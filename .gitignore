@@ -1,0 +1,4 @@
+/.vscode
+/_build
+/src/config.rs
+/target

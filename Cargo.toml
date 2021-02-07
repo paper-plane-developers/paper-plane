@@ -1,0 +1,9 @@
+[package]
+name = "telegrand"
+version = "0.1.0"
+authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+adw = { package = "libadwaita", git = "https://gitlab.gnome.org/bilelmoussaoui/libadwaita-rs" }
+gtk = { package = "gtk4", git = "https://github.com/gtk-rs/gtk4-rs" }
