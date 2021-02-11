@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="AddAccountWindow" parent="AdwWindow">
+    <property name="title" translatable="yes">Add Telegram Account</property>
+    <property name="modal">True</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkHeaderBar">
+          </object>
+        </child>
+        <child>
+          <object class="AdwLeaflet" id="content_leaflet">
+            <property name="vexpand">True</property>
+            <property name="can-unfold">False</property>
+            <child>
+              <object class="AdwClamp">
+                <property name="valign">center</property>
+                <property name="margin-top">32</property>
+                <property name="margin-bottom">32</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="maximum-size">400</property>
+                <property name="tightening-threshold">300</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkEntry">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="phone_number_next">
+                        <property name="label" translatable="yes">Next</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwClamp">
+                <property name="valign">center</property>
+                <property name="margin-top">32</property>
+                <property name="margin-bottom">32</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="maximum-size">400</property>
+                <property name="tightening-threshold">300</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkEntry">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">Next</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

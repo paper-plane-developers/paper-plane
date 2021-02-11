@@ -2,9 +2,11 @@ use gtk::prelude::*;
 use gtk::gio;
 use std::env::args;
 
+mod add_account_window;
 mod config;
 mod window;
 
+use add_account_window::AddAccountWindow;
 use window::TelegrandWindow;
 
 fn main() {
@@ -24,6 +26,10 @@ fn main() {
     application.connect_activate(|app| {
         let win = TelegrandWindow::new(app);
         win.show();
+
+        let add_account_window = AddAccountWindow::new();
+        add_account_window.set_transient_for(Some(&win));
+        add_account_window.show();
     });
 
     application.run(&args().collect::<Vec<_>>());

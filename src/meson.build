@@ -16,6 +16,7 @@ run_command(
 )
 
 sources = files(
+  'add_account_window.rs',
   'config.rs',
   'main.rs',
   'window.rs',
