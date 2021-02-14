@@ -15,61 +15,115 @@
             <property name="vexpand">True</property>
             <property name="can-unfold">False</property>
             <child>
-              <object class="AdwClamp">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <property name="valign">center</property>
-                <property name="margin-top">32</property>
-                <property name="margin-bottom">32</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="maximum-size">400</property>
-                <property name="tightening-threshold">300</property>
-                <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkEntry">
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="phone_number_next">
-                        <property name="label" translatable="yes">Next</property>
-                        <style>
-                          <class name="suggested-action"/>
-                        </style>
-                      </object>
-                    </child>
+                <style>
+                  <class name="auth-page"/>
+                </style>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Phone Number</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="justify">center</property>
+                    <style>
+                      <class name="title"/>
+                      <class name="large-title"/>
+                    </style>
                   </object>
-                </property>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Please enter your phone number to authenticate with Telegrand.</property>
+                    <property name="wrap">True</property>
+                    <property name="justify">center</property>
+                    <style>
+                      <class name="body"/>
+                      <class name="description"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwClamp">
+                    <property name="maximum-size">300</property>
+                    <property name="tightening-threshold">200</property>
+                    <property name="child">
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkEntry">
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="phone_number_next">
+                            <property name="label" translatable="yes">Next</property>
+                            <style>
+                              <class name="suggested-action"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="AdwClamp">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <property name="valign">center</property>
-                <property name="margin-top">32</property>
-                <property name="margin-bottom">32</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="maximum-size">400</property>
-                <property name="tightening-threshold">300</property>
-                <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkEntry">
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton">
-                        <property name="label" translatable="yes">Next</property>
-                        <style>
-                          <class name="suggested-action"/>
-                        </style>
-                      </object>
-                    </child>
+                <style>
+                  <class name="auth-page"/>
+                </style>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Confirmation Code</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="justify">center</property>
+                    <style>
+                      <class name="title"/>
+                      <class name="large-title"/>
+                    </style>
                   </object>
-                </property>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Please enter the confirmation code that we sent to your other Telegram apps.</property>
+                    <property name="wrap">True</property>
+                    <property name="justify">center</property>
+                    <style>
+                      <class name="body"/>
+                      <class name="description"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwClamp">
+                    <property name="maximum-size">300</property>
+                    <property name="tightening-threshold">200</property>
+                    <property name="child">
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkEntry">
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Next</property>
+                            <style>
+                              <class name="suggested-action"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

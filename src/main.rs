@@ -1,4 +1,5 @@
 use gtk::prelude::*;
+use gtk::gdk;
 use gtk::glib;
 use gtk::gio;
 use std::env::args;
@@ -10,6 +11,18 @@ mod telegram;
 
 use window::TelegrandWindow;
 
+fn setup_css() {
+    let provider = gtk::CssProvider::new();
+    provider.load_from_resource("/com/github/melix99/telegrand/style.css");
+    if let Some(display) = gdk::Display::get_default() {
+        gtk::StyleContext::add_provider_for_display(
+            &display,
+            &provider,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
+    }
+}
+
 fn main() {
     gtk::init().expect("Failed to initialize GTK");
     adw::init();
@@ -17,6 +30,8 @@ fn main() {
     let res = gio::Resource::load(config::PKGDATADIR.to_owned() + "/resources.gresource")
         .expect("Could not load resources");
     gio::resources_register(&res);
+
+    setup_css();
 
     let application = gtk::Application::new(
         Some("com.github.melix99.telegrand"),
