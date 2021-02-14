@@ -1,5 +1,10 @@
+tg_api_hash = get_option('tg_api_hash')
+tg_api_id = get_option('tg_api_id')
+
 config = configuration_data()
 config.set_quoted('PKGDATADIR', pkgdatadir)
+config.set_quoted('TG_API_HASH', tg_api_hash)
+config.set('TG_API_ID', tg_api_id)
 
 configure_file(
   input: 'config.rs.in',

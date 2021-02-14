@@ -1,10 +1,13 @@
+use gtk::prelude::*;
 use gtk::glib;
+
+use crate::add_account_window::AddAccountWindow;
+use crate::telegram;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::*;
     use glib::subclass;
-    use gtk::prelude::*;
     use gtk::subclass::prelude::*;
     use gtk::CompositeTemplate;
 
@@ -54,8 +57,23 @@ glib::wrapper! {
 }
 
 impl TelegrandWindow {
-    pub fn new<P: glib::IsA<gtk::Application>>(app: &P) -> Self {
-        glib::Object::new(&[("application", app)])
-            .expect("Failed to create TelegrandWindow")
+    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, receiver: glib::Receiver<telegram::MessageGTK>) -> Self {
+        let window: Self = glib::Object::new(&[("application", app)])
+            .expect("Failed to create TelegrandWindow");
+
+        let window_clone = window.clone();
+        receiver.attach(None, move |msg| {
+            match msg {
+                telegram::MessageGTK::ShowAddAccountWindow => {
+                    let add_account_window = AddAccountWindow::new();
+                    add_account_window.set_transient_for(Some(&window_clone));
+                    add_account_window.show();
+                }
+            }
+
+            glib::Continue(true)
+        });
+
+        window
     }
 }

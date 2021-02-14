@@ -1,12 +1,13 @@
 use gtk::prelude::*;
+use gtk::glib;
 use gtk::gio;
 use std::env::args;
 
 mod add_account_window;
 mod config;
 mod window;
+mod telegram;
 
-use add_account_window::AddAccountWindow;
 use window::TelegrandWindow;
 
 fn main() {
@@ -24,12 +25,12 @@ fn main() {
     .expect("Initialization failed...");
 
     application.connect_activate(|app| {
-        let win = TelegrandWindow::new(app);
+        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+
+        let win = TelegrandWindow::new(app, receiver);
         win.show();
 
-        let add_account_window = AddAccountWindow::new();
-        add_account_window.set_transient_for(Some(&win));
-        add_account_window.show();
+        telegram::spawn(sender);
     });
 
     application.run(&args().collect::<Vec<_>>());

@@ -6,4 +6,7 @@ edition = "2018"
 
 [dependencies]
 adw = { package = "libadwaita", git = "https://gitlab.gnome.org/bilelmoussaoui/libadwaita-rs" }
+grammers-client = { git = "https://github.com/Lonami/grammers" }
+grammers-session = { git = "https://github.com/Lonami/grammers" }
 gtk = { package = "gtk4", git = "https://github.com/gtk-rs/gtk4-rs" }
+tokio = { version = "1.0", features = ["rt"] }
