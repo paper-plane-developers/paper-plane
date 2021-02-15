@@ -70,6 +70,9 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
                 message = tg_receiver.recv().unwrap();
             }
         }
+
+        // TODO: sign out when closing the app if this fails.
+        client.session().save().unwrap();
     }
 
     Ok(())
