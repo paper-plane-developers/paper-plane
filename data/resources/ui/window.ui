@@ -5,12 +5,13 @@
     <property name="default-width">800</property>
     <property name="default-height">576</property>
     <child>
-      <object class="AdwLeaflet">
+      <object class="AdwLeaflet" id="content_box">
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
             <child>
               <object class="AdwHeaderBar">
+                <property name="show-end-title-buttons" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
               </object>
             </child>
             <child>
@@ -26,11 +27,22 @@
           </object>
         </child>
         <child>
+          <object class="GtkSeparator">
+            <style>
+              <class name="sidebar"/>
+            </style>
+          </object>
+        </child>
+        <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
             <property name="hexpand">True</property>
             <child>
               <object class="AdwHeaderBar">
+                <property name="show-start-title-buttons" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
+                <property name="title-widget">
+                  <object class="GtkBox"/>
+                </property>
               </object>
             </child>
           </object>
