@@ -17,6 +17,8 @@ mod imp {
     pub struct TelegrandWindow {
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
+        #[template_child]
+        pub chat_list: TemplateChild<gtk::ListBox>,
     }
 
     impl ObjectSubclass for TelegrandWindow {
@@ -32,6 +34,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 add_account_window: TemplateChild::default(),
+                chat_list: TemplateChild::default(),
             }
         }
 
@@ -70,7 +73,9 @@ impl TelegrandWindow {
         let add_account_window = &*self_.add_account_window;
         add_account_window.init_signals(&tg_sender);
 
-        gtk_receiver.attach(None, glib::clone!(@weak add_account_window => move |msg| {
+        let chat_list = &*self_.chat_list;
+
+        gtk_receiver.attach(None, glib::clone!(@weak add_account_window, @weak chat_list => move |msg| {
             match msg {
                 telegram::MessageGTK::AccountNotAuthorized =>
                     add_account_window.show(),
@@ -78,6 +83,11 @@ impl TelegrandWindow {
                     add_account_window.navigate_forward(),
                 telegram::MessageGTK::SuccessfullySignedIn =>
                     add_account_window.hide(),
+                telegram::MessageGTK::NewMessage(chat, _) => {
+                    // TODO: well, let's manage this properly for existing chats.
+                    let label = gtk::Label::new(Some(&chat));
+                    chat_list.prepend(&label);
+                }
             }
 
             glib::Continue(true)

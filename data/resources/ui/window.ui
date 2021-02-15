@@ -17,6 +17,10 @@
               <object class="GtkStackSidebar">
                 <property name="width_request">270</property>
                 <property name="vexpand">True</property>
+                <child>
+                  <object class="GtkListBox" id="chat_list">
+                  </object>
+                </child>
               </object>
             </child>
           </object>

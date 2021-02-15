@@ -1,4 +1,4 @@
-use grammers_client::{Client, Config};
+use grammers_client::{Client, Config, Update};
 use grammers_session::FileSession;
 use gtk::glib;
 use std::sync::mpsc;
@@ -6,12 +6,13 @@ use tokio::runtime;
 
 use crate::config;
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 pub enum MessageGTK {
     AccountNotAuthorized,
     NeedConfirmationCode,
     SuccessfullySignedIn,
+    NewMessage(String, String),
 }
 
 pub enum MessageTG {
@@ -29,7 +30,7 @@ pub fn spawn(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<M
     });
 }
 
-async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<MessageTG>) -> Result<()> {
+async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<MessageTG>) -> Result {
     let api_id = config::TG_API_ID.to_owned();
     let api_hash = config::TG_API_HASH.to_owned();
 
@@ -59,12 +60,12 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
                                 Ok(_) => {
                                     gtk_sender.send(MessageGTK::SuccessfullySignedIn).unwrap();
                                     signed_in = true;
-                                },
-                                Err(e) => panic!(e),
+                                }
+                                Err(e) => panic!(e)
                             }
                         }
-                    },
-                    Err(e) => panic!(e),
+                    }
+                    Err(e) => panic!(e)
                 };
             } else {
                 message = tg_receiver.recv().unwrap();
@@ -72,7 +73,22 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
         }
 
         // TODO: sign out when closing the app if this fails.
-        client.session().save().unwrap();
+        client.session().save()?;
+    }
+
+    while let Some(updates) = client.next_updates().await? {
+        for update in updates {
+            match update {
+                Update::NewMessage(message) if !message.outgoing() => {
+                    let chat = message.chat();
+                    gtk_sender.send(MessageGTK::NewMessage(chat.name().to_string(),
+                        message.text().to_string())).unwrap();
+                }
+                _ => {}
+            }
+        }
+
+        client.session().save()?;
     }
 
     Ok(())
