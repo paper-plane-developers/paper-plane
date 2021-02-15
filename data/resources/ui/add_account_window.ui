@@ -53,7 +53,7 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">12</property>
                         <child>
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="phone_number_entry">
                           </object>
                         </child>
                         <child>
@@ -109,11 +109,11 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">12</property>
                         <child>
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="confirmation_code_entry">
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="confirmation_code_next">
                             <property name="label" translatable="yes">Next</property>
                             <style>
                               <class name="suggested-action"/>

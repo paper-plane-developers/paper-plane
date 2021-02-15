@@ -1,5 +1,7 @@
 use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use gtk::glib;
+use std::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
 use crate::telegram;
@@ -8,12 +10,13 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::*;
     use glib::subclass;
-    use gtk::subclass::prelude::*;
     use gtk::CompositeTemplate;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
     pub struct TelegrandWindow {
+        #[template_child]
+        pub add_account_window: TemplateChild<AddAccountWindow>,
     }
 
     impl ObjectSubclass for TelegrandWindow {
@@ -27,7 +30,9 @@ mod imp {
         glib::object_subclass!();
 
         fn new() -> Self {
-            Self {}
+            Self {
+                add_account_window: TemplateChild::default(),
+            }
         }
 
         fn class_init(klass: &mut Self::Class) {
@@ -57,22 +62,26 @@ glib::wrapper! {
 }
 
 impl TelegrandWindow {
-    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, receiver: glib::Receiver<telegram::MessageGTK>) -> Self {
+    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, gtk_receiver: glib::Receiver<telegram::MessageGTK>, tg_sender: mpsc::Sender<telegram::MessageTG>) -> Self {
         let window: Self = glib::Object::new(&[("application", app)])
             .expect("Failed to create TelegrandWindow");
 
-        let window_clone = window.clone();
-        receiver.attach(None, move |msg| {
+        let self_ = imp::TelegrandWindow::from_instance(&window);
+        let add_account_window = &*self_.add_account_window;
+        add_account_window.init_signals(&tg_sender);
+
+        gtk_receiver.attach(None, glib::clone!(@weak add_account_window => move |msg| {
             match msg {
-                telegram::MessageGTK::ShowAddAccountWindow => {
-                    let add_account_window = AddAccountWindow::new();
-                    add_account_window.set_transient_for(Some(&window_clone));
-                    add_account_window.show();
-                }
+                telegram::MessageGTK::AccountNotAuthorized =>
+                    add_account_window.show(),
+                telegram::MessageGTK::NeedConfirmationCode =>
+                    add_account_window.navigate_forward(),
+                telegram::MessageGTK::SuccessfullySignedIn =>
+                    add_account_window.hide(),
             }
 
             glib::Continue(true)
-        });
+        }));
 
         window
     }

@@ -34,4 +34,8 @@
       </object>
     </child>
   </template>
+  <object class="AddAccountWindow" id="add_account_window">
+    <property name="halign">center</property>
+    <property name="transient-for">TelegrandWindow</property>
+  </object>
 </interface>

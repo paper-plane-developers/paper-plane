@@ -1,12 +1,15 @@
+use adw::NavigationDirection;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use gtk::glib;
+use std::sync::mpsc;
+
+use crate::telegram;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::*;
-    use adw::NavigationDirection;
     use glib::subclass;
-    use gtk::prelude::*;
-    use gtk::subclass::prelude::*;
     use gtk::CompositeTemplate;
 
     #[derive(Debug, CompositeTemplate)]
@@ -15,7 +18,13 @@ mod imp {
         #[template_child]
         pub content_leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
+        pub phone_number_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
         pub phone_number_next: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub confirmation_code_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub confirmation_code_next: TemplateChild<gtk::Button>,
     }
 
     impl ObjectSubclass for AddAccountWindow {
@@ -31,7 +40,10 @@ mod imp {
         fn new() -> Self {
             Self {
                 content_leaflet: TemplateChild::default(),
+                phone_number_entry: TemplateChild::default(),
                 phone_number_next: TemplateChild::default(),
+                confirmation_code_entry: TemplateChild::default(),
+                confirmation_code_next: TemplateChild::default(),
             }
         }
 
@@ -47,12 +59,6 @@ mod imp {
     impl ObjectImpl for AddAccountWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            let leaflet = &*self.content_leaflet;
-            self.phone_number_next
-                .connect_clicked(glib::clone!(@weak leaflet => move |_| {
-                    leaflet.navigate(NavigationDirection::Forward);
-                }));
         }
     }
 
@@ -70,5 +76,30 @@ impl AddAccountWindow {
     pub fn new() -> Self {
         glib::Object::new(&[])
             .expect("Failed to create AddAccountWindow")
+    }
+
+    pub fn init_signals(&self, tg_sender: &mpsc::Sender<telegram::MessageTG>) {
+        let self_ = imp::AddAccountWindow::from_instance(self);
+
+        let phone_number_entry = &*self_.phone_number_entry;
+        let tg_sender_clone = tg_sender.clone();
+        self_.phone_number_next
+            .connect_clicked(glib::clone!(@weak phone_number_entry => move |_| {
+                tg_sender_clone.send(telegram::MessageTG::SendPhoneNumber(
+                    phone_number_entry.get_text().to_string())).unwrap();
+            }));
+
+        let confirmation_code_entry = &*self_.confirmation_code_entry;
+        let tg_sender_clone = tg_sender.clone();
+        self_.confirmation_code_next
+            .connect_clicked(glib::clone!(@weak confirmation_code_entry => move |_| {
+                tg_sender_clone.send(telegram::MessageTG::SendConfirmationCode(
+                    confirmation_code_entry.get_text().to_string())).unwrap();
+            }));
+    }
+
+    pub fn navigate_forward(&self) {
+        let self_ = imp::AddAccountWindow::from_instance(self);
+        self_.content_leaflet.navigate(NavigationDirection::Forward);
     }
 }
