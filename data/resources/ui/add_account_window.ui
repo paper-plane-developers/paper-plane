@@ -25,7 +25,6 @@
                   <object class="GtkLabel">
                     <property name="label" translatable="yes">Phone Number</property>
                     <property name="wrap">True</property>
-                    <property name="wrap-mode">word-char</property>
                     <property name="justify">center</property>
                     <style>
                       <class name="title"/>
@@ -81,7 +80,6 @@
                   <object class="GtkLabel">
                     <property name="label" translatable="yes">Confirmation Code</property>
                     <property name="wrap">True</property>
-                    <property name="wrap-mode">word-char</property>
                     <property name="justify">center</property>
                     <style>
                       <class name="title"/>
