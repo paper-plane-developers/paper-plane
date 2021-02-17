@@ -18,10 +18,7 @@
               <object class="GtkStackSidebar">
                 <property name="width_request">270</property>
                 <property name="vexpand">True</property>
-                <child>
-                  <object class="GtkListBox" id="chat_list">
-                  </object>
-                </child>
+                <property name="stack">chat_stack</property>
               </object>
             </child>
           </object>
@@ -43,6 +40,10 @@
                 <property name="title-widget">
                   <object class="GtkBox"/>
                 </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStack" id="chat_stack">
               </object>
             </child>
           </object>

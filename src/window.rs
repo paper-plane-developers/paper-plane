@@ -18,7 +18,7 @@ mod imp {
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
         #[template_child]
-        pub chat_list: TemplateChild<gtk::ListBox>,
+        pub chat_stack: TemplateChild<gtk::Stack>,
     }
 
     impl ObjectSubclass for TelegrandWindow {
@@ -34,7 +34,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 add_account_window: TemplateChild::default(),
-                chat_list: TemplateChild::default(),
+                chat_stack: TemplateChild::default(),
             }
         }
 
@@ -73,9 +73,8 @@ impl TelegrandWindow {
         let add_account_window = &*self_.add_account_window;
         add_account_window.init_signals(&tg_sender);
 
-        let chat_list = &*self_.chat_list;
-
-        gtk_receiver.attach(None, glib::clone!(@weak add_account_window, @weak chat_list => move |msg| {
+        let chat_stack = &*self_.chat_stack;
+        gtk_receiver.attach(None, glib::clone!(@weak add_account_window, @weak chat_stack => move |msg| {
             match msg {
                 telegram::MessageGTK::AccountNotAuthorized =>
                     add_account_window.show(),
@@ -83,10 +82,24 @@ impl TelegrandWindow {
                     add_account_window.navigate_forward(),
                 telegram::MessageGTK::SuccessfullySignedIn =>
                     add_account_window.hide(),
-                telegram::MessageGTK::NewMessage(chat, _) => {
-                    // TODO: well, let's manage this properly for existing chats.
-                    let label = gtk::Label::new(Some(&chat));
-                    chat_list.prepend(&label);
+                telegram::MessageGTK::LoadChat(chat_id, chat_name) => {
+                    let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
+                    chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
+                }
+                telegram::MessageGTK::NewMessage(chat_id, chat_name, message_text) => {
+                    match chat_stack.get_child_by_name(&chat_id) {
+                        Some(child) => {
+                            let text_box: gtk::Box = child.downcast().unwrap();
+                            let label = gtk::Label::new(Some(&message_text));
+                            text_box.append(&label);
+                        }
+                        None => {
+                            let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
+                            let label = gtk::Label::new(Some(&message_text));
+                            text_box.append(&label);
+                            chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
+                        }
+                    }
                 }
             }
 
