@@ -86,16 +86,26 @@ impl TelegrandWindow {
                     let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
                     chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
                 }
-                telegram::MessageGTK::NewMessage(chat_id, chat_name, message_text) => {
+                telegram::MessageGTK::NewMessage(chat_id, chat_name, outgoing, message_text) => {
                     match chat_stack.get_child_by_name(&chat_id) {
                         Some(child) => {
                             let text_box: gtk::Box = child.downcast().unwrap();
                             let label = gtk::Label::new(Some(&message_text));
+                            if outgoing {
+                                label.set_halign(gtk::Align::End);
+                            } else {
+                                label.set_halign(gtk::Align::Start);
+                            }
                             text_box.append(&label);
                         }
                         None => {
                             let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
                             let label = gtk::Label::new(Some(&message_text));
+                            if outgoing {
+                                label.set_halign(gtk::Align::End);
+                            } else {
+                                label.set_halign(gtk::Align::Start);
+                            }
                             text_box.append(&label);
                             chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
                         }
