@@ -6,6 +6,7 @@ use std::env::args;
 use std::sync::mpsc;
 
 mod add_account_window;
+mod chat_box;
 mod config;
 mod window;
 mod telegram;

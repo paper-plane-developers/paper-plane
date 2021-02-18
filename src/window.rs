@@ -4,6 +4,7 @@ use gtk::glib;
 use std::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
+use crate::chat_box::ChatBox;
 use crate::telegram;
 
 mod imp {
@@ -83,31 +84,19 @@ impl TelegrandWindow {
                 telegram::MessageGTK::SuccessfullySignedIn =>
                     add_account_window.hide(),
                 telegram::MessageGTK::LoadChat(chat_id, chat_name) => {
-                    let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
-                    chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
+                    let chat_box = ChatBox::new();
+                    chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
                 }
-                telegram::MessageGTK::NewMessage(chat_id, chat_name, outgoing, message_text) => {
+                telegram::MessageGTK::NewMessage(chat_id, chat_name, message_text, outgoing) => {
                     match chat_stack.get_child_by_name(&chat_id) {
                         Some(child) => {
-                            let text_box: gtk::Box = child.downcast().unwrap();
-                            let label = gtk::Label::new(Some(&message_text));
-                            if outgoing {
-                                label.set_halign(gtk::Align::End);
-                            } else {
-                                label.set_halign(gtk::Align::Start);
-                            }
-                            text_box.append(&label);
+                            let chat_box: ChatBox = child.downcast().unwrap();
+                            chat_box.add_message(message_text, outgoing);
                         }
                         None => {
-                            let text_box = gtk::Box::new(gtk::Orientation::Vertical, 16);
-                            let label = gtk::Label::new(Some(&message_text));
-                            if outgoing {
-                                label.set_halign(gtk::Align::End);
-                            } else {
-                                label.set_halign(gtk::Align::Start);
-                            }
-                            text_box.append(&label);
-                            chat_stack.add_titled(&text_box, Some(&chat_id), &chat_name);
+                            let chat_box = ChatBox::new();
+                            chat_box.add_message(message_text, outgoing);
+                            chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
                         }
                     }
                 }

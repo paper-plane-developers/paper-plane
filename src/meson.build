@@ -22,6 +22,7 @@ run_command(
 
 sources = files(
   'add_account_window.rs',
+  'chat_box.rs',
   'config.rs',
   'main.rs',
   'window.rs',

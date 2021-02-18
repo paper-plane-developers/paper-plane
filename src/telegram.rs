@@ -16,8 +16,8 @@ pub enum MessageGTK {
     // chat_id, chat_name
     LoadChat(String, String),
 
-    // chat_id, chat_name, outgoing, message_text
-    NewMessage(String, String, bool, String),
+    // chat_id, chat_name, message_text, outgoing
+    NewMessage(String, String, String, bool),
 }
 
 pub enum MessageTG {
@@ -98,8 +98,8 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
                 Update::NewMessage(message) => {
                     let chat = message.chat();
                     gtk_sender.send(MessageGTK::NewMessage(chat.id().to_string(),
-                        chat.name().to_string(), message.outgoing(),
-                        message.text().to_string())).unwrap();
+                        chat.name().to_string(), message.text().to_string(),
+                        message.outgoing())).unwrap();
                 }
                 _ => {}
             }
