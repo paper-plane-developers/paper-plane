@@ -83,11 +83,19 @@ impl TelegrandWindow {
                     add_account_window.navigate_forward(),
                 telegram::MessageGTK::SuccessfullySignedIn =>
                     add_account_window.hide(),
-                telegram::MessageGTK::LoadChat(chat_id, chat_name) => {
+                telegram::MessageGTK::LoadDialog(dialog) => {
+                    let chat = dialog.chat();
                     let chat_box = ChatBox::new();
-                    chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
+                    let chat_id = chat.id().to_string();
+                    let chat_name = chat.name();
+                    chat_stack.add_titled(&chat_box, Some(&chat_id), chat_name);
                 }
-                telegram::MessageGTK::NewMessage(chat_id, chat_name, message_text, outgoing) => {
+                telegram::MessageGTK::NewMessage(message) => {
+                    let chat = message.chat();
+                    let chat_id = chat.id().to_string();
+                    let message_text = message.text();
+                    let outgoing = message.outgoing();
+
                     match chat_stack.get_child_by_name(&chat_id) {
                         Some(child) => {
                             let chat_box: ChatBox = child.downcast().unwrap();
@@ -95,6 +103,7 @@ impl TelegrandWindow {
                         }
                         None => {
                             let chat_box = ChatBox::new();
+                            let chat_name = chat.name();
                             chat_box.add_message(message_text, outgoing);
                             chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
                         }

@@ -1,4 +1,5 @@
 use grammers_client::{Client, Config, Update};
+use grammers_client::types::{Dialog, Message};
 use grammers_session::FileSession;
 use gtk::glib;
 use std::sync::mpsc;
@@ -12,12 +13,8 @@ pub enum MessageGTK {
     AccountNotAuthorized,
     NeedConfirmationCode,
     SuccessfullySignedIn,
-
-    // chat_id, chat_name
-    LoadChat(String, String),
-
-    // chat_id, chat_name, message_text, outgoing
-    NewMessage(String, String, String, bool),
+    LoadDialog(Dialog),
+    NewMessage(Message),
 }
 
 pub enum MessageTG {
@@ -86,9 +83,7 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
     task::spawn(async move {
         let mut dialogs = client_handle.iter_dialogs();
         while let Some(dialog) = dialogs.next().await.unwrap() {
-            let chat = dialog.chat();
-            gtk_sender_clone.send(MessageGTK::LoadChat(chat.id().to_string(),
-                chat.name().to_string())).unwrap();
+            gtk_sender_clone.send(MessageGTK::LoadDialog(dialog)).unwrap();
         }
     });
 
@@ -96,10 +91,7 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
         for update in updates {
             match update {
                 Update::NewMessage(message) => {
-                    let chat = message.chat();
-                    gtk_sender.send(MessageGTK::NewMessage(chat.id().to_string(),
-                        chat.name().to_string(), message.text().to_string(),
-                        message.outgoing())).unwrap();
+                    gtk_sender.send(MessageGTK::NewMessage(message)).unwrap();
                 }
                 _ => {}
             }

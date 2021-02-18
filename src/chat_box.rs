@@ -60,7 +60,7 @@ impl ChatBox {
             .expect("Failed to create ChatBox")
     }
 
-    pub fn add_message(&self, message_text: String, outgoing: bool) {
+    pub fn add_message(&self, message_text: &str, outgoing: bool) {
         let message_label = gtk::Label::new(Some(&message_text));
         if outgoing {
             message_label.set_halign(gtk::Align::End);
