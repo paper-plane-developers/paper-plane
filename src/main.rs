@@ -8,6 +8,9 @@ use std::sync::mpsc;
 mod add_account_window;
 mod chat_box;
 mod config;
+mod dialog_data;
+mod dialog_model;
+mod dialog_row;
 mod window;
 mod telegram;
 

@@ -1207,6 +1207,7 @@ dependencies = [
  "grammers-session",
  "gtk4",
  "libadwaita",
+ "once_cell",
  "tokio",
 ]
 

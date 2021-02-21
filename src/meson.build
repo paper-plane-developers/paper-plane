@@ -24,6 +24,9 @@ sources = files(
   'add_account_window.rs',
   'chat_box.rs',
   'config.rs',
+  'dialog_data.rs',
+  'dialog_model.rs',
+  'dialog_row.rs',
   'main.rs',
   'window.rs',
 )

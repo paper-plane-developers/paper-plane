@@ -2,8 +2,8 @@
 <interface>
   <template class="TelegrandWindow" parent="AdwApplicationWindow">
     <property name="title">Telegrand</property>
-    <property name="default-width">800</property>
-    <property name="default-height">576</property>
+    <property name="default-width">870</property>
+    <property name="default-height">600</property>
     <child>
       <object class="AdwLeaflet" id="content_box">
         <child>
@@ -15,10 +15,16 @@
               </object>
             </child>
             <child>
-              <object class="GtkStackSidebar">
-                <property name="width_request">270</property>
+              <object class="GtkScrolledWindow">
+                <property name="width_request">330</property>
                 <property name="vexpand">True</property>
-                <property name="stack">chat_stack</property>
+                <child>
+                  <object class="GtkListBox" id="dialogs_list">
+                    <style>
+                      <class name="navigation-sidebar"/>
+                    </style>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

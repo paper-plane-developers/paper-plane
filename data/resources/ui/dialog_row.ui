@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="DialogRow" parent="GtkListBoxRow">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <style>
+          <class name="dialog"/>
+        </style>
+        <child>
+          <object class="AdwAvatar">
+            <property name="show-initials">True</property>
+            <property name="size">46</property>
+            <property name="text" bind-source="chat_name_label" bind-property="label" bind-flags="sync-create"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="homogeneous">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="chat_name_label">
+                <property name="halign">start</property>
+                <property name="ellipsize">end</property>
+                <property name="single_line_mode">True</property>
+                <style>
+                  <class name="heading"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="last_message_label">
+                <property name="halign">start</property>
+                <property name="ellipsize">end</property>
+                <property name="single_line_mode">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

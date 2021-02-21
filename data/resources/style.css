@@ -1,8 +1,8 @@
-stacksidebar {
-  border-left-width: 0px;
-  border-right-width: 0px;
-}
-
 box.auth-page { margin: 36px 12px; }
 box.auth-page > label.title { margin-bottom: 12px; }
 box.auth-page > label.description { margin-bottom: 36px; }
+
+box.dialog {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
