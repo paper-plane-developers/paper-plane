@@ -39,7 +39,7 @@ fn main() {
     setup_css();
 
     let application = gtk::Application::new(
-        Some("com.github.melix99.telegrand"),
+        Some(config::APP_ID),
         Default::default(),
     )
     .expect("Initialization failed...");

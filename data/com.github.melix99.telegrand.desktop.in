@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Telegrand
+Exec=telegrand
+Type=Application
+Terminal=false
+Categories=GNOME;GTK;Network;InstantMessaging;
+StartupNotify=true

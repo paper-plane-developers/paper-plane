@@ -1,3 +1,4 @@
-pub static PKGDATADIR: &str = @PKGDATADIR@;
-pub static TG_API_HASH: &str = @TG_API_HASH@;
-pub static TG_API_ID: i32 = @TG_API_ID@;
+pub const APP_ID: &str = @APP_ID@;
+pub const PKGDATADIR: &str = @PKGDATADIR@;
+pub const TG_API_HASH: &str = @TG_API_HASH@;
+pub const TG_API_ID: i32 = @TG_API_ID@;
