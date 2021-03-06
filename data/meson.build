@@ -1,7 +1,7 @@
 # Desktop file
 desktop_file = i18n.merge_file(
   type: 'desktop',
-  input: '@0@.desktop.in'.format(application_id),
+  input: '@0@.desktop.in'.format(base_id),
   output: '@0@.desktop'.format(application_id),
   po_dir: podir,
   install: true,
