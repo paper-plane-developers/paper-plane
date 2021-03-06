@@ -13,14 +13,15 @@ type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 pub enum EventGTK {
     AccountNotAuthorized,
     NeedConfirmationCode,
-    SuccessfullySignedIn,
-    LoadDialog(Dialog),
+    AccountAuthorized,
+    ReceivedDialog(Dialog),
     NewMessage(Message),
 }
 
 pub enum EventTG {
     SendPhoneNumber(String),
     SendConfirmationCode(String),
+    RequestDialogs,
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
@@ -62,7 +63,6 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                         if let EventTG::SendConfirmationCode(ref code) = event {
                             match client.sign_in(&token, &code).await {
                                 Ok(_) => {
-                                    gtk_sender.send(EventGTK::SuccessfullySignedIn).unwrap();
                                     signed_in = true;
                                 }
                                 Err(e) => panic!(e)
@@ -80,6 +80,8 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
         client.session().save()?;
     }
 
+    gtk_sender.send(EventGTK::AccountAuthorized).unwrap();
+
     let mut client_handle = client.handle();
     let gtk_sender_clone = gtk_sender.clone();
     task::spawn(async move {
@@ -95,13 +97,14 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
         }
     });
 
-    let mut dialogs = client_handle.iter_dialogs();
-    while let Some(dialog) = dialogs.next().await.unwrap() {
-        gtk_sender.send(EventGTK::LoadDialog(dialog)).unwrap();
-    }
-
     while let Some(event) = tg_receiver.recv().await {
         match event {
+            EventTG::RequestDialogs => {
+                let mut dialogs = client_handle.iter_dialogs();
+                while let Some(dialog) = dialogs.next().await.unwrap() {
+                    gtk_sender.send(EventGTK::ReceivedDialog(dialog)).unwrap();
+                }
+            }
             EventTG::SendMessage(dialog, message) => {
                 client_handle.send_message(dialog.chat(), message).await?;
             }

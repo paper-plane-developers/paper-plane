@@ -2,6 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use gtk::gio;
+use tokio::runtime;
 use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
@@ -108,9 +109,17 @@ impl TelegrandWindow {
                     add_account_window.show(),
                 telegram::EventGTK::NeedConfirmationCode =>
                     add_account_window.navigate_forward(),
-                telegram::EventGTK::SuccessfullySignedIn =>
-                    add_account_window.hide(),
-                telegram::EventGTK::LoadDialog(dialog) => {
+                telegram::EventGTK::AccountAuthorized => {
+                    add_account_window.hide();
+
+                    let _ = runtime::Builder::new_current_thread()
+                        .enable_all()
+                        .build()
+                        .unwrap()
+                        .block_on(
+                            tg_sender.send(telegram::EventTG::RequestDialogs));
+                }
+                telegram::EventGTK::ReceivedDialog(dialog) => {
                     let chat = dialog.chat();
                     let chat_id = chat.id().to_string();
                     let chat_name = chat.name().to_string();
