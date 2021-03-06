@@ -1,6 +1,7 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use gtk::gio;
 use std::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
@@ -101,7 +102,7 @@ impl TelegrandWindow {
             row.upcast::<gtk::Widget>()
         });
 
-        gtk_receiver.attach(None, glib::clone!(@weak add_account_window, @weak chat_stack, @weak dialog_model => move |msg| {
+        gtk_receiver.attach(None, glib::clone!(@weak window, @weak add_account_window, @weak chat_stack, @weak dialog_model => move |msg| {
             match msg {
                 telegram::MessageGTK::AccountNotAuthorized =>
                     add_account_window.show(),
@@ -121,25 +122,16 @@ impl TelegrandWindow {
                     chat_stack.add_titled(&chat_box, Some(&chat_id), chat_name);
                 }
                 telegram::MessageGTK::NewMessage(message) => {
-                    let chat = message.chat();
-                    let chat_id = chat.id().to_string();
-                    let message_text = message.text();
-                    let outgoing = message.outgoing();
+                    if !message.outgoing() {
+                        let chat = message.chat();
+                        let chat_name = chat.name();
+                        let message_text = message.text();
 
-                    match chat_stack.get_child_by_name(&chat_id) {
-                        Some(child) => {
-                            let chat_box: ChatBox = child.downcast().unwrap();
-                            chat_box.add_message(message_text, outgoing);
-                        }
-                        None => {
-                            let chat_name = chat.name();
-                            dialog_model.append(&DialogData::new(&chat_id, chat_name,
-                                message_text));
-
-                            let chat_box = ChatBox::new();
-                            chat_stack.add_titled(&chat_box, Some(&chat_id), chat_name);
-                            chat_box.add_message(message_text, outgoing);
-                        }
+                        let notification = gio::Notification::new("Telegrand");
+                        notification.set_title(chat_name);
+                        notification.set_body(Some(message_text));
+                        let app = window.get_application().unwrap();
+                        app.send_notification(Some("new-message"), &notification);
                     }
                 }
             }
