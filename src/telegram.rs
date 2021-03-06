@@ -1,5 +1,5 @@
 use grammers_client::{Client, Config, InputMessage, Update};
-use grammers_client::types::{Dialog, Message};
+use grammers_client::types::{Dialog, LoginToken, Message};
 use grammers_session::FileSession;
 use gtk::glib;
 use std::sync::Arc;
@@ -50,34 +50,31 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
     if !client.is_authorized().await? {
         gtk_sender.send(EventGTK::AccountNotAuthorized).unwrap();
 
-        let mut event = tg_receiver.recv().await.unwrap();
-        let mut signed_in = false;
-
-        while !signed_in {
-            if let EventTG::SendPhoneNumber(ref number) = event {
-                match client.request_login_code(&number, api_id, &api_hash).await {
-                    Ok(token) => {
-                        gtk_sender.send(EventGTK::NeedConfirmationCode).unwrap();
-                        event = tg_receiver.recv().await.unwrap();
-
-                        if let EventTG::SendConfirmationCode(ref code) = event {
-                            match client.sign_in(&token, &code).await {
-                                Ok(_) => {
-                                    signed_in = true;
-                                }
-                                Err(e) => panic!(e)
-                            }
+        let mut token: Option<LoginToken> = None;
+        while let Some(event) = tg_receiver.recv().await {
+            match event {
+                EventTG::SendPhoneNumber(number) => {
+                    match client.request_login_code(&number, api_id, &api_hash).await {
+                        Ok(token_) => {
+                            token = Some(token_);
+                            gtk_sender.send(EventGTK::NeedConfirmationCode).unwrap();
                         }
+                        Err(e) => panic!(e)
+                    };
+                }
+                EventTG::SendConfirmationCode(code) => {
+                    match client.sign_in(token.as_ref().unwrap(), &code).await {
+                        Ok(_) => {
+                            // TODO: sign out when closing the app if this fails.
+                            client.session().save()?;
+                            break;
+                        }
+                        Err(e) => panic!(e)
                     }
-                    Err(e) => panic!(e)
-                };
-            } else {
-                event = tg_receiver.recv().await.unwrap();
+                }
+                _ => {}
             }
         }
-
-        // TODO: sign out when closing the app if this fails.
-        client.session().save()?;
     }
 
     gtk_sender.send(EventGTK::AccountAuthorized).unwrap();
