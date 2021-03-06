@@ -80,13 +80,16 @@ impl ChatBox {
         self_.send_message_button
             .connect_clicked(glib::clone!(@weak message_entry => move |_| {
                 let dialog_clone = dialog.clone();
+                let message = InputMessage::text(message_entry.get_text());
+                message_entry.set_text("");
+
                 let _ = runtime::Builder::new_current_thread()
                     .enable_all()
                     .build()
                     .unwrap()
                     .block_on(
                         tg_sender_clone.send(telegram::EventTG::SendMessage(
-                        dialog_clone, InputMessage::text(message_entry.get_text()))));
+                        dialog_clone, message)));
             }));
 
         chat_box
