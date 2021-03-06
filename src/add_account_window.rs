@@ -78,14 +78,14 @@ impl AddAccountWindow {
             .expect("Failed to create AddAccountWindow")
     }
 
-    pub fn init_signals(&self, tg_sender: &mpsc::Sender<telegram::MessageTG>) {
+    pub fn init_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
         let self_ = imp::AddAccountWindow::from_instance(self);
 
         let phone_number_entry = &*self_.phone_number_entry;
         let tg_sender_clone = tg_sender.clone();
         self_.phone_number_next
             .connect_clicked(glib::clone!(@weak phone_number_entry => move |_| {
-                tg_sender_clone.send(telegram::MessageTG::SendPhoneNumber(
+                tg_sender_clone.send(telegram::EventTG::SendPhoneNumber(
                     phone_number_entry.get_text().to_string())).unwrap();
             }));
 
@@ -93,7 +93,7 @@ impl AddAccountWindow {
         let tg_sender_clone = tg_sender.clone();
         self_.confirmation_code_next
             .connect_clicked(glib::clone!(@weak confirmation_code_entry => move |_| {
-                tg_sender_clone.send(telegram::MessageTG::SendConfirmationCode(
+                tg_sender_clone.send(telegram::EventTG::SendConfirmationCode(
                     confirmation_code_entry.get_text().to_string())).unwrap();
             }));
     }

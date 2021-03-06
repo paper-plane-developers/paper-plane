@@ -9,7 +9,7 @@ use crate::config;
 
 type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
-pub enum MessageGTK {
+pub enum EventGTK {
     AccountNotAuthorized,
     NeedConfirmationCode,
     SuccessfullySignedIn,
@@ -17,12 +17,12 @@ pub enum MessageGTK {
     NewMessage(Message),
 }
 
-pub enum MessageTG {
+pub enum EventTG {
     SendPhoneNumber(String),
     SendConfirmationCode(String),
 }
 
-pub fn spawn(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<MessageTG>) {
+pub fn spawn(gtk_sender: glib::Sender<EventGTK>, tg_receiver: mpsc::Receiver<EventTG>) {
     std::thread::spawn(move || {
         let _ = runtime::Builder::new_current_thread()
             .enable_all()
@@ -32,7 +32,7 @@ pub fn spawn(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<M
     });
 }
 
-async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver<MessageTG>) -> Result {
+async fn start(gtk_sender: glib::Sender<EventGTK>, tg_receiver: mpsc::Receiver<EventTG>) -> Result {
     let api_id = config::TG_API_ID.to_owned();
     let api_hash = config::TG_API_HASH.to_owned();
 
@@ -45,22 +45,22 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
     .await?;
 
     if !client.is_authorized().await? {
-        gtk_sender.send(MessageGTK::AccountNotAuthorized).unwrap();
+        gtk_sender.send(EventGTK::AccountNotAuthorized).unwrap();
 
-        let mut message = tg_receiver.recv().unwrap();
+        let mut event = tg_receiver.recv().unwrap();
         let mut signed_in = false;
 
         while !signed_in {
-            if let MessageTG::SendPhoneNumber(ref number) = message {
+            if let EventTG::SendPhoneNumber(ref number) = event {
                 match client.request_login_code(&number, api_id, &api_hash).await {
                     Ok(token) => {
-                        gtk_sender.send(MessageGTK::NeedConfirmationCode).unwrap();
-                        message = tg_receiver.recv().unwrap();
+                        gtk_sender.send(EventGTK::NeedConfirmationCode).unwrap();
+                        event = tg_receiver.recv().unwrap();
 
-                        if let MessageTG::SendConfirmationCode(ref code) = message {
+                        if let EventTG::SendConfirmationCode(ref code) = event {
                             match client.sign_in(&token, &code).await {
                                 Ok(_) => {
-                                    gtk_sender.send(MessageGTK::SuccessfullySignedIn).unwrap();
+                                    gtk_sender.send(EventGTK::SuccessfullySignedIn).unwrap();
                                     signed_in = true;
                                 }
                                 Err(e) => panic!(e)
@@ -70,7 +70,7 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
                     Err(e) => panic!(e)
                 };
             } else {
-                message = tg_receiver.recv().unwrap();
+                event = tg_receiver.recv().unwrap();
             }
         }
 
@@ -83,7 +83,7 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
     task::spawn(async move {
         let mut dialogs = client_handle.iter_dialogs();
         while let Some(dialog) = dialogs.next().await.unwrap() {
-            gtk_sender_clone.send(MessageGTK::LoadDialog(dialog)).unwrap();
+            gtk_sender_clone.send(EventGTK::LoadDialog(dialog)).unwrap();
         }
     });
 
@@ -91,7 +91,7 @@ async fn start(gtk_sender: glib::Sender<MessageGTK>, tg_receiver: mpsc::Receiver
         for update in updates {
             match update {
                 Update::NewMessage(message) => {
-                    gtk_sender.send(MessageGTK::NewMessage(message)).unwrap();
+                    gtk_sender.send(EventGTK::NewMessage(message)).unwrap();
                 }
                 _ => {}
             }

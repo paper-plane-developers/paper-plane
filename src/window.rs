@@ -75,7 +75,7 @@ glib::wrapper! {
 }
 
 impl TelegrandWindow {
-    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, gtk_receiver: glib::Receiver<telegram::MessageGTK>, tg_sender: mpsc::Sender<telegram::MessageTG>) -> Self {
+    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) -> Self {
         let window = glib::Object::new(&[("application", app)])
             .expect("Failed to create TelegrandWindow");
 
@@ -104,13 +104,13 @@ impl TelegrandWindow {
 
         gtk_receiver.attach(None, glib::clone!(@weak window, @weak add_account_window, @weak chat_stack, @weak dialog_model => move |msg| {
             match msg {
-                telegram::MessageGTK::AccountNotAuthorized =>
+                telegram::EventGTK::AccountNotAuthorized =>
                     add_account_window.show(),
-                telegram::MessageGTK::NeedConfirmationCode =>
+                telegram::EventGTK::NeedConfirmationCode =>
                     add_account_window.navigate_forward(),
-                telegram::MessageGTK::SuccessfullySignedIn =>
+                telegram::EventGTK::SuccessfullySignedIn =>
                     add_account_window.hide(),
-                telegram::MessageGTK::LoadDialog(dialog) => {
+                telegram::EventGTK::LoadDialog(dialog) => {
                     let chat = dialog.chat();
                     let chat_id = chat.id().to_string();
                     let chat_name = chat.name();
@@ -121,7 +121,7 @@ impl TelegrandWindow {
                     let chat_box = ChatBox::new();
                     chat_stack.add_titled(&chat_box, Some(&chat_id), chat_name);
                 }
-                telegram::MessageGTK::NewMessage(message) => {
+                telegram::EventGTK::NewMessage(message) => {
                     if !message.outgoing() {
                         let chat = message.chat();
                         let chat_name = chat.name();
