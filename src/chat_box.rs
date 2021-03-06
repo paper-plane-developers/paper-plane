@@ -1,6 +1,13 @@
+use grammers_client::InputMessage;
+use grammers_client::types::Dialog;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use std::sync::Arc;
+use tokio::runtime;
+use tokio::sync::mpsc;
+
+use crate::telegram;
 
 mod imp {
     use super::*;
@@ -12,6 +19,10 @@ mod imp {
     pub struct ChatBox {
         #[template_child]
         pub messages_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub message_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub send_message_button: TemplateChild<gtk::Button>,
     }
 
     impl ObjectSubclass for ChatBox {
@@ -27,6 +38,8 @@ mod imp {
         fn new() -> Self {
             Self {
                 messages_box: TemplateChild::default(),
+                message_entry: TemplateChild::default(),
+                send_message_button: TemplateChild::default(),
             }
         }
 
@@ -55,9 +68,28 @@ glib::wrapper! {
 }
 
 impl ChatBox {
-    pub fn new() -> Self {
-        glib::Object::new(&[])
-            .expect("Failed to create ChatBox")
+    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Dialog) -> Self {
+        let chat_box = glib::Object::new(&[])
+            .expect("Failed to create ChatBox");
+
+        let dialog = Arc::new(dialog);
+
+        let self_ = imp::ChatBox::from_instance(&chat_box);
+        let message_entry = &*self_.message_entry;
+        let tg_sender_clone = tg_sender.clone();
+        self_.send_message_button
+            .connect_clicked(glib::clone!(@weak message_entry => move |_| {
+                let dialog_clone = dialog.clone();
+                let _ = runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .unwrap()
+                    .block_on(
+                        tg_sender_clone.send(telegram::EventTG::SendMessage(
+                        dialog_clone, InputMessage::text(message_entry.get_text()))));
+            }));
+
+        chat_box
     }
 
     pub fn add_message(&self, message_text: &str, outgoing: bool) {

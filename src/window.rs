@@ -2,7 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use gtk::gio;
-use std::sync::mpsc;
+use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
 use crate::chat_box::ChatBox;
@@ -113,13 +113,13 @@ impl TelegrandWindow {
                 telegram::EventGTK::LoadDialog(dialog) => {
                     let chat = dialog.chat();
                     let chat_id = chat.id().to_string();
-                    let chat_name = chat.name();
+                    let chat_name = chat.name().to_string();
                     let last_message = dialog.last_message.as_ref().unwrap().text();
-                    dialog_model.append(&DialogData::new(&chat_id, chat_name,
+                    dialog_model.append(&DialogData::new(&chat_id, &chat_name,
                         last_message));
 
-                    let chat_box = ChatBox::new();
-                    chat_stack.add_titled(&chat_box, Some(&chat_id), chat_name);
+                    let chat_box = ChatBox::new(&tg_sender, dialog);
+                    chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
                 }
                 telegram::EventGTK::NewMessage(message) => {
                     if !message.outgoing() {

@@ -2,7 +2,8 @@ use adw::NavigationDirection;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use std::sync::mpsc;
+use tokio::runtime;
+use tokio::sync::mpsc;
 
 use crate::telegram;
 
@@ -85,16 +86,26 @@ impl AddAccountWindow {
         let tg_sender_clone = tg_sender.clone();
         self_.phone_number_next
             .connect_clicked(glib::clone!(@weak phone_number_entry => move |_| {
-                tg_sender_clone.send(telegram::EventTG::SendPhoneNumber(
-                    phone_number_entry.get_text().to_string())).unwrap();
+                let _ = runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .unwrap()
+                    .block_on(
+                        tg_sender_clone.send(telegram::EventTG::SendPhoneNumber(
+                        phone_number_entry.get_text().to_string())));
             }));
 
         let confirmation_code_entry = &*self_.confirmation_code_entry;
         let tg_sender_clone = tg_sender.clone();
         self_.confirmation_code_next
             .connect_clicked(glib::clone!(@weak confirmation_code_entry => move |_| {
-                tg_sender_clone.send(telegram::EventTG::SendConfirmationCode(
-                    confirmation_code_entry.get_text().to_string())).unwrap();
+                let _ = runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()
+                    .unwrap()
+                    .block_on(
+                        tg_sender_clone.send(telegram::EventTG::SendConfirmationCode(
+                        confirmation_code_entry.get_text().to_string())));
             }));
     }
 

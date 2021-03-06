@@ -2,8 +2,8 @@ use gtk::prelude::*;
 use gtk::gdk;
 use gtk::glib;
 use gtk::gio;
+use tokio::sync::mpsc;
 use std::env::args;
-use std::sync::mpsc;
 
 mod add_account_window;
 mod chat_box;
@@ -45,7 +45,7 @@ fn main() {
     .expect("Initialization failed...");
 
     application.connect_activate(|app| {
-        let (tg_sender, tg_receiver) = mpsc::channel();
+        let (tg_sender, tg_receiver) = mpsc::channel(1);
         let (gtk_sender, gtk_receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
         let window = TelegrandWindow::new(app, gtk_receiver, tg_sender);
