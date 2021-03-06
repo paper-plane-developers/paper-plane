@@ -613,6 +613,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "gtk-macros"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1874c48e670519ce192093ac906c08a6dde7cb2d18b28722ef237726a39c3a63"
+
+[[package]]
 name = "gtk4"
 version = "0.1.0"
 source = "git+https://github.com/gtk-rs/gtk4-rs#c43025157b12dba1112fad55962966769908a269"
@@ -1205,6 +1211,7 @@ version = "0.1.0"
 dependencies = [
  "grammers-client",
  "grammers-session",
+ "gtk-macros",
  "gtk4",
  "libadwaita",
  "once_cell",

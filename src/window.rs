@@ -1,7 +1,6 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
-use gtk::gio;
+use gtk::{gio, glib};
 use tokio::runtime;
 use tokio::sync::mpsc;
 

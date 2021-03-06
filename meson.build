@@ -19,13 +19,16 @@ cargo_script = find_program('build-aux/cargo.sh')
 
 if get_option('profile') == 'development'
   profile = 'Devel'
+  version_suffix = '-devel'
 else
   profile = ''
+  version_suffix = ''
 endif
 
 application_id = 'com.github.melix99.telegrand@0@'.format(profile)
 tg_api_hash = get_option('tg_api_hash')
 tg_api_id = get_option('tg_api_id')
+version = meson.project_version()
 
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')

@@ -3,6 +3,7 @@ config.set_quoted('APP_ID', application_id)
 config.set_quoted('PKGDATADIR', pkgdatadir)
 config.set_quoted('TG_API_HASH', tg_api_hash)
 config.set('TG_API_ID', tg_api_id)
+config.set_quoted('VERSION', version + version_suffix)
 configure_file(
   input: 'config.rs.in',
   output: 'config.rs',
@@ -18,12 +19,14 @@ run_command(
 
 sources = files(
   'add_account_window.rs',
+  'application.rs',
   'chat_box.rs',
   'config.rs',
   'dialog_data.rs',
   'dialog_model.rs',
   'dialog_row.rs',
   'main.rs',
+  'telegram.rs',
   'window.rs',
 )
 
