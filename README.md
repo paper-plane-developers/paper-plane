@@ -30,7 +30,7 @@ Then you need to have gtk4 and libadwaita installed on your system, use your pac
 
 Now you can configure and then build the project:
 
-```meson
+```shell
 meson _build -Dtg_api_id=ID -Dtg_api_hash=HASH
 ninja -C _build install
 ```
