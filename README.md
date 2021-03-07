@@ -7,11 +7,12 @@ A GTK4 telegram client built to be well integrated with the GNOME desktop enviro
 - Authentication (without 2FA)
 - Show user dialogs
 - Notify for new messages
+- Send text messages
 
 ## Planned features (short run)
 
 - Show messages list
-- Add multilanguage support
+- Multilanguage support
 - Flatpak support
 
 ## Planned features (long run)
