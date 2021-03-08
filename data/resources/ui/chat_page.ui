@@ -3,9 +3,13 @@
   <template class="ChatPage" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox" id="messages_box">
-        <property name="orientation">vertical</property>
-        <property name="vexpand">True</property>
+      <object class="GtkScrolledWindow">
+        <property name="child">
+          <object class="GtkBox" id="messages_box">
+            <property name="orientation">vertical</property>
+            <property name="vexpand">True</property>
+          </object>
+        </property>
       </object>
     </child>
     <child>
