@@ -5,7 +5,7 @@ use tokio::runtime;
 use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
-use crate::chat_box::ChatBox;
+use crate::chat_page::ChatPage;
 use crate::dialog_data::DialogData;
 use crate::dialog_model::DialogModel;
 use crate::dialog_row::DialogRow;
@@ -126,8 +126,8 @@ impl TelegrandWindow {
                     dialog_model.append(&DialogData::new(&chat_id, &chat_name,
                         last_message));
 
-                    let chat_box = ChatBox::new(&tg_sender, dialog);
-                    chat_stack.add_titled(&chat_box, Some(&chat_id), &chat_name);
+                    let chat_page = ChatPage::new(&tg_sender, dialog);
+                    chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
                 }
                 telegram::EventGTK::NewMessage(message) => {
                     if !message.outgoing() {

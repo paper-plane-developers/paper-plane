@@ -15,8 +15,8 @@ mod imp {
     use gtk::CompositeTemplate;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/chat_box.ui")]
-    pub struct ChatBox {
+    #[template(resource = "/com/github/melix99/telegrand/chat_page.ui")]
+    pub struct ChatPage {
         #[template_child]
         pub messages_box: TemplateChild<gtk::Box>,
         #[template_child]
@@ -25,9 +25,9 @@ mod imp {
         pub send_message_button: TemplateChild<gtk::Button>,
     }
 
-    impl ObjectSubclass for ChatBox {
-        const NAME: &'static str = "ChatBox";
-        type Type = super::ChatBox;
+    impl ObjectSubclass for ChatPage {
+        const NAME: &'static str = "ChatPage";
+        type Type = super::ChatPage;
         type ParentType = gtk::Box;
         type Interfaces = ();
         type Instance = subclass::simple::InstanceStruct<Self>;
@@ -52,29 +52,29 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ChatBox {
+    impl ObjectImpl for ChatPage {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
         }
     }
 
-    impl WidgetImpl for ChatBox {}
-    impl BoxImpl for ChatBox {}
+    impl WidgetImpl for ChatPage {}
+    impl BoxImpl for ChatPage {}
 }
 
 glib::wrapper! {
-    pub struct ChatBox(ObjectSubclass<imp::ChatBox>)
+    pub struct ChatPage(ObjectSubclass<imp::ChatPage>)
         @extends gtk::Widget, gtk::Box;
 }
 
-impl ChatBox {
+impl ChatPage {
     pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Dialog) -> Self {
-        let chat_box = glib::Object::new(&[])
-            .expect("Failed to create ChatBox");
+        let chat_page = glib::Object::new(&[])
+            .expect("Failed to create ChatPage");
 
         let dialog = Arc::new(dialog);
 
-        let self_ = imp::ChatBox::from_instance(&chat_box);
+        let self_ = imp::ChatPage::from_instance(&chat_page);
         let message_entry = &*self_.message_entry;
         let tg_sender_clone = tg_sender.clone();
         self_.send_message_button
@@ -92,7 +92,7 @@ impl ChatBox {
                         dialog_clone, message)));
             }));
 
-        chat_box
+        chat_page
     }
 
     pub fn add_message(&self, message_text: &str, outgoing: bool) {
@@ -103,7 +103,7 @@ impl ChatBox {
             message_label.set_halign(gtk::Align::Start);
         }
 
-        let self_ = imp::ChatBox::from_instance(self);
+        let self_ = imp::ChatPage::from_instance(self);
         self_.messages_box.append(&message_label);
     }
 }

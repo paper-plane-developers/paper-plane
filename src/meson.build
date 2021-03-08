@@ -20,7 +20,7 @@ run_command(
 sources = files(
   'add_account_window.rs',
   'application.rs',
-  'chat_box.rs',
+  'chat_page.rs',
   'config.rs',
   'dialog_data.rs',
   'dialog_model.rs',

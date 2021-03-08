@@ -2,7 +2,7 @@ use gtk::gio;
 
 mod add_account_window;
 mod application;
-mod chat_box;
+mod chat_page;
 mod config;
 mod dialog_data;
 mod dialog_model;
