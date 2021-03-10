@@ -32,5 +32,6 @@ Now you can configure and then build the project:
 
 ```shell
 meson _build -Dtg_api_id=ID -Dtg_api_hash=HASH
-ninja -C _build install
+ninja -C _build
+sudo ninja -C _build install
 ```
