@@ -85,6 +85,7 @@ impl TelegrandWindow {
 
         let chat_stack = &*self_.chat_stack;
         let dialog_model = self_.dialog_model.clone();
+        let tg_sender_clone = tg_sender.clone();
         self_.dialogs_list.connect_row_activated(glib::clone!(@weak chat_stack, @weak dialog_model => move |_, row| {
             let index = row.get_index();
             if let Some(item) = dialog_model.get_object(index as u32) {
@@ -92,6 +93,11 @@ impl TelegrandWindow {
                     .expect("Row data is of wrong type");
                 let chat_id = data.get_chat_id();
                 chat_stack.set_visible_child_name(&chat_id);
+
+                if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                    let chat_page: ChatPage = child.downcast().unwrap();
+                    chat_page.update_chat(&tg_sender_clone);
+                }
             }
         }));
 
@@ -128,6 +134,15 @@ impl TelegrandWindow {
 
                     let chat_page = ChatPage::new(&tg_sender, dialog);
                     chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
+                }
+                telegram::EventGTK::ReceivedMessage(message) => {
+                    let chat = message.chat();
+                    let chat_id = chat.id().to_string();
+
+                    if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                        let chat_page: ChatPage = child.downcast().unwrap();
+                        chat_page.add_message(message);
+                    }
                 }
                 telegram::EventGTK::NewMessage(message) => {
                     if !message.outgoing() {

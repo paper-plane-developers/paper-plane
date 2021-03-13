@@ -15,6 +15,7 @@ pub enum EventGTK {
     NeedConfirmationCode,
     AccountAuthorized,
     ReceivedDialog(Dialog),
+    ReceivedMessage(Message),
     NewMessage(Message),
 }
 
@@ -22,6 +23,7 @@ pub enum EventTG {
     SendPhoneNumber(String),
     SendConfirmationCode(String),
     RequestDialogs,
+    RequestMessages(Arc<Dialog>),
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
@@ -100,6 +102,12 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                 let mut dialogs = client_handle.iter_dialogs();
                 while let Some(dialog) = dialogs.next().await.unwrap() {
                     gtk_sender.send(EventGTK::ReceivedDialog(dialog)).unwrap();
+                }
+            }
+            EventTG::RequestMessages(dialog) => {
+                let mut messages = client_handle.iter_messages(dialog.chat()).limit(20);
+                while let Some(message) = messages.next().await.unwrap() {
+                    gtk_sender.send(EventGTK::ReceivedMessage(message)).unwrap();
                 }
             }
             EventTG::SendMessage(dialog, message) => {

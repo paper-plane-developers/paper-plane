@@ -1,5 +1,5 @@
 use grammers_client::InputMessage;
-use grammers_client::types::Dialog;
+use grammers_client::types::{Dialog, Message};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -7,22 +7,25 @@ use std::sync::Arc;
 use tokio::runtime;
 use tokio::sync::mpsc;
 
+use crate::message_row::MessageRow;
 use crate::telegram;
 
 mod imp {
     use super::*;
     use glib::subclass;
     use gtk::CompositeTemplate;
+    use std::cell::RefCell;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/chat_page.ui")]
     pub struct ChatPage {
         #[template_child]
-        pub messages_box: TemplateChild<gtk::Box>,
+        pub messages_list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub message_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub send_message_button: TemplateChild<gtk::Button>,
+        pub dialog: RefCell<Option<Arc<Dialog>>>,
     }
 
     impl ObjectSubclass for ChatPage {
@@ -37,9 +40,10 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                messages_box: TemplateChild::default(),
+                messages_list: TemplateChild::default(),
                 message_entry: TemplateChild::default(),
                 send_message_button: TemplateChild::default(),
+                dialog: RefCell::new(None),
             }
         }
 
@@ -72,14 +76,16 @@ impl ChatPage {
         let chat_page = glib::Object::new(&[])
             .expect("Failed to create ChatPage");
 
-        let dialog = Arc::new(dialog);
-
         let self_ = imp::ChatPage::from_instance(&chat_page);
+        self_.dialog.replace(Some(Arc::new(dialog)));
+        let dialog = self_.dialog.clone();
+
         let message_entry = &*self_.message_entry;
         let tg_sender_clone = tg_sender.clone();
         self_.send_message_button
             .connect_clicked(glib::clone!(@weak message_entry => move |_| {
-                let dialog_clone = dialog.clone();
+                let dialog = &*dialog.borrow();
+                let dialog = dialog.as_ref().unwrap().clone();
                 let message = InputMessage::text(message_entry.get_text());
                 message_entry.set_text("");
 
@@ -89,21 +95,32 @@ impl ChatPage {
                     .unwrap()
                     .block_on(
                         tg_sender_clone.send(telegram::EventTG::SendMessage(
-                        dialog_clone, message)));
+                            dialog, message)));
             }));
 
         chat_page
     }
 
-    pub fn add_message(&self, message_text: &str, outgoing: bool) {
-        let message_label = gtk::Label::new(Some(message_text));
-        if outgoing {
-            message_label.set_halign(gtk::Align::End);
-        } else {
-            message_label.set_halign(gtk::Align::Start);
+    pub fn update_chat(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+        let self_ = imp::ChatPage::from_instance(self);
+        let messages_list = &*self_.messages_list;
+
+        if let None = messages_list.get_row_at_y(0) {
+            let dialog = &*self_.dialog.borrow();
+            let dialog = dialog.as_ref().unwrap().clone();
+            let _ = runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap()
+                .block_on(
+                    tg_sender.send(telegram::EventTG::RequestMessages(dialog)));
         }
+    }
+
+    pub fn add_message(&self, message: Message) {
+        let message_row = MessageRow::new(message);
 
         let self_ = imp::ChatPage::from_instance(self);
-        self_.messages_box.append(&message_label);
+        self_.messages_list.prepend(&message_row);
     }
 }

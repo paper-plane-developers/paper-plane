@@ -26,6 +26,7 @@ sources = files(
   'dialog_model.rs',
   'dialog_row.rs',
   'main.rs',
+  'message_row.rs',
   'telegram.rs',
   'window.rs',
 )
