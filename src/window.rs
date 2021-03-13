@@ -112,8 +112,14 @@ impl TelegrandWindow {
             match msg {
                 telegram::EventGTK::AccountNotAuthorized =>
                     add_account_window.show(),
+                telegram::EventGTK::AuthorizationError(error) => {
+                    add_account_window.show_authorization_error(error);
+                }
                 telegram::EventGTK::NeedConfirmationCode =>
                     add_account_window.navigate_forward(),
+                telegram::EventGTK::SignInError(error) => {
+                    add_account_window.show_sign_in_error(error);
+                }
                 telegram::EventGTK::AccountAuthorized => {
                     add_account_window.hide();
 

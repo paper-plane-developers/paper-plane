@@ -63,6 +63,15 @@
                             </style>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkLabel" id="authorization_error_label">
+                            <property name="wrap">True</property>
+                            <property name="justify">center</property>
+                            <style>
+                              <class name="error"/>
+                            </style>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>
@@ -115,6 +124,15 @@
                             <property name="label" translatable="yes">Next</property>
                             <style>
                               <class name="suggested-action"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="sign_in_error_label">
+                            <property name="wrap">True</property>
+                            <property name="justify">center</property>
+                            <style>
+                              <class name="error"/>
                             </style>
                           </object>
                         </child>

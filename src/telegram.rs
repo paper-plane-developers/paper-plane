@@ -1,4 +1,5 @@
-use grammers_client::{Client, Config, InputMessage, Update};
+use grammers_client::{Client, Config, InputMessage, SignInError, Update};
+use grammers_client::client::chats::AuthorizationError;
 use grammers_client::types::{Dialog, LoginToken, Message};
 use grammers_session::FileSession;
 use gtk::glib;
@@ -12,7 +13,9 @@ type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 pub enum EventGTK {
     AccountNotAuthorized,
+    AuthorizationError(AuthorizationError),
     NeedConfirmationCode,
+    SignInError(SignInError),
     AccountAuthorized,
     ReceivedDialog(Dialog),
     ReceivedMessage(Message),
@@ -61,7 +64,9 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                             token = Some(token_);
                             gtk_sender.send(EventGTK::NeedConfirmationCode).unwrap();
                         }
-                        Err(e) => panic!(e)
+                        Err(error) => {
+                            gtk_sender.send(EventGTK::AuthorizationError(error)).unwrap();
+                        }
                     };
                 }
                 EventTG::SendConfirmationCode(code) => {
@@ -71,7 +76,9 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                             client.session().save()?;
                             break;
                         }
-                        Err(e) => panic!(e)
+                        Err(error) => {
+                            gtk_sender.send(EventGTK::SignInError(error)).unwrap();
+                        }
                     }
                 }
                 _ => {}

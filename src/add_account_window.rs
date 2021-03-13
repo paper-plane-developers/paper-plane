@@ -1,4 +1,6 @@
 use adw::NavigationDirection;
+use grammers_client::SignInError;
+use grammers_client::client::chats::AuthorizationError;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -23,9 +25,13 @@ mod imp {
         #[template_child]
         pub phone_number_next: TemplateChild<gtk::Button>,
         #[template_child]
+        pub authorization_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub confirmation_code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub confirmation_code_next: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub sign_in_error_label: TemplateChild<gtk::Label>,
     }
 
     impl ObjectSubclass for AddAccountWindow {
@@ -43,8 +49,10 @@ mod imp {
                 content_leaflet: TemplateChild::default(),
                 phone_number_entry: TemplateChild::default(),
                 phone_number_next: TemplateChild::default(),
+                authorization_error_label: TemplateChild::default(),
                 confirmation_code_entry: TemplateChild::default(),
                 confirmation_code_next: TemplateChild::default(),
+                sign_in_error_label: TemplateChild::default(),
             }
         }
 
@@ -112,5 +120,17 @@ impl AddAccountWindow {
     pub fn navigate_forward(&self) {
         let self_ = imp::AddAccountWindow::from_instance(self);
         self_.content_leaflet.navigate(NavigationDirection::Forward);
+    }
+
+    pub fn show_authorization_error(&self, error: AuthorizationError) {
+        let self_ = imp::AddAccountWindow::from_instance(self);
+        let authorization_error_label = &*self_.authorization_error_label;
+        authorization_error_label.set_text(&error.to_string());
+    }
+
+    pub fn show_sign_in_error(&self, error: SignInError) {
+        let self_ = imp::AddAccountWindow::from_instance(self);
+        let sign_in_error_label = &*self_.sign_in_error_label;
+        sign_in_error_label.set_text(&error.to_string());
     }
 }
