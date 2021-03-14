@@ -3,34 +3,22 @@ use gtk::glib;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use gtk::prelude::*;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
+    #[derive(Debug, Default)]
     pub struct DialogData {
         pub chat_id: RefCell<Option<String>>,
         chat_name: RefCell<Option<String>>,
         last_message: RefCell<Option<String>>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for DialogData {
         const NAME: &'static str = "DialogData";
         type Type = super::DialogData;
         type ParentType = glib::Object;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                chat_id: RefCell::new(None),
-                chat_name: RefCell::new(None),
-                last_message: RefCell::new(None),
-            }
-        }
     }
 
     impl ObjectImpl for DialogData {

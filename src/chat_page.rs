@@ -12,11 +12,10 @@ use crate::telegram;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use gtk::CompositeTemplate;
     use std::cell::RefCell;
 
-    #[derive(CompositeTemplate)]
+    #[derive(Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/chat_page.ui")]
     pub struct ChatPage {
         #[template_child]
@@ -28,30 +27,17 @@ mod imp {
         pub dialog: RefCell<Option<Arc<Dialog>>>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for ChatPage {
         const NAME: &'static str = "ChatPage";
         type Type = super::ChatPage;
         type ParentType = gtk::Box;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                messages_list: TemplateChild::default(),
-                message_entry: TemplateChild::default(),
-                send_message_button: TemplateChild::default(),
-                dialog: RefCell::new(None),
-            }
-        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self::Type>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }

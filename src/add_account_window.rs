@@ -12,10 +12,9 @@ use crate::telegram;
 mod imp {
     use super::*;
     use adw::subclass::prelude::*;
-    use glib::subclass;
     use gtk::CompositeTemplate;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/add_account_window.ui")]
     pub struct AddAccountWindow {
         #[template_child]
@@ -34,33 +33,17 @@ mod imp {
         pub sign_in_error_label: TemplateChild<gtk::Label>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for AddAccountWindow {
         const NAME: &'static str = "AddAccountWindow";
         type Type = super::AddAccountWindow;
         type ParentType = adw::Window;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                content_leaflet: TemplateChild::default(),
-                phone_number_entry: TemplateChild::default(),
-                phone_number_next: TemplateChild::default(),
-                authorization_error_label: TemplateChild::default(),
-                confirmation_code_entry: TemplateChild::default(),
-                confirmation_code_next: TemplateChild::default(),
-                sign_in_error_label: TemplateChild::default(),
-            }
-        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self::Type>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }

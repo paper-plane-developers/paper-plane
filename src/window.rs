@@ -14,7 +14,6 @@ use crate::telegram;
 mod imp {
     use super::*;
     use adw::subclass::prelude::*;
-    use glib::subclass;
     use gtk::CompositeTemplate;
 
     #[derive(Debug, CompositeTemplate)]
@@ -29,15 +28,11 @@ mod imp {
         pub dialog_model: DialogModel,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for TelegrandWindow {
         const NAME: &'static str = "TelegrandWindow";
         type Type = super::TelegrandWindow;
         type ParentType = adw::ApplicationWindow;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
 
         fn new() -> Self {
             Self {
@@ -52,7 +47,7 @@ mod imp {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self::Type>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }

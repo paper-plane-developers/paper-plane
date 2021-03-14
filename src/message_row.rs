@@ -5,10 +5,9 @@ use gtk::glib;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use gtk::CompositeTemplate;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/message_row.ui")]
     pub struct MessageRow {
         #[template_child]
@@ -17,28 +16,17 @@ mod imp {
         pub message_label: TemplateChild<gtk::Label>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for MessageRow {
         const NAME: &'static str = "MessageRow";
         type Type = super::MessageRow;
         type ParentType = gtk::ListBoxRow;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                sender_label: TemplateChild::default(),
-                message_label: TemplateChild::default(),
-            }
-        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self::Type>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }

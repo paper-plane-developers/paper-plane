@@ -9,32 +9,21 @@ use crate::window::TelegrandWindow;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use once_cell::sync::OnceCell;
     use tokio::sync::mpsc;
 
     use crate::telegram;
 
-    #[derive(Debug)]
+    #[derive(Debug, Default)]
     pub struct TelegrandApplication {
         pub window: OnceCell<glib::WeakRef<TelegrandWindow>>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for TelegrandApplication {
         const NAME: &'static str = "TelegrandApplication";
         type Type = super::TelegrandApplication;
         type ParentType = gtk::Application;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                window: OnceCell::new(),
-            }
-        }
     }
 
     impl ObjectImpl for TelegrandApplication {}

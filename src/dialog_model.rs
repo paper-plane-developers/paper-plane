@@ -7,25 +7,17 @@ use crate::dialog_data::DialogData;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use std::cell::RefCell;
 
-    #[derive(Debug)]
+    #[derive(Debug, Default)]
     pub struct DialogModel(pub RefCell<Vec<DialogData>>);
 
+    #[glib::object_subclass]
     impl ObjectSubclass for DialogModel {
         const NAME: &'static str = "DialogModel";
         type Type = super::DialogModel;
         type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self(RefCell::new(Vec::new()))
-        }
     }
 
     impl ObjectImpl for DialogModel {}

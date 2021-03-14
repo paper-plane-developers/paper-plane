@@ -6,10 +6,9 @@ use crate::dialog_data::DialogData;
 
 mod imp {
     use super::*;
-    use glib::subclass;
     use gtk::CompositeTemplate;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/dialog_row.ui")]
     pub struct DialogRow {
         #[template_child]
@@ -18,28 +17,17 @@ mod imp {
         pub last_message_label: TemplateChild<gtk::Label>,
     }
 
+    #[glib::object_subclass]
     impl ObjectSubclass for DialogRow {
         const NAME: &'static str = "DialogRow";
         type Type = super::DialogRow;
         type ParentType = gtk::ListBoxRow;
-        type Interfaces = ();
-        type Instance = subclass::simple::InstanceStruct<Self>;
-        type Class = subclass::simple::ClassStruct<Self>;
-
-        glib::object_subclass!();
-
-        fn new() -> Self {
-            Self {
-                chat_name_label: TemplateChild::default(),
-                last_message_label: TemplateChild::default(),
-            }
-        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self::Type>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }
