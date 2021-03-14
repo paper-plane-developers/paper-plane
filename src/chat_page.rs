@@ -9,6 +9,7 @@ use tokio::sync::mpsc;
 
 use crate::message_row::MessageRow;
 use crate::telegram;
+use crate::window::TelegrandWindow;
 
 mod imp {
     use super::*;
@@ -87,7 +88,7 @@ impl ChatPage {
         chat_page
     }
 
-    pub fn update_chat(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+    pub fn update_chat(&self, window: &TelegrandWindow, tg_sender: &mpsc::Sender<telegram::EventTG>) {
         let self_ = imp::ChatPage::from_instance(self);
         let messages_list = &*self_.messages_list;
 
@@ -101,6 +102,9 @@ impl ChatPage {
                 .block_on(
                     tg_sender.send(telegram::EventTG::RequestMessages(dialog)));
         }
+
+        let send_message_button = &*self_.send_message_button;
+        window.set_default_widget(Some(send_message_button));
     }
 
     pub fn add_message(&self, message: Message) {

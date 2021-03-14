@@ -41,6 +41,7 @@
             <child>
               <object class="GtkEntry" id="message_entry">
                 <property name="hexpand">True</property>
+                <property name="activates-default">True</property>
                 <property name="show-emoji-icon">True</property>
                 <property name="placeholder-text" translatable="yes">Write a message</property>
               </object>
