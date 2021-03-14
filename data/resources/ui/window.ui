@@ -44,10 +44,15 @@
           </object>
         </child>
         <child>
-          <object class="GtkSeparator">
-            <style>
-              <class name="sidebar"/>
-            </style>
+          <object class="AdwLeafletPage">
+            <property name="navigatable">False</property>
+            <property name="child">
+              <object class="GtkSeparator">
+                <style>
+                  <class name="sidebar"/>
+                </style>
+              </object>
+            </property>
           </object>
         </child>
         <child>
@@ -60,6 +65,14 @@
                 <property name="title-widget">
                   <object class="GtkBox"/>
                 </property>
+                <child type="start">
+                  <object class="GtkButton" id="back_button">
+                    <property name="valign">center</property>
+                    <property name="tooltip-text" translatable="yes">Back</property>
+                    <property name="icon-name">go-previous-symbolic</property>
+                    <property name="visible" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

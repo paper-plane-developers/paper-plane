@@ -1,4 +1,3 @@
-use adw::NavigationDirection;
 use grammers_client::SignInError;
 use grammers_client::client::chats::AuthorizationError;
 use gtk::prelude::*;
@@ -102,7 +101,7 @@ impl AddAccountWindow {
 
     pub fn navigate_forward(&self) {
         let self_ = imp::AddAccountWindow::from_instance(self);
-        self_.content_leaflet.navigate(NavigationDirection::Forward);
+        self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
     }
 
     pub fn show_authorization_error(&self, error: AuthorizationError) {

@@ -20,11 +20,15 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
     pub struct TelegrandWindow {
         #[template_child]
-        pub add_account_window: TemplateChild<AddAccountWindow>,
+        pub content_box: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub back_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub dialogs_list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub chat_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub add_account_window: TemplateChild<AddAccountWindow>,
         pub dialog_model: DialogModel,
     }
 
@@ -36,9 +40,11 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                add_account_window: TemplateChild::default(),
+                content_box: TemplateChild::default(),
+                back_button: TemplateChild::default(),
                 dialogs_list: TemplateChild::default(),
                 chat_stack: TemplateChild::default(),
+                add_account_window: TemplateChild::default(),
                 dialog_model: DialogModel::new(),
             }
         }
@@ -79,9 +85,10 @@ impl TelegrandWindow {
         add_account_window.init_signals(&tg_sender);
 
         let chat_stack = &*self_.chat_stack;
+        let content_box = &*self_.content_box;
         let dialog_model = self_.dialog_model.clone();
         let tg_sender_clone = tg_sender.clone();
-        self_.dialogs_list.connect_row_activated(glib::clone!(@weak window, @weak chat_stack, @weak dialog_model => move |_, row| {
+        self_.dialogs_list.connect_row_activated(glib::clone!(@weak window, @weak chat_stack, @weak content_box, @weak dialog_model => move |_, row| {
             let index = row.get_index();
             if let Some(item) = dialog_model.get_object(index as u32) {
                 let data = item.downcast_ref::<DialogData>()
@@ -92,8 +99,13 @@ impl TelegrandWindow {
                 if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
                     let chat_page: ChatPage = child.downcast().unwrap();
                     chat_page.update_chat(&window, &tg_sender_clone);
+                    content_box.navigate(adw::NavigationDirection::Forward);
                 }
             }
+        }));
+
+        self_.back_button.connect_clicked(glib::clone!(@weak content_box => move |_| {
+            content_box.navigate(adw::NavigationDirection::Back);
         }));
 
         self_.dialogs_list.bind_model(Some(&self_.dialog_model), move |item| {
