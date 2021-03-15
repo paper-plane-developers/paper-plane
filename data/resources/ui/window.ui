@@ -63,7 +63,19 @@
               <object class="AdwHeaderBar">
                 <property name="show-start-title-buttons" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
                 <property name="title-widget">
-                  <object class="GtkBox"/>
+                  <!-- FIXME: This ScrolledWindow is a workaround of a libadwaita bug that causes the leaflet to unfold when a label is too long even if it has wrap or ellipsize enabled -->
+                  <object class="GtkScrolledWindow">
+                    <property name="hexpand">True</property>
+                    <property name="child">
+                      <object class="GtkLabel" id="chat_name_label">
+                        <property name="ellipsize">end</property>
+                        <property name="single_line_mode">True</property>
+                        <style>
+                          <class name="title"/>
+                        </style>
+                      </object>
+                    </property>
+                  </object>
                 </property>
                 <child type="start">
                   <object class="GtkButton" id="back_button">
@@ -78,6 +90,7 @@
             <child>
               <object class="GtkStack" id="chat_stack">
                 <child>
+                  <!-- FIXME: This ScrolledWindow is a workaround of a libadwaita bug that causes the leaflet to unfold when a label is too long even if it has wrap or ellipsize enabled -->
                   <object class="GtkScrolledWindow">
                     <property name="vexpand">True</property>
                     <property name="child">

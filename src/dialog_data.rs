@@ -10,7 +10,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct DialogData {
         pub chat_id: RefCell<Option<String>>,
-        chat_name: RefCell<Option<String>>,
+        pub chat_name: RefCell<Option<String>>,
         last_message: RefCell<Option<String>>,
     }
 
@@ -101,6 +101,14 @@ impl DialogData {
         let self_ = imp::DialogData::from_instance(self);
         if let Some(chat_id) = &*self_.chat_id.borrow() {
             return chat_id.to_string();
+        }
+        "".to_string()
+    }
+
+    pub fn get_chat_name(&self) -> String {
+        let self_ = imp::DialogData::from_instance(self);
+        if let Some(chat_name) = &*self_.chat_name.borrow() {
+            return chat_name.to_string();
         }
         "".to_string()
     }

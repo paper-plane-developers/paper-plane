@@ -20,6 +20,8 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
     pub struct TelegrandWindow {
         #[template_child]
+        pub chat_name_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub content_box: TemplateChild<adw::Leaflet>,
         #[template_child]
         pub back_button: TemplateChild<gtk::Button>,
@@ -40,6 +42,7 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                chat_name_label: TemplateChild::default(),
                 content_box: TemplateChild::default(),
                 back_button: TemplateChild::default(),
                 dialog_list: TemplateChild::default(),
@@ -96,23 +99,30 @@ impl TelegrandWindow {
         // Dialog list signal to show the chat on dialog row activation
         self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let chat_stack = &*self_.chat_stack;
-            let content_box = &*self_.content_box;
             let dialog_model = self_.dialog_model.clone();
             let index = row.get_index();
 
             if let Some(item) = dialog_model.get_object(index as u32) {
                 let data = item.downcast_ref::<DialogData>()
                     .expect("Row data is of wrong type");
-
                 let chat_id = data.get_chat_id();
-                chat_stack.set_visible_child_name(&chat_id);
+                let chat_stack = &*self_.chat_stack;
 
                 if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                    // Update page to prepare it to show
                     let chat_page: ChatPage = child.downcast().unwrap();
                     chat_page.update_chat(&window, &tg_sender);
 
+                    // Show chat page
+                    chat_stack.set_visible_child(&chat_page);
+
+                    // Set chat name in the titlebar
+                    let chat_name_label = &*self_.chat_name_label;
+                    let chat_name = data.get_chat_name();
+                    chat_name_label.set_text(&chat_name);
+
                     // Navigate to the next page for mobile navigation
+                    let content_box = &*self_.content_box;
                     content_box.navigate(adw::NavigationDirection::Forward);
                 }
             }
