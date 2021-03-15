@@ -181,15 +181,22 @@ impl TelegrandWindow {
 
                     if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
                         let chat_page: ChatPage = child.downcast().unwrap();
-                        chat_page.add_message(message);
+                        chat_page.prepend_message(&message);
                     }
                 }
                 telegram::EventGTK::NewMessage(message) => {
+                    // Add message to the relative chat page (if it exists)
+                    let chat = message.chat();
+                    let chat_id = chat.id().to_string();
+                    if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                        let chat_page: ChatPage = child.downcast().unwrap();
+                        chat_page.append_message(&message);
+                    }
+
                     if !message.outgoing() {
-                        let chat = message.chat();
+                        // Send notification about the new incoming message
                         let chat_name = chat.name();
                         let message_text = message.text();
-
                         let notification = gio::Notification::new("Telegrand");
                         notification.set_title(chat_name);
                         notification.set_body(Some(message_text));

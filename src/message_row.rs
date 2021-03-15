@@ -47,7 +47,7 @@ glib::wrapper! {
 }
 
 impl MessageRow {
-    pub fn new(message: Message) -> Self {
+    pub fn new(message: &Message) -> Self {
         let message_row = glib::Object::new(&[])
             .expect("Failed to create MessageRow");
 

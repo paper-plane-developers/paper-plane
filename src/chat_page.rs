@@ -104,9 +104,14 @@ impl ChatPage {
         window.set_default_widget(Some(send_message_button));
     }
 
-    pub fn add_message(&self, message: Message) {
+    pub fn append_message(&self, message: &Message) {
         let message_row = MessageRow::new(message);
+        let self_ = imp::ChatPage::from_instance(self);
+        self_.messages_list.append(&message_row);
+    }
 
+    pub fn prepend_message(&self, message: &Message) {
+        let message_row = MessageRow::new(message);
         let self_ = imp::ChatPage::from_instance(self);
         self_.messages_list.prepend(&message_row);
     }
