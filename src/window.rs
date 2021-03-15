@@ -24,7 +24,7 @@ mod imp {
         #[template_child]
         pub back_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub dialogs_list: TemplateChild<gtk::ListBox>,
+        pub dialog_list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -42,7 +42,7 @@ mod imp {
             Self {
                 content_box: TemplateChild::default(),
                 back_button: TemplateChild::default(),
-                dialogs_list: TemplateChild::default(),
+                dialog_list: TemplateChild::default(),
                 chat_stack: TemplateChild::default(),
                 add_account_window: TemplateChild::default(),
                 dialog_model: DialogModel::new(),
@@ -82,48 +82,76 @@ impl TelegrandWindow {
 
         let self_ = imp::TelegrandWindow::from_instance(&window);
         let add_account_window = &*self_.add_account_window;
-        add_account_window.init_signals(&tg_sender);
+        add_account_window.setup_signals(&tg_sender);
 
-        let chat_stack = &*self_.chat_stack;
-        let content_box = &*self_.content_box;
-        let dialog_model = self_.dialog_model.clone();
-        let tg_sender_clone = tg_sender.clone();
-        self_.dialogs_list.connect_row_activated(glib::clone!(@weak window, @weak chat_stack, @weak content_box, @weak dialog_model => move |_, row| {
+        window.setup_signals(&tg_sender);
+        window.setup_gtk_receiver(gtk_receiver, tg_sender);
+
+        window
+    }
+
+    fn setup_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+        let self_ = imp::TelegrandWindow::from_instance(self);
+
+        // Dialog list signal to show the chat on dialog row activation
+        self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
+            let self_ = imp::TelegrandWindow::from_instance(&window);
+            let chat_stack = &*self_.chat_stack;
+            let content_box = &*self_.content_box;
+            let dialog_model = self_.dialog_model.clone();
             let index = row.get_index();
+
             if let Some(item) = dialog_model.get_object(index as u32) {
                 let data = item.downcast_ref::<DialogData>()
                     .expect("Row data is of wrong type");
+
                 let chat_id = data.get_chat_id();
                 chat_stack.set_visible_child_name(&chat_id);
 
                 if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
                     let chat_page: ChatPage = child.downcast().unwrap();
-                    chat_page.update_chat(&window, &tg_sender_clone);
+                    chat_page.update_chat(&window, &tg_sender);
+
+                    // Navigate to the next page for mobile navigation
                     content_box.navigate(adw::NavigationDirection::Forward);
                 }
             }
         }));
 
-        self_.back_button.connect_clicked(glib::clone!(@weak content_box => move |_| {
-            content_box.navigate(adw::NavigationDirection::Back);
-        }));
-
-        self_.dialogs_list.bind_model(Some(&self_.dialog_model), move |item| {
+        // Bind dialog list to dialog model
+        let dialog_model = self_.dialog_model.clone();
+        self_.dialog_list.bind_model(Some(&dialog_model), move |item| {
             let data = item.downcast_ref::<DialogData>()
                 .expect("Row data is of wrong type");
+
             let row = DialogRow::new(data);
             row.upcast::<gtk::Widget>()
         });
 
-        gtk_receiver.attach(None, glib::clone!(@weak window, @weak add_account_window, @weak chat_stack, @weak dialog_model => move |msg| {
-            match msg {
-                telegram::EventGTK::AccountNotAuthorized =>
-                    add_account_window.show(),
+        // Back button signal for mobile friendly navigation
+        let content_box = &*self_.content_box;
+        self_.back_button.connect_clicked(glib::clone!(@weak content_box => move |_| {
+            content_box.navigate(adw::NavigationDirection::Back);
+        }));
+    }
+
+    fn setup_gtk_receiver(&self, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) {
+        gtk_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
+            let self_ = imp::TelegrandWindow::from_instance(&window);
+            let add_account_window = &*self_.add_account_window;
+            let chat_stack = &*self_.chat_stack;
+            let dialog_model = self_.dialog_model.clone();
+
+            match event {
+                telegram::EventGTK::AccountNotAuthorized => {
+                    add_account_window.show();
+                }
                 telegram::EventGTK::AuthorizationError(error) => {
                     add_account_window.show_authorization_error(error);
                 }
-                telegram::EventGTK::NeedConfirmationCode =>
-                    add_account_window.navigate_forward(),
+                telegram::EventGTK::NeedConfirmationCode => {
+                    add_account_window.navigate_forward();
+                }
                 telegram::EventGTK::SignInError(error) => {
                     add_account_window.show_sign_in_error(error);
                 }
@@ -131,7 +159,6 @@ impl TelegrandWindow {
                     add_account_window.hide();
 
                     let _ = runtime::Builder::new_current_thread()
-                        .enable_all()
                         .build()
                         .unwrap()
                         .block_on(
@@ -174,7 +201,5 @@ impl TelegrandWindow {
 
             glib::Continue(true)
         }));
-
-        window
     }
 }

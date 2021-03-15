@@ -69,32 +69,28 @@ impl AddAccountWindow {
             .expect("Failed to create AddAccountWindow")
     }
 
-    pub fn init_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+    pub fn setup_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
         let self_ = imp::AddAccountWindow::from_instance(self);
 
         let phone_number_entry = &*self_.phone_number_entry;
-        let tg_sender_clone = tg_sender.clone();
         self_.phone_number_next
-            .connect_clicked(glib::clone!(@weak phone_number_entry => move |_| {
+            .connect_clicked(glib::clone!(@weak phone_number_entry, @strong tg_sender => move |_| {
                 let _ = runtime::Builder::new_current_thread()
-                    .enable_all()
                     .build()
                     .unwrap()
                     .block_on(
-                        tg_sender_clone.send(telegram::EventTG::SendPhoneNumber(
+                        tg_sender.send(telegram::EventTG::SendPhoneNumber(
                         phone_number_entry.get_text().to_string())));
             }));
 
         let confirmation_code_entry = &*self_.confirmation_code_entry;
-        let tg_sender_clone = tg_sender.clone();
         self_.confirmation_code_next
-            .connect_clicked(glib::clone!(@weak confirmation_code_entry => move |_| {
+            .connect_clicked(glib::clone!(@weak confirmation_code_entry, @strong tg_sender => move |_| {
                 let _ = runtime::Builder::new_current_thread()
-                    .enable_all()
                     .build()
                     .unwrap()
                     .block_on(
-                        tg_sender_clone.send(telegram::EventTG::SendConfirmationCode(
+                        tg_sender.send(telegram::EventTG::SendConfirmationCode(
                         confirmation_code_entry.get_text().to_string())));
             }));
     }

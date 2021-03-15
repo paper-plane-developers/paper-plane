@@ -68,20 +68,18 @@ impl ChatPage {
         let dialog = self_.dialog.clone();
 
         let message_entry = &*self_.message_entry;
-        let tg_sender_clone = tg_sender.clone();
         self_.send_message_button
-            .connect_clicked(glib::clone!(@weak message_entry => move |_| {
+            .connect_clicked(glib::clone!(@weak message_entry, @strong tg_sender => move |_| {
                 let dialog = &*dialog.borrow();
                 let dialog = dialog.as_ref().unwrap().clone();
                 let message = InputMessage::text(message_entry.get_text());
                 message_entry.set_text("");
 
                 let _ = runtime::Builder::new_current_thread()
-                    .enable_all()
                     .build()
                     .unwrap()
                     .block_on(
-                        tg_sender_clone.send(telegram::EventTG::SendMessage(
+                        tg_sender.send(telegram::EventTG::SendMessage(
                             dialog, message)));
             }));
 
@@ -96,7 +94,6 @@ impl ChatPage {
             let dialog = &*self_.dialog.borrow();
             let dialog = dialog.as_ref().unwrap().clone();
             let _ = runtime::Builder::new_current_thread()
-                .enable_all()
                 .build()
                 .unwrap()
                 .block_on(

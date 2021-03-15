@@ -12,11 +12,13 @@ use crate::config;
 type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 pub enum EventGTK {
+    // Authorization
     AccountNotAuthorized,
     AuthorizationError(AuthorizationError),
     NeedConfirmationCode,
     SignInError(SignInError),
     AccountAuthorized,
+
     ReceivedDialog(Dialog),
     ReceivedMessage(Message),
     NewMessage(Message),

@@ -33,7 +33,7 @@
                 <property name="width_request">330</property>
                 <property name="vexpand">True</property>
                 <child>
-                  <object class="GtkListBox" id="dialogs_list">
+                  <object class="GtkListBox" id="dialog_list">
                     <style>
                       <class name="navigation-sidebar"/>
                     </style>
