@@ -65,13 +65,11 @@ impl ChatPage {
 
         let self_ = imp::ChatPage::from_instance(&chat_page);
         self_.dialog.replace(Some(Arc::new(dialog)));
-        let dialog = self_.dialog.clone();
 
         let message_entry = &*self_.message_entry;
+        let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
         self_.send_message_button
             .connect_clicked(glib::clone!(@weak message_entry, @strong tg_sender => move |_| {
-                let dialog = &*dialog.borrow();
-                let dialog = dialog.as_ref().unwrap().clone();
                 let message = InputMessage::text(message_entry.get_text());
                 message_entry.set_text("");
 
@@ -80,7 +78,7 @@ impl ChatPage {
                     .unwrap()
                     .block_on(
                         tg_sender.send(telegram::EventTG::SendMessage(
-                            dialog, message)));
+                            dialog.clone(), message)));
             }));
 
         chat_page
@@ -88,11 +86,9 @@ impl ChatPage {
 
     pub fn update_chat(&self, window: &TelegrandWindow, tg_sender: &mpsc::Sender<telegram::EventTG>) {
         let self_ = imp::ChatPage::from_instance(self);
-        let messages_list = &*self_.messages_list;
 
-        if let None = messages_list.get_row_at_y(0) {
-            let dialog = &*self_.dialog.borrow();
-            let dialog = dialog.as_ref().unwrap().clone();
+        if let None = self_.messages_list.get_row_at_y(0) {
+            let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
             let _ = runtime::Builder::new_current_thread()
                 .build()
                 .unwrap()

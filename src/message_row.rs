@@ -52,18 +52,16 @@ impl MessageRow {
             .expect("Failed to create MessageRow");
 
         let self_ = imp::MessageRow::from_instance(&message_row);
-        let sender_label = &*self_.sender_label;
-        let message_label = &*self_.message_label;
-
         let sender_name;
+
         if let Some(sender) = message.sender() {
             sender_name = sender.name().to_string();
         } else {
             sender_name = message.chat().name().to_string();
         }
-        sender_label.set_text(&sender_name);
 
-        message_label.set_text(message.text());
+        self_.sender_label.set_text(&sender_name);
+        self_.message_label.set_text(message.text());
 
         message_row
     }

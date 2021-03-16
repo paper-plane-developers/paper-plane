@@ -22,7 +22,7 @@ mod imp {
         #[template_child]
         pub chat_name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub content_box: TemplateChild<adw::Leaflet>,
+        pub content_leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
         pub back_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -43,7 +43,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 chat_name_label: TemplateChild::default(),
-                content_box: TemplateChild::default(),
+                content_leaflet: TemplateChild::default(),
                 back_button: TemplateChild::default(),
                 dialog_list: TemplateChild::default(),
                 chat_stack: TemplateChild::default(),
@@ -84,8 +84,7 @@ impl TelegrandWindow {
             .expect("Failed to create TelegrandWindow");
 
         let self_ = imp::TelegrandWindow::from_instance(&window);
-        let add_account_window = &*self_.add_account_window;
-        add_account_window.setup_signals(&tg_sender);
+        self_.add_account_window.setup_signals(&tg_sender);
 
         window.setup_signals(&tg_sender);
         window.setup_gtk_receiver(gtk_receiver, tg_sender);
@@ -106,24 +105,21 @@ impl TelegrandWindow {
                 let data = item.downcast_ref::<DialogData>()
                     .expect("Row data is of wrong type");
                 let chat_id = data.get_chat_id();
-                let chat_stack = &*self_.chat_stack;
 
-                if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
                     // Update page to prepare it to show
                     let chat_page: ChatPage = child.downcast().unwrap();
                     chat_page.update_chat(&window, &tg_sender);
 
                     // Show chat page
-                    chat_stack.set_visible_child(&chat_page);
+                    self_.chat_stack.set_visible_child(&chat_page);
 
                     // Set chat name in the titlebar
-                    let chat_name_label = &*self_.chat_name_label;
                     let chat_name = data.get_chat_name();
-                    chat_name_label.set_text(&chat_name);
+                    self_.chat_name_label.set_text(&chat_name);
 
                     // Navigate to the next page for mobile navigation
-                    let content_box = &*self_.content_box;
-                    content_box.navigate(adw::NavigationDirection::Forward);
+                    self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
                 }
             }
         }));
@@ -139,34 +135,32 @@ impl TelegrandWindow {
         });
 
         // Back button signal for mobile friendly navigation
-        let content_box = &*self_.content_box;
-        self_.back_button.connect_clicked(glib::clone!(@weak content_box => move |_| {
-            content_box.navigate(adw::NavigationDirection::Back);
+        let content_leaflet = &*self_.content_leaflet;
+        self_.back_button.connect_clicked(glib::clone!(@weak content_leaflet => move |_| {
+            content_leaflet.navigate(adw::NavigationDirection::Back);
         }));
     }
 
     fn setup_gtk_receiver(&self, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) {
         gtk_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let add_account_window = &*self_.add_account_window;
-            let chat_stack = &*self_.chat_stack;
             let dialog_model = self_.dialog_model.clone();
 
             match event {
                 telegram::EventGTK::AccountNotAuthorized => {
-                    add_account_window.show();
+                    self_.add_account_window.show();
                 }
                 telegram::EventGTK::AuthorizationError(error) => {
-                    add_account_window.show_authorization_error(error);
+                    self_.add_account_window.show_authorization_error(error);
                 }
                 telegram::EventGTK::NeedConfirmationCode => {
-                    add_account_window.navigate_forward();
+                    self_.add_account_window.navigate_forward();
                 }
                 telegram::EventGTK::SignInError(error) => {
-                    add_account_window.show_sign_in_error(error);
+                    self_.add_account_window.show_sign_in_error(error);
                 }
                 telegram::EventGTK::AccountAuthorized => {
-                    add_account_window.hide();
+                    self_.add_account_window.hide();
 
                     let _ = runtime::Builder::new_current_thread()
                         .build()
@@ -183,13 +177,13 @@ impl TelegrandWindow {
                         last_message));
 
                     let chat_page = ChatPage::new(&tg_sender, dialog);
-                    chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
+                    self_.chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
                 }
                 telegram::EventGTK::ReceivedMessage(message) => {
+                    // Add message to the relative chat page (if it exists)
                     let chat = message.chat();
                     let chat_id = chat.id().to_string();
-
-                    if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
                         let chat_page: ChatPage = child.downcast().unwrap();
                         chat_page.prepend_message(&message);
                     }
@@ -198,7 +192,7 @@ impl TelegrandWindow {
                     // Add message to the relative chat page (if it exists)
                     let chat = message.chat();
                     let chat_id = chat.id().to_string();
-                    if let Some(child) = chat_stack.get_child_by_name(&chat_id) {
+                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
                         let chat_page: ChatPage = child.downcast().unwrap();
                         chat_page.append_message(&message);
                     }

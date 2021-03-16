@@ -13,13 +13,13 @@
     <property name="default-width">870</property>
     <property name="default-height">600</property>
     <child>
-      <object class="AdwLeaflet" id="content_box">
+      <object class="AdwLeaflet" id="content_leaflet">
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
             <child>
               <object class="AdwHeaderBar">
-                <property name="show-end-title-buttons" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
+                <property name="show-end-title-buttons" bind-source="content_leaflet" bind-property="folded" bind-flags="sync-create"/>
                 <child type="end">
                   <object class="GtkMenuButton">
                     <property name="icon-name">open-menu-symbolic</property>
@@ -61,7 +61,7 @@
             <property name="hexpand">True</property>
             <child>
               <object class="AdwHeaderBar">
-                <property name="show-start-title-buttons" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
+                <property name="show-start-title-buttons" bind-source="content_leaflet" bind-property="folded" bind-flags="sync-create"/>
                 <property name="title-widget">
                   <!-- FIXME: This ScrolledWindow is a workaround of a libadwaita bug that causes the leaflet to fold when a label is too long even if it has wrap or ellipsize enabled -->
                   <object class="GtkScrolledWindow">
@@ -82,7 +82,7 @@
                     <property name="valign">center</property>
                     <property name="tooltip-text" translatable="yes">Back</property>
                     <property name="icon-name">go-previous-symbolic</property>
-                    <property name="visible" bind-source="content_box" bind-property="folded" bind-flags="sync-create"/>
+                    <property name="visible" bind-source="content_leaflet" bind-property="folded" bind-flags="sync-create"/>
                   </object>
                 </child>
               </object>

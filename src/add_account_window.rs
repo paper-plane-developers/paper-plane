@@ -102,13 +102,11 @@ impl AddAccountWindow {
 
     pub fn show_authorization_error(&self, error: AuthorizationError) {
         let self_ = imp::AddAccountWindow::from_instance(self);
-        let authorization_error_label = &*self_.authorization_error_label;
-        authorization_error_label.set_text(&error.to_string());
+        self_.authorization_error_label.set_text(&error.to_string());
     }
 
     pub fn show_sign_in_error(&self, error: SignInError) {
         let self_ = imp::AddAccountWindow::from_instance(self);
-        let sign_in_error_label = &*self_.sign_in_error_label;
-        sign_in_error_label.set_text(&error.to_string());
+        self_.sign_in_error_label.set_text(&error.to_string());
     }
 }
