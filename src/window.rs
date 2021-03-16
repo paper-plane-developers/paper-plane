@@ -15,8 +15,9 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::*;
     use gtk::CompositeTemplate;
+    use std::cell::RefCell;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
     pub struct TelegrandWindow {
         #[template_child]
@@ -31,7 +32,7 @@ mod imp {
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
-        pub dialog_model: DialogModel,
+        pub dialog_model: RefCell<Option<DialogModel>>,
     }
 
     #[glib::object_subclass]
@@ -39,18 +40,6 @@ mod imp {
         const NAME: &'static str = "TelegrandWindow";
         type Type = super::TelegrandWindow;
         type ParentType = adw::ApplicationWindow;
-
-        fn new() -> Self {
-            Self {
-                chat_name_label: TemplateChild::default(),
-                content_leaflet: TemplateChild::default(),
-                back_button: TemplateChild::default(),
-                dialog_list: TemplateChild::default(),
-                chat_stack: TemplateChild::default(),
-                add_account_window: TemplateChild::default(),
-                dialog_model: DialogModel::new(),
-            }
-        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -84,6 +73,7 @@ impl TelegrandWindow {
             .expect("Failed to create TelegrandWindow");
 
         let self_ = imp::TelegrandWindow::from_instance(&window);
+        self_.dialog_model.replace(Some(DialogModel::new()));
         self_.add_account_window.setup_signals(&tg_sender);
 
         window.setup_signals(&tg_sender);
@@ -98,7 +88,7 @@ impl TelegrandWindow {
         // Dialog list signal to show the chat on dialog row activation
         self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let dialog_model = self_.dialog_model.clone();
+            let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
             let index = row.get_index();
 
             if let Some(item) = dialog_model.get_object(index as u32) {
@@ -125,7 +115,7 @@ impl TelegrandWindow {
         }));
 
         // Bind dialog list to dialog model
-        let dialog_model = self_.dialog_model.clone();
+        let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
         self_.dialog_list.bind_model(Some(&dialog_model), move |item| {
             let data = item.downcast_ref::<DialogData>()
                 .expect("Row data is of wrong type");
@@ -144,21 +134,9 @@ impl TelegrandWindow {
     fn setup_gtk_receiver(&self, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) {
         gtk_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let dialog_model = self_.dialog_model.clone();
+            let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
 
             match event {
-                telegram::EventGTK::AccountNotAuthorized => {
-                    self_.add_account_window.show();
-                }
-                telegram::EventGTK::AuthorizationError(error) => {
-                    self_.add_account_window.show_authorization_error(error);
-                }
-                telegram::EventGTK::NeedConfirmationCode => {
-                    self_.add_account_window.navigate_forward();
-                }
-                telegram::EventGTK::SignInError(error) => {
-                    self_.add_account_window.show_sign_in_error(error);
-                }
                 telegram::EventGTK::AccountAuthorized => {
                     self_.add_account_window.hide();
 
@@ -167,6 +145,18 @@ impl TelegrandWindow {
                         .unwrap()
                         .block_on(
                             tg_sender.send(telegram::EventTG::RequestDialogs));
+                }
+                telegram::EventGTK::AccountNotAuthorized => {
+                    self_.add_account_window.show();
+                }
+                telegram::EventGTK::NeedConfirmationCode => {
+                    self_.add_account_window.navigate_forward();
+                }
+                telegram::EventGTK::PhoneNumberError(error) => {
+                    self_.add_account_window.show_phone_number_error(error);
+                }
+                telegram::EventGTK::ConfirmationCodeError(error) => {
+                    self_.add_account_window.show_confirmation_code_error(error);
                 }
                 telegram::EventGTK::ReceivedDialog(dialog) => {
                     let chat = dialog.chat();

@@ -18,18 +18,20 @@ mod imp {
     pub struct AddAccountWindow {
         #[template_child]
         pub content_leaflet: TemplateChild<adw::Leaflet>,
+
         #[template_child]
         pub phone_number_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub phone_number_next: TemplateChild<gtk::Button>,
+        pub phone_number_next_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub authorization_error_label: TemplateChild<gtk::Label>,
+        pub phone_number_error_label: TemplateChild<gtk::Label>,
+
         #[template_child]
         pub confirmation_code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub confirmation_code_next: TemplateChild<gtk::Button>,
+        pub confirmation_code_next_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub sign_in_error_label: TemplateChild<gtk::Label>,
+        pub confirmation_code_error_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -73,7 +75,7 @@ impl AddAccountWindow {
         let self_ = imp::AddAccountWindow::from_instance(self);
 
         let phone_number_entry = &*self_.phone_number_entry;
-        self_.phone_number_next
+        self_.phone_number_next_button
             .connect_clicked(glib::clone!(@weak phone_number_entry, @strong tg_sender => move |_| {
                 let _ = runtime::Builder::new_current_thread()
                     .build()
@@ -84,7 +86,7 @@ impl AddAccountWindow {
             }));
 
         let confirmation_code_entry = &*self_.confirmation_code_entry;
-        self_.confirmation_code_next
+        self_.confirmation_code_next_button
             .connect_clicked(glib::clone!(@weak confirmation_code_entry, @strong tg_sender => move |_| {
                 let _ = runtime::Builder::new_current_thread()
                     .build()
@@ -100,13 +102,13 @@ impl AddAccountWindow {
         self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
     }
 
-    pub fn show_authorization_error(&self, error: AuthorizationError) {
+    pub fn show_phone_number_error(&self, error: AuthorizationError) {
         let self_ = imp::AddAccountWindow::from_instance(self);
-        self_.authorization_error_label.set_text(&error.to_string());
+        self_.phone_number_error_label.set_text(&error.to_string());
     }
 
-    pub fn show_sign_in_error(&self, error: SignInError) {
+    pub fn show_confirmation_code_error(&self, error: SignInError) {
         let self_ = imp::AddAccountWindow::from_instance(self);
-        self_.sign_in_error_label.set_text(&error.to_string());
+        self_.confirmation_code_error_label.set_text(&error.to_string());
     }
 }

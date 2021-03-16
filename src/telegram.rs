@@ -12,12 +12,11 @@ use crate::config;
 type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 pub enum EventGTK {
-    // Authorization
-    AccountNotAuthorized,
-    AuthorizationError(AuthorizationError),
-    NeedConfirmationCode,
-    SignInError(SignInError),
     AccountAuthorized,
+    AccountNotAuthorized,
+    NeedConfirmationCode,
+    PhoneNumberError(AuthorizationError),
+    ConfirmationCodeError(SignInError),
 
     ReceivedDialog(Dialog),
     ReceivedMessage(Message),
@@ -27,6 +26,7 @@ pub enum EventGTK {
 pub enum EventTG {
     SendPhoneNumber(String),
     SendConfirmationCode(String),
+
     RequestDialogs,
     RequestMessages(Arc<Dialog>),
     SendMessage(Arc<Dialog>, InputMessage),
@@ -67,7 +67,7 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                             gtk_sender.send(EventGTK::NeedConfirmationCode).unwrap();
                         }
                         Err(error) => {
-                            gtk_sender.send(EventGTK::AuthorizationError(error)).unwrap();
+                            gtk_sender.send(EventGTK::PhoneNumberError(error)).unwrap();
                         }
                     };
                 }
@@ -79,7 +79,7 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                             break;
                         }
                         Err(error) => {
-                            gtk_sender.send(EventGTK::SignInError(error)).unwrap();
+                            gtk_sender.send(EventGTK::ConfirmationCodeError(error)).unwrap();
                         }
                     }
                 }

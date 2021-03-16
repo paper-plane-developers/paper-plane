@@ -56,7 +56,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton" id="phone_number_next">
+                          <object class="GtkButton" id="phone_number_next_button">
                             <property name="label" translatable="yes">Next</property>
                             <style>
                               <class name="suggested-action"/>
@@ -64,7 +64,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="authorization_error_label">
+                          <object class="GtkLabel" id="phone_number_error_label">
                             <property name="wrap">True</property>
                             <property name="justify">center</property>
                             <style>
@@ -120,7 +120,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton" id="confirmation_code_next">
+                          <object class="GtkButton" id="confirmation_code_next_button">
                             <property name="label" translatable="yes">Next</property>
                             <style>
                               <class name="suggested-action"/>
@@ -128,7 +128,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="sign_in_error_label">
+                          <object class="GtkLabel" id="confirmation_code_error_label">
                             <property name="wrap">True</property>
                             <property name="justify">center</property>
                             <style>
