@@ -6,8 +6,6 @@ use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
 use crate::chat_page::ChatPage;
-use crate::dialog_data::DialogData;
-use crate::dialog_model::DialogModel;
 use crate::dialog_row::DialogRow;
 use crate::telegram;
 
@@ -15,7 +13,6 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::*;
     use gtk::CompositeTemplate;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
@@ -32,7 +29,6 @@ mod imp {
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
-        pub dialog_model: RefCell<Option<DialogModel>>,
     }
 
     #[glib::object_subclass]
@@ -73,7 +69,6 @@ impl TelegrandWindow {
             .expect("Failed to create TelegrandWindow");
 
         let self_ = imp::TelegrandWindow::from_instance(&window);
-        self_.dialog_model.replace(Some(DialogModel::new()));
         self_.add_account_window.setup_signals(&tg_sender);
 
         window.setup_signals(&tg_sender);
@@ -88,13 +83,12 @@ impl TelegrandWindow {
         // Dialog list signal to show the chat on dialog row activation
         self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
             let index = row.get_index();
 
-            if let Some(item) = dialog_model.get_object(index as u32) {
-                let data = item.downcast_ref::<DialogData>()
-                    .expect("Row data is of wrong type");
-                let chat_id = data.get_chat_id();
+            if let Some(row) = self_.dialog_list.get_row_at_index(index) {
+                let row = row.downcast_ref::<DialogRow>()
+                    .expect("Row is of wrong type");
+                let chat_id = row.get_chat_id();
 
                 if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
                     // Update page to prepare it to show
@@ -105,7 +99,7 @@ impl TelegrandWindow {
                     self_.chat_stack.set_visible_child(&chat_page);
 
                     // Set chat name in the titlebar
-                    let chat_name = data.get_chat_name();
+                    let chat_name = row.get_chat_name();
                     self_.chat_name_label.set_text(&chat_name);
 
                     // Navigate to the next page for mobile navigation
@@ -113,16 +107,6 @@ impl TelegrandWindow {
                 }
             }
         }));
-
-        // Bind dialog list to dialog model
-        let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
-        self_.dialog_list.bind_model(Some(&dialog_model), move |item| {
-            let data = item.downcast_ref::<DialogData>()
-                .expect("Row data is of wrong type");
-
-            let row = DialogRow::new(data);
-            row.upcast::<gtk::Widget>()
-        });
 
         // Back button signal for mobile friendly navigation
         let content_leaflet = &*self_.content_leaflet;
@@ -134,7 +118,6 @@ impl TelegrandWindow {
     fn setup_gtk_receiver(&self, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) {
         gtk_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let dialog_model = self_.dialog_model.borrow().as_ref().unwrap().clone();
 
             match event {
                 telegram::EventGTK::AccountAuthorized => {
@@ -159,13 +142,14 @@ impl TelegrandWindow {
                     self_.add_account_window.show_confirmation_code_error(error);
                 }
                 telegram::EventGTK::ReceivedDialog(dialog) => {
+                    // Create dialog row and add it to the dialog list
+                    let dialog_row = DialogRow::new(&dialog);
+                    self_.dialog_list.append(&dialog_row);
+
+                    // Add chat page relative to the dialog to the chat stack
                     let chat = dialog.chat();
                     let chat_id = chat.id().to_string();
                     let chat_name = chat.name().to_string();
-                    let last_message = dialog.last_message.as_ref().unwrap().text();
-                    dialog_model.append(&DialogData::new(&chat_id, &chat_name,
-                        last_message));
-
                     let chat_page = ChatPage::new(&tg_sender, dialog);
                     self_.chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
                 }

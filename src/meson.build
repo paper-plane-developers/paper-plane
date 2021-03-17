@@ -22,8 +22,6 @@ sources = files(
   'application.rs',
   'chat_page.rs',
   'config.rs',
-  'dialog_data.rs',
-  'dialog_model.rs',
   'dialog_row.rs',
   'main.rs',
   'message_row.rs',
