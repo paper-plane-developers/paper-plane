@@ -88,23 +88,39 @@ impl TelegrandWindow {
             if let Some(row) = self_.dialog_list.get_row_at_index(index) {
                 let row = row.downcast_ref::<DialogRow>()
                     .expect("Row is of wrong type");
-                let chat_id = row.get_chat_id();
+                let dialog = row.get_dialog();
+                let chat_id = dialog.chat.id().to_string();
+                let chat_name = dialog.chat.name().to_string();
+                let chat_page;
 
-                if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
-                    // Update page to prepare it to show
-                    let chat_page: ChatPage = child.downcast().unwrap();
-                    chat_page.update_chat(&window, &tg_sender);
-
-                    // Show chat page
-                    self_.chat_stack.set_visible_child(&chat_page);
-
-                    // Set chat name in the titlebar
-                    let chat_name = row.get_chat_name();
-                    self_.chat_name_label.set_text(&chat_name);
-
-                    // Navigate to the next page for mobile navigation
-                    self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
+                match self_.chat_stack.get_child_by_name(&chat_id) {
+                    Some(child) => {
+                        // Get the existing chat page
+                        chat_page = child.downcast()
+                            .expect("Child is of wrong type");
+                    }
+                    None => {
+                        // Create the chat page and add it to the chat stack
+                        let chat = dialog.chat();
+                        let chat_id = chat.id().to_string();
+                        let chat_name = chat.name().to_string();
+                        chat_page = ChatPage::new(&tg_sender, dialog);
+                        self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
+                            &chat_name);
+                    }
                 }
+
+                // Update page to prepare it to show
+                chat_page.update_chat(&window);
+
+                // Show chat page
+                self_.chat_stack.set_visible_child(&chat_page);
+
+                // Set chat name in the titlebar
+                self_.chat_name_label.set_text(&chat_name);
+
+                // Navigate to the next page for mobile navigation
+                self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
             }
         }));
 
@@ -143,15 +159,8 @@ impl TelegrandWindow {
                 }
                 telegram::EventGTK::ReceivedDialog(dialog) => {
                     // Create dialog row and add it to the dialog list
-                    let dialog_row = DialogRow::new(&dialog);
+                    let dialog_row = DialogRow::new(dialog);
                     self_.dialog_list.append(&dialog_row);
-
-                    // Add chat page relative to the dialog to the chat stack
-                    let chat = dialog.chat();
-                    let chat_id = chat.id().to_string();
-                    let chat_name = chat.name().to_string();
-                    let chat_page = ChatPage::new(&tg_sender, dialog);
-                    self_.chat_stack.add_titled(&chat_page, Some(&chat_id), &chat_name);
                 }
                 telegram::EventGTK::ReceivedMessage(message) => {
                     // Add message to the relative chat page (if it exists)

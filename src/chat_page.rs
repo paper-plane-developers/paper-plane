@@ -59,12 +59,19 @@ glib::wrapper! {
 }
 
 impl ChatPage {
-    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Dialog) -> Self {
+    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Arc<Dialog>) -> Self {
         let chat_page = glib::Object::new(&[])
             .expect("Failed to create ChatPage");
 
         let self_ = imp::ChatPage::from_instance(&chat_page);
-        self_.dialog.replace(Some(Arc::new(dialog)));
+        self_.dialog.replace(Some(dialog));
+
+        let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
+        let _ = runtime::Builder::new_current_thread()
+            .build()
+            .unwrap()
+            .block_on(
+                tg_sender.send(telegram::EventTG::RequestMessages(dialog)));
 
         let message_entry = &*self_.message_entry;
         let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
@@ -84,18 +91,8 @@ impl ChatPage {
         chat_page
     }
 
-    pub fn update_chat(&self, window: &TelegrandWindow, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+    pub fn update_chat(&self, window: &TelegrandWindow) {
         let self_ = imp::ChatPage::from_instance(self);
-
-        if let None = self_.messages_list.get_row_at_y(0) {
-            let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
-            let _ = runtime::Builder::new_current_thread()
-                .build()
-                .unwrap()
-                .block_on(
-                    tg_sender.send(telegram::EventTG::RequestMessages(dialog)));
-        }
-
         let send_message_button = &*self_.send_message_button;
         window.set_default_widget(Some(send_message_button));
     }

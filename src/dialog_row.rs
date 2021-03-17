@@ -2,20 +2,21 @@ use grammers_client::types::Dialog;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use std::sync::Arc;
 
 mod imp {
     use super::*;
     use gtk::CompositeTemplate;
     use std::cell::RefCell;
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    #[derive(Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/dialog_row.ui")]
     pub struct DialogRow {
         #[template_child]
         pub chat_name_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
-        pub chat_id: RefCell<String>,
+        pub dialog: RefCell<Option<Arc<Dialog>>>,
     }
 
     #[glib::object_subclass]
@@ -49,15 +50,15 @@ glib::wrapper! {
 }
 
 impl DialogRow {
-    pub fn new(dialog: &Dialog) -> Self {
+    pub fn new(dialog: Dialog) -> Self {
         let dialog_row = glib::Object::new(&[])
             .expect("Failed to create DialogRow");
 
         let self_ = imp::DialogRow::from_instance(&dialog_row);
-        let chat = dialog.chat();
-        let chat_id = chat.id().to_string();
-        self_.chat_id.replace(chat_id);
+        self_.dialog.replace(Some(Arc::new(dialog)));
 
+        let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
+        let chat = dialog.chat();
         let chat_name = chat.name();
         self_.chat_name_label.set_text(chat_name);
 
@@ -67,13 +68,8 @@ impl DialogRow {
         dialog_row
     }
 
-    pub fn get_chat_id(&self) -> String {
+    pub fn get_dialog(&self) -> Arc<Dialog> {
         let self_ = imp::DialogRow::from_instance(self);
-        self_.chat_id.borrow().clone()
-    }
-
-    pub fn get_chat_name(&self) -> String {
-        let self_ = imp::DialogRow::from_instance(self);
-        self_.chat_name_label.get_text().to_string()
+        self_.dialog.borrow().clone().unwrap()
     }
 }
