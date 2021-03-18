@@ -83,45 +83,38 @@ impl TelegrandWindow {
         // Dialog list signal to show the chat on dialog row activation
         self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
-            let index = row.get_index();
+            let dialog_row = row.downcast_ref::<DialogRow>()
+                .expect("Row is of wrong type");
+            let dialog = dialog_row.get_dialog();
+            let chat_id = dialog.chat.id().to_string();
+            let chat_name = dialog.chat.name().to_string();
+            let chat_page;
 
-            if let Some(row) = self_.dialog_list.get_row_at_index(index) {
-                let row = row.downcast_ref::<DialogRow>()
-                    .expect("Row is of wrong type");
-                let dialog = row.get_dialog();
-                let chat_id = dialog.chat.id().to_string();
-                let chat_name = dialog.chat.name().to_string();
-                let chat_page;
-
-                match self_.chat_stack.get_child_by_name(&chat_id) {
-                    Some(child) => {
-                        // Get the existing chat page
-                        chat_page = child.downcast()
-                            .expect("Child is of wrong type");
-                    }
-                    None => {
-                        // Create the chat page and add it to the chat stack
-                        let chat = dialog.chat();
-                        let chat_id = chat.id().to_string();
-                        let chat_name = chat.name().to_string();
-                        chat_page = ChatPage::new(&tg_sender, dialog);
-                        self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
-                            &chat_name);
-                    }
+            match self_.chat_stack.get_child_by_name(&chat_id) {
+                Some(child) => {
+                    // Get the existing chat page
+                    chat_page = child.downcast()
+                        .expect("Child is of wrong type");
                 }
-
-                // Update page to prepare it to show
-                chat_page.update_chat(&window);
-
-                // Show chat page
-                self_.chat_stack.set_visible_child(&chat_page);
-
-                // Set chat name in the titlebar
-                self_.chat_name_label.set_text(&chat_name);
-
-                // Navigate to the next page for mobile navigation
-                self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
+                None => {
+                    // Create the chat page and add it to the chat stack
+                    chat_page = ChatPage::new(&tg_sender, dialog);
+                    self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
+                        &chat_name);
+                }
             }
+
+            // Update page to prepare it to show
+            chat_page.update_chat(&window);
+
+            // Show chat page
+            self_.chat_stack.set_visible_child(&chat_page);
+
+            // Set chat name in the titlebar
+            self_.chat_name_label.set_text(&chat_name);
+
+            // Navigate to the next page for mobile navigation
+            self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
         }));
 
         // Back button signal for mobile friendly navigation
