@@ -72,4 +72,9 @@ impl DialogRow {
         let self_ = imp::DialogRow::from_instance(self);
         self_.dialog.borrow().clone().unwrap()
     }
+
+    pub fn set_last_message_text(&self, last_message: &str) {
+        let self_ = imp::DialogRow::from_instance(self);
+        self_.last_message_label.set_text(last_message);
+    }
 }

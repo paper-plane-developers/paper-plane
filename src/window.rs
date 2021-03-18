@@ -1,6 +1,7 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
+use std::collections::HashMap;
 use tokio::runtime;
 use tokio::sync::mpsc;
 
@@ -13,6 +14,7 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::*;
     use gtk::CompositeTemplate;
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
@@ -29,6 +31,7 @@ mod imp {
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
+        pub dialog_list_map: RefCell<HashMap<i32, i32>>,
     }
 
     #[glib::object_subclass]
@@ -152,8 +155,14 @@ impl TelegrandWindow {
                 }
                 telegram::EventGTK::ReceivedDialog(dialog) => {
                     // Create dialog row and add it to the dialog list
+                    let chat_id = dialog.chat().id();
                     let dialog_row = DialogRow::new(dialog);
                     self_.dialog_list.append(&dialog_row);
+
+                    // Insert dialog index to the dialog map to allow getting
+                    // the dialog by the chat id when we need it
+                    let mut dialog_list_map = self_.dialog_list_map.borrow_mut();
+                    dialog_list_map.insert(chat_id, dialog_row.get_index());
                 }
                 telegram::EventGTK::ReceivedMessage(message) => {
                     // Add message to the relative chat page (if it exists)
@@ -167,16 +176,24 @@ impl TelegrandWindow {
                 telegram::EventGTK::NewMessage(message) => {
                     // Add message to the relative chat page (if it exists)
                     let chat = message.chat();
-                    let chat_id = chat.id().to_string();
-                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
+                    let chat_id = chat.id();
+                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
                         let chat_page: ChatPage = child.downcast().unwrap();
                         chat_page.append_message(&message);
                     }
 
+                    // Update dialog's last message label
+                    let dialog_list_map = self_.dialog_list_map.borrow();
+                    let index = dialog_list_map.get(&chat_id).unwrap();
+                    let row = self_.dialog_list.get_row_at_index(*index).unwrap();
+                    let dialog_row = row.downcast_ref::<DialogRow>()
+                        .expect("Row is of wrong type");
+                    let message_text = message.text();
+                    dialog_row.set_last_message_text(message_text);
+
                     if !message.outgoing() {
                         // Send notification about the new incoming message
                         let chat_name = chat.name();
-                        let message_text = message.text();
                         let notification = gio::Notification::new("Telegrand");
                         notification.set_title(chat_name);
                         notification.set_body(Some(message_text));
