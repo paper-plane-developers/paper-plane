@@ -13,6 +13,8 @@ mod imp {
         #[template_child]
         pub sender_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub time_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub message_label: TemplateChild<gtk::Label>,
     }
 
@@ -52,15 +54,21 @@ impl MessageRow {
             .expect("Failed to create MessageRow");
 
         let self_ = imp::MessageRow::from_instance(&message_row);
-        let sender_name;
 
+        // Set sender name text
+        let sender_name;
         if let Some(sender) = message.sender() {
             sender_name = sender.name().to_string();
         } else {
             sender_name = message.chat().name().to_string();
         }
-
         self_.sender_label.set_text(&sender_name);
+
+        // Set time text
+        let time = message.date().time().format("%H:%M").to_string();
+        self_.time_label.set_markup(&time);
+
+        // Set message text
         self_.message_label.set_text(message.text());
 
         message_row
