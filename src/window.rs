@@ -200,6 +200,9 @@ impl TelegrandWindow {
                         notification.set_body(Some(message_text));
                         let app = window.get_application().unwrap();
                         app.send_notification(Some("new-message"), &notification);
+
+                        // Increment dialog's unread count
+                        dialog_row.increment_unread_count();
                     }
                 }
             }

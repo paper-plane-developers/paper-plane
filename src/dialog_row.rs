@@ -8,7 +8,7 @@ use std::sync::{Arc, Mutex};
 mod imp {
     use super::*;
     use gtk::CompositeTemplate;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/dialog_row.ui")]
@@ -16,9 +16,12 @@ mod imp {
         #[template_child]
         pub chat_name_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub unread_count_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
         pub dialog: RefCell<Option<Arc<Dialog>>>,
         pub message_iter: RefCell<Option<Arc<Mutex<MessageIter>>>>,
+        pub unread_count: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -84,5 +87,15 @@ impl DialogRow {
     pub fn set_last_message_text(&self, last_message: &str) {
         let self_ = imp::DialogRow::from_instance(self);
         self_.last_message_label.set_text(last_message);
+    }
+
+    pub fn increment_unread_count(&self) {
+        let self_ = imp::DialogRow::from_instance(self);
+
+        let unread_count = self_.unread_count.get() + 1;
+        self_.unread_count.set(unread_count);
+
+        self_.unread_count_label.set_text(&unread_count.to_string());
+        self_.unread_count_label.set_visible(true);
     }
 }

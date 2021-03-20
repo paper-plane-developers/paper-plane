@@ -11,3 +11,11 @@ box.message {
   margin-top: 6px;
   margin-bottom: 6px;
 }
+
+.unread-badge {
+  background-color: #555;
+  font-weight: bold;
+  font-size: 0.8em;
+  border-radius: 10px;
+  padding: 0 6px;
+}
