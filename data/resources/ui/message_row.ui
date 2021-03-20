@@ -23,9 +23,9 @@
                 <child>
                   <object class="GtkLabel" id="sender_label">
                     <property name="hexpand">True</property>
-                    <property name="xalign">0</property>
                     <property name="ellipsize">end</property>
                     <property name="single_line_mode">True</property>
+                    <property name="xalign">0</property>
                     <style>
                       <class name="heading"/>
                     </style>
@@ -42,9 +42,10 @@
             </child>
             <child>
               <object class="GtkLabel" id="message_label">
-                <property name="xalign">0</property>
+                <property name="selectable">True</property>
                 <property name="wrap">True</property>
                 <property name="wrap_mode">word-char</property>
+                <property name="xalign">0</property>
               </object>
             </child>
           </object>
