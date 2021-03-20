@@ -8,19 +8,21 @@ A GTK4 telegram client built to be well integrated with the GNOME desktop enviro
 - Show user dialogs
 - Notify for new messages
 - Send text messages
+- Show text messages
 
 ## Planned features (short run)
 
-- Show messages list
 - Multilanguage support
 - Flatpak support
+- Show media
+- Send media
 
 ## Planned features (long run)
 
 - Show stickers in chat
 - Send stickers
-- Download media
-- Send media
+- Download files
+- Send files
 
 ## How to build?
 
