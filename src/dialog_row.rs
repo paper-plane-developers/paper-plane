@@ -1,8 +1,9 @@
+use grammers_client::client::messages::MessageIter;
 use grammers_client::types::Dialog;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 mod imp {
     use super::*;
@@ -17,6 +18,7 @@ mod imp {
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
         pub dialog: RefCell<Option<Arc<Dialog>>>,
+        pub message_iter: RefCell<Option<Arc<Mutex<MessageIter>>>>,
     }
 
     #[glib::object_subclass]
@@ -50,12 +52,13 @@ glib::wrapper! {
 }
 
 impl DialogRow {
-    pub fn new(dialog: Dialog) -> Self {
+    pub fn new(dialog: Dialog, message_iter: MessageIter) -> Self {
         let dialog_row = glib::Object::new(&[])
             .expect("Failed to create DialogRow");
 
         let self_ = imp::DialogRow::from_instance(&dialog_row);
         self_.dialog.replace(Some(Arc::new(dialog)));
+        self_.message_iter.replace(Some(Arc::new(Mutex::new(message_iter))));
 
         let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
         let chat = dialog.chat();
@@ -71,6 +74,11 @@ impl DialogRow {
     pub fn get_dialog(&self) -> Arc<Dialog> {
         let self_ = imp::DialogRow::from_instance(self);
         self_.dialog.borrow().clone().unwrap()
+    }
+
+    pub fn get_message_iter(&self) -> Arc<Mutex<MessageIter>> {
+        let self_ = imp::DialogRow::from_instance(self);
+        self_.message_iter.borrow().clone().unwrap()
     }
 
     pub fn set_last_message_text(&self, last_message: &str) {

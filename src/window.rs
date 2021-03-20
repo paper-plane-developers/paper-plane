@@ -101,7 +101,8 @@ impl TelegrandWindow {
                 }
                 None => {
                     // Create the chat page and add it to the chat stack
-                    chat_page = ChatPage::new(&tg_sender, dialog);
+                    let message_iter = dialog_row.get_message_iter();
+                    chat_page = ChatPage::new(&tg_sender, dialog, message_iter);
                     self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
                         &chat_name);
                 }
@@ -153,10 +154,10 @@ impl TelegrandWindow {
                 telegram::EventGTK::ConfirmationCodeError(error) => {
                     self_.add_account_window.show_confirmation_code_error(error);
                 }
-                telegram::EventGTK::ReceivedDialog(dialog) => {
+                telegram::EventGTK::ReceivedDialog(dialog, message_iter) => {
                     // Create dialog row and add it to the dialog list
                     let chat_id = dialog.chat().id();
-                    let dialog_row = DialogRow::new(dialog);
+                    let dialog_row = DialogRow::new(dialog, message_iter);
                     self_.dialog_list.append(&dialog_row);
 
                     // Insert dialog index to the dialog map to allow getting

@@ -1,9 +1,10 @@
 use grammers_client::{Client, Config, InputMessage, SignInError, Update};
 use grammers_client::client::chats::AuthorizationError;
+use grammers_client::client::messages::MessageIter;
 use grammers_client::types::{Dialog, LoginToken, Message};
 use grammers_session::FileSession;
 use gtk::glib;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use tokio::{runtime, task};
 use tokio::sync::mpsc;
 
@@ -18,7 +19,7 @@ pub enum EventGTK {
     PhoneNumberError(AuthorizationError),
     ConfirmationCodeError(SignInError),
 
-    ReceivedDialog(Dialog),
+    ReceivedDialog(Dialog, MessageIter),
     ReceivedMessage(Message),
     NewMessage(Message),
 }
@@ -28,7 +29,7 @@ pub enum EventTG {
     SendConfirmationCode(String),
 
     RequestDialogs,
-    RequestMessages(Arc<Dialog>),
+    RequestNextMessages(Arc<Mutex<MessageIter>>),
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
@@ -110,13 +111,17 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
             EventTG::RequestDialogs => {
                 let mut dialogs = client_handle.iter_dialogs();
                 while let Some(dialog) = dialogs.next().await.unwrap() {
-                    gtk_sender.send(EventGTK::ReceivedDialog(dialog)).unwrap();
+                    let iterator = client_handle.iter_messages(dialog.chat());
+                    gtk_sender.send(EventGTK::ReceivedDialog(dialog, iterator)).unwrap();
                 }
             }
-            EventTG::RequestMessages(dialog) => {
-                let mut messages = client_handle.iter_messages(dialog.chat()).limit(20);
-                while let Some(message) = messages.next().await.unwrap() {
-                    gtk_sender.send(EventGTK::ReceivedMessage(message)).unwrap();
+            EventTG::RequestNextMessages(iterator) => {
+                // Return the next 20 messages
+                let mut iterator = iterator.lock().unwrap();
+                for _ in 0..20 {
+                    if let Some(message) = iterator.next().await.unwrap() {
+                        gtk_sender.send(EventGTK::ReceivedMessage(message)).unwrap();
+                    }
                 }
             }
             EventTG::SendMessage(dialog, message) => {

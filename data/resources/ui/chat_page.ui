@@ -3,7 +3,7 @@
   <template class="ChatPage" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkScrolledWindow">
+      <object class="GtkScrolledWindow" id="chat_window">
         <property name="vexpand">True</property>
         <property name="child">
           <object class="AdwClamp">

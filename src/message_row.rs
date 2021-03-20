@@ -65,7 +65,7 @@ impl MessageRow {
         self_.sender_label.set_text(&sender_name);
 
         // Set time text
-        let time = message.date().time().format("%H:%M").to_string();
+        let time = message.date().format("%H:%M").to_string();
         self_.time_label.set_markup(&time);
 
         // Set message text

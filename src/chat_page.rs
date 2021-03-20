@@ -1,9 +1,10 @@
 use grammers_client::InputMessage;
+use grammers_client::client::messages::MessageIter;
 use grammers_client::types::{Dialog, Message};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use tokio::runtime;
 use tokio::sync::mpsc;
 
@@ -19,6 +20,8 @@ mod imp {
     #[derive(Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/chat_page.ui")]
     pub struct ChatPage {
+        #[template_child]
+        pub chat_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub messages_list: TemplateChild<gtk::ListBox>,
         #[template_child]
@@ -59,19 +62,18 @@ glib::wrapper! {
 }
 
 impl ChatPage {
-    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Arc<Dialog>) -> Self {
+    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Arc<Dialog>, message_iter: Arc<Mutex<MessageIter>>) -> Self {
         let chat_page = glib::Object::new(&[])
             .expect("Failed to create ChatPage");
 
         let self_ = imp::ChatPage::from_instance(&chat_page);
         self_.dialog.replace(Some(dialog));
 
-        let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
         let _ = runtime::Builder::new_current_thread()
             .build()
             .unwrap()
             .block_on(
-                tg_sender.send(telegram::EventTG::RequestMessages(dialog)));
+                tg_sender.send(telegram::EventTG::RequestNextMessages(message_iter.clone())));
 
         let message_entry = &*self_.message_entry;
         let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
@@ -86,6 +88,17 @@ impl ChatPage {
                     .block_on(
                         tg_sender.send(telegram::EventTG::SendMessage(
                             dialog.clone(), message)));
+            }));
+
+        self_.chat_window
+            .connect_edge_reached(glib::clone!(@strong tg_sender => move |_, position| {
+                if position == gtk::PositionType::Top {
+                    let _ = runtime::Builder::new_current_thread()
+                        .build()
+                        .unwrap()
+                        .block_on(
+                            tg_sender.send(telegram::EventTG::RequestNextMessages(message_iter.clone())));
+                }
             }));
 
         chat_page
