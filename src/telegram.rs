@@ -35,11 +35,15 @@ pub enum EventTG {
 
 pub fn spawn(gtk_sender: glib::Sender<EventGTK>, tg_receiver: mpsc::Receiver<EventTG>) {
     std::thread::spawn(move || {
-        let _ = runtime::Builder::new_current_thread()
+        let result = runtime::Builder::new_current_thread()
             .enable_all()
             .build()
             .unwrap()
             .block_on(start(gtk_sender, tg_receiver));
+
+        // Panic on error
+        // TODO: add automatic reconnection on error
+        result.expect("Telegram thread error")
     });
 }
 
@@ -75,7 +79,7 @@ async fn start(gtk_sender: glib::Sender<EventGTK>, mut tg_receiver: mpsc::Receiv
                 EventTG::SendConfirmationCode(code) => {
                     match client.sign_in(token.as_ref().unwrap(), &code).await {
                         Ok(_) => {
-                            // TODO: sign out when closing the app if this fails.
+                            // TODO: sign out when closing the app if this fails
                             client.session().save()?;
                             break;
                         }
