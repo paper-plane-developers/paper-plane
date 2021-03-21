@@ -3,16 +3,16 @@
   <template class="ChatPage" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkScrolledWindow" id="chat_window">
+      <object class="GtkScrolledWindow" id="messages_scroll">
         <property name="vexpand">True</property>
         <property name="child">
           <object class="AdwClamp">
             <property name="maximum-size">800</property>
             <property name="tightening-threshold">600</property>
             <property name="child">
-              <object class="GtkListBox" id="messages_list">
+              <object class="GtkListBox" id="message_list">
                 <style>
-                  <class name="navigation-sidebar"/>
+                  <class name="message-list"/>
                 </style>
               </object>
             </property>

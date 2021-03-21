@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="MessageRow" parent="GtkListBoxRow">
+    <property name="selectable">False</property>
     <child>
       <object class="GtkBox">
         <property name="spacing">12</property>
-        <style>
-          <class name="message"/>
-        </style>
         <child>
           <object class="AdwAvatar">
             <property name="valign">start</property>

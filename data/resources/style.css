@@ -7,15 +7,22 @@ box.dialog {
   margin-bottom: 6px;
 }
 
-box.message {
-  margin-top: 6px;
-  margin-bottom: 6px;
-}
-
 .unread-badge {
-  background-color: #555;
+  background-color: @theme_selected_bg_color;
+  color: white;
   font-weight: bold;
   font-size: 0.8em;
   border-radius: 10px;
-  padding: 0 6px;
+  min-width: 0.7em;
+  padding: 2px 5px;
+}
+
+.message-list {
+  background-color: @theme_bg_color;
+}
+
+.message-list > row {
+  border-radius: 5px;
+  margin: 2px 6px;
+  padding: 6px;
 }

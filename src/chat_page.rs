@@ -21,9 +21,9 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/chat_page.ui")]
     pub struct ChatPage {
         #[template_child]
-        pub chat_window: TemplateChild<gtk::ScrolledWindow>,
+        pub messages_scroll: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
-        pub messages_list: TemplateChild<gtk::ListBox>,
+        pub message_list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub message_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -90,7 +90,7 @@ impl ChatPage {
                             dialog.clone(), message)));
             }));
 
-        self_.chat_window
+        self_.messages_scroll
             .connect_edge_reached(glib::clone!(@strong tg_sender => move |_, position| {
                 if position == gtk::PositionType::Top {
                     let _ = runtime::Builder::new_current_thread()
@@ -113,12 +113,12 @@ impl ChatPage {
     pub fn append_message(&self, message: &Message) {
         let message_row = MessageRow::new(message);
         let self_ = imp::ChatPage::from_instance(self);
-        self_.messages_list.append(&message_row);
+        self_.message_list.append(&message_row);
     }
 
     pub fn prepend_message(&self, message: &Message) {
         let message_row = MessageRow::new(message);
         let self_ = imp::ChatPage::from_instance(self);
-        self_.messages_list.prepend(&message_row);
+        self_.message_list.prepend(&message_row);
     }
 }
