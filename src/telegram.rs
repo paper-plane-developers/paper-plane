@@ -4,6 +4,8 @@ use grammers_client::client::messages::MessageIter;
 use grammers_client::types::{Dialog, LoginToken, Message};
 use grammers_session::FileSession;
 use gtk::glib;
+use log::LevelFilter;
+use simple_logger::SimpleLogger;
 use std::sync::{Arc, Mutex};
 use tokio::{runtime, task};
 use tokio::sync::mpsc;
@@ -34,6 +36,11 @@ pub enum EventTG {
 }
 
 pub fn spawn(gtk_sender: glib::Sender<EventGTK>, tg_receiver: mpsc::Receiver<EventTG>) {
+    SimpleLogger::new()
+        .with_level(LevelFilter::Debug)
+        .init()
+        .unwrap();
+
     std::thread::spawn(move || {
         let result = runtime::Builder::new_current_thread()
             .enable_all()
