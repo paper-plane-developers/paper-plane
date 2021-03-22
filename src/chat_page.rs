@@ -5,7 +5,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use std::sync::{Arc, Mutex};
-use tokio::runtime;
 use tokio::sync::mpsc;
 
 use crate::message_row::MessageRow;
@@ -62,42 +61,32 @@ glib::wrapper! {
 }
 
 impl ChatPage {
-    pub fn new(tg_sender: &mpsc::Sender<telegram::EventTG>, dialog: Arc<Dialog>, message_iter: Arc<Mutex<MessageIter>>) -> Self {
+    pub fn new(gtk_sender: &mpsc::Sender<telegram::GtkEvent>, dialog: Arc<Dialog>, message_iter: Arc<Mutex<MessageIter>>) -> Self {
         let chat_page = glib::Object::new(&[])
             .expect("Failed to create ChatPage");
 
         let self_ = imp::ChatPage::from_instance(&chat_page);
         self_.dialog.replace(Some(dialog));
 
-        let _ = runtime::Builder::new_current_thread()
-            .build()
-            .unwrap()
-            .block_on(
-                tg_sender.send(telegram::EventTG::RequestNextMessages(message_iter.clone())));
+        telegram::send_gtk_event(gtk_sender,
+            telegram::GtkEvent::RequestNextMessages(message_iter.clone()));
 
         let message_entry = &*self_.message_entry;
         let dialog = self_.dialog.borrow().as_ref().unwrap().clone();
         self_.send_message_button
-            .connect_clicked(glib::clone!(@weak message_entry, @strong tg_sender => move |_| {
+            .connect_clicked(glib::clone!(@weak message_entry, @strong gtk_sender => move |_| {
                 let message = InputMessage::text(message_entry.get_text());
                 message_entry.set_text("");
 
-                let _ = runtime::Builder::new_current_thread()
-                    .build()
-                    .unwrap()
-                    .block_on(
-                        tg_sender.send(telegram::EventTG::SendMessage(
-                            dialog.clone(), message)));
+                telegram::send_gtk_event(&gtk_sender,
+                    telegram::GtkEvent::SendMessage(dialog.clone(), message));
             }));
 
         self_.messages_scroll
-            .connect_edge_reached(glib::clone!(@strong tg_sender => move |_, position| {
+            .connect_edge_reached(glib::clone!(@strong gtk_sender => move |_, position| {
                 if position == gtk::PositionType::Top {
-                    let _ = runtime::Builder::new_current_thread()
-                        .build()
-                        .unwrap()
-                        .block_on(
-                            tg_sender.send(telegram::EventTG::RequestNextMessages(message_iter.clone())));
+                    telegram::send_gtk_event(&gtk_sender,
+                        telegram::GtkEvent::RequestNextMessages(message_iter.clone()));
                 }
             }));
 

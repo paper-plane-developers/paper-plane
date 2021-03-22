@@ -41,15 +41,15 @@ mod imp {
             app.set_resource_base_path(Some("/com/github/melix99/telegrand/"));
             app.setup_css();
 
-            let (tg_sender, tg_receiver) = mpsc::channel(1);
-            let (gtk_sender, gtk_receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+            let (gtk_sender, gtk_receiver) = mpsc::channel(1);
+            let (tg_sender, tg_receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
-            let window = TelegrandWindow::new(app, gtk_receiver, tg_sender);
+            let window = TelegrandWindow::new(app, tg_receiver, gtk_sender);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set");
 
-            telegram::spawn(gtk_sender, tg_receiver);
+            telegram::spawn(tg_sender, gtk_receiver);
 
             app.setup_gactions();
             app.get_main_window().present();

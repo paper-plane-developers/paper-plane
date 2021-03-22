@@ -3,7 +3,6 @@ use grammers_client::client::chats::AuthorizationError;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use tokio::runtime;
 use tokio::sync::mpsc;
 
 use crate::telegram;
@@ -71,29 +70,23 @@ impl AddAccountWindow {
             .expect("Failed to create AddAccountWindow")
     }
 
-    pub fn setup_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+    pub fn setup_signals(&self, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::AddAccountWindow::from_instance(self);
 
         let phone_number_entry = &*self_.phone_number_entry;
         self_.phone_number_next_button
-            .connect_clicked(glib::clone!(@weak phone_number_entry, @strong tg_sender => move |_| {
-                let _ = runtime::Builder::new_current_thread()
-                    .build()
-                    .unwrap()
-                    .block_on(
-                        tg_sender.send(telegram::EventTG::SendPhoneNumber(
-                        phone_number_entry.get_text().to_string())));
+            .connect_clicked(glib::clone!(@weak phone_number_entry, @strong gtk_sender => move |_| {
+                telegram::send_gtk_event(&gtk_sender,
+                    telegram::GtkEvent::SendPhoneNumber(
+                        phone_number_entry.get_text().to_string()));
             }));
 
         let confirmation_code_entry = &*self_.confirmation_code_entry;
         self_.confirmation_code_next_button
-            .connect_clicked(glib::clone!(@weak confirmation_code_entry, @strong tg_sender => move |_| {
-                let _ = runtime::Builder::new_current_thread()
-                    .build()
-                    .unwrap()
-                    .block_on(
-                        tg_sender.send(telegram::EventTG::SendConfirmationCode(
-                        confirmation_code_entry.get_text().to_string())));
+            .connect_clicked(glib::clone!(@weak confirmation_code_entry, @strong gtk_sender => move |_| {
+                telegram::send_gtk_event(&gtk_sender,
+                    telegram::GtkEvent::SendConfirmationCode(
+                        confirmation_code_entry.get_text().to_string()));
             }));
     }
 

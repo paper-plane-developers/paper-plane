@@ -2,7 +2,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::collections::HashMap;
-use tokio::runtime;
 use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
@@ -67,24 +66,24 @@ glib::wrapper! {
 }
 
 impl TelegrandWindow {
-    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) -> Self {
+    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, tg_receiver: glib::Receiver<telegram::TelegramEvent>, gtk_sender: mpsc::Sender<telegram::GtkEvent>) -> Self {
         let window = glib::Object::new(&[("application", app)])
             .expect("Failed to create TelegrandWindow");
 
         let self_ = imp::TelegrandWindow::from_instance(&window);
-        self_.add_account_window.setup_signals(&tg_sender);
+        self_.add_account_window.setup_signals(&gtk_sender);
 
-        window.setup_signals(&tg_sender);
-        window.setup_gtk_receiver(gtk_receiver, tg_sender);
+        window.setup_signals(&gtk_sender);
+        window.setup_tg_receiver(tg_receiver, gtk_sender);
 
         window
     }
 
-    fn setup_signals(&self, tg_sender: &mpsc::Sender<telegram::EventTG>) {
+    fn setup_signals(&self, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::TelegrandWindow::from_instance(self);
 
         // Dialog list signal to show the chat on dialog row activation
-        self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong tg_sender => move |_, row| {
+        self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong gtk_sender => move |_, row| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
             let dialog_row = row.downcast_ref::<DialogRow>()
                 .expect("Row is of wrong type");
@@ -102,7 +101,7 @@ impl TelegrandWindow {
                 None => {
                     // Create the chat page and add it to the chat stack
                     let message_iter = dialog_row.get_message_iter();
-                    chat_page = ChatPage::new(&tg_sender, dialog, message_iter);
+                    chat_page = ChatPage::new(&gtk_sender, dialog, message_iter);
                     self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
                         &chat_name);
                 }
@@ -128,33 +127,30 @@ impl TelegrandWindow {
         }));
     }
 
-    fn setup_gtk_receiver(&self, gtk_receiver: glib::Receiver<telegram::EventGTK>, tg_sender: mpsc::Sender<telegram::EventTG>) {
-        gtk_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
+    fn setup_tg_receiver(&self, tg_receiver: glib::Receiver<telegram::TelegramEvent>, gtk_sender: mpsc::Sender<telegram::GtkEvent>) {
+        tg_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
 
             match event {
-                telegram::EventGTK::AccountAuthorized => {
+                telegram::TelegramEvent::AccountAuthorized => {
                     self_.add_account_window.hide();
 
-                    let _ = runtime::Builder::new_current_thread()
-                        .build()
-                        .unwrap()
-                        .block_on(
-                            tg_sender.send(telegram::EventTG::RequestDialogs));
+                    telegram::send_gtk_event(&gtk_sender,
+                        telegram::GtkEvent::RequestDialogs);
                 }
-                telegram::EventGTK::AccountNotAuthorized => {
+                telegram::TelegramEvent::AccountNotAuthorized => {
                     self_.add_account_window.show();
                 }
-                telegram::EventGTK::NeedConfirmationCode => {
+                telegram::TelegramEvent::NeedConfirmationCode => {
                     self_.add_account_window.navigate_forward();
                 }
-                telegram::EventGTK::PhoneNumberError(error) => {
+                telegram::TelegramEvent::PhoneNumberError(error) => {
                     self_.add_account_window.show_phone_number_error(error);
                 }
-                telegram::EventGTK::ConfirmationCodeError(error) => {
+                telegram::TelegramEvent::ConfirmationCodeError(error) => {
                     self_.add_account_window.show_confirmation_code_error(error);
                 }
-                telegram::EventGTK::ReceivedDialog(dialog, message_iter) => {
+                telegram::TelegramEvent::RequestedDialog(dialog, message_iter) => {
                     // Create dialog row and add it to the dialog list
                     let chat_id = dialog.chat().id();
                     let dialog_row = DialogRow::new(dialog, message_iter);
@@ -165,7 +161,7 @@ impl TelegrandWindow {
                     let mut dialog_list_map = self_.dialog_list_map.borrow_mut();
                     dialog_list_map.insert(chat_id, dialog_row.get_index());
                 }
-                telegram::EventGTK::ReceivedMessage(message) => {
+                telegram::TelegramEvent::RequestedMessage(message) => {
                     // Add message to the relative chat page (if it exists)
                     let chat = message.chat();
                     let chat_id = chat.id().to_string();
@@ -174,7 +170,7 @@ impl TelegrandWindow {
                         chat_page.prepend_message(&message);
                     }
                 }
-                telegram::EventGTK::NewMessage(message) => {
+                telegram::TelegramEvent::NewMessage(message) => {
                     // Add message to the relative chat page (if it exists)
                     let chat = message.chat();
                     let chat_id = chat.id();
