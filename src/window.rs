@@ -30,7 +30,7 @@ mod imp {
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
-        pub dialog_list_map: RefCell<HashMap<i32, i32>>,
+        pub dialog_list_map: RefCell<HashMap<i32, DialogRow>>,
     }
 
     #[glib::object_subclass]
@@ -156,10 +156,10 @@ impl TelegrandWindow {
                     let dialog_row = DialogRow::new(dialog, message_iter);
                     self_.dialog_list.append(&dialog_row);
 
-                    // Insert dialog index to the dialog map to allow getting
+                    // Insert dialog row to the dialog map to allow getting
                     // the dialog by the chat id when we need it
                     let mut dialog_list_map = self_.dialog_list_map.borrow_mut();
-                    dialog_list_map.insert(chat_id, dialog_row.get_index());
+                    dialog_list_map.insert(chat_id, dialog_row);
                 }
                 telegram::TelegramEvent::RequestedMessage(message) => {
                     // Add message to the relative chat page (if it exists)
@@ -181,10 +181,7 @@ impl TelegrandWindow {
 
                     // Update dialog's last message label
                     let dialog_list_map = self_.dialog_list_map.borrow();
-                    let index = dialog_list_map.get(&chat_id).unwrap();
-                    let row = self_.dialog_list.get_row_at_index(*index).unwrap();
-                    let dialog_row = row.downcast_ref::<DialogRow>()
-                        .expect("Row is of wrong type");
+                    let dialog_row = dialog_list_map.get(&chat_id).unwrap();
                     let message_text = message.text();
                     dialog_row.set_last_message_text(message_text);
 
