@@ -74,7 +74,7 @@ impl TelegrandApplication {
             ("application-id", &Some(config::APP_ID)),
             ("flags", &gio::ApplicationFlags::empty()),
         ])
-        .expect("Application initialization failed")
+        .expect("Failed to create TelegrandApplication")
     }
 
     fn get_main_window(&self) -> TelegrandWindow {

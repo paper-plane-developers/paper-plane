@@ -63,7 +63,6 @@
               <object class="AdwHeaderBar">
                 <property name="show-start-title-buttons" bind-source="content_leaflet" bind-property="folded" bind-flags="sync-create"/>
                 <property name="title-widget">
-                  <!-- FIXME: This ScrolledWindow is a workaround of a libadwaita bug that causes the leaflet to fold when a label is too long even if it has wrap or ellipsize enabled -->
                   <object class="GtkScrolledWindow">
                     <property name="hexpand">True</property>
                     <property name="child">
@@ -89,17 +88,12 @@
             </child>
             <child>
               <object class="GtkStack" id="chat_stack">
+                <property name="vexpand">True</property>
                 <child>
-                  <!-- FIXME: This ScrolledWindow is a workaround of a libadwaita bug that causes the leaflet to fold when a label is too long even if it has wrap or ellipsize enabled -->
-                  <object class="GtkScrolledWindow">
-                    <property name="vexpand">True</property>
-                    <property name="child">
-                      <object class="GtkLabel">
-                        <property name="label" translatable="yes">Select a chat to start messaging</property>
-                        <property name="wrap">True</property>
-                        <property name="justify">center</property>
-                      </object>
-                    </property>
+                  <object class="AdwStatusPage">
+                    <property name="icon-name">user-available-symbolic</property>
+                    <property name="title" translatable="yes">No Chat Selected</property>
+                    <property name="description" translatable="yes">Select a chat to start messaging.</property>
                   </object>
                 </child>
               </object>
