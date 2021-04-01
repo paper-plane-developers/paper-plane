@@ -4,7 +4,6 @@
     <file preprocess="xml-stripblanks" alias="add_account_window.ui">resources/ui/add_account_window.ui</file>
     <file preprocess="xml-stripblanks" alias="chat_page.ui">resources/ui/chat_page.ui</file>
     <file preprocess="xml-stripblanks" alias="dialog_row.ui">resources/ui/dialog_row.ui</file>
-    <file preprocess="xml-stripblanks" alias="message_row.ui">resources/ui/message_row.ui</file>
     <file preprocess="xml-stripblanks" alias="window.ui">resources/ui/window.ui</file>
 
     <file alias="style.css">resources/style.css</file>

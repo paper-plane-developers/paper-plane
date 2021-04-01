@@ -22,7 +22,7 @@ pub enum TelegramEvent {
     ConfirmationCodeError(SignInError),
 
     RequestedDialog(Dialog, MessageIter),
-    RequestedMessage(Message),
+    RequestedNextMessages(Vec<Message>, i32),
     NewMessage(Message),
 }
 
@@ -31,7 +31,7 @@ pub enum GtkEvent {
     SendConfirmationCode(String),
 
     RequestDialogs,
-    RequestNextMessages(Arc<Mutex<MessageIter>>),
+    RequestNextMessages(Arc<Mutex<MessageIter>>, i32),
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
@@ -133,14 +133,16 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
                     tg_sender.send(TelegramEvent::RequestedDialog(dialog, iterator)).unwrap();
                 }
             }
-            GtkEvent::RequestNextMessages(iterator) => {
+            GtkEvent::RequestNextMessages(iterator, chat_id) => {
                 // Return the next 20 messages
                 let mut iterator = iterator.lock().unwrap();
+                let mut messages = Vec::<Message>::new();
                 for _ in 0..20 {
                     if let Some(message) = iterator.next().await.unwrap() {
-                        tg_sender.send(TelegramEvent::RequestedMessage(message)).unwrap();
+                        messages.push(message);
                     }
                 }
+                tg_sender.send(TelegramEvent::RequestedNextMessages(messages, chat_id)).unwrap();
             }
             GtkEvent::SendMessage(dialog, message) => {
                 client_handle.send_message(dialog.chat(), message).await?;

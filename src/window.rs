@@ -1,7 +1,6 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use std::collections::HashMap;
 use tokio::sync::mpsc;
 
 use crate::add_account_window::AddAccountWindow;
@@ -14,6 +13,7 @@ mod imp {
     use adw::subclass::prelude::*;
     use gtk::CompositeTemplate;
     use std::cell::RefCell;
+    use std::collections::HashMap;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
@@ -30,7 +30,7 @@ mod imp {
         pub chat_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
-        pub dialog_list_map: RefCell<HashMap<i32, DialogRow>>,
+        pub dialogs_map: RefCell<HashMap<i32, DialogRow>>,
     }
 
     #[glib::object_subclass]
@@ -158,16 +158,14 @@ impl TelegrandWindow {
 
                     // Insert dialog row to the dialog map to allow getting
                     // the dialog by the chat id when we need it
-                    let mut dialog_list_map = self_.dialog_list_map.borrow_mut();
-                    dialog_list_map.insert(chat_id, dialog_row);
+                    let mut dialogs_map = self_.dialogs_map.borrow_mut();
+                    dialogs_map.insert(chat_id, dialog_row);
                 }
-                telegram::TelegramEvent::RequestedMessage(message) => {
-                    // Add message to the relative chat page (if it exists)
-                    let chat = message.chat();
-                    let chat_id = chat.id().to_string();
-                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id) {
+                telegram::TelegramEvent::RequestedNextMessages(messages, chat_id) => {
+                    // Prepend messages to the relative chat page (if it exists)
+                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
                         let chat_page: ChatPage = child.downcast().unwrap();
-                        chat_page.prepend_message(&message);
+                        chat_page.prepend_messages(messages);
                     }
                 }
                 telegram::TelegramEvent::NewMessage(message) => {
@@ -180,8 +178,8 @@ impl TelegrandWindow {
                     }
 
                     // Update dialog's last message label
-                    let dialog_list_map = self_.dialog_list_map.borrow();
-                    let dialog_row = dialog_list_map.get(&chat_id).unwrap();
+                    let dialogs_map = self_.dialogs_map.borrow();
+                    let dialog_row = dialogs_map.get(&chat_id).unwrap();
                     let message_text = message.text();
                     dialog_row.set_last_message_text(message_text);
 
