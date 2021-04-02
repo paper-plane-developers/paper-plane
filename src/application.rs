@@ -41,7 +41,7 @@ mod imp {
             app.set_resource_base_path(Some("/com/github/melix99/telegrand/"));
             app.setup_css();
 
-            let (gtk_sender, gtk_receiver) = mpsc::channel(1);
+            let (gtk_sender, gtk_receiver) = mpsc::channel(20);
             let (tg_sender, tg_receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
 
             let window = TelegrandWindow::new(app, tg_receiver, gtk_sender);

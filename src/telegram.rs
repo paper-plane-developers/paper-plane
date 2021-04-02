@@ -1,11 +1,13 @@
 use grammers_client::{Client, Config, InputMessage, SignInError, Update};
 use grammers_client::client::chats::AuthorizationError;
 use grammers_client::client::messages::MessageIter;
-use grammers_client::types::{Dialog, LoginToken, Message};
+use grammers_client::types::{Dialog, LoginToken, Message, Photo};
+use grammers_client::types::photo_sizes::VecExt;
 use grammers_session::FileSession;
 use gtk::glib;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use tokio::{runtime, task};
 use tokio::sync::mpsc;
@@ -23,6 +25,8 @@ pub enum TelegramEvent {
 
     RequestedDialog(Dialog, MessageIter),
     RequestedNextMessages(Vec<Message>, i32),
+    MessagePhotoDownloaded(PathBuf, i32, i32),
+
     NewMessage(Message),
 }
 
@@ -32,6 +36,8 @@ pub enum GtkEvent {
 
     RequestDialogs,
     RequestNextMessages(Arc<Mutex<MessageIter>>, i32),
+    DownloadMessagePhoto(Photo, i32, i32),
+
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
@@ -139,10 +145,41 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
                 let mut messages = Vec::<Message>::new();
                 for _ in 0..20 {
                     if let Some(message) = iterator.next().await.unwrap() {
+                        // If there´s a photo, download the lowest resolution
+                        // version of the photo to use it for the preview while
+                        // the high resolution one is downloading.
+                        if let Some(photo) = message.photo() {
+                            // Create base directory structure for the photo
+                            let path = glib::get_user_special_dir(glib::UserDirectory::Downloads);
+                            let path = path.join(format!("Telegrand/{}", chat_id));
+                            glib::mkdir_with_parents(&path, 0o744);
+
+                            // Download low resolution photo in the directory
+                            let path = path.join(format!("{}.jpg", photo.id()));
+                            // TODO: use .smallest() when https://github.com/Lonami/grammers/pull/59
+                            // is merged
+                            photo.thumbs().iter().min_by_key(|x| x.size())
+                                .unwrap().download(&path).await;
+                        }
+
                         messages.push(message);
                     }
                 }
                 tg_sender.send(TelegramEvent::RequestedNextMessages(messages, chat_id)).unwrap();
+            }
+            GtkEvent::DownloadMessagePhoto(photo, chat_id, message_id) => {
+                // Create base directory structure for the photo
+                let path = glib::get_user_special_dir(glib::UserDirectory::Downloads);
+                let path = path.join(format!("Telegrand/{}", chat_id));
+                glib::mkdir_with_parents(&path, 0o744);
+
+                // Download high resolution photo in the directory
+                let path = path.join(format!("{}.jpg", photo.id()));
+                photo.thumbs().largest().unwrap().download(&path).await;
+
+                // Tell gtk that the photo has been downloaded
+                tg_sender.send(TelegramEvent::MessagePhotoDownloaded(
+                    path, chat_id, message_id)).unwrap();
             }
             GtkEvent::SendMessage(dialog, message) => {
                 client_handle.send_message(dialog.chat(), message).await?;

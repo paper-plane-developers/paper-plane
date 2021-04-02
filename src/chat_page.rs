@@ -4,6 +4,7 @@ use grammers_client::types::{Dialog, Message};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 
@@ -104,7 +105,7 @@ impl ChatPage {
         window.set_default_widget(Some(send_message_button));
     }
 
-    pub fn append_message(&self, message: &Message) {
+    pub fn append_message(&self, message: &Message, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::ChatPage::from_instance(self);
         let mut messages_map = self_.messages_map.borrow_mut();
 
@@ -121,7 +122,7 @@ impl ChatPage {
         }
 
         // Create the message row and append it to the list
-        let message_row = MessageRow::new(message, show_sender);
+        let message_row = MessageRow::new(message, show_sender, gtk_sender);
         self_.message_list.append(&message_row);
 
         // Add the message row to the messages map
@@ -132,7 +133,7 @@ impl ChatPage {
         self_.last_message_id.replace(Some(message_id));
     }
 
-    pub fn prepend_messages(&self, messages: Vec<Message>) {
+    pub fn prepend_messages(&self, messages: Vec<Message>, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::ChatPage::from_instance(self);
         let mut message_iter = messages.iter();
         let mut message = message_iter.next();
@@ -167,7 +168,7 @@ impl ChatPage {
             }
 
             // Create the message row and prepend it to the list
-            let message_row = MessageRow::new(message.unwrap(), show_sender);
+            let message_row = MessageRow::new(message.unwrap(), show_sender, gtk_sender);
             self_.message_list.prepend(&message_row);
 
             // If there weren´t no previous messages it means that this is
@@ -183,5 +184,12 @@ impl ChatPage {
 
             message = older_message;
         }
+    }
+
+    pub fn update_message_photo(&self, path: PathBuf, message_id: i32) {
+        let self_ = imp::ChatPage::from_instance(self);
+        let messages_map = self_.messages_map.borrow();
+        let message_row = messages_map.get(&message_id).unwrap();
+        message_row.update_photo(path);
     }
 }

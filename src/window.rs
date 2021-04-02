@@ -164,8 +164,16 @@ impl TelegrandWindow {
                 telegram::TelegramEvent::RequestedNextMessages(messages, chat_id) => {
                     // Prepend messages to the relative chat page (if it exists)
                     if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
-                        let chat_page: ChatPage = child.downcast().unwrap();
-                        chat_page.prepend_messages(messages);
+                        let chat_page: ChatPage = child.downcast()
+                            .expect("Child is of wrong type");
+                        chat_page.prepend_messages(messages, &gtk_sender);
+                    }
+                }
+                telegram::TelegramEvent::MessagePhotoDownloaded(path, chat_id, message_id) => {
+                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
+                        let chat_page: ChatPage = child.downcast()
+                            .expect("Child is of wrong type");
+                        chat_page.update_message_photo(path, message_id);
                     }
                 }
                 telegram::TelegramEvent::NewMessage(message) => {
@@ -173,8 +181,9 @@ impl TelegrandWindow {
                     let chat = message.chat();
                     let chat_id = chat.id();
                     if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
-                        let chat_page: ChatPage = child.downcast().unwrap();
-                        chat_page.append_message(&message);
+                        let chat_page: ChatPage = child.downcast()
+                            .expect("Child is of wrong type");
+                        chat_page.append_message(&message, &gtk_sender);
                     }
 
                     // Update dialog's last message label
