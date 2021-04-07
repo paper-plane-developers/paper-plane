@@ -2,7 +2,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 use gtk_macros::action;
-use std::env;
 
 use crate::config;
 use crate::window::TelegrandWindow;
@@ -121,7 +120,6 @@ impl TelegrandApplication {
     }
 
     pub fn run(&self) {
-        let args: Vec<String> = env::args().collect();
-        ApplicationExtManual::run(self, &args);
+        ApplicationExtManual::run(self);
     }
 }

@@ -128,7 +128,7 @@ impl TelegrandWindow {
     }
 
     fn setup_tg_receiver(&self, tg_receiver: glib::Receiver<telegram::TelegramEvent>, gtk_sender: mpsc::Sender<telegram::GtkEvent>) {
-        tg_receiver.attach(None, glib::clone!(@weak self as window => move |event| {
+        tg_receiver.attach(None, glib::clone!(@weak self as window => @default-return Continue(false), move |event| {
             let self_ = imp::TelegrandWindow::from_instance(&window);
 
             match event {
