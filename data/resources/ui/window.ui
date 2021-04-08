@@ -36,6 +36,7 @@
                   <object class="GtkListBox" id="dialog_list">
                     <style>
                       <class name="navigation-sidebar"/>
+                      <class name="dialog-list"/>
                     </style>
                   </object>
                 </child>
@@ -94,6 +95,9 @@
                     <property name="icon-name">user-available-symbolic</property>
                     <property name="title" translatable="yes">No Chat Selected</property>
                     <property name="description" translatable="yes">Select a chat to start messaging.</property>
+                    <style>
+                      <class name="messages-scroll"/>
+                    </style>
                   </object>
                 </child>
               </object>

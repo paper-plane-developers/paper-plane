@@ -5,6 +5,9 @@
     <child>
       <object class="GtkScrolledWindow" id="messages_scroll">
         <property name="vexpand">True</property>
+        <style>
+          <class name="messages-scroll"/>
+        </style>
         <property name="child">
           <object class="AdwClamp">
             <property name="maximum-size">800</property>
