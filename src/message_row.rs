@@ -96,7 +96,7 @@ impl MessageRow {
             // Create picture widget
             // TODO: improve the size adaptiveness on window size changes
             let message_picture = gtk::PictureBuilder::new()
-                .height_request(300)
+                .height_request(400)
                 .build();
             message_vbox.append(&message_picture);
 
