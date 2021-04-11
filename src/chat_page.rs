@@ -32,7 +32,6 @@ mod imp {
 
         pub dialog: RefCell<Option<Arc<Dialog>>>,
         pub messages_map: RefCell<HashMap<i32, MessageRow>>,
-        pub last_message_id: RefCell<Option<i32>>,
     }
 
     #[glib::object_subclass]
@@ -107,89 +106,68 @@ impl ChatPage {
 
     pub fn append_message(&self, message: &Message, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::ChatPage::from_instance(self);
-        let mut messages_map = self_.messages_map.borrow_mut();
 
-        // Check if the last current message is from the same sender as this
-        // message. If it is we don´t want to show the sender widgets.
-        let mut show_sender = true;
-        if let Some(sender) = message.sender() {
-            if let Some(last_message_id) = self_.last_message_id.borrow().as_ref() {
-                let last_message_row = messages_map.get(last_message_id).unwrap();
-                if let Some(last_sender_id) = last_message_row.get_sender_id() {
-                    show_sender = !(sender.id() == last_sender_id);
-                }
+        // Get the previous row, if it exists. Its previous row should
+        // be the last child of the message list, so do all the checking to
+        // see if it´s actually a row.
+        let previous_row;
+        let last_child = self_.message_list.get_last_child();
+        if let Some(last_child) = last_child {
+            if let Ok(last_child) = last_child.downcast::<gtk::ListBoxRow>() {
+                previous_row = Some(last_child);
+            } else {
+                previous_row = None;
             }
+        } else {
+            previous_row = None;
         }
 
-        // Create the message row and append it to the list
-        let message_row = MessageRow::new(message, show_sender, gtk_sender);
+        // Create message row and add it to the message list
+        let message_row = MessageRow::new(message, previous_row.as_ref(), gtk_sender);
         self_.message_list.append(&message_row);
 
-        // Add the message row to the messages map
-        let message_id = message.id();
-        messages_map.insert(message_id, message_row);
-
-        // This is the last message for now, so save it´s id
-        self_.last_message_id.replace(Some(message_id));
+        // Add message row to the messages map
+        let mut messages_map = self_.messages_map.borrow_mut();
+        messages_map.insert(message.id(), message_row);
     }
 
     pub fn prepend_messages(&self, messages: Vec<Message>, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::ChatPage::from_instance(self);
-        let mut message_iter = messages.iter();
-        let mut message = message_iter.next();
+        let mut messages_map = self_.messages_map.borrow_mut();
+        let past_first_child = self_.message_list.get_first_child();
 
-        // Check if the current oldest message is from the same sender as the
-        // first message to prepend. If it is, we need to remove the sender
-        // widgets from the former.
-        if message.is_some() && message.unwrap().sender().is_some() {
-            if let Some(row) = self_.message_list.get_row_at_index(0) {
-                let message_row = row.downcast_ref::<MessageRow>()
-                    .expect("Row is of wrong type");
-                let sender_id = message_row.get_sender_id().unwrap();
-                let older_sender_id = message.unwrap().sender().unwrap().id();
-                if older_sender_id == sender_id {
-                    message_row.remove_sender_widgets();
+        // Reverse insert messages (oldest to newest) to automatically check
+        // the previous row for every added message
+        let mut previous_row = None;
+        for (index, message) in messages.iter().rev().enumerate() {
+            // Create message row and add it to the message list
+            let message_row = MessageRow::new(message, previous_row, gtk_sender);
+            self_.message_list.insert(&message_row, index as i32);
+
+            // Add message row to the messages map
+            messages_map.insert(message.id(), message_row);
+
+            // Get back the message row from the map and set it as previous row
+            let message_row = messages_map.get(&message.id()).unwrap();
+            previous_row = Some(message_row.upcast_ref());
+        }
+
+        // Check if the past first child exists and it´s also a message row.
+        // In that case check if it´s sender widgets needs to be removed
+        // by passing it´s new previous row.
+        if let Some(past_first_child) = past_first_child {
+            if let Ok(previous_first_message_row) = past_first_child.downcast::<MessageRow>() {
+                if !previous_first_message_row.check_show_sender(previous_row) {
+                    previous_first_message_row.remove_sender_widgets();
                 }
             }
         }
-
-        while message.is_some() {
-            // We want to hide the sender if the older message is the same
-            // of the current message. If the message doesn´t have the sender
-            // object, it means that it´s from a channel or similar and we
-            // want to always show the sender and use the chat name as the
-            // sender in that case (this is done in the MessageRow).
-            let older_message = message_iter.next();
-            let mut show_sender = true;
-            if older_message.is_some() && older_message.unwrap().sender().is_some() {
-                let sender_id = message.unwrap().sender().unwrap().id();
-                let older_sender_id = older_message.unwrap().sender().unwrap().id();
-                show_sender = !(sender_id == older_sender_id);
-            }
-
-            // Create the message row and prepend it to the list
-            let message_row = MessageRow::new(message.unwrap(), show_sender, gtk_sender);
-            self_.message_list.prepend(&message_row);
-
-            // If there weren´t no previous messages it means that this is
-            // the last message, so save its id
-            let mut messages_map = self_.messages_map.borrow_mut();
-            let message_id = message.unwrap().id();
-            if messages_map.len() == 0 {
-                self_.last_message_id.replace(Some(message_id));
-            }
-
-            // Add message row to the messages map
-            messages_map.insert(message_id, message_row);
-
-            message = older_message;
-        }
     }
 
-    pub fn update_message_photo(&self, path: PathBuf, message_id: i32) {
+    pub fn update_message_picture(&self, path: PathBuf, message_id: i32) {
         let self_ = imp::ChatPage::from_instance(self);
         let messages_map = self_.messages_map.borrow();
         let message_row = messages_map.get(&message_id).unwrap();
-        message_row.update_photo(path);
+        message_row.update_picture(path);
     }
 }

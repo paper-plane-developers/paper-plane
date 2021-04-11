@@ -47,18 +47,18 @@ box.dialog {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-.sender-label {
+.message-box > .sender-label {
   font-size: small;
   font-weight: bold;
   margin: 0 6px;
 }
 
-.message-label {
+.message-box > .text-label {
   font-size: 0.95em;
   margin: 0 6px;
 }
 
-.time-label {
+.message-box > .time-label {
   font-size: smaller;
   color: @insensitive_fg_color;
   margin: 0 6px;

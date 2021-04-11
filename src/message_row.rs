@@ -1,8 +1,7 @@
 use grammers_client::types::Message;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
-use gtk::pango;
+use gtk::{glib, pango};
 use std::path::PathBuf;
 use tokio::sync::mpsc;
 
@@ -14,14 +13,14 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct MessageRow {
-        pub message_hbox: RefCell<Option<gtk::Box>>,
-        pub message_vbox: RefCell<Option<gtk::Box>>,
-
+        pub content_box: RefCell<Option<gtk::Box>>,
+        pub message_box: RefCell<Option<gtk::Box>>,
         pub message_picture: RefCell<Option<gtk::Picture>>,
 
         pub sender_label: RefCell<Option<gtk::Label>>,
         pub sender_avatar: RefCell<Option<adw::Avatar>>,
 
+        pub outgoing: RefCell<Option<bool>>,
         pub sender_id: RefCell<Option<i32>>,
     }
 
@@ -36,20 +35,20 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            let message_hbox = gtk::BoxBuilder::new()
+            let content_box = gtk::BoxBuilder::new()
                 .spacing(6)
                 .build();
-            message_hbox.set_parent(obj);
+            content_box.set_parent(obj);
 
-            let message_vbox = gtk::BoxBuilder::new()
+            let message_box = gtk::BoxBuilder::new()
                 .css_classes(vec!("message-box".to_string()))
                 .orientation(gtk::Orientation::Vertical)
                 .spacing(3)
                 .build();
-            message_hbox.append(&message_vbox);
+            content_box.append(&message_box);
 
-            *self.message_hbox.borrow_mut() = Some(message_hbox);
-            *self.message_vbox.borrow_mut() = Some(message_vbox);
+            *self.content_box.borrow_mut() = Some(content_box);
+            *self.message_box.borrow_mut() = Some(message_box);
         }
     }
 
@@ -63,32 +62,69 @@ glib::wrapper! {
 }
 
 impl MessageRow {
-    pub fn new(message: &Message, show_sender: bool, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) -> Self {
+    pub fn new(message: &Message, previous_row: Option<&gtk::ListBoxRow>, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) -> Self {
         let message_row = glib::Object::new(&[("selectable", &false)])
             .expect("Failed to create MessageRow");
 
         let self_ = imp::MessageRow::from_instance(&message_row);
-        let message_hbox = self_.message_hbox.borrow().as_ref().unwrap().clone();
-        let message_vbox = self_.message_vbox.borrow().as_ref().unwrap().clone();
+        let content_box = self_.content_box.borrow().as_ref().unwrap().clone();
+        let message_box = self_.message_box.borrow().as_ref().unwrap().clone();
 
-        // Align message box based on the direction on the message
-        if message.outgoing() {
-            message_hbox.set_halign(gtk::Align::End);
-            message_hbox.set_margin_start(120);
-        } else {
-            message_hbox.set_halign(gtk::Align::Start);
-            message_hbox.set_margin_end(120);
-            // Margin for when there´s no avatar (avatar size + hbox spacing)
-            message_hbox.set_margin_start(42);
+        // Save some parameters for later use
+        self_.outgoing.replace(Some(message.outgoing()));
+        if let Some(sender) = message.sender() {
+            self_.sender_id.replace(Some(sender.id()));
         }
 
-        // Add sender widgets if we need them
+        // Check if the sender widgets needs to be added
+        let show_sender = message_row.check_show_sender(previous_row);
         if show_sender {
-            message_row.create_sender_widgets(message);
+            // If the sender object exists, use it´s name for the sender,
+            // otherwise use the chat name
+            let sender_name;
+            if let Some(sender) = message.sender() {
+                sender_name = sender.name().to_string();
+            } else {
+                sender_name = message.chat().name().to_string();
+            }
 
-            // Add top margin to better distinguish messages from
-            // different senders
-            message_hbox.set_margin_top(3);
+            // Add sender label
+            let sender_label = gtk::LabelBuilder::new()
+                .css_classes(vec!["sender-label".to_string()])
+                .ellipsize(pango::EllipsizeMode::End)
+                .label(&sender_name)
+                .single_line_mode(true)
+                .xalign(0.0)
+                .build();
+            message_box.append(&sender_label);
+
+            // Add sender avatar
+            let sender_avatar = adw::AvatarBuilder::new()
+                .valign(gtk::Align::Start)
+                .show_initials(true)
+                .size(36)
+                .build();
+            sender_label.bind_property("label", &sender_avatar, "text")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build();
+            content_box.prepend(&sender_avatar);
+
+            // Save widgets for later use
+            self_.sender_avatar.replace(Some(sender_avatar));
+            self_.sender_label.replace(Some(sender_label));
+        } else if !message.outgoing() {
+            // Add margin to the content box to align the message box
+            // with the other message boxes that have the avatar
+            content_box.set_margin_start(42);
+        }
+
+        // Align content box based on the direction of the message
+        if message.outgoing() {
+            content_box.set_halign(gtk::Align::End);
+            content_box.set_margin_start(120);
+        } else {
+            content_box.set_halign(gtk::Align::Start);
+            content_box.set_margin_end(120);
         }
 
         // Add picture if there´s one in the message
@@ -98,7 +134,7 @@ impl MessageRow {
             let message_picture = gtk::PictureBuilder::new()
                 .height_request(400)
                 .build();
-            message_vbox.append(&message_picture);
+            message_box.append(&message_picture);
 
             // Load the photo from filesystem
             let chat_id = message.chat().id();
@@ -115,16 +151,16 @@ impl MessageRow {
         }
 
         // Add message label if there´s text in the message
-        if message.text().len() > 0 {
+        if !message.text().is_empty() {
             let message_label = gtk::LabelBuilder::new()
-                .css_classes(vec!["message-label".to_string()])
+                .css_classes(vec!["text-label".to_string()])
                 .label(message.text())
                 .selectable(true)
                 .wrap(true)
                 .wrap_mode(pango::WrapMode::WordChar)
                 .xalign(0.0)
                 .build();
-            message_vbox.append(&message_label);
+            message_box.append(&message_label);
         }
 
         // Add time label
@@ -134,70 +170,27 @@ impl MessageRow {
             .label(&time)
             .xalign(1.0)
             .build();
-        message_vbox.append(&time_label);
-
-        // Save the sender id
-        if let Some(sender) = message.sender() {
-            self_.sender_id.replace(Some(sender.id()));
-        }
+        message_box.append(&time_label);
 
         message_row
     }
 
-    fn create_sender_widgets(&self, message: &Message) {
-        let self_ = imp::MessageRow::from_instance(self);
-        let message_hbox = self_.message_hbox.borrow().as_ref().unwrap().clone();
-        let message_vbox = self_.message_vbox.borrow().as_ref().unwrap().clone();
-
-        let sender_name;
-        if let Some(sender) = message.sender() {
-            sender_name = sender.name().to_string();
-        } else {
-            sender_name = message.chat().name().to_string();
-        }
-
-        // Create sender label
-        let sender_label = gtk::LabelBuilder::new()
-            .css_classes(vec!["sender-label".to_string()])
-            .ellipsize(pango::EllipsizeMode::End)
-            .label(&sender_name)
-            .single_line_mode(true)
-            .xalign(0.0)
-            .build();
-        message_vbox.append(&sender_label);
-
-        if !message.outgoing() {
-            // Create sender avatar
-            let sender_avatar = adw::AvatarBuilder::new()
-                .valign(gtk::Align::Start)
-                .show_initials(true)
-                .size(36)
-                .build();
-            sender_label.bind_property("label", &sender_avatar, "text")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build();
-            message_hbox.prepend(&sender_avatar);
-            self_.sender_avatar.replace(Some(sender_avatar));
-
-            // Remove margin from the message as we now have an avatar
-            message_hbox.set_margin_start(0);
-        }
-
-        self_.sender_label.replace(Some(sender_label));
-    }
-
     pub fn remove_sender_widgets(&self) {
         let self_ = imp::MessageRow::from_instance(self);
-        let message_hbox = self_.message_hbox.borrow().as_ref().unwrap().clone();
-        let message_vbox = self_.message_vbox.borrow().as_ref().unwrap().clone();
+        let content_box = self_.content_box.borrow().as_ref().unwrap().clone();
+        let message_box = self_.message_box.borrow().as_ref().unwrap().clone();
 
-        // Remove widgets from the relative boxes
-        message_vbox.remove(self_.sender_label.borrow().as_ref().unwrap());
+        // Remove sender label
+        if let Some(sender_label) = self_.sender_label.borrow().as_ref() {
+            message_box.remove(sender_label);
+        }
+
+        // Remove sender avatar
         if let Some(sender_avatar) = self_.sender_avatar.borrow().as_ref() {
-            message_hbox.remove(sender_avatar);
+            content_box.remove(sender_avatar);
 
-            // Add margin to the message as we have removed the avatar
-            self_.message_hbox.borrow().as_ref().unwrap().set_margin_start(48);
+            // Add margin to the content box to replace the removed avatar
+            content_box.set_margin_start(42);
         }
 
         // Reset saved widgets
@@ -205,14 +198,49 @@ impl MessageRow {
         self_.sender_avatar.replace(None);
     }
 
+    pub fn update_picture(&self, path: PathBuf) {
+        let self_ = imp::MessageRow::from_instance(self);
+        self_.message_picture.borrow().as_ref().unwrap()
+            .set_filename(path.to_str());
+    }
+
     pub fn get_sender_id(&self) -> Option<i32> {
         let self_ = imp::MessageRow::from_instance(self);
         self_.sender_id.borrow().as_ref().copied()
     }
 
-    pub fn update_photo(&self, path: PathBuf) {
+    pub fn check_show_sender(&self, previous_row: Option<&gtk::ListBoxRow>) -> bool {
         let self_ = imp::MessageRow::from_instance(self);
-        self_.message_picture.borrow().as_ref().unwrap()
-            .set_filename(path.to_str());
+        let outgoing = self_.outgoing.borrow().as_ref().unwrap().clone();
+        let sender_id = self.get_sender_id();
+
+        // If the message is outgoing don´t show the sender
+        if outgoing {
+            return false
+        }
+
+        // Check if there was a previous row, otherwise show the sender
+        if let Some(previous_row) = previous_row {
+            // Check if the previous row was a message row, otherwise show
+            // the sender
+            if let Some(previous_message_row) = previous_row.downcast_ref::<MessageRow>() {
+                // Check if the previous message row had a sender object,
+                // otherwise show the sender only if the current message has
+                // a sender object
+                if let Some(previous_sender_id) = previous_message_row.get_sender_id() {
+                    // Check if the current message has a sender object,
+                    // otherwise show the sender
+                    if let Some(sender_id) = sender_id {
+                        // If the current sender if different from the previous
+                        // one, show the sender
+                        return sender_id != previous_sender_id
+                    }
+                } else {
+                    return sender_id.is_some()
+                }
+            }
+        }
+
+        true
     }
 }

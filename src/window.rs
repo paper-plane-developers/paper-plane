@@ -173,7 +173,7 @@ impl TelegrandWindow {
                     if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
                         let chat_page: ChatPage = child.downcast()
                             .expect("Child is of wrong type");
-                        chat_page.update_message_photo(path, message_id);
+                        chat_page.update_message_picture(path, message_id);
                     }
                 }
                 telegram::TelegramEvent::NewMessage(message) => {
