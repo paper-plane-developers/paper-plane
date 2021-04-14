@@ -156,8 +156,6 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
 
                             // Download low resolution photo in the directory
                             let path = path.join(format!("{}.jpg", photo.id()));
-                            // TODO: use .smallest() when https://github.com/Lonami/grammers/pull/59
-                            // is merged
                             photo.thumbs().iter().min_by_key(|x| x.size())
                                 .unwrap().download(&path).await;
                         }
