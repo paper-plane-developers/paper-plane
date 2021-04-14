@@ -7,7 +7,22 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkHeaderBar">
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">False</property>
+            <child type="start">
+              <object class="GtkButton" id="previous_button">
+                <property name="visible">False</property>
+                <property name="label" translatable="yes">Previous</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="next_button">
+                <property name="label" translatable="yes">Next</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -15,131 +30,125 @@
             <property name="vexpand">True</property>
             <property name="can-unfold">False</property>
             <child>
-              <object class="GtkBox">
-                <property name="orientation">vertical</property>
-                <property name="valign">center</property>
-                <style>
-                  <class name="auth-page"/>
-                </style>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Phone Number</property>
-                    <property name="wrap">True</property>
-                    <property name="justify">center</property>
+              <object class="AdwLeafletPage">
+                <property name="name">phone_number_page</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="valign">center</property>
                     <style>
-                      <class name="title"/>
-                      <class name="large-title"/>
+                      <class name="auth-page"/>
                     </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Please enter your phone number to authenticate with Telegrand.</property>
-                    <property name="wrap">True</property>
-                    <property name="justify">center</property>
-                    <style>
-                      <class name="body"/>
-                      <class name="description"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwClamp">
-                    <property name="maximum-size">300</property>
-                    <property name="tightening-threshold">200</property>
-                    <property name="child">
-                      <object class="GtkBox">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkEntry" id="phone_number_entry">
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="phone_number_next_button">
-                            <property name="label" translatable="yes">Next</property>
-                            <style>
-                              <class name="suggested-action"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="phone_number_error_label">
-                            <property name="wrap">True</property>
-                            <property name="justify">center</property>
-                            <style>
-                              <class name="error"/>
-                            </style>
-                          </object>
-                        </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Phone Number</property>
+                        <property name="wrap">True</property>
+                        <property name="justify">center</property>
+                        <style>
+                          <class name="title"/>
+                          <class name="large-title"/>
+                        </style>
                       </object>
-                    </property>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Please enter your phone number to authenticate with Telegrand.</property>
+                        <property name="wrap">True</property>
+                        <property name="justify">center</property>
+                        <style>
+                          <class name="body"/>
+                          <class name="description"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkEntry" id="phone_number_entry">
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="phone_number_error_label">
+                                <property name="wrap">True</property>
+                                <property name="justify">center</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
             <child>
-              <object class="GtkBox">
-                <property name="orientation">vertical</property>
-                <property name="valign">center</property>
-                <style>
-                  <class name="auth-page"/>
-                </style>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Confirmation Code</property>
-                    <property name="wrap">True</property>
-                    <property name="justify">center</property>
+              <object class="AdwLeafletPage">
+                <property name="name">confirmation_code_page</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="valign">center</property>
                     <style>
-                      <class name="title"/>
-                      <class name="large-title"/>
+                      <class name="auth-page"/>
                     </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Please enter the confirmation code that we sent to your other Telegram apps.</property>
-                    <property name="wrap">True</property>
-                    <property name="justify">center</property>
-                    <style>
-                      <class name="body"/>
-                      <class name="description"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwClamp">
-                    <property name="maximum-size">300</property>
-                    <property name="tightening-threshold">200</property>
-                    <property name="child">
-                      <object class="GtkBox">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkEntry" id="confirmation_code_entry">
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="confirmation_code_next_button">
-                            <property name="label" translatable="yes">Next</property>
-                            <style>
-                              <class name="suggested-action"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="confirmation_code_error_label">
-                            <property name="wrap">True</property>
-                            <property name="justify">center</property>
-                            <style>
-                              <class name="error"/>
-                            </style>
-                          </object>
-                        </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Confirmation Code</property>
+                        <property name="wrap">True</property>
+                        <property name="justify">center</property>
+                        <style>
+                          <class name="title"/>
+                          <class name="large-title"/>
+                        </style>
                       </object>
-                    </property>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Please enter the confirmation code that we sent to your other Telegram apps.</property>
+                        <property name="wrap">True</property>
+                        <property name="justify">center</property>
+                        <style>
+                          <class name="body"/>
+                          <class name="description"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkEntry" id="confirmation_code_entry">
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="confirmation_code_error_label">
+                                <property name="wrap">True</property>
+                                <property name="justify">center</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
           </object>

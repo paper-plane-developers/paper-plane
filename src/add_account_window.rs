@@ -17,18 +17,18 @@ mod imp {
     pub struct AddAccountWindow {
         #[template_child]
         pub content_leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub previous_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub next_button: TemplateChild<gtk::Button>,
 
         #[template_child]
         pub phone_number_entry: TemplateChild<gtk::Entry>,
-        #[template_child]
-        pub phone_number_next_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub phone_number_error_label: TemplateChild<gtk::Label>,
 
         #[template_child]
         pub confirmation_code_entry: TemplateChild<gtk::Entry>,
-        #[template_child]
-        pub confirmation_code_next_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub confirmation_code_error_label: TemplateChild<gtk::Label>,
     }
@@ -73,26 +73,39 @@ impl AddAccountWindow {
     pub fn setup_signals(&self, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::AddAccountWindow::from_instance(self);
 
-        let phone_number_entry = &*self_.phone_number_entry;
-        self_.phone_number_next_button
-            .connect_clicked(glib::clone!(@weak phone_number_entry, @strong gtk_sender => move |_| {
-                telegram::send_gtk_event(&gtk_sender,
-                    telegram::GtkEvent::SendPhoneNumber(
-                        phone_number_entry.get_text().to_string()));
+        let content_leaflet = &*self_.content_leaflet;
+        let previous_button = &*self_.previous_button;
+        self_.previous_button
+            .connect_clicked(glib::clone!(@weak content_leaflet, @weak previous_button => move |_| {
+                content_leaflet.navigate(adw::NavigationDirection::Back);
+
+                let page_name = content_leaflet.get_visible_child_name().unwrap();
+                if page_name == "phone_number_page" {
+                    previous_button.set_visible(false);
+                }
             }));
 
+        let phone_number_entry = &*self_.phone_number_entry;
         let confirmation_code_entry = &*self_.confirmation_code_entry;
-        self_.confirmation_code_next_button
-            .connect_clicked(glib::clone!(@weak confirmation_code_entry, @strong gtk_sender => move |_| {
-                telegram::send_gtk_event(&gtk_sender,
-                    telegram::GtkEvent::SendConfirmationCode(
-                        confirmation_code_entry.get_text().to_string()));
+        self_.next_button
+            .connect_clicked(glib::clone!(@weak content_leaflet, @weak phone_number_entry, @weak confirmation_code_entry, @strong gtk_sender => move |_| {
+                let page_name = content_leaflet.get_visible_child_name().unwrap();
+                if page_name == "phone_number_page" {
+                    telegram::send_gtk_event(&gtk_sender,
+                        telegram::GtkEvent::SendPhoneNumber(
+                            phone_number_entry.get_text().to_string()));
+                } else if page_name == "confirmation_code_page" {
+                    telegram::send_gtk_event(&gtk_sender,
+                        telegram::GtkEvent::SendConfirmationCode(
+                            confirmation_code_entry.get_text().to_string()));
+                }
             }));
     }
 
     pub fn navigate_forward(&self) {
         let self_ = imp::AddAccountWindow::from_instance(self);
         self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
+        self_.previous_button.set_visible(true);
     }
 
     pub fn show_phone_number_error(&self, error: AuthorizationError) {
