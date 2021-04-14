@@ -164,7 +164,9 @@ impl MessageRow {
         }
 
         // Add time label
-        let time = message.date().format("%H:%M").to_string();
+        let mut time = glib::DateTime::from_unix_utc(message.date().timestamp())
+            .unwrap().to_local().unwrap().format("%X").unwrap().to_string();
+        time.replace_range(5..8, ""); // Remove seconds
         let time_label = gtk::LabelBuilder::new()
             .css_classes(vec!["time-label".to_string()])
             .label(&time)
