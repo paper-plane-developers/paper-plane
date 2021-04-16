@@ -186,23 +186,28 @@ impl TelegrandWindow {
                         chat_page.append_message(&message, &gtk_sender);
                     }
 
-                    // Update dialog's last message label
+                    // Update dialog's last message label (if it exists)
                     let dialogs_map = self_.dialogs_map.borrow();
-                    let dialog_row = dialogs_map.get(&chat_id).unwrap();
-                    let message_text = message.text();
-                    dialog_row.set_last_message_text(message_text);
+                    let dialog_row = dialogs_map.get(&chat_id);
+                    if let Some(dialog_row) = dialog_row {
+                        let message_text = message.text();
+                        dialog_row.set_last_message_text(message_text);
+                    }
 
                     if !message.outgoing() {
                         // Send notification about the new incoming message
                         let chat_name = chat.name();
+                        let message_text = message.text();
                         let notification = gio::Notification::new("Telegrand");
                         notification.set_title(chat_name);
                         notification.set_body(Some(message_text));
                         let app = window.get_application().unwrap();
                         app.send_notification(Some("new-message"), &notification);
 
-                        // Increment dialog's unread count
-                        dialog_row.increment_unread_count();
+                        // Increment dialog's unread count (if it exists)
+                        if let Some(dialog_row) = dialog_row {
+                            dialog_row.increment_unread_count();
+                        }
                     }
                 }
             }
