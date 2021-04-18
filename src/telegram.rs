@@ -1,9 +1,9 @@
-use grammers_client::{Client, Config, InputMessage, SignInError, Update};
+use grammers_client::{Client, ClientHandle, Config, InputMessage, SignInError, Update};
 use grammers_client::client::chats::AuthorizationError;
 use grammers_client::client::messages::MessageIter;
 use grammers_client::types::{Dialog, LoginToken, Message, Photo};
 use grammers_client::types::photo_sizes::VecExt;
-use grammers_session::Session;
+use grammers_session::FileSession;
 use gtk::glib;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
@@ -67,13 +67,13 @@ pub fn send_gtk_event(gtk_sender: &mpsc::Sender<GtkEvent>, event: GtkEvent) {
         .block_on(gtk_sender.send(event));
 }
 
-async fn handle_gtk_receiver(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>, mut client: Client) {
+async fn handle_gtk_receiver(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>, mut client_handle: ClientHandle) {
     while let Some(event) = gtk_receiver.recv().await {
         match event {
             GtkEvent::RequestDialogs => {
-                let mut dialogs = client.iter_dialogs();
+                let mut dialogs = client_handle.iter_dialogs();
                 while let Some(dialog) = dialogs.next().await.unwrap() {
-                    let iterator = client.iter_messages(dialog.chat());
+                    let iterator = client_handle.iter_messages(dialog.chat());
                     tg_sender.send(TelegramEvent::RequestedDialog(dialog, iterator)).unwrap();
                 }
             }
@@ -118,7 +118,7 @@ async fn handle_gtk_receiver(tg_sender: glib::Sender<TelegramEvent>, mut gtk_rec
                     path, chat_id, message_id)).unwrap();
             }
             GtkEvent::SendMessage(dialog, message) => {
-                client.send_message(dialog.chat(), message).await.unwrap();
+                client_handle.send_message(dialog.chat(), message).await.unwrap();
             }
             _ => {}
         }
@@ -130,7 +130,7 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
     let api_hash = config::TG_API_HASH.to_owned();
 
     let mut client = Client::connect(Config {
-        session: Session::load_file_or_create("telegrand.session")?,
+        session: FileSession::load_or_create("telegrand.session")?,
         api_id,
         api_hash: api_hash.clone(),
         params: Default::default(),
@@ -157,7 +157,8 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
                 GtkEvent::SendConfirmationCode(code) => {
                     match client.sign_in(token.as_ref().unwrap(), &code).await {
                         Ok(_) => {
-                            // TODO: save the session
+                            // TODO: sign out when closing the app if this fails
+                            client.session().save()?;
                             break;
                         }
                         Err(error) => {
@@ -172,9 +173,9 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
     tg_sender.send(TelegramEvent::AccountAuthorized).unwrap();
 
     let tg_sender_clone = tg_sender.clone();
-    let client_clone = client.clone();
+    let client_handle = client.handle();
     task::spawn(async move {
-        handle_gtk_receiver(tg_sender_clone, gtk_receiver, client_clone).await
+        handle_gtk_receiver(tg_sender_clone, gtk_receiver, client_handle).await
     });
 
     // Handle updates received from Telegram

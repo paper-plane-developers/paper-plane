@@ -6,8 +6,8 @@ edition = "2018"
 
 [dependencies]
 adw = { package = "libadwaita", git = "https://gitlab.gnome.org/bilelmoussaoui/libadwaita-rs" }
-grammers-client = { git = "https://github.com/Lonami/grammers" }
-grammers-session = { git = "https://github.com/Lonami/grammers" }
+grammers-client = { git = "https://github.com/Lonami/grammers", rev = "97cd0b982a87caaaf291e091b2627da9081ec935" }
+grammers-session = { git = "https://github.com/Lonami/grammers", rev = "97cd0b982a87caaaf291e091b2627da9081ec935" }
 gtk = { package = "gtk4", git = "https://github.com/gtk-rs/gtk4-rs" }
 gtk-macros = "0.2"
 log = "0.4.11"
