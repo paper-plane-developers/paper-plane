@@ -12,8 +12,6 @@ use std::sync::Arc;
 use tokio::{runtime, task};
 use tokio::sync::{Mutex, mpsc};
 
-use crate::config;
-
 type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 pub enum TelegramEvent {
@@ -41,7 +39,7 @@ pub enum GtkEvent {
     SendMessage(Arc<Dialog>, InputMessage),
 }
 
-pub fn spawn(tg_sender: glib::Sender<TelegramEvent>, gtk_receiver: mpsc::Receiver<GtkEvent>) {
+pub fn spawn(tg_sender: glib::Sender<TelegramEvent>, gtk_receiver: mpsc::Receiver<GtkEvent>, config: Config<FileSession>) {
     SimpleLogger::new()
         .with_level(LevelFilter::Debug)
         .init()
@@ -52,7 +50,7 @@ pub fn spawn(tg_sender: glib::Sender<TelegramEvent>, gtk_receiver: mpsc::Receive
             .enable_all()
             .build()
             .unwrap()
-            .block_on(start(tg_sender, gtk_receiver));
+            .block_on(start(tg_sender, gtk_receiver, config));
 
         // Panic on error
         // TODO: add automatic reconnection on error
@@ -125,17 +123,10 @@ async fn handle_gtk_receiver(tg_sender: glib::Sender<TelegramEvent>, mut gtk_rec
     }
 }
 
-async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>) -> Result {
-    let api_id = config::TG_API_ID.to_owned();
-    let api_hash = config::TG_API_HASH.to_owned();
-
-    let mut client = Client::connect(Config {
-        session: FileSession::load_or_create("telegrand.session")?,
-        api_id,
-        api_hash: api_hash.clone(),
-        params: Default::default(),
-    })
-    .await?;
+async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>, config: Config<FileSession>) -> Result {
+    let api_id = config.api_id;
+    let api_hash = config.api_hash.clone();
+    let mut client = Client::connect(config).await?;
 
     if !client.is_authorized().await? {
         tg_sender.send(TelegramEvent::AccountNotAuthorized).unwrap();

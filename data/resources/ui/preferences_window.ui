@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="PreferencesWindow" parent="AdwPreferencesWindow">
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="title" translatable="yes">Advanced</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="description" translatable="yes">This settings requires a restart to apply.</property>
+            <property name="title" translatable="yes">Network</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Custom Server Address</property>
+                <child>
+                  <object class="GtkEntry" id="server_address_entry">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

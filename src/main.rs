@@ -6,6 +6,7 @@ mod chat_page;
 mod config;
 mod dialog_row;
 mod message_row;
+mod preferences_window;
 mod telegram;
 mod window;
 

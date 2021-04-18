@@ -18,6 +18,28 @@ if desktop_file_validate.found()
   )
 endif
 
+# GSchema
+gschema_conf = configuration_data()
+gschema_conf.set('app-id', application_id)
+gschema_conf.set('gettext-package', gettext_package)
+configure_file(
+  input: '@0@.gschema.xml.in'.format(base_id),
+  output: '@0@.gschema.xml'.format(application_id),
+  configuration: gschema_conf,
+  install: true,
+  install_dir: datadir / 'glib-2.0' / 'schemas'
+)
+
+# Validata GSchema
+if glib_compile_schemas.found()
+  test(
+    'validate-gschema', glib_compile_schemas,
+    args: [
+      '--strict', '--dry-run', meson.current_build_dir()
+    ]
+  )
+endif
+
 # Resources
 resources = gnome.compile_resources(
   'resources',

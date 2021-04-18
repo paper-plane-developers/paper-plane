@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+  <schema path="/com/github/melix99/telegrand/" id="@app-id@" gettext-domain="@gettext-package@">
+    <key name="custom-server-address" type="s">
+      <default>''</default>
+      <summary>Custom server address</summary>
+      <description>Custom server address</description>
+    </key>
+  </schema>
+</schemalist>

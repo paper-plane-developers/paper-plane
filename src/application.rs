@@ -4,10 +4,13 @@ use gtk::{gdk, gio, glib};
 use gtk_macros::action;
 
 use crate::config;
+use crate::preferences_window::PreferencesWindow;
 use crate::window::TelegrandWindow;
 
 mod imp {
     use super::*;
+    use grammers_client::{Config, InitParams};
+    use grammers_session::FileSession;
     use once_cell::sync::OnceCell;
     use tokio::sync::mpsc;
 
@@ -48,7 +51,27 @@ mod imp {
                 .set(window.downgrade())
                 .expect("Window already set");
 
-            telegram::spawn(tg_sender, gtk_receiver);
+            let settings = gio::Settings::new(config::APP_ID);
+            let server_address = settings.get_string("custom-server-address");
+            let params;
+            if let Ok(server_address) = server_address.parse() {
+                params = InitParams {
+                    server_addr: Some(server_address),
+                    ..Default::default()
+                };
+            } else {
+                params = Default::default();
+            }
+
+            let api_id = config::TG_API_ID.to_owned();
+            let api_hash = config::TG_API_HASH.to_owned();
+            let config = Config {
+                session: FileSession::load_or_create("telegrand.session").unwrap(),
+                api_id,
+                api_hash: api_hash.clone(),
+                params: params,
+            };
+            telegram::spawn(tg_sender, gtk_receiver, config);
 
             app.setup_gactions();
             app.get_main_window().present();
@@ -82,6 +105,15 @@ impl TelegrandApplication {
     }
 
     fn setup_gactions(&self) {
+        // Preferences
+        action!(
+            self,
+            "preferences",
+            glib::clone!(@weak self as app => move |_, _| {
+                app.show_preferences_window();
+            })
+        );
+
         // About
         action!(
             self,
@@ -105,7 +137,7 @@ impl TelegrandApplication {
     }
 
     fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialogBuilder::new()
+        let about_dialog = gtk::AboutDialogBuilder::new()
             .program_name("Telegrand")
             .license_type(gtk::License::Gpl30)
             .website("https://github.com/melix99/telegrand/")
@@ -115,8 +147,13 @@ impl TelegrandApplication {
             .authors(vec!["Marco Melorio".into()])
             .artists(vec!["Marco Melorio".into()])
             .build();
+        about_dialog.show();
+    }
 
-        dialog.show();
+    fn show_preferences_window(&self) {
+        let preferences_window = PreferencesWindow::new();
+        preferences_window.set_transient_for(Some(&self.get_main_window()));
+        preferences_window.show();
     }
 
     pub fn run(&self) {
