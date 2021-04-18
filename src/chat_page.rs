@@ -5,8 +5,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
-use tokio::sync::mpsc;
+use std::sync::Arc;
+use tokio::sync::{Mutex, mpsc};
 
 use crate::message_row::MessageRow;
 use crate::telegram;
@@ -80,7 +80,7 @@ impl ChatPage {
         let message_entry = &*self_.message_entry;
         self_.send_message_button
             .connect_clicked(glib::clone!(@weak message_entry, @strong gtk_sender => move |_| {
-                let message = InputMessage::text(message_entry.get_text());
+                let message = InputMessage::text(message_entry.text());
                 message_entry.set_text("");
 
                 telegram::send_gtk_event(&gtk_sender,
@@ -111,7 +111,7 @@ impl ChatPage {
         // be the last child of the message list, so do all the checking to
         // see if it´s actually a row.
         let previous_row;
-        let last_child = self_.message_list.get_last_child();
+        let last_child = self_.message_list.last_child();
         if let Some(last_child) = last_child {
             if let Ok(last_child) = last_child.downcast::<gtk::ListBoxRow>() {
                 previous_row = Some(last_child);
@@ -134,7 +134,7 @@ impl ChatPage {
     pub fn prepend_messages(&self, messages: Vec<Message>, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
         let self_ = imp::ChatPage::from_instance(self);
         let mut messages_map = self_.messages_map.borrow_mut();
-        let past_first_child = self_.message_list.get_first_child();
+        let past_first_child = self_.message_list.first_child();
 
         // Reverse insert messages (oldest to newest) to automatically check
         // the previous row for every added message

@@ -201,7 +201,7 @@ impl TelegrandWindow {
                         let notification = gio::Notification::new("Telegrand");
                         notification.set_title(chat_name);
                         notification.set_body(Some(message_text));
-                        let app = window.get_application().unwrap();
+                        let app = window.application().unwrap();
                         app.send_notification(Some("new-message"), &notification);
 
                         // Increment dialog's unread count (if it exists)

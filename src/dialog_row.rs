@@ -3,7 +3,8 @@ use grammers_client::types::Dialog;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use std::sync::{Arc, Mutex};
+use tokio::sync::Mutex;
+use std::sync::Arc;
 
 mod imp {
     use super::*;

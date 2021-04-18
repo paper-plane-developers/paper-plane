@@ -79,7 +79,7 @@ impl AddAccountWindow {
             .connect_clicked(glib::clone!(@weak content_leaflet, @weak previous_button => move |_| {
                 content_leaflet.navigate(adw::NavigationDirection::Back);
 
-                let page_name = content_leaflet.get_visible_child_name().unwrap();
+                let page_name = content_leaflet.visible_child_name().unwrap();
                 if page_name == "phone_number_page" {
                     previous_button.set_visible(false);
                 }
@@ -89,15 +89,15 @@ impl AddAccountWindow {
         let confirmation_code_entry = &*self_.confirmation_code_entry;
         self_.next_button
             .connect_clicked(glib::clone!(@weak content_leaflet, @weak phone_number_entry, @weak confirmation_code_entry, @strong gtk_sender => move |_| {
-                let page_name = content_leaflet.get_visible_child_name().unwrap();
+                let page_name = content_leaflet.visible_child_name().unwrap();
                 if page_name == "phone_number_page" {
                     telegram::send_gtk_event(&gtk_sender,
                         telegram::GtkEvent::SendPhoneNumber(
-                            phone_number_entry.get_text().to_string()));
+                            phone_number_entry.text().to_string()));
                 } else if page_name == "confirmation_code_page" {
                     telegram::send_gtk_event(&gtk_sender,
                         telegram::GtkEvent::SendConfirmationCode(
-                            confirmation_code_entry.get_text().to_string()));
+                            confirmation_code_entry.text().to_string()));
                 }
             }));
     }

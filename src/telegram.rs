@@ -3,14 +3,14 @@ use grammers_client::client::chats::AuthorizationError;
 use grammers_client::client::messages::MessageIter;
 use grammers_client::types::{Dialog, LoginToken, Message, Photo};
 use grammers_client::types::photo_sizes::VecExt;
-use grammers_session::FileSession;
+use grammers_session::Session;
 use gtk::glib;
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use tokio::{runtime, task};
-use tokio::sync::mpsc;
+use tokio::sync::{Mutex, mpsc};
 
 use crate::config;
 
@@ -67,81 +67,19 @@ pub fn send_gtk_event(gtk_sender: &mpsc::Sender<GtkEvent>, event: GtkEvent) {
         .block_on(gtk_sender.send(event));
 }
 
-async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>) -> Result {
-    let api_id = config::TG_API_ID.to_owned();
-    let api_hash = config::TG_API_HASH.to_owned();
-
-    let mut client = Client::connect(Config {
-        session: FileSession::load_or_create("telegrand.session")?,
-        api_id,
-        api_hash: api_hash.clone(),
-        params: Default::default(),
-    })
-    .await?;
-
-    if !client.is_authorized().await? {
-        tg_sender.send(TelegramEvent::AccountNotAuthorized).unwrap();
-
-        let mut token: Option<LoginToken> = None;
-        while let Some(event) = gtk_receiver.recv().await {
-            match event {
-                GtkEvent::SendPhoneNumber(number) => {
-                    match client.request_login_code(&number, api_id, &api_hash).await {
-                        Ok(token_) => {
-                            token = Some(token_);
-                            tg_sender.send(TelegramEvent::NeedConfirmationCode).unwrap();
-                        }
-                        Err(error) => {
-                            tg_sender.send(TelegramEvent::PhoneNumberError(error)).unwrap();
-                        }
-                    };
-                }
-                GtkEvent::SendConfirmationCode(code) => {
-                    match client.sign_in(token.as_ref().unwrap(), &code).await {
-                        Ok(_) => {
-                            // TODO: sign out when closing the app if this fails
-                            client.session().save()?;
-                            break;
-                        }
-                        Err(error) => {
-                            tg_sender.send(TelegramEvent::ConfirmationCodeError(error)).unwrap();
-                        }
-                    }
-                }
-                _ => {}
-            }
-        }
-    }
-
-    tg_sender.send(TelegramEvent::AccountAuthorized).unwrap();
-
-    let mut client_handle = client.handle();
-    let tg_sender_clone = tg_sender.clone();
-    task::spawn(async move {
-        while let Some(updates) = client.next_updates().await.unwrap() {
-            for update in updates {
-                match update {
-                    Update::NewMessage(message) => {
-                        tg_sender_clone.send(TelegramEvent::NewMessage(message)).unwrap();
-                    }
-                    _ => {}
-                }
-            }
-        }
-    });
-
+async fn handle_gtk_receiver(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>, mut client: Client) {
     while let Some(event) = gtk_receiver.recv().await {
         match event {
             GtkEvent::RequestDialogs => {
-                let mut dialogs = client_handle.iter_dialogs();
+                let mut dialogs = client.iter_dialogs();
                 while let Some(dialog) = dialogs.next().await.unwrap() {
-                    let iterator = client_handle.iter_messages(dialog.chat());
+                    let iterator = client.iter_messages(dialog.chat());
                     tg_sender.send(TelegramEvent::RequestedDialog(dialog, iterator)).unwrap();
                 }
             }
             GtkEvent::RequestNextMessages(iterator, chat_id) => {
                 // Return the next 20 messages
-                let mut iterator = iterator.lock().unwrap();
+                let mut iterator = iterator.lock().await;
                 let mut messages = Vec::<Message>::new();
                 for _ in 0..20 {
                     if let Some(message) = iterator.next().await.unwrap() {
@@ -180,9 +118,74 @@ async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::R
                     path, chat_id, message_id)).unwrap();
             }
             GtkEvent::SendMessage(dialog, message) => {
-                client_handle.send_message(dialog.chat(), message).await?;
+                client.send_message(dialog.chat(), message).await.unwrap();
             }
             _ => {}
+        }
+    }
+}
+
+async fn start(tg_sender: glib::Sender<TelegramEvent>, mut gtk_receiver: mpsc::Receiver<GtkEvent>) -> Result {
+    let api_id = config::TG_API_ID.to_owned();
+    let api_hash = config::TG_API_HASH.to_owned();
+
+    let mut client = Client::connect(Config {
+        session: Session::load_file_or_create("telegrand.session")?,
+        api_id,
+        api_hash: api_hash.clone(),
+        params: Default::default(),
+    })
+    .await?;
+
+    if !client.is_authorized().await? {
+        tg_sender.send(TelegramEvent::AccountNotAuthorized).unwrap();
+
+        let mut token: Option<LoginToken> = None;
+        while let Some(event) = gtk_receiver.recv().await {
+            match event {
+                GtkEvent::SendPhoneNumber(number) => {
+                    match client.request_login_code(&number, api_id, &api_hash).await {
+                        Ok(token_) => {
+                            token = Some(token_);
+                            tg_sender.send(TelegramEvent::NeedConfirmationCode).unwrap();
+                        }
+                        Err(error) => {
+                            tg_sender.send(TelegramEvent::PhoneNumberError(error)).unwrap();
+                        }
+                    };
+                }
+                GtkEvent::SendConfirmationCode(code) => {
+                    match client.sign_in(token.as_ref().unwrap(), &code).await {
+                        Ok(_) => {
+                            // TODO: save the session
+                            break;
+                        }
+                        Err(error) => {
+                            tg_sender.send(TelegramEvent::ConfirmationCodeError(error)).unwrap();
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    tg_sender.send(TelegramEvent::AccountAuthorized).unwrap();
+
+    let tg_sender_clone = tg_sender.clone();
+    let client_clone = client.clone();
+    task::spawn(async move {
+        handle_gtk_receiver(tg_sender_clone, gtk_receiver, client_clone).await
+    });
+
+    // Handle updates received from Telegram
+    while let Some(updates) = client.next_updates().await? {
+        for update in updates {
+            match update {
+                Update::NewMessage(message) => {
+                    tg_sender.send(TelegramEvent::NewMessage(message)).unwrap();
+                }
+                _ => {}
+            }
         }
     }
 
