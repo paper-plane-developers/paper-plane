@@ -11,11 +11,15 @@ use crate::telegram;
 mod imp {
     use super::*;
     use adw::subclass::prelude::*;
+    use glib::signal::Inhibit;
     use gtk::CompositeTemplate;
+    use log::warn;
     use std::cell::RefCell;
     use std::collections::HashMap;
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    use crate::config;
+
+    #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
     pub struct TelegrandWindow {
         #[template_child]
@@ -31,6 +35,7 @@ mod imp {
         #[template_child]
         pub add_account_window: TemplateChild<AddAccountWindow>,
         pub dialogs_map: RefCell<HashMap<i32, DialogRow>>,
+        pub settings: gio::Settings,
     }
 
     #[glib::object_subclass]
@@ -38,6 +43,19 @@ mod imp {
         const NAME: &'static str = "TelegrandWindow";
         type Type = super::TelegrandWindow;
         type ParentType = adw::ApplicationWindow;
+
+        fn new() -> Self {
+            Self {
+                chat_name_label: TemplateChild::default(),
+                content_leaflet: TemplateChild::default(),
+                back_button: TemplateChild::default(),
+                dialog_list: TemplateChild::default(),
+                chat_stack: TemplateChild::default(),
+                add_account_window: TemplateChild::default(),
+                dialogs_map: RefCell::default(),
+                settings: gio::Settings::new(config::APP_ID),
+            }
+        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -51,11 +69,21 @@ mod imp {
     impl ObjectImpl for TelegrandWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            obj.load_window_size();
         }
     }
 
     impl WidgetImpl for TelegrandWindow {}
-    impl WindowImpl for TelegrandWindow {}
+    impl WindowImpl for TelegrandWindow {
+        fn close_request(&self, obj: &Self::Type) -> Inhibit {
+            if let Err(err) = obj.save_window_size() {
+                warn!("Failed to save window state, {}", &err);
+            }
+            Inhibit(false)
+        }
+    }
+
     impl ApplicationWindowImpl for TelegrandWindow {}
     impl AdwApplicationWindowImpl for TelegrandWindow {}
 }
@@ -214,5 +242,30 @@ impl TelegrandWindow {
 
             glib::Continue(true)
         }));
+    }
+
+    fn save_window_size(&self) -> Result<(), glib::BoolError> {
+        let settings = &imp::TelegrandWindow::from_instance(self).settings;
+
+        let size = self.default_size();
+        settings.set_int("window-width", size.0)?;
+        settings.set_int("window-height", size.1)?;
+
+        settings.set_boolean("is-maximized", self.is_maximized())?;
+
+        Ok(())
+    }
+
+    fn load_window_size(&self) {
+        let settings = &imp::TelegrandWindow::from_instance(self).settings;
+
+        let width = settings.get_int("window-width");
+        let height = settings.get_int("window-height");
+        self.set_default_size(width, height);
+
+        let is_maximized = settings.get_boolean("is-maximized");
+        if is_maximized {
+            self.maximize();
+        }
     }
 }

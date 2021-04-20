@@ -14,8 +14,6 @@
   </menu>
   <template class="TelegrandWindow" parent="AdwApplicationWindow">
     <property name="title">Telegrand</property>
-    <property name="default-width">870</property>
-    <property name="default-height">600</property>
     <child>
       <object class="AdwLeaflet" id="content_leaflet">
         <child>
