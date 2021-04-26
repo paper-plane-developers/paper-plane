@@ -8,16 +8,3 @@ option(
   value: 'default',
   description: 'The build profile for Telegrand. One of "default" or "development".'
 )
-
-option(
-  'tg_api_hash',
-  type: 'string',
-  description: 'Telegram API ID'
-)
-
-option(
-  'tg_api_id',
-  type: 'integer',
-  value: 1,
-  description: 'Telegram API Hash'
-)

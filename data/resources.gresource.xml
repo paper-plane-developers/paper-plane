@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/github/melix99/telegrand/">
-    <file preprocess="xml-stripblanks" alias="add_account_window.ui">resources/ui/add_account_window.ui</file>
-    <file preprocess="xml-stripblanks" alias="chat_page.ui">resources/ui/chat_page.ui</file>
-    <file preprocess="xml-stripblanks" alias="dialog_row.ui">resources/ui/dialog_row.ui</file>
-    <file preprocess="xml-stripblanks" alias="preferences_window.ui">resources/ui/preferences_window.ui</file>
-    <file preprocess="xml-stripblanks" alias="window.ui">resources/ui/window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts.ui">resources/ui/shortcuts.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">resources/ui/window.ui</file>
 
-    <file alias="style.css">resources/style.css</file>
+    <file compressed="true" alias="style.css">resources/style.css</file>
   </gresource>
 </gresources>
