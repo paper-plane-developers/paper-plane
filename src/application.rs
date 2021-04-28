@@ -1,37 +1,37 @@
 use crate::config;
-use crate::window::ExampleApplicationWindow;
+use crate::Window;
 use gio::ApplicationFlags;
 use glib::clone;
-use glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 use gtk_macros::action;
 use log::{debug, info};
-use once_cell::sync::OnceCell;
 
 mod imp {
     use super::*;
+    use glib::WeakRef;
+    use once_cell::sync::OnceCell;
 
     #[derive(Debug, Default)]
-    pub struct ExampleApplication {
-        pub window: OnceCell<WeakRef<ExampleApplicationWindow>>,
+    pub struct Application {
+        pub window: OnceCell<WeakRef<Window>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplication {
-        const NAME: &'static str = "ExampleApplication";
-        type Type = super::ExampleApplication;
+    impl ObjectSubclass for Application {
+        const NAME: &'static str = "Application";
+        type Type = super::Application;
         type ParentType = gtk::Application;
     }
 
-    impl ObjectImpl for ExampleApplication {}
+    impl ObjectImpl for Application {}
 
-    impl gio::subclass::prelude::ApplicationImpl for ExampleApplication {
+    impl gio::subclass::prelude::ApplicationImpl for Application {
         fn activate(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::activate");
+            debug!("GtkApplication<Application>::activate");
 
-            let priv_ = ExampleApplication::from_instance(app);
+            let priv_ = Application::from_instance(app);
             if let Some(window) = priv_.window.get() {
                 let window = window.upgrade().unwrap();
                 window.show();
@@ -42,7 +42,7 @@ mod imp {
             app.set_resource_base_path(Some("/com/github/melix99/telegrand/"));
             app.setup_css();
 
-            let window = ExampleApplicationWindow::new(app);
+            let window = Window::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -54,20 +54,20 @@ mod imp {
         }
 
         fn startup(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::startup");
+            debug!("GtkApplication<Application>::startup");
             self.parent_startup(app);
         }
     }
 
-    impl GtkApplicationImpl for ExampleApplication {}
+    impl GtkApplicationImpl for Application {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplication(ObjectSubclass<imp::ExampleApplication>)
+    pub struct Application(ObjectSubclass<imp::Application>)
         @extends gio::Application, gtk::Application, @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl ExampleApplication {
+impl Application {
     pub fn new() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(config::APP_ID)),
@@ -76,8 +76,8 @@ impl ExampleApplication {
         .expect("Application initialization failed...")
     }
 
-    fn get_main_window(&self) -> ExampleApplicationWindow {
-        let priv_ = imp::ExampleApplication::from_instance(self);
+    fn get_main_window(&self) -> Window {
+        let priv_ = imp::Application::from_instance(self);
         priv_.window.get().unwrap().upgrade().unwrap()
     }
 
@@ -126,7 +126,7 @@ impl ExampleApplication {
         let dialog = gtk::AboutDialogBuilder::new()
             .program_name("Telegrand")
             .logo_icon_name(config::APP_ID)
-            .license_type(gtk::License::MitX11)
+            .license_type(gtk::License::Gpl30)
             .website("https://github.com/melix99/telegrand/")
             .version(config::VERSION)
             .transient_for(&self.get_main_window())

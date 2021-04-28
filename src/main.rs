@@ -1,9 +1,14 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod login;
 mod window;
 
-use application::ExampleApplication;
+use self::application::Application;
+use self::login::Login;
+use self::window::Window;
+
+use adw;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use gtk::gio;
@@ -21,10 +26,12 @@ fn main() {
     gtk::glib::set_prgname(Some("telegrand"));
 
     gtk::init().expect("Unable to start GTK4");
+    adw::init();
 
-    let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
+    let res = gio::Resource::load(RESOURCES_FILE)
+        .expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = ExampleApplication::new();
+    let app = Application::new();
     app.run();
 }

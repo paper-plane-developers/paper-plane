@@ -8,7 +8,7 @@ A GTK Telegram client built to be well integrated with the GNOME desktop environ
 
 ## Build Instructions
 
-```
+```shell
 meson . _build --prefix=/usr/local
 ninja -C _build
 sudo ninja -C _build install
