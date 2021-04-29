@@ -28,6 +28,23 @@
     },
     "modules": [
         {
+            "name": "libadwaita",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dintrospection=disabled",
+                "-Dvapi=false",
+                "-Dgtk_doc=false",
+                "-Dtests=false",
+                "-Dexamples=false"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+                    "branch": "main"
+                }
+            ]
+        },{
             "name": "telegrand",
             "buildsystem": "meson",
             "run-tests": true,
