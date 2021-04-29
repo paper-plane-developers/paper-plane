@@ -9,21 +9,18 @@
   <description>
     <p>A GTK Telegram client built to be well integrated with the GNOME desktop environment.</p>
   </description>
-
   <screenshots>
     <screenshot type="default">
       <image>https://github.com/melix99/telegrand/raw/master/data/resources/screenshots/screenshot1.png</image>
       <caption>Main Window</caption>
     </screenshot>
   </screenshots>
-
   <url type="homepage">https://github.com/melix99/telegrand</url>
   <url type="bugtracker">https://github.com/melix99/telegrand/issues</url>
   <content_rating type="oars-1.0" />
-
   <releases>
+    <release version="0.0.1" date="2019-07-11" />
   </releases>
-
   <kudos>
      <!--
        GNOME Software kudos:
