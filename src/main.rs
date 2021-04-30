@@ -12,6 +12,11 @@ use adw;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use gtk::gio;
+use once_cell::sync::Lazy;
+use tokio;
+
+pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
+    Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
 
 fn main() {
     // Initialize logger, debug is carried out via debug!, info!, and warn!.

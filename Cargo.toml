@@ -5,11 +5,13 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
-log = "0.4"
-pretty_env_logger = "0.4"
 gettext-rs = { version = "0.6", features = ["gettext-system"] }
 gtk-macros = "0.3"
+log = "0.4"
 once_cell = "1.5"
+pretty_env_logger = "0.4"
+rust-tdlib = "0.2"
+tokio = { version = "1.5", features = ["rt-multi-thread", "time"] }
 
 [dependencies.adw]
 package = "libadwaita"

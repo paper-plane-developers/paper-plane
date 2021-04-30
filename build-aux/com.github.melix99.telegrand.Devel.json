@@ -45,6 +45,20 @@
                 }
             ]
         },{
+            "name": "tdlib",
+            "buildsystem": "cmake",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz",
+                    "sha256": "3daaf419f1738b7e0ac0e8a08f07e01a1faaf51175a59c0b113c15e30c69e173"
+                }
+            ]
+        },{
             "name": "telegrand",
             "buildsystem": "meson",
             "run-tests": true,

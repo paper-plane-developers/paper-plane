@@ -1,8 +1,9 @@
-use crate::Application;
+use crate::{Application, RUNTIME};
 use crate::config::{APP_ID, PROFILE};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use rust_tdlib::client::Worker;
 
 mod imp {
     use super::*;
@@ -10,6 +11,11 @@ mod imp {
     use adw::subclass::prelude::AdwApplicationWindowImpl;
     use gtk::{CompositeTemplate, Inhibit, gio};
     use log::warn;
+    use rust_tdlib::client::ConsoleAuthStateHandler;
+    use rust_tdlib::client::client::ClientState;
+    use rust_tdlib::client::tdlib_client::TdJson;
+    use std::cell::RefCell;
+    use tokio::task::JoinHandle;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/window.ui")]
@@ -17,6 +23,8 @@ mod imp {
         #[template_child]
         pub login: TemplateChild<Login>,
         pub settings: gio::Settings,
+        pub worker: RefCell<Option<Worker<ConsoleAuthStateHandler, TdJson>>>,
+        pub waiter: RefCell<Option<JoinHandle<ClientState>>>,
     }
 
     #[glib::object_subclass]
@@ -29,6 +37,8 @@ mod imp {
             Self {
                 login: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
+                worker: RefCell::default(),
+                waiter: RefCell::default(),
             }
         }
 
@@ -57,6 +67,9 @@ mod imp {
 
             // Load latest window state
             obj.load_window_size();
+
+            // Setup connection to telegram
+            obj.setup_telegram();
         }
     }
 
@@ -64,6 +77,9 @@ mod imp {
     impl WindowImpl for Window {
         // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
+            // Stop telegram connection
+            obj.stop_telegram();
+
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
             }
@@ -109,5 +125,26 @@ impl Window {
         if is_maximized {
             self.maximize();
         }
+    }
+
+    fn setup_telegram(&self) {
+        let mut worker = Worker::builder().build().unwrap();
+        let _self = &imp::Window::from_instance(self);
+
+        RUNTIME.block_on(async {
+            let waiter = worker.start();
+            _self.waiter.replace(Some(waiter));
+        });
+
+        _self.worker.replace(Some(worker));
+    }
+
+    fn stop_telegram(&self) {
+        let _self = &imp::Window::from_instance(self);
+        _self.worker.borrow().as_ref().unwrap().stop();
+
+        RUNTIME.block_on(async {
+            _self.waiter.borrow_mut().as_mut().unwrap().await.unwrap();
+        });
     }
 }
