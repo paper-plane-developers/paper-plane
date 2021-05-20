@@ -8,7 +8,7 @@ mod imp {
     use gtk::CompositeTemplate;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/login.ui")]
+    #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
     pub struct Login {
     }
 

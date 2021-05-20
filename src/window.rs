@@ -16,7 +16,7 @@ mod imp {
     use tokio::task::JoinHandle;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/window.ui")]
+    #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
     pub struct Window {
         #[template_child]
         pub login: TemplateChild<Login>,
@@ -54,7 +54,7 @@ mod imp {
             self.parent_constructed(obj);
 
             let builder =
-                gtk::Builder::from_resource("/com/github/melix99/telegrand/shortcuts.ui");
+                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/shortcuts.ui");
             let shortcuts = builder.object("shortcuts").unwrap();
             obj.set_help_overlay(Some(&shortcuts));
 
