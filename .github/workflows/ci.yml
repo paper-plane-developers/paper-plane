@@ -1,20 +1,15 @@
 name: CI
-
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
-
 jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-20.04
-
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-40
       options: --privileged
-
     steps:
     - uses: actions/checkout@v2
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v3
