@@ -97,7 +97,7 @@
                                       <object class="AdwActionRow">
                                         <property name="title" translatable="yes">Encryption Key</property>
                                         <child>
-                                          <object class="GtkPasswordEntry" id="encryption_key_entry">
+                                          <object class="GtkPasswordEntry" id="custom_encryption_key_entry">
                                             <property name="activates-default">True</property>
                                             <property name="valign">center</property>
                                           </object>
@@ -124,7 +124,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="phone_number_error_label">
+                              <object class="GtkLabel" id="welcome_page_error_label">
                                 <property name="visible">False</property>
                                 <style>
                                   <class name="error"/>
@@ -237,6 +237,62 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="password_error_label">
+                                <property name="visible">False</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">encryption-key-page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">system-lock-screen-symbolic</property>
+                    <property name="title" translatable="yes">Enter the Encryption Key</property>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="child">
+                                      <object class="GtkPasswordEntry" id="encryption_key_entry">
+                                        <property name="activates-default">True</property>
+                                        <property name="placeholder-text" translatable="yes">Encryption Key</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="encryption_key_error_label">
                                 <property name="visible">False</property>
                                 <style>
                                   <class name="error"/>

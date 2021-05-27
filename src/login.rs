@@ -33,9 +33,9 @@ mod imp {
         #[template_child]
         pub phone_number_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub phone_number_error_label: TemplateChild<gtk::Label>,
+        pub welcome_page_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
+        pub custom_encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub use_test_dc_switch: TemplateChild<gtk::Switch>,
         #[template_child]
@@ -46,6 +46,10 @@ mod imp {
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub password_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
+        #[template_child]
+        pub encryption_key_error_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -116,7 +120,7 @@ impl Login {
                 self.send_tdlib_parameters();
             }
             AuthorizationState::WaitEncryptionKey(_) => {
-                self.send_encryption_key();
+                self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
             }
@@ -155,9 +159,9 @@ impl Login {
         let priv_ = imp::Login::from_instance(self);
         let visible_page = priv_.content.visible_child_name().unwrap();
         if visible_page == "phone-number-page" {
-            let encryption_key = priv_.encryption_key_entry.text().to_string();
+            let encryption_key = priv_.custom_encryption_key_entry.text().to_string();
             if !encryption_key.is_empty() {
-                self.send_encryption_key();
+                self.change_encryption_key();
             }
 
             self.send_phone_number();
@@ -165,6 +169,8 @@ impl Login {
             self.send_code();
         } else if visible_page == "password-page" {
             self.send_password();
+        } else if visible_page == "encryption-key-page" {
+            self.send_encryption_key(false);
         }
     }
 
@@ -207,18 +213,56 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let phone_number_error_label = &imp::Login::from_instance(&obj).phone_number_error_label;
-                    phone_number_error_label.set_text(&err.message);
-                    phone_number_error_label.set_visible(true);
+                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
+                    welcome_page_error_label.set_text(&err.message);
+                    welcome_page_error_label.set_visible(true);
                 }
             }),
         );
     }
 
-    fn send_encryption_key(&self) {
+    fn send_encryption_key(&self, use_empty_key: bool) {
         let priv_ = imp::Login::from_instance(self);
         let client_id = priv_.client_id.get();
-        let encryption_key = priv_.encryption_key_entry.text().to_string();
+        let encryption_key = {
+            if use_empty_key {
+                "".to_string()
+            } else {
+                priv_.encryption_key_entry.text().to_string()
+            }
+        };
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                functions::check_database_encryption_key(client_id, encryption_key).await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                if let Err(err) = result {
+                    let priv_ = imp::Login::from_instance(&obj);
+
+                    // If we were trying an empty key, we now show the
+                    // encryption key page to let the user input its key.
+                    // Otherwise just show the error in the relative label.
+                    if use_empty_key {
+                        priv_.content.set_visible_child_name("encryption-key-page");
+                    } else {
+                        let encryption_key_error_label = &priv_.encryption_key_error_label;
+                        encryption_key_error_label.set_text(&err.message);
+                        encryption_key_error_label.set_visible(true);
+                    }
+                }
+
+                if !use_empty_key {
+                    obj.unfreeze();
+                }
+            }),
+        );
+    }
+
+    fn change_encryption_key(&self) {
+        let priv_ = imp::Login::from_instance(self);
+        let client_id = priv_.client_id.get();
+        let encryption_key = priv_.custom_encryption_key_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -226,9 +270,9 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let phone_number_error_label = &imp::Login::from_instance(&obj).phone_number_error_label;
-                    phone_number_error_label.set_text(&err.message);
-                    phone_number_error_label.set_visible(true);
+                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
+                    welcome_page_error_label.set_text(&err.message);
+                    welcome_page_error_label.set_visible(true);
                 }
             }),
         );
@@ -246,9 +290,9 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let phone_number_error_label = &imp::Login::from_instance(&obj).phone_number_error_label;
-                    phone_number_error_label.set_text(&err.message);
-                    phone_number_error_label.set_visible(true);
+                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
+                    welcome_page_error_label.set_text(&err.message);
+                    welcome_page_error_label.set_visible(true);
                 }
 
                 obj.unfreeze();
