@@ -21,6 +21,8 @@ mod imp {
     pub struct Login {
         pub client_id: Cell<i32>,
         #[template_child]
+        pub previous_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub next_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub next_label: TemplateChild<gtk::Label>,
@@ -50,6 +52,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            klass.install_action("login.previous", None, move |widget, _, _| widget.previous());
             klass.install_action("login.next", None, move |widget, _, _| widget.next());
         }
 
@@ -61,6 +64,19 @@ mod imp {
     impl ObjectImpl for Login {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            // Show the previous button on all pages except the
+            // "phone number" page
+            let priv_ = imp::Login::from_instance(obj);
+            let previous_button = &*priv_.previous_button;
+            priv_.content.connect_property_visible_child_name_notify(clone!(@weak previous_button => move |content| {
+                let visible_page = content.visible_child_name().unwrap();
+                if visible_page == "phone_number_page" {
+                    previous_button.set_visible(false);
+                } else {
+                    previous_button.set_visible(true);
+                }
+            }));
         }
     }
 
@@ -117,12 +133,16 @@ impl Login {
         }
     }
 
-    fn next(&self) {
+    fn previous(&self) {
         let content = &imp::Login::from_instance(self).content;
-        let visible_page = content.visible_child_name().unwrap();
+        content.set_visible_child_name("phone_number_page");
+    }
 
+    fn next(&self) {
         self.freeze();
 
+        let content = &imp::Login::from_instance(self).content;
+        let visible_page = content.visible_child_name().unwrap();
         if visible_page == "phone_number_page" {
             self.send_phone_number();
         } else if visible_page == "code_page" {
@@ -133,18 +153,19 @@ impl Login {
     }
 
     fn freeze(&self) {
-        let priv_ = imp::Login::from_instance(&self);
-
+        self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
-        priv_.next_stack
-            .set_visible_child(&priv_.next_spinner.get());
+
+        let priv_ = imp::Login::from_instance(&self);
+        priv_.next_stack.set_visible_child(&priv_.next_spinner.get());
         priv_.content.set_sensitive(false);
     }
 
     fn unfreeze(&self) {
-        let priv_ = imp::Login::from_instance(&self);
-
+        self.action_set_enabled("login.previous", true);
         self.action_set_enabled("login.next", true);
+
+        let priv_ = imp::Login::from_instance(&self);
         priv_.next_stack.set_visible_child(&priv_.next_label.get());
         priv_.content.set_sensitive(true);
     }

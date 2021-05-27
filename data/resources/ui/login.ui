@@ -6,6 +6,14 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkHeaderBar">
+            <child type="start">
+              <object class="GtkButton" id="previous_button">
+                <property name="visible">False</property>
+                <property name="action_name">login.previous</property>
+                <property name="label" translatable="yes">_Previous</property>
+                <property name="use_underline">True</property>
+              </object>
+            </child>
             <child type="end">
               <object class="GtkButton">
                 <property name="action_name">login.next</property>
