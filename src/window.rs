@@ -1,10 +1,14 @@
 use crate::{Application, RUNTIME};
 use crate::config::{APP_ID, PROFILE};
+use glib::{SyncSender, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use gtk_macros::send;
+use log::error;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use tdgrand::enums::Update;
 
 mod imp {
     use super::*;
@@ -81,6 +85,7 @@ mod imp {
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
             }
+
             Inhibit(false)
         }
     }
@@ -128,9 +133,12 @@ impl Window {
     fn start_td_receiver(&self) {
         let priv_ = imp::Window::from_instance(self);
         let receiver_flag = priv_.receiver_flag.clone();
+        let sender = self.create_new_update_sender();
         let handle = RUNTIME.spawn(async move {
             while receiver_flag.load(Ordering::Acquire) {
-                tdgrand::receive();
+                if let Some((update, _)) = tdgrand::receive() {
+                    send!(sender, update);
+                }
             }
         });
 
@@ -143,5 +151,26 @@ impl Window {
         RUNTIME.block_on(async move {
             priv_.receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
         });
+    }
+
+    fn create_new_update_sender(&self) -> SyncSender<Update> {
+        let (sender, receiver) =
+            glib::MainContext::sync_channel::<Update>(Default::default(), 100);
+        receiver.attach(
+            None,
+            clone!(@weak self as obj => @default-return glib::Continue(false), move |update| {
+                obj.handle_update(update);
+
+                glib::Continue(true)
+            }),
+        );
+
+        sender
+    }
+
+    fn handle_update(&self, update: Update) {
+        if let Update::AuthorizationState(_update) = update {
+            todo!()
+        }
     }
 }
