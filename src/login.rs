@@ -35,6 +35,8 @@ mod imp {
         #[template_child]
         pub phone_number_error_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
+        #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub code_error_label: TemplateChild<gtk::Label>,
@@ -141,9 +143,14 @@ impl Login {
     fn next(&self) {
         self.freeze();
 
-        let content = &imp::Login::from_instance(self).content;
-        let visible_page = content.visible_child_name().unwrap();
+        let priv_ = imp::Login::from_instance(self);
+        let visible_page = priv_.content.visible_child_name().unwrap();
         if visible_page == "phone-number-page" {
+            let encryption_key = priv_.encryption_key_entry.text().to_string();
+            if !encryption_key.is_empty() {
+                self.send_encryption_key();
+            }
+
             self.send_phone_number();
         } else if visible_page == "code-page" {
             self.send_code();
@@ -156,7 +163,7 @@ impl Login {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
 
-        let priv_ = imp::Login::from_instance(&self);
+        let priv_ = imp::Login::from_instance(self);
         priv_.next_stack.set_visible_child(&priv_.next_spinner.get());
         priv_.content.set_sensitive(false);
     }
@@ -165,7 +172,7 @@ impl Login {
         self.action_set_enabled("login.previous", true);
         self.action_set_enabled("login.next", true);
 
-        let priv_ = imp::Login::from_instance(&self);
+        let priv_ = imp::Login::from_instance(self);
         priv_.next_stack.set_visible_child(&priv_.next_label.get());
         priv_.content.set_sensitive(true);
     }
@@ -198,12 +205,13 @@ impl Login {
     }
 
     fn send_encryption_key(&self) {
-        // TODO: make the key customizable
-        let client_id = imp::Login::from_instance(self).client_id.get();
+        let priv_ = imp::Login::from_instance(self);
+        let client_id = priv_.client_id.get();
+        let encryption_key = priv_.encryption_key_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::check_database_encryption_key(client_id, String::new()).await
+                functions::set_database_encryption_key(client_id, encryption_key).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
