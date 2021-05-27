@@ -8,6 +8,7 @@
           <object class="GtkHeaderBar">
             <child type="end">
               <object class="GtkButton">
+                <property name="action_name">login.next</property>
                 <property name="use_underline">True</property>
                 <property name="label" translatable="yes">_Next</property>
                 <style>
@@ -18,32 +19,81 @@
           </object>
         </child>
         <child>
-          <object class="AdwStatusPage">
-            <property name="icon-name">user-available-symbolic</property>
-            <property name="title" translatable="yes">Welcome to Telegrand</property>
+          <object class="AdwLeaflet" id="content">
+            <property name="can-unfold">False</property>
+            <property name="vexpand">True</property>
             <child>
-              <object class="GtkListBox">
-                <child>
-                  <object class="GtkListBoxRow">
-                    <property name="halign">center</property>
-                    <property name="focusable">False</property>
-                    <property name="selectable">False</property>
-                    <property name="activatable">False</property>
-                    <property name="child">
-                      <object class="GtkEntry" id="phone_number_entry">
-                        <property name="activates-default">True</property>
-                        <property name="placeholder-text">Phone Number</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="margin-start">6</property>
-                        <property name="margin-end">6</property>
+              <object class="AdwLeafletPage">
+                <property name="name">phone_number_page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">user-available-symbolic</property>
+                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <child>
+                      <object class="GtkListBox">
+                        <child>
+                          <object class="GtkListBoxRow">
+                            <property name="halign">center</property>
+                            <property name="focusable">False</property>
+                            <property name="selectable">False</property>
+                            <property name="activatable">False</property>
+                            <property name="child">
+                              <object class="GtkEntry" id="phone_number_entry">
+                                <property name="activates-default">True</property>
+                                <property name="placeholder-text">Phone Number</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <style>
+                          <class name="content"/>
+                        </style>
                       </object>
-                    </property>
+                    </child>
                   </object>
-                </child>
-                <style>
-                  <class name="content"/>
-                </style>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">code_page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">user-available-symbolic</property>
+                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <child>
+                      <object class="GtkListBox">
+                        <child>
+                          <object class="GtkListBoxRow">
+                            <property name="halign">center</property>
+                            <property name="focusable">False</property>
+                            <property name="selectable">False</property>
+                            <property name="activatable">False</property>
+                            <property name="child">
+                              <object class="GtkEntry" id="code_entry">
+                                <property name="activates-default">True</property>
+                                <property name="placeholder-text">Code</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <style>
+                          <class name="content"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
               </object>
             </child>
           </object>
