@@ -8,7 +8,10 @@ use gtk_macros::send;
 use log::error;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use tdgrand::enums::Update;
+use tdgrand::{
+    enums::Update,
+    functions,
+};
 
 mod imp {
     use super::*;
@@ -27,6 +30,7 @@ mod imp {
         pub settings: gio::Settings,
         pub receiver_flag: Arc<AtomicBool>,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
+        pub client_id: i32,
     }
 
     #[glib::object_subclass]
@@ -41,6 +45,7 @@ mod imp {
                 settings: gio::Settings::new(APP_ID),
                 receiver_flag: Arc::new(AtomicBool::new(true)),
                 receiver_handle: RefCell::default(),
+                client_id: tdgrand::crate_client(),
             }
         }
 
@@ -72,6 +77,8 @@ mod imp {
 
             // Start the receiver for telegram responses and updates
             obj.start_td_receiver();
+
+            obj.login_client();
         }
     }
 
@@ -150,6 +157,22 @@ impl Window {
         priv_.receiver_flag.store(false, Ordering::Release);
         RUNTIME.block_on(async move {
             priv_.receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+        });
+    }
+
+    fn login_client(&self) {
+        let priv_ = imp::Window::from_instance(self);
+        let client_id = priv_.client_id;
+        let login = &priv_.login;
+
+        login.set_client_id(client_id);
+
+        // This call is important for login because TDLib requires the clients
+        // to do at least a request to start receiving updates. So with this
+        // call we both set our preferred log level and we also enable the
+        // client to receive updates.
+        RUNTIME.spawn(async move {
+            functions::set_log_verbosity_level(client_id, 2).await.unwrap();
         });
     }
 

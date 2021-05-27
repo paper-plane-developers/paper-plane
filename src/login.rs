@@ -6,10 +6,12 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
+    use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
     pub struct Login {
+        pub client_id: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -45,5 +47,10 @@ glib::wrapper! {
 impl Login {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Login")
+    }
+
+    pub fn set_client_id(&self, client_id: i32) {
+        let priv_ = imp::Login::from_instance(self);
+        priv_.client_id.set(client_id);
     }
 }
