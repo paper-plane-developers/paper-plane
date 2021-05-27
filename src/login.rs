@@ -25,6 +25,8 @@ mod imp {
         pub phone_number_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub password_entry: TemplateChild<gtk::PasswordEntry>,
     }
 
     #[glib::object_subclass]
@@ -93,7 +95,9 @@ impl Login {
                 todo!()
             }
             AuthorizationState::WaitPassword(_) => {
-                todo!()
+                // Go to the next page
+                let content = &imp::Login::from_instance(self).content;
+                content.navigate(NavigationDirection::Forward);
             }
             AuthorizationState::Ready => {
                 todo!()
@@ -118,6 +122,8 @@ impl Login {
             self.send_phone_number();
         } else if visible_page == "code_page" {
             self.send_code();
+        } else if visible_page == "password_page" {
+            self.send_password();
         }
     }
 
@@ -166,6 +172,16 @@ impl Login {
         let code = priv_.code_entry.text().to_string();
         RUNTIME.spawn(async move {
             functions::check_authentication_code(client_id, code).await.unwrap();
+        });
+    }
+
+    fn send_password(&self) {
+        // TODO: handle errors
+        let priv_ = imp::Login::from_instance(self);
+        let client_id = priv_.client_id.get();
+        let password = priv_.password_entry.text().to_string();
+        RUNTIME.spawn(async move {
+            functions::check_authentication_password(client_id, password).await.unwrap();
         });
     }
 }

@@ -96,6 +96,43 @@
                 </property>
               </object>
             </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">password_page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">user-available-symbolic</property>
+                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <child>
+                      <object class="GtkListBox">
+                        <child>
+                          <object class="GtkListBoxRow">
+                            <property name="halign">center</property>
+                            <property name="focusable">False</property>
+                            <property name="selectable">False</property>
+                            <property name="activatable">False</property>
+                            <property name="child">
+                              <object class="GtkPasswordEntry" id="password_entry">
+                                <property name="activates-default">True</property>
+                                <property name="placeholder-text">Password</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <style>
+                          <class name="content"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
           </object>
         </child>
       </object>
