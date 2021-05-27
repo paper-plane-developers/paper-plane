@@ -7,10 +7,9 @@ use gtk::glib;
 use gtk_macros::send;
 use log::error;
 use tokio::task;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tdgrand::{
-    enums::Update,
+    enums::{AuthorizationState, Update},
     functions,
 };
 
@@ -29,7 +28,6 @@ mod imp {
         #[template_child]
         pub login: TemplateChild<Login>,
         pub settings: gio::Settings,
-        pub receiver_flag: Arc<AtomicBool>,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
         pub client_id: i32,
     }
@@ -44,7 +42,6 @@ mod imp {
             Self {
                 login: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
-                receiver_flag: Arc::new(AtomicBool::new(true)),
                 receiver_handle: RefCell::default(),
                 client_id: tdgrand::crate_client(),
             }
@@ -87,8 +84,11 @@ mod imp {
     impl WindowImpl for Window {
         // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
-            // Stop telegram receiver
-            obj.stop_td_receiver();
+            // Send close request
+            obj.close_client();
+
+            // Await for the td receiver to end
+            obj.await_td_receiver();
 
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
@@ -140,27 +140,44 @@ impl Window {
 
     fn start_td_receiver(&self) {
         let priv_ = imp::Window::from_instance(self);
-        let receiver_flag = priv_.receiver_flag.clone();
         let sender = Arc::new(self.create_new_update_sender());
         let handle = RUNTIME.spawn(async move {
-            while receiver_flag.load(Ordering::Acquire) {
+            loop {
                 let sender = sender.clone();
-                task::spawn_blocking(move || {
+                let stop = task::spawn_blocking(move || {
                     if let Some((update, _)) = tdgrand::receive() {
+                        if let Update::AuthorizationState(update) = &update {
+                            if let AuthorizationState::Closed = update.authorization_state {
+                                return true;
+                            }
+                        }
+
                         send!(sender, update);
                     }
+
+                    false
                 }).await.unwrap();
+
+                if stop {
+                    break;
+                }
             }
         });
 
         priv_.receiver_handle.replace(Some(handle));
     }
 
-    fn stop_td_receiver(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        priv_.receiver_flag.store(false, Ordering::Release);
+    fn await_td_receiver(&self) {
+        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
         RUNTIME.block_on(async move {
-            priv_.receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+        });
+    }
+
+    fn close_client(&self) {
+        let client_id = imp::Window::from_instance(self).client_id;
+        RUNTIME.spawn(async move {
+            functions::close(client_id).await.unwrap();
         });
     }
 

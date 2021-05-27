@@ -113,12 +113,7 @@ impl Login {
             AuthorizationState::LoggingOut => {
                 todo!()
             }
-            AuthorizationState::Closing => {
-                todo!()
-            }
-            AuthorizationState::Closed => {
-                todo!()
-            }
+            _ => ()
         }
     }
 
