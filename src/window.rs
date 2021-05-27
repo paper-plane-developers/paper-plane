@@ -192,8 +192,9 @@ impl Window {
     }
 
     fn handle_update(&self, update: Update) {
-        if let Update::AuthorizationState(_update) = update {
-            todo!()
+        if let Update::AuthorizationState(update) = update {
+            let login = &imp::Window::from_instance(self).login;
+            login.set_authorization_state(update.authorization_state);
         }
     }
 }

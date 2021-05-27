@@ -1,6 +1,12 @@
+use crate::{RUNTIME, config};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use tdgrand::{
+    enums::AuthorizationState,
+    functions,
+    types::TdlibParameters,
+};
 
 mod imp {
     use super::*;
@@ -52,5 +58,70 @@ impl Login {
     pub fn set_client_id(&self, client_id: i32) {
         let priv_ = imp::Login::from_instance(self);
         priv_.client_id.set(client_id);
+    }
+
+    pub fn set_authorization_state(&self, state: AuthorizationState) {
+        match state {
+            AuthorizationState::WaitTdlibParameters => {
+                self.send_tdlib_parameters();
+            }
+            AuthorizationState::WaitEncryptionKey(_) => {
+                self.send_encryption_key();
+            }
+            AuthorizationState::WaitPhoneNumber => {
+                todo!()
+            }
+            AuthorizationState::WaitCode(_) => {
+                todo!()
+            }
+            AuthorizationState::WaitOtherDeviceConfirmation(_) => {
+                todo!()
+            }
+            AuthorizationState::WaitRegistration(_) => {
+                todo!()
+            }
+            AuthorizationState::WaitPassword(_) => {
+                todo!()
+            }
+            AuthorizationState::Ready => {
+                todo!()
+            }
+            AuthorizationState::LoggingOut => {
+                todo!()
+            }
+            AuthorizationState::Closing => {
+                todo!()
+            }
+            AuthorizationState::Closed => {
+                todo!()
+            }
+        }
+    }
+
+    fn send_tdlib_parameters(&self) {
+        // TODO: make this parameters customizable
+        let client_id = imp::Login::from_instance(self).client_id.get();
+        let params = TdlibParameters {
+            database_directory: "telegrand".to_string(),
+            api_id: config::TG_API_ID,
+            api_hash: config::TG_API_HASH.to_string(),
+            system_language_code: "en-US".to_string(),
+            device_model: "Desktop".to_string(),
+            application_version: config::VERSION.to_string(),
+            ..TdlibParameters::default()
+        };
+
+        // TODO: handle errors
+        RUNTIME.spawn(async move {
+            functions::set_tdlib_parameters(client_id, params).await.unwrap();
+        });
+    }
+
+    fn send_encryption_key(&self) {
+        // TODO: make the key customizable and handle errors
+        let client_id = imp::Login::from_instance(self).client_id.get();
+        RUNTIME.spawn(async move {
+            functions::check_database_encryption_key(client_id, String::new()).await.unwrap();
+        });
     }
 }
