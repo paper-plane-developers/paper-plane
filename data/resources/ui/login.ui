@@ -94,20 +94,26 @@
                                     <property name="activatable">False</property>
                                     <property name="title" translatable="yes">Advanced</property>
                                     <child>
-                                      <object class="GtkListBoxRow">
-                                        <property name="focusable">False</property>
-                                        <property name="selectable">False</property>
-                                        <property name="activatable">False</property>
-                                        <property name="child">
+                                      <object class="AdwActionRow">
+                                        <property name="title" translatable="yes">Encryption Key</property>
+                                        <child>
                                           <object class="GtkPasswordEntry" id="encryption_key_entry">
                                             <property name="activates-default">True</property>
-                                            <property name="placeholder-text" translatable="yes">Encryption Key</property>
-                                            <property name="margin-top">6</property>
-                                            <property name="margin-bottom">6</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
+                                            <property name="valign">center</property>
                                           </object>
-                                        </property>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="AdwActionRow">
+                                        <property name="activatable_widget">use_test_dc_switch</property>
+                                        <property name="title" translatable="yes">Use Test Data Center</property>
+                                        <property name="subtitle" translatable="yes">This requires a restart to apply</property>
+                                        <child>
+                                          <object class="GtkSwitch" id="use_test_dc_switch">
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>

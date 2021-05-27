@@ -13,7 +13,7 @@ use tdgrand::{
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
+    use gtk::{CompositeTemplate, gio};
     use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -36,6 +36,8 @@ mod imp {
         pub phone_number_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
+        #[template_child]
+        pub use_test_dc_switch: TemplateChild<gtk::Switch>,
         #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -79,6 +81,13 @@ mod imp {
                     previous_button.set_visible(true);
                 }
             }));
+
+            // Bind the use-test-dc setting to the relative switch
+            let use_test_dc_switch = &*priv_.use_test_dc_switch;
+            let settings = gio::Settings::new(config::APP_ID);
+            settings
+                .bind("use-test-dc", use_test_dc_switch, "state")
+                .build();
         }
     }
 
@@ -178,9 +187,11 @@ impl Login {
     }
 
     fn send_tdlib_parameters(&self) {
-        // TODO: make this parameters customizable
-        let client_id = imp::Login::from_instance(self).client_id.get();
+        let priv_ = imp::Login::from_instance(self);
+        let client_id = priv_.client_id.get();
+        let use_test_dc = priv_.use_test_dc_switch.state();
         let params = TdlibParameters {
+            use_test_dc: use_test_dc,
             database_directory: "telegrand".to_string(),
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
