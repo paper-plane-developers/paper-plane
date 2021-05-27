@@ -71,6 +71,8 @@ mod imp {
 
     impl ObjectImpl for Login {
         fn constructed(&self, obj: &Self::Type) {
+            obj.action_set_enabled("login.next", false);
+
             self.parent_constructed(obj);
 
             // Show the previous button on all pages except the
@@ -123,6 +125,7 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
+                self.action_set_enabled("login.next", true);
             }
             AuthorizationState::WaitCode(_) => {
                 let content = &imp::Login::from_instance(self).content;
@@ -245,6 +248,7 @@ impl Login {
                     // Otherwise just show the error in the relative label.
                     if use_empty_key {
                         priv_.content.set_visible_child_name("encryption-key-page");
+                        obj.action_set_enabled("login.next", true);
                     } else {
                         let encryption_key_error_label = &priv_.encryption_key_error_label;
                         encryption_key_error_label.set_text(&err.message);
