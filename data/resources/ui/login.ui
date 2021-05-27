@@ -9,8 +9,23 @@
             <child type="end">
               <object class="GtkButton">
                 <property name="action_name">login.next</property>
-                <property name="use_underline">True</property>
-                <property name="label" translatable="yes">_Next</property>
+                <property name="child">
+                  <object class="GtkStack" id="next_stack">
+                    <child>
+                      <object class="GtkLabel" id="next_label">
+                        <property name="use_underline">True</property>
+                        <property name="label" translatable="yes">_Next</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinner" id="next_spinner">
+                        <property name="spinning">True</property>
+                        <property name="valign">center</property>
+                        <property name="halign">center</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
                 <style>
                   <class name="suggested-action"/>
                 </style>

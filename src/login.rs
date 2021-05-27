@@ -22,6 +22,12 @@ mod imp {
     pub struct Login {
         pub client_id: Cell<i32>,
         #[template_child]
+        pub next_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub next_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub next_spinner: TemplateChild<gtk::Spinner>,
+        #[template_child]
         pub content: TemplateChild<adw::Leaflet>,
         #[template_child]
         pub phone_number_entry: TemplateChild<gtk::Entry>,
@@ -87,14 +93,11 @@ impl Login {
                 self.send_encryption_key();
             }
             AuthorizationState::WaitPhoneNumber => {
-                // TODO: here we might want to enable the "Next" button
             }
             AuthorizationState::WaitCode(_) => {
                 // Go to the next page
                 let content = &imp::Login::from_instance(self).content;
                 content.navigate(NavigationDirection::Forward);
-
-                // TODO: here we might want to enable the "Next" button again
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -126,6 +129,8 @@ impl Login {
         let content = &imp::Login::from_instance(self).content;
         let visible_page = content.visible_child_name().unwrap();
 
+        self.freeze();
+
         if visible_page == "phone_number_page" {
             self.send_phone_number();
         } else if visible_page == "code_page" {
@@ -133,6 +138,23 @@ impl Login {
         } else if visible_page == "password_page" {
             self.send_password();
         }
+    }
+
+    fn freeze(&self) {
+        let priv_ = imp::Login::from_instance(&self);
+
+        self.action_set_enabled("login.next", false);
+        priv_.next_stack
+            .set_visible_child(&priv_.next_spinner.get());
+        priv_.content.set_sensitive(false);
+    }
+
+    fn unfreeze(&self) {
+        let priv_ = imp::Login::from_instance(&self);
+
+        self.action_set_enabled("login.next", true);
+        priv_.next_stack.set_visible_child(&priv_.next_label.get());
+        priv_.content.set_sensitive(true);
     }
 
     fn send_tdlib_parameters(&self) {
@@ -196,6 +218,8 @@ impl Login {
                     phone_number_error_label.set_text(&err.message);
                     phone_number_error_label.set_visible(true);
                 }
+
+                obj.unfreeze();
             }),
         );
     }
@@ -215,6 +239,8 @@ impl Login {
                     code_error_label.set_text(&err.message);
                     code_error_label.set_visible(true);
                 }
+
+                obj.unfreeze();
             }),
         );
     }
@@ -234,6 +260,8 @@ impl Login {
                     password_error_label.set_text(&err.message);
                     password_error_label.set_visible(true);
                 }
+
+                obj.unfreeze();
             }),
         );
     }
