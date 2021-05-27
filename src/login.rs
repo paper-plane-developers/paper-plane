@@ -71,7 +71,7 @@ mod imp {
             let previous_button = &*priv_.previous_button;
             priv_.content.connect_property_visible_child_name_notify(clone!(@weak previous_button => move |content| {
                 let visible_page = content.visible_child_name().unwrap();
-                if visible_page == "phone_number_page" {
+                if visible_page == "phone-number-page" {
                     previous_button.set_visible(false);
                 } else {
                     previous_button.set_visible(true);
@@ -111,7 +111,7 @@ impl Login {
             }
             AuthorizationState::WaitCode(_) => {
                 let content = &imp::Login::from_instance(self).content;
-                content.set_visible_child_name("code_page");
+                content.set_visible_child_name("code-page");
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -121,7 +121,7 @@ impl Login {
             }
             AuthorizationState::WaitPassword(_) => {
                 let content = &imp::Login::from_instance(self).content;
-                content.set_visible_child_name("password_page");
+                content.set_visible_child_name("password-page");
             }
             AuthorizationState::Ready => {
                 todo!()
@@ -135,7 +135,7 @@ impl Login {
 
     fn previous(&self) {
         let content = &imp::Login::from_instance(self).content;
-        content.set_visible_child_name("phone_number_page");
+        content.set_visible_child_name("phone-number-page");
     }
 
     fn next(&self) {
@@ -143,11 +143,11 @@ impl Login {
 
         let content = &imp::Login::from_instance(self).content;
         let visible_page = content.visible_child_name().unwrap();
-        if visible_page == "phone_number_page" {
+        if visible_page == "phone-number-page" {
             self.send_phone_number();
-        } else if visible_page == "code_page" {
+        } else if visible_page == "code-page" {
             self.send_code();
-        } else if visible_page == "password_page" {
+        } else if visible_page == "password-page" {
             self.send_password();
         }
     }

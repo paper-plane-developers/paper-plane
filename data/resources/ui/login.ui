@@ -9,19 +9,19 @@
             <child type="start">
               <object class="GtkButton" id="previous_button">
                 <property name="visible">False</property>
-                <property name="action_name">login.previous</property>
+                <property name="action-name">login.previous</property>
+                <property name="use-underline">True</property>
                 <property name="label" translatable="yes">_Previous</property>
-                <property name="use_underline">True</property>
               </object>
             </child>
             <child type="end">
               <object class="GtkButton">
-                <property name="action_name">login.next</property>
+                <property name="action-name">login.next</property>
                 <property name="child">
                   <object class="GtkStack" id="next_stack">
                     <child>
                       <object class="GtkLabel" id="next_label">
-                        <property name="use_underline">True</property>
+                        <property name="use-underline">True</property>
                         <property name="label" translatable="yes">_Next</property>
                       </object>
                     </child>
@@ -47,7 +47,7 @@
             <property name="vexpand">True</property>
             <child>
               <object class="AdwLeafletPage">
-                <property name="name">phone_number_page</property>
+                <property name="name">phone-number-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
                     <property name="valign">start</property>
@@ -98,12 +98,12 @@
             </child>
             <child>
               <object class="AdwLeafletPage">
-                <property name="name">code_page</property>
+                <property name="name">code-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
                     <property name="valign">start</property>
-                    <property name="icon-name">user-available-symbolic</property>
-                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <property name="icon-name">mail-send-symbolic</property>
+                    <property name="title" translatable="yes">Enter the Verification Code</property>
                     <child>
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
@@ -149,12 +149,12 @@
             </child>
             <child>
               <object class="AdwLeafletPage">
-                <property name="name">password_page</property>
+                <property name="name">password-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
                     <property name="valign">start</property>
-                    <property name="icon-name">user-available-symbolic</property>
-                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <property name="icon-name">dialog-password-symbolic</property>
+                    <property name="title" translatable="yes">Enter Your Password</property>
                     <child>
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
