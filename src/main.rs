@@ -2,6 +2,7 @@ mod application;
 #[rustfmt::skip]
 mod config;
 mod login;
+mod utils;
 mod window;
 
 use self::application::Application;

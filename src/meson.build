@@ -25,6 +25,7 @@ sources = files(
   'config.rs',
   'login.rs',
   'main.rs',
+  'utils.rs',
   'window.rs',
 )
 
