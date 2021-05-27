@@ -1,6 +1,5 @@
 use crate::utils::do_async;
 use crate::config;
-use adw::NavigationDirection;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -95,9 +94,8 @@ impl Login {
             AuthorizationState::WaitPhoneNumber => {
             }
             AuthorizationState::WaitCode(_) => {
-                // Go to the next page
                 let content = &imp::Login::from_instance(self).content;
-                content.navigate(NavigationDirection::Forward);
+                content.set_visible_child_name("code_page");
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -106,9 +104,8 @@ impl Login {
                 todo!()
             }
             AuthorizationState::WaitPassword(_) => {
-                // Go to the next page
                 let content = &imp::Login::from_instance(self).content;
-                content.navigate(NavigationDirection::Forward);
+                content.set_visible_child_name("password_page");
             }
             AuthorizationState::Ready => {
                 todo!()
