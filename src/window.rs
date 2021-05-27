@@ -1,10 +1,17 @@
 use crate::{Application, RUNTIME};
 use crate::config::{APP_ID, PROFILE};
+use glib::{SyncSender, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use std::sync::atomic::{AtomicBool, Ordering};
+use gtk_macros::send;
+use log::error;
+use tokio::task;
 use std::sync::Arc;
+use tdgrand::{
+    enums::{AuthorizationState, Update},
+    functions,
+};
 
 mod imp {
     use super::*;
@@ -21,8 +28,8 @@ mod imp {
         #[template_child]
         pub login: TemplateChild<Login>,
         pub settings: gio::Settings,
-        pub receiver_flag: Arc<AtomicBool>,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
+        pub client_id: i32,
     }
 
     #[glib::object_subclass]
@@ -35,8 +42,8 @@ mod imp {
             Self {
                 login: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
-                receiver_flag: Arc::new(AtomicBool::new(true)),
                 receiver_handle: RefCell::default(),
+                client_id: tdgrand::crate_client(),
             }
         }
 
@@ -68,6 +75,8 @@ mod imp {
 
             // Start the receiver for telegram responses and updates
             obj.start_td_receiver();
+
+            obj.login_client();
         }
     }
 
@@ -75,12 +84,16 @@ mod imp {
     impl WindowImpl for Window {
         // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
-            // Stop telegram receiver
-            obj.stop_td_receiver();
+            // Send close request
+            obj.close_client();
+
+            // Await for the td receiver to end
+            obj.await_td_receiver();
 
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
             }
+
             Inhibit(false)
         }
     }
@@ -127,21 +140,82 @@ impl Window {
 
     fn start_td_receiver(&self) {
         let priv_ = imp::Window::from_instance(self);
-        let receiver_flag = priv_.receiver_flag.clone();
+        let sender = Arc::new(self.create_new_update_sender());
         let handle = RUNTIME.spawn(async move {
-            while receiver_flag.load(Ordering::Acquire) {
-                tdgrand::receive();
+            loop {
+                let sender = sender.clone();
+                let stop = task::spawn_blocking(move || {
+                    if let Some((update, _)) = tdgrand::receive() {
+                        if let Update::AuthorizationState(update) = &update {
+                            if let AuthorizationState::Closed = update.authorization_state {
+                                return true;
+                            }
+                        }
+
+                        send!(sender, update);
+                    }
+
+                    false
+                }).await.unwrap();
+
+                if stop {
+                    break;
+                }
             }
         });
 
         priv_.receiver_handle.replace(Some(handle));
     }
 
-    fn stop_td_receiver(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        priv_.receiver_flag.store(false, Ordering::Release);
+    fn await_td_receiver(&self) {
+        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
         RUNTIME.block_on(async move {
-            priv_.receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
         });
+    }
+
+    fn close_client(&self) {
+        let client_id = imp::Window::from_instance(self).client_id;
+        RUNTIME.spawn(async move {
+            functions::close(client_id).await.unwrap();
+        });
+    }
+
+    fn login_client(&self) {
+        let priv_ = imp::Window::from_instance(self);
+        let client_id = priv_.client_id;
+        let login = &priv_.login;
+
+        login.set_client_id(client_id);
+
+        // This call is important for login because TDLib requires the clients
+        // to do at least a request to start receiving updates. So with this
+        // call we both set our preferred log level and we also enable the
+        // client to receive updates.
+        RUNTIME.spawn(async move {
+            functions::set_log_verbosity_level(client_id, 2).await.unwrap();
+        });
+    }
+
+    fn create_new_update_sender(&self) -> SyncSender<Update> {
+        let (sender, receiver) =
+            glib::MainContext::sync_channel::<Update>(Default::default(), 100);
+        receiver.attach(
+            None,
+            clone!(@weak self as obj => @default-return glib::Continue(false), move |update| {
+                obj.handle_update(update);
+
+                glib::Continue(true)
+            }),
+        );
+
+        sender
+    }
+
+    fn handle_update(&self, update: Update) {
+        if let Update::AuthorizationState(update) = update {
+            let login = &imp::Window::from_instance(self).login;
+            login.set_authorization_state(update.authorization_state);
+        }
     }
 }

@@ -16,5 +16,10 @@
       <summary>Default window maximized behaviour</summary>
       <description></description>
     </key>
+    <key name="use-test-dc" type="b">
+      <default>false</default>
+      <summary>Use Telegram's test data center</summary>
+      <description>Use Telegram's test data center</description>
+    </key>
   </schema>
 </schemalist>

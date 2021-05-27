@@ -35,6 +35,9 @@ iconsdir = datadir / 'icons'
 podir = meson.source_root() / 'po'
 gettext_package = meson.project_name()
 
+tg_api_id = get_option('tg_api_id')
+tg_api_hash = get_option('tg_api_hash')
+
 if get_option('profile') == 'development'
   profile = 'Devel'
   vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()

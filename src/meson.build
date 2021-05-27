@@ -5,6 +5,8 @@ global_conf.set_quoted('PROFILE', profile)
 global_conf.set_quoted('VERSION', version + version_suffix)
 global_conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
 global_conf.set_quoted('LOCALEDIR', localedir)
+global_conf.set('TG_API_ID', tg_api_id)
+global_conf.set_quoted('TG_API_HASH', tg_api_hash)
 config = configure_file(
   input: 'config.rs.in',
   output: 'config.rs',
@@ -23,6 +25,7 @@ sources = files(
   'config.rs',
   'login.rs',
   'main.rs',
+  'utils.rs',
   'window.rs',
 )
 
