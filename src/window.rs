@@ -6,6 +6,7 @@ use gtk::subclass::prelude::*;
 use gtk::glib;
 use gtk_macros::send;
 use log::error;
+use tokio::task;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tdgrand::{
@@ -140,12 +141,15 @@ impl Window {
     fn start_td_receiver(&self) {
         let priv_ = imp::Window::from_instance(self);
         let receiver_flag = priv_.receiver_flag.clone();
-        let sender = self.create_new_update_sender();
+        let sender = Arc::new(self.create_new_update_sender());
         let handle = RUNTIME.spawn(async move {
             while receiver_flag.load(Ordering::Acquire) {
-                if let Some((update, _)) = tdgrand::receive() {
-                    send!(sender, update);
-                }
+                let sender = sender.clone();
+                task::spawn_blocking(move || {
+                    if let Some((update, _)) = tdgrand::receive() {
+                        send!(sender, update);
+                    }
+                }).await.unwrap();
             }
         });
 
