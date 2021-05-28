@@ -79,7 +79,7 @@ mod imp {
             // "phone number" and "encryption key" pages
             let priv_ = imp::Login::from_instance(obj);
             let previous_button = &*priv_.previous_button;
-            priv_.content.connect_property_visible_child_name_notify(clone!(@weak previous_button => move |content| {
+            priv_.content.connect_visible_child_name_notify(clone!(@weak previous_button => move |content| {
                 let visible_page = content.visible_child_name().unwrap();
                 if visible_page == "phone-number-page" || visible_page == "encryption-key-page" {
                     previous_button.set_visible(false);
