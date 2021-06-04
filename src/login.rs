@@ -125,11 +125,13 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
-                self.action_set_enabled("login.next", true);
+                self.unfreeze();
             }
             AuthorizationState::WaitCode(_) => {
                 let content = &imp::Login::from_instance(self).content;
                 content.set_visible_child_name("code-page");
+
+                self.unfreeze();
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -140,6 +142,8 @@ impl Login {
             AuthorizationState::WaitPassword(_) => {
                 let content = &imp::Login::from_instance(self).content;
                 content.set_visible_child_name("password-page");
+
+                self.unfreeze();
             }
             AuthorizationState::Ready => {
                 todo!()
@@ -253,11 +257,9 @@ impl Login {
                         let encryption_key_error_label = &priv_.encryption_key_error_label;
                         encryption_key_error_label.set_text(&err.message);
                         encryption_key_error_label.set_visible(true);
-                    }
-                }
 
-                if !use_empty_key {
-                    obj.unfreeze();
+                        obj.unfreeze();
+                    }
                 }
             }),
         );
@@ -297,9 +299,9 @@ impl Login {
                     let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
                     welcome_page_error_label.set_text(&err.message);
                     welcome_page_error_label.set_visible(true);
-                }
 
-                obj.unfreeze();
+                    obj.unfreeze();
+                }
             }),
         );
     }
@@ -318,9 +320,9 @@ impl Login {
                     let code_error_label = &imp::Login::from_instance(&obj).code_error_label;
                     code_error_label.set_text(&err.message);
                     code_error_label.set_visible(true);
-                }
 
-                obj.unfreeze();
+                    obj.unfreeze();
+                }
             }),
         );
     }
@@ -339,9 +341,9 @@ impl Login {
                     let password_error_label = &imp::Login::from_instance(&obj).password_error_label;
                     password_error_label.set_text(&err.message);
                     password_error_label.set_visible(true);
-                }
 
-                obj.unfreeze();
+                    obj.unfreeze();
+                }
             }),
         );
     }
