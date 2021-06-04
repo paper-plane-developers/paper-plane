@@ -960,7 +960,7 @@ dependencies = [
 [[package]]
 name = "tdgrand"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5643074887328913ca769e03e0a90ba212306038"
+source = "git+https://github.com/melix99/tdgrand?branch=main#26c95abb717e83551cf892cc8de40ecc035e3f04"
 dependencies = [
  "log",
  "once_cell",
@@ -975,7 +975,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-gen"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5643074887328913ca769e03e0a90ba212306038"
+source = "git+https://github.com/melix99/tdgrand?branch=main#26c95abb717e83551cf892cc8de40ecc035e3f04"
 dependencies = [
  "convert_case",
  "tdgrand-tl-parser",
@@ -984,7 +984,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-parser"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5643074887328913ca769e03e0a90ba212306038"
+source = "git+https://github.com/melix99/tdgrand?branch=main#26c95abb717e83551cf892cc8de40ecc035e3f04"
 dependencies = [
  "crc32fast",
 ]
