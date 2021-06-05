@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="Content" parent="AdwBin">
+    <property name="hexpand">True</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons" bind-source="Content" bind-property="compact" bind-flags="sync-create"/>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="Session" parent="AdwBin">
+    <child>
+      <object class="AdwLeaflet" id="leaflet">
+        <child>
+          <object class="Sidebar">
+            <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
+          </object>
+        </child>
+        <child>
+          <object class="Content">
+            <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

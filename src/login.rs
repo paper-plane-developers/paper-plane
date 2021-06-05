@@ -1,5 +1,5 @@
-use crate::utils::do_async;
 use crate::config;
+use crate::utils::do_async;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -13,7 +13,9 @@ use tdgrand::{
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
-    use gtk::{CompositeTemplate, gio};
+    use glib::subclass::Signal;
+    use gtk::{gio, CompositeTemplate};
+    use once_cell::sync::Lazy;
     use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -70,6 +72,18 @@ mod imp {
     }
 
     impl ObjectImpl for Login {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder(
+                    "new-session",
+                    &[],
+                    <()>::static_type().into(),
+                )
+                .build()]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn constructed(&self, obj: &Self::Type) {
             obj.action_set_enabled("login.next", false);
 
@@ -146,7 +160,7 @@ impl Login {
                 self.unfreeze();
             }
             AuthorizationState::Ready => {
-                todo!()
+                self.emit_by_name("new-session", &[]).unwrap();
             }
             AuthorizationState::LoggingOut => {
                 todo!()
@@ -346,5 +360,16 @@ impl Login {
                 }
             }),
         );
+    }
+
+    pub fn connect_new_session<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
+        self.connect_local("new-session", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+
+            f(&obj);
+
+            None
+        })
+        .unwrap()
     }
 }

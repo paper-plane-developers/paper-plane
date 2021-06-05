@@ -1,6 +1,8 @@
-use crate::{Application, RUNTIME};
 use crate::config::{APP_ID, PROFILE};
-use glib::{SyncSender, clone};
+use crate::Application;
+use crate::RUNTIME;
+use crate::Session;
+use glib::{clone, SyncSender};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -17,7 +19,7 @@ mod imp {
     use super::*;
     use crate::Login;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use gtk::{CompositeTemplate, Inhibit, gio};
+    use gtk::{gio, CompositeTemplate, Inhibit};
     use log::warn;
     use std::cell::RefCell;
     use tokio::task::JoinHandle;
@@ -25,11 +27,13 @@ mod imp {
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
     pub struct Window {
-        #[template_child]
-        pub login: TemplateChild<Login>,
         pub settings: gio::Settings,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
         pub client_id: i32,
+        #[template_child]
+        pub main_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub login: TemplateChild<Login>,
     }
 
     #[glib::object_subclass]
@@ -40,6 +44,7 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                main_stack: TemplateChild::default(),
                 login: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
                 receiver_handle: RefCell::default(),
@@ -70,11 +75,12 @@ mod imp {
                 obj.style_context().add_class("devel");
             }
 
-            // Load latest window state
             obj.load_window_size();
-
-            // Start the receiver for telegram responses and updates
             obj.start_td_receiver();
+
+            self.login.connect_new_session(
+                clone!(@weak obj => move |_| obj.add_session()),
+            );
 
             obj.login_client();
         }
@@ -111,6 +117,14 @@ impl Window {
     pub fn new(app: &Application) -> Self {
         glib::Object::new(&[("application", &app), ("icon-name", &APP_ID)])
             .expect("Failed to create Window")
+    }
+
+    fn add_session(&self) {
+        let session = Session::new();
+
+        let priv_ = &imp::Window::from_instance(self);
+        priv_.main_stack.add_child(&session);
+        priv_.main_stack.set_visible_child(&session);
     }
 
     pub fn save_window_size(&self) -> Result<(), glib::BoolError> {
