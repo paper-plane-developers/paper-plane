@@ -27,6 +27,9 @@ sources = files(
   'main.rs',
   'utils.rs',
   'window.rs',
+  'session/mod.rs',
+  'session/content/mod.rs',
+  'session/sidebar/mod.rs',
 )
 
 custom_target(
