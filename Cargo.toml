@@ -7,6 +7,7 @@ edition = "2018"
 [dependencies]
 gettext-rs = { version = "0.6", features = ["gettext-system"] }
 gtk-macros = "0.3"
+indexmap = "1.6"
 log = "0.4"
 once_cell = "1.5"
 pretty_env_logger = "0.4"

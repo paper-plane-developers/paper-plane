@@ -1,3 +1,8 @@
+mod chat_row;
+
+use self::chat_row::ChatRow;
+
+use crate::session::ChatList;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -13,6 +18,8 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar.ui")]
     pub struct Sidebar {
         pub compact: Cell<bool>,
+        #[template_child]
+        pub chat_list_view: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -22,6 +29,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            ChatRow::static_type();
             Self::bind_template(klass);
         }
 
@@ -41,6 +49,13 @@ mod imp {
                         false,
                         glib::ParamFlags::READWRITE,
                     ),
+                    glib::ParamSpec::new_object(
+                        "chat-list",
+                        "Chat List",
+                        "A list of chats",
+                        ChatList::static_type(),
+                        glib::ParamFlags::WRITABLE,
+                    ),
                 ]
             });
 
@@ -49,7 +64,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -58,6 +73,10 @@ mod imp {
                 "compact" => {
                     let compact = value.get().unwrap();
                     self.compact.set(compact);
+                }
+                "chat-list" => {
+                    let chat_list = value.get().unwrap();
+                    obj.set_chat_list(chat_list);
                 }
                 _ => unimplemented!(),
             }
@@ -87,5 +106,11 @@ glib::wrapper! {
 impl Sidebar {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Sidebar")
+    }
+
+    pub fn set_chat_list(&self, chat_list: ChatList) {
+        let selection = gtk::SingleSelection::new(Some(&chat_list));
+        let priv_ = imp::Sidebar::from_instance(self);
+        priv_.chat_list_view.set_model(Some(&selection));
     }
 }

@@ -27,8 +27,11 @@ sources = files(
   'main.rs',
   'utils.rs',
   'window.rs',
+  'session/chat.rs',
+  'session/chat_list.rs',
   'session/mod.rs',
   'session/content/mod.rs',
+  'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
 )
 

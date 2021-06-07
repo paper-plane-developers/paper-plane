@@ -120,7 +120,8 @@ impl Window {
     }
 
     fn add_session(&self) {
-        let session = Session::new();
+        let client_id = imp::Window::from_instance(self).client_id;
+        let session = Session::new(client_id);
 
         let priv_ = &imp::Window::from_instance(self);
         priv_.main_stack.add_child(&session);

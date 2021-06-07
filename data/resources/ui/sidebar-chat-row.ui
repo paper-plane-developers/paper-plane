@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SidebarChatRow" parent="AdwBin">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <child>
+          <object class="AdwAvatar">
+            <property name="size">24</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="title_label">
+            <property name="ellipsize">end</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
