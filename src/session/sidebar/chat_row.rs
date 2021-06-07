@@ -17,6 +17,8 @@ mod imp {
         pub bindings: RefCell<Vec<glib::Binding>>,
         #[template_child]
         pub title_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub last_message_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -110,7 +112,16 @@ impl ChatRow {
                 .build()
                 .unwrap();
 
-            bindings.push(title_binding);
+            let last_message_binding = chat
+                .bind_property("last-message", &priv_.last_message_label.get(), "label")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build()
+                .unwrap();
+
+            bindings.append(&mut vec![
+                title_binding,
+                last_message_binding,
+            ]);
         }
 
         priv_.chat.replace(chat);

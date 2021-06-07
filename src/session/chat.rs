@@ -54,6 +54,13 @@ mod imp {
                         None,
                         glib::ParamFlags::READABLE,
                     ),
+                    glib::ParamSpec::new_string(
+                        "last-message",
+                        "Last Message",
+                        "The last message sent on this chat",
+                        None,
+                        glib::ParamFlags::READABLE,
+                    ),
                 ]
             });
 
@@ -85,6 +92,7 @@ mod imp {
                 "chat-id" => obj.chat_id().to_value(),
                 "client-id" => obj.client_id().to_value(),
                 "title" => obj.title().to_value(),
+                "last-message" => obj.last_message().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -127,10 +135,24 @@ impl Chat {
         priv_.telegram_chat.replace(Some(telegram_chat));
 
         self.notify("title");
+        self.notify("last-message");
     }
 
     fn title(&self) -> String {
         self.telegram_chat().unwrap_or_default().title
+    }
+
+    fn last_message(&self) -> Option<String> {
+        if let Some(telegram_chat) = self.telegram_chat() {
+            if let Some(last_message) = telegram_chat.last_message {
+                return Some(match last_message.content {
+                    enums::MessageContent::MessageText(content) => content.text.text,
+                    _ => return None,
+                })
+            }
+        }
+
+        None
     }
 
     fn load_chat(&self) {

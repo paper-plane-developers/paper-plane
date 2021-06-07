@@ -73,7 +73,7 @@ impl ChatList {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::get_chats(client_id, tdgrand::enums::ChatList::Main, i64::MAX, 0, i32::MAX).await
+                functions::get_chats(client_id, enums::ChatList::Main, i64::MAX, 0, i32::MAX).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Chats::Chats(chats)) = result {
