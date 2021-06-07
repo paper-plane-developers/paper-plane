@@ -217,9 +217,10 @@ impl Login {
         let priv_ = imp::Login::from_instance(self);
         let client_id = priv_.client_id.get();
         let use_test_dc = priv_.use_test_dc_switch.state();
+        let database_directory = format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
         let params = TdlibParameters {
-            use_test_dc: use_test_dc,
-            database_directory: "telegrand".to_string(),
+            use_test_dc,
+            database_directory,
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
             system_language_code: "en-US".to_string(),
