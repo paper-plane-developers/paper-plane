@@ -221,6 +221,7 @@ impl Login {
         let params = TdlibParameters {
             use_test_dc,
             database_directory,
+            use_file_database: true,
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
             system_language_code: "en-US".to_string(),

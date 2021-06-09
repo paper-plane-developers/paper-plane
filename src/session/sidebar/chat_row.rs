@@ -16,6 +16,8 @@ mod imp {
         pub chat: RefCell<Option<Chat>>,
         pub bindings: RefCell<Vec<glib::Binding>>,
         #[template_child]
+        pub photo_avatar: TemplateChild<adw::Avatar>,
+        #[template_child]
         pub title_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
@@ -106,6 +108,12 @@ impl ChatRow {
         }
 
         if let Some(ref chat) = chat {
+            let photo_binding = chat
+                .bind_property("photo", &priv_.photo_avatar.get(), "custom-image")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build()
+                .unwrap();
+
             let title_binding = chat
                 .bind_property("title", &priv_.title_label.get(), "label")
                 .flags(glib::BindingFlags::SYNC_CREATE)
@@ -119,6 +127,7 @@ impl ChatRow {
                 .unwrap();
 
             bindings.append(&mut vec![
+                photo_binding,
                 title_binding,
                 last_message_binding,
             ]);
