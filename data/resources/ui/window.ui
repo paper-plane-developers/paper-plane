@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="Window" parent="AdwApplicationWindow">
-    <property name="default-width">600</property>
-    <property name="default-height">400</property>
+    <property name="default-width">900</property>
+    <property name="default-height">600</property>
     <child>
       <object class="GtkStack" id="main_stack">
         <property name="visible-child">login</property>
