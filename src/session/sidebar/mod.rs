@@ -2,7 +2,7 @@ mod chat_row;
 
 use self::chat_row::ChatRow;
 
-use crate::session::ChatList;
+use crate::session::{Chat, ChatList};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -12,12 +12,13 @@ mod imp {
     use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar.ui")]
     pub struct Sidebar {
         pub compact: Cell<bool>,
+        pub selected_chat: RefCell<Option<Chat>>,
         #[template_child]
         pub chat_list_view: TemplateChild<gtk::ListView>,
     }
@@ -56,6 +57,13 @@ mod imp {
                         ChatList::static_type(),
                         glib::ParamFlags::WRITABLE,
                     ),
+                    glib::ParamSpec::new_object(
+                        "selected-chat",
+                        "Selected Chat",
+                        "The selected chat in this sidebar",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
 
@@ -78,13 +86,18 @@ mod imp {
                     let chat_list = value.get().unwrap();
                     obj.set_chat_list(chat_list);
                 }
+                "selected-chat" => {
+                    let selected_chat = value.get().unwrap();
+                    obj.set_selected_chat(selected_chat);
+                }
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
+                "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -112,5 +125,21 @@ impl Sidebar {
         let selection = gtk::SingleSelection::new(Some(&chat_list));
         let priv_ = imp::Sidebar::from_instance(self);
         priv_.chat_list_view.set_model(Some(&selection));
+    }
+
+    pub fn selected_chat(&self) -> Option<Chat> {
+        let priv_ = imp::Sidebar::from_instance(self);
+        priv_.selected_chat.borrow().clone()
+    }
+
+    fn set_selected_chat(&self, selected_chat: Option<Chat>) {
+        if self.selected_chat() == selected_chat {
+            return;
+        }
+
+        let priv_ = imp::Sidebar::from_instance(self);
+        priv_.selected_chat.replace(selected_chat);
+
+        self.notify("selected-chat");
     }
 }

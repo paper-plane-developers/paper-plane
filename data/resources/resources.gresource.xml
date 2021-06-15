@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/com/github/melix99/telegrand/">
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/session.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/shortcuts.ui</file>

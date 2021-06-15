@@ -17,13 +17,14 @@ mod imp {
     use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
     pub struct Session {
         pub client_id: Cell<i32>,
         pub chat_list: ChatList,
+        pub selected_chat: RefCell<Option<Chat>>,
     }
 
     #[glib::object_subclass]
@@ -63,6 +64,13 @@ mod imp {
                         ChatList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
+                    glib::ParamSpec::new_object(
+                        "selected-chat",
+                        "Selected Chat",
+                        "The selected chat in this sidebar",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
 
@@ -71,7 +79,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -81,14 +89,19 @@ mod imp {
                     let client_id = value.get().unwrap();
                     self.client_id.set(client_id);
                 }
+                "selected-chat" => {
+                    let selected_chat = value.get().unwrap();
+                    obj.set_selected_chat(selected_chat);
+                }
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "client-id" => self.client_id.get().to_value(),
                 "chat-list" => self.chat_list.to_value(),
+                "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -113,6 +126,22 @@ impl Session {
     pub fn new(client_id: i32) -> Self {
         glib::Object::new(&[("client-id", &client_id)])
             .expect("Failed to create Session")
+    }
+
+    pub fn selected_chat(&self) -> Option<Chat> {
+        let priv_ = imp::Session::from_instance(self);
+        priv_.selected_chat.borrow().clone()
+    }
+
+    fn set_selected_chat(&self, selected_chat: Option<Chat>) {
+        if self.selected_chat() == selected_chat {
+            return;
+        }
+
+        let priv_ = imp::Session::from_instance(self);
+        priv_.selected_chat.replace(selected_chat);
+
+        self.notify("selected-chat");
     }
 
     fn load_chat_list(&self) {

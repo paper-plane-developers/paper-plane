@@ -1,7 +1,3 @@
-mod chat_history;
-
-use self::chat_history::ChatHistory;
-
 use crate::session::Chat;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -15,20 +11,19 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content.ui")]
-    pub struct Content {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
+    pub struct ChatHistory {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for Content {
-        const NAME: &'static str = "Content";
-        type Type = super::Content;
+    impl ObjectSubclass for ChatHistory {
+        const NAME: &'static str = "ContentChatHistory";
+        type Type = super::ChatHistory;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            ChatHistory::static_type();
             Self::bind_template(klass);
         }
 
@@ -37,7 +32,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for Content {
+    impl ObjectImpl for ChatHistory {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -94,22 +89,22 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for Content {}
-    impl BinImpl for Content {}
+    impl WidgetImpl for ChatHistory {}
+    impl BinImpl for ChatHistory {}
 }
 
 glib::wrapper! {
-    pub struct Content(ObjectSubclass<imp::Content>)
+    pub struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Content {
+impl ChatHistory {
     pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Content")
+        glib::Object::new(&[]).expect("Failed to create ChatHistory")
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let priv_ = imp::Content::from_instance(self);
+        let priv_ = imp::ChatHistory::from_instance(self);
         priv_.chat.borrow().clone()
     }
 
@@ -118,7 +113,7 @@ impl Content {
             return;
         }
 
-        let priv_ = imp::Content::from_instance(self);
+        let priv_ = imp::ChatHistory::from_instance(self);
         priv_.chat.replace(chat);
 
         self.notify("chat");

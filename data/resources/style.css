@@ -2,3 +2,11 @@
   padding-top: 4px;
   padding-bottom: 4px;
 }
+
+.chat-history {
+  background-color: @theme_base_color;
+}
+
+.send-message-area {
+  margin: 6px;
+}
