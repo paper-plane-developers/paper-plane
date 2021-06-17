@@ -12,12 +12,13 @@ option(
 option(
   'tg_api_id',
   type: 'integer',
-  value: 1,
+  value: 17349,
   description: 'Application identifier for accessing the Telegram API, which can be obtained at https://my.telegram.org.'
 )
 
 option(
   'tg_api_hash',
   type: 'string',
+  value: '344583e45741c457fe1862106095a5eb',
   description: 'Hash of the Application identifier for accessing the Telegram API, which can be obtained at https://my.telegram.org.'
 )
