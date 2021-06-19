@@ -123,6 +123,11 @@ impl Sidebar {
 
     pub fn set_chat_list(&self, chat_list: ChatList) {
         let selection = gtk::SingleSelection::new(Some(&chat_list));
+
+        selection.bind_property("selected-item", self, "selected-chat")
+            .flags(glib::BindingFlags::SYNC_CREATE)
+            .build();
+
         let priv_ = imp::Sidebar::from_instance(self);
         priv_.chat_list_view.set_model(Some(&selection));
     }
@@ -136,6 +141,9 @@ impl Sidebar {
         if self.selected_chat() == selected_chat {
             return;
         }
+
+        // TODO: change the selection in the sidebar if it's
+        // different from the current selection
 
         let priv_ = imp::Sidebar::from_instance(self);
         priv_.selected_chat.replace(selected_chat);
