@@ -3,8 +3,12 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use tdgrand::{enums, functions};
-use tdgrand::types::Chat as TelegramChat;
+use tdgrand::{
+    enums,
+    functions,
+    types::Chat as TelegramChat,
+    types::Message as TelegramMessage,
+};
 
 mod imp {
     use super::*;
@@ -15,7 +19,8 @@ mod imp {
     pub struct Chat {
         pub chat_id: Cell<i64>,
         pub client_id: Cell<i32>,
-        pub telegram_chat: RefCell<Option<TelegramChat>>,
+        pub title: RefCell<String>,
+        pub last_message: RefCell<Option<String>>,
     }
 
     #[glib::object_subclass]
@@ -52,14 +57,14 @@ mod imp {
                         "Title",
                         "The title of this chat",
                         None,
-                        glib::ParamFlags::READABLE,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_string(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
                         None,
-                        glib::ParamFlags::READABLE,
+                        glib::ParamFlags::READWRITE,
                     ),
                 ]
             });
@@ -69,7 +74,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -82,6 +87,14 @@ mod imp {
                 "client-id" => {
                     let client_id = value.get().unwrap();
                     self.client_id.set(client_id);
+                }
+                "title" => {
+                    let title = value.get().unwrap();
+                    obj.set_title(title);
+                }
+                "last-message" => {
+                    let last_message = value.get().unwrap();
+                    obj.set_last_message(last_message);
                 }
                 _ => unimplemented!(),
             }
@@ -125,34 +138,42 @@ impl Chat {
         priv_.client_id.get()
     }
 
-    fn telegram_chat(&self) -> Option<TelegramChat> {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.telegram_chat.borrow().to_owned()
-    }
-
-    fn set_telegram_chat(&self, telegram_chat: TelegramChat) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.telegram_chat.replace(Some(telegram_chat));
-
-        self.notify("title");
-        self.notify("last-message");
-    }
-
     fn title(&self) -> String {
-        self.telegram_chat().unwrap_or_default().title
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.title.borrow().clone()
+    }
+
+    fn set_title(&self, title: String) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.title.replace(title);
     }
 
     fn last_message(&self) -> Option<String> {
-        if let Some(telegram_chat) = self.telegram_chat() {
-            if let Some(last_message) = telegram_chat.last_message {
-                return Some(match last_message.content {
-                    enums::MessageContent::MessageText(content) => content.text.text,
-                    _ => return None,
-                })
-            }
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.last_message.borrow().clone()
+    }
+
+    fn set_last_message(&self, last_message: Option<String>) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.last_message.replace(last_message);
+    }
+
+    fn stringify_message(&self, message: Option<TelegramMessage>) -> Option<String> {
+        if let Some(message) = message {
+            return Some(match message.content {
+                enums::MessageContent::MessageText(content) => content.text.text,
+                _ => return None,
+            })
         }
 
         None
+    }
+
+    fn set_telegram_chat(&self, telegram_chat: TelegramChat) {
+        self.set_property("title", telegram_chat.title).unwrap();
+
+        let last_message = self.stringify_message(telegram_chat.last_message);
+        self.set_property("last-message", last_message).unwrap();
     }
 
     fn load_chat(&self) {
