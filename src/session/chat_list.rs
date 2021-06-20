@@ -62,13 +62,6 @@ impl ChatList {
         glib::Object::new(&[]).expect("Failed to create ChatList")
     }
 
-    fn items_added(&self, added: usize) {
-        let priv_ = imp::ChatList::from_instance(self);
-        let list = priv_.list.borrow();
-        let position = list.len() - added;
-        self.items_changed(position as u32, 0, added as u32);
-    }
-
     pub fn load(&self, client_id: i32) {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -77,18 +70,36 @@ impl ChatList {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Chats::Chats(chats)) = result {
-                    let added = chats.chat_ids.len();
+                    for chat_id in chats.chat_ids {
+                        obj.insert(chat_id, client_id);
+                    }
+                }
+            }),
+        );
+    }
 
+    fn item_added(&self) {
+        let priv_ = imp::ChatList::from_instance(self);
+        let list = priv_.list.borrow();
+        let position = list.len() - 1;
+        self.items_changed(position as u32, 0, 1 as u32);
+    }
+
+    fn insert(&self, chat_id: i64, client_id: i32) {
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                functions::get_chat(client_id, chat_id).await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                if let Ok(enums::Chat::Chat(chat)) = result {
                     {
                         let priv_ = imp::ChatList::from_instance(&obj);
                         let mut list = priv_.list.borrow_mut();
-
-                        for chat_id in chats.chat_ids {
-                            list.insert(chat_id, Chat::new(chat_id, client_id));
-                        }
+                        list.insert(chat.id, Chat::new(chat));
                     }
 
-                    obj.items_added(added);
+                    obj.item_added();
                 }
             }),
         );
