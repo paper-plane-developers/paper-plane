@@ -5,7 +5,7 @@
       <object class="GtkBox">
         <property name="spacing">12</property>
         <child>
-          <object class="AdwAvatar" id="photo_avatar">
+          <object class="AdwAvatar">
             <property name="show-initials">True</property>
             <property name="size">42</property>
             <property name="text" bind-source="title_label" bind-property="label" bind-flags="sync-create"/>

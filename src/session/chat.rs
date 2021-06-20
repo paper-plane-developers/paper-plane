@@ -2,7 +2,7 @@ use crate::utils::do_async;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib};
+use gtk::glib;
 use tdgrand::{enums, functions};
 use tdgrand::types::Chat as TelegramChat;
 
@@ -54,13 +54,6 @@ mod imp {
                         None,
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
-                        "photo",
-                        "Photo",
-                        "The photo of this chat",
-                        gdk::Paintable::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
                     glib::ParamSpec::new_string(
                         "last-message",
                         "Last Message",
@@ -99,7 +92,6 @@ mod imp {
                 "chat-id" => obj.chat_id().to_value(),
                 "client-id" => obj.client_id().to_value(),
                 "title" => obj.title().to_value(),
-                "photo" => obj.photo().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 _ => unimplemented!(),
             }
@@ -143,43 +135,11 @@ impl Chat {
         priv_.telegram_chat.replace(Some(telegram_chat));
 
         self.notify("title");
-        self.notify("photo");
         self.notify("last-message");
     }
 
     fn title(&self) -> String {
         self.telegram_chat().unwrap_or_default().title
-    }
-
-    fn photo(&self) -> Option<gdk::Paintable> {
-        if let Some(telegram_chat) = self.telegram_chat() {
-            if let Some(info) = telegram_chat.photo {
-                let file = info.small;
-                let gfile = gio::File::for_path(file.local.path);
-
-                if let Ok(texture) = gdk::Texture::from_file(&gfile) {
-                    return Some(texture.upcast());
-                } else if !file.local.is_downloading_completed && !file.local.is_downloading_active {
-                    let client_id = self.client_id();
-                    let file_id = file.id;
-
-                    do_async(
-                        glib::PRIORITY_DEFAULT_IDLE,
-                        async move {
-                            functions::download_file(client_id, file_id, 16, 0, 0, true).await
-                        },
-                        clone!(@weak self as obj => move |result| async move {
-                            if result.is_ok() {
-                                // Update chat object
-                                obj.load_chat();
-                            }
-                        }),
-                    );
-                }
-            }
-        }
-
-        None
     }
 
     fn last_message(&self) -> Option<String> {
