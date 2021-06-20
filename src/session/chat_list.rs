@@ -1,10 +1,13 @@
 use crate::session::Chat;
-use crate::utils::do_async;
-use glib::clone;
+use crate::RUNTIME;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use tdgrand::{enums, functions};
+use tdgrand::{
+    enums,
+    functions,
+    types::Chat as TelegramChat,
+};
 
 mod imp {
     use super::*;
@@ -62,20 +65,29 @@ impl ChatList {
         glib::Object::new(&[]).expect("Failed to create ChatList")
     }
 
-    pub fn load(&self, client_id: i32) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            async move {
-                functions::get_chats(client_id, enums::ChatList::Main, i64::MAX, 0, i32::MAX).await
+    pub fn fetch(&self, client_id: i32) {
+        RUNTIME.spawn(async move {
+            functions::get_chats(client_id, enums::ChatList::Main, i64::MAX, 0, i32::MAX).await.unwrap();
+        });
+    }
+
+    pub fn handle_update(&self, update: enums::Update) {
+        match update {
+            enums::Update::NewChat(update) => {
+                self.insert_chat(update.chat);
             },
-            clone!(@weak self as obj => move |result| async move {
-                if let Ok(enums::Chats::Chats(chats)) = result {
-                    for chat_id in chats.chat_ids {
-                        obj.insert(chat_id, client_id);
-                    }
-                }
-            }),
-        );
+            _ => (),
+        }
+    }
+
+    fn insert_chat(&self, chat: TelegramChat) {
+        {
+            let priv_ = imp::ChatList::from_instance(self);
+            let mut list = priv_.list.borrow_mut();
+            list.insert(chat.id, Chat::new(chat));
+        }
+
+        self.item_added();
     }
 
     fn item_added(&self) {
@@ -83,25 +95,5 @@ impl ChatList {
         let list = priv_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1 as u32);
-    }
-
-    fn insert(&self, chat_id: i64, client_id: i32) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            async move {
-                functions::get_chat(client_id, chat_id).await
-            },
-            clone!(@weak self as obj => move |result| async move {
-                if let Ok(enums::Chat::Chat(chat)) = result {
-                    {
-                        let priv_ = imp::ChatList::from_instance(&obj);
-                        let mut list = priv_.list.borrow_mut();
-                        list.insert(chat.id, Chat::new(chat));
-                    }
-
-                    obj.item_added();
-                }
-            }),
-        );
     }
 }

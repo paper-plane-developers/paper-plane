@@ -21,6 +21,7 @@ mod imp {
     use adw::subclass::prelude::AdwApplicationWindowImpl;
     use gtk::{gio, CompositeTemplate, Inhibit};
     use log::warn;
+    use once_cell::sync::OnceCell;
     use std::cell::RefCell;
     use tokio::task::JoinHandle;
 
@@ -30,6 +31,7 @@ mod imp {
         pub settings: gio::Settings,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
         pub client_id: i32,
+        pub session: OnceCell<Session>,
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -44,11 +46,12 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                main_stack: TemplateChild::default(),
-                login: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
                 receiver_handle: RefCell::default(),
                 client_id: tdgrand::crate_client(),
+                session: OnceCell::default(),
+                main_stack: TemplateChild::default(),
+                login: TemplateChild::default(),
             }
         }
 
@@ -120,12 +123,12 @@ impl Window {
     }
 
     fn add_session(&self) {
-        let client_id = imp::Window::from_instance(self).client_id;
-        let session = Session::new(client_id);
+        let priv_ = imp::Window::from_instance(self);
+        priv_.session.set(Session::new(priv_.client_id)).unwrap();
 
-        let priv_ = &imp::Window::from_instance(self);
-        priv_.main_stack.add_child(&session);
-        priv_.main_stack.set_visible_child(&session);
+        let session = priv_.session.get().unwrap();
+        priv_.main_stack.add_child(session);
+        priv_.main_stack.set_visible_child(session);
     }
 
     pub fn save_window_size(&self) -> Result<(), glib::BoolError> {
@@ -228,9 +231,12 @@ impl Window {
     }
 
     fn handle_update(&self, update: Update) {
+        let priv_ = imp::Window::from_instance(self);
+
         if let Update::AuthorizationState(update) = update {
-            let login = &imp::Window::from_instance(self).login;
-            login.set_authorization_state(update.authorization_state);
+            priv_.login.set_authorization_state(update.authorization_state);
+        } else if let Some(session) = priv_.session.get() {
+            session.handle_update(update);
         }
     }
 }

@@ -11,6 +11,7 @@ use self::sidebar::Sidebar;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use tdgrand::enums::Update;
 
 mod imp {
     use super::*;
@@ -109,7 +110,7 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            obj.load_chat_list();
+            obj.fetch_chats();
         }
     }
 
@@ -128,7 +129,18 @@ impl Session {
             .expect("Failed to create Session")
     }
 
-    pub fn selected_chat(&self) -> Option<Chat> {
+    pub fn handle_update(&self, update: Update) {
+        let priv_ = imp::Session::from_instance(self);
+
+        match update {
+            Update::NewChat(_) => {
+                priv_.chat_list.handle_update(update);
+            },
+            _ => (),
+        }
+    }
+
+    fn selected_chat(&self) -> Option<Chat> {
         let priv_ = imp::Session::from_instance(self);
         priv_.selected_chat.borrow().clone()
     }
@@ -144,8 +156,9 @@ impl Session {
         self.notify("selected-chat");
     }
 
-    fn load_chat_list(&self) {
+    fn fetch_chats(&self) {
         let priv_ = imp::Session::from_instance(self);
-        priv_.chat_list.load(priv_.client_id.get());
+        let client_id = priv_.client_id.get();
+        priv_.chat_list.fetch(client_id);
     }
 }
