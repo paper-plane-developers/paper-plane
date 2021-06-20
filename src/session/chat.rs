@@ -7,7 +7,7 @@ use tdgrand::{
     types::Message as TelegramMessage,
 };
 
-fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
+pub fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
     if let Some(message) = message {
         return Some(match message.content {
             enums::MessageContent::MessageText(content) => content.text.text,
@@ -45,14 +45,14 @@ mod imp {
                         "Title",
                         "The title of this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_string(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                 ]
             });
@@ -101,23 +101,25 @@ impl Chat {
             .expect("Failed to create Chat")
     }
 
+    pub fn set_title(&self, title: String) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.title.replace(title);
+        self.notify("title");
+    }
+
+    pub fn set_last_message(&self, last_message: Option<String>) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.last_message.replace(last_message);
+        self.notify("last-message");
+    }
+
     fn title(&self) -> String {
         let priv_ = imp::Chat::from_instance(self);
         priv_.title.borrow().clone()
     }
 
-    fn set_title(&self, title: String) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.title.replace(title);
-    }
-
     fn last_message(&self) -> Option<String> {
         let priv_ = imp::Chat::from_instance(self);
         priv_.last_message.borrow().clone()
-    }
-
-    fn set_last_message(&self, last_message: Option<String>) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.last_message.replace(last_message);
     }
 }

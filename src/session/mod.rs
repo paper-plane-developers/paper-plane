@@ -133,7 +133,7 @@ impl Session {
         let priv_ = imp::Session::from_instance(self);
 
         match update {
-            Update::NewChat(_) => {
+            Update::NewChat(_) | Update::ChatTitle(_) | Update::ChatLastMessage(_) => {
                 priv_.chat_list.handle_update(update);
             },
             _ => (),

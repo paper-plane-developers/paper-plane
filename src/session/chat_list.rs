@@ -1,4 +1,4 @@
-use crate::session::Chat;
+use crate::session::{chat::stringify_message, Chat};
 use crate::RUNTIME;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -72,9 +72,22 @@ impl ChatList {
     }
 
     pub fn handle_update(&self, update: enums::Update) {
+        let priv_ = imp::ChatList::from_instance(self);
+
         match update {
             enums::Update::NewChat(update) => {
                 self.insert_chat(update.chat);
+            },
+            enums::Update::ChatTitle(update) => {
+                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
+                    chat.set_title(update.title);
+                }
+            },
+            enums::Update::ChatLastMessage(update) => {
+                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
+                    let message = stringify_message(update.last_message);
+                    chat.set_last_message(message);
+                }
             },
             _ => (),
         }
