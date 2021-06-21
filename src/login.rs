@@ -367,7 +367,6 @@ impl Login {
     pub fn connect_new_session<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
         self.connect_local("new-session", true, move |values| {
             let obj = values[0].get::<Self>().unwrap();
-
             f(&obj);
 
             None

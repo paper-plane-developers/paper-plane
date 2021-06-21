@@ -21,12 +21,13 @@ pub fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub struct Chat {
         pub title: RefCell<String>,
         pub last_message: RefCell<Option<String>>,
+        pub order: Cell<i64>,
     }
 
     #[glib::object_subclass]
@@ -54,6 +55,15 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_int64(
+                        "order",
+                        "Order",
+                        "The parameter to determine the order of this chat in the chat list",
+                        std::i64::MIN,
+                        std::i64::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                    ),
                 ]
             });
 
@@ -76,6 +86,10 @@ mod imp {
                     let last_message = value.get().unwrap();
                     obj.set_last_message(last_message);
                 }
+                "order" => {
+                    let order = value.get().unwrap();
+                    obj.set_order(order);
+                }
                 _ => unimplemented!(),
             }
         }
@@ -84,6 +98,7 @@ mod imp {
             match pspec.name() {
                 "title" => obj.title().to_value(),
                 "last-message" => obj.last_message().to_value(),
+                "order" => obj.order().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -97,8 +112,21 @@ glib::wrapper! {
 impl Chat {
     pub fn new(chat: TelegramChat) -> Self {
         let last_message = stringify_message(chat.last_message);
-        glib::Object::new(&[("title", &chat.title), ("last-message", &last_message)])
-            .expect("Failed to create Chat")
+
+        let mut order = 0;
+        for position in chat.positions {
+            if let enums::ChatList::Main = position.list {
+                order = position.order;
+                break;
+            }
+        }
+
+        glib::Object::new(&[
+            ("title", &chat.title),
+            ("last-message", &last_message),
+            ("order", &order),
+        ])
+        .expect("Failed to create Chat")
     }
 
     pub fn set_title(&self, title: String) {
@@ -121,5 +149,15 @@ impl Chat {
     fn last_message(&self) -> Option<String> {
         let priv_ = imp::Chat::from_instance(self);
         priv_.last_message.borrow().clone()
+    }
+
+    fn set_order(&self, order: i64) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.order.set(order);
+    }
+
+    fn order(&self) -> i64 {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.order.get()
     }
 }

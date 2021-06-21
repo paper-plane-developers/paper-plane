@@ -3,6 +3,7 @@ mod chat_row;
 use self::chat_row::ChatRow;
 
 use crate::session::{Chat, ChatList};
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -11,7 +12,7 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -19,6 +20,8 @@ mod imp {
     pub struct Sidebar {
         pub compact: Cell<bool>,
         pub selected_chat: RefCell<Option<Chat>>,
+        pub filter: OnceCell<gtk::CustomFilter>,
+        pub sorter: OnceCell<gtk::CustomSorter>,
         #[template_child]
         pub chat_list_view: TemplateChild<gtk::ListView>,
     }
@@ -122,17 +125,60 @@ impl Sidebar {
     }
 
     pub fn set_chat_list(&self, chat_list: ChatList) {
-        let selection = gtk::SingleSelection::new(Some(&chat_list));
+        let priv_ = imp::Sidebar::from_instance(self);
+        let filter = gtk::CustomFilter::new(|item| {
+            let order = item
+                .downcast_ref::<Chat>()
+                .unwrap()
+                .property("order")
+                .unwrap()
+                .get::<i64>()
+                .unwrap();
 
+            order != 0
+        });
+        priv_.filter.set(filter).unwrap();
+
+        let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
+            let order1 = obj1
+                .downcast_ref::<Chat>()
+                .unwrap()
+                .property("order")
+                .unwrap()
+                .get::<i64>()
+                .unwrap();
+            let order2 = obj2
+                .downcast_ref::<Chat>()
+                .unwrap()
+                .property("order")
+                .unwrap()
+                .get::<i64>()
+                .unwrap();
+
+            order2.cmp(&order1).into()
+        });
+        priv_.sorter.set(sorter).unwrap();
+
+        let filter = priv_.filter.get().unwrap();
+        let sorter = priv_.sorter.get().unwrap();
+        chat_list.connect_positions_changed(
+            clone!(@weak filter, @weak sorter => move |_| {
+                filter.changed(gtk::FilterChange::Different);
+                sorter.changed(gtk::SorterChange::Different);
+            }),
+        );
+
+        let filter_model = gtk::FilterListModel::new(Some(&chat_list), Some(filter));
+        let sort_model = gtk::SortListModel::new(Some(&filter_model), Some(sorter));
+        let selection = gtk::SingleSelection::new(Some(&sort_model));
         selection.bind_property("selected-item", self, "selected-chat")
             .flags(glib::BindingFlags::SYNC_CREATE)
             .build();
 
-        let priv_ = imp::Sidebar::from_instance(self);
         priv_.chat_list_view.set_model(Some(&selection));
     }
 
-    pub fn selected_chat(&self) -> Option<Chat> {
+    fn selected_chat(&self) -> Option<Chat> {
         let priv_ = imp::Sidebar::from_instance(self);
         priv_.selected_chat.borrow().clone()
     }
