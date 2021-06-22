@@ -21,6 +21,7 @@ mod imp {
     pub struct Sidebar {
         pub compact: Cell<bool>,
         pub selected_chat: RefCell<Option<Chat>>,
+        pub selection: RefCell<Option<gtk::SingleSelection>>,
         pub filter: OnceCell<gtk::CustomFilter>,
         pub sorter: OnceCell<gtk::CustomSorter>,
         #[template_child]
@@ -166,8 +167,9 @@ impl Sidebar {
         selection.bind_property("selected-item", self, "selected-chat")
             .flags(glib::BindingFlags::SYNC_CREATE)
             .build();
+        priv_.selection.replace(Some(selection));
 
-        priv_.chat_list_view.set_model(Some(&selection));
+        priv_.chat_list_view.set_model(Some(priv_.selection.borrow().as_ref().unwrap()));
     }
 
     fn selected_chat(&self) -> Option<Chat> {
@@ -184,8 +186,11 @@ impl Sidebar {
         // different from the current selection
 
         let priv_ = imp::Sidebar::from_instance(self);
-        priv_.selected_chat.replace(selected_chat);
+        if selected_chat.is_none() {
+            priv_.selection.borrow().as_ref().unwrap().set_selected(gtk::INVALID_LIST_POSITION);
+        }
 
+        priv_.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 }
