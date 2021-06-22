@@ -26,6 +26,8 @@ mod imp {
         pub client_id: Cell<i32>,
         pub chat_list: ChatList,
         pub selected_chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub leaflet: TemplateChild<adw::Leaflet>,
     }
 
     #[glib::object_subclass]
@@ -152,8 +154,13 @@ impl Session {
         }
 
         let priv_ = imp::Session::from_instance(self);
-        priv_.selected_chat.replace(selected_chat);
+        if selected_chat.is_some() {
+            priv_.leaflet.navigate(adw::NavigationDirection::Forward);
+        } else {
+            priv_.leaflet.navigate(adw::NavigationDirection::Back);
+        }
 
+        priv_.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 

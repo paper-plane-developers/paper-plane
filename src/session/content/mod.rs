@@ -30,6 +30,10 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             ChatHistory::static_type();
             Self::bind_template(klass);
+
+            klass.install_action("content.go-back", None, move |widget, _, _| {
+                widget.set_chat(None);
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

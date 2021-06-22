@@ -7,6 +7,13 @@
         <child>
           <object class="AdwHeaderBar">
             <property name="show-start-title-buttons" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
+            <child type="start">
+              <object class="GtkButton">
+                <property name="visible" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
+                <property name="icon-name">go-previous-symbolic</property>
+                <property name="action-name">content.go-back</property>
+              </object>
+            </child>
             <child type="title">
               <object class="AdwWindowTitle" id="header_bar_title">
               </object>
