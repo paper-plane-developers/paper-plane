@@ -140,14 +140,8 @@ impl ChatList {
     }
 
     fn update_chat_order(&self, chat: &Chat, order: i64) {
-        let current_order = chat
-            .property("order")
-            .unwrap()
-            .get::<i64>()
-            .unwrap();
-
-        if order != current_order {
-            chat.set_property("order", order).unwrap();
+        if chat.order() != order {
+            chat.set_order(order);
             self.emit_by_name("positions-changed", &[]).unwrap();
         }
     }

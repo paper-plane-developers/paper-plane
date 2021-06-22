@@ -62,7 +62,7 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                 ]
             });
@@ -129,10 +129,20 @@ impl Chat {
         .expect("Failed to create Chat")
     }
 
+    pub fn title(&self) -> String {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.title.borrow().clone()
+    }
+
     pub fn set_title(&self, title: String) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.title.replace(title);
         self.notify("title");
+    }
+
+    pub fn last_message(&self) -> Option<String> {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.last_message.borrow().clone()
     }
 
     pub fn set_last_message(&self, last_message: Option<String>) {
@@ -141,23 +151,14 @@ impl Chat {
         self.notify("last-message");
     }
 
-    fn title(&self) -> String {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.title.borrow().clone()
-    }
-
-    fn last_message(&self) -> Option<String> {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.last_message.borrow().clone()
-    }
-
-    fn set_order(&self, order: i64) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.order.set(order);
-    }
-
-    fn order(&self) -> i64 {
+    pub fn order(&self) -> i64 {
         let priv_ = imp::Chat::from_instance(self);
         priv_.order.get()
+    }
+
+    pub fn set_order(&self, order: i64) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.order.set(order);
+        self.notify("order");
     }
 }

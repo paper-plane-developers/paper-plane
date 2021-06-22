@@ -130,11 +130,7 @@ impl Sidebar {
             let order = item
                 .downcast_ref::<Chat>()
                 .unwrap()
-                .property("order")
-                .unwrap()
-                .get::<i64>()
-                .unwrap();
-
+                .order();
             order != 0
         });
         priv_.filter.set(filter).unwrap();
@@ -143,17 +139,11 @@ impl Sidebar {
             let order1 = obj1
                 .downcast_ref::<Chat>()
                 .unwrap()
-                .property("order")
-                .unwrap()
-                .get::<i64>()
-                .unwrap();
+                .order();
             let order2 = obj2
                 .downcast_ref::<Chat>()
                 .unwrap()
-                .property("order")
-                .unwrap()
-                .get::<i64>()
-                .unwrap();
+                .order();
 
             order2.cmp(&order1).into()
         });
