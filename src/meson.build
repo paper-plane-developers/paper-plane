@@ -30,10 +30,13 @@ sources = files(
   'session/chat.rs',
   'session/chat_list.rs',
   'session/mod.rs',
+  'session/session.rs',
   'session/content/chat_history.rs',
+  'session/content/content.rs',
   'session/content/mod.rs',
   'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
+  'session/sidebar/sidebar.rs',
 )
 
 custom_target(
