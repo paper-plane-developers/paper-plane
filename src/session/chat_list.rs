@@ -118,6 +118,11 @@ impl ChatList {
                     }
                 }
             },
+            enums::Update::ChatReadInbox(update) => {
+                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
+                    chat.set_unread_count(update.unread_count);
+                }
+            },
             _ => (),
         }
     }

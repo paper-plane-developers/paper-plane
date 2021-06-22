@@ -3,6 +3,15 @@
   padding-bottom: 4px;
 }
 
+.sidebar .unread-count {
+  background-color: @accent_color;
+  color: @accent_text;
+  font-size: 0.8em;
+  min-width: 0.7em;
+  border-radius: 10px;
+  padding: 2px 5px;
+}
+
 .chat-history {
   background-color: @theme_base_color;
 }

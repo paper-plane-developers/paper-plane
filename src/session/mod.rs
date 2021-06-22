@@ -134,7 +134,7 @@ impl Session {
 
         match update {
             Update::NewChat(_) | Update::ChatTitle(_) | Update::ChatLastMessage(_) |
-                Update::ChatPosition(_) => {
+                Update::ChatPosition(_) | Update::ChatReadInbox(_) => {
                     priv_.chat_list.handle_update(update);
             },
             _ => (),

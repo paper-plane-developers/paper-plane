@@ -18,6 +18,8 @@ mod imp {
         #[template_child]
         pub title_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub unread_count_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
     }
 
@@ -112,6 +114,18 @@ impl ChatRow {
                 .build()
                 .unwrap();
 
+            let unread_count_binding = chat
+                .bind_property("unread_count", &priv_.unread_count_label.get(), "label")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build()
+                .unwrap();
+
+            let unread_count_visible_binding = chat
+                .bind_property("unread_count", &priv_.unread_count_label.get(), "visible")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build()
+                .unwrap();
+
             let last_message_binding = chat
                 .bind_property("last-message", &priv_.last_message_label.get(), "label")
                 .flags(glib::BindingFlags::SYNC_CREATE)
@@ -120,6 +134,8 @@ impl ChatRow {
 
             bindings.append(&mut vec![
                 title_binding,
+                unread_count_binding,
+                unread_count_visible_binding,
                 last_message_binding,
             ]);
         }

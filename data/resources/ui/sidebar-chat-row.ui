@@ -16,17 +16,32 @@
             <property name="homogeneous">True</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="title_label">
-                <property name="ellipsize">end</property>
-                <property name="single-line-mode">True</property>
-                <property name="xalign">0</property>
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkLabel" id="title_label">
+                    <property name="halign">start</property>
+                    <property name="ellipsize">end</property>
+                    <property name="single-line-mode">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="unread_count_label">
+                    <property name="hexpand">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="ellipsize">end</property>
+                    <style>
+                      <class name="unread-count"/>
+                    </style>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
               <object class="GtkLabel" id="last_message_label">
+                <property name="halign">start</property>
                 <property name="ellipsize">end</property>
                 <property name="single-line-mode">True</property>
-                <property name="xalign">0</property>
               </object>
             </child>
           </object>

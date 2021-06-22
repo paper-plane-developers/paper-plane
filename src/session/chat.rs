@@ -28,6 +28,7 @@ mod imp {
         pub title: RefCell<String>,
         pub last_message: RefCell<Option<String>>,
         pub order: Cell<i64>,
+        pub unread_count: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -64,6 +65,15 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_int(
+                        "unread-count",
+                        "Unread Count",
+                        "The unread messages count of this chat",
+                        std::i32::MIN,
+                        std::i32::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
 
@@ -90,6 +100,10 @@ mod imp {
                     let order = value.get().unwrap();
                     obj.set_order(order);
                 }
+                "unread-count" => {
+                    let unread_count = value.get().unwrap();
+                    obj.set_unread_count(unread_count);
+                }
                 _ => unimplemented!(),
             }
         }
@@ -99,6 +113,7 @@ mod imp {
                 "title" => obj.title().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
+                "unread-count" => obj.unread_count().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -125,6 +140,7 @@ impl Chat {
             ("title", &chat.title),
             ("last-message", &last_message),
             ("order", &order),
+            ("unread-count", &chat.unread_count),
         ])
         .expect("Failed to create Chat")
     }
@@ -160,5 +176,16 @@ impl Chat {
         let priv_ = imp::Chat::from_instance(self);
         priv_.order.set(order);
         self.notify("order");
+    }
+
+    pub fn unread_count(&self) -> i32 {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.unread_count.get()
+    }
+
+    pub fn set_unread_count(&self, unread_count: i32) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.unread_count.set(unread_count);
+        self.notify("unread-count");
     }
 }
