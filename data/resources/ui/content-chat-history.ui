@@ -8,7 +8,7 @@
           <object class="AdwHeaderBar">
             <property name="show-start-title-buttons" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
             <child type="title">
-              <object class="AdwWindowTitle">
+              <object class="AdwWindowTitle" id="header_bar_title">
               </object>
             </child>
           </object>
