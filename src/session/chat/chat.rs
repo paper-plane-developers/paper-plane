@@ -1,9 +1,20 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use tdgrand::{enums, types::Chat as TelegramChat};
+use tdgrand::enums::{self, Update};
+use tdgrand::types::Chat as TelegramChat;
+use tdgrand::types::Message as TelegramMessage;
 
-use crate::utils::stringify_message;
+fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
+    if let Some(message) = message {
+        return Some(match message.content {
+            enums::MessageContent::MessageText(content) => content.text.text,
+            _ => return None,
+        })
+    }
+
+    None
+}
 
 mod imp {
     use super::*;
@@ -132,12 +143,40 @@ impl Chat {
         .expect("Failed to create Chat")
     }
 
+    pub fn handle_update(&self, update: Update) {
+        match update {
+            Update::ChatTitle(update) => {
+                self.set_title(update.title);
+            },
+            Update::ChatLastMessage(update) => {
+                let message = stringify_message(update.last_message);
+                self.set_last_message(message);
+
+                for position in update.positions {
+                    if let enums::ChatList::Main = position.list {
+                        self.set_order(position.order);
+                        break;
+                    }
+                }
+            },
+            Update::ChatPosition(update) => {
+                if let enums::ChatList::Main = update.position.list {
+                    self.set_order(update.position.order);
+                }
+            },
+            Update::ChatReadInbox(update) => {
+                self.set_unread_count(update.unread_count);
+            },
+            _ => (),
+        }
+    }
+
     pub fn title(&self) -> String {
         let priv_ = imp::Chat::from_instance(self);
         priv_.title.borrow().clone()
     }
 
-    pub fn set_title(&self, title: String) {
+    fn set_title(&self, title: String) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.title.replace(title);
         self.notify("title");
@@ -148,7 +187,7 @@ impl Chat {
         priv_.last_message.borrow().clone()
     }
 
-    pub fn set_last_message(&self, last_message: Option<String>) {
+    fn set_last_message(&self, last_message: Option<String>) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.last_message.replace(last_message);
         self.notify("last-message");
@@ -159,7 +198,7 @@ impl Chat {
         priv_.order.get()
     }
 
-    pub fn set_order(&self, order: i64) {
+    fn set_order(&self, order: i64) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.order.set(order);
         self.notify("order");
@@ -170,9 +209,16 @@ impl Chat {
         priv_.unread_count.get()
     }
 
-    pub fn set_unread_count(&self, unread_count: i32) {
+    fn set_unread_count(&self, unread_count: i32) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.unread_count.set(unread_count);
         self.notify("unread-count");
+    }
+
+    pub fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_notify_local(Some("order"), f)
     }
 }

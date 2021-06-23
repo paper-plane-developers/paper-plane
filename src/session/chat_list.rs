@@ -1,14 +1,13 @@
-use crate::session::Chat;
-use crate::utils::stringify_message;
-use crate::RUNTIME;
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use tdgrand::{
-    enums,
-    functions,
-    types::Chat as TelegramChat,
-};
+use tdgrand::enums::{self, Update};
+use tdgrand::functions;
+use tdgrand::types::Chat as TelegramChat;
+
+use crate::session::Chat;
+use crate::RUNTIME;
 
 mod imp {
     use super::*;
@@ -86,42 +85,31 @@ impl ChatList {
         });
     }
 
-    pub fn handle_update(&self, update: enums::Update) {
+    pub fn handle_update(&self, update: Update) {
         let priv_ = imp::ChatList::from_instance(self);
 
         match update {
-            enums::Update::NewChat(update) => {
+            Update::NewChat(update) => {
                 self.insert_chat(update.chat);
             },
-            enums::Update::ChatTitle(update) => {
-                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
-                    chat.set_title(update.title);
+            Update::ChatTitle(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
                 }
             },
-            enums::Update::ChatLastMessage(update) => {
-                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
-                    let message = stringify_message(update.last_message);
-                    chat.set_last_message(message);
-
-                    for position in update.positions {
-                        if let enums::ChatList::Main = position.list {
-                            self.update_chat_order(chat, position.order);
-                            break;
-                        }
-                    }
+            Update::ChatLastMessage(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
                 }
             },
-            enums::Update::ChatPosition(update) => {
-                if let enums::ChatList::Main = update.position.list {
-                    let list = priv_.list.borrow();
-                    if let Some(chat) = list.get(&update.chat_id) {
-                        self.update_chat_order(chat, update.position.order);
-                    }
+            Update::ChatPosition(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
                 }
             },
-            enums::Update::ChatReadInbox(update) => {
-                if let Some(chat) = priv_.list.borrow().get(&update.chat_id) {
-                    chat.set_unread_count(update.unread_count);
+            Update::ChatReadInbox(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
                 }
             },
             _ => (),
@@ -132,7 +120,15 @@ impl ChatList {
         {
             let priv_ = imp::ChatList::from_instance(self);
             let mut list = priv_.list.borrow_mut();
-            list.insert(chat.id, Chat::new(chat));
+            let chat_id = chat.id;
+            let chat = Chat::new(chat);
+            chat.connect_order_notify(
+                clone!(@weak self as obj => move |_, _| {
+                    obj.emit_by_name("positions-changed", &[]).unwrap();
+                }),
+            );
+
+            list.insert(chat_id, chat);
         }
 
         self.item_added();
@@ -143,13 +139,6 @@ impl ChatList {
         let list = priv_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1 as u32);
-    }
-
-    fn update_chat_order(&self, chat: &Chat, order: i64) {
-        if chat.order() != order {
-            chat.set_order(order);
-            self.emit_by_name("positions-changed", &[]).unwrap();
-        }
     }
 
     pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
