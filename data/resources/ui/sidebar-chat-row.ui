@@ -8,7 +8,11 @@
           <object class="AdwAvatar">
             <property name="show-initials">True</property>
             <property name="size">42</property>
-            <property name="text" bind-source="title_label" bind-property="label" bind-flags="sync-create"/>
+            <binding name="text">
+              <lookup name="title">
+                <lookup name="chat">SidebarChatRow</lookup>
+              </lookup>
+            </binding>
           </object>
         </child>
         <child>
@@ -18,18 +22,33 @@
             <child>
               <object class="GtkBox">
                 <child>
-                  <object class="GtkLabel" id="title_label">
+                  <object class="GtkLabel">
                     <property name="halign">start</property>
                     <property name="ellipsize">end</property>
                     <property name="single-line-mode">True</property>
+                    <binding name="label">
+                      <lookup name="title">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="unread_count_label">
+                  <object class="GtkLabel">
                     <property name="hexpand">True</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="ellipsize">end</property>
+                    <binding name="label">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="visible">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
                     <style>
                       <class name="unread-count"/>
                     </style>
@@ -38,10 +57,15 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel" id="last_message_label">
+              <object class="GtkLabel">
                 <property name="halign">start</property>
                 <property name="ellipsize">end</property>
                 <property name="single-line-mode">True</property>
+                <binding name="label">
+                  <lookup name="last-message">
+                    <lookup name="chat">SidebarChatRow</lookup>
+                  </lookup>
+                </binding>
               </object>
             </child>
           </object>

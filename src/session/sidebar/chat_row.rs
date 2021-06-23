@@ -1,7 +1,8 @@
-use crate::session::Chat;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+
+use crate::session::Chat;
 
 mod imp {
     use super::*;
@@ -14,13 +15,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
-        pub bindings: RefCell<Vec<glib::Binding>>,
-        #[template_child]
-        pub title_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub unread_count_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub last_message_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -102,45 +96,8 @@ impl ChatRow {
         }
 
         let priv_ = imp::ChatRow::from_instance(self);
-        let mut bindings = priv_.bindings.borrow_mut();
-        while let Some(binding) = bindings.pop() {
-            binding.unbind();
-        }
-
-        if let Some(ref chat) = chat {
-            let title_binding = chat
-                .bind_property("title", &priv_.title_label.get(), "label")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build()
-                .unwrap();
-
-            let unread_count_binding = chat
-                .bind_property("unread_count", &priv_.unread_count_label.get(), "label")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build()
-                .unwrap();
-
-            let unread_count_visible_binding = chat
-                .bind_property("unread_count", &priv_.unread_count_label.get(), "visible")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build()
-                .unwrap();
-
-            let last_message_binding = chat
-                .bind_property("last-message", &priv_.last_message_label.get(), "label")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build()
-                .unwrap();
-
-            bindings.append(&mut vec![
-                title_binding,
-                unread_count_binding,
-                unread_count_visible_binding,
-                last_message_binding,
-            ]);
-        }
-
         priv_.chat.replace(chat);
+
         self.notify("chat");
     }
 }
