@@ -4,8 +4,8 @@
 }
 
 .sidebar .unread-count {
-  background-color: @accent_color;
-  color: @accent_text;
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
   font-size: 0.8em;
   min-width: 0.7em;
   border-radius: 10px;
