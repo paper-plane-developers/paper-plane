@@ -1,6 +1,18 @@
 use crate::RUNTIME;
 use gtk::glib;
 use std::future::Future;
+use tdgrand::{enums, types::Message as TelegramMessage};
+
+pub fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
+    if let Some(message) = message {
+        return Some(match message.content {
+            enums::MessageContent::MessageText(content) => content.text.text,
+            _ => return None,
+        })
+    }
+
+    None
+}
 
 // Function from https://gitlab.gnome.org/GNOME/fractal/-/blob/fractal-next/src/utils.rs
 pub fn do_async<

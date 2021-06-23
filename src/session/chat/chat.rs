@@ -1,22 +1,9 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use tdgrand::{
-    enums,
-    types::Chat as TelegramChat,
-    types::Message as TelegramMessage,
-};
+use tdgrand::{enums, types::Chat as TelegramChat};
 
-pub fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
-    if let Some(message) = message {
-        return Some(match message.content {
-            enums::MessageContent::MessageText(content) => content.text.text,
-            _ => return None,
-        })
-    }
-
-    None
-}
+use crate::utils::stringify_message;
 
 mod imp {
     use super::*;

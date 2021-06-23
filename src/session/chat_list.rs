@@ -1,4 +1,5 @@
-use crate::session::{chat::stringify_message, Chat};
+use crate::session::Chat;
+use crate::utils::stringify_message;
 use crate::RUNTIME;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
