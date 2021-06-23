@@ -15,9 +15,6 @@ mod imp {
     pub struct ChatHistory {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
-        pub title_binding: RefCell<Option<glib::Binding>>,
-        #[template_child]
-        pub header_bar_title: TemplateChild<adw::WindowTitle>,
     }
 
     #[glib::object_subclass]
@@ -117,20 +114,8 @@ impl ChatHistory {
         }
 
         let priv_ = imp::ChatHistory::from_instance(self);
-        if let Some(title_binding) = priv_.title_binding.borrow().as_ref() {
-            title_binding.unbind();
-        }
-
-        if let Some(ref chat) = chat {
-            let title_binding = chat
-                .bind_property("title", &priv_.header_bar_title.get(), "title")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build()
-                .unwrap();
-            priv_.title_binding.replace(Some(title_binding));
-        }
-
         priv_.chat.replace(chat);
+
         self.notify("chat");
     }
 }

@@ -15,7 +15,12 @@
               </object>
             </child>
             <child type="title">
-              <object class="AdwWindowTitle" id="header_bar_title">
+              <object class="AdwWindowTitle">
+                <binding name="title">
+                  <lookup name="title">
+                    <lookup name="chat">ContentChatHistory</lookup>
+                  </lookup>
+                </binding>
               </object>
             </child>
           </object>
