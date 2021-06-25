@@ -5,6 +5,9 @@ use tdgrand::enums::{self, Update};
 use tdgrand::types::Chat as TelegramChat;
 use tdgrand::types::Message as TelegramMessage;
 
+use crate::Session;
+use crate::session::chat::History;
+
 fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
     if let Some(message) = message {
         return Some(match message.content {
@@ -27,6 +30,8 @@ mod imp {
         pub last_message: RefCell<Option<String>>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
+        pub history: History,
+        pub session: RefCell<Option<Session>>,
     }
 
     #[glib::object_subclass]
@@ -72,6 +77,20 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_object(
+                        "history",
+                        "History",
+                        "The message history of this chat",
+                        History::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
+                        "session",
+                        "Session",
+                        "The session",
+                        Session::static_type(),
+                        glib::ParamFlags::READWRITE,
+                    ),
                 ]
             });
 
@@ -102,6 +121,10 @@ mod imp {
                     let unread_count = value.get().unwrap();
                     obj.set_unread_count(unread_count);
                 }
+                "session" => {
+                    let session = value.get().unwrap();
+                    self.session.replace(session);
+                }
                 _ => unimplemented!(),
             }
         }
@@ -112,8 +135,18 @@ mod imp {
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
                 "unread-count" => obj.unread_count().to_value(),
+                "history" => obj.history().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
+        }
+
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            obj.bind_property("session", &self.history, "session")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build();
         }
     }
 }
@@ -144,7 +177,12 @@ impl Chat {
     }
 
     pub fn handle_update(&self, update: Update) {
+        let priv_ = imp::Chat::from_instance(self);
+
         match update {
+            Update::NewMessage(_) => {
+                priv_.history.handle_update(update);
+            },
             Update::ChatTitle(update) => {
                 self.set_title(update.title);
             },
@@ -213,6 +251,16 @@ impl Chat {
         let priv_ = imp::Chat::from_instance(self);
         priv_.unread_count.set(unread_count);
         self.notify("unread-count");
+    }
+
+    pub fn history(&self) -> &History {
+        let priv_ = imp::Chat::from_instance(self);
+        &priv_.history
+    }
+
+    pub fn session(&self) -> Option<Session> {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.session.borrow().to_owned()
     }
 
     pub fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(

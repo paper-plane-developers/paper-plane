@@ -113,6 +113,9 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
+            let session_expression = gtk::ConstantExpression::new(obj);
+            session_expression.bind(&self.chat_list, "session", Some(&self.chat_list));
+
             obj.fetch_chats();
         }
     }
@@ -136,8 +139,9 @@ impl Session {
         let priv_ = imp::Session::from_instance(self);
 
         match update {
-            Update::NewChat(_) | Update::ChatTitle(_) | Update::ChatLastMessage(_) |
-                Update::ChatPosition(_) | Update::ChatReadInbox(_) => {
+            Update::NewMessage(_) | Update::NewChat(_) | Update::ChatTitle(_) |
+                Update::ChatLastMessage(_) | Update::ChatPosition(_) |
+                Update::ChatReadInbox(_) => {
                     priv_.chat_list.handle_update(update);
             },
             Update::User(_) => {
@@ -145,6 +149,16 @@ impl Session {
             }
             _ => (),
         }
+    }
+
+    pub fn chat_list(&self) -> &ChatList {
+        let priv_ = imp::Session::from_instance(self);
+        &priv_.chat_list
+    }
+
+    pub fn user_list(&self) -> &UserList {
+        let priv_ = imp::Session::from_instance(self);
+        &priv_.user_list
     }
 
     fn selected_chat(&self) -> Option<Chat> {
