@@ -3,7 +3,7 @@ use gtk::subclass::prelude::*;
 use gtk::glib;
 use tdgrand::enums::Update;
 
-use crate::session::{Chat, ChatList, Content, Sidebar};
+use crate::session::{Chat, ChatList, Content, Sidebar, UserList};
 
 mod imp {
     use super::*;
@@ -17,6 +17,7 @@ mod imp {
     pub struct Session {
         pub client_id: Cell<i32>,
         pub chat_list: ChatList,
+        pub user_list: UserList,
         pub selected_chat: RefCell<Option<Chat>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
@@ -60,6 +61,13 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpec::new_object(
+                        "user-list",
+                        "User List",
+                        "The list of users of this session",
+                        ChatList::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
@@ -96,6 +104,7 @@ mod imp {
             match pspec.name() {
                 "client-id" => self.client_id.get().to_value(),
                 "chat-list" => self.chat_list.to_value(),
+                "user-list" => self.user_list.to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
             }
@@ -131,6 +140,9 @@ impl Session {
                 Update::ChatPosition(_) | Update::ChatReadInbox(_) => {
                     priv_.chat_list.handle_update(update);
             },
+            Update::User(_) => {
+                priv_.user_list.handle_update(update);
+            }
             _ => (),
         }
     }

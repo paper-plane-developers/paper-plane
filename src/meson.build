@@ -30,6 +30,8 @@ sources = files(
   'session/chat_list.rs',
   'session/mod.rs',
   'session/session.rs',
+  'session/user.rs',
+  'session/user_list.rs',
   'session/chat/chat.rs',
   'session/chat/mod.rs',
   'session/content/chat_history.rs',
