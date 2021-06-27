@@ -40,6 +40,7 @@ sources = files(
   'session/chat/mod.rs',
   'session/content/chat_history.rs',
   'session/content/content.rs',
+  'session/content/message_row.rs',
   'session/content/mod.rs',
   'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',

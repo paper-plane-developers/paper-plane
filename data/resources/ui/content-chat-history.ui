@@ -35,7 +35,7 @@
             <property name="child">
               <object class="AdwClampScrollable">
                 <property name="child">
-                  <object class="GtkListView">
+                  <object class="GtkListView" id="history_list_view">
                     <style>
                       <class name="navigation-sidebar"/>
                     </style>
@@ -45,6 +45,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
+    <property name="child">
+      <object class="ContentMessageRow">
+        <binding name="message">
+          <lookup name="item">GtkListItem</lookup>
+        </binding>
+      </object>
+    </property>
   </template>
 </interface>
                         ]]></property>
