@@ -2,7 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 
-use crate::session::{content::MessageRow, Chat};
+use crate::session::{chat::Message, content::MessageRow, Chat};
 
 mod imp {
     use super::*;
@@ -119,7 +119,23 @@ impl ChatHistory {
 
         let priv_ = imp::ChatHistory::from_instance(self);
         if let Some(ref chat) = chat {
-            let selection = gtk::NoSelection::new(Some(chat.history()));
+            chat.history().fetch();
+
+            let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
+                let date1 = obj1
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .date();
+                let date2 = obj2
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .date();
+
+                date1.cmp(&date2).into()
+            });
+
+            let sort_model = gtk::SortListModel::new(Some(chat.history()), Some(&sorter));
+            let selection = gtk::NoSelection::new(Some(&sort_model));
             priv_.history_list_view.set_model(Some(&selection));
         }
 

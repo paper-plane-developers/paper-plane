@@ -26,6 +26,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct Chat {
+        pub id: Cell<i64>,
         pub title: RefCell<String>,
         pub last_message: RefCell<Option<String>>,
         pub order: Cell<i64>,
@@ -45,6 +46,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
+                    glib::ParamSpec::new_int64(
+                        "id",
+                        "Id",
+                        "The id of this chat",
+                        std::i64::MIN,
+                        std::i64::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                     glib::ParamSpec::new_string(
                         "title",
                         "Title",
@@ -105,6 +115,10 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
+                "id" => {
+                    let id = value.get().unwrap();
+                    self.id.set(id);
+                }
                 "title" => {
                     let title = value.get().unwrap();
                     obj.set_title(title);
@@ -131,6 +145,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
+                "id" => obj.id().to_value(),
                 "title" => obj.title().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
@@ -143,6 +158,10 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            obj.bind_property("id", &self.history, "chat-id")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build();
 
             obj.bind_property("session", &self.history, "session")
                 .flags(glib::BindingFlags::SYNC_CREATE)
@@ -168,6 +187,7 @@ impl Chat {
         }
 
         glib::Object::new(&[
+            ("id", &chat.id),
             ("title", &chat.title),
             ("last-message", &last_message),
             ("order", &order),
@@ -207,6 +227,11 @@ impl Chat {
             },
             _ => (),
         }
+    }
+
+    pub fn id(&self) -> i64 {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.id.get()
     }
 
     pub fn title(&self) -> String {

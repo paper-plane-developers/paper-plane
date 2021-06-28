@@ -102,7 +102,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "client-id" => self.client_id.get().to_value(),
+                "client-id" => obj.client_id().to_value(),
                 "chat-list" => self.chat_list.to_value(),
                 "user-list" => self.user_list.to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
@@ -149,6 +149,11 @@ impl Session {
             }
             _ => (),
         }
+    }
+
+    pub fn client_id(&self) -> i32 {
+        let priv_ = imp::Session::from_instance(self);
+        priv_.client_id.get()
     }
 
     pub fn chat_list(&self) -> &ChatList {
