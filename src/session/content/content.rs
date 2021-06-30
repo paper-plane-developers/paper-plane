@@ -2,10 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 
-use crate::session::{
-    Chat,
-    content::ChatHistory,
-};
+use crate::session::{content::ChatHistory, Chat};
 
 mod imp {
     use super::*;

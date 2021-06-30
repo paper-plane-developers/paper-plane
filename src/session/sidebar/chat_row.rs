@@ -35,13 +35,15 @@ mod imp {
     impl ObjectImpl for ChatRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
-                    "chat",
-                    "Chat",
-                    "The chat represented by this row",
-                    Chat::static_type(),
-                    glib::ParamFlags::READWRITE,
-                )]
+                vec![
+                    glib::ParamSpec::new_object(
+                        "chat",
+                        "Chat",
+                        "The chat represented by this row",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE,
+                    ),
+                ]
             });
 
             PROPERTIES.as_ref()
