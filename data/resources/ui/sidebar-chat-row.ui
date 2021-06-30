@@ -66,6 +66,9 @@
                     <lookup name="chat">SidebarChatRow</lookup>
                   </lookup>
                 </binding>
+                <style>
+                  <class name="message-content"/>
+                </style>
               </object>
             </child>
           </object>
