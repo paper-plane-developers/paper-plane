@@ -1,6 +1,10 @@
-data/resources/ui/login.ui
-data/resources/ui/shortcuts.ui
-data/resources/ui/sidebar.ui
 data/com.github.melix99.telegrand.desktop.in.in
 data/com.github.melix99.telegrand.gschema.xml.in
 data/com.github.melix99.telegrand.metainfo.xml.in.in
+
+data/resources/ui/login.ui
+data/resources/ui/shortcuts.ui
+data/resources/ui/sidebar.ui
+
+src/session/chat/chat.rs
+src/session/content/message_row.rs
