@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
@@ -8,15 +9,14 @@ use tdgrand::types::Message as TelegramMessage;
 use crate::Session;
 use crate::session::chat::History;
 
-fn stringify_message(message: Option<TelegramMessage>) -> Option<String> {
+fn stringify_message(message: Option<TelegramMessage>) -> String {
     if let Some(message) = message {
-        return Some(match message.content {
+        return match message.content {
             enums::MessageContent::MessageText(content) => content.text.text,
-            _ => return None,
-        })
+            _ => format!("<i>{}</i>", gettext("This message is unsupported")),
+        }
     }
-
-    None
+    String::new()
 }
 
 mod imp {
@@ -28,7 +28,7 @@ mod imp {
     pub struct Chat {
         pub id: Cell<i64>,
         pub title: RefCell<String>,
-        pub last_message: RefCell<Option<String>>,
+        pub last_message: RefCell<String>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
         pub history: History,
@@ -245,12 +245,12 @@ impl Chat {
         self.notify("title");
     }
 
-    pub fn last_message(&self) -> Option<String> {
+    pub fn last_message(&self) -> String {
         let priv_ = imp::Chat::from_instance(self);
         priv_.last_message.borrow().clone()
     }
 
-    fn set_last_message(&self, last_message: Option<String>) {
+    fn set_last_message(&self, last_message: String) {
         let priv_ = imp::Chat::from_instance(self);
         priv_.last_message.replace(last_message);
         self.notify("last-message");
