@@ -1,7 +1,8 @@
-use crate::session::Chat;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+
+use crate::session::{chat::Message, content::MessageRow, Chat};
 
 mod imp {
     use super::*;
@@ -15,6 +16,8 @@ mod imp {
     pub struct ChatHistory {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub history_list_view: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -24,6 +27,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            MessageRow::static_type();
             Self::bind_template(klass);
         }
 
@@ -114,8 +118,28 @@ impl ChatHistory {
         }
 
         let priv_ = imp::ChatHistory::from_instance(self);
-        priv_.chat.replace(chat);
+        if let Some(ref chat) = chat {
+            chat.history().fetch();
 
+            let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
+                let date1 = obj1
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .date();
+                let date2 = obj2
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .date();
+
+                date1.cmp(&date2).into()
+            });
+
+            let sort_model = gtk::SortListModel::new(Some(chat.history()), Some(&sorter));
+            let selection = gtk::NoSelection::new(Some(&sort_model));
+            priv_.history_list_view.set_model(Some(&selection));
+        }
+
+        priv_.chat.replace(chat);
         self.notify("chat");
     }
 }

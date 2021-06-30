@@ -3,7 +3,7 @@ use gtk::subclass::prelude::*;
 use gtk::glib;
 use tdgrand::enums::Update;
 
-use crate::session::{Chat, ChatList, Content, Sidebar};
+use crate::session::{Chat, ChatList, Content, Sidebar, UserList};
 
 mod imp {
     use super::*;
@@ -17,6 +17,7 @@ mod imp {
     pub struct Session {
         pub client_id: Cell<i32>,
         pub chat_list: ChatList,
+        pub user_list: UserList,
         pub selected_chat: RefCell<Option<Chat>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
@@ -60,6 +61,13 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpec::new_object(
+                        "user-list",
+                        "User List",
+                        "The list of users of this session",
+                        ChatList::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
@@ -94,8 +102,9 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "client-id" => self.client_id.get().to_value(),
+                "client-id" => obj.client_id().to_value(),
                 "chat-list" => self.chat_list.to_value(),
+                "user-list" => self.user_list.to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
             }
@@ -103,6 +112,9 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            let session_expression = gtk::ConstantExpression::new(obj);
+            session_expression.bind(&self.chat_list, "session", Some(&self.chat_list));
 
             obj.fetch_chats();
         }
@@ -127,12 +139,31 @@ impl Session {
         let priv_ = imp::Session::from_instance(self);
 
         match update {
-            Update::NewChat(_) | Update::ChatTitle(_) | Update::ChatLastMessage(_) |
-                Update::ChatPosition(_) | Update::ChatReadInbox(_) => {
+            Update::NewMessage(_) | Update::NewChat(_) | Update::ChatTitle(_) |
+                Update::ChatLastMessage(_) | Update::ChatPosition(_) |
+                Update::ChatReadInbox(_) => {
                     priv_.chat_list.handle_update(update);
             },
+            Update::User(_) => {
+                priv_.user_list.handle_update(update);
+            }
             _ => (),
         }
+    }
+
+    pub fn client_id(&self) -> i32 {
+        let priv_ = imp::Session::from_instance(self);
+        priv_.client_id.get()
+    }
+
+    pub fn chat_list(&self) -> &ChatList {
+        let priv_ = imp::Session::from_instance(self);
+        &priv_.chat_list
+    }
+
+    pub fn user_list(&self) -> &UserList {
+        let priv_ = imp::Session::from_instance(self);
+        &priv_.user_list
     }
 
     fn selected_chat(&self) -> Option<Chat> {

@@ -6,8 +6,8 @@ use tdgrand::enums::{self, Update};
 use tdgrand::functions;
 use tdgrand::types::Chat as TelegramChat;
 
+use crate::{RUNTIME, Session};
 use crate::session::Chat;
-use crate::RUNTIME;
 
 mod imp {
     use super::*;
@@ -19,6 +19,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct ChatList {
         pub list: RefCell<IndexMap<i64, Chat>>,
+        pub session: RefCell<Option<Session>>,
     }
 
     #[glib::object_subclass]
@@ -40,6 +41,45 @@ mod imp {
                 .build()]
             });
             SIGNALS.as_ref()
+        }
+
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![
+                    glib::ParamSpec::new_object(
+                        "session",
+                        "Session",
+                        "The session",
+                        Session::static_type(),
+                        glib::ParamFlags::READWRITE,
+                    ),
+                ]
+            });
+
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            _obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "session" => {
+                    let session = value.get().unwrap();
+                    self.session.replace(session);
+                }
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "session" => obj.session().to_value(),
+                _ => unimplemented!(),
+            }
         }
     }
 
@@ -89,6 +129,11 @@ impl ChatList {
         let priv_ = imp::ChatList::from_instance(self);
 
         match update {
+            Update::NewMessage(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.message.chat_id) {
+                    chat.handle_update(update);
+                }
+            },
             Update::NewChat(update) => {
                 self.insert_chat(update.chat);
             },
@@ -116,12 +161,27 @@ impl ChatList {
         }
     }
 
+    pub fn get_chat(&self, chat_id: i64) -> Option<Chat> {
+        let priv_ = imp::ChatList::from_instance(self);
+        if let Some(index) = priv_.list.borrow().get_index_of(&chat_id) {
+            if let Some(item) = self.item(index as u32) {
+                return Some(item.downcast().unwrap())
+            }
+        }
+        None
+    }
+
     fn insert_chat(&self, chat: TelegramChat) {
         {
             let priv_ = imp::ChatList::from_instance(self);
             let mut list = priv_.list.borrow_mut();
             let chat_id = chat.id;
             let chat = Chat::new(chat);
+
+            self.bind_property("session", &chat, "session")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build();
+
             chat.connect_order_notify(
                 clone!(@weak self as obj => move |_, _| {
                     obj.emit_by_name("positions-changed", &[]).unwrap();
@@ -139,6 +199,11 @@ impl ChatList {
         let list = priv_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1 as u32);
+    }
+
+    pub fn session(&self) -> Option<Session> {
+        let priv_ = imp::ChatList::from_instance(self);
+        priv_.session.borrow().to_owned()
     }
 
     pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
