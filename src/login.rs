@@ -4,11 +4,7 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use tdgrand::{
-    enums::AuthorizationState,
-    functions,
-    types::{PhoneNumberAuthenticationSettings, TdlibParameters},
-};
+use tdgrand::{enums::AuthorizationState, functions, types};
 
 mod imp {
     use super::*;
@@ -218,7 +214,7 @@ impl Login {
         let client_id = priv_.client_id.get();
         let use_test_dc = priv_.use_test_dc_switch.state();
         let database_directory = format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
-        let params = TdlibParameters {
+        let parameters = types::TdlibParameters {
             use_test_dc,
             database_directory,
             use_file_database: true,
@@ -227,12 +223,14 @@ impl Login {
             system_language_code: "en-US".to_string(),
             device_model: "Desktop".to_string(),
             application_version: config::VERSION.to_string(),
-            ..TdlibParameters::default()
+            ..types::TdlibParameters::default()
         };
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::set_tdlib_parameters(client_id, params).await
+                functions::SetTdlibParameters::new()
+                    .parameters(parameters)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -257,7 +255,9 @@ impl Login {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::check_database_encryption_key(client_id, encryption_key).await
+                functions::CheckDatabaseEncryptionKey::new()
+                    .encryption_key(encryption_key)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -288,7 +288,9 @@ impl Login {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::set_database_encryption_key(client_id, encryption_key).await
+                functions::SetDatabaseEncryptionKey::new()
+                    .new_encryption_key(encryption_key)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -304,11 +306,12 @@ impl Login {
         let priv_ = imp::Login::from_instance(self);
         let client_id = priv_.client_id.get();
         let phone_number = priv_.phone_number_entry.text().to_string();
-        let settings = PhoneNumberAuthenticationSettings::default();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::set_authentication_phone_number(client_id, phone_number, settings).await
+                functions::SetAuthenticationPhoneNumber::new()
+                    .phone_number(phone_number)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -329,7 +332,9 @@ impl Login {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::check_authentication_code(client_id, code).await
+                functions::CheckAuthenticationCode::new()
+                    .code(code)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -350,7 +355,9 @@ impl Login {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
-                functions::check_authentication_password(client_id, password).await
+                functions::CheckAuthenticationPassword::new()
+                    .password(password)
+                    .send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {

@@ -195,7 +195,7 @@ impl Window {
     fn close_client(&self) {
         let client_id = imp::Window::from_instance(self).client_id;
         RUNTIME.spawn(async move {
-            functions::close(client_id).await.unwrap();
+            functions::Close::new().send(client_id).await.unwrap();
         });
     }
 
@@ -211,7 +211,9 @@ impl Window {
         // call we both set our preferred log level and we also enable the
         // client to receive updates.
         RUNTIME.spawn(async move {
-            functions::set_log_verbosity_level(client_id, 2).await.unwrap();
+            functions::SetLogVerbosityLevel::new()
+                .new_verbosity_level(2)
+                .send(client_id).await.unwrap();
         });
     }
 

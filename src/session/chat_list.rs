@@ -2,8 +2,7 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use tdgrand::enums::{self, Update};
-use tdgrand::functions;
+use tdgrand::{enums::Update, functions};
 use tdgrand::types::Chat as TelegramChat;
 
 use crate::{RUNTIME, Session};
@@ -121,7 +120,10 @@ impl ChatList {
 
     pub fn fetch(&self, client_id: i32) {
         RUNTIME.spawn(async move {
-            functions::get_chats(client_id, enums::ChatList::Main, i64::MAX, 0, i32::MAX).await.unwrap();
+            functions::GetChats::new()
+                .offset_order(i64::MAX)
+                .limit(i32::MAX)
+                .send(client_id).await.unwrap();
         });
     }
 
