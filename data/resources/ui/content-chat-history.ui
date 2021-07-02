@@ -81,6 +81,7 @@
                 </child>
                 <child>
                   <object class="GtkButton">
+                    <property name="action-name">history.send-message</property>
                     <property name="icon-name">mail-send-symbolic</property>
                     <style>
                       <class name="suggested-action"/>

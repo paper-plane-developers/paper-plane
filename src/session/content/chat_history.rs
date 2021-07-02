@@ -33,6 +33,10 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             MessageRow::static_type();
             Self::bind_template(klass);
+
+            klass.install_action("history.send-message", None, move |widget, _, _| {
+                widget.send_message();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -109,6 +113,34 @@ glib::wrapper! {
 impl ChatHistory {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatHistory")
+    }
+
+    fn send_message(&self) {
+        if let Some(chat) = self.chat() {
+            let priv_ = imp::ChatHistory::from_instance(self);
+            let text = types::FormattedText {
+                text: priv_.send_message_entry.text().to_string(),
+                ..Default::default()
+            };
+            let content = types::InputMessageText {
+                text,
+                clear_draft: true,
+                ..Default::default()
+            };
+            let message = enums::InputMessageContent::InputMessageText(content);
+
+            let client_id = chat.session().unwrap().client_id();
+            let chat_id = chat.id();
+
+            RUNTIME.spawn(async move {
+                functions::SendMessage::new()
+                    .chat_id(chat_id)
+                    .input_message_content(message)
+                    .send(client_id).await.unwrap();
+            });
+
+            priv_.send_message_entry.set_text("");
+        }
     }
 
     fn save_draft_message(&self) {
