@@ -146,28 +146,32 @@ impl ChatHistory {
     fn save_draft_message(&self) {
         if let Some(chat) = self.chat() {
             let priv_ = imp::ChatHistory::from_instance(self);
-            let text = types::FormattedText {
-                text: priv_.send_message_entry.text().to_string(),
-                ..Default::default()
-            };
-            let content = types::InputMessageText {
-                text,
-                ..Default::default()
-            };
-            let draft_message = types::DraftMessage {
-                input_message_text: enums::InputMessageContent::InputMessageText(content),
-                ..Default::default()
-            };
+            let draft = priv_.send_message_entry.text().to_string();
 
-            let client_id = chat.session().unwrap().client_id();
-            let chat_id = chat.id();
+            if chat.draft_message() != draft {
+                let text = types::FormattedText {
+                    text: draft,
+                    ..Default::default()
+                };
+                let content = types::InputMessageText {
+                    text,
+                    ..Default::default()
+                };
+                let draft_message = types::DraftMessage {
+                    input_message_text: enums::InputMessageContent::InputMessageText(content),
+                    ..Default::default()
+                };
 
-            RUNTIME.spawn(async move {
-                functions::SetChatDraftMessage::new()
-                    .chat_id(chat_id)
-                    .draft_message(draft_message)
-                    .send(client_id).await.unwrap();
-            });
+                let client_id = chat.session().unwrap().client_id();
+                let chat_id = chat.id();
+
+                RUNTIME.spawn(async move {
+                    functions::SetChatDraftMessage::new()
+                        .chat_id(chat_id)
+                        .draft_message(draft_message)
+                        .send(client_id).await.unwrap();
+                });
+            }
         }
     }
 
