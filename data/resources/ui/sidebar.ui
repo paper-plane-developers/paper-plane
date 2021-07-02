@@ -39,7 +39,20 @@
               <object class="GtkListView" id="chat_list_view">
                 <property name="factory">
                   <object class="GtkBuilderListItemFactory">
-                    <property name="resource">/com/github/melix99/telegrand/ui/sidebar-item.ui</property>
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SidebarChatRow">
+        <binding name="chat">
+          <lookup name="item">GtkListItem</lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+                    ]]></property>
                   </object>
                 </property>
                 <style>
