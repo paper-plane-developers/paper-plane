@@ -183,7 +183,7 @@ impl ChatList {
             let priv_ = imp::ChatList::from_instance(self);
             let mut list = priv_.list.borrow_mut();
             let chat_id = chat.id;
-            let chat = Chat::new(chat);
+            let chat = Chat::new(chat.id, chat.title);
 
             self.bind_property("session", &chat, "session")
                 .flags(glib::BindingFlags::SYNC_CREATE)

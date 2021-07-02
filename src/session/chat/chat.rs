@@ -3,7 +3,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use tdgrand::enums::{self, Update};
-use tdgrand::types::Chat as TelegramChat;
 use tdgrand::types::Message as TelegramMessage;
 
 use crate::Session;
@@ -68,7 +67,7 @@ mod imp {
                         "Last Message",
                         "The last message sent on this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_int64(
                         "order",
@@ -77,7 +76,7 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_int(
                         "unread-count",
@@ -86,14 +85,14 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_string(
                         "draft-message",
                         "Draft Message",
                         "The draft message of this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_object(
                         "history",
@@ -188,34 +187,9 @@ glib::wrapper! {
 }
 
 impl Chat {
-    pub fn new(chat: TelegramChat) -> Self {
-        let last_message = stringify_message(chat.last_message);
-
-        let mut order = 0;
-        for position in chat.positions {
-            if let enums::ChatList::Main = position.list {
-                order = position.order;
-                break;
-            }
-        }
-
-        let mut draft_message = String::new();
-        if let Some(message) = chat.draft_message {
-            let content = message.input_message_text;
-            if let enums::InputMessageContent::InputMessageText(content) = content {
-                draft_message = content.text.text;
-            }
-        }
-
-        glib::Object::new(&[
-            ("id", &chat.id),
-            ("title", &chat.title),
-            ("last-message", &last_message),
-            ("order", &order),
-            ("unread-count", &chat.unread_count),
-            ("draft-message", &draft_message),
-        ])
-        .expect("Failed to create Chat")
+    pub fn new(chat_id: i64, title: String) -> Self {
+        glib::Object::new(&[("id", &chat_id), ("title", &title)])
+            .expect("Failed to create Chat")
     }
 
     pub fn handle_update(&self, update: Update) {
