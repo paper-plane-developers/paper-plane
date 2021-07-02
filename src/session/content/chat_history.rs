@@ -1,7 +1,9 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use tdgrand::{enums, functions, types};
 
+use crate::RUNTIME;
 use crate::session::{chat::Message, content::MessageRow, Chat};
 
 mod imp {
@@ -18,6 +20,8 @@ mod imp {
         pub chat: RefCell<Option<Chat>>,
         #[template_child]
         pub history_list_view: TemplateChild<gtk::ListView>,
+        #[template_child]
+        pub send_message_entry: TemplateChild<gtk::Entry>,
     }
 
     #[glib::object_subclass]
@@ -107,6 +111,34 @@ impl ChatHistory {
         glib::Object::new(&[]).expect("Failed to create ChatHistory")
     }
 
+    fn save_draft_message(&self) {
+        if let Some(chat) = self.chat() {
+            let priv_ = imp::ChatHistory::from_instance(self);
+            let text = types::FormattedText {
+                text: priv_.send_message_entry.text().to_string(),
+                ..Default::default()
+            };
+            let content = types::InputMessageText {
+                text,
+                ..Default::default()
+            };
+            let draft_message = types::DraftMessage {
+                input_message_text: enums::InputMessageContent::InputMessageText(content),
+                ..Default::default()
+            };
+
+            let client_id = chat.session().unwrap().client_id();
+            let chat_id = chat.id();
+
+            RUNTIME.spawn(async move {
+                functions::SetChatDraftMessage::new()
+                    .chat_id(chat_id)
+                    .draft_message(draft_message)
+                    .send(client_id).await.unwrap();
+            });
+        }
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let priv_ = imp::ChatHistory::from_instance(self);
         priv_.chat.borrow().clone()
@@ -117,8 +149,12 @@ impl ChatHistory {
             return;
         }
 
+        self.save_draft_message();
+
         let priv_ = imp::ChatHistory::from_instance(self);
         if let Some(ref chat) = chat {
+            priv_.send_message_entry.set_text(&chat.draft_message());
+
             chat.history().fetch();
 
             let sorter = gtk::CustomSorter::new(move |obj1, obj2| {

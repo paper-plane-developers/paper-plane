@@ -75,7 +75,7 @@
                   <class name="send-message-area"/>
                 </style>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="send_message_entry">
                     <property name="hexpand">True</property>
                   </object>
                 </child>

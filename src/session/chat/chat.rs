@@ -31,6 +31,7 @@ mod imp {
         pub last_message: RefCell<String>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
+        pub draft_message: RefCell<String>,
         pub history: History,
         pub session: RefCell<Option<Session>>,
     }
@@ -87,6 +88,13 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_string(
+                        "draft-message",
+                        "Draft Message",
+                        "The draft message of this chat",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpec::new_object(
                         "history",
                         "History",
@@ -135,6 +143,10 @@ mod imp {
                     let unread_count = value.get().unwrap();
                     obj.set_unread_count(unread_count);
                 }
+                "draft-message" => {
+                    let draft_message = value.get().unwrap();
+                    obj.set_draft_message(draft_message);
+                }
                 "session" => {
                     let session = value.get().unwrap();
                     self.session.replace(session);
@@ -150,6 +162,7 @@ mod imp {
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
                 "unread-count" => obj.unread_count().to_value(),
+                "draft-message" => obj.draft_message().to_value(),
                 "history" => obj.history().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
@@ -186,12 +199,21 @@ impl Chat {
             }
         }
 
+        let mut draft_message = String::new();
+        if let Some(message) = chat.draft_message {
+            let content = message.input_message_text;
+            if let enums::InputMessageContent::InputMessageText(content) = content {
+                draft_message = content.text.text;
+            }
+        }
+
         glib::Object::new(&[
             ("id", &chat.id),
             ("title", &chat.title),
             ("last-message", &last_message),
             ("order", &order),
             ("unread-count", &chat.unread_count),
+            ("draft-message", &draft_message),
         ])
         .expect("Failed to create Chat")
     }
@@ -225,6 +247,16 @@ impl Chat {
             Update::ChatReadInbox(update) => {
                 self.set_unread_count(update.unread_count);
             },
+            Update::ChatDraftMessage(update) => {
+                let mut draft_message = String::new();
+                if let Some(message) = update.draft_message {
+                    let content = message.input_message_text;
+                    if let enums::InputMessageContent::InputMessageText(content) = content {
+                        draft_message = content.text.text;
+                    }
+                }
+                self.set_draft_message(draft_message);
+            }
             _ => (),
         }
     }
@@ -276,6 +308,17 @@ impl Chat {
         let priv_ = imp::Chat::from_instance(self);
         priv_.unread_count.set(unread_count);
         self.notify("unread-count");
+    }
+
+    pub fn draft_message(&self) -> String {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.draft_message.borrow().clone()
+    }
+
+    fn set_draft_message(&self, draft_message: String) {
+        let priv_ = imp::Chat::from_instance(self);
+        priv_.draft_message.replace(draft_message);
+        self.notify("draft-message");
     }
 
     pub fn history(&self) -> &History {
