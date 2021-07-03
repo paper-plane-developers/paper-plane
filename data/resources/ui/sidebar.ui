@@ -3,6 +3,12 @@
   <menu id="primary_menu">
     <section>
       <item>
+        <attribute name="label" translatable="yes">_Log Out</attribute>
+        <attribute name="action">session.log-out</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
         <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
         <attribute name="action">win.show-help-overlay</attribute>
       </item>

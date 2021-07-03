@@ -2,7 +2,9 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use tdgrand::enums::Update;
+use tdgrand::functions;
 
+use crate::RUNTIME;
 use crate::session::{Chat, ChatList, Content, Sidebar, UserList};
 
 mod imp {
@@ -33,6 +35,10 @@ mod imp {
             Sidebar::static_type();
             Content::static_type();
             Self::bind_template(klass);
+
+            klass.install_action("session.log-out", None, move |widget, _, _| {
+                widget.log_out();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -149,6 +155,13 @@ impl Session {
             }
             _ => (),
         }
+    }
+
+    fn log_out(&self) {
+        let client_id = self.client_id();
+        RUNTIME.spawn(async move {
+            functions::LogOut::new().send(client_id).await.unwrap();
+        });
     }
 
     pub fn client_id(&self) -> i32 {
