@@ -1,37 +1,38 @@
-use crate::config::{APP_ID, PROFILE};
-use crate::Application;
-use crate::RUNTIME;
-use crate::Session;
 use glib::{clone, SyncSender};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use gtk_macros::send;
 use log::error;
-use tokio::task;
 use std::sync::Arc;
-use tdgrand::{
-    enums::{AuthorizationState, Update},
-    functions,
-};
+use std::sync::atomic::{AtomicBool, Ordering};
+use tokio::task;
+use tdgrand::enums::{AuthorizationState, Update};
+use tdgrand::functions;
+
+use crate::config::{APP_ID, PROFILE};
+use crate::Application;
+use crate::RUNTIME;
+use crate::Session;
 
 mod imp {
     use super::*;
-    use crate::Login;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
     use gtk::{gio, CompositeTemplate, Inhibit};
     use log::warn;
-    use once_cell::sync::OnceCell;
     use std::cell::RefCell;
+    use std::collections::HashMap;
     use tokio::task::JoinHandle;
+
+    use crate::Login;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
     pub struct Window {
         pub settings: gio::Settings,
         pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
-        pub client_id: i32,
-        pub session: OnceCell<Session>,
+        pub receiver_should_stop: Arc<AtomicBool>,
+        pub clients: RefCell<HashMap<i32, Option<Session>>>,
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -48,8 +49,8 @@ mod imp {
             Self {
                 settings: gio::Settings::new(APP_ID),
                 receiver_handle: RefCell::default(),
-                client_id: tdgrand::crate_client(),
-                session: OnceCell::default(),
+                receiver_should_stop: Arc::default(),
+                clients: RefCell::default(),
                 main_stack: TemplateChild::default(),
                 login: TemplateChild::default(),
             }
@@ -79,13 +80,13 @@ mod imp {
             }
 
             obj.load_window_size();
-            obj.start_td_receiver();
 
             self.login.connect_new_session(
-                clone!(@weak obj => move |_| obj.add_session()),
+                clone!(@weak obj => move |login| obj.create_session(login.client_id())),
             );
 
-            obj.login_client();
+            obj.create_client();
+            obj.start_receiver();
         }
     }
 
@@ -93,11 +94,11 @@ mod imp {
     impl WindowImpl for Window {
         // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
-            // Send close request
-            obj.close_client();
+            self.receiver_should_stop.store(true, Ordering::Release);
 
-            // Await for the td receiver to end
-            obj.await_td_receiver();
+            obj.close_clients();
+
+            obj.wait_receiver();
 
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
@@ -122,16 +123,120 @@ impl Window {
             .expect("Failed to create Window")
     }
 
-    fn add_session(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        priv_.session.set(Session::new(priv_.client_id)).unwrap();
+    fn create_client(&self) {
+        let client_id = tdgrand::create_client();
 
-        let session = priv_.session.get().unwrap();
-        priv_.main_stack.add_child(session);
-        priv_.main_stack.set_visible_child(session);
+        let priv_ = imp::Window::from_instance(self);
+        priv_.clients.borrow_mut().insert(client_id, None);
+        priv_.login.login_client(client_id);
+        priv_.main_stack.set_visible_child(&priv_.login.get());
+
+        // This call is important for login because TDLib requires the clients
+        // to do at least a request to start receiving updates.
+        RUNTIME.spawn(async move {
+            functions::SetLogVerbosityLevel::new()
+                .new_verbosity_level(2)
+                .send(client_id).await.unwrap();
+        });
     }
 
-    pub fn save_window_size(&self) -> Result<(), glib::BoolError> {
+    fn close_clients(&self) {
+        let priv_ = imp::Window::from_instance(self);
+
+        for (client_id, _) in priv_.clients.borrow().iter() {
+            let client_id = *client_id;
+            RUNTIME.spawn(async move {
+                functions::Close::new().send(client_id).await.unwrap();
+            });
+        }
+    }
+
+    fn start_receiver(&self) {
+        let priv_ = imp::Window::from_instance(self);
+        let receiver_should_stop = priv_.receiver_should_stop.clone();
+        let sender = Arc::new(self.create_update_sender());
+        let handle = RUNTIME.spawn(async move {
+            loop {
+                let receiver_should_stop = receiver_should_stop.clone();
+                let sender = sender.clone();
+                let stop = task::spawn_blocking(move || {
+                    if let Some((update, client_id)) = tdgrand::receive() {
+                        if receiver_should_stop.load(Ordering::Acquire) {
+                            if let Update::AuthorizationState(ref update) = update {
+                                if let AuthorizationState::Closed = update.authorization_state {
+                                    return true
+                                }
+                            }
+                        }
+
+                        send!(sender, (update, client_id));
+                    }
+
+                    false
+                }).await.unwrap();
+
+                if stop {
+                    break;
+                }
+            }
+        });
+
+        priv_.receiver_handle.replace(Some(handle));
+    }
+
+    fn wait_receiver(&self) {
+        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
+        RUNTIME.block_on(async move {
+            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+        });
+    }
+
+    fn create_update_sender(&self) -> SyncSender<(Update, i32)> {
+        let (sender, receiver) =
+            glib::MainContext::sync_channel::<(Update, i32)>(Default::default(), 100);
+        receiver.attach(
+            None,
+            clone!(@weak self as obj => @default-return glib::Continue(false), move |(update, client_id)| {
+                obj.handle_update(update, client_id);
+
+                glib::Continue(true)
+            }),
+        );
+
+        sender
+    }
+
+    fn handle_update(&self, update: Update, client_id: i32) {
+        let priv_ = imp::Window::from_instance(self);
+
+        if let Update::AuthorizationState(update) = update {
+            if let AuthorizationState::Closed = update.authorization_state {
+                let session = priv_.clients.borrow_mut().remove(&client_id).unwrap();
+                if let Some(session) = session {
+                    priv_.main_stack.remove(&session);
+                }
+
+                self.create_client();
+            } else {
+                priv_.login.set_authorization_state(update.authorization_state);
+            }
+        } else if let Some(session) = priv_.clients.borrow().get(&client_id) {
+            if let Some(session) = session {
+                session.handle_update(update);
+            }
+        }
+    }
+
+    fn create_session(&self, client_id: i32) {
+        let priv_ = imp::Window::from_instance(self);
+        let session = Session::new(client_id);
+
+        priv_.main_stack.add_child(&session);
+        priv_.main_stack.set_visible_child(&session);
+        priv_.clients.borrow_mut().insert(client_id, Some(session));
+    }
+
+    fn save_window_size(&self) -> Result<(), glib::BoolError> {
         let settings = &imp::Window::from_instance(self).settings;
 
         let size = self.default_size();
@@ -153,92 +258,6 @@ impl Window {
         let is_maximized = settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
-        }
-    }
-
-    fn start_td_receiver(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        let sender = Arc::new(self.create_new_update_sender());
-        let handle = RUNTIME.spawn(async move {
-            loop {
-                let sender = sender.clone();
-                let stop = task::spawn_blocking(move || {
-                    if let Some((update, _)) = tdgrand::receive() {
-                        if let Update::AuthorizationState(update) = &update {
-                            if let AuthorizationState::Closed = update.authorization_state {
-                                return true;
-                            }
-                        }
-
-                        send!(sender, update);
-                    }
-
-                    false
-                }).await.unwrap();
-
-                if stop {
-                    break;
-                }
-            }
-        });
-
-        priv_.receiver_handle.replace(Some(handle));
-    }
-
-    fn await_td_receiver(&self) {
-        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
-        RUNTIME.block_on(async move {
-            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
-        });
-    }
-
-    fn close_client(&self) {
-        let client_id = imp::Window::from_instance(self).client_id;
-        RUNTIME.spawn(async move {
-            functions::Close::new().send(client_id).await.unwrap();
-        });
-    }
-
-    fn login_client(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        let client_id = priv_.client_id;
-        let login = &priv_.login;
-
-        login.set_client_id(client_id);
-
-        // This call is important for login because TDLib requires the clients
-        // to do at least a request to start receiving updates. So with this
-        // call we both set our preferred log level and we also enable the
-        // client to receive updates.
-        RUNTIME.spawn(async move {
-            functions::SetLogVerbosityLevel::new()
-                .new_verbosity_level(2)
-                .send(client_id).await.unwrap();
-        });
-    }
-
-    fn create_new_update_sender(&self) -> SyncSender<Update> {
-        let (sender, receiver) =
-            glib::MainContext::sync_channel::<Update>(Default::default(), 100);
-        receiver.attach(
-            None,
-            clone!(@weak self as obj => @default-return glib::Continue(false), move |update| {
-                obj.handle_update(update);
-
-                glib::Continue(true)
-            }),
-        );
-
-        sender
-    }
-
-    fn handle_update(&self, update: Update) {
-        let priv_ = imp::Window::from_instance(self);
-
-        if let Update::AuthorizationState(update) = update {
-            priv_.login.set_authorization_state(update.authorization_state);
-        } else if let Some(session) = priv_.session.get() {
-            session.handle_update(update);
         }
     }
 }

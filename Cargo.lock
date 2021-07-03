@@ -1075,7 +1075,7 @@ dependencies = [
 [[package]]
 name = "tdgrand"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#60c0709825cb78993a4cbb7d1dff3bfc14514af5"
+source = "git+https://github.com/melix99/tdgrand?branch=main#f38330b3ba6f4fe68e1148285a0aca594203f9ef"
 dependencies = [
  "log",
  "once_cell",
@@ -1091,7 +1091,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-gen"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#60c0709825cb78993a4cbb7d1dff3bfc14514af5"
+source = "git+https://github.com/melix99/tdgrand?branch=main#f38330b3ba6f4fe68e1148285a0aca594203f9ef"
 dependencies = [
  "tdgrand-tl-parser",
 ]
@@ -1099,7 +1099,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-parser"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#60c0709825cb78993a4cbb7d1dff3bfc14514af5"
+source = "git+https://github.com/melix99/tdgrand?branch=main#f38330b3ba6f4fe68e1148285a0aca594203f9ef"
 dependencies = [
  "crc32fast",
 ]
@@ -1191,9 +1191,9 @@ checksum = "56dee185309b50d1f11bfedef0fe6d036842e3fb77413abef29f8f8d1c5d4c1c"
 
 [[package]]
 name = "unicode-segmentation"
-version = "1.7.1"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb0d2e7be6ae3a5fa87eed5fb451aff96f2573d2694942e40543ae0bbe19c796"
+checksum = "8895849a949e7845e06bd6dc1aa51731a103c42707010a5b591c0038fb73385b"
 
 [[package]]
 name = "unicode-xid"

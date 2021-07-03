@@ -1,10 +1,11 @@
-use crate::config;
-use crate::utils::do_async;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
 use tdgrand::{enums::AuthorizationState, functions, types};
+
+use crate::config;
+use crate::utils::do_async;
 
 mod imp {
     use super::*;
@@ -81,8 +82,6 @@ mod imp {
         }
 
         fn constructed(&self, obj: &Self::Type) {
-            obj.action_set_enabled("login.next", false);
-
             self.parent_constructed(obj);
 
             // Show the previous button on all pages except in the
@@ -121,9 +120,19 @@ impl Login {
         glib::Object::new(&[]).expect("Failed to create Login")
     }
 
-    pub fn set_client_id(&self, client_id: i32) {
+    pub fn login_client(&self, client_id: i32) {
         let priv_ = imp::Login::from_instance(self);
         priv_.client_id.set(client_id);
+        priv_.content.set_visible_child_name("phone-number-page");
+
+        priv_.phone_number_entry.set_text("");
+        priv_.custom_encryption_key_entry.set_text("");
+        priv_.code_entry.set_text("");
+        priv_.password_entry.set_text("");
+        priv_.encryption_key_entry.set_text("");
+
+        self.unfreeze();
+        self.action_set_enabled("login.next", false);
     }
 
     pub fn set_authorization_state(&self, state: AuthorizationState) {
@@ -157,9 +166,6 @@ impl Login {
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
-            }
-            AuthorizationState::LoggingOut => {
-                todo!()
             }
             _ => ()
         }
@@ -369,6 +375,11 @@ impl Login {
                 }
             }),
         );
+    }
+
+    pub fn client_id(&self) -> i32 {
+        let priv_ = imp::Login::from_instance(self);
+        priv_.client_id.get()
     }
 
     pub fn connect_new_session<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
