@@ -128,7 +128,7 @@ impl MessageRow {
 
             match message.sender() {
                 MessageSender::Chat(chat) => {
-                    let chat_expression = gtk::ConstantExpression::new(chat);
+                    let chat_expression = gtk::ConstantExpression::new(&chat);
                     let title_expression = gtk::PropertyExpression::new(
                         Chat::static_type(),
                         Some(&chat_expression),
@@ -144,7 +144,7 @@ impl MessageRow {
                         .build();
                     hbox.prepend(&avatar);
 
-                    let user_expression = gtk::ConstantExpression::new(user);
+                    let user_expression = gtk::ConstantExpression::new(&user);
                     let first_name_expression = gtk::PropertyExpression::new(
                         User::static_type(),
                         Some(&user_expression),

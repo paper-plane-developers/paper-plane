@@ -1,6 +1,9 @@
+use gtk::glib;
+
 use crate::session::{Chat, User};
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "MessageSender")]
 pub enum MessageSender {
     Chat(Chat),
     User(User),

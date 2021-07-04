@@ -1,6 +1,8 @@
+use gtk::glib;
 use tdgrand::enums::MessageContent as TelegramMessageContent;
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "MessageContent")]
 pub enum MessageContent {
     Text(String),
     Unsupported,
