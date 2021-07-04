@@ -227,7 +227,7 @@ impl History {
         let priv_ = imp::History::from_instance(self);
         let list = priv_.list.borrow();
         let position = list.len() - 1;
-        self.items_changed(position as u32, 0, 1 as u32);
+        self.items_changed(position as u32, 0, 1);
     }
 
     pub fn chat_id(&self) -> i64 {

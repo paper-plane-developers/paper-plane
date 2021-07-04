@@ -10,7 +10,7 @@ pub enum MessageContent {
 
 impl MessageContent {
     pub fn new(content: TelegramMessageContent) -> Self {
-        return match content {
+        match content {
             TelegramMessageContent::MessageText(content) =>
                 MessageContent::Text(content.text.text),
             _ => MessageContent::Unsupported,

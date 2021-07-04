@@ -220,10 +220,8 @@ impl Window {
             } else {
                 priv_.login.set_authorization_state(update.authorization_state);
             }
-        } else if let Some(session) = priv_.clients.borrow().get(&client_id) {
-            if let Some(session) = session {
-                session.handle_update(update);
-            }
+        } else if let Some(Some(session)) = priv_.clients.borrow().get(&client_id) {
+            session.handle_update(update);
         }
     }
 

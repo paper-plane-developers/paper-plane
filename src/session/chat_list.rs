@@ -205,7 +205,7 @@ impl ChatList {
         let priv_ = imp::ChatList::from_instance(self);
         let list = priv_.list.borrow();
         let position = list.len() - 1;
-        self.items_changed(position as u32, 0, 1 as u32);
+        self.items_changed(position as u32, 0, 1);
     }
 
     pub fn session(&self) -> Option<Session> {

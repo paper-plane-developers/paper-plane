@@ -172,7 +172,7 @@ impl MessageRow {
 
         let text = match message.content() {
             MessageContent::Text(text) => {
-                text.to_owned()
+                text
             },
             MessageContent::Unsupported => {
                 format!("<i>{}</i>", gettext("This message is unsupported"))
