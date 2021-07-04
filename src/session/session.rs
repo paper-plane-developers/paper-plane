@@ -145,15 +145,20 @@ impl Session {
         let priv_ = imp::Session::from_instance(self);
 
         match update {
-            Update::NewMessage(_) | Update::NewChat(_) | Update::ChatTitle(_) |
-                Update::ChatLastMessage(_) | Update::ChatPosition(_) |
-                Update::ChatReadInbox(_) | Update::ChatDraftMessage(_) => {
-                    priv_.chat_list.handle_update(update);
-            },
+            Update::NewMessage(_)
+            | Update::MessageContent(_)
+            | Update::NewChat(_)
+            | Update::ChatTitle(_)
+            | Update::ChatLastMessage(_)
+            | Update::ChatPosition(_)
+            | Update::ChatReadInbox(_)
+            | Update::ChatDraftMessage(_) => {
+                priv_.chat_list.handle_update(update);
+            }
             Update::User(_) => {
                 priv_.user_list.handle_update(update);
             }
-            _ => (),
+            _ => {}
         }
     }
 

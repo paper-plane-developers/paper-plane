@@ -1,6 +1,7 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
+use tdgrand::enums::Update;
 use tdgrand::types::Message as TelegramMessage;
 
 use crate::session::chat::{MessageContent, MessageSender};
@@ -8,7 +9,7 @@ use crate::session::chat::{MessageContent, MessageSender};
 mod imp {
     use super::*;
     use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub struct Message {
@@ -16,7 +17,7 @@ mod imp {
         pub sender: OnceCell<MessageSender>,
         pub outgoing: Cell<bool>,
         pub date: Cell<i32>,
-        pub content: OnceCell<MessageContent>,
+        pub content: RefCell<Option<MessageContent>>,
     }
 
     #[glib::object_subclass]
@@ -67,7 +68,7 @@ mod imp {
                         "Content",
                         "The content of this message",
                         MessageContent::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
                 ]
             });
@@ -101,7 +102,7 @@ mod imp {
                 }
                 "content" => {
                     let content = value.get().unwrap();
-                    self.content.set(content).unwrap();
+                    self.content.replace(Some(content));
                 }
                 _ => unimplemented!(),
             }
@@ -113,7 +114,7 @@ mod imp {
                 "sender" => self.sender.get().unwrap().to_value(),
                 "outgoing" => self.outgoing.get().to_value(),
                 "date" => self.date.get().to_value(),
-                "content" => self.content.get().unwrap().to_value(),
+                "content" => self.content.borrow().as_ref().unwrap().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -137,6 +138,16 @@ impl Message {
         .expect("Failed to create Message")
     }
 
+    pub fn handle_update(&self, update: Update) {
+        match update {
+            Update::MessageContent(update) => {
+                let new_content = MessageContent::new(update.new_content);
+                self.set_content(new_content);
+            }
+            _ => {}
+        }
+    }
+
     pub fn id(&self) -> i64 {
         self.property("id").unwrap().get().unwrap()
     }
@@ -155,5 +166,11 @@ impl Message {
 
     pub fn content(&self) -> MessageContent {
         self.property("content").unwrap().get().unwrap()
+    }
+
+    fn set_content(&self, content: MessageContent) {
+        if self.content() != content {
+            self.set_property("content", &content).unwrap();
+        }
     }
 }

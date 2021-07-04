@@ -196,12 +196,12 @@ impl Chat {
         let priv_ = imp::Chat::from_instance(self);
 
         match update {
-            Update::NewMessage(_) => {
+            Update::NewMessage(_) | Update::MessageContent(_) => {
                 priv_.history.handle_update(update);
-            },
+            }
             Update::ChatTitle(update) => {
                 self.set_title(update.title);
-            },
+            }
             Update::ChatLastMessage(update) => {
                 let message = stringify_message(update.last_message);
                 self.set_last_message(message);
@@ -212,15 +212,15 @@ impl Chat {
                         break;
                     }
                 }
-            },
+            }
             Update::ChatPosition(update) => {
                 if let enums::ChatList::Main = update.position.list {
                     self.set_order(update.position.order);
                 }
-            },
+            }
             Update::ChatReadInbox(update) => {
                 self.set_unread_count(update.unread_count);
-            },
+            }
             Update::ChatDraftMessage(update) => {
                 let mut draft_message = String::new();
                 if let Some(message) = update.draft_message {
@@ -231,7 +231,7 @@ impl Chat {
                 }
                 self.set_draft_message(draft_message);
             }
-            _ => (),
+            _ => {}
         }
     }
 

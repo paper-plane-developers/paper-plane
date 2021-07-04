@@ -182,6 +182,8 @@ impl History {
     }
 
     pub fn handle_update(&self, update: Update) {
+        let priv_ = imp::History::from_instance(self);
+
         match update {
             Update::NewMessage(update) => {
                 // Set this as the oldest message if we had no oldest message id
@@ -190,8 +192,13 @@ impl History {
                 }
 
                 self.insert_message(update.message);
-            },
-            _ => (),
+            }
+            Update::MessageContent(ref update_) => {
+                if let Some(message) = priv_.list.borrow().get(&update_.message_id) {
+                    message.handle_update(update);
+                }
+            }
+            _ => {}
         }
     }
 

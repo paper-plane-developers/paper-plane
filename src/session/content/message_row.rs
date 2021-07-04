@@ -7,6 +7,15 @@ use gtk::{glib, pango};
 use crate::session::{Chat, User};
 use crate::session::chat::{Message, MessageContent, MessageSender};
 
+fn get_text_from_message_content(content: MessageContent) -> String {
+    match content {
+        MessageContent::Text(text) => text,
+        MessageContent::Unsupported => {
+            format!("<i>{}</i>", gettext("This message is unsupported"))
+        }
+    }
+}
+
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
@@ -170,19 +179,9 @@ impl MessageRow {
             }
         }
 
-        let text = match message.content() {
-            MessageContent::Text(text) => {
-                text
-            },
-            MessageContent::Unsupported => {
-                format!("<i>{}</i>", gettext("This message is unsupported"))
-            },
-        };
-
         let text_label = gtk::LabelBuilder::new()
             .css_classes(vec!("message-content".to_string()))
             .vexpand(true)
-            .label(&text)
             .selectable(true)
             .use_markup(true)
             .wrap(true)
@@ -190,6 +189,21 @@ impl MessageRow {
             .xalign(0.0)
             .build();
         vbox.append(&text_label);
+
+        let message_expression = gtk::ConstantExpression::new(message);
+        let content_expression = gtk::PropertyExpression::new(
+            Message::static_type(),
+            Some(&message_expression),
+            "content",
+        );
+        let text_expression = gtk::ClosureExpression::new(
+            move |expressions| -> String {
+                let content = expressions[1].get::<MessageContent>().unwrap();
+                get_text_from_message_content(content)
+            },
+            &[content_expression.upcast()]
+        );
+        text_expression.bind(&text_label, "label", Some(&text_label));
 
         hbox
     }

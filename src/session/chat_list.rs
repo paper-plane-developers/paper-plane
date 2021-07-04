@@ -135,36 +135,41 @@ impl ChatList {
                 if let Some(chat) = priv_.list.borrow().get(&update_.message.chat_id) {
                     chat.handle_update(update);
                 }
-            },
+            }
+            Update::MessageContent(ref update_) => {
+                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             Update::NewChat(update) => {
                 self.insert_chat(update.chat);
-            },
+            }
             Update::ChatTitle(ref update_) => {
                 if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
-            },
+            }
             Update::ChatLastMessage(ref update_) => {
                 if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
-            },
+            }
             Update::ChatPosition(ref update_) => {
                 if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
-            },
+            }
             Update::ChatReadInbox(ref update_) => {
                 if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
-            },
+            }
             Update::ChatDraftMessage(ref update_) => {
                 if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
-            _ => (),
+            _ => {}
         }
     }
 
