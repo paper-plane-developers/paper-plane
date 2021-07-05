@@ -206,7 +206,7 @@ impl ChatHistory {
                 date1.cmp(&date2).into()
             });
 
-            let sort_model = gtk::SortListModel::new(Some(chat.history()), Some(&sorter));
+            let sort_model = gtk::SortListModel::new(Some(&chat.history()), Some(&sorter));
             let selection = gtk::NoSelection::new(Some(&sort_model));
             priv_.history_list_view.set_model(Some(&selection));
         }

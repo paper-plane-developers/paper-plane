@@ -5,15 +5,15 @@ use gtk::glib;
 use tdgrand::enums::{self, Update};
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::Session;
 use crate::session::chat::History;
+use crate::Session;
 
 fn stringify_message(message: Option<TelegramMessage>) -> String {
     if let Some(message) = message {
         return match message.content {
             enums::MessageContent::MessageText(content) => content.text.text,
             _ => format!("<i>{}</i>", gettext("This message is unsupported")),
-        }
+        };
     }
     String::new()
 }
@@ -60,14 +60,14 @@ mod imp {
                         "Title",
                         "The title of this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
                     glib::ParamSpec::new_string(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_int64(
                         "order",
@@ -76,7 +76,7 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_int(
                         "unread-count",
@@ -85,14 +85,14 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_string(
                         "draft-message",
                         "Draft Message",
                         "The draft message of this chat",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_object(
                         "history",
@@ -116,7 +116,7 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -128,23 +128,23 @@ mod imp {
                 }
                 "title" => {
                     let title = value.get().unwrap();
-                    obj.set_title(title);
+                    self.title.replace(title);
                 }
                 "last-message" => {
                     let last_message = value.get().unwrap();
-                    obj.set_last_message(last_message);
+                    self.last_message.replace(last_message);
                 }
                 "order" => {
                     let order = value.get().unwrap();
-                    obj.set_order(order);
+                    self.order.set(order);
                 }
                 "unread-count" => {
                     let unread_count = value.get().unwrap();
-                    obj.set_unread_count(unread_count);
+                    self.unread_count.set(unread_count);
                 }
                 "draft-message" => {
                     let draft_message = value.get().unwrap();
-                    obj.set_draft_message(draft_message);
+                    self.draft_message.replace(draft_message);
                 }
                 "session" => {
                     let session = value.get().unwrap();
@@ -154,16 +154,16 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => obj.id().to_value(),
-                "title" => obj.title().to_value(),
-                "last-message" => obj.last_message().to_value(),
-                "order" => obj.order().to_value(),
-                "unread-count" => obj.unread_count().to_value(),
-                "draft-message" => obj.draft_message().to_value(),
-                "history" => obj.history().to_value(),
-                "session" => obj.session().to_value(),
+                "id" => self.id.get().to_value(),
+                "title" => self.title.borrow().to_value(),
+                "last-message" => self.last_message.borrow().to_value(),
+                "order" => self.order.get().to_value(),
+                "unread-count" => self.unread_count.get().to_value(),
+                "draft-message" => self.draft_message.borrow().to_value(),
+                "history" => self.history.to_value(),
+                "session" => self.session.borrow().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -236,73 +236,37 @@ impl Chat {
     }
 
     pub fn id(&self) -> i64 {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.id.get()
+        self.property("id").unwrap().get().unwrap()
     }
 
     pub fn title(&self) -> String {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.title.borrow().clone()
+        self.property("title").unwrap().get().unwrap()
     }
 
     fn set_title(&self, title: String) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.title.replace(title);
-        self.notify("title");
+        if self.title() != title {
+            self.set_property("title", &title).unwrap();
+        }
     }
 
     pub fn last_message(&self) -> String {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.last_message.borrow().clone()
+        self.property("last-message").unwrap().get().unwrap()
     }
 
     fn set_last_message(&self, last_message: String) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.last_message.replace(last_message);
-        self.notify("last-message");
+        if self.last_message() != last_message {
+            self.set_property("last-message", &last_message).unwrap();
+        }
     }
 
     pub fn order(&self) -> i64 {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.order.get()
+        self.property("order").unwrap().get().unwrap()
     }
 
     fn set_order(&self, order: i64) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.order.set(order);
-        self.notify("order");
-    }
-
-    pub fn unread_count(&self) -> i32 {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.unread_count.get()
-    }
-
-    fn set_unread_count(&self, unread_count: i32) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.unread_count.set(unread_count);
-        self.notify("unread-count");
-    }
-
-    pub fn draft_message(&self) -> String {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.draft_message.borrow().clone()
-    }
-
-    fn set_draft_message(&self, draft_message: String) {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.draft_message.replace(draft_message);
-        self.notify("draft-message");
-    }
-
-    pub fn history(&self) -> &History {
-        let priv_ = imp::Chat::from_instance(self);
-        &priv_.history
-    }
-
-    pub fn session(&self) -> Option<Session> {
-        let priv_ = imp::Chat::from_instance(self);
-        priv_.session.borrow().to_owned()
+        if self.order() != order {
+            self.set_property("order", &order).unwrap();
+        }
     }
 
     pub fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
@@ -310,5 +274,33 @@ impl Chat {
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("order"), f)
+    }
+
+    pub fn unread_count(&self) -> i32 {
+        self.property("unread-count").unwrap().get().unwrap()
+    }
+
+    fn set_unread_count(&self, unread_count: i32) {
+        if self.unread_count() != unread_count {
+            self.set_property("unread-count", &unread_count).unwrap();
+        }
+    }
+
+    pub fn draft_message(&self) -> String {
+        self.property("draft-message").unwrap().get().unwrap()
+    }
+
+    fn set_draft_message(&self, draft_message: String) {
+        if self.draft_message() != draft_message {
+            self.set_property("draft-message", &draft_message).unwrap();
+        }
+    }
+
+    pub fn history(&self) -> History {
+        self.property("history").unwrap().get().unwrap()
+    }
+
+    pub fn session(&self) -> Option<Session> {
+        self.property("session").unwrap().get().unwrap()
     }
 }
