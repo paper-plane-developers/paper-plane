@@ -40,14 +40,14 @@ mod imp {
                         "First Name",
                         "The first name of this user",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_string(
                         "last-name",
                         "Last Name",
                         "The last name of this user",
                         None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE,
                     ),
                 ]
             });
@@ -57,7 +57,7 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -69,21 +69,21 @@ mod imp {
                 }
                 "first-name" => {
                     let first_name = value.get().unwrap();
-                    obj.set_first_name(first_name);
+                    self.first_name.replace(first_name);
                 }
                 "last-name" => {
                     let last_name = value.get().unwrap();
-                    obj.set_last_name(last_name);
+                    self.last_name.replace(last_name);
                 }
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => obj.id().to_value(),
-                "first-name" => obj.first_name().to_value(),
-                "last-name" => obj.last_name().to_value(),
+                "id" => self.id.get().to_value(),
+                "first-name" => self.first_name.borrow().to_value(),
+                "last-name" => self.last_name.borrow().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -96,8 +96,7 @@ glib::wrapper! {
 
 impl User {
     pub fn new(id: i32) -> Self {
-        glib::Object::new(&[("id", &id)])
-            .expect("Failed to create User")
+        glib::Object::new(&[("id", &id)]).expect("Failed to create User")
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -105,43 +104,32 @@ impl User {
             Update::User(update) => {
                 self.set_first_name(update.user.first_name);
                 self.set_last_name(update.user.last_name);
-            },
-            _ => (),
+            }
+            _ => {}
         }
     }
 
     pub fn id(&self) -> i32 {
-        let priv_ = imp::User::from_instance(self);
-        priv_.id.get()
+        self.property("id").unwrap().get().unwrap()
     }
 
     pub fn first_name(&self) -> String {
-        let priv_ = imp::User::from_instance(self);
-        priv_.first_name.borrow().clone()
+        self.property("first-name").unwrap().get().unwrap()
     }
 
     fn set_first_name(&self, first_name: String) {
-        if self.first_name() == first_name {
-            return;
+        if self.first_name() != first_name {
+            self.set_property("first-name", &first_name).unwrap();
         }
-
-        let priv_ = imp::User::from_instance(self);
-        priv_.first_name.replace(first_name);
-        self.notify("first-name");
     }
 
     pub fn last_name(&self) -> String {
-        let priv_ = imp::User::from_instance(self);
-        priv_.last_name.borrow().clone()
+        self.property("last-name").unwrap().get().unwrap()
     }
 
     fn set_last_name(&self, last_name: String) {
-        if self.last_name() == last_name {
-            return;
+        if self.last_name() != last_name {
+            self.set_property("last-name", &last_name).unwrap();
         }
-
-        let priv_ = imp::User::from_instance(self);
-        priv_.last_name.replace(last_name);
-        self.notify("last-name");
     }
 }
