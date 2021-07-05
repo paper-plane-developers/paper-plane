@@ -16,6 +16,12 @@ mod imp {
     pub struct Content {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub unselected_chat: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub chat_history: TemplateChild<ChatHistory>,
     }
 
     #[glib::object_subclass]
@@ -120,6 +126,12 @@ impl Content {
         }
 
         let priv_ = imp::Content::from_instance(self);
+        if chat.is_some() {
+            priv_.stack.set_visible_child(&priv_.chat_history.get());
+        } else {
+            priv_.stack.set_visible_child(&priv_.unselected_chat.get());
+        }
+
         priv_.chat.replace(chat);
 
         self.notify("chat");

@@ -2,6 +2,7 @@ data/com.github.melix99.telegrand.desktop.in.in
 data/com.github.melix99.telegrand.gschema.xml.in
 data/com.github.melix99.telegrand.metainfo.xml.in.in
 
+data/resources/ui/content.ui
 data/resources/ui/login.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/sidebar.ui
