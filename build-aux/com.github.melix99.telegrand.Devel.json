@@ -1,0 +1,75 @@
+{
+    "app-id": "com.github.melix99.telegrand.Devel",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "40",
+    "sdk": "org.gnome.Sdk",
+    "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+    "command": "telegrand",
+    "finish-args": [
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--share=network",
+        "--device=dri",
+        "--talk-name=org.a11y.Bus",
+        "--env=RUST_LOG=telegrand=debug",
+        "--env=G_MESSAGES_DEBUG=none"
+    ],
+    "build-options": {
+        "append-path": "/usr/lib/sdk/rust-stable/bin",
+        "build-args": [
+            "--share=network"
+        ],
+        "test-args": [
+            "--socket=x11",
+            "--share=network"
+        ],
+        "env": {
+            "RUST_BACKTRACE": "1"
+        }
+    },
+    "modules": [
+        {
+            "name": "libadwaita",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dintrospection=disabled",
+                "-Dvapi=false",
+                "-Dgtk_doc=false",
+                "-Dtests=false",
+                "-Dexamples=false"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+                    "branch": "main"
+                }
+            ]
+        },{
+            "name": "tdlib",
+            "buildsystem": "cmake",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz",
+                    "sha256": "3daaf419f1738b7e0ac0e8a08f07e01a1faaf51175a59c0b113c15e30c69e173"
+                }
+            ]
+        },{
+            "name": "telegrand",
+            "buildsystem": "meson",
+            "run-tests": true,
+            "config-opts": ["-Dprofile=development"],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../"
+                }
+            ]
+        }
+    ]
+}

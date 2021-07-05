@@ -1,39 +1,28 @@
-# Telegrand
+<h1 align="center">
+  Telegrand
+</h1>
 
-A GTK4 telegram client built to be well integrated with the GNOME desktop environment.
+<p align="center">
+  <a href="https://github.com/melix99/telegrand/actions/workflows/ci.yml">
+    <img src="https://github.com/melix99/telegrand/actions/workflows/ci.yml/badge.svg" alt="CI status"/>
+  </a>
+  <a href="https://t.me/telegrandchat">
+    <img src="https://img.shields.io/static/v1?label=Chat&message=@telegrandchat&color=blue&logo=telegram" alt="Telegram group">
+  </a>
+</p>
 
-## What can it do?
+<!--
+<p align="center">
+  <img src="data/resources/screenshots/screenshot1.png" alt="Preview"/>
+</p>
+-->
 
-- Authentication (without 2FA)
-- Show user dialogs
-- Notify for new messages
-- Send text messages
-- Show text messages
+A Telegram client built to be well integrated with the GNOME desktop environment.
 
-## Planned features (short run)
-
-- Multilanguage support
-- Flatpak support
-- Show media
-- Send media
-
-## Planned features (long run)
-
-- Show stickers in chat
-- Send stickers
-- Download files
-- Send files
-
-## How to build?
-
-Before building you need to obtain your own telegram api key and hash. You can obtain them [here](https://my.telegram.org/).
-
-Then you need to have gtk4 and libadwaita installed on your system, use your package manager or build this dependencies from source.
-
-Now you can configure and then build the project:
+## Build Instructions
 
 ```shell
-meson _build -Dtg_api_id=ID -Dtg_api_hash=HASH
+meson . _build --prefix=/usr/local
 ninja -C _build
 sudo ninja -C _build install
 ```

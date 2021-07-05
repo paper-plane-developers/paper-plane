@@ -1,65 +1,51 @@
-box.auth-page { margin: 36px 12px; }
-box.auth-page > label.title { margin-bottom: 12px; }
-box.auth-page > label.description { margin-bottom: 36px; }
-
-.dialog-list {
-  background-color: @theme_bg_color;
+.sidebar row {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
-box.dialog {
-  margin-top: 6px;
-  margin-bottom: 6px;
-}
-
-.unread-badge {
-  background-color: @theme_selected_bg_color;
-  color: white;
-  font-weight: bold;
+.sidebar .unread-count {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
   font-size: 0.8em;
-  border-radius: 10px;
+  font-weight: bold;
   min-width: 0.7em;
+  border-radius: 10px;
   padding: 2px 5px;
 }
 
-.messages-scroll {
-  background-color: @text_view_bg;
+.chat-history {
+  background-color: @theme_base_color;
 }
 
-.message-list {
-  background-color: @text_view_bg;
-  margin: 0 6px 3px;
+.chat-history row {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
-.message-list > row {
-  margin: 3px 0;
-  padding: 0;
-}
-
-.message-list > row:hover {
-  background-color: @text_view_bg;
-  box-shadow: none;
-}
-
-.message-box {
-  background-color: @theme_bg_color;
+.chat-history row .message-bubble {
   border-radius: 9px;
-  padding: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
 }
 
-.message-box > .sender-label {
-  font-size: small;
+.chat-history row .incoming {
+  background-color: @light_3;
+  margin-right: 50px;
+}
+
+.chat-history row .outgoing {
+  background-color: @blue_1;
+  margin-left: 50px;
+}
+
+.chat-history row .sender {
+  font-size: 0.85em;
   font-weight: bold;
-  margin: 0 6px;
 }
 
-.message-box > .text-label {
+.send-message-area {
+  margin: 6px;
+}
+
+.message-content {
   font-size: 0.95em;
-  margin: 0 6px;
-}
-
-.message-box > .time-label {
-  font-size: smaller;
-  color: @insensitive_fg_color;
-  margin: 0 6px;
 }

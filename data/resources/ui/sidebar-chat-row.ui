@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SidebarChatRow" parent="AdwBin">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <child>
+          <object class="AdwAvatar">
+            <property name="show-initials">True</property>
+            <property name="size">42</property>
+            <binding name="text">
+              <lookup name="title">
+                <lookup name="chat">SidebarChatRow</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="homogeneous">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="ellipsize">end</property>
+                    <property name="single-line-mode">True</property>
+                    <binding name="label">
+                      <lookup name="title">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="hexpand">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="ellipsize">end</property>
+                    <binding name="label">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="visible">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                    <style>
+                      <class name="unread-count"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="halign">start</property>
+                <property name="ellipsize">end</property>
+                <property name="single-line-mode">True</property>
+                <property name="use-markup">True</property>
+                <binding name="label">
+                  <lookup name="last-message">
+                    <lookup name="chat">SidebarChatRow</lookup>
+                  </lookup>
+                </binding>
+                <style>
+                  <class name="message-content"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

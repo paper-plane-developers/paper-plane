@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Telegrand
+Comment=A GTK + Rust application boilerplate template
+Type=Application
+Exec=telegrand
+Terminal=false
+Categories=GNOME;GTK;
+Keywords=Gnome;GTK;
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Icon=@icon@
+StartupNotify=true

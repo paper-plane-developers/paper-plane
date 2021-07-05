@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentChatHistory" parent="AdwBin">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
+            <child type="start">
+              <object class="GtkButton">
+                <property name="visible" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
+                <property name="icon-name">go-previous-symbolic</property>
+                <property name="action-name">content.go-back</property>
+              </object>
+            </child>
+            <child type="title">
+              <object class="AdwWindowTitle">
+                <binding name="title">
+                  <lookup name="title">
+                    <lookup name="chat">ContentChatHistory</lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">True</property>
+            <property name="hscrollbar-policy">never</property>
+            <style>
+              <class name="chat-history"/>
+            </style>
+            <property name="child">
+              <object class="AdwClampScrollable">
+                <property name="child">
+                  <object class="GtkListView" id="history_list_view">
+                    <style>
+                      <class name="navigation-sidebar"/>
+                    </style>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="ContentMessageRow">
+        <binding name="message">
+          <lookup name="item">GtkListItem</lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+                        ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator"/>
+        </child>
+        <child>
+          <object class="AdwClamp">
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">6</property>
+                <style>
+                  <class name="send-message-area"/>
+                </style>
+                <child>
+                  <object class="GtkEntry" id="send_message_entry">
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="action-name">history.send-message</property>
+                    <property name="icon-name">mail-send-symbolic</property>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

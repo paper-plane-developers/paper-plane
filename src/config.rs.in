@@ -1,5 +1,9 @@
 pub const APP_ID: &str = @APP_ID@;
+pub const GETTEXT_PACKAGE: &str = @GETTEXT_PACKAGE@;
+pub const LOCALEDIR: &str = @LOCALEDIR@;
 pub const PKGDATADIR: &str = @PKGDATADIR@;
+pub const PROFILE: &str = @PROFILE@;
+pub const RESOURCES_FILE: &str = concat!(@PKGDATADIR@, "/resources.gresource");
 pub const TG_API_HASH: &str = @TG_API_HASH@;
 pub const TG_API_ID: i32 = @TG_API_ID@;
 pub const VERSION: &str = @VERSION@;

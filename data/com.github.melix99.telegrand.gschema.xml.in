@@ -2,24 +2,24 @@
 <schemalist>
   <schema path="/com/github/melix99/telegrand/" id="@app-id@" gettext-domain="@gettext-package@">
     <key name="window-width" type="i">
-      <default>870</default>
+      <default>-1</default>
       <summary>Default window width</summary>
       <description>Default window width</description>
     </key>
     <key name="window-height" type="i">
-      <default>600</default>
+      <default>-1</default>
       <summary>Default window height</summary>
       <description>Default window height</description>
     </key>
     <key name="is-maximized" type="b">
       <default>false</default>
       <summary>Default window maximized behaviour</summary>
-      <description>Default window maximized behaviour</description>
+      <description></description>
     </key>
-    <key name="custom-server-address" type="s">
-      <default>''</default>
-      <summary>Custom server address</summary>
-      <description>Custom server address</description>
+    <key name="use-test-dc" type="b">
+      <default>false</default>
+      <summary>Use Telegram's test data center</summary>
+      <description>Use Telegram's test data center</description>
     </key>
   </schema>
 </schemalist>

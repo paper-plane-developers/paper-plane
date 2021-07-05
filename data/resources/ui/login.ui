@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="Login" parent="AdwBin">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkHeaderBar">
+            <child type="start">
+              <object class="GtkButton" id="previous_button">
+                <property name="visible">False</property>
+                <property name="action-name">login.previous</property>
+                <property name="use-underline">True</property>
+                <property name="label" translatable="yes">_Previous</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton">
+                <property name="action-name">login.next</property>
+                <property name="child">
+                  <object class="GtkStack" id="next_stack">
+                    <child>
+                      <object class="GtkLabel" id="next_label">
+                        <property name="use-underline">True</property>
+                        <property name="label" translatable="yes">_Next</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinner" id="next_spinner">
+                        <property name="spinning">True</property>
+                        <property name="valign">center</property>
+                        <property name="halign">center</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwLeaflet" id="content">
+            <property name="can-unfold">False</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">phone-number-page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">user-available-symbolic</property>
+                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="child">
+                                      <object class="GtkEntry" id="phone_number_entry">
+                                        <property name="activates-default">True</property>
+                                        <property name="placeholder-text" translatable="yes">Phone Number</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="AdwExpanderRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="title" translatable="yes">Advanced</property>
+                                    <child>
+                                      <object class="AdwActionRow">
+                                        <property name="title" translatable="yes">Encryption Key</property>
+                                        <child>
+                                          <object class="GtkPasswordEntry" id="custom_encryption_key_entry">
+                                            <property name="activates-default">True</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="AdwActionRow">
+                                        <property name="activatable_widget">use_test_dc_switch</property>
+                                        <property name="title" translatable="yes">Use Test Data Center</property>
+                                        <property name="subtitle" translatable="yes">This requires a restart to apply</property>
+                                        <child>
+                                          <object class="GtkSwitch" id="use_test_dc_switch">
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="welcome_page_error_label">
+                                <property name="visible">False</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">code-page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">mail-send-symbolic</property>
+                    <property name="title" translatable="yes">Enter the Verification Code</property>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="child">
+                                      <object class="GtkEntry" id="code_entry">
+                                        <property name="activates-default">True</property>
+                                        <property name="placeholder-text" translatable="yes">Code</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="code_error_label">
+                                <property name="visible">False</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">password-page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">dialog-password-symbolic</property>
+                    <property name="title" translatable="yes">Enter Your Password</property>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="child">
+                                      <object class="GtkPasswordEntry" id="password_entry">
+                                        <property name="activates-default">True</property>
+                                        <property name="placeholder-text" translatable="yes">Password</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="password_error_label">
+                                <property name="visible">False</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
+                <property name="name">encryption-key-page</property>
+                <property name="child">
+                  <object class="AdwStatusPage">
+                    <property name="valign">start</property>
+                    <property name="icon-name">system-lock-screen-symbolic</property>
+                    <property name="title" translatable="yes">Enter the Encryption Key</property>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="focusable">False</property>
+                                    <property name="selectable">False</property>
+                                    <property name="activatable">False</property>
+                                    <property name="child">
+                                      <object class="GtkPasswordEntry" id="encryption_key_entry">
+                                        <property name="activates-default">True</property>
+                                        <property name="placeholder-text" translatable="yes">Encryption Key</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="encryption_key_error_label">
+                                <property name="visible">False</property>
+                                <style>
+                                  <class name="error"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

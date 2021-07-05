@@ -1,59 +1,58 @@
+use glib::{clone, SyncSender};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
-use tokio::sync::mpsc;
+use gtk::glib;
+use gtk_macros::send;
+use log::error;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use tokio::task;
+use tdgrand::enums::{AuthorizationState, Update};
+use tdgrand::functions;
 
-use crate::add_account_window::AddAccountWindow;
-use crate::chat_page::ChatPage;
-use crate::dialog_row::DialogRow;
-use crate::telegram;
+use crate::config::{APP_ID, PROFILE};
+use crate::Application;
+use crate::RUNTIME;
+use crate::Session;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::*;
-    use glib::signal::Inhibit;
-    use gtk::CompositeTemplate;
+    use adw::subclass::prelude::AdwApplicationWindowImpl;
+    use gtk::{gio, CompositeTemplate, Inhibit};
     use log::warn;
     use std::cell::RefCell;
     use std::collections::HashMap;
+    use tokio::task::JoinHandle;
 
-    use crate::config;
+    use crate::Login;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/window.ui")]
-    pub struct TelegrandWindow {
-        #[template_child]
-        pub chat_name_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub content_leaflet: TemplateChild<adw::Leaflet>,
-        #[template_child]
-        pub back_button: TemplateChild<gtk::Button>,
-        #[template_child]
-        pub dialog_list: TemplateChild<gtk::ListBox>,
-        #[template_child]
-        pub chat_stack: TemplateChild<gtk::Stack>,
-        #[template_child]
-        pub add_account_window: TemplateChild<AddAccountWindow>,
-        pub dialogs_map: RefCell<HashMap<i32, DialogRow>>,
+    #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
+    pub struct Window {
         pub settings: gio::Settings,
+        pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
+        pub receiver_should_stop: Arc<AtomicBool>,
+        pub clients: RefCell<HashMap<i32, Option<Session>>>,
+        #[template_child]
+        pub main_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub login: TemplateChild<Login>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for TelegrandWindow {
-        const NAME: &'static str = "TelegrandWindow";
-        type Type = super::TelegrandWindow;
+    impl ObjectSubclass for Window {
+        const NAME: &'static str = "Window";
+        type Type = super::Window;
         type ParentType = adw::ApplicationWindow;
 
         fn new() -> Self {
             Self {
-                chat_name_label: TemplateChild::default(),
-                content_leaflet: TemplateChild::default(),
-                back_button: TemplateChild::default(),
-                dialog_list: TemplateChild::default(),
-                chat_stack: TemplateChild::default(),
-                add_account_window: TemplateChild::default(),
-                dialogs_map: RefCell::default(),
-                settings: gio::Settings::new(config::APP_ID),
+                settings: gio::Settings::new(APP_ID),
+                receiver_handle: RefCell::default(),
+                receiver_should_stop: Arc::default(),
+                clients: RefCell::default(),
+                main_stack: TemplateChild::default(),
+                login: TemplateChild::default(),
             }
         }
 
@@ -66,186 +65,177 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for TelegrandWindow {
+    impl ObjectImpl for Window {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
+            let builder =
+                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/shortcuts.ui");
+            let shortcuts = builder.object("shortcuts").unwrap();
+            obj.set_help_overlay(Some(&shortcuts));
+
+            // Devel profile
+            if PROFILE == "Devel" {
+                obj.style_context().add_class("devel");
+            }
+
             obj.load_window_size();
+
+            self.login.connect_new_session(
+                clone!(@weak obj => move |login| obj.create_session(login.client_id())),
+            );
+
+            obj.create_client();
+            obj.start_receiver();
         }
     }
 
-    impl WidgetImpl for TelegrandWindow {}
-    impl WindowImpl for TelegrandWindow {
+    impl WidgetImpl for Window {}
+    impl WindowImpl for Window {
+        // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
+            self.receiver_should_stop.store(true, Ordering::Release);
+
+            obj.close_clients();
+
+            obj.wait_receiver();
+
             if let Err(err) = obj.save_window_size() {
                 warn!("Failed to save window state, {}", &err);
             }
+
             Inhibit(false)
         }
     }
 
-    impl ApplicationWindowImpl for TelegrandWindow {}
-    impl AdwApplicationWindowImpl for TelegrandWindow {}
+    impl ApplicationWindowImpl for Window {}
+    impl AdwApplicationWindowImpl for Window {}
 }
 
 glib::wrapper! {
-    pub struct TelegrandWindow(ObjectSubclass<imp::TelegrandWindow>)
+    pub struct Window(ObjectSubclass<imp::Window>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow;
 }
 
-impl TelegrandWindow {
-    pub fn new<P: glib::IsA<gtk::Application>>(app: &P, tg_receiver: glib::Receiver<telegram::TelegramEvent>, gtk_sender: mpsc::Sender<telegram::GtkEvent>) -> Self {
-        let window = glib::Object::new(&[("application", app)])
-            .expect("Failed to create TelegrandWindow");
-
-        let self_ = imp::TelegrandWindow::from_instance(&window);
-        self_.add_account_window.setup_signals(&gtk_sender);
-
-        window.setup_signals(&gtk_sender);
-        window.setup_tg_receiver(tg_receiver, gtk_sender);
-
-        window
+impl Window {
+    pub fn new(app: &Application) -> Self {
+        glib::Object::new(&[("application", &app), ("icon-name", &APP_ID)])
+            .expect("Failed to create Window")
     }
 
-    fn setup_signals(&self, gtk_sender: &mpsc::Sender<telegram::GtkEvent>) {
-        let self_ = imp::TelegrandWindow::from_instance(self);
+    fn create_client(&self) {
+        let client_id = tdgrand::create_client();
 
-        // Dialog list signal to show the chat on dialog row activation
-        self_.dialog_list.connect_row_activated(glib::clone!(@weak self as window, @strong gtk_sender => move |_, row| {
-            let self_ = imp::TelegrandWindow::from_instance(&window);
-            let dialog_row = row.downcast_ref::<DialogRow>()
-                .expect("Row is of wrong type");
-            let dialog = dialog_row.get_dialog();
-            let chat_id = dialog.chat.id().to_string();
-            let chat_name = dialog.chat.name().to_string();
-            let chat_page;
+        let priv_ = imp::Window::from_instance(self);
+        priv_.clients.borrow_mut().insert(client_id, None);
+        priv_.login.login_client(client_id);
+        priv_.main_stack.set_visible_child(&priv_.login.get());
 
-            match self_.chat_stack.get_child_by_name(&chat_id) {
-                Some(child) => {
-                    // Get the existing chat page
-                    chat_page = child.downcast()
-                        .expect("Child is of wrong type");
-                }
-                None => {
-                    // Create the chat page and add it to the chat stack
-                    let message_iter = dialog_row.get_message_iter();
-                    chat_page = ChatPage::new(&gtk_sender, dialog, message_iter);
-                    self_.chat_stack.add_titled(&chat_page, Some(&chat_id),
-                        &chat_name);
-                }
-            }
-
-            // Update page to prepare it to show
-            chat_page.update_chat(&window);
-
-            // Show chat page
-            self_.chat_stack.set_visible_child(&chat_page);
-
-            // Set chat name in the titlebar
-            self_.chat_name_label.set_text(&chat_name);
-
-            // Navigate to the next page for mobile navigation
-            self_.content_leaflet.navigate(adw::NavigationDirection::Forward);
-        }));
-
-        // Back button signal for mobile friendly navigation
-        let content_leaflet = &*self_.content_leaflet;
-        self_.back_button.connect_clicked(glib::clone!(@weak content_leaflet => move |_| {
-            content_leaflet.navigate(adw::NavigationDirection::Back);
-        }));
+        // This call is important for login because TDLib requires the clients
+        // to do at least a request to start receiving updates.
+        RUNTIME.spawn(async move {
+            functions::SetLogVerbosityLevel::new()
+                .new_verbosity_level(2)
+                .send(client_id).await.unwrap();
+        });
     }
 
-    fn setup_tg_receiver(&self, tg_receiver: glib::Receiver<telegram::TelegramEvent>, gtk_sender: mpsc::Sender<telegram::GtkEvent>) {
-        tg_receiver.attach(None, glib::clone!(@weak self as window => @default-return Continue(false), move |event| {
-            let self_ = imp::TelegrandWindow::from_instance(&window);
+    fn close_clients(&self) {
+        let priv_ = imp::Window::from_instance(self);
 
-            match event {
-                telegram::TelegramEvent::AccountAuthorized => {
-                    self_.add_account_window.hide();
+        for (client_id, _) in priv_.clients.borrow().iter() {
+            let client_id = *client_id;
+            RUNTIME.spawn(async move {
+                functions::Close::new().send(client_id).await.unwrap();
+            });
+        }
+    }
 
-                    telegram::send_gtk_event(&gtk_sender,
-                        telegram::GtkEvent::RequestDialogs);
-                }
-                telegram::TelegramEvent::AccountNotAuthorized => {
-                    self_.add_account_window.show();
-                }
-                telegram::TelegramEvent::NeedConfirmationCode => {
-                    self_.add_account_window.navigate_forward();
-                }
-                telegram::TelegramEvent::PhoneNumberError(error) => {
-                    self_.add_account_window.show_phone_number_error(error);
-                }
-                telegram::TelegramEvent::ConfirmationCodeError(error) => {
-                    self_.add_account_window.show_confirmation_code_error(error);
-                }
-                telegram::TelegramEvent::RequestedDialog(dialog, message_iter) => {
-                    // Create dialog row and add it to the dialog list
-                    let chat_id = dialog.chat().id();
-                    let dialog_row = DialogRow::new(dialog, message_iter);
-                    self_.dialog_list.append(&dialog_row);
-
-                    // Insert dialog row to the dialog map to allow getting
-                    // the dialog by the chat id when we need it
-                    let mut dialogs_map = self_.dialogs_map.borrow_mut();
-                    dialogs_map.insert(chat_id, dialog_row);
-                }
-                telegram::TelegramEvent::RequestedNextMessages(messages, chat_id) => {
-                    // Prepend messages to the relative chat page (if it exists)
-                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
-                        let chat_page: ChatPage = child.downcast()
-                            .expect("Child is of wrong type");
-                        chat_page.prepend_messages(messages, &gtk_sender);
-                    }
-                }
-                telegram::TelegramEvent::MessagePhotoDownloaded(path, chat_id, message_id) => {
-                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
-                        let chat_page: ChatPage = child.downcast()
-                            .expect("Child is of wrong type");
-                        chat_page.update_message_picture(path, message_id);
-                    }
-                }
-                telegram::TelegramEvent::NewMessage(message) => {
-                    // Add message to the relative chat page (if it exists)
-                    let chat = message.chat();
-                    let chat_id = chat.id();
-                    if let Some(child) = self_.chat_stack.get_child_by_name(&chat_id.to_string()) {
-                        let chat_page: ChatPage = child.downcast()
-                            .expect("Child is of wrong type");
-                        chat_page.append_message(&message, &gtk_sender);
-                    }
-
-                    // Update dialog's last message label (if it exists)
-                    let dialogs_map = self_.dialogs_map.borrow();
-                    let dialog_row = dialogs_map.get(&chat_id);
-                    if let Some(dialog_row) = dialog_row {
-                        let message_text = message.text();
-                        dialog_row.set_last_message_text(message_text);
-                    }
-
-                    if !message.outgoing() {
-                        // Send notification about the new incoming message
-                        let chat_name = chat.name();
-                        let message_text = message.text();
-                        let notification = gio::Notification::new("Telegrand");
-                        notification.set_title(chat_name);
-                        notification.set_body(Some(message_text));
-                        let app = window.application().unwrap();
-                        app.send_notification(Some("new-message"), &notification);
-
-                        // Increment dialog's unread count (if it exists)
-                        if let Some(dialog_row) = dialog_row {
-                            dialog_row.increment_unread_count();
+    fn start_receiver(&self) {
+        let priv_ = imp::Window::from_instance(self);
+        let receiver_should_stop = priv_.receiver_should_stop.clone();
+        let sender = Arc::new(self.create_update_sender());
+        let handle = RUNTIME.spawn(async move {
+            loop {
+                let receiver_should_stop = receiver_should_stop.clone();
+                let sender = sender.clone();
+                let stop = task::spawn_blocking(move || {
+                    if let Some((update, client_id)) = tdgrand::receive() {
+                        if receiver_should_stop.load(Ordering::Acquire) {
+                            if let Update::AuthorizationState(ref update) = update {
+                                if let AuthorizationState::Closed = update.authorization_state {
+                                    return true
+                                }
+                            }
                         }
+
+                        send!(sender, (update, client_id));
                     }
+
+                    false
+                }).await.unwrap();
+
+                if stop {
+                    break;
                 }
             }
+        });
 
-            glib::Continue(true)
-        }));
+        priv_.receiver_handle.replace(Some(handle));
+    }
+
+    fn wait_receiver(&self) {
+        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
+        RUNTIME.block_on(async move {
+            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+        });
+    }
+
+    fn create_update_sender(&self) -> SyncSender<(Update, i32)> {
+        let (sender, receiver) =
+            glib::MainContext::sync_channel::<(Update, i32)>(Default::default(), 100);
+        receiver.attach(
+            None,
+            clone!(@weak self as obj => @default-return glib::Continue(false), move |(update, client_id)| {
+                obj.handle_update(update, client_id);
+
+                glib::Continue(true)
+            }),
+        );
+
+        sender
+    }
+
+    fn handle_update(&self, update: Update, client_id: i32) {
+        let priv_ = imp::Window::from_instance(self);
+
+        if let Update::AuthorizationState(update) = update {
+            if let AuthorizationState::Closed = update.authorization_state {
+                let session = priv_.clients.borrow_mut().remove(&client_id).unwrap();
+                if let Some(session) = session {
+                    priv_.main_stack.remove(&session);
+                }
+
+                self.create_client();
+            } else {
+                priv_.login.set_authorization_state(update.authorization_state);
+            }
+        } else if let Some(Some(session)) = priv_.clients.borrow().get(&client_id) {
+            session.handle_update(update);
+        }
+    }
+
+    fn create_session(&self, client_id: i32) {
+        let priv_ = imp::Window::from_instance(self);
+        let session = Session::new(client_id);
+
+        priv_.main_stack.add_child(&session);
+        priv_.main_stack.set_visible_child(&session);
+        priv_.clients.borrow_mut().insert(client_id, Some(session));
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let settings = &imp::TelegrandWindow::from_instance(self).settings;
+        let settings = &imp::Window::from_instance(self).settings;
 
         let size = self.default_size();
         settings.set_int("window-width", size.0)?;
@@ -257,13 +247,13 @@ impl TelegrandWindow {
     }
 
     fn load_window_size(&self) {
-        let settings = &imp::TelegrandWindow::from_instance(self).settings;
+        let settings = &imp::Window::from_instance(self).settings;
 
-        let width = settings.get_int("window-width");
-        let height = settings.get_int("window-height");
+        let width = settings.int("window-width");
+        let height = settings.int("window-height");
         self.set_default_size(width, height);
 
-        let is_maximized = settings.get_boolean("is-maximized");
+        let is_maximized = settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
         }
