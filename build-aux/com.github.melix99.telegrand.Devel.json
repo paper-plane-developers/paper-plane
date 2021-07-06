@@ -50,6 +50,7 @@
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
+                "--target tdjson",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "sources": [
