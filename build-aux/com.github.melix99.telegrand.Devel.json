@@ -50,6 +50,7 @@
             "buildsystem": "cmake",
             "builddir": true,
             "config-opts": [
+                "--target tdjson",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
             "sources": [
