@@ -20,9 +20,6 @@
   </menu>
   <template class="Sidebar" parent="AdwBin">
     <property name="width-request">300</property>
-    <style>
-      <class name="sidebar"/>
-    </style>
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>
