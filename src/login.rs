@@ -1,7 +1,7 @@
 use glib::clone;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
 use tdgrand::{enums::AuthorizationState, functions, types};
 
 use crate::config;
@@ -59,7 +59,9 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
-            klass.install_action("login.previous", None, move |widget, _, _| widget.previous());
+            klass.install_action("login.previous", None, move |widget, _, _| {
+                widget.previous()
+            });
             klass.install_action("login.next", None, move |widget, _, _| widget.next());
         }
 
@@ -71,12 +73,7 @@ mod imp {
     impl ObjectImpl for Login {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder(
-                    "new-session",
-                    &[],
-                    <()>::static_type().into(),
-                )
-                .build()]
+                vec![Signal::builder("new-session", &[], <()>::static_type().into()).build()]
             });
             SIGNALS.as_ref()
         }
@@ -136,6 +133,8 @@ impl Login {
     }
 
     pub fn set_authorization_state(&self, state: AuthorizationState) {
+        let priv_ = imp::Login::from_instance(self);
+
         match state {
             AuthorizationState::WaitTdlibParameters => {
                 self.send_tdlib_parameters();
@@ -147,9 +146,7 @@ impl Login {
                 self.unfreeze();
             }
             AuthorizationState::WaitCode(_) => {
-                let content = &imp::Login::from_instance(self).content;
-                content.set_visible_child_name("code-page");
-
+                priv_.content.set_visible_child_name("code-page");
                 self.unfreeze();
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
@@ -159,21 +156,19 @@ impl Login {
                 todo!()
             }
             AuthorizationState::WaitPassword(_) => {
-                let content = &imp::Login::from_instance(self).content;
-                content.set_visible_child_name("password-page");
-
+                priv_.content.set_visible_child_name("password-page");
                 self.unfreeze();
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
             }
-            _ => ()
+            _ => {}
         }
     }
 
     fn previous(&self) {
-        let content = &imp::Login::from_instance(self).content;
-        content.set_visible_child_name("phone-number-page");
+        let priv_ = imp::Login::from_instance(self);
+        priv_.content.set_visible_child_name("phone-number-page");
     }
 
     fn next(&self) {
@@ -202,7 +197,9 @@ impl Login {
         self.action_set_enabled("login.next", false);
 
         let priv_ = imp::Login::from_instance(self);
-        priv_.next_stack.set_visible_child(&priv_.next_spinner.get());
+        priv_
+            .next_stack
+            .set_visible_child(&priv_.next_spinner.get());
         priv_.content.set_sensitive(false);
     }
 
@@ -219,7 +216,8 @@ impl Login {
         let priv_ = imp::Login::from_instance(self);
         let client_id = priv_.client_id.get();
         let use_test_dc = priv_.use_test_dc_switch.state();
-        let database_directory = format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
+        let database_directory =
+            format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
         let parameters = types::TdlibParameters {
             use_test_dc,
             database_directory,
@@ -236,13 +234,14 @@ impl Login {
             async move {
                 functions::SetTdlibParameters::new()
                     .parameters(parameters)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
-                    welcome_page_error_label.set_text(&err.message);
-                    welcome_page_error_label.set_visible(true);
+                    let priv_ = imp::Login::from_instance(&obj);
+                    priv_.welcome_page_error_label.set_text(&err.message);
+                    priv_.welcome_page_error_label.set_visible(true);
                 }
             }),
         );
@@ -263,7 +262,8 @@ impl Login {
             async move {
                 functions::CheckDatabaseEncryptionKey::new()
                     .encryption_key(encryption_key)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
@@ -296,13 +296,14 @@ impl Login {
             async move {
                 functions::SetDatabaseEncryptionKey::new()
                     .new_encryption_key(encryption_key)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
-                    welcome_page_error_label.set_text(&err.message);
-                    welcome_page_error_label.set_visible(true);
+                    let priv_ = imp::Login::from_instance(&obj);
+                    priv_.welcome_page_error_label.set_text(&err.message);
+                    priv_.welcome_page_error_label.set_visible(true);
                 }
             }),
         );
@@ -317,13 +318,14 @@ impl Login {
             async move {
                 functions::SetAuthenticationPhoneNumber::new()
                     .phone_number(phone_number)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let welcome_page_error_label = &imp::Login::from_instance(&obj).welcome_page_error_label;
-                    welcome_page_error_label.set_text(&err.message);
-                    welcome_page_error_label.set_visible(true);
+                    let priv_ = imp::Login::from_instance(&obj);
+                    priv_.welcome_page_error_label.set_text(&err.message);
+                    priv_.welcome_page_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
@@ -340,13 +342,14 @@ impl Login {
             async move {
                 functions::CheckAuthenticationCode::new()
                     .code(code)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let code_error_label = &imp::Login::from_instance(&obj).code_error_label;
-                    code_error_label.set_text(&err.message);
-                    code_error_label.set_visible(true);
+                    let priv_ = imp::Login::from_instance(&obj);
+                    priv_.code_error_label.set_text(&err.message);
+                    priv_.code_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
@@ -363,13 +366,14 @@ impl Login {
             async move {
                 functions::CheckAuthenticationPassword::new()
                     .password(password)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let password_error_label = &imp::Login::from_instance(&obj).password_error_label;
-                    password_error_label.set_text(&err.message);
-                    password_error_label.set_visible(true);
+                    let priv_ = imp::Login::from_instance(&obj);
+                    priv_.password_error_label.set_text(&err.message);
+                    priv_.password_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }

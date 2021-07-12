@@ -75,7 +75,7 @@ impl UserList {
         let priv_ = imp::UserList::from_instance(self);
         if let Some(index) = priv_.list.borrow().get_index_of(&user_id) {
             if let Some(item) = self.item(index as u32) {
-                return item.downcast().unwrap()
+                return item.downcast().unwrap();
             }
         }
 
@@ -89,8 +89,8 @@ impl UserList {
             Update::User(ref update_) => {
                 let user = self.get_or_create_user(update_.user.id);
                 user.handle_update(update);
-            },
-            _ => (),
+            }
+            _ => {}
         }
     }
 

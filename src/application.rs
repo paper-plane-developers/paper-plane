@@ -1,11 +1,11 @@
-use crate::config;
-use crate::Window;
-use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 use log::{debug, info};
+
+use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::Window;
 
 mod imp {
     use super::*;
@@ -26,35 +26,35 @@ mod imp {
 
     impl ObjectImpl for Application {}
 
-    impl gio::subclass::prelude::ApplicationImpl for Application {
+    impl ApplicationImpl for Application {
         fn activate(&self, app: &Self::Type) {
             debug!("GtkApplication<Application>::activate");
 
-            let priv_ = Application::from_instance(app);
-            if let Some(window) = priv_.window.get() {
+            if let Some(window) = self.window.get() {
                 let window = window.upgrade().unwrap();
                 window.show();
                 window.present();
                 return;
             }
 
-            app.set_resource_base_path(Some("/com/github/melix99/telegrand/"));
-            app.setup_css();
-
             let window = Window::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
 
-            app.setup_gactions();
-            app.setup_accels();
-
-            app.get_main_window().present();
+            app.main_window().present();
         }
 
         fn startup(&self, app: &Self::Type) {
             debug!("GtkApplication<Application>::startup");
             self.parent_startup(app);
+
+            // Set icons for shell
+            gtk::Window::set_default_icon_name(APP_ID);
+
+            app.setup_css();
+            app.setup_gactions();
+            app.setup_accels();
         }
     }
 
@@ -63,19 +63,24 @@ mod imp {
 
 glib::wrapper! {
     pub struct Application(ObjectSubclass<imp::Application>)
-        @extends gio::Application, gtk::Application, @implements gio::ActionMap, gio::ActionGroup;
+        @extends gio::Application, gtk::Application,
+        @implements gio::ActionMap, gio::ActionGroup;
 }
 
 impl Application {
     pub fn new() -> Self {
         glib::Object::new(&[
-            ("application-id", &Some(config::APP_ID)),
-            ("flags", &ApplicationFlags::empty()),
+            ("application-id", &Some(APP_ID)),
+            ("flags", &gio::ApplicationFlags::empty()),
+            (
+                "resource-base-path",
+                &Some("/com/github/melix99/telegrand/"),
+            ),
         ])
         .expect("Application initialization failed...")
     }
 
-    fn get_main_window(&self) -> Window {
+    fn main_window(&self) -> Window {
         let priv_ = imp::Application::from_instance(self);
         priv_.window.get().unwrap().upgrade().unwrap()
     }
@@ -85,7 +90,7 @@ impl Application {
         let action_quit = gio::SimpleAction::new("quit", None);
         action_quit.connect_activate(clone!(@weak self as app => move |_, _| {
             // This is needed to trigger the delete event and saving the window state
-            app.get_main_window().close();
+            app.main_window().close();
             app.quit();
         }));
         self.add_action(&action_quit);
@@ -118,11 +123,11 @@ impl Application {
     fn show_about_dialog(&self) {
         let dialog = gtk::AboutDialogBuilder::new()
             .program_name("Telegrand")
-            .logo_icon_name(config::APP_ID)
+            .logo_icon_name(APP_ID)
             .license_type(gtk::License::Gpl30)
             .website("https://github.com/melix99/telegrand/")
-            .version(config::VERSION)
-            .transient_for(&self.get_main_window())
+            .version(VERSION)
+            .transient_for(&self.main_window())
             .modal(true)
             .authors(vec!["Marco Melorio".into()])
             .artists(vec!["Marco Melorio".into()])
@@ -132,9 +137,9 @@ impl Application {
     }
 
     pub fn run(&self) {
-        info!("Telegrand ({})", config::APP_ID);
-        info!("Version: {} ({})", config::VERSION, config::PROFILE);
-        info!("Datadir: {}", config::PKGDATADIR);
+        info!("Telegrand ({})", APP_ID);
+        info!("Version: {} ({})", VERSION, PROFILE);
+        info!("Datadir: {}", PKGDATADIR);
 
         ApplicationExtManual::run(self);
     }

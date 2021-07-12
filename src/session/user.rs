@@ -1,6 +1,6 @@
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
 use tdgrand::enums::Update;
 
 mod imp {

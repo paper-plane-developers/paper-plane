@@ -7,9 +7,9 @@ use tdgrand::enums::{self, Update};
 use tdgrand::functions;
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::Session;
 use crate::session::chat::{Message, MessageSender};
 use crate::utils::do_async;
+use crate::Session;
 
 mod imp {
     use super::*;
@@ -157,7 +157,8 @@ impl History {
                     .chat_id(chat_id)
                     .from_message_id(oldest_message_id)
                     .limit(limit as i32)
-                    .send(client_id).await
+                    .send(client_id)
+                    .await
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Messages::Messages(result)) = result {
@@ -211,15 +212,11 @@ impl History {
                         .user_list()
                         .get_or_create_user(sender.user_id);
                     MessageSender::User(user)
-                },
+                }
                 TelegramMessageSender::Chat(ref sender) => {
-                    let chat = self
-                        .session()
-                        .chat_list()
-                        .get_chat(sender.chat_id)
-                        .unwrap();
+                    let chat = self.session().chat_list().get_chat(sender.chat_id).unwrap();
                     MessageSender::Chat(chat)
-                },
+                }
             };
 
             let priv_ = imp::History::from_instance(self);

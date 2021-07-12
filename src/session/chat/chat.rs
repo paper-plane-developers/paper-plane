@@ -1,7 +1,7 @@
 use gettextrs::gettext;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
 use tdgrand::enums::{self, Update};
 use tdgrand::types::Message as TelegramMessage;
 
@@ -188,8 +188,7 @@ glib::wrapper! {
 
 impl Chat {
     pub fn new(chat_id: i64, title: String) -> Self {
-        glib::Object::new(&[("id", &chat_id), ("title", &title)])
-            .expect("Failed to create Chat")
+        glib::Object::new(&[("id", &chat_id), ("title", &title)]).expect("Failed to create Chat")
     }
 
     pub fn handle_update(&self, update: Update) {

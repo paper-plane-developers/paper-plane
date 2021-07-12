@@ -1,26 +1,24 @@
 use glib::{clone, SyncSender};
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
-use tokio::task;
+use std::sync::Arc;
 use tdgrand::enums::{AuthorizationState, Update};
 use tdgrand::functions;
+use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
 use crate::Application;
-use crate::RUNTIME;
 use crate::Session;
+use crate::RUNTIME;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use gtk::{gio, CompositeTemplate, Inhibit};
-    use log::warn;
+    use gtk::{gio, CompositeTemplate};
     use std::cell::RefCell;
     use std::collections::HashMap;
-    use tokio::task::JoinHandle;
 
     use crate::Login;
 
@@ -28,7 +26,7 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
     pub struct Window {
         pub settings: gio::Settings,
-        pub receiver_handle: RefCell<Option<JoinHandle<()>>>,
+        pub receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
         pub receiver_should_stop: Arc<AtomicBool>,
         pub clients: RefCell<HashMap<i32, Option<Session>>>,
         #[template_child]
@@ -87,18 +85,18 @@ mod imp {
     impl WidgetImpl for Window {}
     impl WindowImpl for Window {
         // Save window state on delete event
-        fn close_request(&self, obj: &Self::Type) -> Inhibit {
+        fn close_request(&self, obj: &Self::Type) -> gtk::Inhibit {
             self.receiver_should_stop.store(true, Ordering::Release);
 
             obj.close_clients();
-
             obj.wait_receiver();
 
             if let Err(err) = obj.save_window_size() {
-                warn!("Failed to save window state, {}", &err);
+                log::warn!("Failed to save window state, {}", &err);
             }
 
-            Inhibit(false)
+            // Pass close request on to the parent
+            self.parent_close_request(obj)
         }
     }
 
@@ -113,8 +111,7 @@ glib::wrapper! {
 
 impl Window {
     pub fn new(app: &Application) -> Self {
-        glib::Object::new(&[("application", &app), ("icon-name", &APP_ID)])
-            .expect("Failed to create Window")
+        glib::Object::new(&[("application", app)]).expect("Failed to create Window")
     }
 
     fn create_client(&self) {
@@ -130,7 +127,9 @@ impl Window {
         RUNTIME.spawn(async move {
             functions::SetLogVerbosityLevel::new()
                 .new_verbosity_level(2)
-                .send(client_id).await.unwrap();
+                .send(client_id)
+                .await
+                .unwrap();
         });
     }
 
@@ -158,7 +157,7 @@ impl Window {
                         if receiver_should_stop.load(Ordering::Acquire) {
                             if let Update::AuthorizationState(ref update) = update {
                                 if let AuthorizationState::Closed = update.authorization_state {
-                                    return true
+                                    return true;
                                 }
                             }
                         }
@@ -167,7 +166,9 @@ impl Window {
                     }
 
                     false
-                }).await.unwrap();
+                })
+                .await
+                .unwrap();
 
                 if stop {
                     break;
@@ -179,9 +180,15 @@ impl Window {
     }
 
     fn wait_receiver(&self) {
-        let receiver_handle = &imp::Window::from_instance(self).receiver_handle;
+        let priv_ = imp::Window::from_instance(self);
         RUNTIME.block_on(async move {
-            receiver_handle.borrow_mut().as_mut().unwrap().await.unwrap();
+            priv_
+                .receiver_handle
+                .borrow_mut()
+                .as_mut()
+                .unwrap()
+                .await
+                .unwrap();
         });
     }
 
@@ -212,7 +219,9 @@ impl Window {
 
                 self.create_client();
             } else {
-                priv_.login.set_authorization_state(update.authorization_state);
+                priv_
+                    .login
+                    .set_authorization_state(update.authorization_state);
             }
         } else if let Some(Some(session)) = priv_.clients.borrow().get(&client_id) {
             session.handle_update(update);
@@ -229,25 +238,27 @@ impl Window {
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let settings = &imp::Window::from_instance(self).settings;
+        let priv_ = imp::Window::from_instance(self);
 
-        let size = self.default_size();
-        settings.set_int("window-width", size.0)?;
-        settings.set_int("window-height", size.1)?;
+        let (width, height) = self.default_size();
+        priv_.settings.set_int("window-width", width)?;
+        priv_.settings.set_int("window-height", height)?;
 
-        settings.set_boolean("is-maximized", self.is_maximized())?;
+        priv_
+            .settings
+            .set_boolean("is-maximized", self.is_maximized())?;
 
         Ok(())
     }
 
     fn load_window_size(&self) {
-        let settings = &imp::Window::from_instance(self).settings;
+        let priv_ = imp::Window::from_instance(self);
 
-        let width = settings.int("window-width");
-        let height = settings.int("window-height");
+        let width = priv_.settings.int("window-width");
+        let height = priv_.settings.int("window-height");
         self.set_default_size(width, height);
 
-        let is_maximized = settings.boolean("is-maximized");
+        let is_maximized = priv_.settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
         }

@@ -1,11 +1,11 @@
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
 use tdgrand::enums::Update;
 use tdgrand::functions;
 
-use crate::RUNTIME;
 use crate::session::{Chat, ChatList, Content, Sidebar, UserList};
+use crate::RUNTIME;
 
 mod imp {
     use super::*;
@@ -137,8 +137,7 @@ glib::wrapper! {
 
 impl Session {
     pub fn new(client_id: i32) -> Self {
-        glib::Object::new(&[("client-id", &client_id)])
-            .expect("Failed to create Session")
+        glib::Object::new(&[("client-id", &client_id)]).expect("Failed to create Session")
     }
 
     pub fn handle_update(&self, update: Update) {

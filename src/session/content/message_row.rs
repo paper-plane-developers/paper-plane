@@ -4,8 +4,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango};
 
-use crate::session::{Chat, User};
 use crate::session::chat::{Message, MessageContent, MessageSender};
+use crate::session::{Chat, User};
 
 fn get_text_from_message_content(content: MessageContent) -> String {
     match content {
@@ -37,15 +37,13 @@ mod imp {
     impl ObjectImpl for MessageRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpec::new_object(
-                        "message",
-                        "Message",
-                        "The message represented by this row",
-                        Message::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                ]
+                vec![glib::ParamSpec::new_object(
+                    "message",
+                    "Message",
+                    "The message represented by this row",
+                    Message::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                )]
             });
 
             PROPERTIES.as_ref()
@@ -111,12 +109,10 @@ impl MessageRow {
     }
 
     fn create_message_bubble(message: &Message) -> gtk::Box {
-        let hbox = gtk::BoxBuilder::new()
-            .spacing(6)
-            .build();
+        let hbox = gtk::BoxBuilder::new().spacing(6).build();
 
         let vbox = gtk::BoxBuilder::new()
-            .css_classes(vec!("message-bubble".to_string()))
+            .css_classes(vec!["message-bubble".to_string()])
             .orientation(gtk::Orientation::Vertical)
             .build();
         hbox.append(&vbox);
@@ -129,7 +125,7 @@ impl MessageRow {
             vbox.add_css_class("incoming");
 
             let sender_label = gtk::LabelBuilder::new()
-                .css_classes(vec!("sender".to_string()))
+                .css_classes(vec!["sender".to_string()])
                 .single_line_mode(true)
                 .xalign(0.0)
                 .build();
@@ -144,7 +140,7 @@ impl MessageRow {
                         "title",
                     );
                     title_expression.bind(&sender_label, "label", Some(&sender_label));
-                },
+                }
                 MessageSender::User(user) => {
                     let avatar = adw::AvatarBuilder::new()
                         .valign(gtk::Align::End)
@@ -170,17 +166,20 @@ impl MessageRow {
                             let last_name = expressions[2].get::<&str>().unwrap();
                             format!("{} {}", first_name, last_name).trim().to_string()
                         },
-                        &[first_name_expression.upcast(), last_name_expression.upcast()]
+                        &[
+                            first_name_expression.upcast(),
+                            last_name_expression.upcast(),
+                        ],
                     );
 
                     full_name_expression.bind(&avatar, "text", Some(&avatar));
                     full_name_expression.bind(&sender_label, "label", Some(&sender_label));
-                },
+                }
             }
         }
 
         let text_label = gtk::LabelBuilder::new()
-            .css_classes(vec!("message-content".to_string()))
+            .css_classes(vec!["message-content".to_string()])
             .vexpand(true)
             .selectable(true)
             .use_markup(true)
@@ -201,7 +200,7 @@ impl MessageRow {
                 let content = expressions[1].get::<MessageContent>().unwrap();
                 get_text_from_message_content(content)
             },
-            &[content_expression.upcast()]
+            &[content_expression.upcast()],
         );
         text_expression.bind(&text_label, "label", Some(&text_label));
 

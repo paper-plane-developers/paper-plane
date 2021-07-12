@@ -1,10 +1,10 @@
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::glib;
 use tdgrand::{enums, functions, types};
 
-use crate::RUNTIME;
 use crate::session::{chat::Message, content::MessageRow, Chat};
+use crate::RUNTIME;
 
 mod imp {
     use super::*;
@@ -136,7 +136,9 @@ impl ChatHistory {
                 functions::SendMessage::new()
                     .chat_id(chat_id)
                     .input_message_content(message)
-                    .send(client_id).await.unwrap();
+                    .send(client_id)
+                    .await
+                    .unwrap();
             });
 
             priv_.send_message_entry.set_text("");
@@ -169,7 +171,9 @@ impl ChatHistory {
                     functions::SetChatDraftMessage::new()
                         .chat_id(chat_id)
                         .draft_message(draft_message)
-                        .send(client_id).await.unwrap();
+                        .send(client_id)
+                        .await
+                        .unwrap();
                 });
             }
         }
@@ -194,14 +198,8 @@ impl ChatHistory {
             chat.history().fetch();
 
             let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
-                let date1 = obj1
-                    .downcast_ref::<Message>()
-                    .unwrap()
-                    .date();
-                let date2 = obj2
-                    .downcast_ref::<Message>()
-                    .unwrap()
-                    .date();
+                let date1 = obj1.downcast_ref::<Message>().unwrap().date();
+                let date2 = obj2.downcast_ref::<Message>().unwrap().date();
 
                 date1.cmp(&date2).into()
             });

@@ -2,11 +2,11 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use tdgrand::{enums::Update, functions};
 use tdgrand::types::Chat as TelegramChat;
+use tdgrand::{enums::Update, functions};
 
-use crate::{RUNTIME, Session};
 use crate::session::Chat;
+use crate::{Session, RUNTIME};
 
 mod imp {
     use super::*;
@@ -32,27 +32,20 @@ mod imp {
     impl ObjectImpl for ChatList {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder(
-                    "positions-changed",
-                    &[],
-                    <()>::static_type().into(),
-                )
-                .build()]
+                vec![Signal::builder("positions-changed", &[], <()>::static_type().into()).build()]
             });
             SIGNALS.as_ref()
         }
 
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpec::new_object(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READWRITE,
-                    ),
-                ]
+                vec![glib::ParamSpec::new_object(
+                    "session",
+                    "Session",
+                    "The session",
+                    Session::static_type(),
+                    glib::ParamFlags::READWRITE,
+                )]
             });
 
             PROPERTIES.as_ref()
@@ -123,7 +116,9 @@ impl ChatList {
             functions::GetChats::new()
                 .offset_order(i64::MAX)
                 .limit(i32::MAX)
-                .send(client_id).await.unwrap();
+                .send(client_id)
+                .await
+                .unwrap();
         });
     }
 
@@ -177,7 +172,7 @@ impl ChatList {
         let priv_ = imp::ChatList::from_instance(self);
         if let Some(index) = priv_.list.borrow().get_index_of(&chat_id) {
             if let Some(item) = self.item(index as u32) {
-                return Some(item.downcast().unwrap())
+                return Some(item.downcast().unwrap());
             }
         }
         None
@@ -194,11 +189,9 @@ impl ChatList {
                 .flags(glib::BindingFlags::SYNC_CREATE)
                 .build();
 
-            chat.connect_order_notify(
-                clone!(@weak self as obj => move |_, _| {
-                    obj.emit_by_name("positions-changed", &[]).unwrap();
-                }),
-            );
+            chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
+                obj.emit_by_name("positions-changed", &[]).unwrap();
+            }));
 
             list.insert(chat_id, chat);
         }
