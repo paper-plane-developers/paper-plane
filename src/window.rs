@@ -67,16 +67,12 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            let builder =
-                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/shortcuts.ui");
-            let shortcuts = builder.object("shortcuts").unwrap();
-            obj.set_help_overlay(Some(&shortcuts));
-
             // Devel profile
             if PROFILE == "Devel" {
-                obj.style_context().add_class("devel");
+                obj.add_css_class("devel");
             }
 
+            // Load latest window state
             obj.load_window_size();
 
             self.login.connect_new_session(

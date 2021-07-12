@@ -101,7 +101,6 @@ impl Application {
     // Sets up keyboard shortcuts
     fn setup_accels(&self) {
         self.set_accels_for_action("app.quit", &["<primary>q"]);
-        self.set_accels_for_action("win.show-help-overlay", &["<primary>question"]);
     }
 
     fn setup_css(&self) {
