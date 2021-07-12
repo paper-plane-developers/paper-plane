@@ -139,10 +139,10 @@ impl History {
     }
 
     pub fn fetch(&self) {
-        let priv_ = imp::History::from_instance(self);
+        let self_ = imp::History::from_instance(self);
         let limit = 20;
         // TODO: remove this when proper automatic fetch is implemented
-        if priv_.list.borrow().len() >= limit {
+        if self_.list.borrow().len() >= limit {
             return;
         }
 
@@ -183,7 +183,7 @@ impl History {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let priv_ = imp::History::from_instance(self);
+        let self_ = imp::History::from_instance(self);
 
         match update {
             Update::NewMessage(update) => {
@@ -195,7 +195,7 @@ impl History {
                 self.insert_message(update.message);
             }
             Update::MessageContent(ref update_) => {
-                if let Some(message) = priv_.list.borrow().get(&update_.message_id) {
+                if let Some(message) = self_.list.borrow().get(&update_.message_id) {
                     message.handle_update(update);
                 }
             }
@@ -219,8 +219,8 @@ impl History {
                 }
             };
 
-            let priv_ = imp::History::from_instance(self);
-            let mut list = priv_.list.borrow_mut();
+            let self_ = imp::History::from_instance(self);
+            let mut list = self_.list.borrow_mut();
             list.insert(message.id, Message::new(message, sender));
         }
 
@@ -228,30 +228,30 @@ impl History {
     }
 
     fn item_added(&self) {
-        let priv_ = imp::History::from_instance(self);
-        let list = priv_.list.borrow();
+        let self_ = imp::History::from_instance(self);
+        let list = self_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
     }
 
     pub fn chat_id(&self) -> i64 {
-        let priv_ = imp::History::from_instance(self);
-        priv_.chat_id.get()
+        let self_ = imp::History::from_instance(self);
+        self_.chat_id.get()
     }
 
     pub fn oldest_message_id(&self) -> i64 {
-        let priv_ = imp::History::from_instance(self);
-        priv_.oldest_message_id.get()
+        let self_ = imp::History::from_instance(self);
+        self_.oldest_message_id.get()
     }
 
     fn set_oldest_message_id(&self, oldest_message_id: i64) {
-        let priv_ = imp::History::from_instance(self);
-        priv_.oldest_message_id.replace(oldest_message_id);
+        let self_ = imp::History::from_instance(self);
+        self_.oldest_message_id.replace(oldest_message_id);
         self.notify("oldest-message-id");
     }
 
     pub fn session(&self) -> Session {
-        let priv_ = imp::History::from_instance(self);
-        priv_.session.borrow().as_ref().unwrap().to_owned()
+        let self_ = imp::History::from_instance(self);
+        self_.session.borrow().as_ref().unwrap().to_owned()
     }
 }

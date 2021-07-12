@@ -192,11 +192,11 @@ impl Chat {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let priv_ = imp::Chat::from_instance(self);
+        let self_ = imp::Chat::from_instance(self);
 
         match update {
             Update::NewMessage(_) | Update::MessageContent(_) => {
-                priv_.history.handle_update(update);
+                self_.history.handle_update(update);
             }
             Update::ChatTitle(update) => {
                 self.set_title(update.title);

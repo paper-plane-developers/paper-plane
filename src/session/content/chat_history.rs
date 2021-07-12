@@ -117,9 +117,9 @@ impl ChatHistory {
 
     fn send_message(&self) {
         if let Some(chat) = self.chat() {
-            let priv_ = imp::ChatHistory::from_instance(self);
+            let self_ = imp::ChatHistory::from_instance(self);
             let text = types::FormattedText {
-                text: priv_.send_message_entry.text().to_string(),
+                text: self_.send_message_entry.text().to_string(),
                 ..Default::default()
             };
             let content = types::InputMessageText {
@@ -141,14 +141,14 @@ impl ChatHistory {
                     .unwrap();
             });
 
-            priv_.send_message_entry.set_text("");
+            self_.send_message_entry.set_text("");
         }
     }
 
     fn save_draft_message(&self) {
         if let Some(chat) = self.chat() {
-            let priv_ = imp::ChatHistory::from_instance(self);
-            let draft = priv_.send_message_entry.text().to_string();
+            let self_ = imp::ChatHistory::from_instance(self);
+            let draft = self_.send_message_entry.text().to_string();
 
             if chat.draft_message() != draft {
                 let text = types::FormattedText {
@@ -180,8 +180,8 @@ impl ChatHistory {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let priv_ = imp::ChatHistory::from_instance(self);
-        priv_.chat.borrow().clone()
+        let self_ = imp::ChatHistory::from_instance(self);
+        self_.chat.borrow().clone()
     }
 
     pub fn set_chat(&self, chat: Option<Chat>) {
@@ -191,9 +191,9 @@ impl ChatHistory {
 
         self.save_draft_message();
 
-        let priv_ = imp::ChatHistory::from_instance(self);
+        let self_ = imp::ChatHistory::from_instance(self);
         if let Some(ref chat) = chat {
-            priv_.send_message_entry.set_text(&chat.draft_message());
+            self_.send_message_entry.set_text(&chat.draft_message());
 
             chat.history().fetch();
 
@@ -206,10 +206,10 @@ impl ChatHistory {
 
             let sort_model = gtk::SortListModel::new(Some(&chat.history()), Some(&sorter));
             let selection = gtk::NoSelection::new(Some(&sort_model));
-            priv_.history_list_view.set_model(Some(&selection));
+            self_.history_list_view.set_model(Some(&selection));
         }
 
-        priv_.chat.replace(chat);
+        self_.chat.replace(chat);
         self.notify("chat");
     }
 }

@@ -63,8 +63,8 @@ impl UserList {
 
     pub fn insert_user(&self, user: User) {
         {
-            let priv_ = imp::UserList::from_instance(self);
-            let mut list = priv_.list.borrow_mut();
+            let self_ = imp::UserList::from_instance(self);
+            let mut list = self_.list.borrow_mut();
             list.insert(user.id(), user);
         }
 
@@ -72,8 +72,8 @@ impl UserList {
     }
 
     pub fn get_or_create_user(&self, user_id: i32) -> User {
-        let priv_ = imp::UserList::from_instance(self);
-        if let Some(index) = priv_.list.borrow().get_index_of(&user_id) {
+        let self_ = imp::UserList::from_instance(self);
+        if let Some(index) = self_.list.borrow().get_index_of(&user_id) {
             if let Some(item) = self.item(index as u32) {
                 return item.downcast().unwrap();
             }
@@ -95,8 +95,8 @@ impl UserList {
     }
 
     fn item_added(&self) {
-        let priv_ = imp::UserList::from_instance(self);
-        let list = priv_.list.borrow();
+        let self_ = imp::UserList::from_instance(self);
+        let list = self_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
     }

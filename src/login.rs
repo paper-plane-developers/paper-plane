@@ -83,9 +83,9 @@ mod imp {
 
             // Show the previous button on all pages except in the
             // "phone number" and "encryption key" pages
-            let priv_ = imp::Login::from_instance(obj);
-            let previous_button = &*priv_.previous_button;
-            priv_.content.connect_visible_child_name_notify(clone!(@weak previous_button => move |content| {
+            let self_ = imp::Login::from_instance(obj);
+            let previous_button = &*self_.previous_button;
+            self_.content.connect_visible_child_name_notify(clone!(@weak previous_button => move |content| {
                 let visible_page = content.visible_child_name().unwrap();
                 if visible_page == "phone-number-page" || visible_page == "encryption-key-page" {
                     previous_button.set_visible(false);
@@ -95,7 +95,7 @@ mod imp {
             }));
 
             // Bind the use-test-dc setting to the relative switch
-            let use_test_dc_switch = &*priv_.use_test_dc_switch;
+            let use_test_dc_switch = &*self_.use_test_dc_switch;
             let settings = gio::Settings::new(config::APP_ID);
             settings
                 .bind("use-test-dc", use_test_dc_switch, "state")
@@ -118,22 +118,22 @@ impl Login {
     }
 
     pub fn login_client(&self, client_id: i32) {
-        let priv_ = imp::Login::from_instance(self);
-        priv_.client_id.set(client_id);
-        priv_.content.set_visible_child_name("phone-number-page");
+        let self_ = imp::Login::from_instance(self);
+        self_.client_id.set(client_id);
+        self_.content.set_visible_child_name("phone-number-page");
 
-        priv_.phone_number_entry.set_text("");
-        priv_.custom_encryption_key_entry.set_text("");
-        priv_.code_entry.set_text("");
-        priv_.password_entry.set_text("");
-        priv_.encryption_key_entry.set_text("");
+        self_.phone_number_entry.set_text("");
+        self_.custom_encryption_key_entry.set_text("");
+        self_.code_entry.set_text("");
+        self_.password_entry.set_text("");
+        self_.encryption_key_entry.set_text("");
 
         self.unfreeze();
         self.action_set_enabled("login.next", false);
     }
 
     pub fn set_authorization_state(&self, state: AuthorizationState) {
-        let priv_ = imp::Login::from_instance(self);
+        let self_ = imp::Login::from_instance(self);
 
         match state {
             AuthorizationState::WaitTdlibParameters => {
@@ -146,7 +146,7 @@ impl Login {
                 self.unfreeze();
             }
             AuthorizationState::WaitCode(_) => {
-                priv_.content.set_visible_child_name("code-page");
+                self_.content.set_visible_child_name("code-page");
                 self.unfreeze();
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
@@ -156,7 +156,7 @@ impl Login {
                 todo!()
             }
             AuthorizationState::WaitPassword(_) => {
-                priv_.content.set_visible_child_name("password-page");
+                self_.content.set_visible_child_name("password-page");
                 self.unfreeze();
             }
             AuthorizationState::Ready => {
@@ -167,17 +167,17 @@ impl Login {
     }
 
     fn previous(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        priv_.content.set_visible_child_name("phone-number-page");
+        let self_ = imp::Login::from_instance(self);
+        self_.content.set_visible_child_name("phone-number-page");
     }
 
     fn next(&self) {
         self.freeze();
 
-        let priv_ = imp::Login::from_instance(self);
-        let visible_page = priv_.content.visible_child_name().unwrap();
+        let self_ = imp::Login::from_instance(self);
+        let visible_page = self_.content.visible_child_name().unwrap();
         if visible_page == "phone-number-page" {
-            let encryption_key = priv_.custom_encryption_key_entry.text().to_string();
+            let encryption_key = self_.custom_encryption_key_entry.text().to_string();
             if !encryption_key.is_empty() {
                 self.change_encryption_key();
             }
@@ -196,26 +196,26 @@ impl Login {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
 
-        let priv_ = imp::Login::from_instance(self);
-        priv_
+        let self_ = imp::Login::from_instance(self);
+        self_
             .next_stack
-            .set_visible_child(&priv_.next_spinner.get());
-        priv_.content.set_sensitive(false);
+            .set_visible_child(&self_.next_spinner.get());
+        self_.content.set_sensitive(false);
     }
 
     fn unfreeze(&self) {
         self.action_set_enabled("login.previous", true);
         self.action_set_enabled("login.next", true);
 
-        let priv_ = imp::Login::from_instance(self);
-        priv_.next_stack.set_visible_child(&priv_.next_label.get());
-        priv_.content.set_sensitive(true);
+        let self_ = imp::Login::from_instance(self);
+        self_.next_stack.set_visible_child(&self_.next_label.get());
+        self_.content.set_sensitive(true);
     }
 
     fn send_tdlib_parameters(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
-        let use_test_dc = priv_.use_test_dc_switch.state();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let use_test_dc = self_.use_test_dc_switch.state();
         let database_directory =
             format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
         let parameters = types::TdlibParameters {
@@ -239,22 +239,22 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
-                    priv_.welcome_page_error_label.set_text(&err.message);
-                    priv_.welcome_page_error_label.set_visible(true);
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.welcome_page_error_label.set_text(&err.message);
+                    self_.welcome_page_error_label.set_visible(true);
                 }
             }),
         );
     }
 
     fn send_encryption_key(&self, use_empty_key: bool) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
         let encryption_key = {
             if use_empty_key {
                 "".to_string()
             } else {
-                priv_.encryption_key_entry.text().to_string()
+                self_.encryption_key_entry.text().to_string()
             }
         };
         do_async(
@@ -267,16 +267,16 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
+                    let self_ = imp::Login::from_instance(&obj);
 
                     // If we were trying an empty key, we now show the
                     // encryption key page to let the user input its key.
                     // Otherwise just show the error in the relative label.
                     if use_empty_key {
-                        priv_.content.set_visible_child_name("encryption-key-page");
+                        self_.content.set_visible_child_name("encryption-key-page");
                         obj.action_set_enabled("login.next", true);
                     } else {
-                        let encryption_key_error_label = &priv_.encryption_key_error_label;
+                        let encryption_key_error_label = &self_.encryption_key_error_label;
                         encryption_key_error_label.set_text(&err.message);
                         encryption_key_error_label.set_visible(true);
 
@@ -288,9 +288,9 @@ impl Login {
     }
 
     fn change_encryption_key(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
-        let encryption_key = priv_.custom_encryption_key_entry.text().to_string();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let encryption_key = self_.custom_encryption_key_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -301,18 +301,18 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
-                    priv_.welcome_page_error_label.set_text(&err.message);
-                    priv_.welcome_page_error_label.set_visible(true);
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.welcome_page_error_label.set_text(&err.message);
+                    self_.welcome_page_error_label.set_visible(true);
                 }
             }),
         );
     }
 
     fn send_phone_number(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
-        let phone_number = priv_.phone_number_entry.text().to_string();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let phone_number = self_.phone_number_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -323,9 +323,9 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
-                    priv_.welcome_page_error_label.set_text(&err.message);
-                    priv_.welcome_page_error_label.set_visible(true);
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.welcome_page_error_label.set_text(&err.message);
+                    self_.welcome_page_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
@@ -334,9 +334,9 @@ impl Login {
     }
 
     fn send_code(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
-        let code = priv_.code_entry.text().to_string();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let code = self_.code_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -347,9 +347,9 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
-                    priv_.code_error_label.set_text(&err.message);
-                    priv_.code_error_label.set_visible(true);
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.code_error_label.set_text(&err.message);
+                    self_.code_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
@@ -358,9 +358,9 @@ impl Login {
     }
 
     fn send_password(&self) {
-        let priv_ = imp::Login::from_instance(self);
-        let client_id = priv_.client_id.get();
-        let password = priv_.password_entry.text().to_string();
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let password = self_.password_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -371,9 +371,9 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let priv_ = imp::Login::from_instance(&obj);
-                    priv_.password_error_label.set_text(&err.message);
-                    priv_.password_error_label.set_visible(true);
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.password_error_label.set_text(&err.message);
+                    self_.password_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
@@ -382,8 +382,8 @@ impl Login {
     }
 
     pub fn client_id(&self) -> i32 {
-        let priv_ = imp::Login::from_instance(self);
-        priv_.client_id.get()
+        let self_ = imp::Login::from_instance(self);
+        self_.client_id.get()
     }
 
     pub fn connect_new_session<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {

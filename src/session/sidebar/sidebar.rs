@@ -123,12 +123,12 @@ impl Sidebar {
     }
 
     pub fn set_chat_list(&self, chat_list: ChatList) {
-        let priv_ = imp::Sidebar::from_instance(self);
+        let self_ = imp::Sidebar::from_instance(self);
         let filter = gtk::CustomFilter::new(|item| {
             let order = item.downcast_ref::<Chat>().unwrap().order();
             order != 0
         });
-        priv_.filter.set(filter).unwrap();
+        self_.filter.set(filter).unwrap();
 
         let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
             let order1 = obj1.downcast_ref::<Chat>().unwrap().order();
@@ -136,10 +136,10 @@ impl Sidebar {
 
             order2.cmp(&order1).into()
         });
-        priv_.sorter.set(sorter).unwrap();
+        self_.sorter.set(sorter).unwrap();
 
-        let filter = priv_.filter.get().unwrap();
-        let sorter = priv_.sorter.get().unwrap();
+        let filter = self_.filter.get().unwrap();
+        let sorter = self_.sorter.get().unwrap();
         chat_list.connect_positions_changed(clone!(@weak filter, @weak sorter => move |_| {
             filter.changed(gtk::FilterChange::Different);
             sorter.changed(gtk::SorterChange::Different);
@@ -153,16 +153,16 @@ impl Sidebar {
             .bind_property("selected-item", self, "selected-chat")
             .flags(glib::BindingFlags::SYNC_CREATE)
             .build();
-        priv_.selection.replace(Some(selection));
+        self_.selection.replace(Some(selection));
 
-        priv_
+        self_
             .chat_list_view
-            .set_model(Some(priv_.selection.borrow().as_ref().unwrap()));
+            .set_model(Some(self_.selection.borrow().as_ref().unwrap()));
     }
 
     fn selected_chat(&self) -> Option<Chat> {
-        let priv_ = imp::Sidebar::from_instance(self);
-        priv_.selected_chat.borrow().clone()
+        let self_ = imp::Sidebar::from_instance(self);
+        self_.selected_chat.borrow().clone()
     }
 
     fn set_selected_chat(&self, selected_chat: Option<Chat>) {
@@ -173,9 +173,9 @@ impl Sidebar {
         // TODO: change the selection in the sidebar if it's
         // different from the current selection
 
-        let priv_ = imp::Sidebar::from_instance(self);
+        let self_ = imp::Sidebar::from_instance(self);
         if selected_chat.is_none() {
-            priv_
+            self_
                 .selection
                 .borrow()
                 .as_ref()
@@ -183,7 +183,7 @@ impl Sidebar {
                 .set_selected(gtk::INVALID_LIST_POSITION);
         }
 
-        priv_.selected_chat.replace(selected_chat);
+        self_.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 }

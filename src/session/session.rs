@@ -141,7 +141,7 @@ impl Session {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let priv_ = imp::Session::from_instance(self);
+        let self_ = imp::Session::from_instance(self);
 
         match update {
             Update::NewMessage(_)
@@ -152,10 +152,10 @@ impl Session {
             | Update::ChatPosition(_)
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_) => {
-                priv_.chat_list.handle_update(update);
+                self_.chat_list.handle_update(update);
             }
             Update::User(_) => {
-                priv_.user_list.handle_update(update);
+                self_.user_list.handle_update(update);
             }
             _ => {}
         }
@@ -169,23 +169,23 @@ impl Session {
     }
 
     pub fn client_id(&self) -> i32 {
-        let priv_ = imp::Session::from_instance(self);
-        priv_.client_id.get()
+        let self_ = imp::Session::from_instance(self);
+        self_.client_id.get()
     }
 
     pub fn chat_list(&self) -> &ChatList {
-        let priv_ = imp::Session::from_instance(self);
-        &priv_.chat_list
+        let self_ = imp::Session::from_instance(self);
+        &self_.chat_list
     }
 
     pub fn user_list(&self) -> &UserList {
-        let priv_ = imp::Session::from_instance(self);
-        &priv_.user_list
+        let self_ = imp::Session::from_instance(self);
+        &self_.user_list
     }
 
     fn selected_chat(&self) -> Option<Chat> {
-        let priv_ = imp::Session::from_instance(self);
-        priv_.selected_chat.borrow().clone()
+        let self_ = imp::Session::from_instance(self);
+        self_.selected_chat.borrow().clone()
     }
 
     fn set_selected_chat(&self, selected_chat: Option<Chat>) {
@@ -193,20 +193,20 @@ impl Session {
             return;
         }
 
-        let priv_ = imp::Session::from_instance(self);
+        let self_ = imp::Session::from_instance(self);
         if selected_chat.is_some() {
-            priv_.leaflet.navigate(adw::NavigationDirection::Forward);
+            self_.leaflet.navigate(adw::NavigationDirection::Forward);
         } else {
-            priv_.leaflet.navigate(adw::NavigationDirection::Back);
+            self_.leaflet.navigate(adw::NavigationDirection::Back);
         }
 
-        priv_.selected_chat.replace(selected_chat);
+        self_.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 
     fn fetch_chats(&self) {
-        let priv_ = imp::Session::from_instance(self);
-        let client_id = priv_.client_id.get();
-        priv_.chat_list.fetch(client_id);
+        let self_ = imp::Session::from_instance(self);
+        let client_id = self_.client_id.get();
+        self_.chat_list.fetch(client_id);
     }
 }

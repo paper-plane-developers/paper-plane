@@ -123,16 +123,16 @@ impl ChatList {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let priv_ = imp::ChatList::from_instance(self);
+        let self_ = imp::ChatList::from_instance(self);
 
         match update {
             Update::NewMessage(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.message.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.message.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::MessageContent(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
@@ -140,27 +140,27 @@ impl ChatList {
                 self.insert_chat(update.chat);
             }
             Update::ChatTitle(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatLastMessage(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatPosition(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatReadInbox(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatDraftMessage(ref update_) => {
-                if let Some(chat) = priv_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
@@ -169,8 +169,8 @@ impl ChatList {
     }
 
     pub fn get_chat(&self, chat_id: i64) -> Option<Chat> {
-        let priv_ = imp::ChatList::from_instance(self);
-        if let Some(index) = priv_.list.borrow().get_index_of(&chat_id) {
+        let self_ = imp::ChatList::from_instance(self);
+        if let Some(index) = self_.list.borrow().get_index_of(&chat_id) {
             if let Some(item) = self.item(index as u32) {
                 return Some(item.downcast().unwrap());
             }
@@ -180,8 +180,8 @@ impl ChatList {
 
     fn insert_chat(&self, chat: TelegramChat) {
         {
-            let priv_ = imp::ChatList::from_instance(self);
-            let mut list = priv_.list.borrow_mut();
+            let self_ = imp::ChatList::from_instance(self);
+            let mut list = self_.list.borrow_mut();
             let chat_id = chat.id;
             let chat = Chat::new(chat.id, chat.title);
 
@@ -200,15 +200,15 @@ impl ChatList {
     }
 
     fn item_added(&self) {
-        let priv_ = imp::ChatList::from_instance(self);
-        let list = priv_.list.borrow();
+        let self_ = imp::ChatList::from_instance(self);
+        let list = self_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
     }
 
     pub fn session(&self) -> Option<Session> {
-        let priv_ = imp::ChatList::from_instance(self);
-        priv_.session.borrow().to_owned()
+        let self_ = imp::ChatList::from_instance(self);
+        self_.session.borrow().to_owned()
     }
 
     pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {

@@ -117,10 +117,10 @@ impl Window {
     fn create_client(&self) {
         let client_id = tdgrand::create_client();
 
-        let priv_ = imp::Window::from_instance(self);
-        priv_.clients.borrow_mut().insert(client_id, None);
-        priv_.login.login_client(client_id);
-        priv_.main_stack.set_visible_child(&priv_.login.get());
+        let self_ = imp::Window::from_instance(self);
+        self_.clients.borrow_mut().insert(client_id, None);
+        self_.login.login_client(client_id);
+        self_.main_stack.set_visible_child(&self_.login.get());
 
         // This call is important for login because TDLib requires the clients
         // to do at least a request to start receiving updates.
@@ -134,9 +134,9 @@ impl Window {
     }
 
     fn close_clients(&self) {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
 
-        for (client_id, _) in priv_.clients.borrow().iter() {
+        for (client_id, _) in self_.clients.borrow().iter() {
             let client_id = *client_id;
             RUNTIME.spawn(async move {
                 functions::Close::new().send(client_id).await.unwrap();
@@ -145,8 +145,8 @@ impl Window {
     }
 
     fn start_receiver(&self) {
-        let priv_ = imp::Window::from_instance(self);
-        let receiver_should_stop = priv_.receiver_should_stop.clone();
+        let self_ = imp::Window::from_instance(self);
+        let receiver_should_stop = self_.receiver_should_stop.clone();
         let sender = Arc::new(self.create_update_sender());
         let handle = RUNTIME.spawn(async move {
             loop {
@@ -176,13 +176,13 @@ impl Window {
             }
         });
 
-        priv_.receiver_handle.replace(Some(handle));
+        self_.receiver_handle.replace(Some(handle));
     }
 
     fn wait_receiver(&self) {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
         RUNTIME.block_on(async move {
-            priv_
+            self_
                 .receiver_handle
                 .borrow_mut()
                 .as_mut()
@@ -208,43 +208,43 @@ impl Window {
     }
 
     fn handle_update(&self, update: Update, client_id: i32) {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
 
         if let Update::AuthorizationState(update) = update {
             if let AuthorizationState::Closed = update.authorization_state {
-                let session = priv_.clients.borrow_mut().remove(&client_id).unwrap();
+                let session = self_.clients.borrow_mut().remove(&client_id).unwrap();
                 if let Some(session) = session {
-                    priv_.main_stack.remove(&session);
+                    self_.main_stack.remove(&session);
                 }
 
                 self.create_client();
             } else {
-                priv_
+                self_
                     .login
                     .set_authorization_state(update.authorization_state);
             }
-        } else if let Some(Some(session)) = priv_.clients.borrow().get(&client_id) {
+        } else if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
             session.handle_update(update);
         }
     }
 
     fn create_session(&self, client_id: i32) {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
         let session = Session::new(client_id);
 
-        priv_.main_stack.add_child(&session);
-        priv_.main_stack.set_visible_child(&session);
-        priv_.clients.borrow_mut().insert(client_id, Some(session));
+        self_.main_stack.add_child(&session);
+        self_.main_stack.set_visible_child(&session);
+        self_.clients.borrow_mut().insert(client_id, Some(session));
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
 
         let (width, height) = self.default_size();
-        priv_.settings.set_int("window-width", width)?;
-        priv_.settings.set_int("window-height", height)?;
+        self_.settings.set_int("window-width", width)?;
+        self_.settings.set_int("window-height", height)?;
 
-        priv_
+        self_
             .settings
             .set_boolean("is-maximized", self.is_maximized())?;
 
@@ -252,13 +252,13 @@ impl Window {
     }
 
     fn load_window_size(&self) {
-        let priv_ = imp::Window::from_instance(self);
+        let self_ = imp::Window::from_instance(self);
 
-        let width = priv_.settings.int("window-width");
-        let height = priv_.settings.int("window-height");
+        let width = self_.settings.int("window-width");
+        let height = self_.settings.int("window-height");
         self.set_default_size(width, height);
 
-        let is_maximized = priv_.settings.boolean("is-maximized");
+        let is_maximized = self_.settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
         }

@@ -86,8 +86,8 @@ impl ChatRow {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let priv_ = imp::ChatRow::from_instance(self);
-        priv_.chat.borrow().clone()
+        let self_ = imp::ChatRow::from_instance(self);
+        self_.chat.borrow().clone()
     }
 
     fn set_chat(&self, chat: Option<Chat>) {
@@ -95,8 +95,8 @@ impl ChatRow {
             return;
         }
 
-        let priv_ = imp::ChatRow::from_instance(self);
-        priv_.chat.replace(chat);
+        let self_ = imp::ChatRow::from_instance(self);
+        self_.chat.replace(chat);
 
         self.notify("chat");
     }

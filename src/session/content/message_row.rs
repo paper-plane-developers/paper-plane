@@ -88,8 +88,8 @@ impl MessageRow {
     }
 
     pub fn message(&self) -> Option<Message> {
-        let priv_ = imp::MessageRow::from_instance(self);
-        priv_.message.borrow().clone()
+        let self_ = imp::MessageRow::from_instance(self);
+        self_.message.borrow().clone()
     }
 
     fn set_message(&self, message: Option<Message>) {
@@ -97,14 +97,14 @@ impl MessageRow {
             return;
         }
 
-        let priv_ = imp::MessageRow::from_instance(self);
+        let self_ = imp::MessageRow::from_instance(self);
 
         if let Some(ref message) = message {
             let message_bubble = MessageRow::create_message_bubble(message);
             self.set_child(Some(&message_bubble));
         }
 
-        priv_.message.replace(message);
+        self_.message.replace(message);
         self.notify("message");
     }
 
