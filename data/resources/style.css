@@ -1,9 +1,4 @@
-.sidebar row {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.sidebar .unread-count {
+.unread-count {
   background-color: @accent_bg_color;
   color: @accent_fg_color;
   font-size: 0.8em;
@@ -15,11 +10,6 @@
 
 .chat-history {
   background-color: @theme_base_color;
-}
-
-.chat-history row {
-  padding-top: 3px;
-  padding-bottom: 3px;
 }
 
 .chat-history row .message-bubble {

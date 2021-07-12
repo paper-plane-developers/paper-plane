@@ -51,6 +51,8 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SidebarChatRow">
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <binding name="chat">
           <lookup name="item">GtkListItem</lookup>
         </binding>
