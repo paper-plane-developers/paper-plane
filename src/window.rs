@@ -2,8 +2,6 @@ use glib::{clone, SyncSender};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::glib;
-use gtk_macros::send;
-use log::error;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::task;
@@ -169,7 +167,7 @@ impl Window {
                             }
                         }
 
-                        send!(sender, (update, client_id));
+                        sender.send((update, client_id)).unwrap();
                     }
 
                     false
