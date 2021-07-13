@@ -1,14 +1,17 @@
+use gettextrs::gettext;
 use glib::{clone, SyncSender};
-use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::{gio, glib};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use tdgrand::enums::{AuthorizationState, Update};
+use tdgrand::enums::{self, AuthorizationState, Update};
 use tdgrand::functions;
+use tdgrand::types;
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
+use crate::utils::stringify_message_content;
 use crate::Application;
 use crate::Session;
 use crate::RUNTIME;
@@ -210,21 +213,90 @@ impl Window {
     fn handle_update(&self, update: Update, client_id: i32) {
         let self_ = imp::Window::from_instance(self);
 
-        if let Update::AuthorizationState(update) = update {
-            if let AuthorizationState::Closed = update.authorization_state {
-                let session = self_.clients.borrow_mut().remove(&client_id).unwrap();
-                if let Some(session) = session {
-                    self_.main_stack.remove(&session);
-                }
+        match update {
+            Update::AuthorizationState(update) => {
+                if let AuthorizationState::Closed = update.authorization_state {
+                    let session = self_.clients.borrow_mut().remove(&client_id).unwrap();
+                    if let Some(session) = session {
+                        self_.main_stack.remove(&session);
+                    }
 
-                self.create_client();
-            } else {
-                self_
-                    .login
-                    .set_authorization_state(update.authorization_state);
+                    self.create_client();
+                } else {
+                    self_
+                        .login
+                        .set_authorization_state(update.authorization_state);
+                }
             }
-        } else if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
-            session.handle_update(update);
+            Update::NotificationGroup(update) => {
+                self.add_notifications(update.added_notifications, client_id, update.chat_id);
+
+                let app = self.application().unwrap();
+                for notification_id in update.removed_notification_ids {
+                    app.withdraw_notification(&notification_id.to_string());
+                }
+            }
+            _ => {
+                if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
+                    session.handle_update(update);
+                }
+            }
+        }
+    }
+
+    fn add_notifications(
+        &self,
+        notifications: Vec<types::Notification>,
+        client_id: i32,
+        chat_id: i64,
+    ) {
+        let self_ = imp::Window::from_instance(self);
+
+        if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
+            let app = self.application().unwrap();
+            let chat = session.chat_list().get_chat(chat_id).unwrap();
+
+            for notification in notifications {
+                let notification_id = notification.id;
+                let notification = match notification.r#type {
+                    enums::NotificationType::NewMessage(data) => {
+                        let mut title = chat.title();
+                        let body = stringify_message_content(data.message.content, false);
+
+                        // Add the sender's name to the title if the chat is a group and the sender is an user
+                        if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =
+                            chat.r#type()
+                        {
+                            if let enums::MessageSender::User(user) = data.message.sender {
+                                let user = session.user_list().get_or_create_user(user.user_id);
+                                let full_name =
+                                    format!("{} {}", user.first_name(), user.last_name())
+                                        .trim()
+                                        .to_owned();
+
+                                title.insert_str(0, &format!("{} – ", full_name));
+                            }
+                        }
+
+                        let notification = gio::Notification::new(&title);
+                        notification.set_body(Some(&body));
+
+                        Some(notification)
+                    }
+                    enums::NotificationType::NewCall(_) => {
+                        let body = gettext("Incoming call");
+                        let notification = gio::Notification::new(&chat.title());
+                        notification.set_body(Some(&body));
+
+                        Some(notification)
+                    }
+                    _ => None,
+                };
+
+                if let Some(notification) = notification {
+                    app.send_notification(Some(&notification_id.to_string()), &notification);
+                }
+            }
         }
     }
 
@@ -235,6 +307,18 @@ impl Window {
         self_.main_stack.add_child(&session);
         self_.main_stack.set_visible_child(&session);
         self_.clients.borrow_mut().insert(client_id, Some(session));
+
+        // Enable notifications for this client
+        RUNTIME.spawn(async move {
+            functions::SetOption::new()
+                .name("notification_group_count_max".to_string())
+                .value(enums::OptionValue::Integer(types::OptionValueInteger {
+                    value: 5,
+                }))
+                .send(client_id)
+                .await
+                .unwrap();
+        });
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
