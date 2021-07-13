@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{self, Update};
+use tdgrand::enums::{self, ChatType, Update};
 use tdgrand::types::Message as TelegramMessage;
 
 use crate::session::chat::History;
@@ -18,14 +18,19 @@ fn stringify_message(message: Option<TelegramMessage>) -> String {
     String::new()
 }
 
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "BoxedChatType")]
+pub struct BoxedChatType(ChatType);
+
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub struct Chat {
         pub id: Cell<i64>,
+        pub r#type: OnceCell<ChatType>,
         pub title: RefCell<String>,
         pub last_message: RefCell<String>,
         pub order: Cell<i64>,
@@ -54,6 +59,13 @@ mod imp {
                         std::i64::MAX,
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_boxed(
+                        "type",
+                        "type",
+                        "The type of this chat",
+                        BoxedChatType::static_type(),
+                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_string(
                         "title",
@@ -126,6 +138,10 @@ mod imp {
                     let id = value.get().unwrap();
                     self.id.set(id);
                 }
+                "type" => {
+                    let r#type = value.get::<BoxedChatType>().unwrap();
+                    self.r#type.set(r#type.0).unwrap();
+                }
                 "title" => {
                     let title = value.get().unwrap();
                     self.title.replace(title);
@@ -187,8 +203,10 @@ glib::wrapper! {
 }
 
 impl Chat {
-    pub fn new(chat_id: i64, title: String) -> Self {
-        glib::Object::new(&[("id", &chat_id), ("title", &title)]).expect("Failed to create Chat")
+    pub fn new(id: i64, r#type: ChatType, title: String) -> Self {
+        let r#type = BoxedChatType(r#type);
+        glib::Object::new(&[("id", &id), ("type", &r#type), ("title", &title)])
+            .expect("Failed to create Chat")
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -236,6 +254,11 @@ impl Chat {
 
     pub fn id(&self) -> i64 {
         self.property("id").unwrap().get().unwrap()
+    }
+
+    pub fn r#type(&self) -> ChatType {
+        let self_ = imp::Chat::from_instance(self);
+        self_.r#type.get().unwrap().clone()
     }
 
     pub fn title(&self) -> String {
