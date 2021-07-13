@@ -8,4 +8,5 @@ data/resources/ui/shortcuts.ui
 data/resources/ui/sidebar.ui
 
 src/utils.rs
+src/window.rs
 src/session/content/message_row.rs
