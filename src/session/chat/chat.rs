@@ -1,22 +1,11 @@
-use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
-use tdgrand::types::Message as TelegramMessage;
 
 use crate::session::chat::History;
+use crate::utils::stringify_message_content;
 use crate::Session;
-
-fn stringify_message(message: Option<TelegramMessage>) -> String {
-    if let Some(message) = message {
-        return match message.content {
-            enums::MessageContent::MessageText(content) => content.text.text,
-            _ => format!("<i>{}</i>", gettext("This message is unsupported")),
-        };
-    }
-    String::new()
-}
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatType")]
@@ -220,8 +209,13 @@ impl Chat {
                 self.set_title(update.title);
             }
             Update::ChatLastMessage(update) => {
-                let message = stringify_message(update.last_message);
-                self.set_last_message(message);
+                match update.last_message {
+                    Some(message) => {
+                        let content = stringify_message_content(message.content, true);
+                        self.set_last_message(content);
+                    }
+                    None => self.set_last_message(String::new()),
+                }
 
                 for position in update.positions {
                     if let enums::ChatList::Main = position.list {

@@ -7,5 +7,5 @@ data/resources/ui/login.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/sidebar.ui
 
-src/session/chat/chat.rs
+src/utils.rs
 src/session/content/message_row.rs
