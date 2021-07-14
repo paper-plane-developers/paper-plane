@@ -21,7 +21,7 @@ mod imp {
         #[template_child]
         pub history_list_view: TemplateChild<gtk::ListView>,
         #[template_child]
-        pub send_message_entry: TemplateChild<gtk::Entry>,
+        pub message_entry: TemplateChild<gtk::TextView>,
     }
 
     #[glib::object_subclass]
@@ -118,8 +118,11 @@ impl ChatHistory {
     fn send_message(&self) {
         if let Some(chat) = self.chat() {
             let self_ = imp::ChatHistory::from_instance(self);
+            let buffer = self_.message_entry.buffer();
             let text = types::FormattedText {
-                text: self_.send_message_entry.text().to_string(),
+                text: buffer
+                    .text(&buffer.start_iter(), &buffer.end_iter(), true)
+                    .to_string(),
                 ..Default::default()
             };
             let content = types::InputMessageText {
@@ -141,14 +144,17 @@ impl ChatHistory {
                     .unwrap();
             });
 
-            self_.send_message_entry.set_text("");
+            buffer.set_text("");
         }
     }
 
     fn save_draft_message(&self) {
         if let Some(chat) = self.chat() {
             let self_ = imp::ChatHistory::from_instance(self);
-            let draft = self_.send_message_entry.text().to_string();
+            let buffer = self_.message_entry.buffer();
+            let draft = buffer
+                .text(&buffer.start_iter(), &buffer.end_iter(), true)
+                .to_string();
 
             if chat.draft_message() != draft {
                 let text = types::FormattedText {
@@ -193,7 +199,7 @@ impl ChatHistory {
 
         let self_ = imp::ChatHistory::from_instance(self);
         if let Some(ref chat) = chat {
-            self_.send_message_entry.set_text(&chat.draft_message());
+            self_.message_entry.buffer().set_text(&chat.draft_message());
 
             chat.history().fetch();
 
