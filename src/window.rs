@@ -82,6 +82,27 @@ mod imp {
 
             obj.create_client();
             obj.start_receiver();
+
+            // Set the online state of the clients based on whether the window is active or not
+            obj.connect_is_active_notify(move |obj| {
+                let self_ = imp::Window::from_instance(obj);
+                let is_active = obj.is_active();
+
+                for (client_id, _) in self_.clients.borrow().iter() {
+                    let client_id = *client_id;
+
+                    RUNTIME.spawn(async move {
+                        functions::SetOption::new()
+                            .name("online".to_string())
+                            .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
+                                value: is_active,
+                            }))
+                            .send(client_id)
+                            .await
+                            .unwrap();
+                    });
+                }
+            });
         }
     }
 
@@ -141,7 +162,18 @@ impl Window {
 
         for (client_id, _) in self_.clients.borrow().iter() {
             let client_id = *client_id;
+
+            // Set the client to offline and then close it
             RUNTIME.spawn(async move {
+                functions::SetOption::new()
+                    .name("online".to_string())
+                    .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
+                        value: false,
+                    }))
+                    .send(client_id)
+                    .await
+                    .unwrap();
+
                 functions::Close::new().send(client_id).await.unwrap();
             });
         }
