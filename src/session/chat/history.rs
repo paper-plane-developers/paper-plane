@@ -13,14 +13,13 @@ use crate::utils::do_async;
 mod imp {
     use super::*;
     use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::{Cell, RefCell};
+    use std::cell::RefCell;
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
     pub struct History {
         pub list: RefCell<VecDeque<Message>>,
         pub message_map: RefCell<HashMap<i64, Message>>,
-        pub oldest_message_id: Cell<i64>,
         pub chat: OnceCell<Chat>,
     }
 
@@ -35,24 +34,13 @@ mod imp {
     impl ObjectImpl for History {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpec::new_int64(
-                        "oldest-message-id",
-                        "Oldest Message Id",
-                        "The oldest message id of this list",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpec::new_object(
-                        "chat",
-                        "Chat",
-                        "The chat relative to this history",
-                        Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
-                ]
+                vec![glib::ParamSpec::new_object(
+                    "chat",
+                    "Chat",
+                    "The chat relative to this history",
+                    Chat::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                )]
             });
 
             PROPERTIES.as_ref()
@@ -60,16 +48,12 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "oldest-message-id" => {
-                    let oldest_message_id = value.get().unwrap();
-                    obj.set_oldest_message_id(oldest_message_id);
-                }
                 "chat" => {
                     let chat = value.get().unwrap();
                     self.chat.set(chat).unwrap();
@@ -78,9 +62,8 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "oldest-message-id" => obj.oldest_message_id().to_value(),
                 "chat" => self.chat.get().to_value(),
                 _ => unimplemented!(),
             }
@@ -127,7 +110,12 @@ impl History {
         let chat = self.chat();
         let client_id = chat.session().client_id();
         let chat_id = chat.id();
-        let oldest_message_id = self.oldest_message_id();
+        let oldest_message_id = self_
+            .list
+            .borrow()
+            .front()
+            .map(|message| message.id())
+            .unwrap_or_default();
 
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -142,10 +130,6 @@ impl History {
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Messages::Messages(result)) = result {
                     if let Some(messages) = result.messages {
-                        if let Some(oldest_message) = messages.last() {
-                            obj.set_oldest_message_id(oldest_message.id);
-                        }
-
                         let fetch_again = messages.len() < limit;
                         obj.prepend(messages);
 
@@ -164,11 +148,6 @@ impl History {
 
         match update {
             Update::NewMessage(update) => {
-                // Set this as the oldest message if we had no oldest message id
-                if self.oldest_message_id() == 0 {
-                    self.set_oldest_message_id(update.message.id);
-                }
-
                 self.append(update.message);
             }
             Update::MessageContent(ref update_) => {
@@ -189,10 +168,7 @@ impl History {
             .borrow_mut()
             .insert(message.id(), message.clone());
 
-        self_
-            .list
-            .borrow_mut()
-            .push_back(message);
+        self_.list.borrow_mut().push_back(message);
 
         let index = self_.list.borrow().len() - 1;
         self.items_changed(index as u32, 0, 1);
@@ -217,17 +193,6 @@ impl History {
         }
 
         self.items_changed(0, 0, added as u32);
-    }
-
-    pub fn oldest_message_id(&self) -> i64 {
-        let self_ = imp::History::from_instance(self);
-        self_.oldest_message_id.get()
-    }
-
-    fn set_oldest_message_id(&self, oldest_message_id: i64) {
-        let self_ = imp::History::from_instance(self);
-        self_.oldest_message_id.replace(oldest_message_id);
-        self.notify("oldest-message-id");
     }
 
     pub fn chat(&self) -> Chat {
