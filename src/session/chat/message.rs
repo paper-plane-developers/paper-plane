@@ -1,10 +1,15 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::Update;
+use tdgrand::enums::{MessageSender, Update};
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::session::chat::{MessageContent, MessageSender};
+use crate::session::chat::MessageContent;
+use crate::session::Chat;
+
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "BoxedMessageSender")]
+pub struct BoxedMessageSender(MessageSender);
 
 mod imp {
     use super::*;
@@ -18,6 +23,7 @@ mod imp {
         pub outgoing: Cell<bool>,
         pub date: Cell<i32>,
         pub content: RefCell<Option<MessageContent>>,
+        pub chat: OnceCell<Chat>,
     }
 
     #[glib::object_subclass]
@@ -44,8 +50,8 @@ mod imp {
                         "sender",
                         "Sender",
                         "The sender of this message",
-                        MessageSender::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        BoxedMessageSender::static_type(),
+                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_boolean(
                         "outgoing",
@@ -70,6 +76,13 @@ mod imp {
                         MessageContent::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
+                    glib::ParamSpec::new_object(
+                        "chat",
+                        "Chat",
+                        "The chat relative to this message",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                 ]
             });
 
@@ -89,8 +102,8 @@ mod imp {
                     self.id.set(id);
                 }
                 "sender" => {
-                    let sender = value.get().unwrap();
-                    self.sender.set(sender).unwrap();
+                    let sender = value.get::<BoxedMessageSender>().unwrap();
+                    self.sender.set(sender.0).unwrap();
                 }
                 "outgoing" => {
                     let outgoing = value.get().unwrap();
@@ -104,6 +117,10 @@ mod imp {
                     let content = value.get().unwrap();
                     self.content.replace(Some(content));
                 }
+                "chat" => {
+                    let chat = value.get().unwrap();
+                    self.chat.set(chat).unwrap();
+                }
                 _ => unimplemented!(),
             }
         }
@@ -111,10 +128,10 @@ mod imp {
         fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => self.id.get().to_value(),
-                "sender" => self.sender.get().unwrap().to_value(),
                 "outgoing" => self.outgoing.get().to_value(),
                 "date" => self.date.get().to_value(),
                 "content" => self.content.borrow().as_ref().unwrap().to_value(),
+                "chat" => self.chat.get().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -126,14 +143,16 @@ glib::wrapper! {
 }
 
 impl Message {
-    pub fn new(message: TelegramMessage, sender: MessageSender) -> Self {
+    pub fn new(message: TelegramMessage, chat: Chat) -> Self {
         let content = MessageContent::new(message.content);
+        let sender = BoxedMessageSender(message.sender);
         glib::Object::new(&[
             ("id", &message.id),
             ("sender", &sender),
             ("outgoing", &message.is_outgoing),
             ("date", &message.date),
             ("content", &content),
+            ("chat", &chat),
         ])
         .expect("Failed to create Message")
     }
@@ -152,8 +171,9 @@ impl Message {
         self.property("id").unwrap().get().unwrap()
     }
 
-    pub fn sender(&self) -> MessageSender {
-        self.property("sender").unwrap().get().unwrap()
+    pub fn sender(&self) -> &MessageSender {
+        let self_ = imp::Message::from_instance(self);
+        self_.sender.get().unwrap()
     }
 
     pub fn outgoing(&self) -> bool {
@@ -172,5 +192,9 @@ impl Message {
         if self.content() != content {
             self.set_property("content", &content).unwrap();
         }
+    }
+
+    pub fn chat(&self) -> Chat {
+        self.property("chat").unwrap().get().unwrap()
     }
 }

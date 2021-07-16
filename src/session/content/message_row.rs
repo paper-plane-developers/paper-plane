@@ -3,8 +3,9 @@ use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango};
+use tdgrand::enums::MessageSender;
 
-use crate::session::chat::{Message, MessageContent, MessageSender};
+use crate::session::chat::{Message, MessageContent};
 use crate::session::{Chat, User};
 
 fn get_text_from_message_content(content: MessageContent) -> String {
@@ -132,7 +133,13 @@ impl MessageRow {
             vbox.append(&sender_label);
 
             match message.sender() {
-                MessageSender::Chat(chat) => {
+                MessageSender::Chat(sender) => {
+                    let chat = message
+                        .chat()
+                        .session()
+                        .chat_list()
+                        .get_chat(sender.chat_id)
+                        .unwrap();
                     let chat_expression = gtk::ConstantExpression::new(&chat);
                     let title_expression = gtk::PropertyExpression::new(
                         Chat::static_type(),
@@ -141,7 +148,12 @@ impl MessageRow {
                     );
                     title_expression.bind(&sender_label, "label", Some(&sender_label));
                 }
-                MessageSender::User(user) => {
+                MessageSender::User(sender) => {
+                    let user = message
+                        .chat()
+                        .session()
+                        .user_list()
+                        .get_or_create_user(sender.user_id);
                     let avatar = adw::AvatarBuilder::new()
                         .valign(gtk::Align::End)
                         .show_initials(true)

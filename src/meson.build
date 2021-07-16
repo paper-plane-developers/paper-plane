@@ -36,7 +36,6 @@ sources = files(
   'session/chat/history.rs',
   'session/chat/message.rs',
   'session/chat/message_content.rs',
-  'session/chat/message_sender.rs',
   'session/chat/mod.rs',
   'session/content/chat_history.rs',
   'session/content/content.rs',

@@ -2,12 +2,11 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
-use tdgrand::enums::MessageSender as TelegramMessageSender;
 use tdgrand::enums::{self, Update};
 use tdgrand::functions;
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::session::chat::{Message, MessageSender};
+use crate::session::chat::Message;
 use crate::session::Chat;
 use crate::utils::do_async;
 
@@ -185,21 +184,9 @@ impl History {
 
     fn insert_message(&self, message: TelegramMessage) {
         {
-            let session = self.chat().session();
-            let sender = match message.sender {
-                TelegramMessageSender::User(ref sender) => {
-                    let user = session.user_list().get_or_create_user(sender.user_id);
-                    MessageSender::User(user)
-                }
-                TelegramMessageSender::Chat(ref sender) => {
-                    let chat = session.chat_list().get_chat(sender.chat_id).unwrap();
-                    MessageSender::Chat(chat)
-                }
-            };
-
             let self_ = imp::History::from_instance(self);
             let mut list = self_.list.borrow_mut();
-            list.insert(message.id, Message::new(message, sender));
+            list.insert(message.id, Message::new(message, self.chat()));
         }
 
         self.item_added();
