@@ -40,6 +40,12 @@
                 "-Dtests=false",
                 "-Dexamples=false"
             ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/lib/libsass.so"
+            ],
             "sources": [
                 {
                     "type": "git",
