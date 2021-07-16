@@ -26,7 +26,7 @@ mod imp {
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<String>,
         pub history: History,
-        pub session: RefCell<Option<Session>>,
+        pub session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -107,7 +107,7 @@ mod imp {
                         "Session",
                         "The session",
                         Session::static_type(),
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                 ]
             });
@@ -153,7 +153,7 @@ mod imp {
                 }
                 "session" => {
                     let session = value.get().unwrap();
-                    self.session.replace(session);
+                    self.session.set(session).unwrap();
                 }
                 _ => unimplemented!(),
             }
@@ -168,7 +168,7 @@ mod imp {
                 "unread-count" => self.unread_count.get().to_value(),
                 "draft-message" => self.draft_message.borrow().to_value(),
                 "history" => self.history.to_value(),
-                "session" => self.session.borrow().to_value(),
+                "session" => self.session.get().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -192,10 +192,15 @@ glib::wrapper! {
 }
 
 impl Chat {
-    pub fn new(id: i64, r#type: ChatType, title: String) -> Self {
+    pub fn new(id: i64, r#type: ChatType, title: String, session: Session) -> Self {
         let r#type = BoxedChatType(r#type);
-        glib::Object::new(&[("id", &id), ("type", &r#type), ("title", &title)])
-            .expect("Failed to create Chat")
+        glib::Object::new(&[
+            ("id", &id),
+            ("type", &r#type),
+            ("title", &title),
+            ("session", &session),
+        ])
+        .expect("Failed to create Chat")
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -316,7 +321,7 @@ impl Chat {
         self.property("history").unwrap().get().unwrap()
     }
 
-    pub fn session(&self) -> Option<Session> {
+    pub fn session(&self) -> Session {
         self.property("session").unwrap().get().unwrap()
     }
 }

@@ -132,7 +132,7 @@ impl ChatHistory {
             };
             let message = enums::InputMessageContent::InputMessageText(content);
 
-            let client_id = chat.session().unwrap().client_id();
+            let client_id = chat.session().client_id();
             let chat_id = chat.id();
 
             RUNTIME.spawn(async move {
@@ -170,7 +170,7 @@ impl ChatHistory {
                     ..Default::default()
                 };
 
-                let client_id = chat.session().unwrap().client_id();
+                let client_id = chat.session().client_id();
                 let chat_id = chat.id();
 
                 RUNTIME.spawn(async move {

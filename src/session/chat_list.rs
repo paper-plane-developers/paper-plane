@@ -12,13 +12,13 @@ mod imp {
     use super::*;
     use glib::subclass::Signal;
     use indexmap::IndexMap;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub struct ChatList {
         pub list: RefCell<IndexMap<i64, Chat>>,
-        pub session: RefCell<Option<Session>>,
+        pub session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -44,7 +44,7 @@ mod imp {
                     "Session",
                     "The session",
                     Session::static_type(),
-                    glib::ParamFlags::READWRITE,
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                 )]
             });
 
@@ -61,15 +61,15 @@ mod imp {
             match pspec.name() {
                 "session" => {
                     let session = value.get().unwrap();
-                    self.session.replace(session);
+                    self.session.set(session).unwrap();
                 }
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "session" => obj.session().to_value(),
+                "session" => self.session.get().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -100,15 +100,9 @@ glib::wrapper! {
         @implements gio::ListModel;
 }
 
-impl Default for ChatList {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl ChatList {
-    pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ChatList")
+    pub fn new(session: &Session) -> Self {
+        glib::Object::new(&[("session", session)]).expect("Failed to create ChatList")
     }
 
     pub fn fetch(&self, client_id: i32) {
@@ -183,11 +177,7 @@ impl ChatList {
             let self_ = imp::ChatList::from_instance(self);
             let mut list = self_.list.borrow_mut();
             let chat_id = chat.id;
-            let chat = Chat::new(chat.id, chat.r#type, chat.title);
-
-            self.bind_property("session", &chat, "session")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build();
+            let chat = Chat::new(chat.id, chat.r#type, chat.title, self.session());
 
             chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
                 obj.emit_by_name("positions-changed", &[]).unwrap();
@@ -206,9 +196,8 @@ impl ChatList {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub fn session(&self) -> Option<Session> {
-        let self_ = imp::ChatList::from_instance(self);
-        self_.session.borrow().to_owned()
+    pub fn session(&self) -> Session {
+        self.property("session").unwrap().get().unwrap()
     }
 
     pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {

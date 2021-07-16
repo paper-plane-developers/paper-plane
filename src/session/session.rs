@@ -11,14 +11,14 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
     pub struct Session {
         pub client_id: Cell<i32>,
-        pub chat_list: ChatList,
+        pub chat_list: OnceCell<ChatList>,
         pub user_list: UserList,
         pub selected_chat: RefCell<Option<Chat>>,
         #[template_child]
@@ -109,7 +109,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
-                "chat-list" => self.chat_list.to_value(),
+                "chat-list" => self.chat_list.get_or_init(|| ChatList::new(obj)).to_value(),
                 "user-list" => self.user_list.to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
@@ -118,9 +118,6 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            let session_expression = gtk::ConstantExpression::new(obj);
-            session_expression.bind(&self.chat_list, "session", Some(&self.chat_list));
 
             obj.fetch_chats();
         }
@@ -152,7 +149,7 @@ impl Session {
             | Update::ChatPosition(_)
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_) => {
-                self_.chat_list.handle_update(update);
+                self.chat_list().handle_update(update);
             }
             Update::User(_) => {
                 self_.user_list.handle_update(update);
@@ -173,9 +170,8 @@ impl Session {
         self_.client_id.get()
     }
 
-    pub fn chat_list(&self) -> &ChatList {
-        let self_ = imp::Session::from_instance(self);
-        &self_.chat_list
+    pub fn chat_list(&self) -> ChatList {
+        self.property("chat-list").unwrap().get().unwrap()
     }
 
     pub fn user_list(&self) -> &UserList {
@@ -207,6 +203,6 @@ impl Session {
     fn fetch_chats(&self) {
         let self_ = imp::Session::from_instance(self);
         let client_id = self_.client_id.get();
-        self_.chat_list.fetch(client_id);
+        self.chat_list().fetch(client_id);
     }
 }
