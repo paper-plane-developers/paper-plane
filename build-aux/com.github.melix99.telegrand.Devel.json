@@ -3,7 +3,9 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "40",
     "sdk": "org.gnome.Sdk",
-    "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.rust-stable"
+    ],
     "command": "telegrand",
     "finish-args": [
         "--socket=fallback-x11",
@@ -38,6 +40,12 @@
                 "-Dtests=false",
                 "-Dexamples=false"
             ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/lib/libsass.so"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -45,12 +53,19 @@
                     "branch": "main"
                 }
             ]
-        },{
+        },
+        {
             "name": "tdlib",
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "cleanup": [
+                "/include",
+                "/lib/cmake",
+                "/lib/pkgconfig",
+                "*.a"
             ],
             "sources": [
                 {
@@ -59,11 +74,14 @@
                     "sha256": "3daaf419f1738b7e0ac0e8a08f07e01a1faaf51175a59c0b113c15e30c69e173"
                 }
             ]
-        },{
+        },
+        {
             "name": "telegrand",
             "buildsystem": "meson",
             "run-tests": true,
-            "config-opts": ["-Dprofile=development"],
+            "config-opts": [
+                "-Dprofile=development"
+            ],
             "sources": [
                 {
                     "type": "dir",
