@@ -8,21 +8,20 @@ use tdgrand::functions;
 use tdgrand::types::Message as TelegramMessage;
 
 use crate::session::chat::{Message, MessageSender};
+use crate::session::Chat;
 use crate::utils::do_async;
-use crate::Session;
 
 mod imp {
     use super::*;
     use indexmap::IndexMap;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub struct History {
         pub list: RefCell<IndexMap<i64, Message>>,
-        pub chat_id: Cell<i64>,
         pub oldest_message_id: Cell<i64>,
-        pub session: RefCell<Option<Session>>,
+        pub chat: OnceCell<Chat>,
     }
 
     #[glib::object_subclass]
@@ -38,15 +37,6 @@ mod imp {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpec::new_int64(
-                        "chat-id",
-                        "Chat Id",
-                        "The chat id relative to this chat history",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READWRITE,
-                    ),
-                    glib::ParamSpec::new_int64(
                         "oldest-message-id",
                         "Oldest Message Id",
                         "The oldest message id of this list",
@@ -56,11 +46,11 @@ mod imp {
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_object(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READWRITE,
+                        "chat",
+                        "Chat",
+                        "The chat relative to this history",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                 ]
             });
@@ -76,17 +66,13 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "chat-id" => {
-                    let chat_id = value.get().unwrap();
-                    self.chat_id.set(chat_id);
-                }
                 "oldest-message-id" => {
                     let oldest_message_id = value.get().unwrap();
                     obj.set_oldest_message_id(oldest_message_id);
                 }
-                "session" => {
-                    let session = value.get().unwrap();
-                    self.session.replace(session);
+                "chat" => {
+                    let chat = value.get().unwrap();
+                    self.chat.set(chat).unwrap();
                 }
                 _ => unimplemented!(),
             }
@@ -94,9 +80,8 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "chat-id" => obj.chat_id().to_value(),
                 "oldest-message-id" => obj.oldest_message_id().to_value(),
-                "session" => obj.session().to_value(),
+                "chat" => self.chat.get().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -127,15 +112,9 @@ glib::wrapper! {
         @implements gio::ListModel;
 }
 
-impl Default for History {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl History {
-    pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create History")
+    pub fn new(chat: &Chat) -> Self {
+        glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
     }
 
     pub fn fetch(&self) {
@@ -146,8 +125,9 @@ impl History {
             return;
         }
 
-        let client_id = self.session().client_id();
-        let chat_id = self.chat_id();
+        let chat = self.chat();
+        let client_id = chat.session().client_id();
+        let chat_id = chat.id();
         let oldest_message_id = self.oldest_message_id();
 
         do_async(
@@ -205,16 +185,14 @@ impl History {
 
     fn insert_message(&self, message: TelegramMessage) {
         {
+            let session = self.chat().session();
             let sender = match message.sender {
                 TelegramMessageSender::User(ref sender) => {
-                    let user = self
-                        .session()
-                        .user_list()
-                        .get_or_create_user(sender.user_id);
+                    let user = session.user_list().get_or_create_user(sender.user_id);
                     MessageSender::User(user)
                 }
                 TelegramMessageSender::Chat(ref sender) => {
-                    let chat = self.session().chat_list().get_chat(sender.chat_id).unwrap();
+                    let chat = session.chat_list().get_chat(sender.chat_id).unwrap();
                     MessageSender::Chat(chat)
                 }
             };
@@ -234,11 +212,6 @@ impl History {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub fn chat_id(&self) -> i64 {
-        let self_ = imp::History::from_instance(self);
-        self_.chat_id.get()
-    }
-
     pub fn oldest_message_id(&self) -> i64 {
         let self_ = imp::History::from_instance(self);
         self_.oldest_message_id.get()
@@ -250,8 +223,7 @@ impl History {
         self.notify("oldest-message-id");
     }
 
-    pub fn session(&self) -> Session {
-        let self_ = imp::History::from_instance(self);
-        self_.session.borrow().as_ref().unwrap().to_owned()
+    pub fn chat(&self) -> Chat {
+        self.property("chat").unwrap().get().unwrap()
     }
 }

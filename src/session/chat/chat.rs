@@ -25,7 +25,7 @@ mod imp {
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<String>,
-        pub history: History,
+        pub history: OnceCell<History>,
         pub session: OnceCell<Session>,
     }
 
@@ -167,7 +167,7 @@ mod imp {
                 "order" => self.order.get().to_value(),
                 "unread-count" => self.unread_count.get().to_value(),
                 "draft-message" => self.draft_message.borrow().to_value(),
-                "history" => self.history.to_value(),
+                "history" => self.history.get().to_value(),
                 "session" => self.session.get().to_value(),
                 _ => unimplemented!(),
             }
@@ -176,13 +176,7 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            obj.bind_property("id", &self.history, "chat-id")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build();
-
-            obj.bind_property("session", &self.history, "session")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build();
+            self.history.set(History::new(obj)).unwrap();
         }
     }
 }
@@ -204,11 +198,9 @@ impl Chat {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let self_ = imp::Chat::from_instance(self);
-
         match update {
             Update::NewMessage(_) | Update::MessageContent(_) => {
-                self_.history.handle_update(update);
+                self.history().handle_update(update);
             }
             Update::ChatTitle(update) => {
                 self.set_title(update.title);
