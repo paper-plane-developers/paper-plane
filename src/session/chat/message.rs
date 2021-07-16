@@ -143,7 +143,7 @@ glib::wrapper! {
 }
 
 impl Message {
-    pub fn new(message: TelegramMessage, chat: Chat) -> Self {
+    pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
         let content = MessageContent::new(message.content);
         let sender = BoxedMessageSender(message.sender);
         glib::Object::new(&[
@@ -152,7 +152,7 @@ impl Message {
             ("outgoing", &message.is_outgoing),
             ("date", &message.date),
             ("content", &content),
-            ("chat", &chat),
+            ("chat", chat),
         ])
         .expect("Failed to create Message")
     }

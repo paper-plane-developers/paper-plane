@@ -12,13 +12,14 @@ use crate::utils::do_async;
 
 mod imp {
     use super::*;
-    use indexmap::IndexMap;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
+    use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
     pub struct History {
-        pub list: RefCell<IndexMap<i64, Message>>,
+        pub list: RefCell<VecDeque<Message>>,
+        pub message_map: RefCell<HashMap<i64, Message>>,
         pub oldest_message_id: Cell<i64>,
         pub chat: OnceCell<Chat>,
     }
@@ -98,8 +99,7 @@ mod imp {
         fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
             self.list
                 .borrow()
-                .values()
-                .nth(position as usize)
+                .get(position as usize)
                 .map(glib::object::Cast::upcast_ref::<glib::Object>)
                 .cloned()
         }
@@ -147,9 +147,7 @@ impl History {
                         }
 
                         let fetch_again = messages.len() < limit;
-                        for message in messages {
-                            obj.insert_message(message);
-                        }
+                        obj.prepend(messages);
 
                         // TODO: remove this when proper automatic fetch is implemented
                         if fetch_again {
@@ -171,10 +169,10 @@ impl History {
                     self.set_oldest_message_id(update.message.id);
                 }
 
-                self.insert_message(update.message);
+                self.append(update.message);
             }
             Update::MessageContent(ref update_) => {
-                if let Some(message) = self_.list.borrow().get(&update_.message_id) {
+                if let Some(message) = self_.message_map.borrow().get(&update_.message_id) {
                     message.handle_update(update);
                 }
             }
@@ -182,21 +180,43 @@ impl History {
         }
     }
 
-    fn insert_message(&self, message: TelegramMessage) {
-        {
-            let self_ = imp::History::from_instance(self);
-            let mut list = self_.list.borrow_mut();
-            list.insert(message.id, Message::new(message, self.chat()));
-        }
+    fn append(&self, message: TelegramMessage) {
+        let self_ = imp::History::from_instance(self);
+        let message = Message::new(message, &self.chat());
 
-        self.item_added();
+        self_
+            .message_map
+            .borrow_mut()
+            .insert(message.id(), message.clone());
+
+        self_
+            .list
+            .borrow_mut()
+            .push_back(message);
+
+        let index = self_.list.borrow().len() - 1;
+        self.items_changed(index as u32, 0, 1);
     }
 
-    fn item_added(&self) {
+    fn prepend(&self, messages: Vec<TelegramMessage>) {
         let self_ = imp::History::from_instance(self);
-        let list = self_.list.borrow();
-        let position = list.len() - 1;
-        self.items_changed(position as u32, 0, 1);
+        let chat = self.chat();
+        let added = messages.len();
+
+        self_.list.borrow_mut().reserve(added);
+
+        for message in messages {
+            let message = Message::new(message, &chat);
+
+            self_
+                .message_map
+                .borrow_mut()
+                .insert(message.id(), message.clone());
+
+            self_.list.borrow_mut().push_front(message);
+        }
+
+        self.items_changed(0, 0, added as u32);
     }
 
     pub fn oldest_message_id(&self) -> i64 {
