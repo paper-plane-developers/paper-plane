@@ -1,8 +1,18 @@
+use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use tdgrand::enums::MessageContent;
 
+use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::Chat;
+
+fn stringify_message_content(content: MessageContent) -> String {
+    match content {
+        MessageContent::MessageText(content) => content.text.text,
+        _ => format!("<i>{}</i>", gettext("This message is unsupported")),
+    }
+}
 
 mod imp {
     use super::*;
@@ -15,6 +25,8 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub last_message_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -96,8 +108,36 @@ impl ChatRow {
         }
 
         let self_ = imp::ChatRow::from_instance(self);
-        self_.chat.replace(chat);
 
+        if let Some(ref chat) = chat {
+            let chat_expression = gtk::ConstantExpression::new(&chat);
+            let last_message_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "last-message",
+            );
+            let content_expression = gtk::PropertyExpression::new(
+                Message::static_type(),
+                Some(&last_message_expression),
+                "content",
+            );
+            let stringified_content_expression = gtk::ClosureExpression::new(
+                move |expressions| -> String {
+                    let content = expressions[1].get::<BoxedMessageContent>().unwrap();
+                    stringify_message_content(content.0)
+                },
+                &[content_expression.upcast()],
+            );
+
+            let last_message_label = self_.last_message_label.get();
+            stringified_content_expression.bind(
+                &last_message_label,
+                "label",
+                Some(&last_message_label),
+            );
+        }
+
+        self_.chat.replace(chat);
         self.notify("chat");
     }
 }

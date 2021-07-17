@@ -3,8 +3,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
 
-use crate::session::chat::History;
-use crate::utils::stringify_message_content;
+use crate::session::chat::{History, Message};
 use crate::Session;
 
 #[derive(Clone, Debug, glib::GBoxed)]
@@ -21,7 +20,7 @@ mod imp {
         pub id: Cell<i64>,
         pub r#type: OnceCell<ChatType>,
         pub title: RefCell<String>,
-        pub last_message: RefCell<String>,
+        pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<String>,
@@ -63,11 +62,11 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpec::new_object(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
-                        None,
+                        Message::static_type(),
                         glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_int64(
@@ -207,11 +206,20 @@ impl Chat {
             }
             Update::ChatLastMessage(update) => {
                 match update.last_message {
-                    Some(message) => {
-                        let content = stringify_message_content(message.content, true);
-                        self.set_last_message(content);
+                    Some(last_message) => {
+                        let message = match self.history().message_by_id(last_message.id) {
+                            Some(message) => message,
+                            None => {
+                                let last_message_id = last_message.id;
+
+                                self.history().append(last_message);
+                                self.history().message_by_id(last_message_id).unwrap()
+                            }
+                        };
+
+                        self.set_last_message(Some(message));
                     }
-                    None => self.set_last_message(String::new()),
+                    None => self.set_last_message(None),
                 }
 
                 for position in update.positions {
@@ -262,11 +270,11 @@ impl Chat {
         }
     }
 
-    pub fn last_message(&self) -> String {
+    pub fn last_message(&self) -> Option<Message> {
         self.property("last-message").unwrap().get().unwrap()
     }
 
-    fn set_last_message(&self, last_message: String) {
+    fn set_last_message(&self, last_message: Option<Message>) {
         if self.last_message() != last_message {
             self.set_property("last-message", &last_message).unwrap();
         }

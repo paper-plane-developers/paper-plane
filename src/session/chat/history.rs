@@ -102,6 +102,7 @@ impl History {
     pub fn fetch(&self) {
         let self_ = imp::History::from_instance(self);
         let limit = 20;
+
         // TODO: remove this when proper automatic fetch is implemented
         if self_.list.borrow().len() >= limit {
             return;
@@ -130,17 +131,16 @@ impl History {
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Messages::Messages(result)) = result {
                     if let Some(messages) = result.messages {
-                        let fetch_again = messages.len() < limit;
                         obj.prepend(messages);
-
-                        // TODO: remove this when proper automatic fetch is implemented
-                        if fetch_again {
-                            obj.fetch();
-                        }
                     }
                 }
             }),
         );
+    }
+
+    pub fn message_by_id(&self, id: i64) -> Option<Message> {
+        let self_ = imp::History::from_instance(self);
+        self_.message_map.borrow().get(&id).cloned()
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -148,7 +148,9 @@ impl History {
 
         match update {
             Update::NewMessage(update) => {
-                self.append(update.message);
+                if !self_.message_map.borrow().contains_key(&update.message.id) {
+                    self.append(update.message);
+                }
             }
             Update::MessageContent(ref update_) => {
                 if let Some(message) = self_.message_map.borrow().get(&update_.message_id) {
@@ -159,7 +161,7 @@ impl History {
         }
     }
 
-    fn append(&self, message: TelegramMessage) {
+    pub fn append(&self, message: TelegramMessage) {
         let self_ = imp::History::from_instance(self);
         let message = Message::new(message, &self.chat());
 
