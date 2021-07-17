@@ -91,6 +91,7 @@
                             <property name="bottom-margin">6</property>
                             <property name="left-margin">6</property>
                             <property name="right-margin">6</property>
+                            <property name="wrap-mode">word-char</property>
                           </object>
                         </property>
                       </object>
