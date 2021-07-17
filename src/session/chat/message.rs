@@ -1,11 +1,14 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{MessageSender, Update};
+use tdgrand::enums::{MessageContent, MessageSender, Update};
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::session::chat::MessageContent;
 use crate::session::Chat;
+
+#[derive(Clone, Debug, PartialEq, glib::GBoxed)]
+#[gboxed(type_name = "BoxedMessageContent")]
+pub struct BoxedMessageContent(pub MessageContent);
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedMessageSender")]
@@ -22,7 +25,7 @@ mod imp {
         pub sender: OnceCell<MessageSender>,
         pub outgoing: Cell<bool>,
         pub date: Cell<i32>,
-        pub content: RefCell<Option<MessageContent>>,
+        pub content: RefCell<Option<BoxedMessageContent>>,
         pub chat: OnceCell<Chat>,
     }
 
@@ -73,7 +76,7 @@ mod imp {
                         "content",
                         "Content",
                         "The content of this message",
-                        MessageContent::static_type(),
+                        BoxedMessageContent::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
                     glib::ParamSpec::new_object(
@@ -144,7 +147,7 @@ glib::wrapper! {
 
 impl Message {
     pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
-        let content = MessageContent::new(message.content);
+        let content = BoxedMessageContent(message.content);
         let sender = BoxedMessageSender(message.sender);
         glib::Object::new(&[
             ("id", &message.id),
@@ -160,7 +163,7 @@ impl Message {
     pub fn handle_update(&self, update: Update) {
         match update {
             Update::MessageContent(update) => {
-                let new_content = MessageContent::new(update.new_content);
+                let new_content = BoxedMessageContent(update.new_content);
                 self.set_content(new_content);
             }
             _ => {}
@@ -184,11 +187,11 @@ impl Message {
         self.property("date").unwrap().get().unwrap()
     }
 
-    pub fn content(&self) -> MessageContent {
+    pub fn content(&self) -> BoxedMessageContent {
         self.property("content").unwrap().get().unwrap()
     }
 
-    fn set_content(&self, content: MessageContent) {
+    fn set_content(&self, content: BoxedMessageContent) {
         if self.content() != content {
             self.set_property("content", &content).unwrap();
         }

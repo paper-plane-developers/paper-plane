@@ -3,17 +3,15 @@ use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango};
-use tdgrand::enums::MessageSender;
+use tdgrand::enums::{MessageContent, MessageSender};
 
-use crate::session::chat::{Message, MessageContent};
+use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::{Chat, User};
 
-fn get_text_from_message_content(content: MessageContent) -> String {
+fn format_message_content_text(content: MessageContent) -> String {
     match content {
-        MessageContent::Text(text) => text,
-        MessageContent::Unsupported => {
-            format!("<i>{}</i>", gettext("This message is unsupported"))
-        }
+        MessageContent::MessageText(content) => content.text.text,
+        _ => format!("<i>{}</i>", gettext("This message is unsupported")),
     }
 }
 
@@ -209,8 +207,8 @@ impl MessageRow {
         );
         let text_expression = gtk::ClosureExpression::new(
             move |expressions| -> String {
-                let content = expressions[1].get::<MessageContent>().unwrap();
-                get_text_from_message_content(content)
+                let content = expressions[1].get::<BoxedMessageContent>().unwrap();
+                format_message_content_text(content.0)
             },
             &[content_expression.upcast()],
         );
