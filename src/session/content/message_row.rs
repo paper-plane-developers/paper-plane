@@ -125,31 +125,41 @@ impl MessageRow {
         } else {
             hbox.set_halign(gtk::Align::Start);
             vbox.add_css_class("incoming");
+        }
 
-            let sender_label = gtk::LabelBuilder::new()
-                .css_classes(vec!["sender".to_string()])
-                .single_line_mode(true)
-                .xalign(0.0)
-                .build();
-            vbox.append(&sender_label);
+        match message.sender() {
+            MessageSender::Chat(sender) => {
+                let sender_label = gtk::LabelBuilder::new()
+                    .css_classes(vec!["sender".to_string()])
+                    .single_line_mode(true)
+                    .xalign(0.0)
+                    .build();
+                vbox.append(&sender_label);
 
-            match message.sender() {
-                MessageSender::Chat(sender) => {
-                    let chat = message
-                        .chat()
-                        .session()
-                        .chat_list()
-                        .get_chat(sender.chat_id)
-                        .unwrap();
-                    let chat_expression = gtk::ConstantExpression::new(&chat);
-                    let title_expression = gtk::PropertyExpression::new(
-                        Chat::static_type(),
-                        Some(&chat_expression),
-                        "title",
-                    );
-                    title_expression.bind(&sender_label, "label", Some(&sender_label));
-                }
-                MessageSender::User(sender) => {
+                let chat = message
+                    .chat()
+                    .session()
+                    .chat_list()
+                    .get_chat(sender.chat_id)
+                    .unwrap();
+                let chat_expression = gtk::ConstantExpression::new(&chat);
+                let title_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    Some(&chat_expression),
+                    "title",
+                );
+
+                title_expression.bind(&sender_label, "label", Some(&sender_label));
+            }
+            MessageSender::User(sender) => {
+                if !message.outgoing() {
+                    let sender_label = gtk::LabelBuilder::new()
+                        .css_classes(vec!["sender".to_string()])
+                        .single_line_mode(true)
+                        .xalign(0.0)
+                        .build();
+                    vbox.append(&sender_label);
+
                     let user = message
                         .chat()
                         .session()
