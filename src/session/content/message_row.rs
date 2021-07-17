@@ -1,4 +1,5 @@
 use adw::prelude::BinExt;
+use askama_escape::escape;
 use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -10,7 +11,9 @@ use crate::session::{Chat, User};
 
 fn format_message_content_text(content: MessageContent) -> String {
     match content {
-        MessageContent::MessageText(content) => content.text.text,
+        MessageContent::MessageText(content) => {
+            escape(&content.text.text, askama_escape::Html).to_string()
+        }
         _ => format!("<i>{}</i>", gettext("This message is unsupported")),
     }
 }

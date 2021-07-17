@@ -5,6 +5,7 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+askama_escape = "0.10"
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.2", package = "gtk4" }
 indexmap = "1.7"

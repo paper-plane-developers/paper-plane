@@ -1,3 +1,4 @@
+use askama_escape::escape;
 use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
@@ -9,7 +10,9 @@ use crate::session::Chat;
 
 fn stringify_message_content(content: MessageContent) -> String {
     match content {
-        MessageContent::MessageText(content) => content.text.text,
+        MessageContent::MessageText(content) => {
+            escape(&content.text.text, askama_escape::Html).to_string()
+        }
         _ => format!("<i>{}</i>", gettext("This message is unsupported")),
     }
 }
