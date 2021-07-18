@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 17:43+0200\n"
-"PO-Revision-Date: 2021-07-18 21:27+0000\n"
+"PO-Revision-Date: 2021-07-19 21:32+0000\n"
 "Last-Translator: Marco Melorio <marco.melorio@protonmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
@@ -143,7 +143,7 @@ msgstr "Chiudi"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr "Disconnettiti"
+msgstr "_Esci"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
