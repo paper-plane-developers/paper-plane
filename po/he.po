@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the telegrand package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: telegrand\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-18 18:08+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/com.github.melix99.telegrand.desktop.in.in:3
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
+msgid "Telegrand"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:4
+msgid "A GTK + Rust application boilerplate template"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:6
+#: data/com.github.melix99.telegrand.gschema.xml.in:7
+msgid "Default window width"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:11
+#: data/com.github.melix99.telegrand.gschema.xml.in:12
+msgid "Default window height"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:16
+msgid "Default window maximized behaviour"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/com.github.melix99.telegrand.gschema.xml.in:22
+msgid "Use Telegram's test data center"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+msgid ""
+"A GTK Telegram client built to be well integrated with the GNOME desktop "
+"environment."
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+msgid "Main Window"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
+msgid "Marco Melorio"
+msgstr ""
+
+#: data/resources/ui/content.ui:22
+msgid "No Chat Selected"
+msgstr ""
+
+#: data/resources/ui/content.ui:23
+msgid "Select a chat to start messaging."
+msgstr ""
+
+#: data/resources/ui/login.ui:14
+msgid "_Previous"
+msgstr ""
+
+#: data/resources/ui/login.ui:25
+msgid "_Next"
+msgstr ""
+
+#: data/resources/ui/login.ui:55
+msgid "Welcome to Telegrand"
+msgstr ""
+
+#: data/resources/ui/login.ui:74
+msgid "Phone Number"
+msgstr ""
+
+#: data/resources/ui/login.ui:95
+msgid "Advanced"
+msgstr ""
+
+#: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
+msgid "Encryption Key"
+msgstr ""
+
+#: data/resources/ui/login.ui:110
+msgid "Use Test Data Center"
+msgstr ""
+
+#: data/resources/ui/login.ui:111
+msgid "This requires a restart to apply"
+msgstr ""
+
+#: data/resources/ui/login.ui:149
+msgid "Enter the Verification Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:168
+msgid "Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:205
+msgid "Enter Your Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:224
+msgid "Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:261
+msgid "Enter the Encryption Key"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:6
+msgid "_Log Out"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:12
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:16
+msgid "_About Telegrand"
+msgstr ""
+
+#: src/utils.rs:12
+msgid "Unsupported message"
+msgstr ""
+
+#: src/window.rs:320
+msgid "Incoming call"
+msgstr ""
+
+#: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
+msgid "This message is unsupported"
+msgstr ""
