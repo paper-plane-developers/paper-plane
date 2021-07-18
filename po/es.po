@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 17:43+0200\n"
-"PO-Revision-Date: 2021-07-18 16:38+0000\n"
+"PO-Revision-Date: 2021-07-18 18:12+0000\n"
 "Last-Translator: Dario <darlex259@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
@@ -26,11 +26,11 @@ msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 msgid "A GTK + Rust application boilerplate template"
-msgstr ""
+msgstr "Un template boilerplate de una aplicación GTK+ en Rust"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
@@ -44,12 +44,12 @@ msgstr "Altura de ventana predeterminado"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Comportamiento predeterminado de ventana maximizada"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "Usar el centro de datos de testeo de Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
@@ -57,110 +57,112 @@ msgid ""
 "A GTK Telegram client built to be well integrated with the GNOME desktop "
 "environment."
 msgstr ""
+"Un cliente GTK de Telegram creado para estar bien integrado con el entorno "
+"de escritorio GNOME."
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main Window"
-msgstr ""
+msgstr "Ventana Principal"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "No Chat Seleccionado"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "Selecciona un chat para empezar a mensajear."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_Previo"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_Siguiente"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "Bienvenido a Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "Numero de Telefono"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzado"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "Clave de Encriptacion"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "Usar Centro de Datos de Testeo"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "Esto requiere un reinicio para aplicar"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "Inserte el Código de Verificación"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "Código"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "Inserte Su Contraseña"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "Inserta la Clave de Encriptacion"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Mostrar Atajos"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Salir"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "_Cerrar Sesión"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Atajos de Teclado"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_Acerca de Telegrand"
 
 #: src/utils.rs:12
 msgid "Unsupported message"
-msgstr ""
+msgstr "Mensaje sin soportar"
 
 #: src/window.rs:320
 msgid "Incoming call"
-msgstr ""
+msgstr "Llamada entrante"
 
 #: src/session/content/message_row.rs:17
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Este mensaje no está soportado"
