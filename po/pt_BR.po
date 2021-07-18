@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 20:06+0200\n"
-"PO-Revision-Date: 2021-07-18 21:12+0000\n"
-"Last-Translator: Renatoh <renatohribeh@outlook.com>\n"
+"PO-Revision-Date: 2021-07-18 21:27+0000\n"
+"Last-Translator: Alisson Lauffer <alissonvitortc@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -51,7 +51,7 @@ msgstr "Comportamento padrão da janela maximizada"
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr "Use o data center de teste do Telegram"
+msgstr "Usar o data center de teste do Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -67,7 +67,7 @@ msgstr "Nenhum chat selecionado"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr "Selecione um chat para começar a enviar mensagens."
+msgstr "Selecione um chat para começar a conversar."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
@@ -99,7 +99,7 @@ msgstr "Usar o data center de teste"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr "É necessário reiniciar o telegrand para aplicar"
+msgstr "É necessário reiniciar para aplicar"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
@@ -111,7 +111,7 @@ msgstr "Código"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr "Coloque sua senha"
+msgstr "Digite sua senha"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
@@ -129,7 +129,7 @@ msgstr "Geral"
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "Mostrar atalhos"
+msgstr "Exibir atalhos"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
@@ -158,4 +158,4 @@ msgstr "Chamada recebida"
 
 #: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
 msgid "This message is unsupported"
-msgstr "Esta mensagem não é compatível"
+msgstr "Esta mensagem não é suportada"
