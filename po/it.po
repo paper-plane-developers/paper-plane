@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 17:43+0200\n"
-"PO-Revision-Date: 2021-07-18 18:12+0000\n"
+"PO-Revision-Date: 2021-07-18 21:27+0000\n"
 "Last-Translator: Marco Melorio <marco.melorio@protonmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 msgid "A GTK + Rust application boilerplate template"
@@ -30,26 +30,26 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "Larghezza della finestra di default"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "Altezza della finestra di default"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Comportamento di default della massimizzazione della finestra"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "Usa il data center di testing di Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
@@ -64,7 +64,7 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
@@ -76,91 +76,91 @@ msgstr "Seleziona una chat per iniziare a messaggiare."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_Precedente"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_Avanti"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "Benvenuto su Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "Numero di Telefono"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzate"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "Chiave di Crittografia"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "Usa il Data Center di Test"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "Richiede un riavvio per applicare"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "Inserisci il Codice di Verifica"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "Codice"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "Inserisci la Tua Password"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "Inserisci la Chiave di Crittografia"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "Generali"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Mostra Scorciatoie"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Chiudi"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "Disconnettiti"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Scorciatoie da Tastiera"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_Informazioni su Telegrand"
 
 #: src/utils.rs:12
 msgid "Unsupported message"
-msgstr ""
+msgstr "Messaggio non supportato"
 
 #: src/window.rs:320
 msgid "Incoming call"
-msgstr ""
+msgstr "Chiamata in Arrivo"
 
 #: src/session/content/message_row.rs:17
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Questo messaggio non è supportato"
