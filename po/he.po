@@ -8,18 +8,22 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 18:08+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-07-18 18:12+0000\n"
+"Last-Translator: iiiiii1wepfj <itay@itayki.com>\n"
+"Language-Team: Hebrew <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Weblate 4.7.2-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 msgid "A GTK + Rust application boilerplate template"
@@ -27,7 +31,7 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
@@ -57,47 +61,47 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main Window"
-msgstr ""
+msgstr "חלון ראשי"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "מרקו מלוריו"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "לא נבחר צ'אט"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "תבחר צ'אט"
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_הקודם"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_הבא"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "ברוך הבא ל Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "מספר טלפון"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "מתקדם"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "מפתח הצפנה"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "השתמש בשרת הבדיקות"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
@@ -109,7 +113,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "קוד"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
@@ -156,8 +160,8 @@ msgstr ""
 
 #: src/window.rs:320
 msgid "Incoming call"
-msgstr ""
+msgstr "שיחה נכנסת"
 
 #: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
 msgid "This message is unsupported"
-msgstr ""
+msgstr "הודעה לא נתמכת"
