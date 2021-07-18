@@ -8,45 +8,50 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 18:08+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-07-18 18:12+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
+"telegrand/telegrand/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.7.2-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 msgid "A GTK + Rust application boilerplate template"
-msgstr ""
+msgstr "Et GTK-malprogram skrevet i Rust"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
+#, fuzzy
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "GNOME;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "Forvalgt vindusbredde"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "Forvalgt vindushøyde"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Forvalgt oppførsel for maksimert vindu"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
+#, fuzzy
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "Bruk Telegrams testdatasenter"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
@@ -54,110 +59,114 @@ msgid ""
 "A GTK Telegram client built to be well integrated with the GNOME desktop "
 "environment."
 msgstr ""
+"En GTK-Telegramklient bygd for å fungere godt i et GNOME-skrivebordsmiljø."
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main Window"
-msgstr ""
+msgstr "Hovedvindu"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "Ingen sludring valgt"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "Velg en sludring for å starte."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_Forrige"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_Neste"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "Velkommen til Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "Avansert"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "Krypteringsnøkkel"
 
 #: data/resources/ui/login.ui:110
+#, fuzzy
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "Bruk testdatasenter"
 
 #: data/resources/ui/login.ui:111
+#, fuzzy
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "Krever programomstart for å tre i effekt"
 
 #: data/resources/ui/login.ui:149
+#, fuzzy
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "Skriv inn bekreftelseskoden"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "Kode"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "Skriv inn passordet ditt"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "Passord"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "Skriv inn krypteringsnøkkelen"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "Generelt"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Vis snarveier"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Avslutt"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "_Logg ut"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Tastatursnarveier"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_Om Telegrand"
 
 #: src/utils.rs:12
 msgid "Unsupported message"
-msgstr ""
+msgstr "Ustøttet melding"
 
 #: src/window.rs:320
 msgid "Incoming call"
-msgstr ""
+msgstr "Innkommende anrop"
 
 #: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Denne meldingen er ustøttet"
