@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Telegrand
-Comment=A GTK + Rust application boilerplate template
+Comment=A Telegram client optimized for the GNOME desktop
 Type=Application
 Exec=telegrand
 Terminal=false

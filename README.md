@@ -2,6 +2,8 @@
   Telegrand
 </h1>
 
+<p align="center"><strong>A Telegram client optimized for the GNOME desktop</strong></p>
+
 <p align="center">
   <a href="https://hosted.weblate.org/engage/telegrand/">
     <img src="https://hosted.weblate.org/widgets/telegrand/-/telegrand/svg-badge.svg" alt="Translation status" />
@@ -19,8 +21,6 @@
   <img src="data/resources/screenshots/screenshot1.png" alt="Preview"/>
 </p>
 -->
-
-A Telegram client built to be well integrated with the GNOME desktop environment.
 
 ## Build Instructions
 

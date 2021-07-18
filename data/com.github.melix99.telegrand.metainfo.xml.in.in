@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Marco Melorio 2019 <marco.melorio@protonmail.com> -->
+<!-- Marco Melorio 2021 <marco.melorio@protonmail.com> -->
 <component type="desktop-application">
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>Telegrand</name>
-  <summary>A GTK Telegram client built to be well integrated with the GNOME desktop environment.</summary>
+  <summary>A Telegram client optimized for the GNOME desktop</summary>
   <description>
-    <p>A GTK Telegram client built to be well integrated with the GNOME desktop environment.</p>
+    <p>A Telegram client optimized for the GNOME desktop</p>
   </description>
   <screenshots>
     <screenshot type="default">
       <image>https://github.com/melix99/telegrand/raw/master/data/resources/screenshots/screenshot1.png</image>
-      <caption>Main Window</caption>
+      <caption>Main window</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://github.com/melix99/telegrand</url>

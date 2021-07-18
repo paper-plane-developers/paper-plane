@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 18:08+0200\n"
+"POT-Creation-Date: 2021-07-18 20:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,9 @@ msgid "Telegrand"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
-msgid "A GTK + Rust application boilerplate template"
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
@@ -49,15 +51,8 @@ msgstr ""
 msgid "Use Telegram's test data center"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
-msgid ""
-"A GTK Telegram client built to be well integrated with the GNOME desktop "
-"environment."
-msgstr ""
-
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-msgid "Main Window"
+msgid "Main window"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
@@ -155,7 +150,7 @@ msgstr ""
 msgid "Unsupported message"
 msgstr ""
 
-#: src/window.rs:320
+#: src/window.rs:319
 msgid "Incoming call"
 msgstr ""
 
