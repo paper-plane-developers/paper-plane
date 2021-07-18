@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 17:43+0200\n"
+"POT-Creation-Date: 2021-07-18 18:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -159,6 +159,6 @@ msgstr ""
 msgid "Incoming call"
 msgstr ""
 
-#: src/session/content/message_row.rs:17
+#: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
 msgid "This message is unsupported"
 msgstr ""

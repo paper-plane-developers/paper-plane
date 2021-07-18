@@ -10,3 +10,4 @@ data/resources/ui/sidebar.ui
 src/utils.rs
 src/window.rs
 src/session/content/message_row.rs
+src/session/sidebar/chat_row.rs
