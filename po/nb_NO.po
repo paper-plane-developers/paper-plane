@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 18:08+0200\n"
-"PO-Revision-Date: 2021-07-18 21:27+0000\n"
-"Last-Translator: Dario <darlex259@gmail.com>\n"
+"PO-Revision-Date: 2021-07-21 10:32+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -48,7 +48,6 @@ msgstr "Forvalgt oppførsel for maksimert vindu"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid "Use Telegram's test data center"
 msgstr "Bruk Telegrams testdatasenter"
 
@@ -101,17 +100,14 @@ msgid "Encryption Key"
 msgstr "Krypteringsnøkkel"
 
 #: data/resources/ui/login.ui:110
-#, fuzzy
 msgid "Use Test Data Center"
 msgstr "Bruk testdatasenter"
 
 #: data/resources/ui/login.ui:111
-#, fuzzy
 msgid "This requires a restart to apply"
 msgstr "Krever programomstart for å tre i effekt"
 
 #: data/resources/ui/login.ui:149
-#, fuzzy
 msgid "Enter the Verification Code"
 msgstr "Skriv inn bekreftelseskoden"
 
