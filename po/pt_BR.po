@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-18 20:06+0200\n"
 "PO-Revision-Date: 2021-07-21 10:32+0000\n"
-"Last-Translator: Rodrigo Tavares <rodrigost23@gmail.com>\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -51,7 +51,7 @@ msgstr "Comportamento padrão da janela maximizada"
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr "Usar o data center de teste do Telegram"
+msgstr "Usar o centro de dados de teste do Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -95,7 +95,7 @@ msgstr "Chave de encriptação"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr "Usar o data center de teste"
+msgstr "Usar o centro de dados de teste"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
