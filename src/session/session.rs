@@ -1,8 +1,11 @@
+use glib::SyncSender;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use std::collections::HashMap;
 use tdgrand::enums::Update;
 use tdgrand::functions;
+use tdgrand::types::File;
 
 use crate::session::{Chat, ChatList, Content, Sidebar, UserList};
 use crate::RUNTIME;
@@ -21,6 +24,7 @@ mod imp {
         pub chat_list: OnceCell<ChatList>,
         pub user_list: UserList,
         pub selected_chat: RefCell<Option<Chat>>,
+        pub downloading_files: RefCell<HashMap<i32, SyncSender<File>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
     }
@@ -154,7 +158,39 @@ impl Session {
             Update::User(_) => {
                 self_.user_list.handle_update(update);
             }
+            Update::File(update) => {
+                self.handle_file_update(update.file);
+            }
             _ => {}
+        }
+    }
+
+    pub fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
+        let self_ = imp::Session::from_instance(self);
+        self_.downloading_files.borrow_mut().insert(file_id, sender);
+
+        let client_id = self.client_id();
+        RUNTIME.spawn(async move {
+            functions::DownloadFile::new()
+                .file_id(file_id)
+                .priority(5)
+                .send(client_id)
+                .await
+                .unwrap();
+        });
+    }
+
+    fn handle_file_update(&self, file: File) {
+        let self_ = imp::Session::from_instance(self);
+        let file_id = file.id;
+        let is_downloading_completed = file.local.is_downloading_completed;
+
+        if let Some(sender) = self_.downloading_files.borrow().get(&file_id) {
+            sender.send(file).unwrap();
+        }
+
+        if is_downloading_completed {
+            self_.downloading_files.borrow_mut().remove(&file_id);
         }
     }
 
