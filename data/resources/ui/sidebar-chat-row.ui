@@ -5,7 +5,7 @@
       <object class="GtkBox">
         <property name="spacing">12</property>
         <child>
-          <object class="AdwAvatar">
+          <object class="AdwAvatar" id="photo_avatar">
             <property name="show-initials">True</property>
             <property name="size">42</property>
             <binding name="text">

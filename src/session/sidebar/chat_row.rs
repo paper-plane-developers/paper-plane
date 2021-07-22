@@ -1,8 +1,9 @@
 use askama_escape::escape;
 use gettextrs::gettext;
-use gtk::glib;
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::{gdk, gio, glib};
 use tdgrand::enums::MessageContent;
 
 use crate::session::chat::{BoxedMessageContent, Message};
@@ -28,6 +29,9 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
+        pub update_photo_handler: RefCell<Option<glib::SignalHandlerId>>,
+        #[template_child]
+        pub photo_avatar: TemplateChild<adw::Avatar>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
     }
@@ -100,6 +104,21 @@ impl ChatRow {
         glib::Object::new(&[]).expect("Failed to create ChatRow")
     }
 
+    fn update_photo_avatar(&self, chat: &Chat) {
+        let self_ = imp::ChatRow::from_instance(self);
+
+        if let Some(photo) = chat.photo() {
+            if photo.small.local.is_downloading_completed {
+                let file = gio::File::for_path(photo.small.local.path);
+                let photo = gdk::Texture::from_file(&file).unwrap();
+                self_.photo_avatar.set_custom_image(Some(&photo));
+                return;
+            }
+        }
+
+        self_.photo_avatar.set_custom_image(None::<&gdk::Paintable>);
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::ChatRow::from_instance(self);
         self_.chat.borrow().clone()
@@ -111,6 +130,13 @@ impl ChatRow {
         }
 
         let self_ = imp::ChatRow::from_instance(self);
+
+        // Remove signals from the previous chat
+        if let Some(chat) = self_.chat.take() {
+            if let Some(update_photo_handler) = self_.update_photo_handler.take() {
+                chat.disconnect(update_photo_handler);
+            }
+        }
 
         if let Some(ref chat) = chat {
             let chat_expression = gtk::ConstantExpression::new(&chat);
@@ -138,6 +164,15 @@ impl ChatRow {
                 "label",
                 Some(&last_message_label),
             );
+
+            self.update_photo_avatar(chat);
+            self_
+                .update_photo_handler
+                .replace(Some(chat.connect_small_photo_updated(
+                    clone!(@weak self as obj => move |chat| {
+                        obj.update_photo_avatar(chat);
+                    }),
+                )));
         }
 
         self_.chat.replace(chat);

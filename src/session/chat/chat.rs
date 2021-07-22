@@ -1,7 +1,10 @@
+use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
+use tdgrand::types::Chat as TelegramChat;
+use tdgrand::types::{ChatPhotoInfo, File};
 
 use crate::session::chat::{History, Message};
 use crate::Session;
@@ -10,8 +13,13 @@ use crate::Session;
 #[gboxed(type_name = "BoxedChatType")]
 pub struct BoxedChatType(ChatType);
 
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "BoxedChatPhoto")]
+pub struct BoxedChatPhoto(Option<ChatPhotoInfo>);
+
 mod imp {
     use super::*;
+    use glib::subclass::Signal;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
@@ -20,6 +28,7 @@ mod imp {
         pub id: Cell<i64>,
         pub r#type: OnceCell<ChatType>,
         pub title: RefCell<String>,
+        pub photo: RefCell<Option<ChatPhotoInfo>>,
         pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
@@ -36,6 +45,15 @@ mod imp {
     }
 
     impl ObjectImpl for Chat {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("small-photo-updated", &[], <()>::static_type().into()).build(),
+                ]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -50,7 +68,7 @@ mod imp {
                     ),
                     glib::ParamSpec::new_boxed(
                         "type",
-                        "type",
+                        "Type",
                         "The type of this chat",
                         BoxedChatType::static_type(),
                         glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
@@ -61,6 +79,13 @@ mod imp {
                         "The title of this chat",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                    ),
+                    glib::ParamSpec::new_boxed(
+                        "photo",
+                        "Photo",
+                        "The photo of this chat",
+                        BoxedChatPhoto::static_type(),
+                        glib::ParamFlags::WRITABLE,
                     ),
                     glib::ParamSpec::new_object(
                         "last-message",
@@ -116,7 +141,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -133,6 +158,10 @@ mod imp {
                 "title" => {
                     let title = value.get().unwrap();
                     self.title.replace(title);
+                }
+                "photo" => {
+                    let photo = value.get::<BoxedChatPhoto>().unwrap();
+                    obj.set_photo(photo.0);
                 }
                 "last-message" => {
                     let last_message = value.get().unwrap();
@@ -185,12 +214,14 @@ glib::wrapper! {
 }
 
 impl Chat {
-    pub fn new(id: i64, r#type: ChatType, title: String, session: Session) -> Self {
-        let r#type = BoxedChatType(r#type);
+    pub fn new(chat: TelegramChat, session: Session) -> Self {
+        let r#type = BoxedChatType(chat.r#type);
+        let photo = BoxedChatPhoto(chat.photo);
         glib::Object::new(&[
-            ("id", &id),
+            ("id", &chat.id),
             ("type", &r#type),
-            ("title", &title),
+            ("title", &chat.title),
+            ("photo", &photo),
             ("session", &session),
         ])
         .expect("Failed to create Chat")
@@ -203,6 +234,9 @@ impl Chat {
             }
             Update::ChatTitle(update) => {
                 self.set_title(update.title);
+            }
+            Update::ChatPhoto(update) => {
+                self.set_photo(update.photo);
             }
             Update::ChatLastMessage(update) => {
                 match update.last_message {
@@ -251,6 +285,30 @@ impl Chat {
         }
     }
 
+    fn download_small_photo(&self) {
+        if let Some(photo) = self.photo() {
+            if photo.small.local.can_be_downloaded && !photo.small.local.is_downloading_completed {
+                let (sender, receiver) =
+                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
+                receiver.attach(
+                    None,
+                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
+                        let self_ = imp::Chat::from_instance(&obj);
+                        let mut photo = self_.photo.take().unwrap();
+                        photo.small = file;
+
+                        self_.photo.replace(Some(photo));
+                        obj.emit_by_name("small-photo-updated", &[]).unwrap();
+
+                        glib::Continue(true)
+                    }),
+                );
+
+                self.session().download_file(photo.small.id, sender);
+            }
+        }
+    }
+
     pub fn id(&self) -> i64 {
         self.property("id").unwrap().get().unwrap()
     }
@@ -262,6 +320,22 @@ impl Chat {
 
     pub fn title(&self) -> String {
         self.property("title").unwrap().get().unwrap()
+    }
+
+    pub fn photo(&self) -> Option<ChatPhotoInfo> {
+        let self_ = imp::Chat::from_instance(self);
+        self_.photo.borrow().clone()
+    }
+
+    pub fn set_photo(&self, photo: Option<ChatPhotoInfo>) {
+        let self_ = imp::Chat::from_instance(self);
+
+        self_.photo.replace(photo);
+        self.notify("photo");
+
+        self.emit_by_name("small-photo-updated", &[]).unwrap();
+
+        self.download_small_photo();
     }
 
     fn set_title(&self, title: String) {
@@ -323,5 +397,18 @@ impl Chat {
 
     pub fn session(&self) -> Session {
         self.property("session").unwrap().get().unwrap()
+    }
+
+    pub fn connect_small_photo_updated<F: Fn(&Self) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("small-photo-updated", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
+        .unwrap()
     }
 }

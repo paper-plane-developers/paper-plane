@@ -138,6 +138,11 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::ChatPhoto(ref update_) => {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             Update::ChatLastMessage(ref update_) => {
                 if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
@@ -177,7 +182,7 @@ impl ChatList {
             let self_ = imp::ChatList::from_instance(self);
             let mut list = self_.list.borrow_mut();
             let chat_id = chat.id;
-            let chat = Chat::new(chat.id, chat.r#type, chat.title, self.session());
+            let chat = Chat::new(chat, self.session());
 
             chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
                 obj.emit_by_name("positions-changed", &[]).unwrap();
