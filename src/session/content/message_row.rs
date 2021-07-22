@@ -131,6 +131,7 @@ impl MessageRow {
             MessageSender::Chat(sender) => {
                 let sender_label = gtk::LabelBuilder::new()
                     .css_classes(vec!["sender".to_string()])
+                    .ellipsize(pango::EllipsizeMode::End)
                     .single_line_mode(true)
                     .xalign(0.0)
                     .build();
@@ -155,6 +156,7 @@ impl MessageRow {
                 if !message.outgoing() {
                     let sender_label = gtk::LabelBuilder::new()
                         .css_classes(vec!["sender".to_string()])
+                        .ellipsize(pango::EllipsizeMode::End)
                         .single_line_mode(true)
                         .xalign(0.0)
                         .build();
