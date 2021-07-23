@@ -24,7 +24,7 @@ mod imp {
         pub chat_list: OnceCell<ChatList>,
         pub user_list: UserList,
         pub selected_chat: RefCell<Option<Chat>>,
-        pub downloading_files: RefCell<HashMap<i32, SyncSender<File>>>,
+        pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
     }
@@ -168,30 +168,40 @@ impl Session {
 
     pub fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
         let self_ = imp::Session::from_instance(self);
-        self_.downloading_files.borrow_mut().insert(file_id, sender);
 
-        let client_id = self.client_id();
-        RUNTIME.spawn(async move {
-            functions::DownloadFile::new()
-                .file_id(file_id)
-                .priority(5)
-                .send(client_id)
-                .await
-                .unwrap();
-        });
+        let mut downloading_files = self_.downloading_files.borrow_mut();
+        match downloading_files.get_mut(&file_id) {
+            Some(senders) => {
+                senders.push(sender);
+            }
+            None => {
+                downloading_files.insert(file_id, vec![sender]);
+
+                let client_id = self.client_id();
+                RUNTIME.spawn(async move {
+                    functions::DownloadFile::new()
+                        .file_id(file_id)
+                        .priority(5)
+                        .send(client_id)
+                        .await
+                        .unwrap();
+                });
+            }
+        }
     }
 
     fn handle_file_update(&self, file: File) {
         let self_ = imp::Session::from_instance(self);
-        let file_id = file.id;
-        let is_downloading_completed = file.local.is_downloading_completed;
 
-        if let Some(sender) = self_.downloading_files.borrow().get(&file_id) {
-            sender.send(file).unwrap();
+        let mut downloading_files = self_.downloading_files.borrow_mut();
+        if let Some(senders) = downloading_files.get(&file.id) {
+            for sender in senders {
+                sender.send(file.clone()).unwrap();
+            }
         }
 
-        if is_downloading_completed {
-            self_.downloading_files.borrow_mut().remove(&file_id);
+        if file.local.is_downloading_completed {
+            downloading_files.remove(&file.id);
         }
     }
 
