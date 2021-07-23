@@ -27,15 +27,15 @@
   margin-left: 50px;
 }
 
-.chat-history row .sender {
+.sender-text {
   font-size: 0.85em;
   font-weight: bold;
 }
 
-.send-message-area {
-  margin: 6px;
+.message-text {
+  font-size: 0.95em;
 }
 
-.message-content {
-  font-size: 0.95em;
+.send-message-area {
+  margin: 6px;
 }

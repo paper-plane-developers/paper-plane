@@ -4,7 +4,7 @@ use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango};
-use tdgrand::enums::{MessageContent, MessageSender};
+use tdgrand::enums::{ChatType, MessageContent, MessageSender};
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::{Chat, User};
@@ -102,15 +102,14 @@ impl MessageRow {
         let self_ = imp::MessageRow::from_instance(self);
 
         if let Some(ref message) = message {
-            let message_bubble = MessageRow::create_message_bubble(message);
-            self.set_child(Some(&message_bubble));
+            self.show_message_bubble(message);
         }
 
         self_.message.replace(message);
         self.notify("message");
     }
 
-    fn create_message_bubble(message: &Message) -> gtk::Box {
+    fn show_message_bubble(&self, message: &Message) {
         let hbox = gtk::BoxBuilder::new().spacing(6).build();
 
         let vbox = gtk::BoxBuilder::new()
@@ -127,16 +126,46 @@ impl MessageRow {
             vbox.add_css_class("incoming");
         }
 
+        if !message.outgoing() {
+            match message.chat().r#type() {
+                ChatType::BasicGroup(_) => {
+                    let sender_label = MessageRow::create_sender_label(message);
+                    vbox.append(&sender_label);
+                }
+                ChatType::Supergroup(group) => {
+                    let sender_label = MessageRow::create_sender_label(message);
+                    vbox.append(&sender_label);
+
+                    if !group.is_channel {
+                        let sender_avatar = MessageRow::create_sender_avatar();
+                        hbox.prepend(&sender_avatar);
+
+                        sender_label
+                            .bind_property("label", &sender_avatar, "text")
+                            .flags(glib::BindingFlags::SYNC_CREATE)
+                            .build();
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        let text_label = self.create_text_label(message);
+        vbox.append(&text_label);
+
+        self.set_child(Some(&hbox));
+    }
+
+    fn create_sender_label(message: &Message) -> gtk::Label {
+        let label = gtk::LabelBuilder::new()
+            .css_classes(vec!["sender-text".to_string()])
+            .ellipsize(pango::EllipsizeMode::End)
+            .single_line_mode(true)
+            .xalign(0.0)
+            .build();
+
         match message.sender() {
             MessageSender::Chat(sender) => {
-                let sender_label = gtk::LabelBuilder::new()
-                    .css_classes(vec!["sender".to_string()])
-                    .ellipsize(pango::EllipsizeMode::End)
-                    .single_line_mode(true)
-                    .xalign(0.0)
-                    .build();
-                vbox.append(&sender_label);
-
                 let chat = message
                     .chat()
                     .session()
@@ -150,69 +179,62 @@ impl MessageRow {
                     "title",
                 );
 
-                title_expression.bind(&sender_label, "label", Some(&sender_label));
+                title_expression.bind(&label, "label", Some(&label));
             }
             MessageSender::User(sender) => {
-                if !message.outgoing() {
-                    let sender_label = gtk::LabelBuilder::new()
-                        .css_classes(vec!["sender".to_string()])
-                        .ellipsize(pango::EllipsizeMode::End)
-                        .single_line_mode(true)
-                        .xalign(0.0)
-                        .build();
-                    vbox.append(&sender_label);
+                let user = message
+                    .chat()
+                    .session()
+                    .user_list()
+                    .get_or_create_user(sender.user_id);
 
-                    let user = message
-                        .chat()
-                        .session()
-                        .user_list()
-                        .get_or_create_user(sender.user_id);
-                    let avatar = adw::AvatarBuilder::new()
-                        .valign(gtk::Align::End)
-                        .show_initials(true)
-                        .size(32)
-                        .build();
-                    hbox.prepend(&avatar);
+                let user_expression = gtk::ConstantExpression::new(&user);
+                let first_name_expression = gtk::PropertyExpression::new(
+                    User::static_type(),
+                    Some(&user_expression),
+                    "first-name",
+                );
+                let last_name_expression = gtk::PropertyExpression::new(
+                    User::static_type(),
+                    Some(&user_expression),
+                    "last-name",
+                );
+                let full_name_expression = gtk::ClosureExpression::new(
+                    move |expressions| -> String {
+                        let first_name = expressions[1].get::<&str>().unwrap();
+                        let last_name = expressions[2].get::<&str>().unwrap();
+                        format!("{} {}", first_name, last_name).trim().to_string()
+                    },
+                    &[
+                        first_name_expression.upcast(),
+                        last_name_expression.upcast(),
+                    ],
+                );
 
-                    let user_expression = gtk::ConstantExpression::new(&user);
-                    let first_name_expression = gtk::PropertyExpression::new(
-                        User::static_type(),
-                        Some(&user_expression),
-                        "first-name",
-                    );
-                    let last_name_expression = gtk::PropertyExpression::new(
-                        User::static_type(),
-                        Some(&user_expression),
-                        "last-name",
-                    );
-                    let full_name_expression = gtk::ClosureExpression::new(
-                        move |expressions| -> String {
-                            let first_name = expressions[1].get::<&str>().unwrap();
-                            let last_name = expressions[2].get::<&str>().unwrap();
-                            format!("{} {}", first_name, last_name).trim().to_string()
-                        },
-                        &[
-                            first_name_expression.upcast(),
-                            last_name_expression.upcast(),
-                        ],
-                    );
-
-                    full_name_expression.bind(&avatar, "text", Some(&avatar));
-                    full_name_expression.bind(&sender_label, "label", Some(&sender_label));
-                }
+                full_name_expression.bind(&label, "label", Some(&label));
             }
         }
 
-        let text_label = gtk::LabelBuilder::new()
-            .css_classes(vec!["message-content".to_string()])
-            .vexpand(true)
+        label
+    }
+
+    fn create_sender_avatar() -> adw::Avatar {
+        adw::AvatarBuilder::new()
+            .valign(gtk::Align::End)
+            .show_initials(true)
+            .size(32)
+            .build()
+    }
+
+    fn create_text_label(&self, message: &Message) -> gtk::Label {
+        let label = gtk::LabelBuilder::new()
+            .css_classes(vec!["message-text".to_string()])
             .selectable(true)
             .use_markup(true)
             .wrap(true)
             .wrap_mode(pango::WrapMode::WordChar)
             .xalign(0.0)
             .build();
-        vbox.append(&text_label);
 
         let message_expression = gtk::ConstantExpression::new(message);
         let content_expression = gtk::PropertyExpression::new(
@@ -227,8 +249,8 @@ impl MessageRow {
             },
             &[content_expression.upcast()],
         );
-        text_expression.bind(&text_label, "label", Some(&text_label));
+        text_expression.bind(&label, "label", Some(&label));
 
-        hbox
+        label
     }
 }
