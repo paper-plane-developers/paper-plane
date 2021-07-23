@@ -1,10 +1,9 @@
-use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
 use tdgrand::types::Chat as TelegramChat;
-use tdgrand::types::{ChatPhotoInfo, File};
+use tdgrand::types::ChatPhotoInfo;
 
 use crate::session::chat::{History, Message};
 use crate::Session;
@@ -47,9 +46,7 @@ mod imp {
     impl ObjectImpl for Chat {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![
-                    Signal::builder("small-photo-updated", &[], <()>::static_type().into()).build(),
-                ]
+                vec![Signal::builder("photo-updated", &[], <()>::static_type().into()).build()]
             });
             SIGNALS.as_ref()
         }
@@ -285,30 +282,6 @@ impl Chat {
         }
     }
 
-    fn download_small_photo(&self) {
-        if let Some(photo) = self.photo() {
-            if photo.small.local.can_be_downloaded && !photo.small.local.is_downloading_completed {
-                let (sender, receiver) =
-                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
-                receiver.attach(
-                    None,
-                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                        let self_ = imp::Chat::from_instance(&obj);
-                        let mut photo = self_.photo.take().unwrap();
-                        photo.small = file;
-
-                        self_.photo.replace(Some(photo));
-                        obj.emit_by_name("small-photo-updated", &[]).unwrap();
-
-                        glib::Continue(true)
-                    }),
-                );
-
-                self.session().download_file(photo.small.id, sender);
-            }
-        }
-    }
-
     pub fn id(&self) -> i64 {
         self.property("id").unwrap().get().unwrap()
     }
@@ -329,13 +302,11 @@ impl Chat {
 
     pub fn set_photo(&self, photo: Option<ChatPhotoInfo>) {
         let self_ = imp::Chat::from_instance(self);
-
         self_.photo.replace(photo);
+
         self.notify("photo");
 
-        self.emit_by_name("small-photo-updated", &[]).unwrap();
-
-        self.download_small_photo();
+        self.emit_by_name("photo-updated", &[]).unwrap();
     }
 
     fn set_title(&self, title: String) {
@@ -399,11 +370,8 @@ impl Chat {
         self.property("session").unwrap().get().unwrap()
     }
 
-    pub fn connect_small_photo_updated<F: Fn(&Self) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_local("small-photo-updated", true, move |values| {
+    pub fn connect_photo_updated<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
+        self.connect_local("photo-updated", true, move |values| {
             let obj = values[0].get::<Self>().unwrap();
             f(&obj);
 

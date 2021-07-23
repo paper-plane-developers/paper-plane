@@ -5,6 +5,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
 use tdgrand::enums::MessageContent;
+use tdgrand::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::Chat;
@@ -29,7 +30,7 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
-        pub update_photo_handler: RefCell<Option<glib::SignalHandlerId>>,
+        pub photo_updated_handler: RefCell<Option<glib::SignalHandlerId>>,
         #[template_child]
         pub photo_avatar: TemplateChild<adw::Avatar>,
         #[template_child]
@@ -113,6 +114,21 @@ impl ChatRow {
                 let photo = gdk::Texture::from_file(&file).unwrap();
                 self_.photo_avatar.set_custom_image(Some(&photo));
                 return;
+            } else if photo.small.local.can_be_downloaded {
+                let (sender, receiver) =
+                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
+                receiver.attach(
+                    None,
+                    clone!(@weak chat => @default-return glib::Continue(false), move |file| {
+                        let mut photo = chat.photo().unwrap();
+                        photo.small = file;
+                        chat.set_photo(Some(photo));
+
+                        glib::Continue(true)
+                    }),
+                );
+
+                chat.session().download_file(photo.small.id, sender);
             }
         }
 
@@ -133,8 +149,8 @@ impl ChatRow {
 
         // Remove signals from the previous chat
         if let Some(chat) = self_.chat.take() {
-            if let Some(update_photo_handler) = self_.update_photo_handler.take() {
-                chat.disconnect(update_photo_handler);
+            if let Some(photo_updated_handler) = self_.photo_updated_handler.take() {
+                chat.disconnect(photo_updated_handler);
             }
         }
 
@@ -167,8 +183,8 @@ impl ChatRow {
 
             self.update_photo_avatar(chat);
             self_
-                .update_photo_handler
-                .replace(Some(chat.connect_small_photo_updated(
+                .photo_updated_handler
+                .replace(Some(chat.connect_photo_updated(
                     clone!(@weak self as obj => move |chat| {
                         obj.update_photo_avatar(chat);
                     }),
