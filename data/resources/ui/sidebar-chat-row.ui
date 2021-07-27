@@ -39,6 +39,7 @@
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="ellipsize">end</property>
+                    <property name="justify">center</property>
                     <binding name="label">
                       <lookup name="unread-count">
                         <lookup name="chat">SidebarChatRow</lookup>
