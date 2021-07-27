@@ -7,7 +7,7 @@
         <child>
           <object class="AdwAvatar" id="photo_avatar">
             <property name="show-initials">True</property>
-            <property name="size">42</property>
+            <property name="size">44</property>
             <binding name="text">
               <lookup name="title">
                 <lookup name="chat">SidebarChatRow</lookup>
