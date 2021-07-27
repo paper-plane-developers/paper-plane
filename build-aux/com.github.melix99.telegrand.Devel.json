@@ -56,22 +56,20 @@
         },
         {
             "name": "tdlib",
-            "buildsystem": "cmake-ninja",
-            "builddir": true,
-            "config-opts": [
-                "-DCMAKE_BUILD_TYPE=Release"
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D libtdjson.so.* /app/lib",
+                "ln -sf /app/lib/libtdjson.so.* /app/lib/libtdjson.so",
+                "install -D pkgconfig/* /app/lib/pkgconfig"
             ],
             "cleanup": [
-                "/include",
-                "/lib/cmake",
-                "/lib/pkgconfig",
-                "*.a"
+                "/lib/pkgconfig"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/tdlib/td/archive/refs/tags/v1.7.0.tar.gz",
-                    "sha256": "3daaf419f1738b7e0ac0e8a08f07e01a1faaf51175a59c0b113c15e30c69e173"
+                    "url": "https://github.com/melix99/tdlib-ci/releases/download/v1.7.0/tdlib.zip",
+                    "sha256": "95b079228b17c2e6d54aa4252a6ac790e230fe61764710bb5a932afd5ba90826"
                 }
             ]
         },
