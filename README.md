@@ -22,6 +22,10 @@
 </p>
 -->
 
+## Installation Instructions
+
+Telegrand is an in-development project and it isn't considered stable software yet. But if you still want to try it out, there's a [CI](https://github.com/melix99/telegrand/actions?query=branch%3Amain) that automatically generates the latest flatpak build. Just download the artifact of the latest build and install it locally using `flatpak install telegrand.flatpak`.
+
 ## Build Instructions
 
 ### Gnome Builder
