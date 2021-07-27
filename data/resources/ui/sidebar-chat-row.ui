@@ -29,6 +29,9 @@
                     <lookup name="chat">SidebarChatRow</lookup>
                   </lookup>
                 </binding>
+                <style>
+                  <class name="title"/>
+                </style>
               </object>
             </child>
             <child>
@@ -41,7 +44,7 @@
                     <property name="single-line-mode">True</property>
                     <property name="use-markup">True</property>
                     <style>
-                      <class name="message-content"/>
+                      <class name="last-message"/>
                     </style>
                   </object>
                 </child>

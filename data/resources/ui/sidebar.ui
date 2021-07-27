@@ -62,6 +62,7 @@
                 </property>
                 <style>
                   <class name="navigation-sidebar"/>
+                  <class name="chat-list"/>
                 </style>
               </object>
             </child>
