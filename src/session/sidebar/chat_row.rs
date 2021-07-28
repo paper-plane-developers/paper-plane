@@ -34,6 +34,8 @@ mod imp {
         #[template_child]
         pub photo_avatar: TemplateChild<adw::Avatar>,
         #[template_child]
+        pub timestamp_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
     }
 
@@ -155,6 +157,33 @@ impl ChatRow {
         }
 
         if let Some(ref chat) = chat {
+            if let Some(last_message) = chat.last_message() {
+                let datetime_now = glib::DateTime::new_now_local().unwrap();
+
+                let date = last_message.date();
+                let datetime = glib::DateTime::from_unix_utc(date as i64)
+                    .and_then(|t| t.to_local())
+                    .unwrap();
+
+                let days_difference = datetime_now.difference(&datetime) / 86400000000;
+
+                let time = if days_difference == 0 {
+                    let mut time = datetime.format("%X").unwrap().to_string();
+                    // Remove seconds
+                    time.replace_range(5..8, "");
+
+                    time
+                } else if days_difference < 6 {
+                    datetime.format("%a").unwrap().to_string()
+                } else if days_difference < 364 {
+                    datetime.format("%d %b").unwrap().to_string()
+                } else {
+                    datetime.format("%x").unwrap().to_string()
+                };
+
+                self_.timestamp_label.set_text(&time);
+            }
+
             let chat_expression = gtk::ConstantExpression::new(&chat);
             let last_message_expression = gtk::PropertyExpression::new(
                 Chat::static_type(),
