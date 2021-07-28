@@ -2,6 +2,10 @@
   font-size: 0.95em;
 }
 
+.chat-list row .timestamp {
+  font-size: 0.8em;
+}
+
 .chat-list row .last-message {
   font-size: 0.95em;
 }
