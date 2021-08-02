@@ -1,4 +1,4 @@
-use gtk::glib;
+use gtk::{glib, glib::clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::{enums, functions, types};
@@ -94,6 +94,21 @@ mod imp {
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
+        }
+
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+            let message_buffer = self.message_entry.buffer();
+
+            self.message_entry.buffer().connect_text_notify(clone!(@weak obj => move |_: &gtk::TextBuffer| {
+                let should_enable = !message_buffer
+                        .text(&message_buffer.start_iter(), &message_buffer.end_iter(), true)
+                        .is_empty();
+                obj.action_set_enabled("history.send-message", should_enable);
+            }));
+
+            // Buffer is always empty at this point, so unconditionally disable sending of messages
+            obj.action_set_enabled("history.send-message", false);
         }
     }
 
