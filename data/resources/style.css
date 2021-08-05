@@ -18,12 +18,13 @@
 }
 
 .chat-history row .incoming {
-  background-color: @light_3;
+  background-color: alpha(black, 0.1);
   margin-right: 50px;
 }
 
 .chat-history row .outgoing {
   background-color: @blue_1;
+  color: black;
   margin-left: 50px;
 }
 

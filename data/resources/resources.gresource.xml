@@ -10,6 +10,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-chat-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
 
-    <file compressed="true" alias="style.css">style.css</file>
+    <file compressed="true">style.css</file>
+    <file compressed="true">style-dark.css</file>
   </gresource>
 </gresources>
