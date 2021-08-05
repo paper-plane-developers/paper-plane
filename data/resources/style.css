@@ -1,4 +1,16 @@
-.unread-count {
+.chat-list row .title {
+  font-size: 0.95em;
+}
+
+.chat-list row .timestamp {
+  font-size: 0.8em;
+}
+
+.chat-list row .last-message {
+  font-size: 0.95em;
+}
+
+.chat-list row .unread-count {
   background-color: @accent_bg_color;
   color: @accent_fg_color;
   font-size: 0.8em;

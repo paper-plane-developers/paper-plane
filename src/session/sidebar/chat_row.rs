@@ -34,6 +34,8 @@ mod imp {
         #[template_child]
         pub photo_avatar: TemplateChild<adw::Avatar>,
         #[template_child]
+        pub timestamp_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
     }
 
@@ -161,6 +163,49 @@ impl ChatRow {
                 Some(&chat_expression),
                 "last-message",
             );
+
+            // Last message timestamp
+            let date_expression = gtk::PropertyExpression::new(
+                Message::static_type(),
+                Some(&last_message_expression),
+                "date",
+            );
+            let timestamp_expression = gtk::ClosureExpression::new(
+                move |expressions| -> String {
+                    let date = expressions[1].get::<i32>().unwrap();
+
+                    let datetime_now = glib::DateTime::new_now_local().unwrap();
+                    let datetime = glib::DateTime::from_unix_utc(date as i64)
+                        .and_then(|t| t.to_local())
+                        .unwrap();
+
+                    let hours_difference = datetime_now.difference(&datetime) / 3600000000;
+                    let days_difference = hours_difference / 24;
+
+                    if hours_difference <= 16 {
+                        // Show the time
+                        let mut time = datetime.format("%X").unwrap().to_string();
+
+                        // Remove seconds
+                        time.replace_range(5..8, "");
+                        time
+                    } else if days_difference < 6 {
+                        // Show the day of the week
+                        datetime.format("%a").unwrap().to_string()
+                    } else if days_difference < 364 {
+                        // Show the day and the month
+                        datetime.format("%d %b").unwrap().to_string()
+                    } else {
+                        // Show the entire date
+                        datetime.format("%x").unwrap().to_string()
+                    }
+                },
+                &[date_expression.upcast()],
+            );
+            let timestamp_label = self_.timestamp_label.get();
+            timestamp_expression.bind(&timestamp_label, "label", Some(&timestamp_label));
+
+            // Last message content
             let content_expression = gtk::PropertyExpression::new(
                 Message::static_type(),
                 Some(&last_message_expression),
@@ -173,7 +218,6 @@ impl ChatRow {
                 },
                 &[content_expression.upcast()],
             );
-
             let last_message_label = self_.last_message_label.get();
             stringified_content_expression.bind(
                 &last_message_label,
@@ -181,6 +225,7 @@ impl ChatRow {
                 Some(&last_message_label),
             );
 
+            // Chat photo
             self.update_photo_avatar(chat);
             self_
                 .photo_updated_handler

@@ -7,7 +7,7 @@
         <child>
           <object class="AdwAvatar" id="photo_avatar">
             <property name="show-initials">True</property>
-            <property name="size">42</property>
+            <property name="size">44</property>
             <binding name="text">
               <lookup name="title">
                 <lookup name="chat">SidebarChatRow</lookup>
@@ -21,9 +21,11 @@
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkBox">
+                <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="halign">start</property>
+                    <property name="hexpand">True</property>
                     <property name="ellipsize">end</property>
                     <property name="single-line-mode">True</property>
                     <binding name="label">
@@ -31,6 +33,34 @@
                         <lookup name="chat">SidebarChatRow</lookup>
                       </lookup>
                     </binding>
+                    <style>
+                      <class name="title"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="timestamp_label">
+                    <property name="single-line-mode">True</property>
+                    <style>
+                      <class name="dim-label"/>
+                      <class name="timestamp"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel" id="last_message_label">
+                    <property name="halign">start</property>
+                    <property name="ellipsize">end</property>
+                    <property name="single-line-mode">True</property>
+                    <property name="use-markup">True</property>
+                    <style>
+                      <class name="last-message"/>
+                    </style>
                   </object>
                 </child>
                 <child>
@@ -39,6 +69,7 @@
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="ellipsize">end</property>
+                    <property name="justify">center</property>
                     <binding name="label">
                       <lookup name="unread-count">
                         <lookup name="chat">SidebarChatRow</lookup>
@@ -54,17 +85,6 @@
                     </style>
                   </object>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="last_message_label">
-                <property name="halign">start</property>
-                <property name="ellipsize">end</property>
-                <property name="single-line-mode">True</property>
-                <property name="use-markup">True</property>
-                <style>
-                  <class name="message-content"/>
-                </style>
               </object>
             </child>
           </object>
