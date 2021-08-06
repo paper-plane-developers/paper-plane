@@ -228,6 +228,7 @@ impl Login {
             system_language_code: "en-US".to_string(),
             device_model: "Desktop".to_string(),
             application_version: config::VERSION.to_string(),
+            enable_storage_optimizer: true,
             ..types::TdlibParameters::default()
         };
         do_async(
