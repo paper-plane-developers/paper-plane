@@ -157,6 +157,11 @@ impl History {
                     message.handle_update(update);
                 }
             }
+            Update::DeleteMessages(update) => {
+                for message_id in update.message_ids {
+                    self.remove(message_id);
+                }
+            }
             _ => {}
         }
     }
@@ -195,6 +200,20 @@ impl History {
         }
 
         self.items_changed(0, 0, added as u32);
+    }
+
+    fn remove(&self, message_id: i64) {
+        let self_ = imp::History::from_instance(self);
+        let index = self_
+            .list
+            .borrow()
+            .binary_search_by(|message| message.id().cmp(&message_id))
+            .unwrap();
+
+        self_.list.borrow_mut().remove(index);
+        self_.message_map.borrow_mut().remove(&message_id);
+
+        self.items_changed(index as u32, 1, 0);
     }
 
     pub fn chat(&self) -> Chat {

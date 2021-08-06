@@ -226,7 +226,7 @@ impl Chat {
 
     pub fn handle_update(&self, update: Update) {
         match update {
-            Update::NewMessage(_) | Update::MessageContent(_) => {
+            Update::NewMessage(_) | Update::MessageContent(_) | Update::DeleteMessages(_) => {
                 self.history().handle_update(update);
             }
             Update::ChatTitle(update) => {

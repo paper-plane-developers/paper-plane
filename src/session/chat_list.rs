@@ -163,6 +163,11 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::DeleteMessages(ref update_) => {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             _ => {}
         }
     }
