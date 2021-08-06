@@ -212,13 +212,14 @@ impl History {
         let index = self_
             .list
             .borrow()
-            .binary_search_by(|message| message.id().cmp(&message_id))
-            .unwrap();
+            .binary_search_by(|message| message.id().cmp(&message_id));
 
-        self_.list.borrow_mut().remove(index);
-        self_.message_map.borrow_mut().remove(&message_id);
+        if let Ok(index) = index {
+            self_.list.borrow_mut().remove(index);
+            self_.message_map.borrow_mut().remove(&message_id);
 
-        self.items_changed(index as u32, 1, 0);
+            self.items_changed(index as u32, 1, 0);
+        }
     }
 
     pub fn chat(&self) -> Chat {
