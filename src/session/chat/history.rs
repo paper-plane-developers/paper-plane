@@ -161,8 +161,10 @@ impl History {
                 }
             }
             Update::DeleteMessages(update) => {
-                for message_id in update.message_ids {
-                    self.remove(message_id);
+                if !update.from_cache {
+                    for message_id in update.message_ids {
+                        self.remove(message_id);
+                    }
                 }
             }
             _ => {}
