@@ -146,6 +146,7 @@ impl Session {
 
         match update {
             Update::NewMessage(_)
+            | Update::MessageSendSucceeded(_)
             | Update::MessageContent(_)
             | Update::NewChat(_)
             | Update::ChatTitle(_)

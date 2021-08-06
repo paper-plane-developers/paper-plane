@@ -152,6 +152,9 @@ impl History {
                     self.append(update.message);
                 }
             }
+            Update::MessageSendSucceeded(update) => {
+                self.remove(update.old_message_id);
+            }
             Update::MessageContent(ref update_) => {
                 if let Some(message) = self_.message_map.borrow().get(&update_.message_id) {
                     message.handle_update(update);
