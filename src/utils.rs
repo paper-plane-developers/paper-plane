@@ -5,6 +5,12 @@ use tdgrand::enums::MessageContent as TelegramMessageContent;
 
 use crate::RUNTIME;
 
+pub fn escape(text: &str) -> String {
+    text.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+}
+
 pub fn stringify_message_content(content: TelegramMessageContent, use_markup: bool) -> String {
     match content {
         TelegramMessageContent::MessageText(content) => content.text.text,
