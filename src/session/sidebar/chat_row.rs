@@ -1,4 +1,3 @@
-use askama_escape::escape;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::prelude::*;
@@ -9,12 +8,11 @@ use tdgrand::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::Chat;
+use crate::utils::escape;
 
 fn stringify_message_content(content: MessageContent) -> String {
     match content {
-        MessageContent::MessageText(content) => {
-            escape(&content.text.text, askama_escape::Html).to_string()
-        }
+        MessageContent::MessageText(content) => escape(&content.text.text),
         _ => format!("<i>{}</i>", gettext("This message is unsupported")),
     }
 }
