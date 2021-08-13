@@ -1,5 +1,5 @@
-use glib::clone;
-use gtk::glib;
+use glib::{clone, signal::Inhibit};
+use gtk::{gdk, glib};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::{enums, functions, types};
@@ -113,6 +113,23 @@ mod imp {
 
             // Buffer is always empty at this point, so unconditionally disable sending of messages
             obj.action_set_enabled("history.send-message", false);
+
+            let key_events = gtk::EventControllerKey::new();
+            self.message_entry.add_controller(&key_events);
+
+            key_events.connect_key_pressed(
+                clone!(@weak obj => @default-return Inhibit(false), move |_, key, _, modifier| {
+                    if !modifier.contains(gdk::ModifierType::SHIFT_MASK)
+                        && (key == gdk::keys::constants::Return
+                            || key == gdk::keys::constants::KP_Enter)
+                    {
+                        obj.activate_action("history.send-message", None);
+                        Inhibit(true)
+                    } else {
+                        Inhibit(false)
+                    }
+                }),
+            );
         }
     }
 
