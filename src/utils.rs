@@ -1,14 +1,26 @@
 use gettextrs::gettext;
 use gtk::glib;
+use once_cell::sync::Lazy;
+use regex::Regex;
 use std::future::Future;
 use tdgrand::enums::MessageContent as TelegramMessageContent;
 
 use crate::RUNTIME;
 
+pub static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
+
 pub fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
+}
+
+pub fn linkify(text: &str) -> String {
+    if !PROTOCOL_RE.is_match(text) {
+        format!("http://{}", text)
+    } else {
+        text.to_string()
+    }
 }
 
 pub fn stringify_message_content(content: TelegramMessageContent, use_markup: bool) -> String {

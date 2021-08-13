@@ -8,11 +8,11 @@ use tdgrand::types::FormattedText;
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::{Chat, User};
-use crate::utils::escape;
+use crate::utils::{escape, linkify};
 
 fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
     match entity {
-        TextEntityType::Url => format!("<a href='{0}'>{0}</a>", text),
+        TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
         TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
         TextEntityType::PhoneNumber => format!("<a href='tel:{0}'>{0}</a>", text),
         TextEntityType::Bold => format!("<b>{}</b>", text),
