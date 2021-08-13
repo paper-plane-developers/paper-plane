@@ -13,7 +13,7 @@ use crate::utils::do_async;
 mod imp {
     use super::*;
     use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
@@ -21,6 +21,7 @@ mod imp {
         pub list: RefCell<VecDeque<Message>>,
         pub message_map: RefCell<HashMap<i64, Message>>,
         pub chat: OnceCell<Chat>,
+        pub loading: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -34,13 +35,22 @@ mod imp {
     impl ObjectImpl for History {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
-                    "chat",
-                    "Chat",
-                    "The chat relative to this history",
-                    Chat::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                )]
+                vec![
+                    glib::ParamSpec::new_object(
+                        "chat",
+                        "Chat",
+                        "The chat relative to this history",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_boolean(
+                        "loading",
+                        "Loading",
+                        "Whether the history is loading messages or not",
+                        false,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                ]
             });
 
             PROPERTIES.as_ref()
@@ -48,7 +58,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -58,13 +68,15 @@ mod imp {
                     let chat = value.get().unwrap();
                     self.chat.set(chat).unwrap();
                 }
+                "loading" => obj.set_loading(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "chat" => self.chat.get().to_value(),
+                "loading" => obj.loading().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -100,6 +112,10 @@ impl History {
     }
 
     pub fn load_older_messages(&self) {
+        if self.loading() {
+            return;
+        }
+
         let self_ = imp::History::from_instance(self);
         let chat = self.chat();
         let client_id = chat.session().client_id();
@@ -110,6 +126,8 @@ impl History {
             .front()
             .map(|message| message.id())
             .unwrap_or_default();
+
+        self.set_loading(true);
 
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -127,6 +145,8 @@ impl History {
                         obj.prepend(messages);
                     }
                 }
+
+                obj.set_loading(false);
             }),
         );
     }
@@ -217,5 +237,17 @@ impl History {
 
     pub fn chat(&self) -> Chat {
         self.property("chat").unwrap().get().unwrap()
+    }
+
+    pub fn set_loading(&self, loading: bool) {
+        let priv_ = imp::History::from_instance(self);
+
+        priv_.loading.set(loading);
+        self.notify("loading");
+    }
+
+    pub fn loading(&self) -> bool {
+        let priv_ = imp::History::from_instance(self);
+        priv_.loading.get()
     }
 }
