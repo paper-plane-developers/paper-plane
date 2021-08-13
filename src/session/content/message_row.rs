@@ -1,19 +1,91 @@
 use adw::prelude::BinExt;
-use askama_escape::escape;
 use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango};
-use tdgrand::enums::{ChatType, MessageContent, MessageSender};
+use tdgrand::enums::{ChatType, MessageContent, MessageSender, TextEntityType};
+use tdgrand::types::FormattedText;
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::{Chat, User};
+use crate::utils::escape;
+
+fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
+    match entity {
+        TextEntityType::Url => format!("<a href='{0}'>{0}</a>", text),
+        TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
+        TextEntityType::PhoneNumber => format!("<a href='tel:{0}'>{0}</a>", text),
+        TextEntityType::Bold => format!("<b>{}</b>", text),
+        TextEntityType::Italic => format!("<i>{}</i>", text),
+        TextEntityType::Underline => format!("<u>{}</u>", text),
+        TextEntityType::Strikethrough => format!("<s>{}</s>", text),
+        TextEntityType::Code | TextEntityType::Pre | TextEntityType::PreCode(_) => {
+            format!("<tt>{}</tt>", text)
+        }
+        TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
+        _ => text,
+    }
+}
+
+fn parse_formatted_text(formatted_text: FormattedText) -> String {
+    let mut entities = formatted_text.entities.iter();
+    let mut entity = entities.next();
+    let mut output = String::new();
+    let mut buffer = String::new();
+    let mut inside_entry = false;
+
+    // This is the offset in utf16 code units of the text to parse. We need this variable
+    // because tdlib stores the offset and length parameters as utf16 code units instead
+    // of regular code points.
+    let mut code_units_offset = 0;
+
+    for c in formatted_text.text.chars() {
+        if !inside_entry && entity.is_some() && code_units_offset >= entity.unwrap().offset as usize
+        {
+            inside_entry = true;
+
+            if !buffer.is_empty() {
+                output.push_str(&escape(&buffer));
+                buffer = String::new();
+            }
+        }
+
+        buffer.push(c);
+        code_units_offset = code_units_offset + c.len_utf16();
+
+        if let Some(entity_) = entity {
+            if code_units_offset >= (entity_.offset + entity_.length) as usize {
+                buffer = escape(&buffer);
+
+                entity = loop {
+                    let entity = entities.next();
+
+                    // Handle eventual nested entries
+                    if entity.is_some() && entity.unwrap().offset == entity_.offset {
+                        buffer = convert_to_markup(buffer, &entity.unwrap().r#type);
+                    } else {
+                        break entity;
+                    }
+                };
+
+                output.push_str(&convert_to_markup(buffer, &entity_.r#type));
+                buffer = String::new();
+                inside_entry = false;
+            }
+        }
+    }
+
+    // Add the eventual leftovers from the buffer to the output
+    if !buffer.is_empty() {
+        output.push_str(&escape(&buffer));
+    }
+
+    output
+}
 
 fn format_message_content_text(content: MessageContent) -> String {
     match content {
-        MessageContent::MessageText(content) => {
-            escape(&content.text.text, askama_escape::Html).to_string()
-        }
+        MessageContent::MessageText(content) => parse_formatted_text(content.text),
         _ => format!("<i>{}</i>", gettext("This message is unsupported")),
     }
 }
