@@ -99,15 +99,8 @@ impl History {
         glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
     }
 
-    pub fn fetch(&self) {
+    pub fn load_older_messages(&self) {
         let self_ = imp::History::from_instance(self);
-        let limit = 20;
-
-        // TODO: remove this when proper automatic fetch is implemented
-        if self_.list.borrow().len() >= limit {
-            return;
-        }
-
         let chat = self.chat();
         let client_id = chat.session().client_id();
         let chat_id = chat.id();
@@ -124,7 +117,7 @@ impl History {
                 functions::GetChatHistory::new()
                     .chat_id(chat_id)
                     .from_message_id(oldest_message_id)
-                    .limit(limit as i32)
+                    .limit(20)
                     .send(client_id)
                     .await
             },

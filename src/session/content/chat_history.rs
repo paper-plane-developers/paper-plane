@@ -1,7 +1,7 @@
 use glib::{clone, signal::Inhibit};
-use gtk::{gdk, glib};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::{gdk, glib};
 use tdgrand::{enums, functions, types};
 
 use crate::session::{content::MessageRow, Chat};
@@ -99,8 +99,13 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            let message_buffer = self.message_entry.buffer();
 
+            let adj = self.history_list_view.vadjustment().unwrap();
+            adj.connect_value_changed(clone!(@weak obj => move |adj| {
+                obj.load_older_messages(adj);
+            }));
+
+            let message_buffer = self.message_entry.buffer();
             self.message_entry.buffer().connect_text_notify(
                 clone!(@weak obj => move |_: &gtk::TextBuffer| {
                     let should_enable = !message_buffer
@@ -217,6 +222,14 @@ impl ChatHistory {
         }
     }
 
+    fn load_older_messages(&self, adj: &gtk::Adjustment) {
+        if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
+            if let Some(chat) = self.chat() {
+                chat.history().load_older_messages();
+            }
+        }
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::ChatHistory::from_instance(self);
         self_.chat.borrow().clone()
@@ -233,13 +246,14 @@ impl ChatHistory {
         if let Some(ref chat) = chat {
             self_.message_entry.buffer().set_text(&chat.draft_message());
 
-            chat.history().fetch();
-
             let selection = gtk::NoSelection::new(Some(&chat.history()));
             self_.history_list_view.set_model(Some(&selection));
         }
 
         self_.chat.replace(chat);
         self.notify("chat");
+
+        let adj = self_.history_list_view.vadjustment().unwrap();
+        self.load_older_messages(&adj);
     }
 }
