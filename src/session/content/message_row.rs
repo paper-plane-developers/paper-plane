@@ -199,16 +199,18 @@ impl MessageRow {
         }
 
         if !message.outgoing() {
+            let is_channel = if let ChatType::Supergroup(data) = message.chat().r#type() {
+                data.is_channel
+            } else {
+                false
+            };
+
             match message.chat().r#type() {
-                ChatType::BasicGroup(_) => {
-                    let sender_label = MessageRow::create_sender_label(message);
-                    vbox.append(&sender_label);
-                }
-                ChatType::Supergroup(group) => {
+                ChatType::BasicGroup(_) | ChatType::Supergroup(_) => {
                     let sender_label = MessageRow::create_sender_label(message);
                     vbox.append(&sender_label);
 
-                    if !group.is_channel {
+                    if !is_channel {
                         let sender_avatar = MessageRow::create_sender_avatar();
                         hbox.prepend(&sender_avatar);
 
