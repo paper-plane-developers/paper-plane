@@ -3,22 +3,17 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
 use tdgrand::types::Chat as TelegramChat;
-use tdgrand::types::ChatPhotoInfo;
 
 use crate::session::chat::{History, Message};
+use crate::session::Avatar;
 use crate::Session;
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatType")]
 pub struct BoxedChatType(ChatType);
 
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "BoxedChatPhoto")]
-pub struct BoxedChatPhoto(Option<ChatPhotoInfo>);
-
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
@@ -27,7 +22,7 @@ mod imp {
         pub id: Cell<i64>,
         pub r#type: OnceCell<ChatType>,
         pub title: RefCell<String>,
-        pub photo: RefCell<Option<ChatPhotoInfo>>,
+        pub avatar: OnceCell<Avatar>,
         pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
         pub unread_count: Cell<i32>,
@@ -44,13 +39,6 @@ mod imp {
     }
 
     impl ObjectImpl for Chat {
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("photo-updated", &[], <()>::static_type().into()).build()]
-            });
-            SIGNALS.as_ref()
-        }
-
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -77,12 +65,12 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
-                    glib::ParamSpec::new_boxed(
-                        "photo",
-                        "Photo",
-                        "The photo of this chat",
-                        BoxedChatPhoto::static_type(),
-                        glib::ParamFlags::WRITABLE,
+                    glib::ParamSpec::new_object(
+                        "avatar",
+                        "Avatar",
+                        "The avatar of this chat",
+                        Avatar::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_object(
                         "last-message",
@@ -138,7 +126,7 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -156,9 +144,8 @@ mod imp {
                     let title = value.get().unwrap();
                     self.title.replace(title);
                 }
-                "photo" => {
-                    let photo = value.get::<BoxedChatPhoto>().unwrap();
-                    obj.set_photo(photo.0);
+                "avatar" => {
+                    self.avatar.set(value.get().unwrap()).unwrap();
                 }
                 "last-message" => {
                     let last_message = value.get().unwrap();
@@ -184,10 +171,11 @@ mod imp {
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => self.id.get().to_value(),
                 "title" => self.title.borrow().to_value(),
+                "avatar" => obj.avatar().to_value(),
                 "last-message" => self.last_message.borrow().to_value(),
                 "order" => self.order.get().to_value(),
                 "unread-count" => self.unread_count.get().to_value(),
@@ -213,12 +201,14 @@ glib::wrapper! {
 impl Chat {
     pub fn new(chat: TelegramChat, session: Session) -> Self {
         let r#type = BoxedChatType(chat.r#type);
-        let photo = BoxedChatPhoto(chat.photo);
+        let avatar = Avatar::new(&session);
+        avatar.update_from_chat_photo(chat.photo);
+
         glib::Object::new(&[
             ("id", &chat.id),
             ("type", &r#type),
             ("title", &chat.title),
-            ("photo", &photo),
+            ("avatar", &avatar),
             ("session", &session),
         ])
         .expect("Failed to create Chat")
@@ -236,7 +226,7 @@ impl Chat {
                 self.set_title(update.title);
             }
             Update::ChatPhoto(update) => {
-                self.set_photo(update.photo);
+                self.avatar().update_from_chat_photo(update.photo);
             }
             Update::ChatLastMessage(update) => {
                 match update.last_message {
@@ -298,24 +288,15 @@ impl Chat {
         self.property("title").unwrap().get().unwrap()
     }
 
-    pub fn photo(&self) -> Option<ChatPhotoInfo> {
-        let self_ = imp::Chat::from_instance(self);
-        self_.photo.borrow().clone()
-    }
-
-    pub fn set_photo(&self, photo: Option<ChatPhotoInfo>) {
-        let self_ = imp::Chat::from_instance(self);
-        self_.photo.replace(photo);
-
-        self.notify("photo");
-
-        self.emit_by_name("photo-updated", &[]).unwrap();
-    }
-
     fn set_title(&self, title: String) {
         if self.title() != title {
             self.set_property("title", &title).unwrap();
         }
+    }
+
+    pub fn avatar(&self) -> &Avatar {
+        let self_ = imp::Chat::from_instance(self);
+        self_.avatar.get().unwrap()
     }
 
     pub fn last_message(&self) -> Option<Message> {
@@ -371,15 +352,5 @@ impl Chat {
 
     pub fn session(&self) -> Session {
         self.property("session").unwrap().get().unwrap()
-    }
-
-    pub fn connect_photo_updated<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
-        self.connect_local("photo-updated", true, move |values| {
-            let obj = values[0].get::<Self>().unwrap();
-            f(&obj);
-
-            None
-        })
-        .unwrap()
     }
 }

@@ -1,12 +1,11 @@
 use gettextrs::gettext;
-use glib::clone;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib};
 use tdgrand::enums::MessageContent;
-use tdgrand::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
+use crate::session::components::Avatar;
 use crate::session::Chat;
 use crate::utils::escape;
 
@@ -28,9 +27,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
-        pub photo_updated_handler: RefCell<Option<glib::SignalHandlerId>>,
-        #[template_child]
-        pub photo_avatar: TemplateChild<adw::Avatar>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -44,6 +40,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            Avatar::static_type();
             Self::bind_template(klass);
         }
 
@@ -105,36 +102,6 @@ impl ChatRow {
         glib::Object::new(&[]).expect("Failed to create ChatRow")
     }
 
-    fn update_photo_avatar(&self, chat: &Chat) {
-        let self_ = imp::ChatRow::from_instance(self);
-
-        if let Some(photo) = chat.photo() {
-            if photo.small.local.is_downloading_completed {
-                let file = gio::File::for_path(photo.small.local.path);
-                let photo = gdk::Texture::from_file(&file).unwrap();
-                self_.photo_avatar.set_custom_image(Some(&photo));
-                return;
-            } else if photo.small.local.can_be_downloaded {
-                let (sender, receiver) =
-                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
-                receiver.attach(
-                    None,
-                    clone!(@weak chat => @default-return glib::Continue(false), move |file| {
-                        let mut photo = chat.photo().unwrap();
-                        photo.small = file;
-                        chat.set_photo(Some(photo));
-
-                        glib::Continue(true)
-                    }),
-                );
-
-                chat.session().download_file(photo.small.id, sender);
-            }
-        }
-
-        self_.photo_avatar.set_custom_image(None::<&gdk::Paintable>);
-    }
-
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::ChatRow::from_instance(self);
         self_.chat.borrow().clone()
@@ -146,13 +113,6 @@ impl ChatRow {
         }
 
         let self_ = imp::ChatRow::from_instance(self);
-
-        // Remove signals from the previous chat
-        if let Some(chat) = self_.chat.take() {
-            if let Some(photo_updated_handler) = self_.photo_updated_handler.take() {
-                chat.disconnect(photo_updated_handler);
-            }
-        }
 
         if let Some(ref chat) = chat {
             let chat_expression = gtk::ConstantExpression::new(&chat);
@@ -222,16 +182,6 @@ impl ChatRow {
                 "label",
                 Some(&last_message_label),
             );
-
-            // Chat photo
-            self.update_photo_avatar(chat);
-            self_
-                .photo_updated_handler
-                .replace(Some(chat.connect_photo_updated(
-                    clone!(@weak self as obj => move |chat| {
-                        obj.update_photo_avatar(chat);
-                    }),
-                )));
         }
 
         self_.chat.replace(chat);

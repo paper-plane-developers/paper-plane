@@ -5,10 +5,13 @@
       <object class="GtkBox">
         <property name="spacing">12</property>
         <child>
-          <object class="AdwAvatar" id="photo_avatar">
-            <property name="show-initials">True</property>
-            <property name="size">44</property>
-            <binding name="text">
+          <object class="ComponentsAvatar">
+            <binding name="item">
+              <lookup name="avatar">
+                <lookup name="chat">SidebarChatRow</lookup>
+              </lookup>
+            </binding>
+            <binding name="display-name">
               <lookup name="title">
                 <lookup name="chat">SidebarChatRow</lookup>
               </lookup>
