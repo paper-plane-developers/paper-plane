@@ -29,20 +29,35 @@
     },
     "modules": [
         {
+            "name": "libsass",
+            "buildsystem": "meson",
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/libsass.git",
+                    "branch": "meson"
+                }
+            ]
+        },
+        {
+            "name": "sassc",
+            "buildsystem": "meson",
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/sassc.git",
+                    "branch": "meson"
+                }
+            ]
+        },
+        {
             "name": "libadwaita",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dintrospection=disabled",
-                "-Dvapi=false",
-                "-Dgtk_doc=false",
-                "-Dtests=false",
-                "-Dexamples=false"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/lib/libsass.so"
+                "-Dexamples=false",
+                "-Dtests=false"
             ],
             "sources": [
                 {
