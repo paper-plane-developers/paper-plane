@@ -27,6 +27,10 @@
             "--share=network"
         ]
     },
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig"
+    ],
     "modules": [
         {
             "name": "libsass",
@@ -74,9 +78,6 @@
                 "install -D libtdjson.so.* /app/lib",
                 "ln -sf /app/lib/libtdjson.so.* /app/lib/libtdjson.so",
                 "install -D pkgconfig/* /app/lib/pkgconfig"
-            ],
-            "cleanup": [
-                "/lib/pkgconfig"
             ],
             "sources": [
                 {
