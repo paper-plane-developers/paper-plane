@@ -6,6 +6,7 @@
         <property name="spacing">12</property>
         <child>
           <object class="ComponentsAvatar">
+            <property name="size">44</property>
             <binding name="item">
               <lookup name="avatar">
                 <lookup name="chat">SidebarChatRow</lookup>

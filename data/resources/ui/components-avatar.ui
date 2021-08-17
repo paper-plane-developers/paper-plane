@@ -4,7 +4,6 @@
     <property name="child">
       <object class="AdwAvatar" id="avatar">
         <property name="show-initials">True</property>
-        <property name="size">44</property>
         <binding name="custom-image">
           <lookup name="image" type="Avatar">
             <lookup name="item">ComponentsAvatar</lookup>

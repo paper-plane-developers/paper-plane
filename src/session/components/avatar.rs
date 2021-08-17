@@ -53,6 +53,15 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_int(
+                        "size",
+                        "Size",
+                        "The size of this avatar",
+                        -1,
+                        i32::MAX,
+                        -1,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
 
@@ -69,6 +78,7 @@ mod imp {
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
                 "display-name" => obj.set_display_name(value.get().unwrap()),
+                "size" => obj.set_size(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -77,6 +87,7 @@ mod imp {
             match pspec.name() {
                 "item" => obj.item().to_value(),
                 "display-name" => obj.display_name().to_value(),
+                "size" => obj.size().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -94,6 +105,13 @@ glib::wrapper! {
 impl Avatar {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ComponentsAvatar")
+    }
+
+    fn request_avatar_image(&self) {
+        let self_ = imp::Avatar::from_instance(self);
+        if let Some(item) = &*self_.item.borrow() {
+            item.set_needed(true);
+        }
     }
 
     pub fn item(&self) -> Option<AvatarItem> {
@@ -122,10 +140,15 @@ impl Avatar {
         self.notify("display-name");
     }
 
-    fn request_avatar_image(&self) {
+    pub fn size(&self) -> i32 {
         let self_ = imp::Avatar::from_instance(self);
-        if let Some(item) = &*self_.item.borrow() {
-            item.set_needed(true);
-        }
+        self_.avatar.size()
+    }
+
+    pub fn set_size(&self, size: i32) {
+        let self_ = imp::Avatar::from_instance(self);
+        self_.avatar.set_size(size);
+
+        self.notify("size");
     }
 }
