@@ -1,7 +1,7 @@
 {
     "app-id": "com.github.melix99.telegrand.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "40",
+    "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
@@ -14,7 +14,8 @@
         "--device=dri",
         "--talk-name=org.a11y.Bus",
         "--env=RUST_LOG=telegrand=debug",
-        "--env=G_MESSAGES_DEBUG=none"
+        "--env=G_MESSAGES_DEBUG=none",
+        "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin",
@@ -24,27 +25,43 @@
         "test-args": [
             "--socket=x11",
             "--share=network"
-        ],
-        "env": {
-            "RUST_BACKTRACE": "1"
-        }
+        ]
     },
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig"
+    ],
     "modules": [
+        {
+            "name": "libsass",
+            "buildsystem": "meson",
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/libsass.git",
+                    "branch": "meson"
+                }
+            ]
+        },
+        {
+            "name": "sassc",
+            "buildsystem": "meson",
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/sassc.git",
+                    "branch": "meson"
+                }
+            ]
+        },
         {
             "name": "libadwaita",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dintrospection=disabled",
-                "-Dvapi=false",
-                "-Dgtk_doc=false",
-                "-Dtests=false",
-                "-Dexamples=false"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/lib/libsass.so"
+                "-Dexamples=false",
+                "-Dtests=false"
             ],
             "sources": [
                 {
@@ -61,9 +78,6 @@
                 "install -D libtdjson.so.* /app/lib",
                 "ln -sf /app/lib/libtdjson.so.* /app/lib/libtdjson.so",
                 "install -D pkgconfig/* /app/lib/pkgconfig"
-            ],
-            "cleanup": [
-                "/lib/pkgconfig"
             ],
             "sources": [
                 {
