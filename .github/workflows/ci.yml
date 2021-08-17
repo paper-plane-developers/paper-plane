@@ -6,9 +6,9 @@ on:
 jobs:
   flatpak:
     name: "Flatpak"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-40
+      image: bilelmoussaoui/flatpak-github-actions:gnome-nightly
       options: --privileged
     steps:
     - uses: actions/checkout@v2
@@ -16,5 +16,6 @@ jobs:
       with:
         bundle: telegrand.flatpak
         manifest-path: build-aux/com.github.melix99.telegrand.Devel.json
+        repository-name: flathub-beta
         run-tests: true
         cache-key: flatpak-builder-${{ github.sha }}
