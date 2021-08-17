@@ -14,7 +14,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/components-avatar.ui")]
     pub struct Avatar {
         pub item: RefCell<Option<AvatarItem>>,
-        pub display_name: RefCell<Option<String>>,
         #[template_child]
         pub avatar: TemplateChild<adw::Avatar>,
     }
@@ -130,12 +129,12 @@ impl Avatar {
 
     pub fn display_name(&self) -> Option<String> {
         let self_ = imp::Avatar::from_instance(self);
-        self_.display_name.borrow().clone()
+        self_.avatar.text().map(|s| s.to_string())
     }
 
-    pub fn set_display_name(&self, display_name: Option<String>) {
+    pub fn set_display_name(&self, display_name: Option<&str>) {
         let self_ = imp::Avatar::from_instance(self);
-        self_.display_name.replace(display_name);
+        self_.avatar.set_text(display_name);
 
         self.notify("display-name");
     }
