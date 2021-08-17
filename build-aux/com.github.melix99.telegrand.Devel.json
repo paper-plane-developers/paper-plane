@@ -1,7 +1,7 @@
 {
     "app-id": "com.github.melix99.telegrand.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "40",
+    "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
