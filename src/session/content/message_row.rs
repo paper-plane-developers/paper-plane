@@ -7,6 +7,7 @@ use tdgrand::enums::{ChatType, MessageContent, MessageSender, TextEntityType};
 use tdgrand::types::FormattedText;
 
 use crate::session::chat::{BoxedMessageContent, Message};
+use crate::session::components::Avatar;
 use crate::session::{Chat, User};
 use crate::utils::{escape, linkify};
 
@@ -211,11 +212,11 @@ impl MessageRow {
                     vbox.append(&sender_label);
 
                     if !is_channel {
-                        let sender_avatar = MessageRow::create_sender_avatar();
+                        let sender_avatar = MessageRow::create_sender_avatar(message);
                         hbox.prepend(&sender_avatar);
 
                         sender_label
-                            .bind_property("label", &sender_avatar, "text")
+                            .bind_property("label", &sender_avatar, "display-name")
                             .flags(glib::BindingFlags::SYNC_CREATE)
                             .build();
                     }
@@ -224,7 +225,7 @@ impl MessageRow {
             }
         }
 
-        let text_label = self.create_text_label(message);
+        let text_label = MessageRow::create_text_label(message);
         vbox.append(&text_label);
 
         self.set_child(Some(&hbox));
@@ -292,15 +293,37 @@ impl MessageRow {
         label
     }
 
-    fn create_sender_avatar() -> adw::Avatar {
-        adw::AvatarBuilder::new()
-            .valign(gtk::Align::End)
-            .show_initials(true)
-            .size(32)
-            .build()
+    fn create_sender_avatar(message: &Message) -> Avatar {
+        let sender_avatar = Avatar::new();
+        sender_avatar.set_size(32);
+        sender_avatar.set_valign(gtk::Align::End);
+
+        match message.sender() {
+            MessageSender::Chat(sender) => {
+                let chat = message
+                    .chat()
+                    .session()
+                    .chat_list()
+                    .get_chat(sender.chat_id)
+                    .unwrap();
+
+                sender_avatar.set_item(Some(chat.avatar().clone()));
+            }
+            MessageSender::User(sender) => {
+                let user = message
+                    .chat()
+                    .session()
+                    .user_list()
+                    .get_or_create_user(sender.user_id);
+
+                sender_avatar.set_item(Some(user.avatar().clone()));
+            }
+        }
+
+        sender_avatar
     }
 
-    fn create_text_label(&self, message: &Message) -> gtk::Label {
+    fn create_text_label(message: &Message) -> gtk::Label {
         let label = gtk::LabelBuilder::new()
             .css_classes(vec!["message-text".to_string()])
             .selectable(true)

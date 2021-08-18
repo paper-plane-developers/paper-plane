@@ -22,7 +22,7 @@ mod imp {
     pub struct Session {
         pub client_id: Cell<i32>,
         pub chat_list: OnceCell<ChatList>,
-        pub user_list: UserList,
+        pub user_list: OnceCell<UserList>,
         pub selected_chat: RefCell<Option<Chat>>,
         pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
@@ -113,8 +113,8 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
-                "chat-list" => self.chat_list.get_or_init(|| ChatList::new(obj)).to_value(),
-                "user-list" => self.user_list.to_value(),
+                "chat-list" => obj.chat_list().to_value(),
+                "user-list" => obj.user_list().to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 _ => unimplemented!(),
             }
@@ -142,8 +142,6 @@ impl Session {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let self_ = imp::Session::from_instance(self);
-
         match update {
             Update::NewMessage(_)
             | Update::MessageSendSucceeded(_)
@@ -159,7 +157,7 @@ impl Session {
                 self.chat_list().handle_update(update);
             }
             Update::User(_) => {
-                self_.user_list.handle_update(update);
+                self.user_list().handle_update(update);
             }
             Update::File(update) => {
                 self.handle_file_update(update.file);
@@ -219,13 +217,14 @@ impl Session {
         self_.client_id.get()
     }
 
-    pub fn chat_list(&self) -> ChatList {
-        self.property("chat-list").unwrap().get().unwrap()
+    pub fn chat_list(&self) -> &ChatList {
+        let self_ = imp::Session::from_instance(self);
+        self_.chat_list.get_or_init(|| ChatList::new(self))
     }
 
     pub fn user_list(&self) -> &UserList {
         let self_ = imp::Session::from_instance(self);
-        &self_.user_list
+        self_.user_list.get_or_init(|| UserList::new(self))
     }
 
     fn selected_chat(&self) -> Option<Chat> {

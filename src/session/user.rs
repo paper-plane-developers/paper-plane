@@ -3,9 +3,12 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::Update;
 
+use crate::session::Avatar;
+use crate::Session;
+
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
@@ -13,6 +16,8 @@ mod imp {
         pub id: Cell<i32>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
+        pub avatar: OnceCell<Avatar>,
+        pub session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -49,6 +54,20 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE,
                     ),
+                    glib::ParamSpec::new_object(
+                        "avatar",
+                        "Avatar",
+                        "The avatar of this chat",
+                        Avatar::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_object(
+                        "session",
+                        "Session",
+                        "The session",
+                        Session::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                 ]
             });
 
@@ -75,15 +94,23 @@ mod imp {
                     let last_name = value.get().unwrap();
                     self.last_name.replace(last_name);
                 }
+                "avatar" => {
+                    self.avatar.set(value.get().unwrap()).unwrap();
+                }
+                "session" => {
+                    self.session.set(value.get().unwrap()).unwrap();
+                }
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => self.id.get().to_value(),
                 "first-name" => self.first_name.borrow().to_value(),
                 "last-name" => self.last_name.borrow().to_value(),
+                "avatar" => obj.avatar().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -95,8 +122,11 @@ glib::wrapper! {
 }
 
 impl User {
-    pub fn new(id: i32) -> Self {
-        glib::Object::new(&[("id", &id)]).expect("Failed to create User")
+    pub fn new(id: i32, session: &Session) -> Self {
+        let avatar = Avatar::new(session);
+
+        glib::Object::new(&[("id", &id), ("avatar", &avatar), ("session", session)])
+            .expect("Failed to create User")
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -104,6 +134,8 @@ impl User {
             Update::User(update) => {
                 self.set_first_name(update.user.first_name);
                 self.set_last_name(update.user.last_name);
+                self.avatar()
+                    .update_from_user_photo(update.user.profile_photo);
             }
             _ => {}
         }
@@ -131,5 +163,15 @@ impl User {
         if self.last_name() != last_name {
             self.set_property("last-name", &last_name).unwrap();
         }
+    }
+
+    pub fn avatar(&self) -> &Avatar {
+        let self_ = imp::User::from_instance(self);
+        self_.avatar.get().unwrap()
+    }
+
+    pub fn session(&self) -> &Session {
+        let self_ = imp::User::from_instance(self);
+        self_.session.get().unwrap()
     }
 }

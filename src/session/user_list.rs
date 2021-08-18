@@ -4,15 +4,18 @@ use gtk::{gio, glib};
 use tdgrand::enums::Update;
 
 use crate::session::User;
+use crate::Session;
 
 mod imp {
     use super::*;
     use indexmap::IndexMap;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub struct UserList {
         pub list: RefCell<IndexMap<i32, User>>,
+        pub session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -23,7 +26,42 @@ mod imp {
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for UserList {}
+    impl ObjectImpl for UserList {
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpec::new_object(
+                    "session",
+                    "Session",
+                    "The session",
+                    Session::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                )]
+            });
+
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            _obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "session" => self.session.set(value.get().unwrap()).unwrap(),
+
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "session" => obj.session().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+    }
 
     impl ListModelImpl for UserList {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
@@ -50,15 +88,9 @@ glib::wrapper! {
         @implements gio::ListModel;
 }
 
-impl Default for UserList {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl UserList {
-    pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create UserList")
+    pub fn new(session: &Session) -> Self {
+        glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
     }
 
     pub fn insert_user(&self, user: User) {
@@ -79,7 +111,7 @@ impl UserList {
             }
         }
 
-        let user = User::new(user_id);
+        let user = User::new(user_id, self.session());
         self.insert_user(user);
         self.get_or_create_user(user_id)
     }
@@ -99,5 +131,10 @@ impl UserList {
         let list = self_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
+    }
+
+    pub fn session(&self) -> &Session {
+        let self_ = imp::UserList::from_instance(self);
+        self_.session.get().unwrap()
     }
 }

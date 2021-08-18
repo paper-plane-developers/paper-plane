@@ -2,7 +2,7 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
-use tdgrand::types::{ChatPhotoInfo, File};
+use tdgrand::types::{ChatPhotoInfo, File, ProfilePhoto};
 
 use crate::Session;
 
@@ -94,6 +94,11 @@ impl Avatar {
 
     pub fn update_from_chat_photo(&self, chat_photo: Option<ChatPhotoInfo>) {
         let image_file = chat_photo.map(|data| data.small);
+        self.set_image_file(image_file);
+    }
+
+    pub fn update_from_user_photo(&self, user_photo: Option<ProfilePhoto>) {
+        let image_file = user_photo.map(|data| data.small);
         self.set_image_file(image_file);
     }
 
