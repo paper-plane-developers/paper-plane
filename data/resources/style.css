@@ -44,7 +44,17 @@
 }
 
 .chat-history row .outgoing {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
   margin-left: 50px;
+}
+
+.chat-history row .outgoing selection {
+  background-color: alpha(@accent_fg_color, 0.2);
+}
+
+.chat-history row .outgoing link {
+  color: @accent_fg_color;
 }
 
 .event-row {

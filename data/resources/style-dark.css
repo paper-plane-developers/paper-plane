@@ -1,4 +1,4 @@
-.chat-history row .message-bubble {
+.chat-history row .message-bubble:not(.outgoing) {
   background-color: alpha(white, 0.1);
 }
 
