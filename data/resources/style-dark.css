@@ -1,3 +1,7 @@
 .chat-history row .message-bubble {
   background-color: alpha(white, 0.1);
 }
+
+.event-row {
+  background-color: alpha(white, 0.05);
+}

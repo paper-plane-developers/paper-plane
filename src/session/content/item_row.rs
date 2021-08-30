@@ -1,8 +1,9 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
+use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::{Item, ItemType};
-use crate::session::content::MessageRow;
+use crate::session::content::{EventRow, MessageRow};
 
 mod imp {
     use super::*;
@@ -88,7 +89,25 @@ impl ItemRow {
                             self.set_child(Some(&child));
                             child
                         };
+
                     child.set_message(message.clone());
+                }
+                ItemType::DayDivider(date) => {
+                    let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year() {
+                        // Translators: This is a date format in the day divider without the year
+                        gettext("%B %e")
+                    } else {
+                        // Translators: This is a date format in the day divider with the year
+                        gettext("%B %e, %Y")
+                    };
+                    let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
+
+                    if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
+                        child.set_label(&date);
+                    } else {
+                        let child = EventRow::new(date);
+                        self.set_child(Some(&child));
+                    }
                 }
             }
         }

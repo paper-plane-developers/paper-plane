@@ -38,6 +38,13 @@
   margin-left: 50px;
 }
 
+.event-row {
+  background-color: alpha(black, 0.1);
+  border-radius: 9999px;
+  font-size: 0.8em;
+  padding: 6px 18px;
+}
+
 .sender-text {
   font-size: 0.85em;
   font-weight: bold;

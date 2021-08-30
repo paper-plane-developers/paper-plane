@@ -1,10 +1,11 @@
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::{glib, glib::DateTime, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::Message;
 
 #[derive(Debug, Clone)]
 pub enum ItemType {
     Message(Message),
+    DayDivider(DateTime),
 }
 
 #[derive(Clone, Debug, glib::GBoxed)]
@@ -70,6 +71,11 @@ impl Item {
         glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
     }
 
+    pub fn for_day_divider(day: DateTime) -> Self {
+        let type_ = BoxedItemType(ItemType::DayDivider(day));
+        glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
+    }
+
     pub fn type_(&self) -> &ItemType {
         let self_ = imp::Item::from_instance(self);
         self_.type_.get().unwrap()
@@ -78,6 +84,18 @@ impl Item {
     pub fn message(&self) -> Option<&Message> {
         if let ItemType::Message(message) = self.type_() {
             Some(message)
+        } else {
+            None
+        }
+    }
+
+    pub fn message_timestamp(&self) -> Option<DateTime> {
+        if let ItemType::Message(message) = self.type_() {
+            Some(
+                glib::DateTime::from_unix_utc(message.date().into())
+                    .and_then(|t| t.to_local())
+                    .unwrap(),
+            )
         } else {
             None
         }

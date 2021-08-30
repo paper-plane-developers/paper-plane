@@ -183,6 +183,107 @@ impl History {
         }
     }
 
+    fn items_changed(&self, position: u32, removed: u32, added: u32) {
+        let self_ = imp::History::from_instance(self);
+
+        // Insert day dividers where needed
+        let added = {
+            let position = position as usize;
+            let added = added as usize;
+
+            let mut list = self_.list.borrow_mut();
+            let mut previous_timestamp = if position > 0 {
+                list.get(position - 1)
+                    .and_then(|item| item.message_timestamp())
+            } else {
+                None
+            };
+            let mut dividers: Vec<(usize, Item)> = vec![];
+            let mut index = position;
+
+            for current in list.range(position..position + added) {
+                if let Some(current_timestamp) = current.message_timestamp() {
+                    if Some(current_timestamp.ymd()) != previous_timestamp.as_ref().map(|t| t.ymd())
+                    {
+                        dividers.push((index, Item::for_day_divider(current_timestamp.clone())));
+                        previous_timestamp = Some(current_timestamp);
+                        index += 1;
+                    }
+                }
+                index += 1;
+            }
+
+            let dividers_len = dividers.len();
+            for (position, item) in dividers {
+                list.insert(position, item);
+            }
+
+            (added + dividers_len) as u32
+        };
+
+        // Check and remove no more needed day divider after removing messages
+        let (position, removed) = {
+            let mut position = position as usize;
+            let mut removed = removed as usize;
+
+            if removed > 0 {
+                let mut list = self_.list.borrow_mut();
+                let previous_item = if position > 0 {
+                    list.get(position - 1)
+                } else {
+                    None
+                };
+
+                if let Some(ItemType::DayDivider(_)) = previous_item.map(|item| item.type_()) {
+                    let item_after_removed = list.get(position + removed - 1);
+
+                    match item_after_removed.map(|item| item.type_()) {
+                        None | Some(ItemType::DayDivider(_)) => {
+                            list.remove(position - 1);
+
+                            position = position - 1;
+                            removed = removed + 1;
+                        }
+                        _ => {}
+                    }
+                }
+            }
+
+            (position as u32, removed as u32)
+        };
+
+        // Check and remove no more needed day divider after adding messages
+        let removed = {
+            let mut removed = removed;
+
+            if added > 0 {
+                let position = position as usize;
+                let added = added as usize;
+
+                let mut list = self_.list.borrow_mut();
+                let last_added_timestamp = list
+                    .get(position + added - 1)
+                    .unwrap()
+                    .message_timestamp()
+                    .unwrap();
+                let next_item = list.get(position + added);
+
+                if let Some(ItemType::DayDivider(date)) = next_item.map(|item| item.type_()) {
+                    if date.ymd() == last_added_timestamp.ymd() {
+                        list.remove(position + added);
+
+                        removed = removed + 1;
+                    }
+                }
+            }
+
+            removed
+        };
+
+        self.upcast_ref::<gio::ListModel>()
+            .items_changed(position, removed, added);
+    }
+
     pub fn append(&self, message: TelegramMessage) {
         let self_ = imp::History::from_instance(self);
         let message = Message::new(message, &self.chat());
