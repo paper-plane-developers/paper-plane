@@ -1,12 +1,10 @@
 use glib::clone;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
+use gtk::{gio, glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{self, Update};
 use tdgrand::functions;
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::session::chat::Message;
+use crate::session::chat::{Item, ItemType, Message};
 use crate::session::Chat;
 use crate::utils::do_async;
 
@@ -18,10 +16,10 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct History {
-        pub list: RefCell<VecDeque<Message>>,
-        pub message_map: RefCell<HashMap<i64, Message>>,
         pub chat: OnceCell<Chat>,
         pub loading: Cell<bool>,
+        pub list: RefCell<VecDeque<Item>>,
+        pub message_map: RefCell<HashMap<i64, Message>>,
     }
 
     #[glib::object_subclass]
@@ -84,7 +82,7 @@ mod imp {
 
     impl ListModelImpl for History {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
-            Message::static_type()
+            Item::static_type()
         }
 
         fn n_items(&self, _list_model: &Self::Type) -> u32 {
@@ -123,8 +121,9 @@ impl History {
         let oldest_message_id = self_
             .list
             .borrow()
-            .front()
-            .map(|message| message.id())
+            .iter()
+            .find_map(|item| item.message())
+            .map(|m| m.id())
             .unwrap_or_default();
 
         self.set_loading(true);
@@ -193,7 +192,10 @@ impl History {
             .borrow_mut()
             .insert(message.id(), message.clone());
 
-        self_.list.borrow_mut().push_back(message);
+        self_
+            .list
+            .borrow_mut()
+            .push_back(Item::for_message(message));
 
         let index = self_.list.borrow().len() - 1;
         self.items_changed(index as u32, 0, 1);
@@ -214,7 +216,10 @@ impl History {
                 .borrow_mut()
                 .insert(message.id(), message.clone());
 
-            self_.list.borrow_mut().push_front(message);
+            self_
+                .list
+                .borrow_mut()
+                .push_front(Item::for_message(message));
         }
 
         self.items_changed(0, 0, added as u32);
@@ -222,12 +227,17 @@ impl History {
 
     fn remove(&self, message_id: i64) {
         let self_ = imp::History::from_instance(self);
-        let index = self_
-            .list
-            .borrow()
-            .binary_search_by(|message| message.id().cmp(&message_id));
+        let index = self_.list.borrow().iter().position(|m| {
+            if let ItemType::Message(message) = m.type_() {
+                if message.id() == message_id {
+                    return true;
+                }
+            }
 
-        if let Ok(index) = index {
+            false
+        });
+
+        if let Some(index) = index {
             self_.list.borrow_mut().remove(index);
             self_.message_map.borrow_mut().remove(&message_id);
 

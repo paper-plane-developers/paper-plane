@@ -167,18 +167,11 @@ impl MessageRow {
         self_.message.borrow().clone()
     }
 
-    fn set_message(&self, message: Option<Message>) {
-        if self.message() == message {
-            return;
-        }
+    pub fn set_message(&self, message: Message) {
+        self.show_message_bubble(&message);
 
         let self_ = imp::MessageRow::from_instance(self);
-
-        if let Some(ref message) = message {
-            self.show_message_bubble(message);
-        }
-
-        self_.message.replace(message);
+        self_.message.replace(Some(message));
         self.notify("message");
     }
 
