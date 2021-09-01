@@ -279,9 +279,9 @@ impl Chat {
         self.property("id").unwrap().get().unwrap()
     }
 
-    pub fn r#type(&self) -> ChatType {
+    pub fn r#type(&self) -> &ChatType {
         let self_ = imp::Chat::from_instance(self);
-        self_.r#type.get().unwrap().clone()
+        self_.r#type.get().unwrap()
     }
 
     pub fn title(&self) -> String {
