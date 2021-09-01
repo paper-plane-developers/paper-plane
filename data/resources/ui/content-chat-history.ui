@@ -36,9 +36,6 @@
               <object class="AdwClampScrollable">
                 <property name="child">
                   <object class="GtkListView" id="history_list_view">
-                    <style>
-                      <class name="navigation-sidebar"/>
-                    </style>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -46,10 +43,10 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="ContentMessageRow">
+      <object class="ContentItemRow">
         <property name="margin-top">3</property>
         <property name="margin-bottom">3</property>
-        <binding name="message">
+        <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>
       </object>

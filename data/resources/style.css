@@ -24,6 +24,15 @@
   background-color: @theme_base_color;
 }
 
+.chat-history listview {
+  padding: 3px 0;
+}
+
+.chat-history row {
+  border-radius: 5px;
+  margin: 0 6px;
+}
+
 .chat-history row .message-bubble {
   background-color: alpha(black, 0.1);
   border-radius: 9px;
@@ -36,6 +45,13 @@
 
 .chat-history row .outgoing {
   margin-left: 50px;
+}
+
+.event-row {
+  background-color: alpha(black, 0.1);
+  border-radius: 9999px;
+  font-size: 0.8em;
+  padding: 6px 18px;
 }
 
 .sender-text {

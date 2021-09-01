@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentEventRow" parent="AdwBin">
+    <property name="halign">center</property>
+    <style>
+      <class name="event-row"/>
+    </style>
+    <property name="child">
+      <object class="GtkLabel" id="label"/>
+    </property>
+  </template>
+</interface>

@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gdk, glib};
 use tdgrand::{enums, functions, types};
 
-use crate::session::{content::MessageRow, Chat};
+use crate::session::{content::ItemRow, Chat};
 use crate::RUNTIME;
 
 mod imp {
@@ -32,7 +32,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            MessageRow::static_type();
+            ItemRow::static_type();
             Self::bind_template(klass);
 
             klass.install_action("history.send-message", None, move |widget, _, _| {
