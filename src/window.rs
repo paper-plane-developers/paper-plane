@@ -5,16 +5,22 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use tdgrand::enums::{self, AuthorizationState, Update};
+use tdgrand::enums::{self, AuthorizationState, MessageContent, Update};
 use tdgrand::functions;
 use tdgrand::types;
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
-use crate::utils::stringify_message_content;
 use crate::Application;
 use crate::Session;
 use crate::RUNTIME;
+
+fn stringify_message_content(content: MessageContent) -> String {
+    match content {
+        MessageContent::MessageText(content) => content.text.text,
+        _ => gettext("Unsupported message"),
+    }
+}
 
 mod imp {
     use super::*;
@@ -293,7 +299,7 @@ impl Window {
                 let notification = match notification.r#type {
                     enums::NotificationType::NewMessage(data) => {
                         let mut title = chat.title();
-                        let body = stringify_message_content(data.message.content, false);
+                        let body = stringify_message_content(data.message.content);
 
                         // Add the sender's name to the title if the chat is a group and the sender is an user
                         if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =

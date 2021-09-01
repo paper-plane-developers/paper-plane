@@ -1,9 +1,7 @@
-use gettextrs::gettext;
 use gtk::glib;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::future::Future;
-use tdgrand::enums::MessageContent as TelegramMessageContent;
 
 use crate::RUNTIME;
 
@@ -22,20 +20,6 @@ pub fn linkify(text: &str) -> String {
         format!("http://{}", text)
     } else {
         text.to_string()
-    }
-}
-
-pub fn stringify_message_content(content: TelegramMessageContent, use_markup: bool) -> String {
-    match content {
-        TelegramMessageContent::MessageText(content) => content.text.text,
-        _ => {
-            let text = gettext("Unsupported message");
-            if use_markup {
-                format!("<i>{}</i>", text)
-            } else {
-                text
-            }
-        }
     }
 }
 
