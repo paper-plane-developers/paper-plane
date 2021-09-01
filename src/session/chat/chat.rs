@@ -20,7 +20,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct Chat {
         pub id: Cell<i64>,
-        pub r#type: OnceCell<ChatType>,
+        pub type_: OnceCell<ChatType>,
         pub title: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
         pub last_message: RefCell<Option<Message>>,
@@ -137,8 +137,8 @@ mod imp {
                     self.id.set(id);
                 }
                 "type" => {
-                    let r#type = value.get::<BoxedChatType>().unwrap();
-                    self.r#type.set(r#type.0).unwrap();
+                    let type_ = value.get::<BoxedChatType>().unwrap();
+                    self.type_.set(type_.0).unwrap();
                 }
                 "title" => {
                     let title = value.get().unwrap();
@@ -200,13 +200,13 @@ glib::wrapper! {
 
 impl Chat {
     pub fn new(chat: TelegramChat, session: Session) -> Self {
-        let r#type = BoxedChatType(chat.r#type);
+        let type_ = BoxedChatType(chat.r#type);
         let avatar = Avatar::new(&session);
         avatar.update_from_chat_photo(chat.photo);
 
         glib::Object::new(&[
             ("id", &chat.id),
-            ("type", &r#type),
+            ("type", &type_),
             ("title", &chat.title),
             ("avatar", &avatar),
             ("session", &session),
@@ -279,9 +279,9 @@ impl Chat {
         self.property("id").unwrap().get().unwrap()
     }
 
-    pub fn r#type(&self) -> &ChatType {
+    pub fn type_(&self) -> &ChatType {
         let self_ = imp::Chat::from_instance(self);
-        self_.r#type.get().unwrap()
+        self_.type_.get().unwrap()
     }
 
     pub fn title(&self) -> String {

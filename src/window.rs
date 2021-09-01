@@ -303,7 +303,7 @@ impl Window {
 
                         // Add the sender's name to the title if the chat is a group and the sender is an user
                         if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =
-                            chat.r#type()
+                            chat.type_()
                         {
                             if let enums::MessageSender::User(user) = data.message.sender {
                                 let user = session.user_list().get_or_create_user(user.user_id);

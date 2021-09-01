@@ -191,13 +191,13 @@ impl MessageRow {
         }
 
         if !message.is_outgoing() {
-            let is_channel = if let ChatType::Supergroup(data) = message.chat().r#type() {
+            let is_channel = if let ChatType::Supergroup(data) = message.chat().type_() {
                 data.is_channel
             } else {
                 false
             };
 
-            match message.chat().r#type() {
+            match message.chat().type_() {
                 ChatType::BasicGroup(_) | ChatType::Supergroup(_) => {
                     let sender_label = MessageRow::create_sender_label(message);
                     vbox.append(&sender_label);
