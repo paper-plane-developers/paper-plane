@@ -1,14 +1,18 @@
-use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use tdgrand::enums::{MessageContent, MessageSender, Update};
+use gtk::{glib, prelude::*, subclass::prelude::*};
+use tdgrand::enums::{MessageContent, MessageSender as TelegramMessageSender, Update};
 use tdgrand::types::Message as TelegramMessage;
 
-use crate::session::Chat;
+use crate::session::{Chat, User};
 
 #[derive(Clone, Debug, PartialEq, glib::GBoxed)]
 #[gboxed(type_name = "BoxedMessageContent")]
 pub struct BoxedMessageContent(pub MessageContent);
+
+#[derive(Debug, Clone)]
+pub enum MessageSender {
+    User(User),
+    Chat(Chat),
+}
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedMessageSender")]
@@ -148,7 +152,17 @@ glib::wrapper! {
 impl Message {
     pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
         let content = BoxedMessageContent(message.content);
-        let sender = BoxedMessageSender(message.sender);
+        let sender = match message.sender {
+            TelegramMessageSender::User(data) => {
+                let user = chat.session().user_list().get_or_create_user(data.user_id);
+                BoxedMessageSender(MessageSender::User(user))
+            }
+            TelegramMessageSender::Chat(data) => {
+                let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
+                BoxedMessageSender(MessageSender::Chat(chat))
+            }
+        };
+
         glib::Object::new(&[
             ("id", &message.id),
             ("sender", &sender),

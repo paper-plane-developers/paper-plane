@@ -1,12 +1,10 @@
 use adw::prelude::BinExt;
 use gettextrs::gettext;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, pango};
-use tdgrand::enums::{ChatType, MessageContent, MessageSender, TextEntityType};
+use gtk::{glib, pango, prelude::*, subclass::prelude::*};
+use tdgrand::enums::{ChatType, MessageContent, TextEntityType};
 use tdgrand::types::FormattedText;
 
-use crate::session::chat::{BoxedMessageContent, Message};
+use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
 use crate::session::components::Avatar;
 use crate::session::{Chat, User};
 use crate::utils::{escape, linkify};
@@ -233,29 +231,7 @@ impl MessageRow {
             .build();
 
         match message.sender() {
-            MessageSender::Chat(sender) => {
-                let chat = message
-                    .chat()
-                    .session()
-                    .chat_list()
-                    .get_chat(sender.chat_id)
-                    .unwrap();
-                let chat_expression = gtk::ConstantExpression::new(&chat);
-                let title_expression = gtk::PropertyExpression::new(
-                    Chat::static_type(),
-                    Some(&chat_expression),
-                    "title",
-                );
-
-                title_expression.bind(&label, "label", Some(&label));
-            }
-            MessageSender::User(sender) => {
-                let user = message
-                    .chat()
-                    .session()
-                    .user_list()
-                    .get_or_create_user(sender.user_id);
-
+            MessageSender::User(user) => {
                 let user_expression = gtk::ConstantExpression::new(&user);
                 let first_name_expression = gtk::PropertyExpression::new(
                     User::static_type(),
@@ -281,6 +257,16 @@ impl MessageRow {
 
                 full_name_expression.bind(&label, "label", Some(&label));
             }
+            MessageSender::Chat(chat) => {
+                let chat_expression = gtk::ConstantExpression::new(&chat);
+                let title_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    Some(&chat_expression),
+                    "title",
+                );
+
+                title_expression.bind(&label, "label", Some(&label));
+            }
         }
 
         label
@@ -292,25 +278,8 @@ impl MessageRow {
         sender_avatar.set_valign(gtk::Align::End);
 
         match message.sender() {
-            MessageSender::Chat(sender) => {
-                let chat = message
-                    .chat()
-                    .session()
-                    .chat_list()
-                    .get_chat(sender.chat_id)
-                    .unwrap();
-
-                sender_avatar.set_item(Some(chat.avatar().clone()));
-            }
-            MessageSender::User(sender) => {
-                let user = message
-                    .chat()
-                    .session()
-                    .user_list()
-                    .get_or_create_user(sender.user_id);
-
-                sender_avatar.set_item(Some(user.avatar().clone()));
-            }
+            MessageSender::User(user) => sender_avatar.set_item(Some(user.avatar().clone())),
+            MessageSender::Chat(chat) => sender_avatar.set_item(Some(chat.avatar().clone())),
         }
 
         sender_avatar
