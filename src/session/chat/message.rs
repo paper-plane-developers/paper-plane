@@ -27,7 +27,7 @@ mod imp {
     pub struct Message {
         pub id: Cell<i64>,
         pub sender: OnceCell<MessageSender>,
-        pub outgoing: Cell<bool>,
+        pub is_outgoing: Cell<bool>,
         pub date: Cell<i32>,
         pub content: RefCell<Option<BoxedMessageContent>>,
         pub chat: OnceCell<Chat>,
@@ -61,9 +61,9 @@ mod imp {
                         glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_boolean(
-                        "outgoing",
-                        "Outgoing",
-                        "Wheter this message is outgoing or not",
+                        "is-outgoing",
+                        "Is Outgoing",
+                        "Whether this message is outgoing or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
@@ -104,41 +104,29 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "id" => {
-                    let id = value.get().unwrap();
-                    self.id.set(id);
-                }
+                "id" => self.id.set(value.get().unwrap()),
                 "sender" => {
                     let sender = value.get::<BoxedMessageSender>().unwrap();
                     self.sender.set(sender.0).unwrap();
                 }
-                "outgoing" => {
-                    let outgoing = value.get().unwrap();
-                    self.outgoing.set(outgoing);
-                }
-                "date" => {
-                    let date = value.get().unwrap();
-                    self.date.set(date);
-                }
+                "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
+                "date" => self.date.set(value.get().unwrap()),
                 "content" => {
                     let content = value.get().unwrap();
                     self.content.replace(Some(content));
                 }
-                "chat" => {
-                    let chat = value.get().unwrap();
-                    self.chat.set(chat).unwrap();
-                }
+                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => self.id.get().to_value(),
-                "outgoing" => self.outgoing.get().to_value(),
-                "date" => self.date.get().to_value(),
+                "id" => obj.id().to_value(),
+                "is-outgoing" => obj.is_outgoing().to_value(),
+                "date" => obj.date().to_value(),
                 "content" => self.content.borrow().as_ref().unwrap().to_value(),
-                "chat" => self.chat.get().to_value(),
+                "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -166,7 +154,7 @@ impl Message {
         glib::Object::new(&[
             ("id", &message.id),
             ("sender", &sender),
-            ("outgoing", &message.is_outgoing),
+            ("is-outgoing", &message.is_outgoing),
             ("date", &message.date),
             ("content", &content),
             ("chat", chat),
@@ -185,7 +173,8 @@ impl Message {
     }
 
     pub fn id(&self) -> i64 {
-        self.property("id").unwrap().get().unwrap()
+        let self_ = imp::Message::from_instance(self);
+        self_.id.get()
     }
 
     pub fn sender(&self) -> &MessageSender {
@@ -193,12 +182,14 @@ impl Message {
         self_.sender.get().unwrap()
     }
 
-    pub fn outgoing(&self) -> bool {
-        self.property("outgoing").unwrap().get().unwrap()
+    pub fn is_outgoing(&self) -> bool {
+        let self_ = imp::Message::from_instance(self);
+        self_.is_outgoing.get()
     }
 
     pub fn date(&self) -> i32 {
-        self.property("date").unwrap().get().unwrap()
+        let self_ = imp::Message::from_instance(self);
+        self_.date.get()
     }
 
     pub fn content(&self) -> BoxedMessageContent {
@@ -211,7 +202,8 @@ impl Message {
         }
     }
 
-    pub fn chat(&self) -> Chat {
-        self.property("chat").unwrap().get().unwrap()
+    pub fn chat(&self) -> &Chat {
+        let self_ = imp::Message::from_instance(self);
+        self_.chat.get().unwrap()
     }
 }

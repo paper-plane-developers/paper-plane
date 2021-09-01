@@ -182,7 +182,7 @@ impl MessageRow {
             .build();
         hbox.append(&vbox);
 
-        if message.outgoing() {
+        if message.is_outgoing() {
             hbox.set_halign(gtk::Align::End);
             vbox.add_css_class("outgoing");
         } else {
@@ -190,7 +190,7 @@ impl MessageRow {
             vbox.add_css_class("incoming");
         }
 
-        if !message.outgoing() {
+        if !message.is_outgoing() {
             let is_channel = if let ChatType::Supergroup(data) = message.chat().r#type() {
                 data.is_channel
             } else {
