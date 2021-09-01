@@ -3,7 +3,7 @@
   <template class="Window" parent="AdwApplicationWindow">
     <property name="default-width">900</property>
     <property name="default-height">600</property>
-    <child>
+    <property name="content">
       <object class="GtkStack" id="main_stack">
         <property name="visible-child">login</property>
         <property name="transition-type">crossfade</property>
@@ -11,6 +11,6 @@
           <object class="Login" id="login" />
         </child>
       </object>
-    </child>
+    </property>
   </template>
 </interface>
