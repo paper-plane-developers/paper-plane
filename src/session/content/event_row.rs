@@ -73,8 +73,8 @@ glib::wrapper! {
 }
 
 impl EventRow {
-    pub fn new(label: String) -> Self {
-        glib::Object::new(&[("label", &label)]).expect("Failed to create EventRow")
+    pub fn new() -> Self {
+        glib::Object::new(&[]).expect("Failed to create EventRow")
     }
 
     pub fn label(&self) -> String {

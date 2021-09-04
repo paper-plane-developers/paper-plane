@@ -108,12 +108,15 @@ impl ItemRow {
                     };
                     let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
 
-                    if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
-                        child.set_label(&date);
-                    } else {
-                        let child = EventRow::new(date);
-                        self.set_child(Some(&child));
-                    }
+                    let child =
+                        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
+                            child
+                        } else {
+                            let child = EventRow::new();
+                            self.set_child(Some(&child));
+                            child
+                        };
+                    child.set_label(&date);
                 }
             }
         }
