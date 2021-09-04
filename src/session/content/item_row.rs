@@ -108,14 +108,7 @@ impl ItemRow {
                     };
                     let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
 
-                    let child =
-                        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
-                            child
-                        } else {
-                            let child = EventRow::new();
-                            self.set_child(Some(&child));
-                            child
-                        };
+                    let child = self.get_or_create_event_row();
                     child.set_label(&date);
                 }
             }
@@ -123,5 +116,15 @@ impl ItemRow {
 
         let self_ = imp::ItemRow::from_instance(self);
         self_.item.replace(item);
+    }
+
+    fn get_or_create_event_row(&self) -> EventRow {
+        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
+            child
+        } else {
+            let child = EventRow::new();
+            self.set_child(Some(&child));
+            child
+        }
     }
 }
