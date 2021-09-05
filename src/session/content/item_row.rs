@@ -86,7 +86,7 @@ impl ItemRow {
     fn set_item(&self, item: Option<Item>) {
         if let Some(ref item) = item {
             match item.type_() {
-                ItemType::Message(message) => match message.content().0 {
+                ItemType::Message(message) => match message.content() {
                     _ => {
                         let child = if let Some(Ok(child)) =
                             self.child().map(|w| w.downcast::<MessageRow>())

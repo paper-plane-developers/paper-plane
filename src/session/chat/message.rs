@@ -1,10 +1,12 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{MessageContent, MessageSender as TelegramMessageSender, Update};
-use tdgrand::types::Message as TelegramMessage;
+use tdgrand::{
+    enums::{MessageContent, MessageSender as TelegramMessageSender, Update},
+    types::Message as TelegramMessage,
+};
 
 use crate::session::{Chat, User};
 
-#[derive(Clone, Debug, PartialEq, glib::GBoxed)]
+#[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedMessageContent")]
 pub struct BoxedMessageContent(pub MessageContent);
 
@@ -81,7 +83,7 @@ mod imp {
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_object(
                         "chat",
@@ -98,7 +100,7 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -112,8 +114,8 @@ mod imp {
                 "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => {
-                    let content = value.get().unwrap();
-                    self.content.replace(Some(content));
+                    let content = value.get::<BoxedMessageContent>().unwrap();
+                    obj.set_boxed_content(content);
                 }
                 "chat" => self.chat.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
@@ -125,7 +127,7 @@ mod imp {
                 "id" => obj.id().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
                 "date" => obj.date().to_value(),
-                "content" => self.content.borrow().as_ref().unwrap().to_value(),
+                "content" => obj.boxed_content().to_value(),
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
@@ -165,7 +167,7 @@ impl Message {
     pub fn handle_update(&self, update: Update) {
         if let Update::MessageContent(data) = update {
             let new_content = BoxedMessageContent(data.new_content);
-            self.set_content(new_content);
+            self.set_boxed_content(new_content);
         }
     }
 
@@ -189,14 +191,20 @@ impl Message {
         self_.date.get()
     }
 
-    pub fn content(&self) -> BoxedMessageContent {
-        self.property("content").unwrap().get().unwrap()
+    fn boxed_content(&self) -> BoxedMessageContent {
+        let self_ = imp::Message::from_instance(self);
+        self_.content.borrow().clone().unwrap()
     }
 
-    fn set_content(&self, content: BoxedMessageContent) {
-        if self.content() != content {
-            self.set_property("content", &content).unwrap();
-        }
+    fn set_boxed_content(&self, content: BoxedMessageContent) {
+        let self_ = imp::Message::from_instance(self);
+        self_.content.replace(Some(content));
+
+        self.notify("content");
+    }
+
+    pub fn content(&self) -> MessageContent {
+        self.boxed_content().0
     }
 
     pub fn chat(&self) -> &Chat {
