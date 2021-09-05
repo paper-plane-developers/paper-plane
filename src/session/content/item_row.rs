@@ -86,9 +86,11 @@ impl ItemRow {
     fn set_item(&self, item: Option<Item>) {
         if let Some(ref item) = item {
             match item.type_() {
-                ItemType::Message(message) => {
-                    let child =
-                        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<MessageRow>()) {
+                ItemType::Message(message) => match message.content().0 {
+                    _ => {
+                        let child = if let Some(Ok(child)) =
+                            self.child().map(|w| w.downcast::<MessageRow>())
+                        {
                             child
                         } else {
                             let child = MessageRow::new();
@@ -96,8 +98,9 @@ impl ItemRow {
                             child
                         };
 
-                    child.set_message(message.clone());
-                }
+                        child.set_message(message.clone());
+                    }
+                },
                 ItemType::DayDivider(date) => {
                     let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year() {
                         // Translators: This is a date format in the day divider without the year
