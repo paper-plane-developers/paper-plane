@@ -106,6 +106,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for Content {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Content {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Content")

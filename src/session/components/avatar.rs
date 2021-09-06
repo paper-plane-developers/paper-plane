@@ -101,6 +101,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for Avatar {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Avatar {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ComponentsAvatar")

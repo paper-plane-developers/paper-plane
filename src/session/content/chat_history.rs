@@ -147,6 +147,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for ChatHistory {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ChatHistory {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatHistory")

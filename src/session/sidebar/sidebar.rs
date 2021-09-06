@@ -113,6 +113,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for Sidebar {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Sidebar {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Sidebar")

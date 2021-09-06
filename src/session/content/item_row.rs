@@ -67,6 +67,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for ItemRow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ItemRow {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ItemRow")

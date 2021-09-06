@@ -97,6 +97,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for ChatRow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ChatRow {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatRow")

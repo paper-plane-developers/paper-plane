@@ -155,6 +155,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for MessageRow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MessageRow {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create MessageRow")
