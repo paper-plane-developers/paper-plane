@@ -31,7 +31,7 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
     let mut entity = entities.next();
     let mut output = String::new();
     let mut buffer = String::new();
-    let mut inside_entry = false;
+    let mut is_inside_entity = false;
 
     // This is the offset in utf16 code units of the text to parse. We need this variable
     // because tdlib stores the offset and length parameters as utf16 code units instead
@@ -39,9 +39,11 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
     let mut code_units_offset = 0;
 
     for c in formatted_text.text.chars() {
-        if !inside_entry && entity.is_some() && code_units_offset >= entity.unwrap().offset as usize
+        if !is_inside_entity
+            && entity.is_some()
+            && code_units_offset >= entity.unwrap().offset as usize
         {
-            inside_entry = true;
+            is_inside_entity = true;
 
             if !buffer.is_empty() {
                 output.push_str(&escape(&buffer));
@@ -59,7 +61,7 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
                 entity = loop {
                     let entity = entities.next();
 
-                    // Handle eventual nested entries
+                    // Handle eventual nested entities
                     if entity.is_some() && entity.unwrap().offset == entity_.offset {
                         buffer = convert_to_markup(buffer, &entity.unwrap().r#type);
                     } else {
@@ -69,7 +71,7 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
 
                 output.push_str(&convert_to_markup(buffer, &entity_.r#type));
                 buffer = String::new();
-                inside_entry = false;
+                is_inside_entity = false;
             }
         }
     }
