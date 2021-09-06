@@ -241,8 +241,8 @@ impl History {
                         None | Some(ItemType::DayDivider(_)) => {
                             list.remove(position - 1);
 
-                            position = position - 1;
-                            removed = removed + 1;
+                            position -= 1;
+                            removed += 1;
                         }
                         _ => {}
                     }
@@ -272,7 +272,7 @@ impl History {
                     if date.ymd() == last_added_timestamp.ymd() {
                         list.remove(position + added);
 
-                        removed = removed + 1;
+                        removed += 1;
                     }
                 }
             }

@@ -50,7 +50,7 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
         }
 
         buffer.push(c);
-        code_units_offset = code_units_offset + c.len_utf16();
+        code_units_offset += c.len_utf16();
 
         if let Some(entity_) = entity {
             if code_units_offset >= (entity_.offset + entity_.length) as usize {
