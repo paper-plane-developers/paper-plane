@@ -117,12 +117,9 @@ impl UserList {
     }
 
     pub fn handle_update(&self, update: Update) {
-        match update {
-            Update::User(ref update_) => {
-                let user = self.get_or_create_user(update_.user.id);
-                user.handle_update(update);
-            }
-            _ => {}
+        if let Update::User(ref data) = update {
+            let user = self.get_or_create_user(data.user.id);
+            user.handle_update(update);
         }
     }
 

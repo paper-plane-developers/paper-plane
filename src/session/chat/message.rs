@@ -163,12 +163,9 @@ impl Message {
     }
 
     pub fn handle_update(&self, update: Update) {
-        match update {
-            Update::MessageContent(update) => {
-                let new_content = BoxedMessageContent(update.new_content);
-                self.set_content(new_content);
-            }
-            _ => {}
+        if let Update::MessageContent(data) = update {
+            let new_content = BoxedMessageContent(data.new_content);
+            self.set_content(new_content);
         }
     }
 

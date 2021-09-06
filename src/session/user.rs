@@ -130,14 +130,11 @@ impl User {
     }
 
     pub fn handle_update(&self, update: Update) {
-        match update {
-            Update::User(update) => {
-                self.set_first_name(update.user.first_name);
-                self.set_last_name(update.user.last_name);
-                self.avatar()
-                    .update_from_user_photo(update.user.profile_photo);
-            }
-            _ => {}
+        if let Update::User(data) = update {
+            self.set_first_name(data.user.first_name);
+            self.set_last_name(data.user.last_name);
+            self.avatar()
+                .update_from_user_photo(data.user.profile_photo);
         }
     }
 
