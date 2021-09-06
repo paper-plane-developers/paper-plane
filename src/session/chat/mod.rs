@@ -32,6 +32,7 @@ mod imp {
         pub avatar: OnceCell<Avatar>,
         pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
+        pub is_pinned: Cell<bool>,
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<String>,
         pub history: OnceCell<History>,
@@ -93,6 +94,13 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
+                        glib::ParamFlags::READWRITE,
+                    ),
+                    glib::ParamSpec::new_boolean(
+                        "is-pinned",
+                        "Is Pinned",
+                        "The parameter to determine if this chat is pinned in the chat list",
+                        false,
                         glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_int(
@@ -162,6 +170,10 @@ mod imp {
                     let order = value.get().unwrap();
                     self.order.set(order);
                 }
+                "is-pinned" => {
+                    let is_pinned = value.get().unwrap();
+                    self.is_pinned.set(is_pinned);
+                }
                 "unread-count" => {
                     let unread_count = value.get().unwrap();
                     self.unread_count.set(unread_count);
@@ -185,6 +197,7 @@ mod imp {
                 "avatar" => obj.avatar().to_value(),
                 "last-message" => self.last_message.borrow().to_value(),
                 "order" => self.order.get().to_value(),
+                "is-pinned" => self.is_pinned.get().to_value(),
                 "unread-count" => self.unread_count.get().to_value(),
                 "draft-message" => self.draft_message.borrow().to_value(),
                 "history" => self.history.get().to_value(),
@@ -263,6 +276,7 @@ impl Chat {
             Update::ChatPosition(update) => {
                 if let enums::ChatList::Main = update.position.list {
                     self.set_order(update.position.order);
+                    self.set_is_pinned(update.position.is_pinned);
                 }
             }
             Update::ChatReadInbox(update) => {
@@ -331,6 +345,16 @@ impl Chat {
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("order"), f)
+    }
+
+    pub fn is_pinned(&self) -> bool {
+        self.property("is_pinned").unwrap().get().unwrap()
+    }
+
+    fn set_is_pinned(&self, is_pinned: bool) {
+        if self.is_pinned() != is_pinned {
+            self.set_property("is-pinned", &is_pinned).unwrap();
+        }
     }
 
     pub fn unread_count(&self) -> i32 {
