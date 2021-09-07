@@ -112,6 +112,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for Login {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Login {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Login")
