@@ -31,6 +31,8 @@ mod imp {
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub badge_stack: TemplateChild<gtk::Stack>,
     }
 
     #[glib::object_subclass]
@@ -187,6 +189,53 @@ impl ChatRow {
                 &last_message_label,
                 "label",
                 Some(&last_message_label),
+            );
+
+            // Pinned icon and unread badge visibility
+            let is_pinned_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "is-pinned",
+            );
+            let unread_count_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "unread-count",
+            );
+            let badge_stack_page_expression = gtk::ClosureExpression::new(
+                move |expressions| -> String {
+                    let is_pinned = expressions[1].get::<bool>().unwrap();
+                    let unread_count = expressions[2].get::<i32>().unwrap();
+
+                    if unread_count > 0 {
+                        "unread".to_string()
+                    } else if is_pinned {
+                        "pin".to_string()
+                    } else {
+                        "empty".to_string()
+                    }
+                },
+                &[is_pinned_expression.upcast(), unread_count_expression.upcast()],
+            );
+            let badge_stack = self_.badge_stack.get();
+            badge_stack_page_expression.bind(
+                &badge_stack,
+                "visible-child-name",
+                Some(&badge_stack),
+            );
+            // Hide the whole stack if page is "empty"
+            let badge_stack_visibility_expression = gtk::ClosureExpression::new(
+                move |expressions| -> bool {
+                    let child_name = expressions[1].get::<String>().unwrap();
+
+                    child_name != "empty"
+                },
+                &[badge_stack_page_expression.upcast()],
+            );
+            badge_stack_visibility_expression.bind(
+                &badge_stack,
+                "visible",
+                Some(&badge_stack),
             );
         }
 
