@@ -30,10 +30,8 @@ sources = files(
   'session/avatar.rs',
   'session/chat_list.rs',
   'session/mod.rs',
-  'session/session.rs',
   'session/user.rs',
   'session/user_list.rs',
-  'session/chat/chat.rs',
   'session/chat/history.rs',
   'session/chat/item.rs',
   'session/chat/message.rs',
@@ -41,14 +39,12 @@ sources = files(
   'session/components/avatar.rs',
   'session/components/mod.rs',
   'session/content/chat_history.rs',
-  'session/content/content.rs',
   'session/content/event_row.rs',
   'session/content/item_row.rs',
   'session/content/message_row.rs',
   'session/content/mod.rs',
   'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
-  'session/sidebar/sidebar.rs',
 )
 
 custom_target(
