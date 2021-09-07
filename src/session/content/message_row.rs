@@ -62,10 +62,15 @@ fn parse_formatted_text(formatted_text: FormattedText) -> String {
                     let entity = entities.next();
 
                     // Handle eventual nested entities
-                    if entity.is_some() && entity.unwrap().offset == entity_.offset {
-                        buffer = convert_to_markup(buffer, &entity.unwrap().r#type);
-                    } else {
-                        break entity;
+                    match entity {
+                        Some(entity) => {
+                            if entity.offset == entity_.offset {
+                                buffer = convert_to_markup(buffer, &entity.r#type);
+                            } else {
+                                break Some(entity);
+                            }
+                        }
+                        None => break None,
                     }
                 };
 
