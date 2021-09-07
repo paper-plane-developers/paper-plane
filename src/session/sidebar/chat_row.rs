@@ -32,7 +32,7 @@ mod imp {
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub badge_stack: TemplateChild<gtk::Stack>,
+        pub pin_image: TemplateChild<gtk::Image>,
     }
 
     #[glib::object_subclass]
@@ -202,40 +202,20 @@ impl ChatRow {
                 Some(&chat_expression),
                 "unread-count",
             );
-            let badge_stack_page_expression = gtk::ClosureExpression::new(
-                move |expressions| -> String {
+            let pin_visibility_expression = gtk::ClosureExpression::new(
+                move |expressions| -> bool {
                     let is_pinned = expressions[1].get::<bool>().unwrap();
                     let unread_count = expressions[2].get::<i32>().unwrap();
 
-                    if unread_count > 0 {
-                        "unread".to_string()
-                    } else if is_pinned {
-                        "pin".to_string()
-                    } else {
-                        "empty".to_string()
-                    }
+                    is_pinned && unread_count <= 0
                 },
                 &[is_pinned_expression.upcast(), unread_count_expression.upcast()],
             );
-            let badge_stack = self_.badge_stack.get();
-            badge_stack_page_expression.bind(
-                &badge_stack,
-                "visible-child-name",
-                Some(&badge_stack),
-            );
-            // Hide the whole stack if page is "empty"
-            let badge_stack_visibility_expression = gtk::ClosureExpression::new(
-                move |expressions| -> bool {
-                    let child_name = expressions[1].get::<String>().unwrap();
-
-                    child_name != "empty"
-                },
-                &[badge_stack_page_expression.upcast()],
-            );
-            badge_stack_visibility_expression.bind(
-                &badge_stack,
+            let pin_image = self_.pin_image.get();
+            pin_visibility_expression.bind(
+                &pin_image,
                 "visible",
-                Some(&badge_stack),
+                Some(&pin_image),
             );
         }
 

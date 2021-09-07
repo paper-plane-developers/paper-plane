@@ -69,50 +69,31 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkStack" id="badge_stack">
-                    <child>
-                      <object class="GtkStackPage">
-                        <property name="name">empty</property>
-                        <property name="child">
-                          <object class="GtkBox">
-                            <property name="can-focus">False</property>
-                          </object>
-                        </property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkStackPage">
-                        <property name="name">pin</property>
-                        <property name="child">
-                          <object class="GtkImage">
-                            <property name="icon-name">view-pin-symbolic</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkStackPage">
-                        <property name="name">unread</property>
-                        <property name="child">
-                          <object class="GtkLabel">
-                            <property name="valign">center</property>
-                            <property name="ellipsize">end</property>
-                            <property name="justify">center</property>
-                            <binding name="label">
-                              <lookup name="unread-count">
-                                <lookup name="chat">SidebarChatRow</lookup>
-                              </lookup>
-                            </binding>
-                            <style>
-                              <class name="unread-count"/>
-                            </style>
-                          </object>
-                        </property>
-                      </object>
-                    </child>
+                  <object class="GtkImage" id="pin_image">
+                    <property name="icon-name">view-pin-symbolic</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="valign">center</property>
+                    <property name="ellipsize">end</property>
+                    <property name="justify">center</property>
+                    <binding name="label">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="visible">
+                      <lookup name="unread-count">
+                        <lookup name="chat">SidebarChatRow</lookup>
+                      </lookup>
+                    </binding>
+                    <style>
+                      <class name="unread-count"/>
+                    </style>
                   </object>
                 </child>
               </object>
