@@ -31,6 +31,8 @@ mod imp {
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub pin_image: TemplateChild<gtk::Image>,
     }
 
     #[glib::object_subclass]
@@ -187,6 +189,33 @@ impl ChatRow {
                 &last_message_label,
                 "label",
                 Some(&last_message_label),
+            );
+
+            // Pinned icon and unread badge visibility
+            let is_pinned_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "is-pinned",
+            );
+            let unread_count_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "unread-count",
+            );
+            let pin_visibility_expression = gtk::ClosureExpression::new(
+                move |expressions| -> bool {
+                    let is_pinned = expressions[1].get::<bool>().unwrap();
+                    let unread_count = expressions[2].get::<i32>().unwrap();
+
+                    is_pinned && unread_count <= 0
+                },
+                &[is_pinned_expression.upcast(), unread_count_expression.upcast()],
+            );
+            let pin_image = self_.pin_image.get();
+            pin_visibility_expression.bind(
+                &pin_image,
+                "visible",
+                Some(&pin_image),
             );
         }
 
