@@ -59,6 +59,34 @@
   font-weight: bold;
 }
 
+.sender-text-red {
+  color: #c01c28;
+}
+
+.sender-text-orange {
+  color: #e66100;
+}
+
+.sender-text-violet {
+  color: #813d9c;
+}
+
+.sender-text-green {
+  color: #26a269;
+}
+
+.sender-text-cyan {
+  color: #2eacc2;
+}
+
+.sender-text-blue {
+  color: #1c71d8;
+}
+
+.sender-text-pink {
+  color: #9c3d80;
+}
+
 .message-text {
   font-size: 0.95em;
 }
