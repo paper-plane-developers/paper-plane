@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 18:08+0200\n"
+"POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-07-18 18:12+0000\n"
 "Last-Translator: Ícar N. S. <icar.nin@pm.me>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
@@ -25,8 +25,13 @@ msgid "Telegrand"
 msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
-msgid "A GTK + Rust application boilerplate template"
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#, fuzzy
+msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
+"Un client GTK de Telegram construit per estar ben integrat amb l'entorn "
+"d'escriptori del GNOME."
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -51,17 +56,9 @@ msgstr "Comportament de la finestra per defecte maximitzada"
 msgid "Use Telegram's test data center"
 msgstr "Usa el centre de dades de proves de Telegram"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
-msgid ""
-"A GTK Telegram client built to be well integrated with the GNOME desktop "
-"environment."
-msgstr ""
-"Un client GTK de Telegram construit per estar ben integrat amb l'entorn "
-"d'escriptori del GNOME."
-
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-msgid "Main Window"
+#, fuzzy
+msgid "Main window"
 msgstr "Finestra principal"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
@@ -155,14 +152,28 @@ msgstr "_Dreceres de teclat"
 msgid "_About Telegrand"
 msgstr "_Sobre el Telegrand"
 
-#: src/utils.rs:12
+#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
 msgstr "Missatge no suportat"
 
-#: src/window.rs:320
+#: src/window.rs:325
 msgid "Incoming call"
 msgstr "Trucada entrant"
 
-#: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:104
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:107
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
 msgstr "Aquest missatge no està suportat"
+
+#: src/session/sidebar/chat_row.rs:241
+msgid "You"
+msgstr ""

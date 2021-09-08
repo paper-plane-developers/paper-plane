@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 18:08+0200\n"
+"POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-07-21 10:32+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -25,8 +25,12 @@ msgid "Telegrand"
 msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
-msgid "A GTK + Rust application boilerplate template"
-msgstr "Et GTK-malprogram skrevet i Rust"
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#, fuzzy
+msgid "A Telegram client optimized for the GNOME desktop"
+msgstr ""
+"En GTK-Telegramklient bygd for å fungere godt i et GNOME-skrivebordsmiljø."
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -51,16 +55,9 @@ msgstr "Forvalgt oppførsel for maksimert vindu"
 msgid "Use Telegram's test data center"
 msgstr "Bruk Telegrams testdatasenter"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
-msgid ""
-"A GTK Telegram client built to be well integrated with the GNOME desktop "
-"environment."
-msgstr ""
-"En GTK-Telegramklient bygd for å fungere godt i et GNOME-skrivebordsmiljø."
-
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-msgid "Main Window"
+#, fuzzy
+msgid "Main window"
 msgstr "Hovedvindu"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
@@ -154,14 +151,31 @@ msgstr "_Tastatursnarveier"
 msgid "_About Telegrand"
 msgstr "_Om Telegrand"
 
-#: src/utils.rs:12
+#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
 msgstr "Ustøttet melding"
 
-#: src/window.rs:320
+#: src/window.rs:325
 msgid "Incoming call"
 msgstr "Innkommende anrop"
 
-#: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:104
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:107
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
 msgstr "Denne meldingen er ustøttet"
+
+#: src/session/sidebar/chat_row.rs:241
+msgid "You"
+msgstr ""
+
+#~ msgid "A GTK + Rust application boilerplate template"
+#~ msgstr "Et GTK-malprogram skrevet i Rust"

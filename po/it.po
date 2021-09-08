@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 17:43+0200\n"
+"POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-07-21 10:32+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
@@ -25,7 +25,9 @@ msgid "Telegrand"
 msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
-msgid "A GTK + Rust application boilerplate template"
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
@@ -51,15 +53,8 @@ msgstr "Comportamento predefinito della massimizzazione della finestra"
 msgid "Use Telegram's test data center"
 msgstr "Usa il centro dati di prova di Telegram"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
-msgid ""
-"A GTK Telegram client built to be well integrated with the GNOME desktop "
-"environment."
-msgstr ""
-
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-msgid "Main Window"
+msgid "Main window"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
@@ -153,14 +148,28 @@ msgstr "_Scorciatoie da tastiera"
 msgid "_About Telegrand"
 msgstr "_Informazioni su Telegrand"
 
-#: src/utils.rs:12
+#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
 msgstr "Messaggio non supportato"
 
-#: src/window.rs:320
+#: src/window.rs:325
 msgid "Incoming call"
 msgstr "Chiamata in arrivo"
 
-#: src/session/content/message_row.rs:17
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:104
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:107
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
 msgstr "Questo messaggio non è supportato"
+
+#: src/session/sidebar/chat_row.rs:241
+msgid "You"
+msgstr ""

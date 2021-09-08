@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-18 20:06+0200\n"
+"POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-09-02 22:33+0000\n"
 "Last-Translator: Seyed mohammad ali Hosseinifard <ali_hosseine@yahoo.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
@@ -148,14 +148,28 @@ msgstr "_میانبرهای صفحه‌کلید"
 msgid "_About Telegrand"
 msgstr "_درباره تلگراند"
 
-#: src/utils.rs:12
+#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
 msgstr "پیام پشتیبانی نشده"
 
-#: src/window.rs:319
+#: src/window.rs:325
 msgid "Incoming call"
 msgstr "تماس دریافتی"
 
-#: src/session/content/message_row.rs:17 src/session/sidebar/chat_row.rs:16
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:104
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:107
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
 msgstr "این پیام پشتیبانی نمی‌شود"
+
+#: src/session/sidebar/chat_row.rs:241
+msgid "You"
+msgstr ""
