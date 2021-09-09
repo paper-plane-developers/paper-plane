@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: SWYK <swyknox@gmail.com>\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ca/>\n"
 "Language: ca\n"
@@ -56,7 +56,6 @@ msgid "Use Telegram's test data center"
 msgstr "Usa el centre de dades de proves de Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-#, fuzzy
 msgid "Main window"
 msgstr "Finestra principal"
 
