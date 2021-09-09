@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: SWYK <swyknox@gmail.com>\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
 "Language: es\n"
@@ -56,9 +56,8 @@ msgid "Use Telegram's test data center"
 msgstr "Usar el centro de datos de testeo de Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
-#, fuzzy
 msgid "Main window"
-msgstr "Ventana Principal"
+msgstr "Ventana principal"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
@@ -162,12 +161,12 @@ msgstr "Llamada entrante"
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%e de %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%e de %B de %Y"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
@@ -175,7 +174,7 @@ msgstr "Este mensaje no está soportado"
 
 #: src/session/sidebar/chat_row.rs:241
 msgid "You"
-msgstr ""
+msgstr "Usted"
 
 #~ msgid "A GTK + Rust application boilerplate template"
 #~ msgstr "Un template boilerplate de una aplicación GTK+ en Rust"
