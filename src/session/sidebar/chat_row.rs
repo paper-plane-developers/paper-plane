@@ -240,7 +240,7 @@ fn stringify_message(message: Message) -> String {
         let sender_name = if message.is_outgoing() {
             gettext("You")
         } else {
-            sender_name(message.sender(), false)
+            escape(&sender_name(message.sender(), false))
         };
 
         format!("{}: {}", sender_name, text_content)
