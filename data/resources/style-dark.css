@@ -5,3 +5,31 @@
 .event-row {
   background-color: alpha(white, 0.05);
 }
+
+.sender-text-red {
+  color: #fb6169;
+}
+
+.sender-text-orange {
+  color: #faa357;
+}
+
+.sender-text-violet {
+  color: #b48bf2;
+}
+
+.sender-text-green {
+  color: #85de85;
+}
+
+.sender-text-cyan {
+  color: #62d4e3;
+}
+
+.sender-text-blue {
+  color: #65bdf3;
+}
+
+.sender-text-pink {
+  color: #ff5694;
+}

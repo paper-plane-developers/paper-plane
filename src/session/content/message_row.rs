@@ -269,6 +269,19 @@ impl MessageRow {
                 );
 
                 full_name_expression.bind(&label, "label", Some(&label));
+
+                let classes = vec![
+                    "sender-text-red".to_string(),
+                    "sender-text-orange".to_string(),
+                    "sender-text-violet".to_string(),
+                    "sender-text-green".to_string(),
+                    "sender-text-cyan".to_string(),
+                    "sender-text-blue".to_string(),
+                    "sender-text-pink".to_string(),
+                ];
+
+                let user_class = &classes[user.id() as usize % classes.len()];
+                label.add_css_class(&user_class.to_string());
             }
             MessageSender::Chat(chat) => {
                 let chat_expression = gtk::ConstantExpression::new(&chat);
