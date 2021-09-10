@@ -99,13 +99,9 @@ fn format_message_content_text(content: MessageContent) -> String {
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct MessageRow {
-        pub message: RefCell<Option<Message>>,
-    }
+    pub struct MessageRow {}
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageRow {
@@ -114,45 +110,7 @@ mod imp {
         type ParentType = adw::Bin;
     }
 
-    impl ObjectImpl for MessageRow {
-        fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
-                    "message",
-                    "Message",
-                    "The message represented by this row",
-                    Message::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
-            });
-
-            PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "message" => {
-                    let message = value.get().unwrap();
-                    obj.set_message(message);
-                }
-                _ => unimplemented!(),
-            }
-        }
-
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            match pspec.name() {
-                "message" => obj.message().to_value(),
-                _ => unimplemented!(),
-            }
-        }
-    }
-
+    impl ObjectImpl for MessageRow {}
     impl WidgetImpl for MessageRow {}
     impl BinImpl for MessageRow {}
 }
@@ -173,17 +131,8 @@ impl MessageRow {
         glib::Object::new(&[]).expect("Failed to create MessageRow")
     }
 
-    pub fn message(&self) -> Option<Message> {
-        let self_ = imp::MessageRow::from_instance(self);
-        self_.message.borrow().clone()
-    }
-
-    pub fn set_message(&self, message: Message) {
-        self.show_message_bubble(&message);
-
-        let self_ = imp::MessageRow::from_instance(self);
-        self_.message.replace(Some(message));
-        self.notify("message");
+    pub fn set_message(&self, message: &Message) {
+        self.show_message_bubble(message);
     }
 
     fn show_message_bubble(&self, message: &Message) {

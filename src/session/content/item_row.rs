@@ -96,7 +96,7 @@ impl ItemRow {
                             child
                         };
 
-                    child.set_message(message.clone());
+                    child.set_message(message);
                 }
                 ItemType::DayDivider(date) => {
                     let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year() {
