@@ -227,7 +227,7 @@ impl Login {
         let parameters = types::TdlibParameters {
             use_test_dc,
             database_directory,
-            use_file_database: true,
+            use_message_database: true,
             use_secret_chats: true,
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
