@@ -30,7 +30,7 @@
 }
 
 .chat-history row .message-bubble {
-  background-color: alpha(black, 0.1);
+  background-color: alpha(black, 0.07);
   border-radius: 9px;
   padding: 6px 12px;
 }
@@ -53,8 +53,8 @@
   color: @accent_fg_color;
 }
 
-.event-row {
-  background-color: alpha(black, 0.1);
+.chat-history row .event-row {
+  background-color: alpha(black, 0.07);
   border-radius: 9999px;
   font-size: 0.8em;
   padding: 6px 18px;
