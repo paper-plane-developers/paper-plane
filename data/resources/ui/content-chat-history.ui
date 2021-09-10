@@ -30,6 +30,7 @@
             <property name="vexpand">True</property>
             <property name="hscrollbar-policy">never</property>
             <style>
+              <class name="view"/>
               <class name="chat-history"/>
             </style>
             <property name="child">

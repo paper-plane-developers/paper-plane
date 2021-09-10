@@ -20,10 +20,6 @@
   padding: 2px 5px;
 }
 
-.chat-history {
-  background-color: @theme_base_color;
-}
-
 .chat-history listview {
   padding: 3px 0;
 }
