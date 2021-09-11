@@ -144,6 +144,49 @@ impl MessageRow {
     }
 
     pub fn set_message(&self, message: &Message) {
+        let self_ = imp::MessageRow::from_instance(self);
+
+        // Align message based on whether the message is outgoing or not
+        if message.is_outgoing() {
+            self_.avatar_bin.set_hexpand(true);
+        } else {
+            self_.avatar_bin.set_hexpand(false);
+        }
+
+        // Show avatar, if needed
+        let show_avatar = {
+            if !message.is_outgoing() {
+                match message.chat().type_() {
+                    ChatType::BasicGroup(_) => true,
+                    ChatType::Supergroup(data) => !data.is_channel,
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        };
+        if show_avatar {
+            let avatar = if let Some(Ok(avatar)) =
+                self_.avatar_bin.child().map(|w| w.downcast::<Avatar>())
+            {
+                avatar
+            } else {
+                let avatar = Avatar::new();
+                avatar.set_size(32);
+                avatar.set_valign(gtk::Align::End);
+                self_.avatar_bin.set_child(Some(&avatar));
+                avatar
+            };
+            match message.sender() {
+                MessageSender::User(user) => avatar.set_item(Some(user.avatar().clone())),
+                MessageSender::Chat(chat) => avatar.set_item(Some(chat.avatar().clone())),
+            }
+            let sender_name_expression = message.sender_name_expression();
+            sender_name_expression.bind(&avatar, "display-name", Some(&avatar));
+        } else {
+            self_.avatar_bin.set_child(None::<&gtk::Widget>);
+        }
+
         self.show_message_bubble(message);
     }
 
@@ -157,36 +200,16 @@ impl MessageRow {
         self_.content_bin.set_child(Some(&vbox));
 
         if message.is_outgoing() {
-            self.set_halign(gtk::Align::End);
             vbox.add_css_class("outgoing");
         } else {
-            self.set_halign(gtk::Align::Start);
             vbox.add_css_class("incoming");
         }
 
-        self_.avatar_bin.set_child(None::<&gtk::Widget>);
-
         if !message.is_outgoing() {
-            let is_channel = if let ChatType::Supergroup(data) = message.chat().type_() {
-                data.is_channel
-            } else {
-                false
-            };
-
             match message.chat().type_() {
                 ChatType::BasicGroup(_) | ChatType::Supergroup(_) => {
                     let sender_label = MessageRow::create_sender_label(message);
                     vbox.append(&sender_label);
-
-                    if !is_channel {
-                        let sender_avatar = MessageRow::create_sender_avatar(message);
-                        self_.avatar_bin.set_child(Some(&sender_avatar));
-
-                        sender_label
-                            .bind_property("label", &sender_avatar, "display-name")
-                            .flags(glib::BindingFlags::SYNC_CREATE)
-                            .build();
-                    }
                 }
                 _ => {}
             }
@@ -223,19 +246,6 @@ impl MessageRow {
         }
 
         label
-    }
-
-    fn create_sender_avatar(message: &Message) -> Avatar {
-        let sender_avatar = Avatar::new();
-        sender_avatar.set_size(32);
-        sender_avatar.set_valign(gtk::Align::End);
-
-        match message.sender() {
-            MessageSender::User(user) => sender_avatar.set_item(Some(user.avatar().clone())),
-            MessageSender::Chat(chat) => sender_avatar.set_item(Some(chat.avatar().clone())),
-        }
-
-        sender_avatar
     }
 
     fn create_text_label(message: &Message) -> gtk::Label {
