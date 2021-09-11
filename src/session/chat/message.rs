@@ -203,4 +203,41 @@ impl Message {
         let self_ = imp::Message::from_instance(self);
         self_.chat.get().unwrap()
     }
+
+    pub fn sender_name_expression(&self) -> gtk::Expression {
+        match self.sender() {
+            MessageSender::User(user) => {
+                let user_expression = gtk::ConstantExpression::new(&user);
+                let first_name_expression = gtk::PropertyExpression::new(
+                    User::static_type(),
+                    Some(&user_expression),
+                    "first-name",
+                );
+                let last_name_expression = gtk::PropertyExpression::new(
+                    User::static_type(),
+                    Some(&user_expression),
+                    "last-name",
+                );
+
+                gtk::ClosureExpression::new(
+                    move |expressions| -> String {
+                        let first_name = expressions[1].get::<&str>().unwrap();
+                        let last_name = expressions[2].get::<&str>().unwrap();
+                        format!("{} {}", first_name, last_name).trim().to_string()
+                    },
+                    &[
+                        first_name_expression.upcast(),
+                        last_name_expression.upcast(),
+                    ],
+                )
+                .upcast()
+            }
+            MessageSender::Chat(chat) => {
+                let chat_expression = gtk::ConstantExpression::new(&chat);
+
+                gtk::PropertyExpression::new(Chat::static_type(), Some(&chat_expression), "title")
+                    .upcast()
+            }
+        }
+    }
 }

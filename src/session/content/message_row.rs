@@ -6,7 +6,6 @@ use tdgrand::types::FormattedText;
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::{Chat, User};
 use crate::utils::{escape, linkify};
 
 fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
@@ -205,56 +204,22 @@ impl MessageRow {
             .xalign(0.0)
             .build();
 
-        match message.sender() {
-            MessageSender::User(user) => {
-                let user_expression = gtk::ConstantExpression::new(&user);
-                let first_name_expression = gtk::PropertyExpression::new(
-                    User::static_type(),
-                    Some(&user_expression),
-                    "first-name",
-                );
-                let last_name_expression = gtk::PropertyExpression::new(
-                    User::static_type(),
-                    Some(&user_expression),
-                    "last-name",
-                );
-                let full_name_expression = gtk::ClosureExpression::new(
-                    move |expressions| -> String {
-                        let first_name = expressions[1].get::<&str>().unwrap();
-                        let last_name = expressions[2].get::<&str>().unwrap();
-                        format!("{} {}", first_name, last_name).trim().to_string()
-                    },
-                    &[
-                        first_name_expression.upcast(),
-                        last_name_expression.upcast(),
-                    ],
-                );
+        let sender_name_expression = message.sender_name_expression();
+        sender_name_expression.bind(&label, "label", Some(&label));
 
-                full_name_expression.bind(&label, "label", Some(&label));
+        if let MessageSender::User(user) = message.sender() {
+            let classes = vec![
+                "sender-text-red".to_string(),
+                "sender-text-orange".to_string(),
+                "sender-text-violet".to_string(),
+                "sender-text-green".to_string(),
+                "sender-text-cyan".to_string(),
+                "sender-text-blue".to_string(),
+                "sender-text-pink".to_string(),
+            ];
 
-                let classes = vec![
-                    "sender-text-red".to_string(),
-                    "sender-text-orange".to_string(),
-                    "sender-text-violet".to_string(),
-                    "sender-text-green".to_string(),
-                    "sender-text-cyan".to_string(),
-                    "sender-text-blue".to_string(),
-                    "sender-text-pink".to_string(),
-                ];
-
-                let user_class = &classes[user.id() as usize % classes.len()];
-                label.add_css_class(&user_class.to_string());
-            }
-            MessageSender::Chat(chat) => {
-                let chat_expression = gtk::ConstantExpression::new(&chat);
-                let title_expression = gtk::PropertyExpression::new(
-                    Chat::static_type(),
-                    Some(&chat_expression),
-                    "title",
-                );
-
-                title_expression.bind(&label, "label", Some(&label));
-            }
+            let user_class = &classes[user.id() as usize % classes.len()];
+            label.add_css_class(&user_class.to_string());
         }
 
         label
