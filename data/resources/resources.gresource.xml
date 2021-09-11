@@ -5,6 +5,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-message-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/session.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts.ui</file>

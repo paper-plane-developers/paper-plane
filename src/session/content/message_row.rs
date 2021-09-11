@@ -1,6 +1,6 @@
-use adw::prelude::BinExt;
+use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gettextrs::gettext;
-use gtk::{glib, pango, prelude::*, subclass::prelude::*};
+use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent, TextEntityType};
 use tdgrand::types::FormattedText;
 
@@ -98,16 +98,29 @@ fn format_message_content_text(content: MessageContent) -> String {
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
 
-    #[derive(Debug, Default)]
-    pub struct MessageRow {}
+    #[derive(Debug, Default, CompositeTemplate)]
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-row.ui")]
+    pub struct MessageRow {
+        #[template_child]
+        pub avatar_bin: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub content_bin: TemplateChild<adw::Bin>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageRow {
         const NAME: &'static str = "ContentMessageRow";
         type Type = super::MessageRow;
         type ParentType = adw::Bin;
+
+        fn class_init(klass: &mut Self::Class) {
+            Self::bind_template(klass);
+        }
+
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
+            obj.init_template();
+        }
     }
 
     impl ObjectImpl for MessageRow {}
@@ -136,21 +149,23 @@ impl MessageRow {
     }
 
     fn show_message_bubble(&self, message: &Message) {
-        let hbox = gtk::BoxBuilder::new().spacing(6).build();
+        let self_ = imp::MessageRow::from_instance(self);
 
         let vbox = gtk::BoxBuilder::new()
             .css_classes(vec!["message-bubble".to_string()])
             .orientation(gtk::Orientation::Vertical)
             .build();
-        hbox.append(&vbox);
+        self_.content_bin.set_child(Some(&vbox));
 
         if message.is_outgoing() {
-            hbox.set_halign(gtk::Align::End);
+            self.set_halign(gtk::Align::End);
             vbox.add_css_class("outgoing");
         } else {
-            hbox.set_halign(gtk::Align::Start);
+            self.set_halign(gtk::Align::Start);
             vbox.add_css_class("incoming");
         }
+
+        self_.avatar_bin.set_child(None::<&gtk::Widget>);
 
         if !message.is_outgoing() {
             let is_channel = if let ChatType::Supergroup(data) = message.chat().type_() {
@@ -166,7 +181,7 @@ impl MessageRow {
 
                     if !is_channel {
                         let sender_avatar = MessageRow::create_sender_avatar(message);
-                        hbox.prepend(&sender_avatar);
+                        self_.avatar_bin.set_child(Some(&sender_avatar));
 
                         sender_label
                             .bind_property("label", &sender_avatar, "display-name")
@@ -180,8 +195,6 @@ impl MessageRow {
 
         let text_label = MessageRow::create_text_label(message);
         vbox.append(&text_label);
-
-        self.set_child(Some(&hbox));
     }
 
     fn create_sender_label(message: &Message) -> gtk::Label {
