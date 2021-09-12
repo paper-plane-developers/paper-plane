@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2021-09-13 10:43+0000\n"
+"Last-Translator: Ícar N. S. <icar.nin@pm.me>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ca/>\n"
 "Language: ca\n"
@@ -29,7 +29,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
-"Un client GTK de Telegram construit per estar ben integrat amb l'entorn "
+"Un client GTK del Telegram construit per estar ben integrat amb l'entorn "
 "d'escriptori del GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
@@ -48,12 +48,12 @@ msgstr "Alçada per defecte de la finestra"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr "Comportament de la finestra per defecte maximitzada"
+msgstr "Comportament de la finestra maximitzada per defecte"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr "Usa el centre de dades de proves de Telegram"
+msgstr "Usa el centre de dades de proves del Telegram"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -161,12 +161,12 @@ msgstr "Trucada entrant"
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%e de %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%e de %B del %Y"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
@@ -174,4 +174,4 @@ msgstr "Aquest missatge no està suportat"
 
 #: src/session/sidebar/chat_row.rs:241
 msgid "You"
-msgstr "Vostè"
+msgstr "Vós"
