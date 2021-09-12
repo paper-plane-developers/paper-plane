@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2021-09-13 10:43+0000\n"
+"Last-Translator: Michael Moroni <michaelmoroni@disroot.org>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
 "Language: it\n"
@@ -28,7 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "Un cliente Telegram ottimizzato per il desktop GNOME"
+msgstr "Un client di Telegram ottimizzato per GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -75,7 +75,7 @@ msgstr "_Precedente"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr "_Avanti"
+msgstr "Ava_nti"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
@@ -99,7 +99,7 @@ msgstr "Usa il centro dati di prova"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr "Richiede un riavvio per applicare"
+msgstr "Richiede un riavvio per l'applicazione"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
@@ -146,7 +146,7 @@ msgstr "_Scorciatoie da tastiera"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr "_Informazioni su Telegrand"
+msgstr "Inform_azioni"
 
 #: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
