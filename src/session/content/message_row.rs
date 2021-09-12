@@ -1,99 +1,10 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
-use gettextrs::gettext;
-use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::{ChatType, MessageContent, TextEntityType};
-use tdgrand::types::FormattedText;
+use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use tdgrand::enums::ChatType;
 
-use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
+use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::utils::{escape, linkify};
-
-fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
-    match entity {
-        TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
-        TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
-        TextEntityType::PhoneNumber => format!("<a href='tel:{0}'>{0}</a>", text),
-        TextEntityType::Bold => format!("<b>{}</b>", text),
-        TextEntityType::Italic => format!("<i>{}</i>", text),
-        TextEntityType::Underline => format!("<u>{}</u>", text),
-        TextEntityType::Strikethrough => format!("<s>{}</s>", text),
-        TextEntityType::Code | TextEntityType::Pre | TextEntityType::PreCode(_) => {
-            format!("<tt>{}</tt>", text)
-        }
-        TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
-        _ => text,
-    }
-}
-
-fn parse_formatted_text(formatted_text: FormattedText) -> String {
-    let mut entities = formatted_text.entities.iter();
-    let mut entity = entities.next();
-    let mut output = String::new();
-    let mut buffer = String::new();
-    let mut is_inside_entity = false;
-
-    // This is the offset in utf16 code units of the text to parse. We need this variable
-    // because tdlib stores the offset and length parameters as utf16 code units instead
-    // of regular code points.
-    let mut code_units_offset = 0;
-
-    for c in formatted_text.text.chars() {
-        if !is_inside_entity
-            && entity.is_some()
-            && code_units_offset >= entity.unwrap().offset as usize
-        {
-            is_inside_entity = true;
-
-            if !buffer.is_empty() {
-                output.push_str(&escape(&buffer));
-                buffer = String::new();
-            }
-        }
-
-        buffer.push(c);
-        code_units_offset += c.len_utf16();
-
-        if let Some(entity_) = entity {
-            if code_units_offset >= (entity_.offset + entity_.length) as usize {
-                buffer = escape(&buffer);
-
-                entity = loop {
-                    let entity = entities.next();
-
-                    // Handle eventual nested entities
-                    match entity {
-                        Some(entity) => {
-                            if entity.offset == entity_.offset {
-                                buffer = convert_to_markup(buffer, &entity.r#type);
-                            } else {
-                                break Some(entity);
-                            }
-                        }
-                        None => break None,
-                    }
-                };
-
-                output.push_str(&convert_to_markup(buffer, &entity_.r#type));
-                buffer = String::new();
-                is_inside_entity = false;
-            }
-        }
-    }
-
-    // Add the eventual leftovers from the buffer to the output
-    if !buffer.is_empty() {
-        output.push_str(&escape(&buffer));
-    }
-
-    output
-}
-
-fn format_message_content_text(content: MessageContent) -> String {
-    match content {
-        MessageContent::MessageText(content) => parse_formatted_text(content.text),
-        _ => format!("<i>{}</i>", gettext("This message is unsupported")),
-    }
-}
+use crate::session::content::MessageBubble;
 
 mod imp {
     use super::*;
@@ -187,92 +98,18 @@ impl MessageRow {
             self_.avatar_bin.set_child(None::<&gtk::Widget>);
         }
 
-        self.show_message_bubble(message);
-    }
-
-    fn show_message_bubble(&self, message: &Message) {
-        let self_ = imp::MessageRow::from_instance(self);
-
-        let vbox = gtk::BoxBuilder::new()
-            .css_classes(vec!["message-bubble".to_string()])
-            .orientation(gtk::Orientation::Vertical)
-            .build();
-        self_.content_bin.set_child(Some(&vbox));
-
-        if message.is_outgoing() {
-            vbox.add_css_class("outgoing");
+        // Show content widget
+        let content = if let Some(Ok(content)) = self_
+            .content_bin
+            .child()
+            .map(|w| w.downcast::<MessageBubble>())
+        {
+            content
         } else {
-            vbox.add_css_class("incoming");
-        }
-
-        if !message.is_outgoing() {
-            match message.chat().type_() {
-                ChatType::BasicGroup(_) | ChatType::Supergroup(_) => {
-                    let sender_label = MessageRow::create_sender_label(message);
-                    vbox.append(&sender_label);
-                }
-                _ => {}
-            }
-        }
-
-        let text_label = MessageRow::create_text_label(message);
-        vbox.append(&text_label);
-    }
-
-    fn create_sender_label(message: &Message) -> gtk::Label {
-        let label = gtk::LabelBuilder::new()
-            .css_classes(vec!["sender-text".to_string()])
-            .ellipsize(pango::EllipsizeMode::End)
-            .single_line_mode(true)
-            .xalign(0.0)
-            .build();
-
-        let sender_name_expression = message.sender_name_expression();
-        sender_name_expression.bind(&label, "label", Some(&label));
-
-        if let MessageSender::User(user) = message.sender() {
-            let classes = vec![
-                "sender-text-red".to_string(),
-                "sender-text-orange".to_string(),
-                "sender-text-violet".to_string(),
-                "sender-text-green".to_string(),
-                "sender-text-cyan".to_string(),
-                "sender-text-blue".to_string(),
-                "sender-text-pink".to_string(),
-            ];
-
-            let user_class = &classes[user.id() as usize % classes.len()];
-            label.add_css_class(&user_class.to_string());
-        }
-
-        label
-    }
-
-    fn create_text_label(message: &Message) -> gtk::Label {
-        let label = gtk::LabelBuilder::new()
-            .css_classes(vec!["message-text".to_string()])
-            .selectable(true)
-            .use_markup(true)
-            .wrap(true)
-            .wrap_mode(pango::WrapMode::WordChar)
-            .xalign(0.0)
-            .build();
-
-        let message_expression = gtk::ConstantExpression::new(message);
-        let content_expression = gtk::PropertyExpression::new(
-            Message::static_type(),
-            Some(&message_expression),
-            "content",
-        );
-        let text_expression = gtk::ClosureExpression::new(
-            move |expressions| -> String {
-                let content = expressions[1].get::<BoxedMessageContent>().unwrap();
-                format_message_content_text(content.0)
-            },
-            &[content_expression.upcast()],
-        );
-        text_expression.bind(&label, "label", Some(&label));
-
-        label
+            let content = MessageBubble::new();
+            self_.content_bin.set_child(Some(&content));
+            content
+        };
+        content.set_message(message);
     }
 }

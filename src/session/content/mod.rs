@@ -1,11 +1,13 @@
 mod chat_history;
 mod event_row;
 mod item_row;
+mod message_bubble;
 mod message_row;
 
 use self::chat_history::ChatHistory;
 use self::event_row::EventRow;
 use self::item_row::ItemRow;
+use self::message_bubble::MessageBubble;
 use self::message_row::MessageRow;
 
 use gtk::glib;
