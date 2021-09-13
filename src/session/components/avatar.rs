@@ -45,13 +45,6 @@ mod imp {
                         AvatarItem::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
-                        "display-name",
-                        "Display Name",
-                        "The display name used for this avatar",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
                     glib::ParamSpec::new_int(
                         "size",
                         "Size",
@@ -76,7 +69,6 @@ mod imp {
         ) {
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
-                "display-name" => obj.set_display_name(value.get().unwrap()),
                 "size" => obj.set_size(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -85,7 +77,6 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "item" => obj.item().to_value(),
-                "display-name" => obj.display_name().to_value(),
                 "size" => obj.size().to_value(),
                 _ => unimplemented!(),
             }
@@ -131,18 +122,6 @@ impl Avatar {
         self.request_avatar_image();
 
         self.notify("item");
-    }
-
-    pub fn display_name(&self) -> Option<String> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.avatar.text().map(|s| s.to_string())
-    }
-
-    pub fn set_display_name(&self, display_name: Option<&str>) {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.avatar.set_text(display_name);
-
-        self.notify("display-name");
     }
 
     pub fn size(&self) -> i32 {

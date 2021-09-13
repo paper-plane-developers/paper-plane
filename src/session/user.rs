@@ -114,6 +114,14 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            let avatar = obj.avatar();
+            let full_name_expression = obj.full_name_expression();
+            full_name_expression.bind(avatar, "display-name", Some(avatar));
+        }
     }
 }
 
@@ -170,5 +178,26 @@ impl User {
     pub fn session(&self) -> &Session {
         let self_ = imp::User::from_instance(self);
         self_.session.get().unwrap()
+    }
+
+    pub fn full_name_expression(&self) -> gtk::Expression {
+        let user_expression = gtk::ConstantExpression::new(self);
+        let first_name_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(&user_expression), "first-name");
+        let last_name_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(&user_expression), "last-name");
+
+        gtk::ClosureExpression::new(
+            move |expressions| -> String {
+                let first_name = expressions[1].get::<&str>().unwrap();
+                let last_name = expressions[2].get::<&str>().unwrap();
+                format!("{} {}", first_name, last_name).trim().to_string()
+            },
+            &[
+                first_name_expression.upcast(),
+                last_name_expression.upcast(),
+            ],
+        )
+        .upcast()
     }
 }

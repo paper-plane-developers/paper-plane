@@ -12,11 +12,6 @@
                 <lookup name="chat">SidebarChatRow</lookup>
               </lookup>
             </binding>
-            <binding name="display-name">
-              <lookup name="title">
-                <lookup name="chat">SidebarChatRow</lookup>
-              </lookup>
-            </binding>
           </object>
         </child>
         <child>

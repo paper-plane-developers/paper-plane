@@ -210,6 +210,10 @@ mod imp {
             self.parent_constructed(obj);
 
             self.history.set(History::new(obj)).unwrap();
+
+            let avatar = obj.avatar();
+            let title_expression = obj.title_expression();
+            title_expression.bind(avatar, "display-name", Some(avatar));
         }
     }
 }
@@ -383,5 +387,10 @@ impl Chat {
 
     pub fn session(&self) -> Session {
         self.property("session").unwrap().get().unwrap()
+    }
+
+    pub fn title_expression(&self) -> gtk::Expression {
+        let chat_expression = gtk::ConstantExpression::new(self);
+        gtk::PropertyExpression::new(Chat::static_type(), Some(&chat_expression), "title").upcast()
     }
 }

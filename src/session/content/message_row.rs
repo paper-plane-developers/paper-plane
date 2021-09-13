@@ -92,8 +92,6 @@ impl MessageRow {
                 MessageSender::User(user) => avatar.set_item(Some(user.avatar().clone())),
                 MessageSender::Chat(chat) => avatar.set_item(Some(chat.avatar().clone())),
             }
-            let sender_name_expression = message.sender_name_expression();
-            sender_name_expression.bind(&avatar, "display-name", Some(&avatar));
         } else {
             self_.avatar_bin.set_child(None::<&gtk::Widget>);
         }

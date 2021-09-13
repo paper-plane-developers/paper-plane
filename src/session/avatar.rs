@@ -15,6 +15,7 @@ mod imp {
     pub struct Avatar {
         pub image: RefCell<Option<gdk::Paintable>>,
         pub needed: Cell<bool>,
+        pub display_name: RefCell<Option<String>>,
         pub session: OnceCell<Session>,
 
         pub image_file: RefCell<Option<File>>,
@@ -45,6 +46,13 @@ mod imp {
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_string(
+                        "display-name",
+                        "Display Name",
+                        "The display name used for this avatar",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpec::new_object(
                         "session",
                         "Session",
@@ -67,6 +75,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "needed" => obj.set_needed(value.get().unwrap()),
+                "display-name" => obj.set_display_name(value.get().unwrap()),
                 "session" => self.session.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
@@ -76,6 +85,7 @@ mod imp {
             match pspec.name() {
                 "image" => obj.image().to_value(),
                 "needed" => obj.needed().to_value(),
+                "display-name" => obj.display_name().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
@@ -176,6 +186,22 @@ impl Avatar {
         }
 
         self.notify("needed");
+    }
+
+    pub fn display_name(&self) -> Option<String> {
+        let self_ = imp::Avatar::from_instance(self);
+        self_.display_name.borrow().clone()
+    }
+
+    pub fn set_display_name(&self, display_name: Option<String>) {
+        if self.display_name() == display_name {
+            return;
+        }
+
+        let self_ = imp::Avatar::from_instance(self);
+        self_.display_name.replace(display_name);
+
+        self.notify("display-name");
     }
 
     pub fn session(&self) -> &Session {

@@ -9,6 +9,11 @@
             <lookup name="item">ComponentsAvatar</lookup>
           </lookup>
         </binding>
+        <binding name="text">
+          <lookup name="display-name" type="Avatar">
+            <lookup name="item">ComponentsAvatar</lookup>
+          </lookup>
+        </binding>
       </object>
     </property>
   </template>
