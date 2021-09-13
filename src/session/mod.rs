@@ -8,7 +8,7 @@ mod user;
 mod user_list;
 
 use self::avatar::Avatar;
-use self::chat::Chat;
+pub use self::chat::Chat;
 use self::chat_list::ChatList;
 use self::content::Content;
 use self::sidebar::Sidebar;

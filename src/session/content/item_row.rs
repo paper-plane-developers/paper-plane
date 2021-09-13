@@ -1,6 +1,7 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
+use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{Item, ItemType};
 use crate::session::content::{EventRow, MessageRow};
@@ -86,9 +87,38 @@ impl ItemRow {
     fn set_item(&self, item: Option<Item>) {
         if let Some(ref item) = item {
             match item.type_() {
-                ItemType::Message(message) => {
-                    let child =
-                        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<MessageRow>()) {
+                ItemType::Message(message) => match message.content().0 {
+                    MessageContent::MessageChatDeletePhoto => {
+                        let is_outgoing = message.is_outgoing();
+                        let is_channel = if let ChatType::Supergroup(data) = message.chat().type_()
+                        {
+                            data.is_channel
+                        } else {
+                            false
+                        };
+
+                        let sender_name_expression = message.sender_name_expression();
+                        let label_expression = gtk::ClosureExpression::new(
+                            move |args| {
+                                if is_channel {
+                                    gettext("Channel photo removed")
+                                } else if is_outgoing {
+                                    gettext("You removed the group photo")
+                                } else {
+                                    let name = args[1].get::<&str>().unwrap();
+                                    gettext!("{} removed the group photo", name)
+                                }
+                            },
+                            &[sender_name_expression],
+                        );
+
+                        let child = self.get_or_create_event_row();
+                        label_expression.bind(&child, "label", Some(&child));
+                    }
+                    _ => {
+                        let child = if let Some(Ok(child)) =
+                            self.child().map(|w| w.downcast::<MessageRow>())
+                        {
                             child
                         } else {
                             let child = MessageRow::new();
@@ -96,8 +126,9 @@ impl ItemRow {
                             child
                         };
 
-                    child.set_message(message);
-                }
+                        child.set_message(message);
+                    }
+                },
                 ItemType::DayDivider(date) => {
                     let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year() {
                         // Translators: This is a date format in the day divider without the year
@@ -108,17 +139,23 @@ impl ItemRow {
                     };
                     let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
 
-                    if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
-                        child.set_label(&date);
-                    } else {
-                        let child = EventRow::new(date);
-                        self.set_child(Some(&child));
-                    }
+                    let child = self.get_or_create_event_row();
+                    child.set_label(&date);
                 }
             }
         }
 
         let self_ = imp::ItemRow::from_instance(self);
         self_.item.replace(item);
+    }
+
+    fn get_or_create_event_row(&self) -> EventRow {
+        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
+            child
+        } else {
+            let child = EventRow::new();
+            self.set_child(Some(&child));
+            child
+        }
     }
 }

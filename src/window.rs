@@ -5,22 +5,52 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use tdgrand::enums::{self, AuthorizationState, MessageContent, Update};
+use tdgrand::enums::{
+    self, AuthorizationState, ChatType, MessageContent, MessageSender as TelegramMessageSender,
+    Update,
+};
 use tdgrand::functions;
-use tdgrand::types;
+use tdgrand::types::{self, Message as TelegramMessage};
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
+use crate::session::Chat;
 use crate::Application;
 use crate::Session;
 use crate::RUNTIME;
 
-fn stringify_message_content(content: MessageContent) -> String {
-    match content {
-        MessageContent::MessageText(data) => data.text.text,
+fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
+    match sender {
+        TelegramMessageSender::User(data) => {
+            let user = chat.session().user_list().get_or_create_user(data.user_id);
+            format!("{} {}", user.first_name(), user.last_name())
+                .trim()
+                .into()
+        }
+        TelegramMessageSender::Chat(data) => {
+            let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
+            chat.title()
+        }
+    }
+}
+
+fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
+    match &message.content {
+        MessageContent::MessageText(data) => data.text.text.clone(),
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
+        MessageContent::MessageChatDeletePhoto => match chat.type_() {
+            ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
+            _ => {
+                if message.is_outgoing {
+                    gettext("You removed the group photo")
+                } else {
+                    let sender_name = sender_name(&message.sender, chat);
+                    gettext!("{} removed the group photo", sender_name)
+                }
+            }
+        },
         _ => gettext("Unsupported message"),
     }
 }
@@ -302,21 +332,14 @@ impl Window {
                 let notification = match notification.r#type {
                     enums::NotificationType::NewMessage(data) => {
                         let mut title = chat.title();
-                        let body = stringify_message_content(data.message.content);
+                        let body = stringify_message_content(&data.message, &chat);
 
-                        // Add the sender's name to the title if the chat is a group and the sender is an user
+                        // Add the sender's name to the title if the chat is a group
                         if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =
                             chat.type_()
                         {
-                            if let enums::MessageSender::User(user) = data.message.sender {
-                                let user = session.user_list().get_or_create_user(user.user_id);
-                                let full_name =
-                                    format!("{} {}", user.first_name(), user.last_name())
-                                        .trim()
-                                        .to_owned();
-
-                                title.insert_str(0, &format!("{} – ", full_name));
-                            }
+                            let sender_name = sender_name(&data.message.sender, &chat);
+                            title.insert_str(0, &format!("{} – ", sender_name));
                         }
 
                         let notification = gio::Notification::new(&title);

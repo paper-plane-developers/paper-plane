@@ -72,9 +72,15 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Bin;
 }
 
+impl Default for EventRow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EventRow {
-    pub fn new(label: String) -> Self {
-        glib::Object::new(&[("label", &label)]).expect("Failed to create EventRow")
+    pub fn new() -> Self {
+        glib::Object::new(&[]).expect("Failed to create EventRow")
     }
 
     pub fn label(&self) -> String {
