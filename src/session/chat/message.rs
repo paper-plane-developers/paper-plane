@@ -203,4 +203,11 @@ impl Message {
         let self_ = imp::Message::from_instance(self);
         self_.chat.get().unwrap()
     }
+
+    pub fn sender_name_expression(&self) -> gtk::Expression {
+        match self.sender() {
+            MessageSender::User(user) => user.full_name_expression(),
+            MessageSender::Chat(chat) => chat.title_expression(),
+        }
+    }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessageBubble" parent="AdwBin">
+    <style>
+      <class name="message-bubble"/>
+    </style>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwBin" id="sender_bin"/>
+        </child>
+        <child>
+          <object class="GtkLabel" id="content_label">
+            <property name="selectable">True</property>
+            <property name="use-markup">True</property>
+            <property name="wrap">True</property>
+            <property name="wrap-mode">word-char</property>
+            <property name="xalign">0</property>
+            <style>
+              <class name="message-text"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

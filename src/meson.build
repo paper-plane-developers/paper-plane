@@ -41,6 +41,7 @@ sources = files(
   'session/content/chat_history.rs',
   'session/content/event_row.rs',
   'session/content/item_row.rs',
+  'session/content/message_bubble.rs',
   'session/content/message_row.rs',
   'session/content/mod.rs',
   'session/sidebar/chat_row.rs',
