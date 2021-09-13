@@ -17,7 +17,10 @@ use crate::RUNTIME;
 
 fn stringify_message_content(content: MessageContent) -> String {
     match content {
-        MessageContent::MessageText(content) => content.text.text,
+        MessageContent::MessageText(data) => data.text.text,
+        MessageContent::MessageSticker(data) => {
+            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
+        }
         _ => gettext("Unsupported message"),
     }
 }
