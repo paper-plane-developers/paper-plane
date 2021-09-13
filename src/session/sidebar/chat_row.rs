@@ -222,6 +222,12 @@ impl ChatRow {
 }
 
 fn stringify_message(message: Message) -> String {
+    let mut show_sender = match message.chat().type_() {
+        ChatType::BasicGroup(_) => true,
+        ChatType::Supergroup(data) => !data.is_channel,
+        ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
+    };
+
     let text_content = match message.content().0 {
         MessageContent::MessageText(data) => {
             // The alpha value should be kept in sync with Adwaita's dim-label alpha value
@@ -230,13 +236,24 @@ fn stringify_message(message: Message) -> String {
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
-        _ => gettext("Unsupported message"),
-    };
+        MessageContent::MessageChatDeletePhoto => {
+            show_sender = false;
 
-    let show_sender = match message.chat().type_() {
-        ChatType::BasicGroup(_) => true,
-        ChatType::Supergroup(data) => !data.is_channel,
-        ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
+            match message.chat().type_() {
+                ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
+                _ => {
+                    if message.is_outgoing() {
+                        gettext("You removed the group photo")
+                    } else {
+                        gettext!(
+                            "{} removed the group photo",
+                            sender_name(message.sender(), true)
+                        )
+                    }
+                }
+            }
+        }
+        _ => gettext("Unsupported message"),
     };
 
     if show_sender {
