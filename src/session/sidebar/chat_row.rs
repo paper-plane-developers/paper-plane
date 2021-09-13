@@ -223,9 +223,12 @@ impl ChatRow {
 
 fn stringify_message(message: Message) -> String {
     let text_content = match message.content().0 {
-        MessageContent::MessageText(content) => {
+        MessageContent::MessageText(data) => {
             // The alpha value should be kept in sync with Adwaita's dim-label alpha value
-            format!("<span alpha=\"55%\">{}</span>", escape(&content.text.text))
+            format!("<span alpha=\"55%\">{}</span>", escape(&data.text.text))
+        }
+        MessageContent::MessageSticker(data) => {
+            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
         _ => gettext("Unsupported message"),
     };

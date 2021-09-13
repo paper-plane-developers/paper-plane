@@ -1,10 +1,10 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::ChatType;
+use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::content::MessageBubble;
+use crate::session::content::{MessageBubble, MessageSticker};
 
 mod imp {
     use super::*;
@@ -97,17 +97,38 @@ impl MessageRow {
         }
 
         // Show content widget
-        let content = if let Some(Ok(content)) = self_
-            .content_bin
-            .child()
-            .map(|w| w.downcast::<MessageBubble>())
-        {
-            content
-        } else {
-            let content = MessageBubble::new();
-            self_.content_bin.set_child(Some(&content));
-            content
-        };
-        content.set_message(message);
+        match message.content().0 {
+            // TODO: Support animated and mask stickers
+            MessageContent::MessageSticker(data)
+                if !data.sticker.is_animated && !data.sticker.is_mask =>
+            {
+                let content = if let Some(Ok(content)) = self_
+                    .content_bin
+                    .child()
+                    .map(|w| w.downcast::<MessageSticker>())
+                {
+                    content
+                } else {
+                    let content = MessageSticker::new();
+                    self_.content_bin.set_child(Some(&content));
+                    content
+                };
+                content.set_message(message);
+            }
+            _ => {
+                let content = if let Some(Ok(content)) = self_
+                    .content_bin
+                    .child()
+                    .map(|w| w.downcast::<MessageBubble>())
+                {
+                    content
+                } else {
+                    let content = MessageBubble::new();
+                    self_.content_bin.set_child(Some(&content));
+                    content
+                };
+                content.set_message(message);
+            }
+        }
     }
 }
