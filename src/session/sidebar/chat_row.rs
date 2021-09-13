@@ -274,6 +274,8 @@ fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
         MessageSender::User(user) => {
             if use_full_name {
                 format!("{} {}", user.first_name(), user.last_name())
+                    .trim()
+                    .into()
             } else {
                 user.first_name()
             }
