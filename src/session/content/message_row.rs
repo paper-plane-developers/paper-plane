@@ -98,10 +98,8 @@ impl MessageRow {
 
         // Show content widget
         match message.content().0 {
-            // TODO: Support animated and mask stickers
-            MessageContent::MessageSticker(data)
-                if !data.sticker.is_animated && !data.sticker.is_mask =>
-            {
+            // TODO: Support animated stickers
+            MessageContent::MessageSticker(data) if !data.sticker.is_animated => {
                 let content = if let Some(Ok(content)) = self_
                     .content_bin
                     .child()
