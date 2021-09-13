@@ -43,6 +43,7 @@ sources = files(
   'session/content/item_row.rs',
   'session/content/message_bubble.rs',
   'session/content/message_row.rs',
+  'session/content/message_sticker.rs',
   'session/content/mod.rs',
   'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
