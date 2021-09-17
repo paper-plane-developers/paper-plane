@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2021-09-15 09:54+0300\n"
+"Last-Translator: Igor Dyatlov <dyatlov.igor@protonmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ru/>\n"
 "Language: ru\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Poedit 3.0\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -72,11 +72,11 @@ msgstr "Выберите чат, чтобы начать обмен сообще
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr "_Предыдущий"
+msgstr "_Назад"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr "_Следующий"
+msgstr "_Далее"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
@@ -88,7 +88,7 @@ msgstr "Номер телефона"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr "Расширенный"
+msgstr "Дополнительно"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
@@ -130,12 +130,12 @@ msgstr "Общее"
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "Показать ярлыки"
+msgstr "Комбинации клавиш"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr "Уйти"
+msgstr "Выйти из приложения"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -143,11 +143,11 @@ msgstr "_Выйти"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr "_Горячие клавиши"
+msgstr "_Комбинации клавиш"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr "_О Telegrand"
+msgstr "_О приложении"
 
 #: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
@@ -155,7 +155,7 @@ msgstr "Неподдерживаемое сообщение"
 
 #: src/window.rs:325
 msgid "Incoming call"
-msgstr "Входящий вызов"
+msgstr "Входящий звонок"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
