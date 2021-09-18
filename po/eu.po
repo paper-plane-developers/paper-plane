@@ -8,165 +8,170 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-09-19 13:48+0000\n"
+"Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
+"Language-Team: Basque <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/eu/>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
+"Un cliente GTK de Telegram optimizado para estar bien integrado con el "
+"entorno de escritorio GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "Aurrez zehaztutako leihoaren zabalera"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "Aurrez zehaztutako leihoaren altuera"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Leiho maximizatuaren portaera lehenetsia"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "Telegram-en testatze-datuen zentroa erabili"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "Leiho nagusia"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "Hautatutako txatik ez"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "Aukeratu txat bat hizketan hasteko."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_Aurretiaz"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_Hurrengoa"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "Ongi etorri Telegrandera"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefono-zenbakia"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "Aurreratua"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "Enkriptazio-gakoa"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "Testatzeko datu-zentroa erabili"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "Hori aplikatzeko, berriz hasi behar da"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "Sartu egiaztapen-kodea"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "Kodea"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "Sartu zure pasahitza"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "Pasahitza"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "Sartu enkriptazio-gakoa"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "Orokorra"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Erakutsi lasterbideak"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Irten"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "_Itxi saioa"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Teklatu-lasterbideak"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_Telegrand-ri buruz"
 
 #: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
-msgstr ""
+msgstr "Mezua ez dago jasanda"
 
 #: src/window.rs:325
 msgid "Incoming call"
-msgstr ""
+msgstr "Sarrerako deia"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%Y, %B %e"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Mezu hau ez dago jasanda"
 
 #: src/session/sidebar/chat_row.rs:241
 msgid "You"
-msgstr ""
+msgstr "Zu"
