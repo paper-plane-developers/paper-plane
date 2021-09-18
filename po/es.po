@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2021-09-19 13:48+0000\n"
+"Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
 "Language: es\n"
@@ -65,11 +65,11 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr "No chat seleccionado"
+msgstr "Ningún chat seleccionado"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr "Selecciona un chat para empezar a mensajear."
+msgstr "Selecciona un chat para empezar a conversar."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
@@ -152,7 +152,7 @@ msgstr "_Acerca de Telegrand"
 
 #: src/window.rs:21 src/session/sidebar/chat_row.rs:230
 msgid "Unsupported message"
-msgstr "Mensaje sin soportar"
+msgstr "Mensaje no soportado"
 
 #: src/window.rs:325
 msgid "Incoming call"
@@ -166,7 +166,7 @@ msgstr "%e de %B"
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr "%e de %B de %Y"
+msgstr "%e de %B del %Y"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
