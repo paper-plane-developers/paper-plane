@@ -45,3 +45,7 @@ sudo ninja -C _build install
 ## Telegram API Credentials
 
 Telegram requires custom clients to set some credentials for using their API. Telegrand doesn't provide official credentials, so the packagers are expected to set their own credentials for distributing the app. Anyway, Telegrand does include by default the official credentials that Telegram provides for testing purposes, which are very limited, but usable (expecially for development).
+
+## Acknowledgment
+
+The general code architecture was heavily inspired by [fractal-next](https://gitlab.gnome.org/GNOME/fractal/-/tree/fractal-next).
