@@ -1,0 +1,45 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "command": "meson",
+            "args": [
+                "setup",
+                "--reconfigure",
+                "$HOME/.cache/vscode/build/telegrand",
+                "-Dprefix=/tmp/telegrand/usr",
+                "-Dprofile=development"
+            ],
+            "problemMatcher": [],
+            "group": "build",
+            "label": "Meson: Reconfigure"
+        },
+        {
+            "type": "shell",
+            "command": "meson",
+            "args": [
+                "setup",
+                "$HOME/.cache/vscode/build/telegrand",
+                "-Dprefix=$HOME/.cache/vscode/install/telegrand",
+                "-Dprofile=development"
+            ],
+            "problemMatcher": [],
+            "group": "build",
+            "label": "Meson: Build"
+        },
+        {
+            "type": "shell",
+            "command": "meson",
+            "args": [
+                "install",
+                "-C",
+                "$HOME/.cache/vscode/build/telegrand",
+            ],
+            "problemMatcher": [],
+            "group": "build",
+            "dependsOn": "Meson: Build",
+            "label": "Meson: Install",
+        }
+    ]
+}

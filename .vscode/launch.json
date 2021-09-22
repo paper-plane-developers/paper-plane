@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug telegrand",
+            "program": "${env:HOME}/.cache/vscode/install/telegrand/bin/telegrand",
+            "args": [],
+            "env": {
+                "GDK_BACKEND": "wayland",
+                "GSETTINGS_SCHEMA_DIR": "${env:HOME}/.cache/vscode/install/telegrand/share/glib-2.0/schemas",
+            },
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Meson: Install"
+        },
+    ]
+}
