@@ -5,16 +5,13 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+adw = { version = "0.1.0-alpha-5", package = "libadwaita" }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.2", package = "gtk4" }
+gtk = { version = "0.3", package = "gtk4" }
 indexmap = "1.7"
 log = "0.4"
 once_cell = "1.8"
 pretty_env_logger = "0.4"
 regex = "1.5"
 tdgrand = { git = "https://github.com/melix99/tdgrand", branch = "main" }
-tokio = { version = "1.9", features = ["rt-multi-thread"] }
-
-[dependencies.adw]
-package = "libadwaita"
-git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs"
+tokio = { version = "1.12", features = ["rt-multi-thread"] }
