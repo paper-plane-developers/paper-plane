@@ -59,6 +59,11 @@ meson.add_dist_script(
   meson.source_root()
 )
 
+cargo_sources = files(
+  'Cargo.lock',
+  'Cargo.toml',
+)
+
 subdir('data')
 subdir('po')
 subdir('src')
