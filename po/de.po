@@ -150,6 +150,15 @@ msgstr "_Tastaturkurzbefehle"
 msgid "_About Telegrand"
 msgstr "_Über Telegrand"
 
+#: src/window.rs::91 src/session/sidebar/chat_row.rs:286
+msgid "Voice message"
+msgstr "Sprachnachricht"
+
+#. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
+#: src/window.rs::110 src/session/sidebar/chat_row.rs:311
+msgid "{} joined Telegram"
+msgstr "{} benutzt jetzt Telegram"
+
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
 msgstr "Nicht unterstützte Nachricht"
