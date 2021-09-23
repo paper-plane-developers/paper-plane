@@ -3,7 +3,7 @@ use gtk::gdk;
 use gtk::glib::{self, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::AuthorizationState;
+use tdlib::enums::{AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
 
 use crate::session::Session;
@@ -13,6 +13,7 @@ use crate::utils::{do_async, log_out, parse_formatted_text, send_tdlib_parameter
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
+    use gtk::glib::SourceId;
     use gtk::CompositeTemplate;
     use once_cell::sync::OnceCell;
     use std::cell::{Cell, RefCell};
@@ -27,6 +28,8 @@ mod imp {
         pub(super) show_tos_popup: Cell<bool>,
         pub(super) has_recovery_email_address: Cell<bool>,
         pub(super) password_recovery_expired: Cell<bool>,
+        pub(super) code_has_next_type: Cell<bool>,
+        pub(super) code_next_type_countdown_id: RefCell<Option<SourceId>>,
         #[template_child]
         pub(super) outer_box: TemplateChild<gtk::Box>,
         #[template_child]
@@ -52,7 +55,15 @@ mod imp {
         #[template_child]
         pub(super) qr_code_image: TemplateChild<gtk::Image>,
         #[template_child]
+        pub(super) code_page: TemplateChild<adw::StatusPage>,
+        #[template_child]
         pub(super) code_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub(super) code_resend_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub(super) code_resend_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub(super) code_timeout_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -131,6 +142,9 @@ mod imp {
             );
             klass.install_action("login.show-tos-dialog", None, move |widget, _, _| {
                 widget.show_tos_dialog(false)
+            });
+            klass.install_action("login.resend-auth-code", None, move |widget, _, _| {
+                widget.resend_auth_code()
             });
         }
 
@@ -248,7 +262,14 @@ impl Login {
                     Some(&*imp.phone_number_entry),
                 );
             }
-            AuthorizationState::WaitCode(_) => {
+            AuthorizationState::WaitCode(data) => {
+                imp.code_page.set_description(Some(&gettext!(
+                    "The code will arrive to you via {}.",
+                    stringify_auth_code_type(data.code_info.r#type),
+                )));
+
+                self.update_code_resend_state(data.code_info.next_type, data.code_info.timeout);
+
                 self.navigate_to_page(
                     "code-page",
                     [&*imp.code_entry],
@@ -381,6 +402,62 @@ impl Login {
         }
     }
 
+    fn update_code_resend_state(
+        &self,
+        auth_code_next_type: Option<AuthenticationCodeType>,
+        timeout: i32,
+    ) {
+        // Always stop the resend countdown first.
+        self.stop_code_next_type_countdown();
+
+        let imp = self.imp();
+
+        imp.code_has_next_type
+            .replace(auth_code_next_type.is_some());
+
+        self.action_set_enabled("login.resend-auth-code", imp.code_has_next_type.get());
+
+        match auth_code_next_type {
+            None => {
+                imp.code_resend_stack.set_visible_child_name("disabled");
+            }
+            Some(code_type) => {
+                imp.code_resend_stack
+                    .set_visible_child(&*imp.code_resend_button);
+                imp.code_resend_button.set_label(&gettext!(
+                    "_Resend via {}",
+                    &stringify_auth_code_type(code_type)
+                ));
+
+                let mut countdown = timeout;
+                if countdown > 0 {
+                    imp.code_timeout_label.set_visible(true);
+                    imp.code_timeout_label
+                        .set_label(&gettext!("Please still wait {} seconds", countdown));
+
+                    let source_id = glib::timeout_add_seconds_local(
+                        1,
+                        clone!(@weak self as obj => @default-return glib::Continue(false), move || {
+                            let imp = obj.imp();
+                            countdown -= 1;
+                            glib::Continue(if countdown == 0 {
+                                obj.stop_code_next_type_countdown();
+                                false
+                            } else {
+                                imp.code_timeout_label.set_label(&gettext!(
+                                    "Please still wait {} seconds",
+                                    countdown
+                                ));
+                                true
+                            })
+                        }),
+                    );
+                    imp.code_next_type_countdown_id.replace(Some(source_id));
+                }
+            }
+        };
+    }
+
     fn navigate_to_page<'a, E, I, W>(
         &self,
         page_name: &str,
@@ -437,6 +514,10 @@ impl Login {
         self.action_set_enabled("login.next", is_next_valid);
         self.action_set_enabled("login.use-qr-code", visible_page == "phone-number-page");
         self.action_set_enabled(
+            "login.resend-auth-code",
+            visible_page == "code-page" && imp.code_has_next_type.get(),
+        );
+        self.action_set_enabled(
             "login.go-to-forgot-password-page",
             visible_page == "password-page",
         );
@@ -453,6 +534,14 @@ impl Login {
             visible_page == "password-forgot-page",
         );
         self.action_set_enabled("login.show-tos-dialog", visible_page == "registration-page");
+    }
+
+    fn stop_code_next_type_countdown(&self) {
+        self.imp().code_timeout_label.set_visible(false);
+
+        if let Some(source_id) = self.imp().code_next_type_countdown_id.take() {
+            source_id.remove();
+        }
     }
 
     fn previous(&self) {
@@ -479,12 +568,17 @@ impl Login {
                 None,
                 None,
             ),
-            _ => self.navigate_to_page::<gtk::Editable, _, _>(
-                "phone-number-page",
-                [],
-                None,
-                Some(&*imp.phone_number_entry),
-            ),
+            other => {
+                if other == "code-page" {
+                    self.stop_code_next_type_countdown();
+                }
+                self.navigate_to_page::<gtk::Editable, _, _>(
+                    "phone-number-page",
+                    [],
+                    None,
+                    Some(&*imp.phone_number_entry),
+                )
+            }
         }
     }
 
@@ -598,6 +692,7 @@ impl Login {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
         self.action_set_enabled("login.use-qr-code", false);
+        self.action_set_enabled("login.resend-auth-code", false);
         self.action_set_enabled("login.go-to-forgot-password-page", false);
         self.action_set_enabled("login.recover-password", false);
         self.action_set_enabled("login.show-no-email-access-dialog", false);
@@ -688,7 +783,11 @@ impl Login {
                     glib::PRIORITY_DEFAULT_IDLE,
                     functions::set_authentication_phone_number(
                         phone_number.into(),
-                        None,
+                        Some(types::PhoneNumberAuthenticationSettings {
+                            allow_flash_call: true,
+                            allow_missed_call: true,
+                            ..Default::default()
+                        }),
                         client_id,
                     ),
                     clone!(@weak self as obj => move |result| async move {
@@ -715,8 +814,13 @@ impl Login {
             glib::PRIORITY_DEFAULT_IDLE,
             functions::check_authentication_code(code, client_id),
             clone!(@weak self as obj => move |result| async move {
-                let imp = obj.imp();
-                obj.handle_user_result(result, &imp.code_error_label, &*imp.code_entry);
+                if let Err(err) = result {
+                    let imp = obj.imp();
+                    obj.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+                } else {
+                    // We entered the correct code, so stop resend countdown.
+                    obj.stop_code_next_type_countdown()
+                }
             }),
         );
     }
@@ -739,6 +843,30 @@ impl Login {
                     &imp.registration_error_label,
                     &*imp.registration_first_name_entry
                 );
+            }),
+        );
+    }
+
+    fn resend_auth_code(&self) {
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            functions::resend_authentication_code(self.imp().client_id.get()),
+            clone!(@weak self as obj => move |result| async move {
+                if let Err(err) = result {
+                    if err.code == 8 {
+                        // Sometimes the user may get a FLOOD_WAIT when he/she wants to resend the
+                        // authorization code. But then tdlib blocks the resend function for the
+                        // user, but does not inform us about it by sending an
+                        // 'AuthorizationState::WaitCode'. Consequently, the user interface would
+                        // still indicate that we are allowed to resend the code. However, we
+                        // always get code 8 when we try, indicating that resending does not work.
+                        // In this case, we automatically disable the resend feature.
+                        obj.update_code_resend_state(None, 0);
+                    }
+                    let imp = obj.imp();
+                    obj.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+
+                }
             }),
         );
     }
@@ -969,4 +1097,14 @@ fn show_error_label(error_label: &gtk::Label, message: &str) {
 fn reset_error_label(error_label: &gtk::Label) {
     error_label.set_text("");
     error_label.set_visible(false);
+}
+
+fn stringify_auth_code_type(code_type: AuthenticationCodeType) -> String {
+    match code_type {
+        AuthenticationCodeType::TelegramMessage(_) => gettext("Telegram"),
+        AuthenticationCodeType::Sms(_) => gettext("SMS"),
+        AuthenticationCodeType::Call(_) => gettext("Call"),
+        AuthenticationCodeType::FlashCall(_) => gettext("Flash Call"),
+        AuthenticationCodeType::MissedCall(_) => gettext("Missed Call"),
+    }
 }
