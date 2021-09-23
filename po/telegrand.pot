@@ -146,11 +146,32 @@ msgstr ""
 msgid "_About Telegrand"
 msgstr ""
 
-#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
+#: src/window.rs:45 src/session/sidebar/chat_row.rs:240
+msgid "Photo"
+msgstr ""
+
+#: src/window.rs:64 src/session/sidebar/chat_row.rs:259
+msgid "GIF"
+msgstr ""
+
+#: src/window.rs:73 src/session/sidebar/chat_row.rs:268
+msgid "Video"
+msgstr ""
+
+#: src/window.rs::91 src/session/sidebar/chat_row.rs:286
+msgid "Voice message"
+msgstr ""
+
+#. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
+#: src/window.rs::110 src/session/sidebar/chat_row.rs:311
+msgid "{} joined Telegram"
+msgstr ""
+
+#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
 msgstr ""
 
-#: src/window.rs:325
+#: src/window.rs:409
 msgid "Incoming call"
 msgstr ""
 
@@ -168,6 +189,6 @@ msgstr ""
 msgid "This message is unsupported"
 msgstr ""
 
-#: src/session/sidebar/chat_row.rs:241
+#: src/session/sidebar/chat_row.rs:318
 msgid "You"
 msgstr ""
