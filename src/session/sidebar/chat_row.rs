@@ -5,7 +5,7 @@ use tdgrand::enums::{ChatType, MessageContent};
 use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
 use crate::session::Chat;
-use crate::utils::escape;
+use crate::utils::{dim_and_escape, escape};
 
 mod imp {
     use super::*;
@@ -230,12 +230,66 @@ fn stringify_message(message: Message) -> String {
 
     let text_content = match message.content().0 {
         MessageContent::MessageText(data) => {
-            // The alpha value should be kept in sync with Adwaita's dim-label alpha value
-            format!("<span alpha=\"55%\">{}</span>", escape(&data.text.text))
+            dim_and_escape(&data.text.text)
         }
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
+        MessageContent::MessagePhoto(data) => format!(
+            "{}{}",
+            gettext("Photo"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
+        MessageContent::MessageAudio(data) => format!(
+            "{} - {}{}",
+            data.audio.performer,
+            data.audio.title,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
+        MessageContent::MessageAnimation(data) => format!(
+            "{}{}",
+            gettext("GIF"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
+        MessageContent::MessageVideo(data) => format!(
+            "{}{}",
+            gettext("Video"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
+        MessageContent::MessageDocument(data) => format!(
+            "{}{}",
+            data.document.file_name,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
+        MessageContent::MessageVoiceNote(data) => format!(
+            "{}{}",
+            gettext("Voice message"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", dim_and_escape(&data.caption.text))
+            }
+        ),
         MessageContent::MessageChatDeletePhoto => {
             show_sender = false;
 
@@ -252,6 +306,9 @@ fn stringify_message(message: Message) -> String {
                     }
                 }
             }
+        }
+        MessageContent::MessageContactRegistered => {
+            gettext!("{} joined Telegram", sender_name(message.sender(), true))
         }
         _ => gettext("Unsupported message"),
     };

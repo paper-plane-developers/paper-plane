@@ -15,6 +15,15 @@ pub fn escape(text: &str) -> String {
         .replace('"', "&quot;")
 }
 
+pub fn dim(text: &str) -> String {
+    // The alpha value should be kept in sync with Adwaita's dim-label alpha value
+    format!("<span alpha=\"55%\">{}</span>", text)
+}
+
+pub fn dim_and_escape(text: &str) -> String {
+    dim(&escape(text))
+}
+
 pub fn linkify(text: &str) -> String {
     if !PROTOCOL_RE.is_match(text) {
         format!("http://{}", text)
