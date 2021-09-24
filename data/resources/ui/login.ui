@@ -50,7 +50,6 @@
                 <property name="name">phone-number-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
-                    <property name="valign">start</property>
                     <property name="icon-name">user-available-symbolic</property>
                     <property name="title" translatable="yes">Welcome to Telegrand</property>
                     <child>
@@ -144,7 +143,6 @@
                 <property name="name">code-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
-                    <property name="valign">start</property>
                     <property name="icon-name">mail-send-symbolic</property>
                     <property name="title" translatable="yes">Enter the Verification Code</property>
                     <child>
@@ -200,7 +198,6 @@
                 <property name="name">password-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
-                    <property name="valign">start</property>
                     <property name="icon-name">dialog-password-symbolic</property>
                     <property name="title" translatable="yes">Enter Your Password</property>
                     <child>
@@ -256,7 +253,6 @@
                 <property name="name">encryption-key-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">
-                    <property name="valign">start</property>
                     <property name="icon-name">system-lock-screen-symbolic</property>
                     <property name="title" translatable="yes">Enter the Encryption Key</property>
                     <child>
