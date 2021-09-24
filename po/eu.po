@@ -150,11 +150,11 @@ msgstr "_Teklatu-lasterbideak"
 msgid "_About Telegrand"
 msgstr "_Telegrand-ri buruz"
 
-#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
+#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
 msgstr "Mezua ez dago jasanda"
 
-#: src/window.rs:325
+#: src/window.rs:409
 msgid "Incoming call"
 msgstr "Sarrerako deia"
 
@@ -172,6 +172,6 @@ msgstr "%Y, %B %e"
 msgid "This message is unsupported"
 msgstr "Mezu hau ez dago jasanda"
 
-#: src/session/sidebar/chat_row.rs:241
+#: src/session/sidebar/chat_row.rs:318
 msgid "You"
 msgstr "Zu"

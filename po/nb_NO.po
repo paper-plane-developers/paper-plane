@@ -151,11 +151,11 @@ msgstr "_Tastatursnarveier"
 msgid "_About Telegrand"
 msgstr "_Om Telegrand"
 
-#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
+#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
 msgstr "Ustøttet melding"
 
-#: src/window.rs:325
+#: src/window.rs:409
 msgid "Incoming call"
 msgstr "Innkommende anrop"
 
@@ -173,7 +173,7 @@ msgstr "%e %B %Y"
 msgid "This message is unsupported"
 msgstr "Denne meldingen er ustøttet"
 
-#: src/session/sidebar/chat_row.rs:241
+#: src/session/sidebar/chat_row.rs:318
 msgid "You"
 msgstr "Du"
 

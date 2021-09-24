@@ -40,6 +40,61 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
+        MessageContent::MessagePhoto(data) => format!(
+            "{}{}",
+            gettext("Photo"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageAudio(data) => format!(
+            "{} - {}{}",
+            data.audio.performer,
+            data.audio.title,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageAnimation(data) => format!(
+            "{}{}",
+            gettext("GIF"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageVideo(data) => format!(
+            "{}{}",
+            gettext("Video"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageDocument(data) => format!(
+            "{}{}",
+            data.document.file_name,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageVoiceNote(data) => format!(
+            "{}{}",
+            gettext("Voice message"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
         MessageContent::MessageChatDeletePhoto => match chat.type_() {
             ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
             _ => {
@@ -51,6 +106,9 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
                 }
             }
         },
+        MessageContent::MessageContactRegistered => {
+            gettext!("{} joined Telegram", sender_name(&message.sender, chat))
+        }
         _ => gettext("Unsupported message"),
     }
 }

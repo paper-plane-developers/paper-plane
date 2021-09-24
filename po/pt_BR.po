@@ -148,11 +148,11 @@ msgstr "_Atalhos do teclado"
 msgid "_About Telegrand"
 msgstr "_Sobre o Telegrand"
 
-#: src/window.rs:21 src/session/sidebar/chat_row.rs:230
+#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
 msgstr "Mensagem não suportada"
 
-#: src/window.rs:325
+#: src/window.rs:409
 msgid "Incoming call"
 msgstr "Chamada recebida"
 
@@ -170,6 +170,6 @@ msgstr "%e de %B de %Y"
 msgid "This message is unsupported"
 msgstr "Esta mensagem não é suportada"
 
-#: src/session/sidebar/chat_row.rs:241
+#: src/session/sidebar/chat_row.rs:318
 msgid "You"
 msgstr "Você"
