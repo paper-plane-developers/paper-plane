@@ -2,6 +2,7 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use locale_config::Locale;
 use tdgrand::{enums::AuthorizationState, functions, types};
 
 use crate::config;
@@ -231,7 +232,7 @@ impl Login {
             use_secret_chats: true,
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
-            system_language_code: "en-US".to_string(),
+            system_language_code: Locale::current().to_string(),
             device_model: "Desktop".to_string(),
             application_version: config::VERSION.to_string(),
             enable_storage_optimizer: true,
