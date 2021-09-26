@@ -229,9 +229,7 @@ fn stringify_message(message: Message) -> String {
     };
 
     let text_content = match message.content().0 {
-        MessageContent::MessageText(data) => {
-            dim_and_escape(&data.text.text)
-        }
+        MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
