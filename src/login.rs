@@ -146,7 +146,6 @@ impl Login {
     pub fn login_client(&self, client_id: i32) {
         let self_ = imp::Login::from_instance(self);
         self_.client_id.set(client_id);
-        self_.content.set_visible_child_name("phone-number-page");
 
         self_.phone_number_entry.set_text("");
         self_.custom_encryption_key_entry.set_text("");
@@ -171,6 +170,7 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
+                self_.content.set_visible_child_name("phone-number-page");
                 self.unfreeze();
             }
             AuthorizationState::WaitCode(_) => {
