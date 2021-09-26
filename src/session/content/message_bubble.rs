@@ -1,11 +1,10 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gettextrs::gettext;
 use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::{ChatType, MessageContent, TextEntityType};
-use tdgrand::types::FormattedText;
+use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
-use crate::utils::{escape, linkify};
+use crate::utils::parse_formatted_text;
 
 mod imp {
     use super::*;
@@ -151,86 +150,6 @@ impl MessageBubble {
         let content_label = self_.content_label.get();
         text_expression.bind(&content_label, "label", Some(&content_label));
     }
-}
-
-fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
-    match entity {
-        TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
-        TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
-        TextEntityType::PhoneNumber => format!("<a href='tel:{0}'>{0}</a>", text),
-        TextEntityType::Bold => format!("<b>{}</b>", text),
-        TextEntityType::Italic => format!("<i>{}</i>", text),
-        TextEntityType::Underline => format!("<u>{}</u>", text),
-        TextEntityType::Strikethrough => format!("<s>{}</s>", text),
-        TextEntityType::Code | TextEntityType::Pre | TextEntityType::PreCode(_) => {
-            format!("<tt>{}</tt>", text)
-        }
-        TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
-        _ => text,
-    }
-}
-
-fn parse_formatted_text(formatted_text: FormattedText) -> String {
-    let mut entities = formatted_text.entities.iter();
-    let mut entity = entities.next();
-    let mut output = String::new();
-    let mut buffer = String::new();
-    let mut is_inside_entity = false;
-
-    // This is the offset in utf16 code units of the text to parse. We need this variable
-    // because tdlib stores the offset and length parameters as utf16 code units instead
-    // of regular code points.
-    let mut code_units_offset = 0;
-
-    for c in formatted_text.text.chars() {
-        if !is_inside_entity
-            && entity.is_some()
-            && code_units_offset >= entity.unwrap().offset as usize
-        {
-            is_inside_entity = true;
-
-            if !buffer.is_empty() {
-                output.push_str(&escape(&buffer));
-                buffer = String::new();
-            }
-        }
-
-        buffer.push(c);
-        code_units_offset += c.len_utf16();
-
-        if let Some(entity_) = entity {
-            if code_units_offset >= (entity_.offset + entity_.length) as usize {
-                buffer = escape(&buffer);
-
-                entity = loop {
-                    let entity = entities.next();
-
-                    // Handle eventual nested entities
-                    match entity {
-                        Some(entity) => {
-                            if entity.offset == entity_.offset {
-                                buffer = convert_to_markup(buffer, &entity.r#type);
-                            } else {
-                                break Some(entity);
-                            }
-                        }
-                        None => break None,
-                    }
-                };
-
-                output.push_str(&convert_to_markup(buffer, &entity_.r#type));
-                buffer = String::new();
-                is_inside_entity = false;
-            }
-        }
-    }
-
-    // Add the eventual leftovers from the buffer to the output
-    if !buffer.is_empty() {
-        output.push_str(&escape(&buffer));
-    }
-
-    output
 }
 
 fn format_message_content_text(content: MessageContent) -> String {
