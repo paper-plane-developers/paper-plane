@@ -158,6 +158,14 @@ impl Window {
         self_.login.login_client(client_id);
         self_.main_stack.set_visible_child(&self_.login.get());
 
+        RUNTIME.spawn(async move {
+            functions::SetLogStream::new()
+                .log_stream(enums::LogStream::Empty)
+                .send(client_id)
+                .await
+                .unwrap();
+        });
+
         // This call is important for login because TDLib requires the clients
         // to do at least a request to start receiving updates.
         RUNTIME.spawn(async move {

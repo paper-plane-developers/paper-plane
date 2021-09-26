@@ -21,6 +21,7 @@ use gtk::{
 };
 use once_cell::sync::{Lazy, OnceCell};
 use std::{path::PathBuf, str::FromStr};
+use syslog::Facility;
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
@@ -51,15 +52,24 @@ fn main() {
             // ... and exit application.
             1
         } else {
-            let log_level = match dict.lookup::<String>("log-level").unwrap() {
-                Some(level) => log::Level::from_str(&level).expect("Error on parsing log-level"),
+            let log_level_filter = match dict.lookup::<String>("log-level").unwrap() {
+                Some(level) => {
+                    log::LevelFilter::from_str(&level).expect("Error on parsing log-level")
+                }
                 // Standard log levels if not specified by user
-                None => log::Level::Warn,
+                None => log::LevelFilter::Warn,
             };
 
-            // TODO: Change to syslog when tdlib v1.8 is out where messages can be redirected.
-            std::env::set_var("RUST_LOG", log_level.as_str());
-            pretty_env_logger::init();
+            tdgrand::set_log_message_callback(
+                3,
+                Some(Box::new(|_level, message| {
+                    print!("{}", message);
+                })),
+            );
+
+            // Initialize logger
+            syslog::init(Facility::LOG_USER, log_level_filter, Some("telegrand"))
+                .expect("could not initialize logging");
 
             DATA_DIR
                 .set(

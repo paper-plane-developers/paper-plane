@@ -185,6 +185,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "error-chain"
+version = "0.12.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d2f06b9cac1506ece98fe3231e3cc9c4410ec3d5b1f24ae1c8946f0742cdefc"
+dependencies = [
+ "version_check",
+]
+
+[[package]]
 name = "field-offset"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -563,6 +572,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "hostname"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c731c3e10504cc8ed35cfe2f1db4c9274c3d35fa486e3b31df46f068ef3e867"
+dependencies = [
+ "libc",
+ "match_cfg",
+ "winapi",
+]
+
+[[package]]
 name = "html-escape"
 version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -719,6 +739,12 @@ checksum = "62bb907fe88d54d8d9ce32a3cceab4218ed2f6b7d35617cafe9adf84e43919cb"
 dependencies = [
  "libc",
 ]
+
+[[package]]
+name = "match_cfg"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ffbee8634e0d45d258acb448e7eaab3fce7a0a467395d4d9f228e3c1f01fb2e4"
 
 [[package]]
 name = "memchr"
@@ -1115,6 +1141,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "syslog"
+version = "6.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7caf36e4fc5d8ccee2ff4a19e27185339cf00338bb0c68f284dc5a295e9cc045"
+dependencies = [
+ "error-chain",
+ "hostname",
+ "log",
+ "time",
+]
+
+[[package]]
 name = "system-deps"
 version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1161,7 +1199,7 @@ dependencies = [
 [[package]]
 name = "tdgrand"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
+source = "git+https://github.com/marhkb/tdgrand.git?branch=main#b8741dc8e540132863f5483c843567446c5db746"
 dependencies = [
  "log",
  "once_cell",
@@ -1177,7 +1215,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-gen"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
+source = "git+https://github.com/marhkb/tdgrand.git?branch=main#b8741dc8e540132863f5483c843567446c5db746"
 dependencies = [
  "tdgrand-tl-parser",
 ]
@@ -1185,7 +1223,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-parser"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
+source = "git+https://github.com/marhkb/tdgrand.git?branch=main#b8741dc8e540132863f5483c843567446c5db746"
 dependencies = [
  "crc32fast",
 ]
@@ -1204,6 +1242,7 @@ dependencies = [
  "pretty_env_logger",
  "qrcode-generator",
  "regex",
+ "syslog",
  "tdgrand",
  "tokio",
  "webp",
@@ -1242,6 +1281,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "time"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41effe7cfa8af36f439fac33861b66b049edc6f9a32331e2312660529c1c24ad"
+dependencies = [
+ "itoa",
+ "libc",
 ]
 
 [[package]]
