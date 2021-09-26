@@ -195,6 +195,101 @@
             </child>
             <child>
               <object class="AdwLeafletPage">
+                <property name="name">registration-page</property>
+                <property name="child">
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="AdwStatusPage">
+                        <property name="icon-name">contact-new-symbolic</property>
+                        <property name="title" translatable="yes">Register New Account</property>
+                        <property name="vexpand">True</property>
+                        <child>
+                          <object class="AdwClamp">
+                            <property name="maximum-size">300</property>
+                            <property name="tightening-threshold">200</property>
+                            <property name="child">
+                              <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">12</property>
+                                <child>
+                                  <object class="GtkListBox">
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="focusable">False</property>
+                                        <property name="selectable">False</property>
+                                        <property name="activatable">False</property>
+                                        <property name="child">
+                                          <object class="GtkEntry" id="registration_first_name_entry">
+                                            <property name="activates-default">True</property>
+                                            <property name="placeholder-text" translatable="yes">First Name</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="focusable">False</property>
+                                        <property name="selectable">False</property>
+                                        <property name="activatable">False</property>
+                                        <property name="child">
+                                          <object class="GtkEntry" id="registration_last_name_entry">
+                                            <property name="activates-default">True</property>
+                                            <property name="placeholder-text" translatable="yes">Last Name</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="content"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="registration_error_label">
+                                    <property name="visible">False</property>
+                                    <style>
+                                      <class name="error"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="maximum-size">300</property>
+                        <property name="tightening-threshold">200</property>
+                        <property name="child">
+                          <object class="GtkLabel" id="tos_label">
+                            <property name="ellipsize">middle</property>
+                            <property name="justify">center</property>
+                            <property name="margin-bottom">18</property>
+                            <property name="use-markup">True</property>
+                            <property name="valign">end</property>
+                            <property name="label" translatable="yes">By signing up,
+you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwLeafletPage">
                 <property name="name">password-page</property>
                 <property name="child">
                   <object class="AdwStatusPage">

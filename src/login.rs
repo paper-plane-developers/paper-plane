@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
@@ -6,7 +7,7 @@ use locale_config::Locale;
 use tdgrand::{enums::AuthorizationState, functions, types};
 
 use crate::config;
-use crate::utils::do_async;
+use crate::utils::{do_async, parse_formatted_text};
 
 mod imp {
     use super::*;
@@ -14,12 +15,14 @@ mod imp {
     use glib::subclass::Signal;
     use gtk::{gio, CompositeTemplate};
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
     pub struct Login {
         pub client_id: Cell<i32>,
+        pub tos_text: RefCell<String>,
+        pub show_tos_popup: Cell<bool>,
         #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -43,6 +46,14 @@ mod imp {
         #[template_child]
         pub code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub registration_first_name_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub registration_last_name_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub registration_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub tos_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub password_error_label: TemplateChild<gtk::Label>,
@@ -64,6 +75,9 @@ mod imp {
                 widget.previous()
             });
             klass.install_action("login.next", None, move |widget, _, _| widget.next());
+            klass.install_action("tos.dialog", None, move |widget, _, _| {
+                widget.show_tos_dialog(false)
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -101,6 +115,11 @@ mod imp {
             settings
                 .bind("use-test-dc", use_test_dc_switch, "state")
                 .build();
+
+            self_.tos_label.connect_activate_link(|label, _| {
+                label.activate_action("tos.dialog", None);
+                gtk::Inhibit(true)
+            });
         }
     }
 
@@ -131,6 +150,8 @@ impl Login {
 
         self_.phone_number_entry.set_text("");
         self_.custom_encryption_key_entry.set_text("");
+        self_.registration_first_name_entry.set_text("");
+        self_.registration_last_name_entry.set_text("");
         self_.code_entry.set_text("");
         self_.password_entry.set_text("");
         self_.encryption_key_entry.set_text("");
@@ -159,8 +180,14 @@ impl Login {
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
             }
-            AuthorizationState::WaitRegistration(_) => {
-                todo!()
+            AuthorizationState::WaitRegistration(data) => {
+                self_.show_tos_popup.set(data.terms_of_service.show_popup);
+                self_
+                    .tos_text
+                    .replace(parse_formatted_text(data.terms_of_service.text));
+
+                self_.content.set_visible_child_name("registration-page");
+                self.unfreeze();
             }
             AuthorizationState::WaitPassword(_) => {
                 self_.content.set_visible_child_name("password-page");
@@ -183,20 +210,64 @@ impl Login {
 
         let self_ = imp::Login::from_instance(self);
         let visible_page = self_.content.visible_child_name().unwrap();
-        if visible_page == "phone-number-page" {
-            let encryption_key = self_.custom_encryption_key_entry.text().to_string();
-            if !encryption_key.is_empty() {
-                self.change_encryption_key();
-            }
 
-            self.send_phone_number();
-        } else if visible_page == "code-page" {
-            self.send_code();
-        } else if visible_page == "password-page" {
-            self.send_password();
-        } else if visible_page == "encryption-key-page" {
-            self.send_encryption_key(false);
+        match visible_page.as_str() {
+            "phone-number-page" => {
+                let encryption_key = self_.custom_encryption_key_entry.text().to_string();
+                if !encryption_key.is_empty() {
+                    self.change_encryption_key();
+                }
+
+                self.send_phone_number();
+            }
+            "code-page" => self.send_code(),
+            "registration-page" => {
+                if self_.show_tos_popup.get() {
+                    // Force the ToS dialog for the user before he can proceed
+                    self.show_tos_dialog(true);
+                } else {
+                    // Just proceed if the user either doesn't need to accept the ToS
+                    self.send_registration()
+                }
+            }
+            "password-page" => self.send_password(),
+            "encryption-key-page" => self.send_encryption_key(false),
+            other => unreachable!("no page named '{}'", other),
         }
+    }
+
+    fn show_tos_dialog(&self, user_needs_to_accept: bool) {
+        let self_ = imp::Login::from_instance(self);
+
+        let builder = gtk::MessageDialog::builder()
+            .use_markup(true)
+            .secondary_text(&*self_.tos_text.borrow())
+            .modal(true)
+            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap());
+
+        let dialog = if user_needs_to_accept {
+            builder
+                .buttons(gtk::ButtonsType::YesNo)
+                .text(&gettext("Do You Accept the Terms of Service?"))
+        } else {
+            builder
+                .buttons(gtk::ButtonsType::Ok)
+                .text(&gettext("Terms of Service"))
+        }
+        .build();
+
+        dialog.run_async(clone!(@weak self as obj => move |dialog, response| {
+            if matches!(response, gtk::ResponseType::No) {
+                // If the user declines the ToS, don't proceed and just stay in
+                // the view but unfreeze it again.
+                obj.unfreeze();
+            } else if matches!(response, gtk::ResponseType::Yes) {
+                // User has accepted the ToS, so we can proceed in the login
+                // flow.
+                obj.send_registration();
+            }
+            dialog.close();
+        }));
     }
 
     fn freeze(&self) {
@@ -359,6 +430,32 @@ impl Login {
                     let self_ = imp::Login::from_instance(&obj);
                     self_.code_error_label.set_text(&err.message);
                     self_.code_error_label.set_visible(true);
+
+                    obj.unfreeze();
+                }
+            }),
+        );
+    }
+
+    fn send_registration(&self) {
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let first_name = self_.registration_first_name_entry.text().to_string();
+        let last_name = self_.registration_last_name_entry.text().to_string();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                functions::RegisterUser::new()
+                    .first_name(first_name)
+                    .last_name(last_name)
+                    .send(client_id)
+                    .await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                if let Err(err) = result {
+                    let self_ = imp::Login::from_instance(&obj);
+                    self_.registration_error_label.set_text(&err.message);
+                    self_.registration_error_label.set_visible(true);
 
                     obj.unfreeze();
                 }
