@@ -146,7 +146,6 @@ impl Login {
     pub fn login_client(&self, client_id: i32) {
         let self_ = imp::Login::from_instance(self);
         self_.client_id.set(client_id);
-        self_.content.set_visible_child_name("phone-number-page");
 
         self_.phone_number_entry.set_text("");
         self_.custom_encryption_key_entry.set_text("");
@@ -171,11 +170,14 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
+                self_.content.set_visible_child_name("phone-number-page");
                 self.unfreeze();
+                self_.phone_number_entry.grab_focus();
             }
             AuthorizationState::WaitCode(_) => {
                 self_.content.set_visible_child_name("code-page");
                 self.unfreeze();
+                self_.code_entry.grab_focus();
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -188,10 +190,12 @@ impl Login {
 
                 self_.content.set_visible_child_name("registration-page");
                 self.unfreeze();
+                self_.registration_first_name_entry.grab_focus();
             }
             AuthorizationState::WaitPassword(_) => {
                 self_.content.set_visible_child_name("password-page");
                 self.unfreeze();
+                self_.password_entry.grab_focus();
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
@@ -203,6 +207,9 @@ impl Login {
     fn previous(&self) {
         let self_ = imp::Login::from_instance(self);
         self_.content.set_visible_child_name("phone-number-page");
+
+        // Grab focus for entry after reset.
+        self_.phone_number_entry.grab_focus();
     }
 
     fn next(&self) {
@@ -362,6 +369,9 @@ impl Login {
 
                         obj.unfreeze();
                     }
+
+                    // In case of an empty key or an error, grab focus for entry again.
+                    self_.encryption_key_entry.grab_focus();
                 }
             }),
         );
@@ -384,6 +394,9 @@ impl Login {
                     let self_ = imp::Login::from_instance(&obj);
                     self_.welcome_page_error_label.set_text(&err.message);
                     self_.welcome_page_error_label.set_visible(true);
+
+                    // Grab focus for entry again after error.
+                    self_.custom_encryption_key_entry.grab_focus();
                 }
             }),
         );
@@ -408,6 +421,9 @@ impl Login {
                     self_.welcome_page_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.phone_number_entry.grab_focus();
                 }
             }),
         );
@@ -432,6 +448,9 @@ impl Login {
                     self_.code_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.code_entry.grab_focus();
                 }
             }),
         );
@@ -458,6 +477,9 @@ impl Login {
                     self_.registration_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.registration_first_name_entry.grab_focus();
                 }
             }),
         );
@@ -482,6 +504,9 @@ impl Login {
                     self_.password_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.password_entry.grab_focus();
                 }
             }),
         );
