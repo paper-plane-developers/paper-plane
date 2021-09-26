@@ -172,10 +172,12 @@ impl Login {
             AuthorizationState::WaitPhoneNumber => {
                 self_.content.set_visible_child_name("phone-number-page");
                 self.unfreeze();
+                self_.phone_number_entry.grab_focus();
             }
             AuthorizationState::WaitCode(_) => {
                 self_.content.set_visible_child_name("code-page");
                 self.unfreeze();
+                self_.code_entry.grab_focus();
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -188,10 +190,12 @@ impl Login {
 
                 self_.content.set_visible_child_name("registration-page");
                 self.unfreeze();
+                self_.registration_first_name_entry.grab_focus();
             }
             AuthorizationState::WaitPassword(_) => {
                 self_.content.set_visible_child_name("password-page");
                 self.unfreeze();
+                self_.password_entry.grab_focus();
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
@@ -203,6 +207,9 @@ impl Login {
     fn previous(&self) {
         let self_ = imp::Login::from_instance(self);
         self_.content.set_visible_child_name("phone-number-page");
+
+        // Grab focus for entry after reset.
+        self_.phone_number_entry.grab_focus();
     }
 
     fn next(&self) {
