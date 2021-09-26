@@ -369,6 +369,9 @@ impl Login {
 
                         obj.unfreeze();
                     }
+
+                    // In case of an empty key or an error, grab focus for entry again.
+                    self_.encryption_key_entry.grab_focus();
                 }
             }),
         );
@@ -391,6 +394,9 @@ impl Login {
                     let self_ = imp::Login::from_instance(&obj);
                     self_.welcome_page_error_label.set_text(&err.message);
                     self_.welcome_page_error_label.set_visible(true);
+
+                    // Grab focus for entry again after error.
+                    self_.custom_encryption_key_entry.grab_focus();
                 }
             }),
         );
@@ -415,6 +421,9 @@ impl Login {
                     self_.welcome_page_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.phone_number_entry.grab_focus();
                 }
             }),
         );
@@ -439,6 +448,9 @@ impl Login {
                     self_.code_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.code_entry.grab_focus();
                 }
             }),
         );
@@ -465,6 +477,9 @@ impl Login {
                     self_.registration_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.registration_first_name_entry.grab_focus();
                 }
             }),
         );
@@ -489,6 +504,9 @@ impl Login {
                     self_.password_error_label.set_visible(true);
 
                     obj.unfreeze();
+
+                    // Grab focus for entry again after error.
+                    self_.password_entry.grab_focus();
                 }
             }),
         );
