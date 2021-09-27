@@ -132,6 +132,8 @@ mod imp {
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        pub loading_widget: TemplateChild<gtk::Widget>,
+        #[template_child]
         pub login: TemplateChild<Login>,
     }
 
@@ -148,6 +150,7 @@ mod imp {
                 receiver_should_stop: Arc::default(),
                 clients: RefCell::default(),
                 main_stack: TemplateChild::default(),
+                loading_widget: TemplateChild::default(),
                 login: TemplateChild::default(),
             }
         }
@@ -173,6 +176,11 @@ mod imp {
             // Load latest window state
             obj.load_window_size();
 
+            self.login
+                .connect_login_page_activated(clone!(@weak obj => move |_| {
+                    let obj_ = imp::Window::from_instance(&obj);
+                    obj_.main_stack.set_visible_child(&obj_.login.get())
+                }));
             self.login.connect_new_session(
                 clone!(@weak obj => move |login| obj.create_session(login.client_id())),
             );
@@ -241,7 +249,6 @@ impl Window {
         let self_ = imp::Window::from_instance(self);
         self_.clients.borrow_mut().insert(client_id, None);
         self_.login.login_client(client_id);
-        self_.main_stack.set_visible_child(&self_.login.get());
 
         // This call is important for login because TDLib requires the clients
         // to do at least a request to start receiving updates.
@@ -350,6 +357,9 @@ impl Window {
                         self_.main_stack.remove(&session);
                     }
 
+                    // FIXME: For the the future (when multiple sessions are implemented) we need
+                    // to check whether there are still opened sessions and switch to one of them
+                    // instead of creating the client.
                     self.create_client();
                 } else {
                     self_
@@ -428,6 +438,12 @@ impl Window {
 
         self_.main_stack.add_child(&session);
         self_.main_stack.set_visible_child(&session);
+
+        session.connect_logging_out(clone!(@weak self as obj => move |_| {
+            let obj_ = imp::Window::from_instance(&obj);
+            obj_.main_stack.set_visible_child(&obj_.loading_widget.get())
+        }));
+
         self_.clients.borrow_mut().insert(client_id, Some(session));
 
         // Enable notifications for this client

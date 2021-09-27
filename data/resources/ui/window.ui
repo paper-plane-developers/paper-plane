@@ -5,8 +5,26 @@
     <property name="default-height">600</property>
     <property name="content">
       <object class="GtkStack" id="main_stack">
-        <property name="visible-child">login</property>
+        <property name="visible-child">loading_widget</property>
         <property name="transition-type">crossfade</property>
+        <child>
+          <object class="GtkBox" id="loading_widget">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkHeaderBar"/>
+            </child>
+            <child>
+              <object class="GtkSpinner">
+                <property name="vexpand">True</property>
+                <property name="spinning">true</property>
+                <property name="width-request">32</property>
+                <property name="height-request">32</property>
+                <property name="valign">center</property>
+                <property name="halign">center</property>
+              </object>
+            </child>
+          </object>
+        </child>
         <child>
           <object class="Login" id="login" />
         </child>

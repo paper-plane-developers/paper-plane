@@ -88,7 +88,11 @@ mod imp {
     impl ObjectImpl for Login {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("new-session", &[], <()>::static_type().into()).build()]
+                vec![
+                    Signal::builder("login-page-activated", &[], <()>::static_type().into())
+                        .build(),
+                    Signal::builder("new-session", &[], <()>::static_type().into()).build(),
+                ]
             });
             SIGNALS.as_ref()
         }
@@ -170,14 +174,10 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
-                self_.content.set_visible_child_name("phone-number-page");
-                self.unfreeze();
-                self_.phone_number_entry.grab_focus();
+                self.set_visible_page_name("phone-number-page", &*self_.phone_number_entry);
             }
             AuthorizationState::WaitCode(_) => {
-                self_.content.set_visible_child_name("code-page");
-                self.unfreeze();
-                self_.code_entry.grab_focus();
+                self.set_visible_page_name("code-page", &*self_.code_entry);
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -188,20 +188,29 @@ impl Login {
                     .tos_text
                     .replace(parse_formatted_text(data.terms_of_service.text));
 
-                self_.content.set_visible_child_name("registration-page");
-                self.unfreeze();
-                self_.registration_first_name_entry.grab_focus();
+                self.set_visible_page_name(
+                    "registration-page",
+                    &*self_.registration_first_name_entry,
+                );
             }
             AuthorizationState::WaitPassword(_) => {
-                self_.content.set_visible_child_name("password-page");
-                self.unfreeze();
-                self_.password_entry.grab_focus();
+                self.set_visible_page_name("password-page", &*self_.password_entry);
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
             }
             _ => {}
         }
+    }
+
+    fn set_visible_page_name<W: WidgetExt>(&self, page_name: &str, widget_to_focus: &W) {
+        let self_ = imp::Login::from_instance(self);
+
+        self_.content.set_visible_child_name(page_name);
+        self.unfreeze();
+        widget_to_focus.grab_focus();
+
+        self.emit_by_name("login-page-activated", &[]).unwrap();
     }
 
     fn previous(&self) {
@@ -515,6 +524,19 @@ impl Login {
     pub fn client_id(&self) -> i32 {
         let self_ = imp::Login::from_instance(self);
         self_.client_id.get()
+    }
+
+    pub fn connect_login_page_activated<F: Fn(&Self) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("login-page-activated", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
+        .unwrap()
     }
 
     pub fn connect_new_session<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {

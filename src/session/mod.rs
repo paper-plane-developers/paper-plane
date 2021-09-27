@@ -29,6 +29,7 @@ use crate::RUNTIME;
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
+    use glib::subclass::Signal;
     use gtk::CompositeTemplate;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
@@ -67,6 +68,13 @@ mod imp {
     }
 
     impl ObjectImpl for Session {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder("logging-out", &[], <()>::static_type().into()).build()]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -222,6 +230,7 @@ impl Session {
     }
 
     fn log_out(&self) {
+        self.emit_by_name("logging-out", &[]).unwrap();
         let client_id = self.client_id();
         RUNTIME.spawn(async move {
             functions::LogOut::new().send(client_id).await.unwrap();
@@ -268,5 +277,15 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
         let client_id = self_.client_id.get();
         self.chat_list().fetch(client_id);
+    }
+
+    pub fn connect_logging_out<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
+        self.connect_local("logging-out", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
+        .unwrap()
     }
 }
