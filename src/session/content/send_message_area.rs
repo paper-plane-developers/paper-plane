@@ -1,20 +1,25 @@
 use glib::{clone, signal::Inhibit};
 use gtk::{gdk, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::{enums::InputMessageContent, functions, types};
+use tdgrand::{
+    enums::{ChatAction, InputMessageContent},
+    functions, types,
+};
 
 use crate::session::Chat;
+use crate::utils::do_async;
 use crate::RUNTIME;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use once_cell::sync::Lazy;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-send-message-area.ui")]
     pub struct SendMessageArea {
         pub chat: RefCell<Option<Chat>>,
+        pub chat_action_in_cooldown: Cell<bool>,
         #[template_child]
         pub message_entry: TemplateChild<gtk::TextView>,
     }
@@ -82,11 +87,14 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            // Enable the send-text-message action only when the message entry contains text
             let message_buffer = self.message_entry.buffer();
             message_buffer.connect_text_notify(clone!(@weak obj => move |_| {
+                // Enable the send-text-message action only when the message entry contains text
                 let should_enable = !obj.message_entry_text().is_empty();
                 obj.action_set_enabled("send-message-area.send-text-message", should_enable);
+
+                // Send typing action
+                obj.send_chat_action(ChatAction::Typing);
             }));
 
             // The message entry is always empty at this point, so disable the
@@ -206,6 +214,46 @@ impl SendMessageArea {
         self_.message_entry.buffer().set_text(&message);
     }
 
+    fn send_chat_action(&self, action: ChatAction) {
+        let self_ = imp::SendMessageArea::from_instance(self);
+        if self_.chat_action_in_cooldown.get() {
+            return;
+        }
+
+        if let Some(chat) = self.chat() {
+            let client_id = chat.session().client_id();
+            let chat_id = chat.id();
+
+            // Enable chat action cooldown right away
+            self_.chat_action_in_cooldown.set(true);
+
+            // Send typing action
+            do_async(
+                glib::PRIORITY_DEFAULT_IDLE,
+                async move {
+                    functions::SendChatAction::new()
+                        .chat_id(chat_id)
+                        .action(action)
+                        .send(client_id)
+                        .await
+                },
+                clone!(@weak self as obj => move |result| async move {
+                    // If the request is successful, then start the actual cooldown of 5 seconds.
+                    // Otherwise just cancel it right away.
+                    if result.is_ok() {
+                        glib::timeout_add_seconds_local_once(5, clone!(@weak obj =>move || {
+                            let self_ = imp::SendMessageArea::from_instance(&obj);
+                            self_.chat_action_in_cooldown.set(false);
+                        }));
+                    } else {
+                        let self_ = imp::SendMessageArea::from_instance(&obj);
+                        self_.chat_action_in_cooldown.set(false);
+                    }
+                }),
+            );
+        }
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::SendMessageArea::from_instance(self);
         self_.chat.borrow().clone()
@@ -218,11 +266,14 @@ impl SendMessageArea {
 
         self.save_message_as_draft();
 
+        let self_ = imp::SendMessageArea::from_instance(self);
+
         if let Some(ref chat) = chat {
             self.load_draft_message(chat.draft_message());
+
+            self_.chat_action_in_cooldown.set(false);
         }
 
-        let self_ = imp::SendMessageArea::from_instance(self);
         self_.chat.replace(chat);
         self.notify("chat");
     }
