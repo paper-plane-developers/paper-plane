@@ -4,6 +4,7 @@ mod item_row;
 mod message_bubble;
 mod message_row;
 mod message_sticker;
+mod send_message_area;
 
 use self::chat_history::ChatHistory;
 use self::event_row::EventRow;
@@ -11,6 +12,7 @@ use self::item_row::ItemRow;
 use self::message_bubble::MessageBubble;
 use self::message_row::MessageRow;
 use self::message_sticker::MessageSticker;
+use self::send_message_area::SendMessageArea;
 
 use gtk::glib;
 use gtk::prelude::*;

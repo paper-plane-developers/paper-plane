@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentSendMessageArea" parent="AdwBin">
+    <style>
+      <class name="send-message-area"/>
+    </style>
+    <property name="child">
+      <object class="GtkBox">
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkFrame">
+            <property name="child">
+              <object class="GtkScrolledWindow">
+                <property name="hexpand">True</property>
+                <property name="max-content-height">200</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="vscrollbar-policy">external</property>
+                <property name="propagate-natural-height">True</property>
+                <property name="child">
+                  <object class="GtkTextView" id="message_entry">
+                    <property name="top-margin">6</property>
+                    <property name="bottom-margin">6</property>
+                    <property name="left-margin">6</property>
+                    <property name="right-margin">6</property>
+                    <property name="wrap-mode">word-char</property>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="valign">end</property>
+            <property name="action-name">send-message-area.send-text-message</property>
+            <property name="icon-name">mail-send-symbolic</property>
+            <style>
+              <class name="circular"/>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>

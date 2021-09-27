@@ -45,6 +45,7 @@ rust_sources = files(
   'session/content/message_row.rs',
   'session/content/message_sticker.rs',
   'session/content/mod.rs',
+  'session/content/send_message_area.rs',
   'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
 )
