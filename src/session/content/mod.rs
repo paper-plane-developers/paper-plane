@@ -35,6 +35,8 @@ mod imp {
         #[template_child]
         pub unselected_chat: TemplateChild<gtk::Box>,
         #[template_child]
+        pub unselected_chat_status_page: TemplateChild<adw::StatusPage>,
+        #[template_child]
         pub chat_history: TemplateChild<ChatHistory>,
     }
 
@@ -129,6 +131,12 @@ impl Default for Content {
 impl Content {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Content")
+    }
+
+    pub fn freeze(&self) {
+        let self_ = imp::Content::from_instance(self);
+        self_.unselected_chat_status_page.set_sensitive(false);
+        self_.chat_history.freeze();
     }
 
     pub fn chat(&self) -> Option<Chat> {

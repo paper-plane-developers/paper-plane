@@ -26,20 +26,23 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
-            <property name="vexpand">True</property>
-            <property name="hscrollbar-policy">never</property>
-            <style>
-              <class name="view"/>
-              <class name="chat-history"/>
-            </style>
-            <property name="child">
-              <object class="AdwClampScrollable">
+          <object class="GtkBox" id="scrolled_window">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <style>
+                  <class name="view"/>
+                  <class name="chat-history"/>
+                </style>
                 <property name="child">
-                  <object class="GtkListView" id="history_list_view">
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
+                  <object class="AdwClampScrollable">
+                    <property name="child">
+                      <object class="GtkListView" id="history_list_view">
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -54,57 +57,59 @@
     </property>
   </template>
 </interface>
-                        ]]></property>
-                      </object>
-                    </property>
-                  </object>
-                </property>
-              </object>
-            </property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkSeparator"/>
-        </child>
-        <child>
-          <object class="AdwClamp">
-            <child>
-              <object class="GtkBox">
-                <property name="spacing">6</property>
-                <style>
-                  <class name="send-message-area"/>
-                </style>
-                <child>
-                  <object class="GtkFrame">
-                    <property name="child">
-                      <object class="GtkScrolledWindow">
-                        <property name="hexpand">True</property>
-                        <property name="max-content-height">200</property>
-                        <property name="hscrollbar-policy">never</property>
-                        <property name="vscrollbar-policy">external</property>
-                        <property name="propagate-natural-height">True</property>
-                        <property name="child">
-                          <object class="GtkTextView" id="message_entry">
-                            <property name="top-margin">6</property>
-                            <property name="bottom-margin">6</property>
-                            <property name="left-margin">6</property>
-                            <property name="right-margin">6</property>
-                            <property name="wrap-mode">word-char</property>
+                         ]]></property>
                           </object>
                         </property>
                       </object>
                     </property>
                   </object>
-                </child>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"/>
+            </child>
+            <child>
+              <object class="AdwClamp">
                 <child>
-                  <object class="GtkButton">
-                    <property name="valign">end</property>
-                    <property name="action-name">history.send-message</property>
-                    <property name="icon-name">mail-send-symbolic</property>
+                  <object class="GtkBox">
+                    <property name="spacing">6</property>
                     <style>
-                      <class name="circular"/>
-                      <class name="suggested-action"/>
+                      <class name="send-message-area"/>
                     </style>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="child">
+                          <object class="GtkScrolledWindow">
+                            <property name="hexpand">True</property>
+                            <property name="max-content-height">200</property>
+                            <property name="hscrollbar-policy">never</property>
+                            <property name="vscrollbar-policy">external</property>
+                            <property name="propagate-natural-height">True</property>
+                            <property name="child">
+                              <object class="GtkTextView" id="message_entry">
+                                <property name="top-margin">6</property>
+                                <property name="bottom-margin">6</property>
+                                <property name="left-margin">6</property>
+                                <property name="right-margin">6</property>
+                                <property name="wrap-mode">word-char</property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="valign">end</property>
+                        <property name="action-name">history.send-message</property>
+                        <property name="icon-name">mail-send-symbolic</property>
+                        <style>
+                          <class name="circular"/>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

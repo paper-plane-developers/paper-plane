@@ -16,7 +16,7 @@
               </object>
             </child>
             <child>
-              <object class="AdwStatusPage">
+              <object class="AdwStatusPage" id="unselected_chat_status_page">
                 <property name="vexpand">True</property>
                 <property name="icon-name">user-available-symbolic</property>
                 <property name="title" translatable="yes">No Chat Selected</property>

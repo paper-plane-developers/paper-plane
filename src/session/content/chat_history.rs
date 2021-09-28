@@ -20,6 +20,8 @@ mod imp {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
         #[template_child]
+        pub scrolled_window: TemplateChild<gtk::Box>,
+        #[template_child]
         pub history_list_view: TemplateChild<gtk::ListView>,
         #[template_child]
         pub message_entry: TemplateChild<gtk::TextView>,
@@ -156,6 +158,12 @@ impl Default for ChatHistory {
 impl ChatHistory {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatHistory")
+    }
+
+    pub fn freeze(&self) {
+        imp::ChatHistory::from_instance(self)
+            .scrolled_window
+            .set_sensitive(false);
     }
 
     fn send_message(&self) {

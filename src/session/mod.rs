@@ -44,6 +44,10 @@ mod imp {
         pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub sidebar: TemplateChild<Sidebar>,
+        #[template_child]
+        pub content: TemplateChild<Content>,
     }
 
     #[glib::object_subclass]
@@ -229,8 +233,14 @@ impl Session {
         }
     }
 
+    fn freeze(&self) {
+        let self_ = imp::Session::from_instance(self);
+        self_.sidebar.freeze();
+        self_.content.freeze();
+    }
+
     fn log_out(&self) {
-        self.emit_by_name("logging-out", &[]).unwrap();
+        self.freeze();
         let client_id = self.client_id();
         RUNTIME.spawn(async move {
             functions::LogOut::new().send(client_id).await.unwrap();
