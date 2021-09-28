@@ -8,21 +8,8 @@
         <property name="visible-child">loading_widget</property>
         <property name="transition-type">crossfade</property>
         <child>
-          <object class="GtkBox" id="loading_widget">
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkHeaderBar"/>
-            </child>
-            <child>
-              <object class="GtkSpinner">
-                <property name="vexpand">True</property>
-                <property name="spinning">true</property>
-                <property name="width-request">32</property>
-                <property name="height-request">32</property>
-                <property name="valign">center</property>
-                <property name="halign">center</property>
-              </object>
-            </child>
+          <object class="GtkHeaderBar" id="loading_widget">
+            <property name="valign">start</property>
           </object>
         </child>
         <child>
