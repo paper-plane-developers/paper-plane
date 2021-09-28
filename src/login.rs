@@ -24,6 +24,8 @@ mod imp {
         pub tos_text: RefCell<String>,
         pub show_tos_popup: Cell<bool>,
         #[template_child]
+        pub main_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub next_stack: TemplateChild<gtk::Stack>,
@@ -147,6 +149,10 @@ impl Login {
         let self_ = imp::Login::from_instance(self);
         self_.client_id.set(client_id);
 
+        // We don't know what login page to show at this point, so we show an empty page until we
+        // receive an AuthenticationState that will eventually show the related login page.
+        self_.main_stack.set_visible_child_name("empty-page");
+
         self_.phone_number_entry.set_text("");
         self_.custom_encryption_key_entry.set_text("");
         self_.registration_first_name_entry.set_text("");
@@ -170,14 +176,10 @@ impl Login {
                 self.send_encryption_key(true);
             }
             AuthorizationState::WaitPhoneNumber => {
-                self_.content.set_visible_child_name("phone-number-page");
-                self.unfreeze();
-                self_.phone_number_entry.grab_focus();
+                self.set_visible_page_name("phone-number-page", &*self_.phone_number_entry);
             }
             AuthorizationState::WaitCode(_) => {
-                self_.content.set_visible_child_name("code-page");
-                self.unfreeze();
-                self_.code_entry.grab_focus();
+                self.set_visible_page_name("code-page", &*self_.code_entry);
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -188,20 +190,32 @@ impl Login {
                     .tos_text
                     .replace(parse_formatted_text(data.terms_of_service.text));
 
-                self_.content.set_visible_child_name("registration-page");
-                self.unfreeze();
-                self_.registration_first_name_entry.grab_focus();
+                self.set_visible_page_name(
+                    "registration-page",
+                    &*self_.registration_first_name_entry,
+                );
             }
             AuthorizationState::WaitPassword(_) => {
-                self_.content.set_visible_child_name("password-page");
-                self.unfreeze();
-                self_.password_entry.grab_focus();
+                self.set_visible_page_name("password-page", &*self_.password_entry);
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
             }
             _ => {}
         }
+    }
+
+    fn set_visible_page_name<W: WidgetExt>(&self, page_name: &str, widget_to_focus: &W) {
+        let self_ = imp::Login::from_instance(self);
+
+        self_.content.set_visible_child_name(page_name);
+
+        // After we've transitioned to a new login page, let's be sure that we set the stack here
+        // to an ancestor widget of the login leaflet because we might still be in the empty page.
+        self_.main_stack.set_visible_child_name("login-flow-page");
+
+        self.unfreeze();
+        widget_to_focus.grab_focus();
     }
 
     fn previous(&self) {
