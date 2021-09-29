@@ -43,6 +43,10 @@ mod imp {
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
+        pub sidebar: TemplateChild<Sidebar>,
+        #[template_child]
+        pub content: TemplateChild<Content>,
+        #[template_child]
         pub info_bar: TemplateChild<gtk::InfoBar>,
     }
 
@@ -158,6 +162,12 @@ impl Session {
         glib::Object::new(&[("client-id", &client_id)]).expect("Failed to create Session")
     }
 
+    fn freeze(&self) {
+        let self_ = imp::Session::from_instance(self);
+        self_.sidebar.freeze();
+        self_.content.freeze();
+    }
+
     pub fn handle_update(&self, update: Update) {
         match update {
             Update::NewMessage(_)
@@ -225,6 +235,7 @@ impl Session {
     fn log_out(&self) {
         let self_ = imp::Session::from_instance(self);
 
+        self.freeze();
         self.action_set_enabled("session.log-out", false);
         self_.info_bar.set_revealed(true);
 

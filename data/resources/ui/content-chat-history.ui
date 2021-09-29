@@ -26,45 +26,52 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
-            <property name="vexpand">True</property>
-            <property name="hscrollbar-policy">never</property>
-            <style>
-              <class name="view"/>
-              <class name="chat-history"/>
-            </style>
-            <property name="child">
-              <object class="AdwClampScrollable">
+          <object class="GtkBox" id="scrolled_window">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <style>
+                  <class name="view" />
+                  <class name="chat-history" />
+                </style>
                 <property name="child">
-                  <object class="GtkListView" id="list_view">
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="ContentItemRow">
-        <property name="margin-top">3</property>
-        <property name="margin-bottom">3</property>
-        <binding name="item">
-          <lookup name="item">GtkListItem</lookup>
-        </binding>
-      </object>
-    </property>
-  </template>
-</interface>
-                        ]]></property>
+                  <object class="AdwClampScrollable">
+                    <property name="child">
+                      <object class="GtkListView" id="list_view">
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes">
+                              <![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+  <interface>
+    <template class="GtkListItem">
+      <property name="child">
+        <object class="ContentItemRow">
+          <property name="margin-top">3</property>
+          <property name="margin-bottom">3</property>
+          <binding name="item">
+            <lookup name="item">GtkListItem</lookup>
+          </binding>
+        </object>
+      </property>
+    </template>
+  </interface>
+                            ]]>
+                            </property>
+                          </object>
+                        </property>
                       </object>
                     </property>
                   </object>
                 </property>
               </object>
-            </property>
+            </child>
           </object>
         </child>
         <child>
-          <object class="GtkSeparator"/>
+          <object class="GtkSeparator" />
         </child>
         <child>
           <object class="AdwClamp">

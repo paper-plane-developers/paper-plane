@@ -27,7 +27,7 @@
           <object class="AdwHeaderBar">
             <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
             <child type="end">
-              <object class="GtkMenuButton">
+              <object class="GtkMenuButton" id="main_menu_button">
                 <property name="icon-name">open-menu-symbolic</property>
                 <property name="menu-model">primary_menu</property>
               </object>
@@ -35,7 +35,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkScrolledWindow" id="scrolled_window">
             <property name="vexpand">True</property>
             <property name="hscrollbar-policy">never</property>
             <child>

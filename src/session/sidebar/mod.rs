@@ -25,6 +25,10 @@ mod imp {
         pub filter: OnceCell<gtk::CustomFilter>,
         pub sorter: OnceCell<gtk::CustomSorter>,
         #[template_child]
+        pub main_menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub scrolled_window: TemplateChild<gtk::ScrolledWindow>,
+        #[template_child]
         pub chat_list_view: TemplateChild<gtk::ListView>,
     }
 
@@ -126,6 +130,12 @@ impl Default for Sidebar {
 impl Sidebar {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Sidebar")
+    }
+
+    pub fn freeze(&self) {
+        let self_ = imp::Sidebar::from_instance(self);
+        self_.main_menu_button.set_sensitive(false);
+        self_.scrolled_window.set_sensitive(false);
     }
 
     pub fn set_chat_list(&self, chat_list: ChatList) {
