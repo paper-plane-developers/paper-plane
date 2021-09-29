@@ -28,7 +28,6 @@ use crate::RUNTIME;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
@@ -43,13 +42,15 @@ mod imp {
         pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub info_bar: TemplateChild<gtk::InfoBar>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for Session {
         const NAME: &'static str = "Session";
         type Type = super::Session;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
             Sidebar::static_type();
@@ -144,12 +145,12 @@ mod imp {
     }
 
     impl WidgetImpl for Session {}
-    impl BinImpl for Session {}
+    impl BoxImpl for Session {}
 }
 
 glib::wrapper! {
     pub struct Session(ObjectSubclass<imp::Session>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget, gtk::Box;
 }
 
 impl Session {
@@ -222,6 +223,11 @@ impl Session {
     }
 
     fn log_out(&self) {
+        let self_ = imp::Session::from_instance(self);
+
+        self.action_set_enabled("session.log-out", false);
+        self_.info_bar.set_revealed(true);
+
         let client_id = self.client_id();
         RUNTIME.spawn(async move {
             functions::LogOut::new().send(client_id).await.unwrap();

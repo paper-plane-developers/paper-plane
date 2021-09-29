@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="Session" parent="AdwBin">
+  <template class="Session" parent="GtkBox">
+    <property name="orientation">vertical</property>
     <child>
       <object class="AdwLeaflet" id="leaflet">
         <child>
@@ -27,6 +28,26 @@
           <object class="Content">
             <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
             <property name="chat" bind-source="Session" bind-property="selected-chat" bind-flags="sync-create | bidirectional"/>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkInfoBar" id="info_bar">
+        <property name="revealed">False</property>
+        <child>
+          <object class="GtkBox">
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkSpinner">
+                <property name="spinning">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="label">You are currently being logged out.</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>
