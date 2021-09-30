@@ -169,10 +169,20 @@ impl Login {
                 self.send_encryption_key();
             }
             AuthorizationState::WaitPhoneNumber => {
-                self.set_visible_page_name("phone-number-page", &*self_.phone_number_entry);
+                self.set_visible_page_name(
+                    "phone-number-page",
+                    [&*self_.phone_number_entry],
+                    &self_.welcome_page_error_label,
+                    &*self_.phone_number_entry,
+                );
             }
             AuthorizationState::WaitCode(_) => {
-                self.set_visible_page_name("code-page", &*self_.code_entry);
+                self.set_visible_page_name(
+                    "code-page",
+                    [&*self_.code_entry],
+                    &self_.code_error_label,
+                    &*self_.code_entry,
+                );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
                 todo!()
@@ -185,11 +195,21 @@ impl Login {
 
                 self.set_visible_page_name(
                     "registration-page",
+                    [
+                        &*self_.registration_first_name_entry,
+                        &*self_.registration_last_name_entry,
+                    ],
+                    &self_.registration_error_label,
                     &*self_.registration_first_name_entry,
                 );
             }
             AuthorizationState::WaitPassword(_) => {
-                self.set_visible_page_name("password-page", &*self_.password_entry);
+                self.set_visible_page_name(
+                    "password-page",
+                    [&*self_.password_entry],
+                    &self_.password_error_label,
+                    &*self_.password_entry,
+                );
             }
             AuthorizationState::Ready => {
                 self.emit_by_name("new-session", &[]).unwrap();
@@ -198,8 +218,26 @@ impl Login {
         }
     }
 
-    fn set_visible_page_name<W: WidgetExt>(&self, page_name: &str, widget_to_focus: &W) {
+    fn set_visible_page_name<'a, W, E, I>(
+        &self,
+        page_name: &str,
+        editables_to_clear: I,
+        error_label_to_clear: &gtk::Label,
+        widget_to_focus: &W,
+    ) where
+        W: WidgetExt,
+        E: EditableExt,
+        I: IntoIterator<Item = &'a E>,
+    {
         let self_ = imp::Login::from_instance(self);
+
+        // Before transition to the page, be sure to reset the error label because it still might
+        // conatain an error message from the time when it was previously visited.
+        error_label_to_clear.set_label("");
+        // Also clear all editables on that page.
+        editables_to_clear
+            .into_iter()
+            .for_each(|editable| editable.set_text(""));
 
         self_.content.set_visible_child_name(page_name);
 
@@ -326,9 +364,10 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.welcome_page_error_label.set_text(&err.message);
-                    self_.welcome_page_error_label.set_visible(true);
+                    show_error_label(
+                        &imp::Login::from_instance(&obj).welcome_page_error_label,
+                        &err.message
+                    );
                 }
             }),
         );
@@ -348,9 +387,10 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.welcome_page_error_label.set_text(&err.message);
-                    self_.welcome_page_error_label.set_visible(true);
+                    show_error_label(
+                        &imp::Login::from_instance(&obj).welcome_page_error_label,
+                        &err.message
+                    )
                 }
             }),
         );
@@ -358,6 +398,9 @@ impl Login {
 
     fn send_phone_number(&self) {
         let self_ = imp::Login::from_instance(self);
+
+        reset_error_label(&self_.welcome_page_error_label);
+
         let client_id = self_.client_id.get();
         let phone_number = self_.phone_number_entry.text().to_string();
         do_async(
@@ -369,22 +412,21 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.welcome_page_error_label.set_text(&err.message);
-                    self_.welcome_page_error_label.set_visible(true);
-
-                    obj.unfreeze();
-
-                    // Grab focus for entry again after error.
-                    self_.phone_number_entry.grab_focus();
-                }
+                let self_ = imp::Login::from_instance(&obj);
+                obj.handle_user_result(
+                    result,
+                    &self_.welcome_page_error_label,
+                    &*self_.phone_number_entry
+                )
             }),
         );
     }
 
     fn send_code(&self) {
         let self_ = imp::Login::from_instance(self);
+
+        reset_error_label(&self_.code_error_label);
+
         let client_id = self_.client_id.get();
         let code = self_.code_entry.text().to_string();
         do_async(
@@ -396,22 +438,17 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.code_error_label.set_text(&err.message);
-                    self_.code_error_label.set_visible(true);
-
-                    obj.unfreeze();
-
-                    // Grab focus for entry again after error.
-                    self_.code_entry.grab_focus();
-                }
+                let self_ = imp::Login::from_instance(&obj);
+                obj.handle_user_result(result, &self_.code_error_label, &*self_.code_entry)
             }),
         );
     }
 
     fn send_registration(&self) {
         let self_ = imp::Login::from_instance(self);
+
+        reset_error_label(&self_.registration_error_label);
+
         let client_id = self_.client_id.get();
         let first_name = self_.registration_first_name_entry.text().to_string();
         let last_name = self_.registration_last_name_entry.text().to_string();
@@ -425,22 +462,21 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.registration_error_label.set_text(&err.message);
-                    self_.registration_error_label.set_visible(true);
-
-                    obj.unfreeze();
-
-                    // Grab focus for entry again after error.
-                    self_.registration_first_name_entry.grab_focus();
-                }
+                let self_ = imp::Login::from_instance(&obj);
+                obj.handle_user_result(
+                    result,
+                    &self_.registration_error_label,
+                    &*self_.registration_first_name_entry
+                )
             }),
         );
     }
 
     fn send_password(&self) {
         let self_ = imp::Login::from_instance(self);
+
+        reset_error_label(&self_.password_error_label);
+
         let client_id = self_.client_id.get();
         let password = self_.password_entry.text().to_string();
         do_async(
@@ -452,18 +488,30 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
-                    self_.password_error_label.set_text(&err.message);
-                    self_.password_error_label.set_visible(true);
-
-                    obj.unfreeze();
-
-                    // Grab focus for entry again after error.
-                    self_.password_entry.grab_focus();
-                }
+                let self_ = imp::Login::from_instance(&obj);
+                obj.handle_user_result(
+                    result,
+                    &self_.password_error_label,
+                    &*self_.password_entry
+                )
             }),
         );
+    }
+
+    fn handle_user_result<T, W>(
+        &self,
+        result: Result<T, types::Error>,
+        error_label: &gtk::Label,
+        widget_to_focus: &W,
+    ) where
+        W: WidgetExt,
+    {
+        if let Err(err) = result {
+            show_error_label(error_label, &err.message);
+            self.unfreeze();
+            // Grab focus for entry again after error.
+            widget_to_focus.grab_focus();
+        }
     }
 
     pub fn client_id(&self) -> i32 {
@@ -480,4 +528,14 @@ impl Login {
         })
         .unwrap()
     }
+}
+
+fn show_error_label(error_label: &gtk::Label, message: &str) {
+    error_label.set_text(message);
+    error_label.set_visible(true);
+}
+
+fn reset_error_label(error_label: &gtk::Label) {
+    error_label.set_text("");
+    error_label.set_visible(false);
 }
