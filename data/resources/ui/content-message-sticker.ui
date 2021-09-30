@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageSticker" parent="AdwBin">
-    <property name="child">
-      <object class="GtkPicture" id="sticker_picture"/>
-    </property>
+  <template class="ContentMessageSticker" parent="GtkWidget">
+    <child>
+      <object class="GtkPicture" id="picture"/>
+    </child>
   </template>
 </interface>
