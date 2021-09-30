@@ -374,7 +374,7 @@ impl Login {
                     // encryption key page to let the user input its key.
                     // Otherwise just show the error in the relative label.
                     if use_empty_key {
-                        self_.content.set_visible_child_name("encryption-key-page");
+                        obj.set_visible_page_name("encryption-key-page", &*self_.encryption_key_entry);
                         obj.action_set_enabled("login.next", true);
                     } else {
                         let encryption_key_error_label = &self_.encryption_key_error_label;
@@ -382,10 +382,10 @@ impl Login {
                         encryption_key_error_label.set_visible(true);
 
                         obj.unfreeze();
-                    }
 
-                    // In case of an empty key or an error, grab focus for entry again.
-                    self_.encryption_key_entry.grab_focus();
+                        // In case of an empty key or an error, grab focus for entry again.
+                        self_.encryption_key_entry.grab_focus();
+                    }
                 }
             }),
         );
