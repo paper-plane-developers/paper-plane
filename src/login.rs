@@ -40,8 +40,6 @@ mod imp {
         #[template_child]
         pub welcome_page_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub custom_encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
-        #[template_child]
         pub use_test_dc_switch: TemplateChild<gtk::Switch>,
         #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
@@ -59,10 +57,6 @@ mod imp {
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub password_error_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub encryption_key_entry: TemplateChild<gtk::PasswordEntry>,
-        #[template_child]
-        pub encryption_key_error_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -98,18 +92,19 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            // Show the previous button on all pages except in the
-            // "phone number" and "encryption key" pages
+            // Show the previous button on all pages except in the "phone-number-page"
             let self_ = imp::Login::from_instance(obj);
             let previous_button = &*self_.previous_button;
-            self_.content.connect_visible_child_name_notify(clone!(@weak previous_button => move |content| {
-                let visible_page = content.visible_child_name().unwrap();
-                if visible_page == "phone-number-page" || visible_page == "encryption-key-page" {
-                    previous_button.set_visible(false);
-                } else {
-                    previous_button.set_visible(true);
-                }
-            }));
+            self_.content.connect_visible_child_name_notify(
+                clone!(@weak previous_button => move |content| {
+                    let visible_page = content.visible_child_name().unwrap();
+                    if visible_page == "phone-number-page" {
+                        previous_button.set_visible(false);
+                    } else {
+                        previous_button.set_visible(true);
+                    }
+                }),
+            );
 
             // Bind the use-test-dc setting to the relative switch
             let use_test_dc_switch = &*self_.use_test_dc_switch;
@@ -154,12 +149,10 @@ impl Login {
         self_.main_stack.set_visible_child_name("empty-page");
 
         self_.phone_number_entry.set_text("");
-        self_.custom_encryption_key_entry.set_text("");
         self_.registration_first_name_entry.set_text("");
         self_.registration_last_name_entry.set_text("");
         self_.code_entry.set_text("");
         self_.password_entry.set_text("");
-        self_.encryption_key_entry.set_text("");
 
         self.unfreeze();
         self.action_set_enabled("login.next", false);
@@ -173,7 +166,7 @@ impl Login {
                 self.send_tdlib_parameters();
             }
             AuthorizationState::WaitEncryptionKey(_) => {
-                self.send_encryption_key(true);
+                self.send_encryption_key();
             }
             AuthorizationState::WaitPhoneNumber => {
                 self.set_visible_page_name("phone-number-page", &*self_.phone_number_entry);
@@ -233,14 +226,8 @@ impl Login {
         let visible_page = self_.content.visible_child_name().unwrap();
 
         match visible_page.as_str() {
-            "phone-number-page" => {
-                let encryption_key = self_.custom_encryption_key_entry.text().to_string();
-                if !encryption_key.is_empty() {
-                    self.change_encryption_key();
-                }
+            "phone-number-page" => self.send_phone_number(),
 
-                self.send_phone_number();
-            }
             "code-page" => self.send_code(),
             "registration-page" => {
                 if self_.show_tos_popup.get() {
@@ -252,7 +239,6 @@ impl Login {
                 }
             }
             "password-page" => self.send_password(),
-            "encryption-key-page" => self.send_encryption_key(false),
             other => unreachable!("no page named '{}'", other),
         }
     }
@@ -348,16 +334,10 @@ impl Login {
         );
     }
 
-    fn send_encryption_key(&self, use_empty_key: bool) {
+    fn send_encryption_key(&self) {
         let self_ = imp::Login::from_instance(self);
         let client_id = self_.client_id.get();
-        let encryption_key = {
-            if use_empty_key {
-                "".to_string()
-            } else {
-                self_.encryption_key_entry.text().to_string()
-            }
-        };
+        let encryption_key = "".to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -369,48 +349,8 @@ impl Login {
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
                     let self_ = imp::Login::from_instance(&obj);
-
-                    // If we were trying an empty key, we now show the
-                    // encryption key page to let the user input its key.
-                    // Otherwise just show the error in the relative label.
-                    if use_empty_key {
-                        self_.content.set_visible_child_name("encryption-key-page");
-                        obj.action_set_enabled("login.next", true);
-                    } else {
-                        let encryption_key_error_label = &self_.encryption_key_error_label;
-                        encryption_key_error_label.set_text(&err.message);
-                        encryption_key_error_label.set_visible(true);
-
-                        obj.unfreeze();
-                    }
-
-                    // In case of an empty key or an error, grab focus for entry again.
-                    self_.encryption_key_entry.grab_focus();
-                }
-            }),
-        );
-    }
-
-    fn change_encryption_key(&self) {
-        let self_ = imp::Login::from_instance(self);
-        let client_id = self_.client_id.get();
-        let encryption_key = self_.custom_encryption_key_entry.text().to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            async move {
-                functions::SetDatabaseEncryptionKey::new()
-                    .new_encryption_key(encryption_key)
-                    .send(client_id)
-                    .await
-            },
-            clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let self_ = imp::Login::from_instance(&obj);
                     self_.welcome_page_error_label.set_text(&err.message);
                     self_.welcome_page_error_label.set_visible(true);
-
-                    // Grab focus for entry again after error.
-                    self_.custom_encryption_key_entry.grab_focus();
                 }
             }),
         );
