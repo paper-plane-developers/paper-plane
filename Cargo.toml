@@ -5,7 +5,7 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
-adw = { version = "0.1.0-alpha-5", package = "libadwaita" }
+adw = { version = "0.1.0-alpha-6", package = "libadwaita" }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.3", package = "gtk4" }
 indexmap = "1.7"
