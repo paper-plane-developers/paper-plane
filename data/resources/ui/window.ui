@@ -8,7 +8,7 @@
         <property name="visible-child">login</property>
         <property name="transition-type">crossfade</property>
         <child>
-          <object class="Login" id="login" />
+          <object class="Login" id="login"/>
         </child>
       </object>
     </property>
