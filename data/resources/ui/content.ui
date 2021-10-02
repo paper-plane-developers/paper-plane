@@ -7,6 +7,9 @@
         <child>
           <object class="GtkBox" id="unselected_chat">
             <property name="orientation">vertical</property>
+            <style>
+              <class name="view"/>
+            </style>
             <child>
               <object class="AdwHeaderBar">
                 <property name="show-start-title-buttons">False</property>
