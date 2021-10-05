@@ -16,9 +16,6 @@
             <property name="child">
               <object class="GtkSeparator">
                 <property name="orientation">vertical</property>
-                <style>
-                  <class name="sidebar"/>
-                </style>
               </object>
             </property>
           </object>
