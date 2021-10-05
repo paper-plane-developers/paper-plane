@@ -31,7 +31,7 @@
 
 .chat-history row .message-bubble {
   background-color: alpha(black, 0.07);
-  border-radius: 9px;
+  border-radius: 12px;
   padding: 6px 12px;
 }
 
