@@ -35,14 +35,10 @@
   padding: 6px 12px;
 }
 
-.chat-history row .incoming {
-  margin-right: 50px;
-}
-
 .chat-history row .outgoing {
   background-color: @accent_bg_color;
   color: @accent_fg_color;
-  margin-left: 50px;
+  margin-left: 35px;
 }
 
 .chat-history row .outgoing selection {

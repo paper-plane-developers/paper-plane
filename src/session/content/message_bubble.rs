@@ -63,16 +63,13 @@ impl MessageBubble {
         // Remove previous css class
         if self_.is_outgoing.get() {
             self.remove_css_class("outgoing")
-        } else {
-            self.remove_css_class("incoming")
         }
 
         // Set new css class
         if message.is_outgoing() {
             self.add_css_class("outgoing");
-        } else {
-            self.add_css_class("incoming");
         }
+
         self_.is_outgoing.set(message.is_outgoing());
 
         // Show sender label, if needed
