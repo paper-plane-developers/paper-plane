@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageRow" parent="AdwBin">
-    <child>
-      <object class="GtkBox">
+  <template class="ContentMessageRow" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
         <property name="spacing">6</property>
-        <child>
-          <object class="AdwBin" id="avatar_bin"/>
-        </child>
-        <child>
-          <object class="AdwBin" id="content_bin"/>
-        </child>
       </object>
+    </property>
+    <child>
+      <object class="AdwBin" id="avatar_bin"/>
+    </child>
+    <child>
+      <object class="AdwBin" id="content_bin"/>
     </child>
   </template>
 </interface>

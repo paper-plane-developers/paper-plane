@@ -38,7 +38,7 @@
 .chat-history row .outgoing {
   background-color: @accent_bg_color;
   color: @accent_fg_color;
-  margin-left: 35px;
+  margin-left: 38px;
 }
 
 .chat-history row .outgoing selection {

@@ -1,4 +1,4 @@
-use adw::{prelude::BinExt, subclass::prelude::BinImpl};
+use adw::prelude::BinExt;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent};
 
@@ -22,7 +22,7 @@ mod imp {
     impl ObjectSubclass for MessageRow {
         const NAME: &'static str = "ContentMessageRow";
         type Type = super::MessageRow;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -33,14 +33,19 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessageRow {}
+    impl ObjectImpl for MessageRow {
+        fn dispose(&self, _obj: &Self::Type) {
+            self.avatar_bin.unparent();
+            self.content_bin.unparent();
+        }
+    }
+
     impl WidgetImpl for MessageRow {}
-    impl BinImpl for MessageRow {}
 }
 
 glib::wrapper! {
     pub struct MessageRow(ObjectSubclass<imp::MessageRow>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget;
 }
 
 impl Default for MessageRow {
@@ -59,9 +64,9 @@ impl MessageRow {
 
         // Align message based on whether the message is outgoing or not
         if message.is_outgoing() {
-            self_.avatar_bin.set_hexpand(true);
+            self.set_halign(gtk::Align::End);
         } else {
-            self_.avatar_bin.set_hexpand(false);
+            self.set_halign(gtk::Align::Start);
         }
 
         // Show avatar, if needed
@@ -92,8 +97,10 @@ impl MessageRow {
                 MessageSender::User(user) => avatar.set_item(Some(user.avatar().clone())),
                 MessageSender::Chat(chat) => avatar.set_item(Some(chat.avatar().clone())),
             }
+            self_.avatar_bin.set_visible(true);
         } else {
             self_.avatar_bin.set_child(None::<&gtk::Widget>);
+            self_.avatar_bin.set_visible(false);
         }
 
         // Show content widget
