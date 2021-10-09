@@ -169,19 +169,19 @@ impl Login {
                 self.send_encryption_key();
             }
             AuthorizationState::WaitPhoneNumber => {
-                self.set_visible_page_name(
+                self.navigate_to_page(
                     "phone-number-page",
                     [&*self_.phone_number_entry],
-                    &self_.welcome_page_error_label,
-                    &*self_.phone_number_entry,
+                    Some(&self_.welcome_page_error_label),
+                    Some(&*self_.phone_number_entry),
                 );
             }
             AuthorizationState::WaitCode(_) => {
-                self.set_visible_page_name(
+                self.navigate_to_page(
                     "code-page",
                     [&*self_.code_entry],
-                    &self_.code_error_label,
-                    &*self_.code_entry,
+                    Some(&self_.code_error_label),
+                    Some(&*self_.code_entry),
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(_) => {
@@ -193,14 +193,14 @@ impl Login {
                     .tos_text
                     .replace(parse_formatted_text(data.terms_of_service.text));
 
-                self.set_visible_page_name(
+                self.navigate_to_page(
                     "registration-page",
                     [
                         &*self_.registration_first_name_entry,
                         &*self_.registration_last_name_entry,
                     ],
-                    &self_.registration_error_label,
-                    &*self_.registration_first_name_entry,
+                    Some(&self_.registration_error_label),
+                    Some(&*self_.registration_first_name_entry),
                 );
             }
             AuthorizationState::WaitPassword(_) => {
@@ -209,11 +209,11 @@ impl Login {
                 self_.password_entry.set_show_peek_icon(false);
                 self_.password_entry.set_show_peek_icon(true);
 
-                self.set_visible_page_name(
+                self.navigate_to_page(
                     "password-page",
                     [&*self_.password_entry],
-                    &self_.password_error_label,
-                    &*self_.password_entry,
+                    Some(&self_.password_error_label),
+                    Some(&*self_.password_entry),
                 );
             }
             AuthorizationState::Ready => {
@@ -223,22 +223,24 @@ impl Login {
         }
     }
 
-    fn set_visible_page_name<'a, W, E, I>(
+    fn navigate_to_page<'a, E, I, W>(
         &self,
         page_name: &str,
         editables_to_clear: I,
-        error_label_to_clear: &gtk::Label,
-        widget_to_focus: &W,
+        error_label_to_clear: Option<&gtk::Label>,
+        widget_to_focus: Option<&W>,
     ) where
-        W: WidgetExt,
-        E: EditableExt,
+        E: IsA<gtk::Editable>,
         I: IntoIterator<Item = &'a E>,
+        W: IsA<gtk::Widget>,
     {
         let self_ = imp::Login::from_instance(self);
 
         // Before transition to the page, be sure to reset the error label because it still might
         // conatain an error message from the time when it was previously visited.
-        error_label_to_clear.set_label("");
+        if let Some(error_label_to_clear) = error_label_to_clear {
+            error_label_to_clear.set_label("");
+        }
         // Also clear all editables on that page.
         editables_to_clear
             .into_iter()
@@ -251,7 +253,9 @@ impl Login {
         self_.main_stack.set_visible_child_name("login-flow-page");
 
         self.unfreeze();
-        widget_to_focus.grab_focus();
+        if let Some(widget_to_focus) = widget_to_focus {
+            widget_to_focus.grab_focus();
+        }
     }
 
     fn previous(&self) {
