@@ -435,7 +435,7 @@ impl Login {
                     result,
                     &self_.welcome_page_error_label,
                     &*self_.phone_number_entry
-                )
+                );
             }),
         );
     }
@@ -457,7 +457,7 @@ impl Login {
             },
             clone!(@weak self as obj => move |result| async move {
                 let self_ = imp::Login::from_instance(&obj);
-                obj.handle_user_result(result, &self_.code_error_label, &*self_.code_entry)
+                obj.handle_user_result(result, &self_.code_error_label, &*self_.code_entry);
             }),
         );
     }
@@ -485,7 +485,7 @@ impl Login {
                     result,
                     &self_.registration_error_label,
                     &*self_.registration_first_name_entry
-                )
+                );
             }),
         );
     }
@@ -511,25 +511,36 @@ impl Login {
                     result,
                     &self_.password_error_label,
                     &*self_.password_entry
-                )
+                );
             }),
         );
     }
 
-    fn handle_user_result<T, W>(
+    fn handle_user_result<T, W: IsA<gtk::Widget>>(
         &self,
         result: Result<T, types::Error>,
         error_label: &gtk::Label,
         widget_to_focus: &W,
-    ) where
-        W: WidgetExt,
-    {
-        if let Err(err) = result {
-            show_error_label(error_label, &err.message);
-            self.unfreeze();
-            // Grab focus for entry again after error.
-            widget_to_focus.grab_focus();
+    ) -> Option<T> {
+        match result {
+            Err(err) => {
+                self.handle_user_error(&err, error_label, widget_to_focus);
+                None
+            }
+            Ok(t) => Some(t),
         }
+    }
+
+    fn handle_user_error<W: IsA<gtk::Widget>>(
+        &self,
+        err: &types::Error,
+        error_label: &gtk::Label,
+        widget_to_focus: &W,
+    ) {
+        show_error_label(error_label, &err.message);
+        self.unfreeze();
+        // Grab focus for entry again after error.
+        widget_to_focus.grab_focus();
     }
 
     pub fn client_id(&self) -> i32 {
