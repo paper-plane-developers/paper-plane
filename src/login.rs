@@ -28,6 +28,8 @@ mod imp {
         #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
+        pub next_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub next_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub next_label: TemplateChild<gtk::Label>,
@@ -96,19 +98,14 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            // Show the previous button on all pages except in the "phone-number-page"
+            // On each page change, decide which button to hide/show and which actions to
+            // (de)activate.
             let self_ = imp::Login::from_instance(obj);
-            let previous_button = &*self_.previous_button;
-            self_.content.connect_visible_child_name_notify(
-                clone!(@weak previous_button => move |content| {
-                    let visible_page = content.visible_child_name().unwrap();
-                    if visible_page == "phone-number-page" {
-                        previous_button.set_visible(false);
-                    } else {
-                        previous_button.set_visible(true);
-                    }
-                }),
-            );
+            self_
+                .content
+                .connect_visible_child_name_notify(clone!(@weak obj => move |_| {
+                    obj.update_actions_for_visible_page()
+                }));
 
             // Bind the use-test-dc setting to the relative switch
             let use_test_dc_switch = &*self_.use_test_dc_switch;
@@ -157,9 +154,6 @@ impl Login {
         self_.registration_last_name_entry.set_text("");
         self_.code_entry.set_text("");
         self_.password_entry.set_text("");
-
-        self.unfreeze();
-        self.action_set_enabled("login.next", false);
     }
 
     pub fn set_authorization_state(&self, state: AuthorizationState) {
@@ -226,6 +220,7 @@ impl Login {
                 );
             }
             AuthorizationState::Ready => {
+                self.disable_actions();
                 self.emit_by_name("new-session", &[]).unwrap();
             }
             _ => {}
@@ -265,6 +260,21 @@ impl Login {
         if let Some(widget_to_focus) = widget_to_focus {
             widget_to_focus.grab_focus();
         }
+    }
+
+    fn update_actions_for_visible_page(&self) {
+        let self_ = imp::Login::from_instance(self);
+
+        let visible_page = self_.content.visible_child_name().unwrap();
+
+        let is_previous_valid = visible_page.as_str() != "phone-number-page";
+        let is_next_valid = visible_page.as_str() != "password-forgot-page";
+
+        self_.previous_button.set_visible(is_previous_valid);
+        self_.next_button.set_visible(is_next_valid);
+
+        self.action_set_enabled("login.previous", is_previous_valid);
+        self.action_set_enabled("login.next", is_next_valid);
     }
 
     fn previous(&self) {
@@ -333,9 +343,13 @@ impl Login {
         }));
     }
 
-    fn freeze(&self) {
+    fn disable_actions(&self) {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
+    }
+
+    fn freeze(&self) {
+        self.disable_actions();
 
         let self_ = imp::Login::from_instance(self);
         self_
@@ -345,9 +359,6 @@ impl Login {
     }
 
     fn unfreeze(&self) {
-        self.action_set_enabled("login.previous", true);
-        self.action_set_enabled("login.next", true);
-
         let self_ = imp::Login::from_instance(self);
         self_.next_stack.set_visible_child(&self_.next_label.get());
         self_.content.set_sensitive(true);
@@ -538,6 +549,8 @@ impl Login {
         widget_to_focus: &W,
     ) {
         show_error_label(error_label, &err.message);
+        // In case of an error we do not switch pages. So invalidate actions here.
+        self.update_actions_for_visible_page();
         self.unfreeze();
         // Grab focus for entry again after error.
         widget_to_focus.grab_focus();
