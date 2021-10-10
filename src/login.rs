@@ -56,6 +56,10 @@ mod imp {
         #[template_child]
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
+        pub password_hint_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub password_hint_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub password_error_label: TemplateChild<gtk::Label>,
     }
 
@@ -203,11 +207,16 @@ impl Login {
                     Some(&*self_.registration_first_name_entry),
                 );
             }
-            AuthorizationState::WaitPassword(_) => {
+            AuthorizationState::WaitPassword(data) => {
                 // When we enter the password page, the password to be entered should be masked by
                 // default, so the peek icon is turned off and on again.
                 self_.password_entry.set_show_peek_icon(false);
                 self_.password_entry.set_show_peek_icon(true);
+
+                self_
+                    .password_hint_action_row
+                    .set_visible(!data.password_hint.is_empty());
+                self_.password_hint_label.set_text(&data.password_hint);
 
                 self.navigate_to_page(
                     "password-page",

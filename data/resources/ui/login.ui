@@ -331,6 +331,21 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                             </property>
                                           </object>
                                         </child>
+                                        <child>
+                                          <object class="AdwActionRow" id="password_hint_action_row">
+                                            <property name="focusable">False</property>
+                                            <property name="selectable">False</property>
+                                            <property name="activatable">False</property>
+                                            <property name="title" translatable="yes">Hint</property>
+                                            <child>
+                                              <object class="GtkLabel" id="password_hint_label">
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
                                         <style>
                                           <class name="content"/>
                                         </style>
