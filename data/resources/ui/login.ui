@@ -352,7 +352,278 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                       </object>
                                     </child>
                                     <child>
+                                      <object class="GtkListBox">
+                                        <child>
+                                          <object class="AdwActionRow">
+                                            <property name="selectable">False</property>
+                                            <property name="activatable">True</property>
+                                            <property name="action-name">login.go-to-forgot-password-page</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="title" translatable="yes">_Forgot password?</property>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="icon_name">go-next-symbolic</property>
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="content"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkLabel" id="password_error_label">
+                                        <property name="visible">False</property>
+                                        <style>
+                                          <class name="error"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwLeafletPage">
+                        <property name="name">password-forgot-page</property>
+                        <property name="child">
+                          <object class="GtkScrolledWindow">
+                            <property name="child">
+                              <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+                                <property name="valign">center</property>
+                                <!--  Mimick the status page margins. -->
+                                <property name="margin-top">36</property>
+                                <property name="margin-bottom">36</property>
+                                <property name="margin-start">12</property>
+                                <property name="margin-end">12</property>
+                                <property name="spacing">36</property>
+                                <child>
+                                  <object class="GtkBox" id="password_recovery_code_send_box">
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="AdwClamp">
+                                        <property name="child">
+                                          <object class="GtkBox">
+                                            <property name="orientation">vertical</property>
+                                            <property name="valign">center</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="wrap">True</property>
+                                                <property name="wrap-mode">word-char</property>
+                                                <property name="justify">center</property>
+                                                <!--  Mimick the status page title margins. -->
+                                                <property name="margin-bottom">12</property>
+                                                <property name="label" translatable="yes">Use Recovery Code</property>
+                                                <style>
+                                                  <class name="title-1"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="wrap">True</property>
+                                                <property name="wrap-mode">word-char</property>
+                                                <property name="justify">center</property>
+                                                <!--  Mimick the status page description margins. -->
+                                                <property name="margin-bottom">36</property>
+                                                <property name="label" translatable="yes">When you set your cloud password, you provided a recovery email address. We can send you a code to this email address that you can use to reset your password.</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="AdwClamp">
+                                        <property name="maximum-size">300</property>
+                                        <property name="tightening-threshold">200</property>
+                                        <property name="child">
+                                          <object class="GtkListBox">
+                                            <child>
+                                              <object class="AdwActionRow">
+                                                <property name="selectable">False</property>
+                                                <property name="activatable">True</property>
+                                                <property name="action-name">login.recover-password</property>
+                                                <property name="use-underline">True</property>
+                                                <property name="title" translatable="yes">_Send recovery code</property>
+                                                <child>
+                                                  <object class="GtkStack" id="password_send_code_stack">
+                                                    <child>
+                                                      <object class="GtkStackPage">
+                                                        <property name="name">image</property>
+                                                        <property name="child">
+                                                          <object class="GtkImage">
+                                                            <property name="icon_name">go-next-symbolic</property>
+                                                            <style>
+                                                              <class name="dim-label"/>
+                                                            </style>
+                                                          </object>
+                                                        </property>
+                                                      </object>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkStackPage">
+                                                        <property name="name">spinner</property>
+                                                        <property name="child">
+                                                          <object class="GtkSpinner">
+                                                            <property name="spinning">True</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="halign">center</property>
+                                                          </object>
+                                                        </property>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <style>
+                                              <class name="content"/>
+                                            </style>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator">
+                                        <!--  Mimick the status page margins. -->
+                                        <property name="margin-top">36</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="AdwClamp">
+                                        <property name="child">
+                                          <object class="GtkBox">
+                                            <property name="orientation">vertical</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="wrap">True</property>
+                                                <property name="wrap-mode">word-char</property>
+                                                <property name="justify">center</property>
+                                                <!--  Mimick the status page title margins. -->
+                                                <property name="margin-bottom">12</property>
+                                                <property name="label" translatable="yes">Account Deletion</property>
+                                                <style>
+                                                  <class name="title-1"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="account_deletion_description_label">
+                                                <property name="wrap">True</property>
+                                                <property name="wrap-mode">word-char</property>
+                                                <property name="justify">center</property>
+                                                <!--  Mimick the status page description margins. -->
+                                                <property name="margin-bottom">36</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="AdwClamp">
+                                        <property name="maximum-size">300</property>
+                                        <property name="tightening-threshold">200</property>
+                                        <property name="child">
+                                          <object class="GtkButton">
+                                            <property name="action-name">login.show-delete-account-dialog</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="label" translatable="yes">_Delete Account</property>
+                                            <style>
+                                              <class name="destructive-action"/>
+                                            </style>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwLeafletPage">
+                        <property name="name">password-recovery-page</property>
+                        <property name="child">
+                          <object class="AdwStatusPage" id="password_recovery_status_page">
+                            <property name="icon-name">mail-unread-symbolic</property>
+                            <property name="title" translatable="yes">Enter the Code Sent by Mail</property>
+                            <child>
+                              <object class="AdwClamp">
+                                <property name="maximum-size">300</property>
+                                <property name="tightening-threshold">200</property>
+                                <property name="child">
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkListBox">
+                                        <child>
+                                          <object class="GtkListBoxRow">
+                                            <property name="focusable">False</property>
+                                            <property name="selectable">False</property>
+                                            <property name="activatable">False</property>
+                                            <property name="child">
+                                              <object class="GtkEntry" id="password_recovery_code_entry">
+                                                <property name="activates-default">True</property>
+                                                <property name="placeholder-text" translatable="yes">Code</property>
+                                                <property name="margin-top">6</property>
+                                                <property name="margin-bottom">6</property>
+                                                <property name="margin-start">6</property>
+                                                <property name="margin-end">6</property>
+                                              </object>
+                                            </property>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="content"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkListBox">
+                                        <child>
+                                          <object class="AdwActionRow">
+                                            <property name="selectable">False</property>
+                                            <property name="activatable">True</property>
+                                            <property name="action-name">login.show-no-email-access-dialog</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="title" translatable="yes">_Unable to access your email?</property>
+                                            <child>
+                                              <object class="GtkImage">
+                                                <property name="icon_name">go-next-symbolic</property>
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="content"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="password_recovery_error_label">
                                         <property name="visible">False</property>
                                         <style>
                                           <class name="error"/>

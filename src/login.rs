@@ -23,6 +23,8 @@ mod imp {
         pub client_id: Cell<i32>,
         pub tos_text: RefCell<String>,
         pub show_tos_popup: Cell<bool>,
+        pub has_recovery_email_address: Cell<bool>,
+        pub password_recovery_expired: Cell<bool>,
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -63,6 +65,18 @@ mod imp {
         pub password_hint_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub password_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub password_recovery_code_send_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub password_send_code_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub account_deletion_description_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub password_recovery_status_page: TemplateChild<adw::StatusPage>,
+        #[template_child]
+        pub password_recovery_code_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub password_recovery_error_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -77,6 +91,35 @@ mod imp {
                 widget.previous()
             });
             klass.install_action("login.next", None, move |widget, _, _| widget.next());
+            klass.install_action(
+                "login.go-to-forgot-password-page",
+                None,
+                move |widget, _, _| {
+                    widget.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
+                        "password-forgot-page",
+                        [],
+                        None,
+                        None,
+                    );
+                },
+            );
+            klass.install_action("login.recover-password", None, move |widget, _, _| {
+                widget.recover_password();
+            });
+            klass.install_action(
+                "login.show-no-email-access-dialog",
+                None,
+                move |widget, _, _| {
+                    widget.show_no_email_access_dialog();
+                },
+            );
+            klass.install_action(
+                "login.show-delete-account-dialog",
+                None,
+                move |widget, _, _| {
+                    widget.show_delete_account_dialog();
+                },
+            );
             klass.install_action("tos.dialog", None, move |widget, _, _| {
                 widget.show_tos_dialog(false)
             });
@@ -202,6 +245,13 @@ impl Login {
                 );
             }
             AuthorizationState::WaitPassword(data) => {
+                // If we do RequestAuthenticationPasswordRecovery we will land in this arm again.
+                // To avoid transition back, clearing the entries and to save cpu time, we check
+                // whether we are in the password-forgot-page.
+                if self_.content.visible_child_name().unwrap() == "password-forgot-page" {
+                    return;
+                }
+
                 // When we enter the password page, the password to be entered should be masked by
                 // default, so the peek icon is turned off and on again.
                 self_.password_entry.set_show_peek_icon(false);
@@ -211,6 +261,41 @@ impl Login {
                     .password_hint_action_row
                     .set_visible(!data.password_hint.is_empty());
                 self_.password_hint_label.set_text(&data.password_hint);
+
+                let account_deletion_preface = if data.has_recovery_email_address {
+                    self_
+                        .password_recovery_status_page
+                        .set_description(Some(&gettext!(
+                            "The code was sent to {}.",
+                            data.recovery_email_address_pattern
+                        )));
+                    gettext(
+                            "One way to continue using your account is to delete your account and then recreate it"
+                        )
+                } else {
+                    self_.password_recovery_status_page.set_description(None);
+                    gettext(
+                        "Since you have not provided a recovery email address, the only way to continue using your account is to delete your account and then recreate it"
+                    )
+                };
+
+                self_.account_deletion_description_label.set_label(&format!(
+                    "{}. {}",
+                    account_deletion_preface,
+                    gettext(
+                        "Please note, you will lose all your chats and messages, along with any media and files you shared!"
+                    )
+                ));
+                self_
+                    .password_recovery_code_send_box
+                    .set_visible(data.has_recovery_email_address);
+                self_
+                    .has_recovery_email_address
+                    .set(data.has_recovery_email_address);
+
+                // When we first enter WaitPassword, we assume that the mail with the recovery
+                // code hasn't been sent, yet.
+                self_.password_recovery_expired.set(true);
 
                 self.navigate_to_page(
                     "password-page",
@@ -275,25 +360,58 @@ impl Login {
 
         self.action_set_enabled("login.previous", is_previous_valid);
         self.action_set_enabled("login.next", is_next_valid);
+        self.action_set_enabled(
+            "login.go-to-forgot-password-page",
+            visible_page == "password-page",
+        );
+        self.action_set_enabled(
+            "login.recover-password",
+            visible_page == "password-forgot-page" && self_.has_recovery_email_address.get(),
+        );
+        self.action_set_enabled(
+            "login.show-no-email-access-dialog",
+            visible_page == "password-recovery-page",
+        );
+        self.action_set_enabled(
+            "login.show-delete-account-dialog",
+            visible_page == "password-forgot-page",
+        );
+        // TODO: Also consider ToS dialog show action
     }
 
     fn previous(&self) {
         let self_ = imp::Login::from_instance(self);
-        self_.content.set_visible_child_name("phone-number-page");
 
-        // Grab focus for entry after reset.
-        self_.phone_number_entry.grab_focus();
+        match self_.content.visible_child_name().unwrap().as_str() {
+            "password-forgot-page" => self.navigate_to_page::<gtk::Editable, _, _>(
+                "password-page",
+                [],
+                None,
+                Some(&*self_.password_entry),
+            ),
+            "password-recovery-page" => self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
+                "password-forgot-page",
+                [],
+                None,
+                None,
+            ),
+            _ => self.navigate_to_page::<gtk::Editable, _, _>(
+                "phone-number-page",
+                [],
+                None,
+                Some(&*self_.phone_number_entry),
+            ),
+        }
     }
 
     fn next(&self) {
-        self.freeze();
+        self.freeze_with_next_spinner();
 
         let self_ = imp::Login::from_instance(self);
         let visible_page = self_.content.visible_child_name().unwrap();
 
         match visible_page.as_str() {
             "phone-number-page" => self.send_phone_number(),
-
             "code-page" => self.send_code(),
             "registration-page" => {
                 if self_.show_tos_popup.get() {
@@ -305,6 +423,7 @@ impl Login {
                 }
             }
             "password-page" => self.send_password(),
+            "password-recovery-page" => self.send_password_recovery_code(),
             other => unreachable!("no page named '{}'", other),
         }
     }
@@ -346,16 +465,25 @@ impl Login {
     fn disable_actions(&self) {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
+        self.action_set_enabled("login.go-to-forgot-password-page", false);
+        self.action_set_enabled("login.recover-password", false);
+        self.action_set_enabled("login.show-no-email-access-dialog", false);
+        self.action_set_enabled("login.show-delete-account-dialog", false);
+        //TODO: Add missing actions here: tos.dialog.
     }
 
     fn freeze(&self) {
         self.disable_actions();
+        imp::Login::from_instance(self).content.set_sensitive(false);
+    }
+
+    fn freeze_with_next_spinner(&self) {
+        self.freeze();
 
         let self_ = imp::Login::from_instance(self);
         self_
             .next_stack
             .set_visible_child(&self_.next_spinner.get());
-        self_.content.set_sensitive(false);
     }
 
     fn unfreeze(&self) {
@@ -525,6 +653,183 @@ impl Login {
                 );
             }),
         );
+    }
+
+    fn recover_password(&self) {
+        let self_ = imp::Login::from_instance(self);
+
+        if self_.password_recovery_expired.get() {
+            // We need to tell tdlib to send us the recovery code via mail (again).
+            self.freeze();
+            self_
+                .password_send_code_stack
+                .set_visible_child_name("spinner");
+
+            let client_id = imp::Login::from_instance(self).client_id.get();
+            do_async(
+                glib::PRIORITY_DEFAULT_IDLE,
+                async move {
+                    functions::RequestAuthenticationPasswordRecovery::new()
+                        .send(client_id)
+                        .await
+                },
+                clone!(@weak self as obj => move |result| async move {
+                    let self_ = imp::Login::from_instance(&obj);
+
+                    // Remove the spinner from the button.
+                    self_
+                        .password_send_code_stack
+                        .set_visible_child_name("image");
+
+                    if result.is_ok() {
+                        // Save that we do not need to resend the mail when we enter the recovery
+                        // page the next time.
+                        self_.password_recovery_expired.set(false);
+                        obj.navigate_to_page(
+                            "password-recovery-page",
+                            [&*self_.password_recovery_code_entry],
+                            Some(&self_.password_recovery_error_label),
+                            Some(&*self_.password_recovery_code_entry),
+                        );
+                    } else {
+                        obj.update_actions_for_visible_page();
+                        // TODO: We also need to handle potiential errors here and inform the user.
+                    }
+
+                    obj.unfreeze();
+                }),
+            );
+        } else {
+            // The code has been send already via mail.
+            self.navigate_to_page(
+                "password-recovery-page",
+                [&*self_.password_recovery_code_entry],
+                Some(&self_.password_recovery_error_label),
+                Some(&*self_.password_recovery_code_entry),
+            );
+        }
+    }
+
+    fn show_delete_account_dialog(&self) {
+        let dialog = gtk::MessageDialog::builder()
+            .text(&gettext("Warning"))
+            .secondary_text(&gettext(
+                "You will lose all your chats and messages, along with any media and files you shared!\n\nDo you want to delete your account?",
+            ))
+            .buttons(gtk::ButtonsType::Cancel)
+            .modal(true)
+            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
+            .build();
+
+        dialog.add_action_widget(
+            &gtk::Button::builder()
+                .use_underline(true)
+                .label("_Delete Account")
+                .css_classes(vec!["destructive-action".to_string()])
+                .build(),
+            gtk::ResponseType::Accept,
+        );
+
+        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
+            dialog.close();
+
+            if matches!(response_id, gtk::ResponseType::Accept) {
+                obj.freeze();
+                let client_id = imp::Login::from_instance(&obj).client_id.get();
+                do_async(
+                    glib::PRIORITY_DEFAULT_IDLE,
+                    async move {
+                        functions::DeleteAccount::new()
+                            .reason(String::from("cloud password lost and not recoverable"))
+                            .send(client_id)
+                            .await
+                    },
+                    clone!(@weak obj => move |result| async move {
+                        // Just unfreeze in case of an error, else stay frozen until we are
+                        // redirected to the welcome page.
+                        if result.is_err() {
+                            obj.update_actions_for_visible_page();
+                            obj.unfreeze();
+                            // TODO: We also need to handle potiential errors here and inform the
+                            // user.
+                        }
+                    }),
+                );
+            } else {
+                imp::Login::from_instance(&obj)
+                    .password_entry
+                    .grab_focus();
+            }
+        }));
+    }
+
+    fn send_password_recovery_code(&self) {
+        let self_ = imp::Login::from_instance(self);
+        let client_id = self_.client_id.get();
+        let recovery_code = self_.password_recovery_code_entry.text().to_string();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                functions::RecoverAuthenticationPassword::new()
+                    .recovery_code(recovery_code)
+                    .send(client_id)
+                    .await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                let self_ = imp::Login::from_instance(&obj);
+
+                if let Err(err) = result {
+                    if err.message == "PASSWORD_RECOVERY_EXPIRED" {
+                        // The same procedure is used as for the official client (as far as I
+                        // understood from the code). Alternatively, we could send the user a new
+                        // code, indicate that and stay on the recovery page.
+                        self_.password_recovery_expired.set(true);
+                        obj.navigate_to_page::<gtk::Editable, _, _>(
+                            "password-page", [],
+                            None,
+                            Some(&*self_.password_entry)
+                        );
+                    } else {
+                        obj.handle_user_error(
+                            &err,
+                            &self_.password_recovery_error_label,
+                            &*self_.password_recovery_code_entry
+                        );
+                    }
+                }
+            }),
+        );
+    }
+
+    fn show_no_email_access_dialog(&self) {
+        let dialog = gtk::MessageDialog::builder()
+            .text(&gettext("Sorry"))
+            .secondary_text(&gettext(
+                "If you can't restore access to the email, your remaining options are either to remember your password or to delete and recreate your account.",
+            ))
+            .buttons(gtk::ButtonsType::Close)
+            .modal(true)
+            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
+            .build();
+
+        dialog.add_button(&gettext("_Go Back"), gtk::ResponseType::Other(0));
+
+        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
+            dialog.close();
+
+            if let gtk::ResponseType::Other(_) = response_id {
+                obj.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
+                    "password-forgot-page",
+                    [],
+                    None,
+                    None,
+                );
+            } else {
+                imp::Login::from_instance(&obj)
+                    .password_recovery_code_entry
+                    .grab_focus();
+            }
+        }));
     }
 
     fn handle_user_result<T, W: IsA<gtk::Widget>>(
