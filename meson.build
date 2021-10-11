@@ -40,7 +40,10 @@ tg_api_hash = get_option('tg_api_hash')
 
 if get_option('profile') == 'development'
   profile = 'Devel'
-  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
+  vcs_tag = 'r' \
+    + run_command('git', 'rev-list', '--count', 'HEAD').stdout().strip() \
+    + '.' \
+    + run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
   if vcs_tag == ''
     version_suffix = '-devel'
   else
