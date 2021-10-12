@@ -352,7 +352,7 @@ impl Chat {
     }
 
     pub fn is_pinned(&self) -> bool {
-        self.property("is_pinned").unwrap().get().unwrap()
+        self.property("is-pinned").unwrap().get().unwrap()
     }
 
     fn set_is_pinned(&self, is_pinned: bool) {
