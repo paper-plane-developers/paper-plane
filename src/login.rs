@@ -204,6 +204,11 @@ impl Login {
                 );
             }
             AuthorizationState::WaitPassword(_) => {
+                // When we enter the password page, the password to be entered should be masked by
+                // default, so the peek icon is turned off and on again.
+                self_.password_entry.set_show_peek_icon(false);
+                self_.password_entry.set_show_peek_icon(true);
+
                 self.set_visible_page_name(
                     "password-page",
                     [&*self_.password_entry],
