@@ -322,6 +322,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                               <object class="GtkPasswordEntry" id="password_entry">
                                                 <property name="activates-default">True</property>
                                                 <property name="placeholder-text" translatable="yes">Password</property>
+                                                <property name="show-peek-icon">True</property>
                                                 <property name="margin-top">6</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="margin-start">6</property>
