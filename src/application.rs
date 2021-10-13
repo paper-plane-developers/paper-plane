@@ -124,7 +124,7 @@ impl Application {
             .version(VERSION)
             .transient_for(&self.main_window())
             .modal(true)
-            .authors(vec!["Marco Melorio".into()])
+            .authors(vec!["Marco Melorio".into(), "Marcus Behrendt".into()])
             .artists(vec!["Marco Melorio".into()])
             .build();
 
