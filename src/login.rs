@@ -120,7 +120,7 @@ mod imp {
                     widget.show_delete_account_dialog();
                 },
             );
-            klass.install_action("tos.dialog", None, move |widget, _, _| {
+            klass.install_action("login.show-tos-dialog", None, move |widget, _, _| {
                 widget.show_tos_dialog(false)
             });
         }
@@ -158,7 +158,7 @@ mod imp {
                 .build();
 
             self_.tos_label.connect_activate_link(|label, _| {
-                label.activate_action("tos.dialog", None);
+                label.activate_action("login.show-tos-dialog", None);
                 gtk::Inhibit(true)
             });
 
@@ -385,7 +385,7 @@ impl Login {
             "login.show-delete-account-dialog",
             visible_page == "password-forgot-page",
         );
-        // TODO: Also consider ToS dialog show action
+        self.action_set_enabled("login.show-tos-dialog", visible_page == "registration-page");
     }
 
     fn previous(&self) {
@@ -478,7 +478,7 @@ impl Login {
         self.action_set_enabled("login.recover-password", false);
         self.action_set_enabled("login.show-no-email-access-dialog", false);
         self.action_set_enabled("login.show-delete-account-dialog", false);
-        //TODO: Add missing actions here: tos.dialog.
+        self.action_set_enabled("login.show-tos-dialog", false);
     }
 
     fn freeze(&self) {
