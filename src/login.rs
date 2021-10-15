@@ -161,6 +161,9 @@ mod imp {
                 label.activate_action("tos.dialog", None);
                 gtk::Inhibit(true)
             });
+
+            // Disable all actions by default.
+            obj.disable_actions();
         }
     }
 
@@ -210,6 +213,12 @@ impl Login {
                 self.send_encryption_key();
             }
             AuthorizationState::WaitPhoneNumber => {
+                // The page 'phone-number-page' is the first page and thus the visible page by
+                // default. This means that no transition will happen when we receive
+                // 'WaitPhoneNumber'. In this case, we have to update the actions manually.
+                if self_.content.visible_child_name().unwrap() == "phone-number-page" {
+                    self.update_actions_for_visible_page();
+                }
                 self.navigate_to_page(
                     "phone-number-page",
                     [&*self_.phone_number_entry],
