@@ -14,6 +14,8 @@ mod imp {
         pub id: Cell<i32>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
+        pub username: RefCell<String>,
+        pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
         pub session: OnceCell<Session>,
     }
@@ -52,6 +54,20 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_string(
+                        "username",
+                        "Username",
+                        "The username of this user",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpec::new_string(
+                        "phone-number",
+                        "Phone Number",
+                        "The phone number of this user",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpec::new_object(
                         "avatar",
                         "Avatar",
@@ -82,6 +98,8 @@ mod imp {
                 "id" => self.id.set(value.get().unwrap()),
                 "first-name" => obj.set_first_name(value.get().unwrap()),
                 "last-name" => obj.set_last_name(value.get().unwrap()),
+                "username" => obj.set_username(value.get().unwrap()),
+                "phone-number" => obj.set_phone_number(value.get().unwrap()),
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
                 "session" => self.session.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
@@ -93,6 +111,8 @@ mod imp {
                 "id" => obj.id().to_value(),
                 "first-name" => obj.first_name().to_value(),
                 "last-name" => obj.last_name().to_value(),
+                "username" => obj.username().to_value(),
+                "phone-number" => obj.phone_number().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
@@ -125,6 +145,9 @@ impl User {
         if let Update::User(data) = update {
             self.set_first_name(data.user.first_name);
             self.set_last_name(data.user.last_name);
+            self.set_username(data.user.username);
+            self.set_phone_number(data.user.phone_number);
+
             self.avatar()
                 .update_from_user_photo(data.user.profile_photo);
         }
@@ -172,6 +195,46 @@ impl User {
 
     pub fn last_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
         gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "last-name")
+            .upcast()
+    }
+
+    pub fn username(&self) -> String {
+        let self_ = imp::User::from_instance(self);
+        self_.username.borrow().to_owned()
+    }
+
+    fn set_username(&self, username: String) {
+        if self.username() == username {
+            return;
+        }
+
+        let self_ = imp::User::from_instance(self);
+        self_.username.replace(username);
+        self.notify("username");
+    }
+
+    pub fn username_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "username")
+            .upcast()
+    }
+
+    pub fn phone_number(&self) -> String {
+        let self_ = imp::User::from_instance(self);
+        self_.phone_number.borrow().to_owned()
+    }
+
+    fn set_phone_number(&self, phone_number: String) {
+        if self.phone_number() == phone_number {
+            return;
+        }
+
+        let self_ = imp::User::from_instance(self);
+        self_.phone_number.replace(phone_number);
+        self.notify("phone-number");
+    }
+
+    pub fn phone_number_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "phone-number")
             .upcast()
     }
 
