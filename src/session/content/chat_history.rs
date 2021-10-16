@@ -1,8 +1,9 @@
 use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use tdgrand::enums::ChatType;
 
 use crate::session::{
-    content::{ItemRow, SendMessageArea},
+    content::{ItemRow, SendMessageArea, UserDialog},
     Chat,
 };
 
@@ -31,6 +32,10 @@ mod imp {
             ItemRow::static_type();
             SendMessageArea::static_type();
             Self::bind_template(klass);
+
+            klass.install_action("chat-history.view-info", None, move |widget, _, _| {
+                widget.open_info_dialog();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -127,6 +132,20 @@ impl ChatHistory {
         }
     }
 
+    fn open_info_dialog(&self) {
+        if let Some(chat) = self.chat() {
+            if let ChatType::Private(data) = chat.type_() {
+                let user = chat.session().user_list().get_or_create_user(data.user_id);
+                let dialog = UserDialog::new(&self.parent_window(), &user);
+                dialog.show();
+            }
+        }
+    }
+
+    fn parent_window(&self) -> Option<gtk::Window> {
+        self.root()?.downcast().ok()
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::ChatHistory::from_instance(self);
         self_.chat.borrow().clone()
@@ -139,6 +158,11 @@ impl ChatHistory {
 
         let self_ = imp::ChatHistory::from_instance(self);
         if let Some(ref chat) = chat {
+            match chat.type_() {
+                ChatType::Private(_) => self.action_set_enabled("chat-history.view-info", true),
+                _ => self.action_set_enabled("chat-history.view-info", false),
+            }
+
             let selection = gtk::NoSelection::new(Some(&chat.history()));
             self_.list_view.set_model(Some(&selection));
         }
