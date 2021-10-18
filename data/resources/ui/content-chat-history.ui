@@ -23,6 +23,12 @@
                 </binding>
               </object>
             </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="icon-name">view-more-symbolic</property>
+                <property name="menu-model">chat-menu-model</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -80,4 +86,13 @@
       </object>
     </child>
   </template>
+  <menu id="chat-menu-model">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">View Info</attribute>
+        <attribute name="action">chat-history.view-info</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

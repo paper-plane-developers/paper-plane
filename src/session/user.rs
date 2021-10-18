@@ -1,6 +1,4 @@
-use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
+use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::Update;
 
 use crate::session::Avatar;
@@ -16,6 +14,8 @@ mod imp {
         pub id: Cell<i32>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
+        pub username: RefCell<String>,
+        pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
         pub session: OnceCell<Session>,
     }
@@ -45,14 +45,28 @@ mod imp {
                         "First Name",
                         "The first name of this user",
                         None,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_string(
                         "last-name",
                         "Last Name",
                         "The last name of this user",
                         None,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpec::new_string(
+                        "username",
+                        "Username",
+                        "The username of this user",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpec::new_string(
+                        "phone-number",
+                        "Phone Number",
+                        "The phone number of this user",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_object(
                         "avatar",
@@ -70,45 +84,35 @@ mod imp {
                     ),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "id" => {
-                    let id = value.get().unwrap();
-                    self.id.set(id);
-                }
-                "first-name" => {
-                    let first_name = value.get().unwrap();
-                    self.first_name.replace(first_name);
-                }
-                "last-name" => {
-                    let last_name = value.get().unwrap();
-                    self.last_name.replace(last_name);
-                }
-                "avatar" => {
-                    self.avatar.set(value.get().unwrap()).unwrap();
-                }
-                "session" => {
-                    self.session.set(value.get().unwrap()).unwrap();
-                }
+                "id" => self.id.set(value.get().unwrap()),
+                "first-name" => obj.set_first_name(value.get().unwrap()),
+                "last-name" => obj.set_last_name(value.get().unwrap()),
+                "username" => obj.set_username(value.get().unwrap()),
+                "phone-number" => obj.set_phone_number(value.get().unwrap()),
+                "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
+                "session" => self.session.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => self.id.get().to_value(),
-                "first-name" => self.first_name.borrow().to_value(),
-                "last-name" => self.last_name.borrow().to_value(),
+                "id" => obj.id().to_value(),
+                "first-name" => obj.first_name().to_value(),
+                "last-name" => obj.last_name().to_value(),
+                "username" => obj.username().to_value(),
+                "phone-number" => obj.phone_number().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
@@ -119,8 +123,9 @@ mod imp {
             self.parent_constructed(obj);
 
             let avatar = obj.avatar();
-            let full_name_expression = obj.full_name_expression();
-            full_name_expression.bind(avatar, "display-name", Some(avatar));
+            let user_expression = gtk::ConstantExpression::new(obj);
+            let full_name_expression = super::User::full_name_expression(&user_expression);
+            full_name_expression.bind(avatar, "display-name", gtk::NONE_WIDGET);
         }
     }
 }
@@ -132,7 +137,6 @@ glib::wrapper! {
 impl User {
     pub fn new(id: i32, session: &Session) -> Self {
         let avatar = Avatar::new(session);
-
         glib::Object::new(&[("id", &id), ("avatar", &avatar), ("session", session)])
             .expect("Failed to create User")
     }
@@ -141,33 +145,97 @@ impl User {
         if let Update::User(data) = update {
             self.set_first_name(data.user.first_name);
             self.set_last_name(data.user.last_name);
+            self.set_username(data.user.username);
+            self.set_phone_number(data.user.phone_number);
+
             self.avatar()
                 .update_from_user_photo(data.user.profile_photo);
         }
     }
 
     pub fn id(&self) -> i32 {
-        self.property("id").unwrap().get().unwrap()
+        let self_ = imp::User::from_instance(self);
+        self_.id.get()
     }
 
     pub fn first_name(&self) -> String {
-        self.property("first-name").unwrap().get().unwrap()
+        let self_ = imp::User::from_instance(self);
+        self_.first_name.borrow().to_owned()
     }
 
     fn set_first_name(&self, first_name: String) {
-        if self.first_name() != first_name {
-            self.set_property("first-name", &first_name).unwrap();
+        if self.first_name() == first_name {
+            return;
         }
+
+        let self_ = imp::User::from_instance(self);
+        self_.first_name.replace(first_name);
+        self.notify("first-name");
+    }
+
+    pub fn first_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "first-name")
+            .upcast()
     }
 
     pub fn last_name(&self) -> String {
-        self.property("last-name").unwrap().get().unwrap()
+        let self_ = imp::User::from_instance(self);
+        self_.last_name.borrow().to_owned()
     }
 
     fn set_last_name(&self, last_name: String) {
-        if self.last_name() != last_name {
-            self.set_property("last-name", &last_name).unwrap();
+        if self.last_name() == last_name {
+            return;
         }
+
+        let self_ = imp::User::from_instance(self);
+        self_.last_name.replace(last_name);
+        self.notify("last-name");
+    }
+
+    pub fn last_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "last-name")
+            .upcast()
+    }
+
+    pub fn username(&self) -> String {
+        let self_ = imp::User::from_instance(self);
+        self_.username.borrow().to_owned()
+    }
+
+    fn set_username(&self, username: String) {
+        if self.username() == username {
+            return;
+        }
+
+        let self_ = imp::User::from_instance(self);
+        self_.username.replace(username);
+        self.notify("username");
+    }
+
+    pub fn username_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "username")
+            .upcast()
+    }
+
+    pub fn phone_number(&self) -> String {
+        let self_ = imp::User::from_instance(self);
+        self_.phone_number.borrow().to_owned()
+    }
+
+    fn set_phone_number(&self, phone_number: String) {
+        if self.phone_number() == phone_number {
+            return;
+        }
+
+        let self_ = imp::User::from_instance(self);
+        self_.phone_number.replace(phone_number);
+        self.notify("phone-number");
+    }
+
+    pub fn phone_number_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "phone-number")
+            .upcast()
     }
 
     pub fn avatar(&self) -> &Avatar {
@@ -180,23 +248,17 @@ impl User {
         self_.session.get().unwrap()
     }
 
-    pub fn full_name_expression(&self) -> gtk::Expression {
-        let user_expression = gtk::ConstantExpression::new(self);
-        let first_name_expression =
-            gtk::PropertyExpression::new(User::static_type(), Some(&user_expression), "first-name");
-        let last_name_expression =
-            gtk::PropertyExpression::new(User::static_type(), Some(&user_expression), "last-name");
+    pub fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        let first_name_expression = User::first_name_expression(user_expression);
+        let last_name_expression = User::last_name_expression(user_expression);
 
         gtk::ClosureExpression::new(
-            move |expressions| -> String {
-                let first_name = expressions[1].get::<&str>().unwrap();
-                let last_name = expressions[2].get::<&str>().unwrap();
-                format!("{} {}", first_name, last_name).trim().to_string()
+            move |args| -> String {
+                let first_name = args[1].get::<&str>().unwrap();
+                let last_name = args[2].get::<&str>().unwrap();
+                format!("{} {}", first_name, last_name).trim().to_owned()
             },
-            &[
-                first_name_expression.upcast(),
-                last_name_expression.upcast(),
-            ],
+            &[first_name_expression, last_name_expression],
         )
         .upcast()
     }
