@@ -96,3 +96,7 @@
 .send-message-area {
   margin: 6px;
 }
+
+.qr-code-quite-zone {
+  background-color: white;
+}

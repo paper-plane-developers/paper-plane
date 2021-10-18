@@ -29,8 +29,33 @@
                       <object class="GtkButton" id="previous_button">
                         <property name="visible">False</property>
                         <property name="action-name">login.previous</property>
-                        <property name="use-underline">True</property>
-                        <property name="label" translatable="yes">_Previous</property>
+                        <property name="child">
+                          <object class="GtkStack" id="previous_stack">
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">text</property>
+                                <property name="child">
+                                  <object class="GtkLabel">
+                                    <property name="use-underline">True</property>
+                                    <property name="label" translatable="yes">_Previous</property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">spinner</property>
+                                <property name="child">
+                                  <object class="GtkSpinner">
+                                    <property name="spinning">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="halign">center</property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
                       </object>
                     </child>
                     <child type="end">
@@ -106,6 +131,45 @@
                                     <child>
                                       <object class="GtkListBox">
                                         <child>
+                                          <object class="AdwActionRow">
+                                            <property name="selectable">False</property>
+                                            <property name="activatable">True</property>
+                                            <property name="action-name">login.use-qr-code</property>
+                                            <property name="use-underline">True</property>
+                                            <property name="title" translatable="yes">_Log in using QR code</property>
+                                            <property name="icon-name">scanner-symbolic</property>
+                                            <child>
+                                              <object class="GtkStack" id="phone_number_use_qr_code_stack">
+                                                <child>
+                                                  <object class="GtkStackPage">
+                                                    <property name="name">image</property>
+                                                    <property name="child">
+                                                      <object class="GtkImage">
+                                                        <property name="icon_name">go-next-symbolic</property>
+                                                        <style>
+                                                          <class name="dim-label"/>
+                                                        </style>
+                                                      </object>
+                                                    </property>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkStackPage">
+                                                    <property name="name">spinner</property>
+                                                    <property name="child">
+                                                      <object class="GtkSpinner">
+                                                        <property name="spinning">True</property>
+                                                        <property name="valign">center</property>
+                                                        <property name="halign">center</property>
+                                                      </object>
+                                                    </property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
                                           <object class="AdwExpanderRow">
                                             <property name="focusable">False</property>
                                             <property name="selectable">False</property>
@@ -140,6 +204,40 @@
                                     </child>
                                   </object>
                                 </property>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwLeafletPage">
+                        <property name="name">qr-code-page</property>
+                        <property name="child">
+                          <object class="AdwStatusPage">
+                            <property name="title" translatable="yes">Scan Code</property>
+                            <property name="description" translatable="yes">Scan this code with another Telegram app logged into your account.</property>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="width-request">200</property>
+                                <property name="height-request">200</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="child">
+                                  <object class="AdwBin" id="qr_code_bin">
+                                    <property name="visible">False</property>
+                                    <child>
+                                      <object class="GtkImage" id="qr_code_image">
+                                        <property name="pixel-size">192</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </property>
+                                <style>
+                                  <class name="qr-code-quite-zone"/>
+                                </style>
                               </object>
                             </child>
                           </object>

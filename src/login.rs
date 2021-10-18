@@ -1,8 +1,10 @@
 use gettextrs::gettext;
-use glib::clone;
-use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
+use gtk::{
+    gdk,
+    glib::{self, clone},
+    prelude::*,
+    subclass::prelude::*,
+};
 use locale_config::Locale;
 use tdgrand::{enums::AuthorizationState, functions, types};
 
@@ -30,6 +32,8 @@ mod imp {
         #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
+        pub previous_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
         pub next_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub next_stack: TemplateChild<gtk::Stack>,
@@ -42,9 +46,15 @@ mod imp {
         #[template_child]
         pub phone_number_entry: TemplateChild<gtk::Entry>,
         #[template_child]
+        pub phone_number_use_qr_code_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
         pub welcome_page_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub use_test_dc_switch: TemplateChild<gtk::Switch>,
+        #[template_child]
+        pub qr_code_bin: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub qr_code_image: TemplateChild<gtk::Image>,
         #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -91,6 +101,9 @@ mod imp {
                 widget.previous()
             });
             klass.install_action("login.next", None, move |widget, _, _| widget.next());
+            klass.install_action("login.use-qr-code", None, move |widget, _, _| {
+                widget.request_qr_code();
+            });
             klass.install_action(
                 "login.go-to-forgot-password-page",
                 None,
@@ -219,6 +232,12 @@ impl Login {
                 if self_.content.visible_child_name().unwrap() == "phone-number-page" {
                     self.update_actions_for_visible_page();
                 }
+
+                // Hide the spinner before entering 'phone-number-page'.
+                self_
+                    .phone_number_use_qr_code_stack
+                    .set_visible_child_name("image");
+
                 self.navigate_to_page(
                     "phone-number-page",
                     [&*self_.phone_number_entry],
@@ -234,8 +253,40 @@ impl Login {
                     Some(&*self_.code_entry),
                 );
             }
-            AuthorizationState::WaitOtherDeviceConfirmation(_) => {
-                todo!()
+            AuthorizationState::WaitOtherDeviceConfirmation(data) => {
+                let data_luma = qrcode_generator::to_image_from_str(
+                    data.link,
+                    qrcode_generator::QrCodeEcc::Low,
+                    192,
+                )
+                .unwrap();
+
+                let bytes = glib::Bytes::from_owned(
+                    // gdk::Texture only knows 3 byte color spaces, thus convert Luma.
+                    data_luma
+                        .into_iter()
+                        .flat_map(|p| (0..3).map(move |_| p))
+                        .collect::<Vec<_>>(),
+                );
+
+                self_
+                    .qr_code_image
+                    .set_paintable(Some(&gdk::MemoryTexture::new(
+                        192,
+                        192,
+                        gdk::MemoryFormat::R8g8b8,
+                        &bytes,
+                        1,
+                    )));
+
+                self_.qr_code_bin.set_visible(true);
+
+                self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
+                    "qr-code-page",
+                    [],
+                    None,
+                    None,
+                );
             }
             AuthorizationState::WaitRegistration(data) => {
                 self_.show_tos_popup.set(data.terms_of_service.show_popup);
@@ -315,6 +366,11 @@ impl Login {
             }
             AuthorizationState::Ready => {
                 self.disable_actions();
+                self_.qr_code_bin.set_visible(false);
+                // Clear the qr code image save some potential memory.
+                self_
+                    .qr_code_image
+                    .set_paintable(None as Option<&gdk::Paintable>);
                 self.emit_by_name("new-session", &[]).unwrap();
             }
             _ => {}
@@ -362,13 +418,15 @@ impl Login {
         let visible_page = self_.content.visible_child_name().unwrap();
 
         let is_previous_valid = visible_page.as_str() != "phone-number-page";
-        let is_next_valid = visible_page.as_str() != "password-forgot-page";
+        let is_next_valid = visible_page.as_str() != "password-forgot-page"
+            && visible_page.as_str() != "qr-code-page";
 
         self_.previous_button.set_visible(is_previous_valid);
         self_.next_button.set_visible(is_next_valid);
 
         self.action_set_enabled("login.previous", is_previous_valid);
         self.action_set_enabled("login.next", is_next_valid);
+        self.action_set_enabled("login.use-qr-code", visible_page == "phone-number-page");
         self.action_set_enabled(
             "login.go-to-forgot-password-page",
             visible_page == "password-page",
@@ -392,6 +450,7 @@ impl Login {
         let self_ = imp::Login::from_instance(self);
 
         match self_.content.visible_child_name().unwrap().as_str() {
+            "qr-code-page" => self.leave_qr_code_page(),
             "password-forgot-page" => self.navigate_to_page::<gtk::Editable, _, _>(
                 "password-page",
                 [],
@@ -437,6 +496,57 @@ impl Login {
         }
     }
 
+    fn request_qr_code(&self) {
+        self.freeze();
+        imp::Login::from_instance(self)
+            .phone_number_use_qr_code_stack
+            .set_visible_child_name("spinner");
+
+        let client_id = self.client_id();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                functions::RequestQrCodeAuthentication::new()
+                    .send(client_id)
+                    .await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                let self_ = imp::Login::from_instance(&obj);
+                obj.handle_user_result(
+                    result,
+                    &self_.welcome_page_error_label,
+                    &*self_.phone_number_entry
+                );
+            }),
+        );
+    }
+
+    fn leave_qr_code_page(&self) {
+        self.freeze_with_previous_spinner();
+
+        let self_ = imp::Login::from_instance(self);
+        self_.qr_code_bin.set_visible(false);
+
+        let client_id = self.client_id();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move {
+                // We actually need to logout to stop tdlib sending us new links.
+                // https://github.com/tdlib/td/issues/1645
+                functions::LogOut::new().send(client_id).await
+            },
+            clone!(@weak self as obj => move |result| async move {
+                let self_ = imp::Login::from_instance(&obj);
+                if result.is_err() {
+                    self_.qr_code_bin.set_visible(true);
+                    obj.unfreeze();
+                    // TODO: We also need to handle potential errors here and inform the user that
+                    // the change to phone number identification failed (Toast?).
+                }
+            }),
+        );
+    }
+
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let self_ = imp::Login::from_instance(self);
 
@@ -474,6 +584,7 @@ impl Login {
     fn disable_actions(&self) {
         self.action_set_enabled("login.previous", false);
         self.action_set_enabled("login.next", false);
+        self.action_set_enabled("login.use-qr-code", false);
         self.action_set_enabled("login.go-to-forgot-password-page", false);
         self.action_set_enabled("login.recover-password", false);
         self.action_set_enabled("login.show-no-email-access-dialog", false);
@@ -484,6 +595,13 @@ impl Login {
     fn freeze(&self) {
         self.disable_actions();
         imp::Login::from_instance(self).content.set_sensitive(false);
+    }
+
+    fn freeze_with_previous_spinner(&self) {
+        self.freeze();
+
+        let self_ = imp::Login::from_instance(self);
+        self_.previous_stack.set_visible_child_name("spinner");
     }
 
     fn freeze_with_next_spinner(&self) {
@@ -497,6 +615,7 @@ impl Login {
 
     fn unfreeze(&self) {
         let self_ = imp::Login::from_instance(self);
+        self_.previous_stack.set_visible_child_name("text");
         self_.next_stack.set_visible_child(&self_.next_label.get());
         self_.content.set_sensitive(true);
     }
