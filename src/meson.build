@@ -42,6 +42,8 @@ rust_sources = files(
   'session/content/event_row.rs',
   'session/content/item_row.rs',
   'session/content/message_bubble.rs',
+  'session/content/message_indicators.rs',
+  'session/content/message_label.rs',
   'session/content/message_row.rs',
   'session/content/message_sticker.rs',
   'session/content/mod.rs',

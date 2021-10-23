@@ -11,16 +11,7 @@
           <object class="AdwBin" id="sender_bin"/>
         </child>
         <child>
-          <object class="GtkLabel" id="content_label">
-            <property name="selectable">True</property>
-            <property name="use-markup">True</property>
-            <property name="wrap">True</property>
-            <property name="wrap-mode">word-char</property>
-            <property name="xalign">0</property>
-            <style>
-              <class name="message-text"/>
-            </style>
-          </object>
+          <object class="ContentMessageLabel" id="message_label"/>
         </child>
       </object>
     </child>

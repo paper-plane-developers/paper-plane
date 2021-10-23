@@ -1,10 +1,9 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
-use gettextrs::gettext;
 use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::ChatType;
 
-use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
-use crate::utils::parse_formatted_text;
+use crate::session::chat::{Message, MessageSender};
+use crate::session::content::MessageLabel;
 
 mod imp {
     use super::*;
@@ -18,7 +17,7 @@ mod imp {
         #[template_child]
         pub sender_bin: TemplateChild<adw::Bin>,
         #[template_child]
-        pub content_label: TemplateChild<gtk::Label>,
+        pub message_label: TemplateChild<MessageLabel>,
     }
 
     #[glib::object_subclass]
@@ -130,28 +129,6 @@ impl MessageBubble {
             self_.sender_color_class.replace(None);
         }
 
-        // Set content label expression
-        let message_expression = gtk::ConstantExpression::new(message);
-        let content_expression = gtk::PropertyExpression::new(
-            Message::static_type(),
-            Some(&message_expression),
-            "content",
-        );
-        let text_expression = gtk::ClosureExpression::new(
-            move |expressions| -> String {
-                let content = expressions[1].get::<BoxedMessageContent>().unwrap();
-                format_message_content_text(content.0)
-            },
-            &[content_expression.upcast()],
-        );
-        let content_label = self_.content_label.get();
-        text_expression.bind(&content_label, "label", Some(&content_label));
-    }
-}
-
-fn format_message_content_text(content: MessageContent) -> String {
-    match content {
-        MessageContent::MessageText(content) => parse_formatted_text(content.text),
-        _ => format!("<i>{}</i>", gettext("This message is unsupported")),
+        self_.message_label.set_message(message);
     }
 }

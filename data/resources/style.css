@@ -93,8 +93,21 @@
   color: #cd4073;
 }
 
-.message-text {
+.message-label {
   font-size: 0.95em;
+}
+
+.message-indicators {
+  font-size: 0.8em;
+  padding-left: 6px;
+}
+
+.message-bubble .message-indicators label {
+  opacity: 0.55;
+}
+
+.outgoing .message-indicators label {
+  opacity: 0.75;
 }
 
 .send-message-area {

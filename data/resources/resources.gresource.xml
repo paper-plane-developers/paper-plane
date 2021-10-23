@@ -8,6 +8,8 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-bubble.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-message-indicators.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-message-label.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-sticker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-send-message-area.ui</file>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessageLabel" parent="GtkWidget">
+    <style>
+      <class name="message-label"/>
+    </style>
+    <child>
+      <object class="GtkLabel" id="label">
+        <property name="selectable">True</property>
+        <property name="use-markup">True</property>
+        <property name="wrap">True</property>
+        <property name="wrap-mode">word-char</property>
+        <property name="xalign">0</property>
+      </object>
+    </child>
+    <child>
+      <object class="ContentMessageIndicators" id="indicators"/>
+    </child>
+  </template>
+</interface>
