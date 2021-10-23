@@ -3,6 +3,7 @@ use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::{enums::MessageContent, types::File};
 
 use crate::session::chat::Message;
+use crate::session::content::MessageIndicators;
 
 mod imp {
     use super::*;
@@ -13,6 +14,10 @@ mod imp {
     pub struct MessageSticker {
         pub width: Cell<i32>,
         pub height: Cell<i32>,
+        #[template_child]
+        pub overlay: TemplateChild<gtk::Overlay>,
+        #[template_child]
+        pub indicators: TemplateChild<MessageIndicators>,
         #[template_child]
         pub picture: TemplateChild<gtk::Picture>,
     }
@@ -34,7 +39,7 @@ mod imp {
 
     impl ObjectImpl for MessageSticker {
         fn dispose(&self, _obj: &Self::Type) {
-            self.picture.unparent();
+            self.overlay.unparent();
         }
     }
 
@@ -55,7 +60,7 @@ mod imp {
         }
 
         fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
-            self.picture.allocate(width, height, baseline, None);
+            self.overlay.allocate(width, height, baseline, None);
         }
     }
 }
@@ -79,6 +84,8 @@ impl MessageSticker {
     pub fn set_message(&self, message: &Message) {
         if let MessageContent::MessageSticker(data) = message.content().0 {
             let self_ = imp::MessageSticker::from_instance(self);
+
+            self_.indicators.set_message(message);
 
             // Scale the sticker to fit it in a small container, but keeping its
             // original aspect ratio

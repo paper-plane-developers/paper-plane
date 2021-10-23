@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentMessageSticker" parent="GtkWidget">
+    <style>
+      <class name="message-sticker"/>
+    </style>
     <child>
-      <object class="GtkPicture" id="picture"/>
+      <object class="GtkOverlay" id="overlay">
+        <child type="overlay">
+          <object class="ContentMessageIndicators" id="indicators">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkPicture" id="picture"/>
+        </child>
+      </object>
     </child>
   </template>
 </interface>

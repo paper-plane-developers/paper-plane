@@ -110,6 +110,13 @@
   opacity: 0.75;
 }
 
+.message-sticker .message-indicators {
+  background-color: alpha(@view_bg_color, 0.9);
+  border-radius: 100px;
+  font-size: 0.75em;
+  padding: 1px 5px;
+}
+
 .send-message-area {
   margin: 6px;
 }
