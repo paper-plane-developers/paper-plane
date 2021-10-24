@@ -56,7 +56,7 @@
                 <child>
                   <object class="AdwActionRow" id="username_row">
                     <property name="subtitle" translatable="yes">Username</property>
-                    <property name="icon-name">person2-symbolic</property>
+                    <property name="icon-name">user-info-symbolic</property>
                   </object>
                 </child>
               </object>

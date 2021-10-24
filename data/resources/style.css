@@ -1,3 +1,7 @@
+.chat-list {
+  background: @window_bg_color;
+}
+
 .chat-list row .title {
   font-size: 0.95em;
 }
@@ -32,6 +36,7 @@
 .chat-history row .message-bubble {
   background-color: alpha(black, 0.07);
   border-radius: 12px;
+  margin-right: 38px;
   padding: 6px 12px;
 }
 
@@ -39,6 +44,7 @@
   background-color: @accent_bg_color;
   color: @accent_fg_color;
   margin-left: 38px;
+  margin-right: 0;
 }
 
 .chat-history row .outgoing selection {
@@ -50,10 +56,8 @@
 }
 
 .chat-history row .event-row {
-  background-color: alpha(black, 0.07);
-  border-radius: 9999px;
   font-size: 0.8em;
-  padding: 6px 18px;
+  padding: 3px;
 }
 
 .sender-text {
