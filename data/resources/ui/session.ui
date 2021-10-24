@@ -14,9 +14,7 @@
           <object class="AdwLeafletPage">
             <property name="navigatable">False</property>
             <property name="child">
-              <object class="GtkSeparator">
-                <property name="orientation">vertical</property>
-              </object>
+              <object class="GtkSeparator"/>
             </property>
           </object>
         </child>
