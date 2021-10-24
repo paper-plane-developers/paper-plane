@@ -49,6 +49,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
+    <property name="activatable">False</property>
     <property name="child">
       <object class="ContentItemRow">
         <property name="margin-top">3</property>
