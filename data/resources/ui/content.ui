@@ -2,6 +2,7 @@
 <interface>
   <template class="Content" parent="AdwBin">
     <property name="hexpand">True</property>
+    <property name="width-request">300</property>
     <child>
       <object class="GtkStack" id="stack">
         <child>
