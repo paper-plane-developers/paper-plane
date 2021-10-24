@@ -1,3 +1,7 @@
+.chat-list {
+  background: @window_bg_color;
+}
+
 .chat-list row .title {
   font-size: 0.95em;
 }
