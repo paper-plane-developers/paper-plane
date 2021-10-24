@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/github/melix99/telegrand/">
-    <file preprocess="xml-stripblanks">icons/person2-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/phone-oldschool-symbolic.svg</file>
 
     <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar.ui</file>
