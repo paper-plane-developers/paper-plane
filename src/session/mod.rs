@@ -16,14 +16,15 @@ use self::user::User;
 use self::user_list::UserList;
 
 use glib::SyncSender;
-use gtk::glib;
+use gtk::glib::{self, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::collections::hash_map::{Entry, HashMap};
-use tdgrand::enums::{NotificationSettingsScope, Update};
+use tdgrand::enums::{NotificationSettingsScope, Update, User as TelegramUser};
 use tdgrand::functions;
 use tdgrand::types::{File, ScopeNotificationSettings};
 
+use crate::utils::do_async;
 use crate::RUNTIME;
 
 #[derive(Clone, Debug, Default, glib::GBoxed)]
@@ -41,6 +42,7 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
     pub struct Session {
         pub client_id: Cell<i32>,
+        pub me: RefCell<Option<User>>,
         pub chat_list: OnceCell<ChatList>,
         pub user_list: OnceCell<UserList>,
         pub selected_chat: RefCell<Option<Chat>>,
@@ -85,6 +87,13 @@ mod imp {
                         std::i32::MAX,
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_object(
+                        "me",
+                        "Me",
+                        "The own user id of this session",
+                        User::static_type(),
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpec::new_object(
                         "chat-list",
@@ -172,6 +181,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
+                "me" => obj.me().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
@@ -191,6 +201,7 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
+            obj.fetch_me();
             obj.fetch_chats();
         }
     }
@@ -300,6 +311,11 @@ impl Session {
         self_.client_id.get()
     }
 
+    pub fn me(&self) -> Option<User> {
+        let self_ = imp::Session::from_instance(self);
+        self_.me.borrow().clone()
+    }
+
     pub fn chat_list(&self) -> &ChatList {
         let self_ = imp::Session::from_instance(self);
         self_.chat_list.get_or_init(|| ChatList::new(self))
@@ -371,6 +387,23 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
         self_.channel_chats_notification_settings.replace(settings);
         self.notify("channel-chats-notification-settings")
+    }
+
+    fn fetch_me(&self) {
+        let client_id = self.client_id();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move { functions::GetMe::new().send(client_id).await },
+            clone!(@weak self as obj => move |result| async move {
+                let TelegramUser::User(me) = result.unwrap();
+
+                imp::Session::from_instance(&obj)
+                    .me
+                    .replace(obj.user_list().get_or_create_user(me.id).into());
+
+                obj.notify("me");
+            }),
+        );
     }
 
     fn fetch_chats(&self) {
