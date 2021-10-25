@@ -1,3 +1,4 @@
+mod avatar;
 mod chat_row;
 
 use self::chat_row::ChatRow;
@@ -8,6 +9,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::session::{Chat, ChatList};
+
+pub use self::avatar::Avatar;
 
 mod imp {
     use super::*;

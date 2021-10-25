@@ -2,6 +2,18 @@
   background: @window_bg_color;
 }
 
+.online-indicator-mask {
+  border-radius: 9999px;
+  background-color: @window_bg_color;
+  padding: 7px;
+}
+
+.online-indicator-dot {
+  border-radius: 9999px;
+  background-color: @green_4;
+  padding: 5px;
+}
+
 .chat-list row .title {
   font-size: 0.95em;
 }

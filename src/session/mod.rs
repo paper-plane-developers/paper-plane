@@ -250,7 +250,7 @@ impl Session {
                     }
                 }
             }
-            Update::User(_) => {
+            Update::User(_) | Update::UserStatus(_) => {
                 self.user_list().handle_update(update);
             }
             Update::File(update) => {
