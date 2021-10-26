@@ -27,6 +27,9 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
 
+    <file preprocess="xml-stripblanks">icons/scalable/status/bot-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/status/megaphone-symbolic.svg</file>
+
     <file compressed="true">style.css</file>
     <file compressed="true">style-dark.css</file>
     <file compressed="true">style-hc.css</file>

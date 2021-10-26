@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use glib::closure;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
-use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
+use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent, UserType};
 use tdgrand::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
@@ -31,6 +31,8 @@ mod imp {
         pub bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub title_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub chat_type_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -135,6 +137,32 @@ impl Row {
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
+                match chat.type_() {
+                    ChatType::BasicGroup(_) => {
+                        imp.chat_type_icon
+                            .set_icon_name(Some("system-users-symbolic"));
+                    }
+                    ChatType::Supergroup(group) => {
+                        imp.chat_type_icon
+                            .set_icon_name(Some(if group.is_channel() {
+                                "megaphone-symbolic"
+                            } else {
+                                "system-users-symbolic"
+                            }));
+                    }
+                    ChatType::Secret(_) => {
+                        imp.chat_type_icon
+                            .set_icon_name(Some("channel-secure-symbolic"));
+                    }
+                    ChatType::Private(user) => {
+                        if let UserType::Bot(_) = user.type_().0 {
+                            imp.chat_type_icon.set_icon_name(Some("bot-symbolic"));
+                        } else {
+                            imp.chat_type_icon.set_visible(false);
+                        }
+                    }
+                }
+
                 imp.timestamp_label.set_visible(true);
                 imp.bottom_box.set_visible(true);
 
