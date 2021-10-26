@@ -1,5 +1,6 @@
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*};
+use std::cmp::Ordering;
 use std::collections::hash_map::Entry;
 use tdgrand::enums::{self, Update};
 use tdgrand::functions;
@@ -327,21 +328,39 @@ impl History {
 
     fn remove(&self, message_id: i64) {
         let self_ = imp::History::from_instance(self);
-        let index = self_.list.borrow().iter().position(|m| {
-            if let ItemType::Message(message) = m.type_() {
-                if message.id() == message_id {
-                    return true;
-                }
-            }
 
-            false
-        });
+        if let Some(message) = self_.message_map.borrow_mut().remove(&message_id) {
+            // Put this in a block, so that we only need to borrow the list once and the runtime
+            // borrow checker does not panic in Self::items_changed when it borrows the list again.
+            let index = {
+                let mut list = self_.list.borrow_mut();
 
-        if let Some(index) = index {
-            self_.list.borrow_mut().remove(index);
-            self_.message_map.borrow_mut().remove(&message_id);
+                // The elements in this list are ordered. While the day dividers are ordered
+                // only by their date time, the messages are additionally sorted by their id. We
+                // can exploit this by applying a binary search.
+                let index = list
+                    .binary_search_by(|m| match m.type_() {
+                        ItemType::Message(message) => message.id().cmp(&message_id),
+                        ItemType::DayDivider(date_time) => {
+                            let ordering = date_time.cmp(
+                                &glib::DateTime::from_unix_utc(message.date() as i64).unwrap(),
+                            );
+                            if let Ordering::Equal = ordering {
+                                // We found the day divider of the message. Therefore, the message
+                                // must be among the following elements.
+                                Ordering::Less
+                            } else {
+                                ordering
+                            }
+                        }
+                    })
+                    .unwrap();
 
-            self.items_changed(index as u32, 1, 0);
+                list.remove(index);
+                index as u32
+            };
+
+            self.items_changed(index, 1, 0);
         }
     }
 
