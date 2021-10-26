@@ -1,5 +1,6 @@
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*};
+use std::collections::hash_map::Entry;
 use tdgrand::enums::{self, Update};
 use tdgrand::functions;
 use tdgrand::types::Message as TelegramMessage;
@@ -160,9 +161,7 @@ impl History {
 
         match update {
             Update::NewMessage(update) => {
-                if !self_.message_map.borrow().contains_key(&update.message.id) {
-                    self.append(update.message);
-                }
+                self.append(update.message);
             }
             Update::MessageSendSucceeded(update) => {
                 self.remove(update.old_message_id);
@@ -286,20 +285,20 @@ impl History {
 
     pub fn append(&self, message: TelegramMessage) {
         let self_ = imp::History::from_instance(self);
-        let message = Message::new(message, &self.chat());
 
-        self_
-            .message_map
-            .borrow_mut()
-            .insert(message.id(), message.clone());
+        if let Entry::Vacant(entry) = self_.message_map.borrow_mut().entry(message.id) {
+            let message = Message::new(message, &self.chat());
 
-        self_
-            .list
-            .borrow_mut()
-            .push_back(Item::for_message(message));
+            entry.insert(message.clone());
 
-        let index = self_.list.borrow().len() - 1;
-        self.items_changed(index as u32, 0, 1);
+            self_
+                .list
+                .borrow_mut()
+                .push_back(Item::for_message(message));
+
+            let index = self_.list.borrow().len() - 1;
+            self.items_changed(index as u32, 0, 1);
+        }
     }
 
     fn prepend(&self, messages: Vec<TelegramMessage>) {
