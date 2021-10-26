@@ -185,7 +185,7 @@ mod imp {
                 let self_ = imp::Window::from_instance(obj);
                 let is_active = obj.is_active();
 
-                for (client_id, _) in self_.clients.borrow().iter() {
+                for client_id in self_.clients.borrow().keys() {
                     let client_id = *client_id;
 
                     RUNTIME.spawn(async move {
@@ -257,7 +257,7 @@ impl Window {
     fn close_clients(&self) {
         let self_ = imp::Window::from_instance(self);
 
-        for (client_id, _) in self_.clients.borrow().iter() {
+        for client_id in self_.clients.borrow().keys() {
             let client_id = *client_id;
 
             // Set the client to offline and then close it

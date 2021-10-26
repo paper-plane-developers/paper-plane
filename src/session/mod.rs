@@ -19,7 +19,7 @@ use glib::SyncSender;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use std::collections::HashMap;
+use std::collections::hash_map::{Entry, HashMap};
 use tdgrand::enums::Update;
 use tdgrand::functions;
 use tdgrand::types::File;
@@ -186,12 +186,12 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
 
         let mut downloading_files = self_.downloading_files.borrow_mut();
-        match downloading_files.get_mut(&file_id) {
-            Some(senders) => {
-                senders.push(sender);
+        match downloading_files.entry(file_id) {
+            Entry::Occupied(mut entry) => {
+                entry.get_mut().push(sender);
             }
-            None => {
-                downloading_files.insert(file_id, vec![sender]);
+            Entry::Vacant(entry) => {
+                entry.insert(vec![sender]);
 
                 let client_id = self.client_id();
                 RUNTIME.spawn(async move {
@@ -210,14 +210,14 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
 
         let mut downloading_files = self_.downloading_files.borrow_mut();
-        if let Some(senders) = downloading_files.get(&file.id) {
-            for sender in senders {
+        if let Entry::Occupied(entry) = downloading_files.entry(file.id) {
+            for sender in entry.get() {
                 sender.send(file.clone()).unwrap();
             }
-        }
 
-        if file.local.is_downloading_completed {
-            downloading_files.remove(&file.id);
+            if file.local.is_downloading_completed {
+                entry.remove();
+            }
         }
     }
 
