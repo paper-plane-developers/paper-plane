@@ -8,12 +8,11 @@ use crate::utils::parse_formatted_text;
 
 mod imp {
     use super::*;
-    use std::cell::{Cell, RefCell};
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-bubble.ui")]
     pub struct MessageBubble {
-        pub is_outgoing: Cell<bool>,
         pub sender_color_class: RefCell<Option<String>>,
         #[template_child]
         pub sender_bin: TemplateChild<adw::Bin>,
@@ -60,17 +59,11 @@ impl MessageBubble {
     pub fn set_message(&self, message: &Message) {
         let self_ = imp::MessageBubble::from_instance(self);
 
-        // Remove previous css class
-        if self_.is_outgoing.get() {
-            self.remove_css_class("outgoing")
-        }
-
-        // Set new css class
         if message.is_outgoing() {
             self.add_css_class("outgoing");
+        } else {
+            self.remove_css_class("outgoing");
         }
-
-        self_.is_outgoing.set(message.is_outgoing());
 
         // Show sender label, if needed
         let show_sender = {

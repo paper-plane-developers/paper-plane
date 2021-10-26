@@ -65,8 +65,12 @@ impl MessageRow {
         // Align message based on whether the message is outgoing or not
         if message.is_outgoing() {
             self.set_halign(gtk::Align::End);
+            self.set_margin_start(38);
+            self.set_margin_end(0);
         } else {
             self.set_halign(gtk::Align::Start);
+            self.set_margin_start(0);
+            self.set_margin_end(38);
         }
 
         // Show avatar, if needed
