@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use gtk::glib;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -112,6 +113,32 @@ pub fn parse_formatted_text(formatted_text: FormattedText) -> String {
     }
 
     output
+}
+
+pub fn human_friendly_duration(mut seconds: i32) -> String {
+    let hours = seconds / (60 * 60);
+    if hours > 0 {
+        seconds %= 60 * 60;
+        let minutes = seconds / 60;
+        if minutes > 0 {
+            seconds %= 60;
+            gettext!("{} h {} min {} s", hours, minutes, seconds)
+        } else {
+            gettext!("{} h {} s", hours, seconds)
+        }
+    } else {
+        let minutes = seconds / 60;
+        if minutes > 0 {
+            seconds %= 60;
+            if seconds > 0 {
+                gettext!("{} min {} s", minutes, seconds)
+            } else {
+                gettext!("{} min", minutes)
+            }
+        } else {
+            gettext!("{} s", seconds)
+        }
+    }
 }
 
 // Function from https://gitlab.gnome.org/GNOME/fractal/-/blob/fractal-next/src/utils.rs
