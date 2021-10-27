@@ -1,12 +1,13 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use std::borrow::Cow;
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::{CallDiscardReason, ChatType, MessageContent};
+use tdgrand::types::MessageCall;
 
 use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
 use crate::session::components::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
-use crate::utils::{dim_and_escape, escape};
+use crate::utils::{dim_and_escape, escape, human_friendly_duration};
 
 mod imp {
     use super::*;
@@ -406,6 +407,41 @@ fn stringify_message(message: Message) -> String {
                 format!(", {}", dim_and_escape(&data.caption.text))
             }
         ),
+        MessageContent::MessageCall(data) => {
+            match data.discard_reason {
+                CallDiscardReason::Declined => {
+                    if message.is_outgoing() {
+                        // Telegram Desktop/Android labels declined outgoing calls just as
+                        // "Outgoing call" and puts a red arrow in the message bubble. We should be
+                        // more accurate here.
+                        if data.is_video {
+                            gettext("Declined outgoing video call")
+                        } else {
+                            gettext("Declined outgoing call")
+                        }
+                    // Telegram Android labels declined incoming calls as "Incoming call". Telegram
+                    // Desktop labels it as "Declined call" and is a bit inconsistent with outgoing
+                    // calls ^.
+                    } else if data.is_video {
+                        gettext("Declined incoming video call")
+                    } else {
+                        gettext("Declined incoming call")
+                    }
+                }
+                CallDiscardReason::Disconnected
+                | CallDiscardReason::HungUp
+                | CallDiscardReason::Empty => {
+                    stringify_made_message_call(message.is_outgoing(), data)
+                }
+                CallDiscardReason::Missed => {
+                    if message.is_outgoing() {
+                        gettext("Cancelled call")
+                    } else {
+                        gettext("Missed call")
+                    }
+                }
+            }
+        }
         MessageContent::MessageChatDeletePhoto => {
             show_sender = false;
 
@@ -439,6 +475,40 @@ fn stringify_message(message: Message) -> String {
         format!("{}: {}", sender_name, text_content)
     } else {
         text_content
+    }
+}
+
+/// This method returns the text for all calls that have actually been made.
+/// This means that the called party has accepted the call.
+fn stringify_made_message_call(is_outgoing: bool, data: MessageCall) -> String {
+    if is_outgoing {
+        if data.duration > 0 {
+            if data.is_video {
+                gettext!(
+                    "Outgoing video call ({})",
+                    human_friendly_duration(data.duration)
+                )
+            } else {
+                gettext!("Outgoing call ({})", human_friendly_duration(data.duration))
+            }
+        } else if data.is_video {
+            gettext("Outgoing video call")
+        } else {
+            gettext("Outgoing call")
+        }
+    } else if data.duration > 0 {
+        if data.is_video {
+            gettext!(
+                "Incoming video call ({})",
+                human_friendly_duration(data.duration)
+            )
+        } else {
+            gettext!("Incoming call ({})", human_friendly_duration(data.duration))
+        }
+    } else if data.is_video {
+        gettext("Incoming video call")
+    } else {
+        gettext("Incoming call")
     }
 }
 
