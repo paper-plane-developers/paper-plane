@@ -230,6 +230,14 @@ fn stringify_message(message: Message) -> String {
 
     let text_content = match message.content().0 {
         MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
+        MessageContent::MessageBasicGroupChatCreate(data) => {
+            show_sender = false;
+            gettext!(
+                "{} created the group",
+                sender_name(message.sender(), true),
+                data.title
+            )
+        }
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
