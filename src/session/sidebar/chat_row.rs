@@ -1,10 +1,11 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
+use std::borrow::Cow;
 use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::{BoxedScopeNotificationSettings, Chat, Session};
+use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
 use crate::utils::{dim_and_escape, escape};
 
 mod imp {
@@ -300,6 +301,50 @@ fn stringify_message(message: Message) -> String {
             show_sender = false;
             gettext!("{} created the group", sender_name(message.sender(), true))
         }
+        MessageContent::MessageChatAddMembers(data) => {
+            show_sender = false;
+
+            let session = message.chat().session();
+            let user_list = session.user_list();
+
+            let members = data
+                .member_user_ids
+                .into_iter()
+                .map(|user_id| user_list.get_or_create_user(user_id))
+                .map(|user| stringify_user(&user, true))
+                .collect::<Vec<_>>();
+
+            let (last_member, first_members) = members.split_last().unwrap();
+
+            gettext!(
+                "{} added {}",
+                sender_name(message.sender(), true),
+                if first_members.is_empty() {
+                    Cow::Borrowed(last_member)
+                } else {
+                    Cow::Owned(gettext!(
+                        "{} and {}",
+                        first_members.join(&gettext(", ")),
+                        last_member
+                    ))
+                }
+            )
+        }
+        MessageContent::MessageChatDeleteMember(data) => {
+            show_sender = false;
+            gettext!(
+                "{} removed {}",
+                sender_name(message.sender(), true),
+                stringify_user(
+                    &message
+                        .chat()
+                        .session()
+                        .user_list()
+                        .get_or_create_user(data.user_id),
+                    true
+                )
+            )
+        }
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
@@ -396,15 +441,17 @@ fn stringify_message(message: Message) -> String {
 
 fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
     match sender {
-        MessageSender::User(user) => {
-            if use_full_name {
-                format!("{} {}", user.first_name(), user.last_name())
-                    .trim()
-                    .into()
-            } else {
-                user.first_name()
-            }
-        }
+        MessageSender::User(user) => stringify_user(user, use_full_name),
         MessageSender::Chat(chat) => chat.title(),
+    }
+}
+
+fn stringify_user(user: &User, use_full_name: bool) -> String {
+    if use_full_name {
+        format!("{} {}", user.first_name(), user.last_name())
+            .trim()
+            .into()
+    } else {
+        user.first_name()
     }
 }
