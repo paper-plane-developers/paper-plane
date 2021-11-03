@@ -124,7 +124,7 @@
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -190,7 +190,7 @@
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -279,7 +279,7 @@
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -355,7 +355,7 @@
                                               </object>
                                             </child>
                                             <style>
-                                              <class name="content"/>
+                                              <class name="boxed-list"/>
                                             </style>
                                           </object>
                                         </child>
@@ -445,7 +445,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -469,7 +469,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -585,7 +585,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                               </object>
                                             </child>
                                             <style>
-                                              <class name="content"/>
+                                              <class name="boxed-list"/>
                                             </style>
                                           </object>
                                         </property>
@@ -692,7 +692,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
@@ -716,7 +716,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                           </object>
                                         </child>
                                         <style>
-                                          <class name="content"/>
+                                          <class name="boxed-list"/>
                                         </style>
                                       </object>
                                     </child>
