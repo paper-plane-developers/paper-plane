@@ -179,12 +179,7 @@ impl ChatList {
 
     pub fn get_chat(&self, chat_id: i64) -> Option<Chat> {
         let self_ = imp::ChatList::from_instance(self);
-        if let Some(index) = self_.list.borrow().get_index_of(&chat_id) {
-            if let Some(item) = self.item(index as u32) {
-                return Some(item.downcast().unwrap());
-            }
-        }
-        None
+        self_.list.borrow().get(&chat_id).cloned()
     }
 
     fn insert_chat(&self, chat: TelegramChat) {
