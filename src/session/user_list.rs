@@ -1,6 +1,7 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
+use indexmap::map::Entry;
 use tdgrand::enums::Update;
 
 use crate::session::User;
@@ -105,15 +106,20 @@ impl UserList {
 
     pub fn get_or_create_user(&self, user_id: i32) -> User {
         let self_ = imp::UserList::from_instance(self);
-        if let Some(index) = self_.list.borrow().get_index_of(&user_id) {
-            if let Some(item) = self.item(index as u32) {
-                return item.downcast().unwrap();
+
+        let mut list = self_.list.borrow_mut();
+        match list.entry(user_id) {
+            Entry::Occupied(entry) => entry.get().clone(),
+            Entry::Vacant(entry) => {
+                let user = User::new(user_id, self.session());
+                entry.insert(user.clone());
+
+                drop(list);
+                self.item_added();
+
+                user
             }
         }
-
-        let user = User::new(user_id, self.session());
-        self.insert_user(user);
-        self.get_or_create_user(user_id)
     }
 
     pub fn handle_update(&self, update: Update) {
