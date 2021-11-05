@@ -10,7 +10,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
-use tdgrand::types::Chat as TelegramChat;
+use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings};
 
 use crate::session::Avatar;
 use crate::Session;
@@ -18,6 +18,10 @@ use crate::Session;
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatType")]
 pub struct BoxedChatType(ChatType);
+
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "BoxedChatNotificationSettings")]
+pub struct BoxedChatNotificationSettings(pub ChatNotificationSettings);
 
 mod imp {
     use super::*;
@@ -35,6 +39,7 @@ mod imp {
         pub is_pinned: Cell<bool>,
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<String>,
+        pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub history: OnceCell<History>,
         pub session: OnceCell<Session>,
     }
@@ -119,6 +124,13 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE,
                     ),
+                    glib::ParamSpec::new_boxed(
+                        "notification-settings",
+                        "Notification Settings",
+                        "The notification settings of this chat",
+                        BoxedChatNotificationSettings::static_type(),
+                        glib::ParamFlags::READWRITE,
+                    ),
                     glib::ParamSpec::new_object(
                         "history",
                         "History",
@@ -182,6 +194,11 @@ mod imp {
                     let draft_message = value.get().unwrap();
                     self.draft_message.replace(draft_message);
                 }
+                "notification-settings" => {
+                    let notification_settings = value.get().unwrap();
+                    self.notification_settings
+                        .replace(Some(notification_settings));
+                }
                 "session" => {
                     let session = value.get().unwrap();
                     self.session.set(session).unwrap();
@@ -200,6 +217,12 @@ mod imp {
                 "is-pinned" => self.is_pinned.get().to_value(),
                 "unread-count" => self.unread_count.get().to_value(),
                 "draft-message" => self.draft_message.borrow().to_value(),
+                "notification-settings" => self
+                    .notification_settings
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .to_value(),
                 "history" => self.history.get().to_value(),
                 "session" => self.session.get().to_value(),
                 _ => unimplemented!(),
@@ -234,6 +257,10 @@ impl Chat {
             ("title", &chat.title),
             ("avatar", &avatar),
             ("unread-count", &chat.unread_count),
+            (
+                "notification-settings",
+                &BoxedChatNotificationSettings(chat.notification_settings),
+            ),
             ("session", &session),
         ])
         .expect("Failed to create Chat")
@@ -277,6 +304,9 @@ impl Chat {
                         break;
                     }
                 }
+            }
+            Update::ChatNotificationSettings(update) => {
+                self.set_notification_settings(update.notification_settings);
             }
             Update::ChatPosition(update) => {
                 if let enums::ChatList::Main = update.position.list {
@@ -379,6 +409,24 @@ impl Chat {
     fn set_draft_message(&self, draft_message: String) {
         if self.draft_message() != draft_message {
             self.set_property("draft-message", &draft_message).unwrap();
+        }
+    }
+
+    pub fn notification_settings(&self) -> ChatNotificationSettings {
+        self.property("notification-settings")
+            .unwrap()
+            .get::<BoxedChatNotificationSettings>()
+            .unwrap()
+            .0
+    }
+
+    fn set_notification_settings(&self, notification_settings: ChatNotificationSettings) {
+        if self.notification_settings() != notification_settings {
+            self.set_property(
+                "notification-settings",
+                &BoxedChatNotificationSettings(notification_settings),
+            )
+            .unwrap();
         }
     }
 

@@ -166,6 +166,7 @@ impl Session {
             | Update::ChatTitle(_)
             | Update::ChatPhoto(_)
             | Update::ChatLastMessage(_)
+            | Update::ChatNotificationSettings(_)
             | Update::ChatPosition(_)
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_)

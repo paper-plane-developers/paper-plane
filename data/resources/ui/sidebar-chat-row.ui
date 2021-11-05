@@ -72,7 +72,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="unread_count_label">
                     <property name="valign">center</property>
                     <property name="ellipsize">end</property>
                     <property name="justify">center</property>
@@ -86,9 +86,6 @@
                         <lookup name="chat">SidebarChatRow</lookup>
                       </lookup>
                     </binding>
-                    <style>
-                      <class name="unread-count"/>
-                    </style>
                   </object>
                 </child>
               </object>

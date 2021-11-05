@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{ChatType, MessageContent};
 
-use crate::session::chat::{Message, MessageSender};
+use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
 use crate::session::components::Avatar;
 use crate::session::Chat;
 use crate::utils::{dim_and_escape, escape};
@@ -24,6 +24,8 @@ mod imp {
         pub last_message_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub pin_image: TemplateChild<gtk::Image>,
+        #[template_child]
+        pub unread_count_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -214,6 +216,34 @@ impl ChatRow {
             );
             let pin_image = self_.pin_image.get();
             pin_visibility_expression.bind(&pin_image, "visible", Some(&pin_image));
+
+            let notification_settings_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "notification-settings",
+            );
+            let unread_count_label_css_expression = gtk::ClosureExpression::new(
+                |args| {
+                    let notification_settings =
+                        args[1].get::<BoxedChatNotificationSettings>().unwrap().0;
+
+                    vec![
+                        "unread-count".to_string(),
+                        if notification_settings.mute_for > 0 {
+                            "unread-count-muted"
+                        } else {
+                            "unread-count-unmuted"
+                        }
+                        .to_string(),
+                    ]
+                },
+                &[notification_settings_expression.upcast()],
+            );
+            unread_count_label_css_expression.bind(
+                &*self_.unread_count_label,
+                "css-classes",
+                gtk::NONE_WIDGET,
+            );
         }
 
         self_.chat.replace(chat);

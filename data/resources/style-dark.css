@@ -1,3 +1,7 @@
+.chat-list row .unread-count-muted {
+  background-color: @dark_1;
+}
+
 .chat-history row .message-bubble:not(.outgoing) {
   background-color: alpha(white, 0.1);
 }

@@ -153,6 +153,11 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::ChatNotificationSettings(ref update_) => {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             Update::ChatPosition(ref update_) => {
                 if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
