@@ -15,13 +15,20 @@
 }
 
 .chat-list row .unread-count {
-  background-color: @accent_bg_color;
   color: @accent_fg_color;
   font-size: 0.8em;
   font-weight: bold;
   min-width: 0.7em;
   border-radius: 10px;
   padding: 2px 5px;
+}
+
+.chat-list row .unread-count-unmuted {
+  background-color: @accent_bg_color;
+}
+
+.chat-list row .unread-count-muted {
+  background-color: @light_5;
 }
 
 .chat-history listview {
