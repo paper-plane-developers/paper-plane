@@ -233,6 +233,7 @@ impl Chat {
             ("type", &type_),
             ("title", &chat.title),
             ("avatar", &avatar),
+            ("unread-count", &chat.unread_count),
             ("session", &session),
         ])
         .expect("Failed to create Chat")
