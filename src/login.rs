@@ -628,7 +628,7 @@ impl Login {
             format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
         let system_language_code = {
             let locale = Locale::current().to_string();
-            if locale.is_empty() {
+            if !locale.is_empty() {
                 locale
             } else {
                 "en_US".to_string()
