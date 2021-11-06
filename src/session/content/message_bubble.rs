@@ -1,4 +1,4 @@
-use adw::{prelude::BinExt, subclass::prelude::BinImpl};
+use adw::prelude::BinExt;
 use gettextrs::gettext;
 use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent};
@@ -24,7 +24,7 @@ mod imp {
     impl ObjectSubclass for MessageBubble {
         const NAME: &'static str = "ContentMessageBubble";
         type Type = super::MessageBubble;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -35,14 +35,19 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessageBubble {}
+    impl ObjectImpl for MessageBubble {
+        fn dispose(&self, _obj: &Self::Type) {
+            self.sender_bin.unparent();
+            self.content_label.unparent();
+        }
+    }
+
     impl WidgetImpl for MessageBubble {}
-    impl BinImpl for MessageBubble {}
 }
 
 glib::wrapper! {
     pub struct MessageBubble(ObjectSubclass<imp::MessageBubble>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget;
 }
 
 impl Default for MessageBubble {
