@@ -36,6 +36,15 @@ fn main() {
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
+    if std::env::var("TELEGRAND_FORCE_DARK_THEME")
+        .map(|var| !var.is_empty() && var != "0")
+        .unwrap_or_default()
+    {
+        adw::StyleManager::default()
+            .unwrap()
+            .set_color_scheme(adw::ColorScheme::ForceDark);
+    }
+
     let app = Application::new();
     app.run();
 }
