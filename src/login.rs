@@ -626,6 +626,14 @@ impl Login {
         let use_test_dc = self_.use_test_dc_switch.state();
         let database_directory =
             format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
+        let system_language_code = {
+            let locale = Locale::current().to_string();
+            if locale.is_empty() {
+                locale
+            } else {
+                "en_US".to_string()
+            }
+        };
         let parameters = types::TdlibParameters {
             use_test_dc,
             database_directory,
@@ -633,7 +641,7 @@ impl Login {
             use_secret_chats: true,
             api_id: config::TG_API_ID,
             api_hash: config::TG_API_HASH.to_string(),
-            system_language_code: Locale::current().to_string(),
+            system_language_code,
             device_model: "Desktop".to_string(),
             application_version: config::VERSION.to_string(),
             enable_storage_optimizer: true,
