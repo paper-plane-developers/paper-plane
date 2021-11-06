@@ -11,7 +11,6 @@ use crate::RUNTIME;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
@@ -21,14 +20,18 @@ mod imp {
         pub chat: RefCell<Option<Chat>>,
         pub chat_action_in_cooldown: Cell<bool>,
         #[template_child]
+        pub frame: TemplateChild<gtk::Frame>,
+        #[template_child]
         pub message_entry: TemplateChild<gtk::TextView>,
+        #[template_child]
+        pub send_message_button: TemplateChild<gtk::Button>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for ChatActionBar {
         const NAME: &'static str = "ContentChatActionBar";
         type Type = super::ChatActionBar;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -119,15 +122,19 @@ mod imp {
                 }),
             );
         }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.frame.unparent();
+            self.send_message_button.unparent();
+        }
     }
 
     impl WidgetImpl for ChatActionBar {}
-    impl BinImpl for ChatActionBar {}
 }
 
 glib::wrapper! {
     pub struct ChatActionBar(ObjectSubclass<imp::ChatActionBar>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget;
 }
 
 impl Default for ChatActionBar {
