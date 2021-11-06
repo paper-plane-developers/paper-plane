@@ -11,7 +11,6 @@ use crate::session::{Chat, ChatList};
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
     use gtk::CompositeTemplate;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
@@ -25,6 +24,10 @@ mod imp {
         pub filter: OnceCell<gtk::CustomFilter>,
         pub sorter: OnceCell<gtk::CustomSorter>,
         #[template_child]
+        pub header_bar: TemplateChild<adw::HeaderBar>,
+        #[template_child]
+        pub scrolled_window: TemplateChild<gtk::ScrolledWindow>,
+        #[template_child]
         pub chat_list_view: TemplateChild<gtk::ListView>,
     }
 
@@ -32,7 +35,7 @@ mod imp {
     impl ObjectSubclass for Sidebar {
         const NAME: &'static str = "Sidebar";
         type Type = super::Sidebar;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             ChatRow::static_type();
@@ -71,7 +74,6 @@ mod imp {
                     ),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 
@@ -106,15 +108,19 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.header_bar.unparent();
+            self.scrolled_window.unparent();
+        }
     }
 
     impl WidgetImpl for Sidebar {}
-    impl BinImpl for Sidebar {}
 }
 
 glib::wrapper! {
     pub struct Sidebar(ObjectSubclass<imp::Sidebar>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget;
 }
 
 impl Default for Sidebar {
