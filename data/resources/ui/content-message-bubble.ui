@@ -10,7 +10,14 @@
       <class name="message-bubble"/>
     </style>
     <child>
-      <object class="AdwBin" id="sender_bin"/>
+      <object class="GtkLabel" id="sender_label">
+        <property name="ellipsize">end</property>
+        <property name="single-line-mode">True</property>
+        <property name="halign">start</property>
+        <style>
+          <class name="sender-text"/>
+        </style>
+      </object>
     </child>
     <child>
       <object class="GtkLabel" id="content_label">

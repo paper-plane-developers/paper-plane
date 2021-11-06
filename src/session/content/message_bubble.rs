@@ -1,6 +1,5 @@
-use adw::prelude::BinExt;
 use gettextrs::gettext;
-use gtk::{glib, pango, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender};
@@ -15,7 +14,7 @@ mod imp {
     pub struct MessageBubble {
         pub sender_color_class: RefCell<Option<String>>,
         #[template_child]
-        pub sender_bin: TemplateChild<adw::Bin>,
+        pub sender_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub content_label: TemplateChild<gtk::Label>,
     }
@@ -37,7 +36,7 @@ mod imp {
 
     impl ObjectImpl for MessageBubble {
         fn dispose(&self, _obj: &Self::Type) {
-            self.sender_bin.unparent();
+            self.sender_label.unparent();
             self.content_label.unparent();
         }
     }
@@ -82,26 +81,13 @@ impl MessageBubble {
             }
         };
         if show_sender {
-            let label = if let Some(Ok(label)) =
-                self_.sender_bin.child().map(|w| w.downcast::<gtk::Label>())
-            {
-                label
-            } else {
-                let label = gtk::LabelBuilder::new()
-                    .css_classes(vec!["sender-text".to_string()])
-                    .halign(gtk::Align::Start)
-                    .ellipsize(pango::EllipsizeMode::End)
-                    .single_line_mode(true)
-                    .build();
-                self_.sender_bin.set_child(Some(&label));
-                label
-            };
             let sender_name_expression = message.sender_name_expression();
-            sender_name_expression.bind(&label, "label", Some(&label));
+            sender_name_expression.bind(&*self_.sender_label, "label", gtk::NONE_WIDGET);
 
             // Remove the previous color css class
             if let Some(class) = self_.sender_color_class.borrow().as_ref() {
-                label.remove_css_class(class);
+                self_.sender_label.remove_css_class(class);
+                self_.sender_color_class.replace(None);
             }
 
             // Color sender label
@@ -117,15 +103,14 @@ impl MessageBubble {
                 ];
 
                 let color_class = classes[user.id() as usize % classes.len()];
-                label.add_css_class(color_class);
+                self_.sender_label.add_css_class(color_class);
 
                 self_.sender_color_class.replace(Some(color_class.into()));
-            } else {
-                self_.sender_color_class.replace(None);
             }
+
+            self_.sender_label.set_visible(true);
         } else {
-            self_.sender_bin.set_child(None::<&gtk::Widget>);
-            self_.sender_color_class.replace(None);
+            self_.sender_label.set_visible(false);
         }
 
         // Set content label expression
