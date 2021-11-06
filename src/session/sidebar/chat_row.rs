@@ -4,7 +4,7 @@ use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::Chat;
+use crate::session::{BoxedScopeNotificationSettings, Chat, Session};
 use crate::utils::{dim_and_escape, escape};
 
 mod imp {
@@ -222,14 +222,47 @@ impl ChatRow {
                 Some(&chat_expression),
                 "notification-settings",
             );
+
+            let session_expression = gtk::ConstantExpression::new(&chat.session());
+
+            let scope_notification_settings_expression = gtk::PropertyExpression::new(
+                Session::static_type(),
+                Some(&session_expression),
+                match chat.type_() {
+                    ChatType::Private(_) | ChatType::Secret(_) => {
+                        "private-chats-notification-settings"
+                    }
+                    ChatType::BasicGroup(_) => "group-chats-notification-settings",
+                    ChatType::Supergroup(data) => {
+                        if data.is_channel {
+                            "channel-chats-notification-settings"
+                        } else {
+                            "group-chats-notification-settings"
+                        }
+                    }
+                },
+            );
+
             let unread_count_label_css_expression = gtk::ClosureExpression::new(
                 |args| {
                     let notification_settings =
                         args[1].get::<BoxedChatNotificationSettings>().unwrap().0;
 
+                    let scope_notification_settings =
+                        args[2].get::<BoxedScopeNotificationSettings>().unwrap().0;
+
                     vec![
                         "unread-count".to_string(),
-                        if notification_settings.mute_for > 0 {
+                        if notification_settings.use_default_mute_for {
+                            if scope_notification_settings
+                                .map(|s| s.mute_for > 0)
+                                .unwrap_or(notification_settings.mute_for > 0)
+                            {
+                                "unread-count-muted"
+                            } else {
+                                "unread-count-unmuted"
+                            }
+                        } else if notification_settings.mute_for > 0 {
                             "unread-count-muted"
                         } else {
                             "unread-count-unmuted"
@@ -237,7 +270,10 @@ impl ChatRow {
                         .to_string(),
                     ]
                 },
-                &[notification_settings_expression.upcast()],
+                &[
+                    notification_settings_expression.upcast(),
+                    scope_notification_settings_expression.upcast(),
+                ],
             );
             unread_count_label_css_expression.bind(
                 &*self_.unread_count_label,
