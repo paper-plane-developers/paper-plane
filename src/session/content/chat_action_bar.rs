@@ -16,8 +16,8 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-send-message-area.ui")]
-    pub struct SendMessageArea {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-action-bar.ui")]
+    pub struct ChatActionBar {
         pub chat: RefCell<Option<Chat>>,
         pub chat_action_in_cooldown: Cell<bool>,
         #[template_child]
@@ -25,16 +25,16 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SendMessageArea {
-        const NAME: &'static str = "ContentSendMessageArea";
-        type Type = super::SendMessageArea;
+    impl ObjectSubclass for ChatActionBar {
+        const NAME: &'static str = "ContentChatActionBar";
+        type Type = super::ChatActionBar;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
 
             klass.install_action(
-                "send-message-area.send-text-message",
+                "chat-action-bar.send-text-message",
                 None,
                 move |widget, _, _| {
                     widget.send_text_message();
@@ -47,7 +47,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for SendMessageArea {
+    impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpec::new_object(
@@ -91,7 +91,7 @@ mod imp {
             message_buffer.connect_text_notify(clone!(@weak obj => move |_| {
                 // Enable the send-text-message action only when the message entry contains text
                 let should_enable = !obj.message_entry_text().is_empty();
-                obj.action_set_enabled("send-message-area.send-text-message", should_enable);
+                obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                 // Send typing action
                 obj.send_chat_action(ChatAction::Typing);
@@ -99,7 +99,7 @@ mod imp {
 
             // The message entry is always empty at this point, so disable the
             // send-text-message action
-            obj.action_set_enabled("send-message-area.send-text-message", false);
+            obj.action_set_enabled("chat-action-bar.send-text-message", false);
 
             // Handle the enter key to send the message and also the combination of if with the
             // right modifier keys to add new lines to the entry
@@ -111,7 +111,7 @@ mod imp {
                         && (key == gdk::keys::constants::Return
                             || key == gdk::keys::constants::KP_Enter)
                     {
-                        obj.activate_action("send-message-area.send-text-message", None);
+                        obj.activate_action("chat-action-bar.send-text-message", None);
                         Inhibit(true)
                     } else {
                         Inhibit(false)
@@ -121,28 +121,28 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for SendMessageArea {}
-    impl BinImpl for SendMessageArea {}
+    impl WidgetImpl for ChatActionBar {}
+    impl BinImpl for ChatActionBar {}
 }
 
 glib::wrapper! {
-    pub struct SendMessageArea(ObjectSubclass<imp::SendMessageArea>)
+    pub struct ChatActionBar(ObjectSubclass<imp::ChatActionBar>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for SendMessageArea {
+impl Default for ChatActionBar {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl SendMessageArea {
+impl ChatActionBar {
     pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create SendMessageArea")
+        glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
     fn message_entry_text(&self) -> String {
-        let self_ = imp::SendMessageArea::from_instance(self);
+        let self_ = imp::ChatActionBar::from_instance(self);
         let buffer = self_.message_entry.buffer();
         buffer
             .text(&buffer.start_iter(), &buffer.end_iter(), true)
@@ -181,7 +181,7 @@ impl SendMessageArea {
             });
 
             // Reset message entry
-            let self_ = imp::SendMessageArea::from_instance(self);
+            let self_ = imp::ChatActionBar::from_instance(self);
             let buffer = self_.message_entry.buffer();
             buffer.set_text("");
         }
@@ -210,12 +210,12 @@ impl SendMessageArea {
     }
 
     fn load_draft_message(&self, message: String) {
-        let self_ = imp::SendMessageArea::from_instance(self);
+        let self_ = imp::ChatActionBar::from_instance(self);
         self_.message_entry.buffer().set_text(&message);
     }
 
     fn send_chat_action(&self, action: ChatAction) {
-        let self_ = imp::SendMessageArea::from_instance(self);
+        let self_ = imp::ChatActionBar::from_instance(self);
         if self_.chat_action_in_cooldown.get() {
             return;
         }
@@ -242,11 +242,11 @@ impl SendMessageArea {
                     // Otherwise just cancel it right away.
                     if result.is_ok() {
                         glib::timeout_add_seconds_local_once(5, clone!(@weak obj =>move || {
-                            let self_ = imp::SendMessageArea::from_instance(&obj);
+                            let self_ = imp::ChatActionBar::from_instance(&obj);
                             self_.chat_action_in_cooldown.set(false);
                         }));
                     } else {
-                        let self_ = imp::SendMessageArea::from_instance(&obj);
+                        let self_ = imp::ChatActionBar::from_instance(&obj);
                         self_.chat_action_in_cooldown.set(false);
                     }
                 }),
@@ -255,7 +255,7 @@ impl SendMessageArea {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::SendMessageArea::from_instance(self);
+        let self_ = imp::ChatActionBar::from_instance(self);
         self_.chat.borrow().clone()
     }
 
@@ -266,7 +266,7 @@ impl SendMessageArea {
 
         self.save_message_as_draft();
 
-        let self_ = imp::SendMessageArea::from_instance(self);
+        let self_ = imp::ChatActionBar::from_instance(self);
 
         if let Some(ref chat) = chat {
             self.load_draft_message(chat.draft_message());

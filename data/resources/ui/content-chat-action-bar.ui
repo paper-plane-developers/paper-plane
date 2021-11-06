@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentSendMessageArea" parent="AdwBin">
+  <template class="ContentChatActionBar" parent="AdwBin">
     <style>
-      <class name="send-message-area"/>
+      <class name="chat-action-bar"/>
     </style>
     <property name="child">
       <object class="GtkBox">
@@ -32,7 +32,7 @@
         <child>
           <object class="GtkButton">
             <property name="valign">end</property>
-            <property name="action-name">send-message-area.send-text-message</property>
+            <property name="action-name">chat-action-bar.send-text-message</property>
             <property name="icon-name">mail-send-symbolic</property>
             <style>
               <class name="circular"/>
