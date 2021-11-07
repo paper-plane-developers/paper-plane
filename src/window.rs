@@ -20,7 +20,7 @@ use crate::RUNTIME;
 mod imp {
     use super::*;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
     use std::collections::HashMap;
 
     use crate::Login;
@@ -32,6 +32,7 @@ mod imp {
         pub receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
         pub receiver_should_stop: Arc<AtomicBool>,
         pub clients: RefCell<HashMap<i32, Option<Session>>>,
+        pub active_client_id: Cell<i32>,
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -50,6 +51,7 @@ mod imp {
                 receiver_handle: RefCell::default(),
                 receiver_should_stop: Arc::default(),
                 clients: RefCell::default(),
+                active_client_id: Cell::default(),
                 main_stack: TemplateChild::default(),
                 login: TemplateChild::default(),
             }
@@ -83,25 +85,23 @@ mod imp {
             obj.create_client();
             obj.start_receiver();
 
-            // Set the online state of the clients based on whether the window is active or not
+            // Set the online state of the active client based on
+            // whether the window is active or not
             obj.connect_is_active_notify(move |obj| {
                 let self_ = imp::Window::from_instance(obj);
-                let is_active = obj.is_active();
+                let client_id = self_.active_client_id.get();
+                let window_is_active = obj.is_active();
 
-                for client_id in self_.clients.borrow().keys() {
-                    let client_id = *client_id;
-
-                    RUNTIME.spawn(async move {
-                        functions::SetOption::new()
-                            .name("online".to_string())
-                            .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
-                                value: is_active,
-                            }))
-                            .send(client_id)
-                            .await
-                            .unwrap();
-                    });
-                }
+                RUNTIME.spawn(async move {
+                    functions::SetOption::new()
+                        .name("online".to_string())
+                        .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
+                            value: window_is_active,
+                        }))
+                        .send(client_id)
+                        .await
+                        .unwrap();
+                });
             });
         }
     }
@@ -143,6 +143,7 @@ impl Window {
 
         let self_ = imp::Window::from_instance(self);
         self_.clients.borrow_mut().insert(client_id, None);
+        self_.active_client_id.set(client_id);
         self_.login.login_client(client_id);
         self_.main_stack.set_visible_child(&self_.login.get());
 
