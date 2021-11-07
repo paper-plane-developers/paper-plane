@@ -18,31 +18,33 @@
       </item>
     </section>
   </menu>
-  <template class="Sidebar" parent="AdwBin">
+  <template class="Sidebar" parent="GtkWidget">
     <property name="width-request">300</property>
-    <child>
-      <object class="GtkBox">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
         <property name="orientation">vertical</property>
-        <child>
-          <object class="AdwHeaderBar">
-            <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
-            <child type="end">
-              <object class="GtkMenuButton">
-                <property name="icon-name">open-menu-symbolic</property>
-                <property name="menu-model">primary_menu</property>
-              </object>
-            </child>
+      </object>
+    </property>
+    <child>
+      <object class="AdwHeaderBar" id="header_bar">
+        <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+        <child type="end">
+          <object class="GtkMenuButton">
+            <property name="icon-name">open-menu-symbolic</property>
+            <property name="menu-model">primary_menu</property>
           </object>
         </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="scrolled_window">
+        <property name="vexpand">True</property>
+        <property name="hscrollbar-policy">never</property>
         <child>
-          <object class="GtkScrolledWindow">
-            <property name="vexpand">True</property>
-            <property name="hscrollbar-policy">never</property>
-            <child>
-              <object class="GtkListView" id="chat_list_view">
-                <property name="factory">
-                  <object class="GtkBuilderListItemFactory">
-                    <property name="bytes"><![CDATA[
+          <object class="GtkListView" id="chat_list_view">
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -57,15 +59,13 @@
     </property>
   </template>
 </interface>
-                    ]]></property>
-                  </object>
-                </property>
-                <style>
-                  <class name="navigation-sidebar"/>
-                  <class name="chat-list"/>
-                </style>
+                ]]></property>
               </object>
-            </child>
+            </property>
+            <style>
+              <class name="navigation-sidebar"/>
+              <class name="chat-list"/>
+            </style>
           </object>
         </child>
       </object>

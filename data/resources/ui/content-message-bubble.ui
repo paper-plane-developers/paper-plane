@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageBubble" parent="AdwBin">
+  <template class="ContentMessageBubble" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="orientation">vertical</property>
+      </object>
+    </property>
     <style>
       <class name="message-bubble"/>
     </style>
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="AdwBin" id="sender_bin"/>
-        </child>
-        <child>
-          <object class="GtkLabel" id="content_label">
-            <property name="selectable">True</property>
-            <property name="use-markup">True</property>
-            <property name="wrap">True</property>
-            <property name="wrap-mode">word-char</property>
-            <property name="xalign">0</property>
-            <style>
-              <class name="message-text"/>
-            </style>
-          </object>
-        </child>
+      <object class="GtkLabel" id="sender_label">
+        <property name="ellipsize">end</property>
+        <property name="single-line-mode">True</property>
+        <property name="halign">start</property>
+        <style>
+          <class name="sender-text"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="GtkLabel" id="content_label">
+        <property name="selectable">True</property>
+        <property name="use-markup">True</property>
+        <property name="wrap">True</property>
+        <property name="wrap-mode">word-char</property>
+        <property name="xalign">0</property>
+        <style>
+          <class name="message-text"/>
+        </style>
       </object>
     </child>
   </template>

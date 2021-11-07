@@ -3,7 +3,7 @@ use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::ChatType;
 
 use crate::session::{
-    content::{ItemRow, SendMessageArea, UserDialog},
+    content::{ChatActionBar, ItemRow, UserDialog},
     Chat,
 };
 
@@ -30,7 +30,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             ItemRow::static_type();
-            SendMessageArea::static_type();
+            ChatActionBar::static_type();
             Self::bind_template(klass);
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
