@@ -1,8 +1,6 @@
 use gettextrs::gettext;
 use glib::{clone, SyncSender};
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
+use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tdgrand::enums::{
@@ -19,104 +17,9 @@ use crate::Application;
 use crate::Session;
 use crate::RUNTIME;
 
-fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
-    match sender {
-        TelegramMessageSender::User(data) => {
-            let user = chat.session().user_list().get_or_create_user(data.user_id);
-            format!("{} {}", user.first_name(), user.last_name())
-                .trim()
-                .into()
-        }
-        TelegramMessageSender::Chat(data) => {
-            let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
-            chat.title()
-        }
-    }
-}
-
-fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
-    match &message.content {
-        MessageContent::MessageText(data) => data.text.text.clone(),
-        MessageContent::MessageSticker(data) => {
-            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
-        }
-        MessageContent::MessagePhoto(data) => format!(
-            "{}{}",
-            gettext("Photo"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageAudio(data) => format!(
-            "{} - {}{}",
-            data.audio.performer,
-            data.audio.title,
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageAnimation(data) => format!(
-            "{}{}",
-            gettext("GIF"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageVideo(data) => format!(
-            "{}{}",
-            gettext("Video"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageDocument(data) => format!(
-            "{}{}",
-            data.document.file_name,
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageVoiceNote(data) => format!(
-            "{}{}",
-            gettext("Voice message"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", data.caption.text)
-            }
-        ),
-        MessageContent::MessageChatDeletePhoto => match chat.type_() {
-            ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
-            _ => {
-                if message.is_outgoing {
-                    gettext("You removed the group photo")
-                } else {
-                    let sender_name = sender_name(&message.sender, chat);
-                    gettext!("{} removed the group photo", sender_name)
-                }
-            }
-        },
-        MessageContent::MessageContactRegistered => {
-            gettext!("{} joined Telegram", sender_name(&message.sender, chat))
-        }
-        _ => gettext("Unsupported message"),
-    }
-}
-
 mod imp {
     use super::*;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use gtk::{gio, CompositeTemplate};
     use std::cell::RefCell;
     use std::collections::HashMap;
 
@@ -468,5 +371,99 @@ impl Window {
         if is_maximized {
             self.maximize();
         }
+    }
+}
+
+fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
+    match sender {
+        TelegramMessageSender::User(data) => {
+            let user = chat.session().user_list().get_or_create_user(data.user_id);
+            format!("{} {}", user.first_name(), user.last_name())
+                .trim()
+                .into()
+        }
+        TelegramMessageSender::Chat(data) => {
+            let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
+            chat.title()
+        }
+    }
+}
+
+fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
+    match &message.content {
+        MessageContent::MessageText(data) => data.text.text.clone(),
+        MessageContent::MessageSticker(data) => {
+            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
+        }
+        MessageContent::MessagePhoto(data) => format!(
+            "{}{}",
+            gettext("Photo"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageAudio(data) => format!(
+            "{} - {}{}",
+            data.audio.performer,
+            data.audio.title,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageAnimation(data) => format!(
+            "{}{}",
+            gettext("GIF"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageVideo(data) => format!(
+            "{}{}",
+            gettext("Video"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageDocument(data) => format!(
+            "{}{}",
+            data.document.file_name,
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageVoiceNote(data) => format!(
+            "{}{}",
+            gettext("Voice message"),
+            if data.caption.text.is_empty() {
+                String::new()
+            } else {
+                format!(", {}", data.caption.text)
+            }
+        ),
+        MessageContent::MessageChatDeletePhoto => match chat.type_() {
+            ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
+            _ => {
+                if message.is_outgoing {
+                    gettext("You removed the group photo")
+                } else {
+                    let sender_name = sender_name(&message.sender, chat);
+                    gettext!("{} removed the group photo", sender_name)
+                }
+            }
+        },
+        MessageContent::MessageContactRegistered => {
+            gettext!("{} joined Telegram", sender_name(&message.sender, chat))
+        }
+        _ => gettext("Unsupported message"),
     }
 }
