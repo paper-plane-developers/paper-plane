@@ -14,12 +14,22 @@
     <key name="is-maximized" type="b">
       <default>false</default>
       <summary>Default window maximized behaviour</summary>
-      <description></description>
+      <description>Default window maximized behaviour</description>
     </key>
     <key name="use-test-dc" type="b">
       <default>false</default>
       <summary>Use Telegram's test data center</summary>
       <description>Use Telegram's test data center</description>
+    </key>
+    <key name="color-scheme" type="s">
+      <choices>
+        <choice value="default"/>
+        <choice value="light"/>
+        <choice value="dark"/>
+      </choices>
+      <default>'default'</default>
+      <summary>Color Scheme</summary>
+      <description>The color scheme to be used in the app</description>
     </key>
   </schema>
 </schemalist>

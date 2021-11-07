@@ -13,6 +13,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-sticker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-user-dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/preferences-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/session.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar.ui</file>

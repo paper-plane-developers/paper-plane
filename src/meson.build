@@ -25,6 +25,7 @@ rust_sources = files(
   'config.rs',
   'login.rs',
   'main.rs',
+  'preferences_window.rs',
   'utils.rs',
   'window.rs',
   'session/avatar.rs',

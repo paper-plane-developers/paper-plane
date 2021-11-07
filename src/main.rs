@@ -2,12 +2,14 @@ mod application;
 #[rustfmt::skip]
 mod config;
 mod login;
+mod preferences_window;
 mod session;
 mod utils;
 mod window;
 
 use self::application::Application;
 use self::login::Login;
+use self::preferences_window::PreferencesWindow;
 use self::session::Session;
 use self::window::Window;
 
