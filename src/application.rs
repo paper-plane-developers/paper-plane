@@ -5,6 +5,7 @@ use gtk::{gio, glib};
 use log::{debug, info};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::PreferencesWindow;
 use crate::Window;
 
 mod imp {
@@ -55,6 +56,7 @@ mod imp {
 
             app.setup_gactions();
             app.setup_accels();
+            app.load_color_scheme();
         }
     }
 
@@ -102,6 +104,13 @@ impl Application {
         }));
         self.add_action(&action_quit);
 
+        // Preferences
+        let action_preferences = gio::SimpleAction::new("preferences", None);
+        action_preferences.connect_activate(clone!(@weak self as app => move |_, _| {
+            app.show_preferences();
+        }));
+        self.add_action(&action_preferences);
+
         // About
         let action_about = gio::SimpleAction::new("about", None);
         action_about.connect_activate(clone!(@weak self as app => move |_, _| {
@@ -113,6 +122,25 @@ impl Application {
     // Sets up keyboard shortcuts
     fn setup_accels(&self) {
         self.set_accels_for_action("app.quit", &["<primary>q"]);
+    }
+
+    fn load_color_scheme(&self) {
+        let style_manager = adw::StyleManager::default();
+        if let Some(style_manager) = style_manager {
+            let settings = gio::Settings::new(APP_ID);
+
+            match settings.string("color-scheme").as_ref() {
+                "light" => style_manager.set_color_scheme(adw::ColorScheme::ForceLight),
+                "dark" => style_manager.set_color_scheme(adw::ColorScheme::ForceDark),
+                _ => style_manager.set_color_scheme(adw::ColorScheme::PreferLight),
+            }
+        }
+    }
+
+    fn show_preferences(&self) {
+        let preferences = PreferencesWindow::new();
+        preferences.set_transient_for(Some(&self.main_window()));
+        preferences.present();
     }
 
     fn show_about_dialog(&self) {
