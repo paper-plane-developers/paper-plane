@@ -11,8 +11,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/preferences-window.ui")]
     pub struct PreferencesWindow {
         #[template_child]
-        pub follow_system_colors_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
         pub follow_system_colors_switch: TemplateChild<gtk::Switch>,
         #[template_child]
         pub dark_theme_switch: TemplateChild<gtk::Switch>,
@@ -38,7 +36,7 @@ mod imp {
             self.parent_constructed(obj);
 
             // If the system supports color schemes, load the 'Follow system colors'
-            // switch state, otherwise hide that row completely
+            // switch state, otherwise make that switch insensitive
             let style_manager = adw::StyleManager::default();
             if let Some(style_manager) = style_manager {
                 if style_manager.system_supports_color_schemes() {
@@ -47,7 +45,7 @@ mod imp {
                     self.follow_system_colors_switch
                         .set_active(follow_system_colors);
                 } else {
-                    self.follow_system_colors_row.set_visible(false);
+                    self.follow_system_colors_switch.set_sensitive(false);
                 }
             }
 

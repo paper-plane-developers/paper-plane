@@ -8,7 +8,7 @@
           <object class="AdwPreferencesGroup">
             <property name="title" translatable="yes">Color Scheme</property>
             <child>
-              <object class="AdwActionRow" id="follow_system_colors_row">
+              <object class="AdwActionRow">
                 <property name="title" translatable="yes">Follow System Colors</property>
                 <property name="activatable_widget">follow_system_colors_switch</property>
                 <child>
