@@ -85,9 +85,10 @@ impl MessageBubble {
             sender_name_expression.bind(&*self_.sender_label, "label", gtk::NONE_WIDGET);
 
             // Remove the previous color css class
-            if let Some(class) = self_.sender_color_class.borrow().as_ref() {
+            let mut sender_color_class = self_.sender_color_class.borrow_mut();
+            if let Some(class) = sender_color_class.as_ref() {
                 self_.sender_label.remove_css_class(class);
-                self_.sender_color_class.replace(None);
+                *sender_color_class = None;
             }
 
             // Color sender label
@@ -105,7 +106,7 @@ impl MessageBubble {
                 let color_class = classes[user.id() as usize % classes.len()];
                 self_.sender_label.add_css_class(color_class);
 
-                self_.sender_color_class.replace(Some(color_class.into()));
+                *sender_color_class = Some(color_class.into());
             }
 
             self_.sender_label.set_visible(true);
