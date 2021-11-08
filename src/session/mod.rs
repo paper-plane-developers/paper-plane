@@ -15,10 +15,8 @@ use self::sidebar::Sidebar;
 use self::user::User;
 use self::user_list::UserList;
 
-use glib::SyncSender;
-use gtk::glib::{self, clone};
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
+use glib::{clone, SyncSender};
+use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
 use tdgrand::enums::{NotificationSettingsScope, Update, User as TelegramUser};
 use tdgrand::functions;
@@ -34,7 +32,6 @@ pub struct BoxedScopeNotificationSettings(pub Option<ScopeNotificationSettings>)
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
@@ -52,6 +49,8 @@ mod imp {
         pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub sidebar: TemplateChild<Sidebar>,
     }
 
     #[glib::object_subclass]
@@ -61,7 +60,6 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            Sidebar::static_type();
             Content::static_type();
             Self::bind_template(klass);
 
@@ -282,6 +280,12 @@ impl Session {
                 });
             }
         }
+    }
+
+    pub fn begin_chats_search(&self) {
+        let self_ = imp::Session::from_instance(self);
+        self_.leaflet.navigate(adw::NavigationDirection::Back);
+        self_.sidebar.begin_chats_search();
     }
 
     fn handle_file_update(&self, file: File) {

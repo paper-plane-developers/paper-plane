@@ -1,6 +1,6 @@
 use gettextrs::gettext;
 use glib::{clone, SyncSender};
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tdgrand::enums::{
@@ -59,6 +59,17 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+
+            klass.add_binding_action(
+                gdk::keys::constants::F,
+                gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::SHIFT_MASK,
+                "sidebar.begin-chats-search",
+                None,
+            );
+
+            klass.install_action("sidebar.begin-chats-search", None, move |widget, _, _| {
+                widget.begin_chats_search();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -371,6 +382,14 @@ impl Window {
         let is_maximized = self_.settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
+        }
+    }
+
+    fn begin_chats_search(&self) {
+        let self_ = imp::Window::from_instance(self);
+        let active_client_id = self_.active_client_id.get();
+        if let Some(session) = self_.clients.borrow().get(&active_client_id).unwrap() {
+            session.begin_chats_search();
         }
     }
 }
