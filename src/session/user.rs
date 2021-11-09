@@ -17,7 +17,6 @@ mod imp {
         pub username: RefCell<String>,
         pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
-        pub session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -75,13 +74,6 @@ mod imp {
                         Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_object(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -101,7 +93,6 @@ mod imp {
                 "username" => obj.set_username(value.get().unwrap()),
                 "phone-number" => obj.set_phone_number(value.get().unwrap()),
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
-                "session" => self.session.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
@@ -114,7 +105,6 @@ mod imp {
                 "username" => obj.username().to_value(),
                 "phone-number" => obj.phone_number().to_value(),
                 "avatar" => obj.avatar().to_value(),
-                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -137,7 +127,7 @@ glib::wrapper! {
 impl User {
     pub fn new(id: i32, session: &Session) -> Self {
         let avatar = Avatar::new(session);
-        glib::Object::new(&[("id", &id), ("avatar", &avatar), ("session", session)])
+        glib::Object::new(&[("id", &id), ("avatar", &avatar)])
             .expect("Failed to create User")
     }
 
@@ -241,11 +231,6 @@ impl User {
     pub fn avatar(&self) -> &Avatar {
         let self_ = imp::User::from_instance(self);
         self_.avatar.get().unwrap()
-    }
-
-    pub fn session(&self) -> &Session {
-        let self_ = imp::User::from_instance(self);
-        self_.session.get().unwrap()
     }
 
     pub fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
