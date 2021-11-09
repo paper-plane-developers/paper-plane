@@ -8,15 +8,12 @@ use crate::session::{Chat, User};
 #[gboxed(type_name = "BoxedMessageContent")]
 pub struct BoxedMessageContent(pub MessageContent);
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "MessageSender")]
 pub enum MessageSender {
     User(User),
     Chat(Chat),
 }
-
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "BoxedMessageSender")]
-pub struct BoxedMessageSender(MessageSender);
 
 mod imp {
     use super::*;
@@ -57,7 +54,7 @@ mod imp {
                         "sender",
                         "Sender",
                         "The sender of this message",
-                        BoxedMessageSender::static_type(),
+                        MessageSender::static_type(),
                         glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_boolean(
@@ -106,8 +103,8 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "sender" => {
-                    let sender = value.get::<BoxedMessageSender>().unwrap();
-                    self.sender.set(sender.0).unwrap();
+                    let sender = value.get::<MessageSender>().unwrap();
+                    self.sender.set(sender).unwrap();
                 }
                 "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
                 "date" => self.date.set(value.get().unwrap()),
@@ -143,11 +140,11 @@ impl Message {
         let sender = match message.sender {
             TelegramMessageSender::User(data) => {
                 let user = chat.session().user_list().get_or_create_user(data.user_id);
-                BoxedMessageSender(MessageSender::User(user))
+                MessageSender::User(user)
             }
             TelegramMessageSender::Chat(data) => {
                 let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
-                BoxedMessageSender(MessageSender::Chat(chat))
+                MessageSender::Chat(chat)
             }
         };
 

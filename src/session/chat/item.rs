@@ -2,15 +2,12 @@ use gtk::{glib, glib::DateTime, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::Message;
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "ItemType")]
 pub enum ItemType {
     Message(Message),
     DayDivider(DateTime),
 }
-
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "BoxedItemType")]
-pub struct BoxedItemType(ItemType);
 
 mod imp {
     use super::*;
@@ -35,7 +32,7 @@ mod imp {
                     "type",
                     "Type",
                     "The type of this item",
-                    BoxedItemType::static_type(),
+                    ItemType::static_type(),
                     glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                 )]
             });
@@ -52,8 +49,8 @@ mod imp {
         ) {
             match pspec.name() {
                 "type" => {
-                    let type_ = value.get::<BoxedItemType>().unwrap();
-                    self.type_.set(type_.0).unwrap();
+                    let type_ = value.get::<ItemType>().unwrap();
+                    self.type_.set(type_).unwrap();
                 }
                 _ => unimplemented!(),
             }
@@ -67,12 +64,12 @@ glib::wrapper! {
 
 impl Item {
     pub fn for_message(message: Message) -> Self {
-        let type_ = BoxedItemType(ItemType::Message(message));
+        let type_ = ItemType::Message(message);
         glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
     }
 
     pub fn for_day_divider(day: DateTime) -> Self {
-        let type_ = BoxedItemType(ItemType::DayDivider(day));
+        let type_ = ItemType::DayDivider(day);
         glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
     }
 
