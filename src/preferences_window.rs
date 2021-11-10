@@ -64,6 +64,12 @@ glib::wrapper! {
         @extends gtk::Widget, gtk::Window, adw::Window, adw::PreferencesWindow;
 }
 
+impl Default for PreferencesWindow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PreferencesWindow {
     pub fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create PreferencesWindow")
