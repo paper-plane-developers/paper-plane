@@ -127,8 +127,7 @@ glib::wrapper! {
 impl User {
     pub fn new(id: i32, session: &Session) -> Self {
         let avatar = Avatar::new(session);
-        glib::Object::new(&[("id", &id), ("avatar", &avatar)])
-            .expect("Failed to create User")
+        glib::Object::new(&[("id", &id), ("avatar", &avatar)]).expect("Failed to create User")
     }
 
     pub fn handle_update(&self, update: Update) {
