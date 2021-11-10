@@ -52,7 +52,7 @@ mod imp {
                     "Chat",
                     "The chat represented by this row",
                     Chat::static_type(),
-                    glib::ParamFlags::READWRITE,
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                 )]
             });
 
