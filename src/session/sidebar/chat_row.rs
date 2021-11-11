@@ -15,6 +15,8 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
+    use crate::session::sidebar::Avatar as SidebarAvatar;
+
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
@@ -37,6 +39,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Avatar::static_type();
+            SidebarAvatar::static_type();
             Self::bind_template(klass);
         }
 

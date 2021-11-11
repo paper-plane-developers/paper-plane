@@ -123,9 +123,16 @@ impl UserList {
     }
 
     pub fn handle_update(&self, update: Update) {
-        if let Update::User(ref data) = update {
-            let user = self.get_or_create_user(data.user.id);
-            user.handle_update(update);
+        match update {
+            Update::User(ref data) => {
+                let user = self.get_or_create_user(data.user.id);
+                user.handle_update(update);
+            }
+            Update::UserStatus(ref data) => {
+                let user = self.get_or_create_user(data.user_id);
+                user.handle_update(update)
+            }
+            _ => {}
         }
     }
 

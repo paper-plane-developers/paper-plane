@@ -1,8 +1,16 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::Update;
+use tdgrand::enums::{Update, UserStatus, UserType};
 
 use crate::session::Avatar;
 use crate::Session;
+
+#[derive(Clone, Debug, Default, glib::GBoxed)]
+#[gboxed(type_name = "BoxedUserType")]
+pub struct BoxedUserType(pub UserType);
+
+#[derive(Clone, Debug, Default, glib::GBoxed)]
+#[gboxed(type_name = "BoxedUserStatus")]
+pub struct BoxedUserStatus(pub UserStatus);
 
 mod imp {
     use super::*;
@@ -12,11 +20,13 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct User {
         pub id: Cell<i32>,
+        pub type_: RefCell<BoxedUserType>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
         pub username: RefCell<String>,
         pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
+        pub status: RefCell<BoxedUserStatus>,
     }
 
     #[glib::object_subclass]
@@ -38,6 +48,13 @@ mod imp {
                         std::i32::MAX,
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_boxed(
+                        "type",
+                        "Type",
+                        "The type of this user",
+                        BoxedUserType::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_string(
                         "first-name",
@@ -74,6 +91,13 @@ mod imp {
                         Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
+                    glib::ParamSpec::new_boxed(
+                        "status",
+                        "Status",
+                        "The status of this user",
+                        BoxedUserStatus::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -88,11 +112,17 @@ mod imp {
         ) {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
+                "type" => {
+                    self.type_.replace(value.get().unwrap());
+                }
                 "first-name" => obj.set_first_name(value.get().unwrap()),
                 "last-name" => obj.set_last_name(value.get().unwrap()),
                 "username" => obj.set_username(value.get().unwrap()),
                 "phone-number" => obj.set_phone_number(value.get().unwrap()),
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
+                "status" => {
+                    self.status.replace(value.get().unwrap());
+                }
                 _ => unimplemented!(),
             }
         }
@@ -100,11 +130,13 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => obj.id().to_value(),
+                "type" => obj.type_().to_value(),
                 "first-name" => obj.first_name().to_value(),
                 "last-name" => obj.last_name().to_value(),
                 "username" => obj.username().to_value(),
                 "phone-number" => obj.phone_number().to_value(),
                 "avatar" => obj.avatar().to_value(),
+                "status" => obj.status().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -131,20 +163,44 @@ impl User {
     }
 
     pub fn handle_update(&self, update: Update) {
-        if let Update::User(data) = update {
-            self.set_first_name(data.user.first_name);
-            self.set_last_name(data.user.last_name);
-            self.set_username(data.user.username);
-            self.set_phone_number(data.user.phone_number);
+        match update {
+            Update::User(data) => {
+                self.set_type(data.user.r#type);
+                self.set_first_name(data.user.first_name);
+                self.set_last_name(data.user.last_name);
+                self.set_username(data.user.username);
+                self.set_phone_number(data.user.phone_number);
+                self.set_status(data.user.status);
 
-            self.avatar()
-                .update_from_user_photo(data.user.profile_photo);
+                self.avatar()
+                    .update_from_user_photo(data.user.profile_photo);
+            }
+            Update::UserStatus(data) => self.set_status(data.status),
+            _ => {}
         }
     }
 
     pub fn id(&self) -> i32 {
         let self_ = imp::User::from_instance(self);
         self_.id.get()
+    }
+
+    pub fn type_(&self) -> BoxedUserType {
+        let self_ = imp::User::from_instance(self);
+        self_.type_.borrow().clone()
+    }
+
+    pub fn set_type(&self, type_: UserType) {
+        if self.type_().0 == type_ {
+            return;
+        }
+        let self_ = imp::User::from_instance(self);
+        self_.type_.replace(BoxedUserType(type_));
+        self.notify("type");
+    }
+
+    pub fn type_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "type").upcast()
     }
 
     pub fn first_name(&self) -> String {
@@ -245,5 +301,22 @@ impl User {
             &[first_name_expression, last_name_expression],
         )
         .upcast()
+    }
+
+    fn status(&self) -> BoxedUserStatus {
+        let self_ = imp::User::from_instance(self);
+        self_.status.borrow().clone()
+    }
+    fn set_status(&self, status: UserStatus) {
+        if self.status().0 == status {
+            return;
+        }
+        let self_ = imp::User::from_instance(self);
+        self_.status.replace(BoxedUserStatus(status));
+        self.notify("status");
+    }
+
+    pub fn status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "status").upcast()
     }
 }
