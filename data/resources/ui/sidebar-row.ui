@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="SidebarChatRow" parent="AdwBin">
+  <template class="SidebarRow" parent="AdwBin">
     <child>
       <object class="GtkBox">
         <property name="spacing">12</property>
         <child>
           <object class="SidebarAvatar">
             <binding name="chat">
-              <lookup name="chat">SidebarChatRow</lookup>
+              <lookup name="chat">SidebarRow</lookup>
             </binding>
           </object>
         </child>
@@ -26,7 +26,7 @@
                     <property name="single-line-mode">True</property>
                     <binding name="label">
                       <lookup name="title">
-                        <lookup name="chat">SidebarChatRow</lookup>
+                        <lookup name="chat">SidebarRow</lookup>
                       </lookup>
                     </binding>
                     <style>
@@ -75,12 +75,12 @@
                     <property name="justify">center</property>
                     <binding name="label">
                       <lookup name="unread-count">
-                        <lookup name="chat">SidebarChatRow</lookup>
+                        <lookup name="chat">SidebarRow</lookup>
                       </lookup>
                     </binding>
                     <binding name="visible">
                       <lookup name="unread-count">
-                        <lookup name="chat">SidebarChatRow</lookup>
+                        <lookup name="chat">SidebarRow</lookup>
                       </lookup>
                     </binding>
                   </object>

@@ -1,7 +1,7 @@
 mod avatar;
-mod chat_row;
+mod row;
 
-use self::chat_row::ChatRow;
+use self::row::Row;
 
 use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
@@ -46,7 +46,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            ChatRow::static_type();
+            Row::static_type();
             Self::bind_template(klass);
         }
 

@@ -68,7 +68,7 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="SidebarChatRow">
+      <object class="SidebarRow">
         <property name="margin-top">6</property>
         <property name="margin-bottom">6</property>
         <binding name="chat">

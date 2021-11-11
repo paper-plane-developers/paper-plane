@@ -19,8 +19,8 @@ mod imp {
     use crate::session::sidebar::Avatar as SidebarAvatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
-    pub struct ChatRow {
+    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
+    pub struct Row {
         pub chat: RefCell<Option<Chat>>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
@@ -33,9 +33,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatRow {
-        const NAME: &'static str = "SidebarChatRow";
-        type Type = super::ChatRow;
+    impl ObjectSubclass for Row {
+        const NAME: &'static str = "SidebarRow";
+        type Type = super::Row;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -49,7 +49,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ChatRow {
+    impl ObjectImpl for Row {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpec::new_object(
@@ -88,28 +88,28 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ChatRow {}
-    impl BinImpl for ChatRow {}
+    impl WidgetImpl for Row {}
+    impl BinImpl for Row {}
 }
 
 glib::wrapper! {
-    pub struct ChatRow(ObjectSubclass<imp::ChatRow>)
+    pub struct Row(ObjectSubclass<imp::Row>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for ChatRow {
+impl Default for Row {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl ChatRow {
+impl Row {
     pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ChatRow")
+        glib::Object::new(&[]).expect("Failed to create Row")
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::ChatRow::from_instance(self);
+        let self_ = imp::Row::from_instance(self);
         self_.chat.borrow().clone()
     }
 
@@ -118,7 +118,7 @@ impl ChatRow {
             return;
         }
 
-        let self_ = imp::ChatRow::from_instance(self);
+        let self_ = imp::Row::from_instance(self);
 
         if let Some(ref chat) = chat {
             let chat_expression = gtk::ConstantExpression::new(&chat);

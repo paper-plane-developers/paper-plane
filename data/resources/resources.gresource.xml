@@ -18,7 +18,7 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-avatar.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-chat-row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
 
     <file compressed="true">style.css</file>
