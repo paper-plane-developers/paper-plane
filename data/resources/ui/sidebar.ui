@@ -71,7 +71,7 @@
       <object class="SidebarRow">
         <property name="margin-top">6</property>
         <property name="margin-bottom">6</property>
-        <binding name="chat">
+        <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>
       </object>

@@ -9,7 +9,7 @@
     <child>
       <object class="SidebarAvatar" id="avatar">
         <binding name="chat">
-          <lookup name="chat">SidebarRow</lookup>
+          <lookup name="item">SidebarRow</lookup>
         </binding>
       </object>
     </child>
@@ -21,16 +21,11 @@
           <object class="GtkBox">
             <property name="spacing">6</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="title_label">
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="ellipsize">end</property>
                 <property name="single-line-mode">True</property>
-                <binding name="label">
-                  <lookup name="title">
-                    <lookup name="chat">SidebarRow</lookup>
-                  </lookup>
-                </binding>
                 <style>
                   <class name="title"/>
                 </style>
@@ -63,7 +58,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkImage" id="pin_image">
+              <object class="GtkImage" id="pin_icon">
                 <property name="icon-name">view-pin-symbolic</property>
                 <style>
                   <class name="dim-label"/>
@@ -75,16 +70,6 @@
                 <property name="valign">center</property>
                 <property name="ellipsize">end</property>
                 <property name="justify">center</property>
-                <binding name="label">
-                  <lookup name="unread-count">
-                    <lookup name="chat">SidebarRow</lookup>
-                  </lookup>
-                </binding>
-                <binding name="visible">
-                  <lookup name="unread-count">
-                    <lookup name="chat">SidebarRow</lookup>
-                  </lookup>
-                </binding>
               </object>
             </child>
           </object>
