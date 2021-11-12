@@ -1,27 +1,27 @@
 use gettextrs::gettext;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
 use tdgrand::enums::{CallDiscardReason, ChatType, MessageContent};
 use tdgrand::types::MessageCall;
 
 use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
-use crate::session::components::Avatar;
+use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
 use crate::utils::{dim_and_escape, escape, human_friendly_duration};
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
-
-    use crate::session::sidebar::Avatar as SidebarAvatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub struct Row {
         pub chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub avatar: TemplateChild<Avatar>,
+        #[template_child]
+        pub main_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -36,11 +36,9 @@ mod imp {
     impl ObjectSubclass for Row {
         const NAME: &'static str = "SidebarRow";
         type Type = super::Row;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Avatar::static_type();
-            SidebarAvatar::static_type();
             Self::bind_template(klass);
         }
 
@@ -86,15 +84,19 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.avatar.unparent();
+            self.main_box.unparent();
+        }
     }
 
     impl WidgetImpl for Row {}
-    impl BinImpl for Row {}
 }
 
 glib::wrapper! {
     pub struct Row(ObjectSubclass<imp::Row>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget;
 }
 
 impl Default for Row {
