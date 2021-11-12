@@ -14,6 +14,14 @@ pub enum MessageSender {
     User(User),
     Chat(Chat),
 }
+impl MessageSender {
+    pub fn as_user(&self) -> Option<&User> {
+        match self {
+            MessageSender::User(user) => Some(user),
+            _ => None,
+        }
+    }
+}
 
 mod imp {
     use super::*;

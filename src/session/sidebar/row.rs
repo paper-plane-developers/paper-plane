@@ -342,46 +342,68 @@ fn stringify_message(message: Message) -> String {
         MessageContent::MessageChatAddMembers(data) => {
             show_sender = false;
 
-            let session = message.chat().session();
-            let user_list = session.user_list();
-
-            let members = data
-                .member_user_ids
-                .into_iter()
-                .map(|user_id| user_list.get_or_create_user(user_id))
-                .map(|user| stringify_user(&user, true))
-                .collect::<Vec<_>>();
-
-            let (last_member, first_members) = members.split_last().unwrap();
-
-            gettext!(
-                "{} added {}",
-                sender_name(message.sender(), true),
-                if first_members.is_empty() {
-                    Cow::Borrowed(last_member)
+            if message.sender().as_user().map(User::id).as_ref() == data.member_user_ids.get(0) {
+                if message.is_outgoing() {
+                    gettext("You joined the group")
                 } else {
-                    Cow::Owned(gettext!(
-                        "{} and {}",
-                        first_members.join(&gettext(", ")),
-                        last_member
-                    ))
+                    gettext!("{} joined the group", sender_name(message.sender(), true))
                 }
-            )
+            } else {
+                let session = message.chat().session();
+                let user_list = session.user_list();
+
+                let members = data
+                    .member_user_ids
+                    .into_iter()
+                    .map(|user_id| user_list.get_or_create_user(user_id))
+                    .map(|user| stringify_user(&user, true))
+                    .collect::<Vec<_>>();
+
+                let (last_member, first_members) = members.split_last().unwrap();
+
+                gettext!(
+                    "{} added {}",
+                    sender_name(message.sender(), true),
+                    if first_members.is_empty() {
+                        Cow::Borrowed(last_member)
+                    } else {
+                        Cow::Owned(gettext!(
+                            "{} and {}",
+                            first_members.join(&gettext(", ")),
+                            last_member
+                        ))
+                    }
+                )
+            }
         }
         MessageContent::MessageChatDeleteMember(data) => {
             show_sender = false;
-            gettext!(
-                "{} removed {}",
-                sender_name(message.sender(), true),
-                stringify_user(
-                    &message
-                        .chat()
-                        .session()
-                        .user_list()
-                        .get_or_create_user(data.user_id),
-                    true
+
+            if message
+                .sender()
+                .as_user()
+                .map(|user| user.id() == data.user_id)
+                .unwrap_or_default()
+            {
+                if message.is_outgoing() {
+                    gettext("You left the group")
+                } else {
+                    gettext!("{} left the group", sender_name(message.sender(), true))
+                }
+            } else {
+                gettext!(
+                    "{} removed {}",
+                    sender_name(message.sender(), true),
+                    stringify_user(
+                        &message
+                            .chat()
+                            .session()
+                            .user_list()
+                            .get_or_create_user(data.user_id),
+                        true
+                    )
                 )
-            )
+            }
         }
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
