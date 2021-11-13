@@ -7,11 +7,6 @@
     <child>
       <object class="ComponentsAvatar" id="avatar">
         <property name="size">44</property>
-        <binding name="item">
-          <lookup name="avatar">
-            <lookup name="chat">SidebarAvatar</lookup>
-          </lookup>
-        </binding>
       </object>
     </child>
     <child>

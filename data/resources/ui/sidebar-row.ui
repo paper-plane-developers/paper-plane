@@ -8,7 +8,7 @@
     </property>
     <child>
       <object class="SidebarAvatar" id="avatar">
-        <binding name="chat">
+        <binding name="item">
           <lookup name="item">SidebarRow</lookup>
         </binding>
       </object>

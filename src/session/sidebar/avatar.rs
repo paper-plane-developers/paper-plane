@@ -1,15 +1,12 @@
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, gsk};
+use gtk::{glib, gsk, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, UserStatus, UserType};
 
 use crate::session::user::BoxedUserStatus;
 use crate::session::{Chat, Session, User};
 
 mod imp {
-
     use super::*;
-    use gtk::CompositeTemplate;
+    use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
     use crate::session::components::Avatar as ComponentsAvatar;
@@ -17,7 +14,8 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]
     pub struct Avatar {
-        pub chat: RefCell<Option<Chat>>,
+        /// A `Chat`
+        pub item: RefCell<Option<glib::Object>>,
         pub is_online: Cell<bool>,
         // The first Option indicates whether we've once tried to compile the shader. The second
         // Option contains the compiled shader.
@@ -47,14 +45,13 @@ mod imp {
 
     impl ObjectImpl for Avatar {
         fn properties() -> &'static [glib::ParamSpec] {
-            use once_cell::sync::Lazy;
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpec::new_object(
-                        "chat",
-                        "Chat",
-                        "The chat represented by this SidebarAvatar",
-                        Chat::static_type(),
+                        "item",
+                        "Item",
+                        "The item of this avatar",
+                        glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_boolean(
@@ -66,7 +63,6 @@ mod imp {
                     ),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 
@@ -78,7 +74,7 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "chat" => obj.set_chat(value.get().unwrap()),
+                "item" => obj.set_item(value.get().unwrap()),
                 "is-online" => obj.set_is_online(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -86,7 +82,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "chat" => obj.chat().to_value(),
+                "item" => obj.item().to_value(),
                 "is-online" => obj.is_online().to_value(),
                 _ => unimplemented!(),
             }
@@ -160,57 +156,82 @@ impl Avatar {
         glib::Object::new(&[]).expect("Failed to create SidebarAvatar")
     }
 
-    pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.chat.borrow().clone()
+    fn setup_is_online_binding(&self, user: &User) {
+        if !matches!(user.type_().0, UserType::Regular) {
+            return;
+        }
+
+        if let Some(session) = self.ancestor(Session::static_type()) {
+            let me_expression =
+                gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
+
+            let user_expression = gtk::ConstantExpression::new(user);
+            let interlocutor_status_expression = User::status_expression(&user_expression);
+
+            let user_id = user.id();
+            let interlocutor_is_online_expression = gtk::ClosureExpression::new(
+                move |args| {
+                    let maybe_me = args[1].get::<User>();
+                    maybe_me
+                        .map(|me| {
+                            let user_status = args[2].get::<BoxedUserStatus>().unwrap().0;
+                            matches!(user_status, UserStatus::Online(_)) && me.id() != user_id
+                        })
+                        .unwrap_or_default()
+                },
+                &[me_expression.upcast(), interlocutor_status_expression],
+            );
+            interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
+        }
     }
-    fn set_chat(&self, chat: Option<Chat>) {
-        if self.chat() == chat {
+
+    pub fn item(&self) -> Option<glib::Object> {
+        let self_ = imp::Avatar::from_instance(self);
+        self_.item.borrow().to_owned()
+    }
+
+    pub fn set_item(&self, item: Option<glib::Object>) {
+        if self.item() == item {
             return;
         }
 
         let self_ = imp::Avatar::from_instance(self);
 
-        if let Some(ref chat) = chat {
-            if let Some(interlocutor_id) = interlocutor_id(chat) {
-                let interlocutor = chat
-                    .session()
-                    .user_list()
-                    .get_or_create_user(interlocutor_id);
+        if let Some(ref item) = item {
+            if let Some(chat) = item.downcast_ref::<Chat>() {
+                let avatar_item_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "avatar",
+                );
 
-                if let UserType::Regular = interlocutor.type_().0 {
-                    let session_expression = gtk::ConstantExpression::new(&chat.session());
-                    let me_expression = gtk::PropertyExpression::new(
-                        Session::static_type(),
-                        Some(&session_expression),
-                        "me",
-                    );
+                avatar_item_expression.bind(&*self_.avatar, "item", Some(chat));
 
-                    let interlocutor_expression = gtk::ConstantExpression::new(&interlocutor);
-                    let interlocutor_status_expression =
-                        User::status_expression(&interlocutor_expression);
+                if let Some(interlocutor_id) = interlocutor_id(chat) {
+                    let interlocutor = chat
+                        .session()
+                        .user_list()
+                        .get_or_create_user(interlocutor_id);
 
-                    let interlocutor_is_online_expression = gtk::ClosureExpression::new(
-                        move |expressions| -> bool {
-                            let maybe_me = expressions[1].get::<User>();
-                            maybe_me
-                                .map(|me| {
-                                    let user_status =
-                                        expressions[2].get::<BoxedUserStatus>().unwrap().0;
-                                    matches!(user_status, UserStatus::Online(_))
-                                        && me.id() != interlocutor_id
-                                })
-                                .unwrap_or_default()
-                        },
-                        &[me_expression.upcast(), interlocutor_status_expression],
-                    );
-                    interlocutor_is_online_expression.bind(self, "is-online", gtk::NONE_WIDGET);
+                    self.setup_is_online_binding(&interlocutor);
                 }
+            } else if let Some(user) = item.downcast_ref::<User>() {
+                let avatar_item_expression = gtk::PropertyExpression::new(
+                    User::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "avatar",
+                );
+
+                avatar_item_expression.bind(&*self_.avatar, "item", Some(user));
+
+                self.setup_is_online_binding(user);
+            } else {
+                unreachable!("Unexpected item type: {:?}", item);
             }
         }
 
-        self_.chat.replace(chat);
-        self.notify("chat");
+        self_.item.replace(item);
+        self.notify("item");
     }
 
     pub fn is_online(&self) -> bool {
