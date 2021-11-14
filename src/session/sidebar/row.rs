@@ -17,12 +17,14 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub struct Row {
-        /// A `Chat`
+        /// A `Chat` or `User`
         pub item: RefCell<Option<glib::Object>>,
         #[template_child]
         pub avatar: TemplateChild<Avatar>,
         #[template_child]
         pub main_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub title_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -123,6 +125,9 @@ impl Row {
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
+                self_.timestamp_label.set_visible(true);
+                self_.bottom_box.set_visible(true);
+
                 // Chat properties expressions
                 let title_expression = gtk::PropertyExpression::new(
                     Chat::static_type(),
@@ -302,6 +307,15 @@ impl Row {
                     ],
                 );
                 pin_visibility_expression.bind(&*self_.pin_icon, "visible", Some(chat));
+            } else if let Some(user) = item.downcast_ref::<User>() {
+                self_.timestamp_label.set_visible(false);
+                self_.bottom_box.set_visible(false);
+
+                let user_expression = gtk::ConstantExpression::new(user);
+                let full_name_expression = User::full_name_expression(&user_expression);
+
+                // Title label bindings
+                full_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
             }

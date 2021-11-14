@@ -43,7 +43,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="bottom_box">
             <property name="spacing">6</property>
             <child>
               <object class="GtkLabel" id="last_message_label">

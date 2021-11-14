@@ -14,7 +14,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]
     pub struct Avatar {
-        /// A `Chat`
+        /// A `Chat` or `User`
         pub item: RefCell<Option<glib::Object>>,
         pub is_online: Cell<bool>,
         // The first Option indicates whether we've once tried to compile the shader. The second
