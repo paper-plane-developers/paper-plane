@@ -7,7 +7,7 @@ use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::{enums, functions};
 
-use crate::session::{Chat, ChatList};
+use crate::session::Chat;
 use crate::utils::do_async;
 use crate::Session;
 
@@ -67,13 +67,6 @@ mod imp {
                         glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_object(
-                        "chat-list",
-                        "Chat List",
-                        "A list of chats",
-                        ChatList::static_type(),
-                        glib::ParamFlags::WRITABLE,
-                    ),
-                    glib::ParamSpec::new_object(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
@@ -104,17 +97,13 @@ mod imp {
                     let compact = value.get().unwrap();
                     self.compact.set(compact);
                 }
-                "chat-list" => {
-                    let chat_list = value.get().unwrap();
-                    obj.set_chat_list(chat_list);
-                }
                 "selected-chat" => {
                     let selected_chat = value.get().unwrap();
                     obj.set_selected_chat(selected_chat);
                 }
                 "session" => {
                     let session = value.get().unwrap();
-                    self.session.replace(Some(session));
+                    obj.set_session(session);
                 }
                 _ => unimplemented!(),
             }
@@ -205,48 +194,6 @@ impl Sidebar {
         }
     }
 
-    pub fn set_chat_list(&self, chat_list: ChatList) {
-        let self_ = imp::Sidebar::from_instance(self);
-
-        let filter = gtk::CustomFilter::new(
-            clone!(@weak self as obj => @default-return false, move |item| {
-                let self_ = imp::Sidebar::from_instance(&obj);
-                let is_searching = !self_.search_entry.text().is_empty();
-                let chat = item.downcast_ref::<Chat>().unwrap();
-
-                if is_searching {
-                    self_.searched_chats.borrow().contains(&chat.id())
-                } else {
-                    chat.order() > 0
-                }
-            }),
-        );
-        let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
-            let order1 = obj1.downcast_ref::<Chat>().unwrap().order();
-            let order2 = obj2.downcast_ref::<Chat>().unwrap().order();
-
-            order2.cmp(&order1).into()
-        });
-
-        chat_list.connect_positions_changed(clone!(@weak filter, @weak sorter => move |_| {
-            filter.changed(gtk::FilterChange::Different);
-            sorter.changed(gtk::SorterChange::Different);
-        }));
-
-        let filter_model = gtk::FilterListModel::new(Some(&chat_list), Some(&filter));
-        let sort_model = gtk::SortListModel::new(Some(&filter_model), Some(&sorter));
-        let selection = gtk::SingleSelection::new(Some(&sort_model));
-        selection.set_autoselect(false);
-        selection
-            .bind_property("selected-item", self, "selected-chat")
-            .flags(glib::BindingFlags::SYNC_CREATE)
-            .build();
-
-        self_.list_view.set_model(Some(&selection));
-        self_.filter.replace(Some(filter));
-        self_.selection.replace(Some(selection));
-    }
-
     fn selected_chat(&self) -> Option<Chat> {
         let self_ = imp::Sidebar::from_instance(self);
         self_.selected_chat.borrow().clone()
@@ -272,6 +219,59 @@ impl Sidebar {
 
         self_.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
+    }
+
+    pub fn set_session(&self, session: Option<Session>) {
+        if self.session() == session {
+            return;
+        }
+
+        let self_ = imp::Sidebar::from_instance(self);
+
+        if let Some(ref session) = session {
+            let filter = gtk::CustomFilter::new(
+                clone!(@weak self as obj => @default-return false, move |item| {
+                    let self_ = imp::Sidebar::from_instance(&obj);
+                    let is_searching = !self_.search_entry.text().is_empty();
+                    let chat = item.downcast_ref::<Chat>().unwrap();
+
+                    if is_searching {
+                        self_.searched_chats.borrow().contains(&chat.id())
+                    } else {
+                        chat.order() > 0
+                    }
+                }),
+            );
+            let sorter = gtk::CustomSorter::new(move |obj1, obj2| {
+                let order1 = obj1.downcast_ref::<Chat>().unwrap().order();
+                let order2 = obj2.downcast_ref::<Chat>().unwrap().order();
+
+                order2.cmp(&order1).into()
+            });
+
+            session.chat_list().connect_positions_changed(
+                clone!(@weak filter, @weak sorter => move |_| {
+                    filter.changed(gtk::FilterChange::Different);
+                    sorter.changed(gtk::SorterChange::Different);
+                }),
+            );
+
+            let filter_model = gtk::FilterListModel::new(Some(session.chat_list()), Some(&filter));
+            let sort_model = gtk::SortListModel::new(Some(&filter_model), Some(&sorter));
+            let selection = gtk::SingleSelection::new(Some(&sort_model));
+            selection.set_autoselect(false);
+            selection
+                .bind_property("selected-item", self, "selected-chat")
+                .flags(glib::BindingFlags::SYNC_CREATE)
+                .build();
+
+            self_.list_view.set_model(Some(&selection));
+            self_.filter.replace(Some(filter));
+            self_.selection.replace(Some(selection));
+        }
+
+        self_.session.replace(session);
+        self.notify("session");
     }
 
     pub fn session(&self) -> Option<Session> {
