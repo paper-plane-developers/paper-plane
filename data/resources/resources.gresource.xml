@@ -23,5 +23,8 @@
 
     <file compressed="true">style.css</file>
     <file compressed="true">style-dark.css</file>
+
+    <file preprocess="xml-stripblanks">icons/scalable/status/message-unread-right-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/status/message-read-symbolic.svg</file>
   </gresource>
 </gresources>

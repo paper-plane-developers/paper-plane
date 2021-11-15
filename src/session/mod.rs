@@ -168,6 +168,7 @@ impl Session {
             | Update::ChatLastMessage(_)
             | Update::ChatPosition(_)
             | Update::ChatReadInbox(_)
+            | Update::ChatReadOutbox(_)
             | Update::ChatDraftMessage(_)
             | Update::DeleteMessages(_) => {
                 self.chat_list().handle_update(update);

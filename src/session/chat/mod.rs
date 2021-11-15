@@ -29,6 +29,7 @@ mod imp {
         pub id: Cell<i64>,
         pub type_: OnceCell<ChatType>,
         pub title: RefCell<String>,
+        pub last_read_outbox_message_id: Cell<i64>,
         pub avatar: OnceCell<Avatar>,
         pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
@@ -72,6 +73,15 @@ mod imp {
                         "The title of this chat",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                    ),
+                    glib::ParamSpec::new_int64(
+                        "last-read-outbox-message-id",
+                        "Last Read Outbox Message Id",
+                        "The last read outbox message id of this chat",
+                        std::i64::MIN,
+                        std::i64::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_object(
                         "avatar",
@@ -159,6 +169,9 @@ mod imp {
                     let title = value.get().unwrap();
                     self.title.replace(title);
                 }
+                "last-read-outbox-message-id" => {
+                    self.last_read_outbox_message_id.set(value.get().unwrap());
+                }
                 "avatar" => {
                     self.avatar.set(value.get().unwrap()).unwrap();
                 }
@@ -194,6 +207,7 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.get().to_value(),
                 "title" => self.title.borrow().to_value(),
+                "last-read-outbox-message-id" => self.last_read_outbox_message_id.get().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-message" => self.last_message.borrow().to_value(),
                 "order" => self.order.get().to_value(),
@@ -232,6 +246,10 @@ impl Chat {
             ("id", &chat.id),
             ("type", &type_),
             ("title", &chat.title),
+            (
+                "last-read-outbox-message-id",
+                &chat.last_read_outbox_message_id,
+            ),
             ("avatar", &avatar),
             ("session", &session),
         ])
@@ -286,6 +304,9 @@ impl Chat {
             Update::ChatReadInbox(update) => {
                 self.set_unread_count(update.unread_count);
             }
+            Update::ChatReadOutbox(update) => {
+                self.set_last_read_outbox_message_id(update.last_read_outbox_message_id);
+            }
             Update::ChatDraftMessage(update) => {
                 let mut draft_message = String::new();
                 if let Some(message) = update.draft_message {
@@ -316,6 +337,20 @@ impl Chat {
     fn set_title(&self, title: String) {
         if self.title() != title {
             self.set_property("title", &title).unwrap();
+        }
+    }
+
+    pub fn last_read_outbox_message_id(&self) -> i64 {
+        self.property("last-read-outbox-message-id")
+            .unwrap()
+            .get()
+            .unwrap()
+    }
+
+    fn set_last_read_outbox_message_id(&self, last_read_outbox_message_id: i64) {
+        if self.last_read_outbox_message_id() != last_read_outbox_message_id {
+            self.set_property("last-read-outbox-message-id", &last_read_outbox_message_id)
+                .unwrap();
         }
     }
 

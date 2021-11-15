@@ -1,6 +1,6 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::{ChatType, MessageContent, MessageSendingState};
 
 use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
@@ -18,6 +18,8 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
     pub struct ChatRow {
         pub chat: RefCell<Option<Chat>>,
+        #[template_child]
+        pub message_status_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -119,6 +121,58 @@ impl ChatRow {
                 Chat::static_type(),
                 Some(&chat_expression),
                 "last-message",
+            );
+
+            // Message Status
+            let message_status_visibility_expression = gtk::PropertyExpression::new(
+                Message::static_type(),
+                Some(&last_message_expression),
+                "is-outgoing",
+            );
+            let message_status_stack = self_.message_status_stack.get();
+            message_status_visibility_expression.bind(
+                &message_status_stack,
+                "visible",
+                gtk::NONE_WIDGET,
+            );
+            let last_read_outbox_message_id_expression = gtk::PropertyExpression::new(
+                Chat::static_type(),
+                Some(&chat_expression),
+                "last-read-outbox-message-id",
+            );
+            let message_status_icon_expression = gtk::ClosureExpression::new(
+                move |args| {
+                    let last_message = args[1].get::<Message>().unwrap();
+
+                    // TODO: Always set last message in "Saved Messages" chat as 'read'.
+                    if last_message.is_outgoing() {
+                        match last_message.sending_state() {
+                            Some(state) => match state {
+                                MessageSendingState::Failed(_) => "failed",
+                                MessageSendingState::Pending => "pending",
+                            },
+                            None => {
+                                let last_read_msg_id = args[2].get::<i64>().unwrap();
+                                if last_message.id() == last_read_msg_id {
+                                    "read"
+                                } else {
+                                    "unread"
+                                }
+                            }
+                        }
+                    } else {
+                        "empty"
+                    }
+                },
+                &[
+                    last_message_expression.clone().upcast(),
+                    last_read_outbox_message_id_expression.upcast(),
+                ],
+            );
+            message_status_icon_expression.bind(
+                &message_status_stack,
+                "visible-child-name",
+                gtk::NONE_WIDGET,
             );
 
             // Last message timestamp

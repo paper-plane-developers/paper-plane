@@ -1,5 +1,7 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{MessageContent, MessageSender as TelegramMessageSender, Update};
+use tdgrand::enums::{
+    MessageContent, MessageSender as TelegramMessageSender, MessageSendingState, Update,
+};
 use tdgrand::types::Message as TelegramMessage;
 
 use crate::session::{Chat, User};
@@ -18,6 +20,10 @@ pub enum MessageSender {
 #[gboxed(type_name = "BoxedMessageSender")]
 pub struct BoxedMessageSender(MessageSender);
 
+#[derive(Clone, Debug, Default, glib::GBoxed)]
+#[gboxed(type_name = "BoxedSendingState")]
+pub struct BoxedMessageSendingState(Option<MessageSendingState>);
+
 mod imp {
     use super::*;
     use once_cell::sync::{Lazy, OnceCell};
@@ -28,6 +34,7 @@ mod imp {
         pub id: Cell<i64>,
         pub sender: OnceCell<MessageSender>,
         pub is_outgoing: Cell<bool>,
+        pub sending_state: RefCell<BoxedMessageSendingState>,
         pub date: Cell<i32>,
         pub content: RefCell<Option<BoxedMessageContent>>,
         pub chat: OnceCell<Chat>,
@@ -66,6 +73,13 @@ mod imp {
                         "Whether this message is outgoing or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_boxed(
+                        "sending-state",
+                        "Sending State",
+                        "The sending state of this message",
+                        BoxedMessageSendingState::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
                     glib::ParamSpec::new_int(
                         "date",
@@ -110,6 +124,10 @@ mod imp {
                     self.sender.set(sender.0).unwrap();
                 }
                 "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
+                "sending-state" => {
+                    let sending_state = value.get().unwrap();
+                    self.sending_state.replace(sending_state);
+                }
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => {
                     let content = value.get().unwrap();
@@ -124,6 +142,7 @@ mod imp {
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
+                "sending-state" => self.sending_state.borrow().to_value(),
                 "date" => obj.date().to_value(),
                 "content" => self.content.borrow().as_ref().unwrap().to_value(),
                 "chat" => obj.chat().to_value(),
@@ -139,6 +158,7 @@ glib::wrapper! {
 
 impl Message {
     pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
+        let sending_state = BoxedMessageSendingState(message.sending_state);
         let content = BoxedMessageContent(message.content);
         let sender = match message.sender {
             TelegramMessageSender::User(data) => {
@@ -155,6 +175,7 @@ impl Message {
             ("id", &message.id),
             ("sender", &sender),
             ("is-outgoing", &message.is_outgoing),
+            ("sending-state", &sending_state),
             ("date", &message.date),
             ("content", &content),
             ("chat", chat),
@@ -182,6 +203,14 @@ impl Message {
     pub fn is_outgoing(&self) -> bool {
         let self_ = imp::Message::from_instance(self);
         self_.is_outgoing.get()
+    }
+
+    pub fn sending_state(&self) -> Option<MessageSendingState> {
+        self.property("sending-state")
+            .unwrap()
+            .get::<BoxedMessageSendingState>()
+            .unwrap()
+            .0
     }
 
     pub fn date(&self) -> i32 {
