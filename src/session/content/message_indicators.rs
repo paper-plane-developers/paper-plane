@@ -1,6 +1,7 @@
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use tdgrand::enums::MessageSendingState;
 
-use crate::session::chat::Message;
+use crate::session::chat::{Chat, Message};
 
 mod imp {
     use super::*;
@@ -10,6 +11,8 @@ mod imp {
     pub struct MessageIndicators {
         #[template_child]
         pub timestamp: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub status_stack: TemplateChild<gtk::Stack>,
     }
 
     #[glib::object_subclass]
@@ -30,6 +33,7 @@ mod imp {
     impl ObjectImpl for MessageIndicators {
         fn dispose(&self, _obj: &Self::Type) {
             self.timestamp.unparent();
+            self.status_stack.unparent();
         }
     }
 
@@ -73,5 +77,48 @@ impl MessageIndicators {
             &[date_expression.upcast()],
         );
         timestamp_expression.bind(&*self_.timestamp, "label", gtk::NONE_WIDGET);
+
+        // Message Status
+        let message_status_visibility_expression = gtk::PropertyExpression::new(
+            Message::static_type(),
+            Some(&message_expression),
+            "is-outgoing",
+        );
+        message_status_visibility_expression.bind(
+            &*self_.status_stack,
+            "visible",
+            gtk::NONE_WIDGET,
+        );
+        let last_read_expression = gtk::PropertyExpression::new(
+            Chat::static_type(),
+            Some(&gtk::ConstantExpression::new(message.chat())),
+            "last-read-outbox-message-id",
+        );
+        let status_icon_expression = gtk::ClosureExpression::new(
+            move |args| {
+                let message = args[1].get::<Message>().unwrap();
+
+                if message.is_outgoing() {
+                    // TODO: Always set messages in "Saved Messages" chat as 'read'.
+                    match message.sending_state() {
+                        Some(state) => match state {
+                            MessageSendingState::Failed(_) => "failed",
+                            MessageSendingState::Pending => "pending",
+                        },
+                        None => {
+                            if message.id() <= args[2].get::<i64>().unwrap() {
+                                "read"
+                            } else {
+                                "unread"
+                            }
+                        }
+                    }
+                } else {
+                    "empty"
+                }
+            },
+            &[message_expression.upcast(), last_read_expression.upcast()],
+        );
+        status_icon_expression.bind(&*self_.status_stack, "visible-child-name", gtk::NONE_WIDGET);
     }
 }

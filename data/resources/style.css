@@ -118,6 +118,10 @@
   opacity: 0.75;
 }
 
+.outgoing .message-indicators .status-failed {
+  color: @destructive_color;
+}
+
 .message-sticker .message-indicators {
   background-color: alpha(@view_bg_color, 0.9);
   border-radius: 100px;

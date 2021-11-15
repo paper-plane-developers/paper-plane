@@ -12,5 +12,61 @@
     <child>
       <object class="GtkLabel" id="timestamp"/>
     </child>
+    <child>
+      <object class="GtkStack" id="status_stack">
+        <!-- <property name="transition-type">crossfade</property> -->
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">empty</property>
+            <property name="child">
+              <object class="AdwBin"/>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">pending</property>
+            <property name="child">
+              <object class="GtkImage">
+                <property name="icon-name">preferences-system-time-symbolic</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">failed</property>
+            <property name="child">
+              <object class="GtkImage">
+                <property name="icon-name">emblem-important-symbolic</property>
+                <style>
+                  <class name="status-failed"/>
+                </style>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">unread</property>
+            <property name="child">
+              <object class="GtkImage">
+                <property name="icon-name">message-unread-left-symbolic</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">read</property>
+            <property name="child">
+              <object class="GtkImage">
+                <property name="icon-name">message-read-symbolic</property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
   </template>
 </interface>
