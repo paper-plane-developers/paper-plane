@@ -117,6 +117,10 @@
   margin: 6px;
 }
 
+.chat-action-bar scrolledwindow slider {
+  min-height: 0;
+}
+
 .qr-code-quite-zone {
   background-color: white;
 }
