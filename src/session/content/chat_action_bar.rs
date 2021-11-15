@@ -110,7 +110,8 @@ mod imp {
             self.message_entry.add_controller(&key_events);
             key_events.connect_key_pressed(
                 clone!(@weak obj => @default-return Inhibit(false), move |_, key, _, modifier| {
-                    if !modifier.contains(gdk::ModifierType::SHIFT_MASK)
+                    if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
+                        && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
                         && (key == gdk::keys::constants::Return
                             || key == gdk::keys::constants::KP_Enter)
                     {
