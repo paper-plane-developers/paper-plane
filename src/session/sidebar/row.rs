@@ -1,46 +1,49 @@
 use gettextrs::gettext;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
 use tdgrand::enums::{CallDiscardReason, ChatType, MessageContent};
 use tdgrand::types::MessageCall;
 
 use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
-use crate::session::components::Avatar;
+use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
 use crate::utils::{dim_and_escape, escape, human_friendly_duration};
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
-    use crate::session::sidebar::Avatar as SidebarAvatar;
-
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-chat-row.ui")]
-    pub struct ChatRow {
-        pub chat: RefCell<Option<Chat>>,
+    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
+    pub struct Row {
+        /// A `Chat` or `User`
+        pub item: RefCell<Option<glib::Object>>,
+        #[template_child]
+        pub avatar: TemplateChild<Avatar>,
+        #[template_child]
+        pub main_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub bottom_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub title_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub last_message_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub pin_image: TemplateChild<gtk::Image>,
+        pub pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub unread_count_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatRow {
-        const NAME: &'static str = "SidebarChatRow";
-        type Type = super::ChatRow;
-        type ParentType = adw::Bin;
+    impl ObjectSubclass for Row {
+        const NAME: &'static str = "SidebarRow";
+        type Type = super::Row;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Avatar::static_type();
-            SidebarAvatar::static_type();
             Self::bind_template(klass);
         }
 
@@ -49,18 +52,17 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ChatRow {
+    impl ObjectImpl for Row {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpec::new_object(
-                    "chat",
-                    "Chat",
-                    "The chat represented by this row",
-                    Chat::static_type(),
+                    "item",
+                    "Item",
+                    "The item of this row",
+                    glib::Object::static_type(),
                     glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                 )]
             });
-
             PROPERTIES.as_ref()
         }
 
@@ -72,223 +74,255 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "chat" => {
-                    let chat = value.get().unwrap();
-                    obj.set_chat(chat);
-                }
+                "item" => obj.set_item(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "chat" => obj.chat().to_value(),
+                "item" => obj.item().to_value(),
                 _ => unimplemented!(),
             }
         }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.avatar.unparent();
+            self.main_box.unparent();
+        }
     }
 
-    impl WidgetImpl for ChatRow {}
-    impl BinImpl for ChatRow {}
+    impl WidgetImpl for Row {}
 }
 
 glib::wrapper! {
-    pub struct ChatRow(ObjectSubclass<imp::ChatRow>)
-        @extends gtk::Widget, adw::Bin;
+    pub struct Row(ObjectSubclass<imp::Row>)
+        @extends gtk::Widget;
 }
 
-impl Default for ChatRow {
+impl Default for Row {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl ChatRow {
+impl Row {
     pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ChatRow")
+        glib::Object::new(&[]).expect("Failed to create Row")
     }
 
-    pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::ChatRow::from_instance(self);
-        self_.chat.borrow().clone()
+    pub fn item(&self) -> Option<glib::Object> {
+        let self_ = imp::Row::from_instance(self);
+        self_.item.borrow().to_owned()
     }
 
-    fn set_chat(&self, chat: Option<Chat>) {
-        if self.chat() == chat {
+    pub fn set_item(&self, item: Option<glib::Object>) {
+        if self.item() == item {
             return;
         }
 
-        let self_ = imp::ChatRow::from_instance(self);
+        let self_ = imp::Row::from_instance(self);
 
-        if let Some(ref chat) = chat {
-            let chat_expression = gtk::ConstantExpression::new(&chat);
-            let last_message_expression = gtk::PropertyExpression::new(
-                Chat::static_type(),
-                Some(&chat_expression),
-                "last-message",
-            );
+        if let Some(ref item) = item {
+            if let Some(chat) = item.downcast_ref::<Chat>() {
+                self_.timestamp_label.set_visible(true);
+                self_.bottom_box.set_visible(true);
 
-            // Last message timestamp
-            let date_expression = gtk::PropertyExpression::new(
-                Message::static_type(),
-                Some(&last_message_expression),
-                "date",
-            );
-            let timestamp_expression = gtk::ClosureExpression::new(
-                move |expressions| -> String {
-                    let date = expressions[1].get::<i32>().unwrap();
+                // Chat properties expressions
+                let title_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "title",
+                );
+                let last_message_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "last-message",
+                );
+                let unread_count_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "unread-count",
+                );
+                let is_pinned_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "is-pinned",
+                );
+                let notification_settings_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "notification-settings",
+                );
+                let session_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "session",
+                );
 
-                    let datetime_now = glib::DateTime::new_now_local().unwrap();
-                    let datetime = glib::DateTime::from_unix_utc(date as i64)
-                        .and_then(|t| t.to_local())
-                        .unwrap();
+                // Title label bindings
+                title_expression.bind(&*self_.title_label, "label", Some(chat));
 
-                    let hours_difference = datetime_now.difference(&datetime) / 3600000000;
-                    let days_difference = hours_difference / 24;
+                // Timestamp label bindings
+                let date_expression = gtk::PropertyExpression::new(
+                    Message::static_type(),
+                    Some(&last_message_expression),
+                    "date",
+                );
+                let timestamp_expression = gtk::ClosureExpression::new(
+                    |args| -> String {
+                        let date = args[1].get::<i32>().unwrap();
 
-                    if hours_difference <= 16 {
-                        // Show the time
-                        let mut time = datetime.format("%X").unwrap().to_string();
+                        let datetime_now = glib::DateTime::new_now_local().unwrap();
+                        let datetime = glib::DateTime::from_unix_utc(date as i64)
+                            .and_then(|t| t.to_local())
+                            .unwrap();
 
-                        // Remove seconds
-                        time.replace_range(5..8, "");
-                        time
-                    } else if days_difference < 6 {
-                        // Show the day of the week
-                        datetime.format("%a").unwrap().to_string()
-                    } else if days_difference < 364 {
-                        // Show the day and the month
-                        datetime.format("%d %b").unwrap().to_string()
-                    } else {
-                        // Show the entire date
-                        datetime.format("%x").unwrap().to_string()
-                    }
-                },
-                &[date_expression.upcast()],
-            );
-            let timestamp_label = self_.timestamp_label.get();
-            timestamp_expression.bind(&timestamp_label, "label", Some(&timestamp_label));
+                        let hours_difference = datetime_now.difference(&datetime) / 3600000000;
+                        let days_difference = hours_difference / 24;
 
-            // Last message label
-            //
-            // FIXME: The sender name should be part of the expressions, but it can't because
-            // the sender object is an enum of two object variants and there's no way to obtain
-            // one of the two objects from a message expression to make a sender variant expression.
-            let content_expression = gtk::PropertyExpression::new(
-                Message::static_type(),
-                Some(&last_message_expression),
-                "content",
-            );
-            let stringified_message_expression = gtk::ClosureExpression::new(
-                move |args| {
-                    let last_message = args[1].get::<Message>().unwrap();
-                    stringify_message(last_message)
-                },
-                &[
-                    last_message_expression.upcast(),
-                    content_expression.upcast(),
-                ],
-            );
-            let last_message_label = self_.last_message_label.get();
-            stringified_message_expression.bind(
-                &last_message_label,
-                "label",
-                Some(&last_message_label),
-            );
+                        if hours_difference <= 16 {
+                            // Show the time
+                            let mut time = datetime.format("%X").unwrap().to_string();
 
-            // Pinned icon and unread badge visibility
-            let is_pinned_expression = gtk::PropertyExpression::new(
-                Chat::static_type(),
-                Some(&chat_expression),
-                "is-pinned",
-            );
-            let unread_count_expression = gtk::PropertyExpression::new(
-                Chat::static_type(),
-                Some(&chat_expression),
-                "unread-count",
-            );
-            let pin_visibility_expression = gtk::ClosureExpression::new(
-                move |args| {
-                    let is_pinned = args[1].get::<bool>().unwrap();
-                    let unread_count = args[2].get::<i32>().unwrap();
-
-                    is_pinned && unread_count <= 0
-                },
-                &[
-                    is_pinned_expression.upcast(),
-                    unread_count_expression.upcast(),
-                ],
-            );
-            let pin_image = self_.pin_image.get();
-            pin_visibility_expression.bind(&pin_image, "visible", Some(&pin_image));
-
-            let notification_settings_expression = gtk::PropertyExpression::new(
-                Chat::static_type(),
-                Some(&chat_expression),
-                "notification-settings",
-            );
-
-            let session_expression = gtk::ConstantExpression::new(&chat.session());
-
-            let scope_notification_settings_expression = gtk::PropertyExpression::new(
-                Session::static_type(),
-                Some(&session_expression),
-                match chat.type_() {
-                    ChatType::Private(_) | ChatType::Secret(_) => {
-                        "private-chats-notification-settings"
-                    }
-                    ChatType::BasicGroup(_) => "group-chats-notification-settings",
-                    ChatType::Supergroup(data) => {
-                        if data.is_channel {
-                            "channel-chats-notification-settings"
+                            // Remove seconds
+                            time.replace_range(5..8, "");
+                            time
+                        } else if days_difference < 6 {
+                            // Show the day of the week
+                            datetime.format("%a").unwrap().to_string()
+                        } else if days_difference < 364 {
+                            // Show the day and the month
+                            datetime.format("%d %b").unwrap().to_string()
                         } else {
-                            "group-chats-notification-settings"
+                            // Show the entire date
+                            datetime.format("%x").unwrap().to_string()
                         }
-                    }
-                },
-            );
+                    },
+                    &[date_expression.upcast()],
+                );
+                timestamp_expression.bind(&*self_.timestamp_label, "label", Some(chat));
 
-            let unread_count_label_css_expression = gtk::ClosureExpression::new(
-                |args| {
-                    let notification_settings =
-                        args[1].get::<BoxedChatNotificationSettings>().unwrap().0;
+                // Last message label bindings
+                let content_expression = gtk::PropertyExpression::new(
+                    Message::static_type(),
+                    Some(&last_message_expression),
+                    "content",
+                );
+                // FIXME: the sender name should be part of this expression.
+                let stringified_message_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        let last_message = args[1].get::<Message>().unwrap();
+                        stringify_message(last_message)
+                    },
+                    &[
+                        last_message_expression.upcast(),
+                        content_expression.upcast(),
+                    ],
+                );
+                stringified_message_expression.bind(
+                    &*self_.last_message_label,
+                    "label",
+                    Some(chat),
+                );
 
-                    let scope_notification_settings =
-                        args[2].get::<BoxedScopeNotificationSettings>().unwrap().0;
+                // Unread count label bindings
+                let unread_count_visibility_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        let unread_count = args[1].get::<i32>().unwrap();
+                        unread_count > 0
+                    },
+                    &[unread_count_expression.clone().upcast()],
+                );
+                let scope_notification_settings_expression = gtk::PropertyExpression::new(
+                    Session::static_type(),
+                    Some(&session_expression),
+                    match chat.type_() {
+                        ChatType::Private(_) | ChatType::Secret(_) => {
+                            "private-chats-notification-settings"
+                        }
+                        ChatType::BasicGroup(_) => "group-chats-notification-settings",
+                        ChatType::Supergroup(data) => {
+                            if data.is_channel {
+                                "channel-chats-notification-settings"
+                            } else {
+                                "group-chats-notification-settings"
+                            }
+                        }
+                    },
+                );
+                let unread_count_css_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        let notification_settings =
+                            args[1].get::<BoxedChatNotificationSettings>().unwrap().0;
+                        let scope_notification_settings =
+                            args[2].get::<BoxedScopeNotificationSettings>().unwrap().0;
 
-                    vec![
-                        "unread-count".to_string(),
-                        if notification_settings.use_default_mute_for {
-                            if scope_notification_settings
-                                .map(|s| s.mute_for > 0)
-                                .unwrap_or(notification_settings.mute_for > 0)
-                            {
+                        vec![
+                            "unread-count".to_string(),
+                            if notification_settings.use_default_mute_for {
+                                if scope_notification_settings
+                                    .map(|s| s.mute_for > 0)
+                                    .unwrap_or(notification_settings.mute_for > 0)
+                                {
+                                    "unread-count-muted"
+                                } else {
+                                    "unread-count-unmuted"
+                                }
+                            } else if notification_settings.mute_for > 0 {
                                 "unread-count-muted"
                             } else {
                                 "unread-count-unmuted"
                             }
-                        } else if notification_settings.mute_for > 0 {
-                            "unread-count-muted"
-                        } else {
-                            "unread-count-unmuted"
-                        }
-                        .to_string(),
-                    ]
-                },
-                &[
-                    notification_settings_expression.upcast(),
-                    scope_notification_settings_expression.upcast(),
-                ],
-            );
-            unread_count_label_css_expression.bind(
-                &*self_.unread_count_label,
-                "css-classes",
-                gtk::NONE_WIDGET,
-            );
+                            .to_string(),
+                        ]
+                    },
+                    &[
+                        notification_settings_expression.upcast(),
+                        scope_notification_settings_expression.upcast(),
+                    ],
+                );
+                unread_count_expression.bind(&*self_.unread_count_label, "label", Some(chat));
+                unread_count_visibility_expression.bind(
+                    &*self_.unread_count_label,
+                    "visible",
+                    Some(chat),
+                );
+                unread_count_css_expression.bind(
+                    &*self_.unread_count_label,
+                    "css-classes",
+                    Some(chat),
+                );
+
+                // Pin icon bindings
+                let pin_visibility_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        let is_pinned = args[1].get::<bool>().unwrap();
+                        let unread_count = args[2].get::<i32>().unwrap();
+                        is_pinned && unread_count <= 0
+                    },
+                    &[
+                        is_pinned_expression.upcast(),
+                        unread_count_expression.upcast(),
+                    ],
+                );
+                pin_visibility_expression.bind(&*self_.pin_icon, "visible", Some(chat));
+            } else if let Some(user) = item.downcast_ref::<User>() {
+                self_.timestamp_label.set_visible(false);
+                self_.bottom_box.set_visible(false);
+
+                let user_expression = gtk::ConstantExpression::new(user);
+                let full_name_expression = User::full_name_expression(&user_expression);
+
+                // Title label bindings
+                full_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
+            } else {
+                unreachable!("Unexpected item type: {:?}", item);
+            }
         }
 
-        self_.chat.replace(chat);
-        self.notify("chat");
+        self_.item.replace(item);
+        self.notify("item");
     }
 }
 

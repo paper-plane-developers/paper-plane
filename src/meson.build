@@ -49,8 +49,8 @@ rust_sources = files(
   'session/content/mod.rs',
   'session/content/user_dialog.rs',
   'session/sidebar/avatar.rs',
-  'session/sidebar/chat_row.rs',
   'session/sidebar/mod.rs',
+  'session/sidebar/row.rs',
 )
 
 sources = [rust_sources, cargo_sources]

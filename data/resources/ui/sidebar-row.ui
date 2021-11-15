@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SidebarRow" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="spacing">12</property>
+      </object>
+    </property>
+    <child>
+      <object class="SidebarAvatar" id="avatar">
+        <binding name="item">
+          <lookup name="item">SidebarRow</lookup>
+        </binding>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox" id="main_box">
+        <property name="homogeneous">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="title_label">
+                <property name="halign">start</property>
+                <property name="hexpand">True</property>
+                <property name="ellipsize">end</property>
+                <property name="single-line-mode">True</property>
+                <style>
+                  <class name="title"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="timestamp_label">
+                <property name="single-line-mode">True</property>
+                <style>
+                  <class name="dim-label"/>
+                  <class name="timestamp"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="bottom_box">
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="last_message_label">
+                <property name="hexpand">True</property>
+                <property name="halign">start</property>
+                <property name="ellipsize">end</property>
+                <property name="single-line-mode">True</property>
+                <property name="use-markup">True</property>
+                <style>
+                  <class name="last-message"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImage" id="pin_icon">
+                <property name="icon-name">view-pin-symbolic</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="unread_count_label">
+                <property name="valign">center</property>
+                <property name="ellipsize">end</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

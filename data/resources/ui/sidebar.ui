@@ -32,6 +32,12 @@
     <child>
       <object class="AdwHeaderBar" id="header_bar">
         <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+        <child type="start">
+          <object class="GtkToggleButton">
+            <property name="icon-name">system-search-symbolic</property>
+            <property name="active" bind-source="search_bar" bind-property="search-mode-enabled" bind-flags="bidirectional|sync-create"/>
+          </object>
+        </child>
         <child type="end">
           <object class="GtkMenuButton">
             <property name="icon-name">open-menu-symbolic</property>
@@ -41,11 +47,20 @@
       </object>
     </child>
     <child>
+      <object class="GtkSearchBar" id="search_bar">
+        <property name="child">
+          <object class="GtkSearchEntry" id="search_entry">
+            <property name="hexpand">True</property>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
       <object class="GtkScrolledWindow" id="scrolled_window">
         <property name="vexpand">True</property>
         <property name="hscrollbar-policy">never</property>
         <child>
-          <object class="GtkListView" id="chat_list_view">
+          <object class="GtkListView" id="list_view">
             <property name="factory">
               <object class="GtkBuilderListItemFactory">
                 <property name="bytes"><![CDATA[
@@ -53,10 +68,10 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="SidebarChatRow">
+      <object class="SidebarRow">
         <property name="margin-top">6</property>
         <property name="margin-bottom">6</property>
-        <binding name="chat">
+        <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>
       </object>

@@ -23,6 +23,17 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes" context="shortcut window">Chat List</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes" context="shortcut window">Search Chats</property>
+                <property name="accelerator">&lt;ctrl&gt;&lt;shift&gt;f</property>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </object>
