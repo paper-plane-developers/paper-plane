@@ -10,23 +10,18 @@
       <class name="chat-action-bar"/>
     </style>
     <child>
-      <object class="GtkFrame" id="frame">
+      <object class="GtkScrolledWindow" id="scrolled_window">
+        <property name="hexpand">True</property>
+        <property name="max-content-height">200</property>
+        <property name="hscrollbar-policy">never</property>
+        <property name="propagate-natural-height">True</property>
         <property name="child">
-          <object class="GtkScrolledWindow">
-            <property name="hexpand">True</property>
-            <property name="max-content-height">200</property>
-            <property name="hscrollbar-policy">never</property>
-            <property name="vscrollbar-policy">external</property>
-            <property name="propagate-natural-height">True</property>
-            <property name="child">
-              <object class="GtkTextView" id="message_entry">
-                <property name="top-margin">6</property>
-                <property name="bottom-margin">6</property>
-                <property name="left-margin">6</property>
-                <property name="right-margin">6</property>
-                <property name="wrap-mode">word-char</property>
-              </object>
-            </property>
+          <object class="GtkTextView" id="message_entry">
+            <property name="top-margin">6</property>
+            <property name="bottom-margin">6</property>
+            <property name="left-margin">6</property>
+            <property name="right-margin">6</property>
+            <property name="wrap-mode">word-char</property>
           </object>
         </property>
       </object>

@@ -117,6 +117,20 @@
   margin: 6px;
 }
 
+.chat-action-bar scrolledwindow slider {
+  min-height: 0;
+}
+
+.chat-action-bar textview {
+  background-color: alpha(@view_fg_color, 0.08);
+  border-radius: 12px;
+  padding: 2px;
+}
+
+.chat-action-bar text {
+  background-color: transparent;
+}
+
 .qr-code-quite-zone {
   background-color: white;
 }
