@@ -1,11 +1,13 @@
+use gettextrs::gettext;
 use glib::{clone, signal::Inhibit};
 use gtk::{gdk, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use std::borrow::Cow;
 use tdgrand::{
-    enums::{ChatAction, InputMessageContent},
+    enums::{self, ChatAction, InputMessageContent},
     functions, types,
 };
 
-use crate::session::Chat;
+use crate::session::{chat::BoxedDraftMessage, Chat};
 use crate::utils::do_async;
 use crate::RUNTIME;
 
@@ -217,9 +219,21 @@ impl ChatActionBar {
         }
     }
 
-    fn load_draft_message(&self, message: String) {
+    fn load_draft_message(&self, message: BoxedDraftMessage) {
+        // TODO: Load more message types
+        let message_text = message
+            .0
+            .as_ref()
+            .map(|message| match message.input_message_text {
+                enums::InputMessageContent::InputMessageText(ref content) => {
+                    Cow::Borrowed(content.text.text.as_str())
+                }
+                _ => Cow::Owned(gettext("Unsupported draft message type")),
+            })
+            .unwrap_or_default();
+
         let self_ = imp::ChatActionBar::from_instance(self);
-        self_.message_entry.buffer().set_text(&message);
+        self_.message_entry.buffer().set_text(&*message_text);
     }
 
     fn send_chat_action(&self, action: ChatAction) {

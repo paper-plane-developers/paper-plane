@@ -46,14 +46,14 @@
           <object class="GtkBox" id="bottom_box">
             <property name="spacing">6</property>
             <child>
-              <object class="GtkLabel" id="last_message_label">
+              <object class="GtkLabel" id="message_label">
                 <property name="hexpand">True</property>
                 <property name="halign">start</property>
                 <property name="ellipsize">end</property>
                 <property name="single-line-mode">True</property>
                 <property name="use-markup">True</property>
                 <style>
-                  <class name="last-message"/>
+                  <class name="message"/>
                 </style>
               </object>
             </child>
