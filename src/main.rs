@@ -15,17 +15,15 @@ use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};
 use gtk::{
     gio, glib,
-    prelude::{ApplicationExt, IsA},
+    prelude::{ApplicationExt, ApplicationExtManual, IsA},
 };
 use once_cell::sync::Lazy;
+use std::str::FromStr;
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
 
 fn main() {
-    // Initialize logger
-    pretty_env_logger::init();
-
     // Prepare i18n
     gettextrs::setlocale(LocaleCategory::LcAll, "");
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
@@ -49,6 +47,19 @@ fn main() {
             // ... and exit application.
             1
         } else {
+            let log_level = match dict.lookup::<String>("log-level").unwrap() {
+                Some(level) => log::Level::from_str(&level).expect("Error on parsing log-level"),
+                // Standard log levels if not specified by user
+                #[cfg(not(debug_assertions))]
+                None => log::Level::Info,
+                #[cfg(debug_assertions)]
+                None => log::Level::Debug,
+            };
+
+            // TODO: Change to syslog when tdlib v1.8 is out where messages can be redirected.
+            std::env::set_var("RUST_LOG", log_level.as_str());
+            pretty_env_logger::init();
+
             -1
         }
     });
@@ -64,6 +75,15 @@ fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
         glib::OptionArg::None,
         &gettext("Prints application version"),
         None,
+    );
+
+    app.add_main_option(
+        "log-level",
+        b'l'.into(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::String,
+        &gettext("Specify the minimum log level"),
+        Some("error|warn|info|debug|trace"),
     );
 
     app
