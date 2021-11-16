@@ -162,7 +162,17 @@ impl Window {
         // to do at least a request to start receiving updates.
         RUNTIME.spawn(async move {
             functions::SetLogVerbosityLevel::new()
-                .new_verbosity_level(2)
+                .new_verbosity_level(if log::log_enabled!(log::Level::Trace) {
+                    5
+                } else if log::log_enabled!(log::Level::Debug) {
+                    4
+                } else if log::log_enabled!(log::Level::Info) {
+                    3
+                } else if log::log_enabled!(log::Level::Warn) {
+                    2
+                } else {
+                    0
+                })
                 .send(client_id)
                 .await
                 .unwrap();

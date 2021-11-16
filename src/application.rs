@@ -49,6 +49,11 @@ mod imp {
 
         fn startup(&self, app: &Self::Type) {
             debug!("GtkApplication<Application>::startup");
+
+            info!("Telegrand ({})", APP_ID);
+            info!("Version: {} ({})", VERSION, PROFILE);
+            info!("Datadir: {}", PKGDATADIR);
+
             self.parent_startup(app);
 
             // Set icons for shell
@@ -157,13 +162,5 @@ impl Application {
             .build();
 
         dialog.show();
-    }
-
-    pub fn run(&self) {
-        info!("Telegrand ({})", APP_ID);
-        info!("Version: {} ({})", VERSION, PROFILE);
-        info!("Datadir: {}", PKGDATADIR);
-
-        ApplicationExtManual::run(self);
     }
 }

@@ -10,6 +10,7 @@ use tdgrand::{enums::AuthorizationState, functions, types};
 
 use crate::config;
 use crate::utils::{do_async, parse_formatted_text};
+use crate::DATA_DIR;
 
 mod imp {
     use super::*;
@@ -624,8 +625,14 @@ impl Login {
         let self_ = imp::Login::from_instance(self);
         let client_id = self_.client_id.get();
         let use_test_dc = self_.use_test_dc_switch.state();
-        let database_directory =
-            format!("{}/telegrand/db0", glib::user_data_dir().to_str().unwrap());
+
+        let database_directory = DATA_DIR
+            .get()
+            .unwrap()
+            .to_str()
+            .expect("Data directory path is not a valid unicode string")
+            .to_owned();
+
         let system_language_code = {
             let locale = Locale::current().to_string();
             if !locale.is_empty() {

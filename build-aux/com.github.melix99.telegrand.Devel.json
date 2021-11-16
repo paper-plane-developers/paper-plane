@@ -13,7 +13,6 @@
         "--share=network",
         "--device=dri",
         "--talk-name=org.a11y.Bus",
-        "--env=RUST_LOG=telegrand=debug",
         "--env=G_MESSAGES_DEBUG=none",
         "--env=RUST_BACKTRACE=1"
     ],
