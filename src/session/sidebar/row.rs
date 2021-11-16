@@ -1,10 +1,12 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
-use tdgrand::enums::{CallDiscardReason, ChatType, MessageContent};
-use tdgrand::types::MessageCall;
+use tdgrand::enums::{CallDiscardReason, ChatType, InputMessageContent, MessageContent};
+use tdgrand::types::{DraftMessage, MessageCall};
 
-use crate::session::chat::{BoxedChatNotificationSettings, Message, MessageSender};
+use crate::session::chat::{
+    BoxedChatNotificationSettings, BoxedDraftMessage, Message, MessageSender,
+};
 use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
 use crate::utils::{dim_and_escape, escape, human_friendly_duration};
@@ -30,7 +32,7 @@ mod imp {
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub last_message_label: TemplateChild<gtk::Label>,
+        pub message_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
@@ -139,6 +141,11 @@ impl Row {
                     gtk::NONE_EXPRESSION,
                     "last-message",
                 );
+                let draft_message_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "draft-message",
+                );
                 let unread_count_expression = gtk::PropertyExpression::new(
                     Chat::static_type(),
                     gtk::NONE_EXPRESSION,
@@ -164,10 +171,32 @@ impl Row {
                 title_expression.bind(&*self_.title_label, "label", Some(chat));
 
                 // Timestamp label bindings
-                let date_expression = gtk::PropertyExpression::new(
-                    Message::static_type(),
-                    Some(&last_message_expression),
-                    "date",
+                let date_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        // Either, if there is a draft message, retrieve the timestamp from it. ...
+                        args[1]
+                            .get::<BoxedDraftMessage>()
+                            .unwrap()
+                            .0
+                            .map(|m| m.date)
+                            .unwrap_or_else(|| {
+                                // ... Or, if there is no draft message use the timestamp of the
+                                // last message.
+                                args[2]
+                                    .get::<Message>()
+                                    .as_ref()
+                                    // TODO: Sometimes just unwrapping here crashes because the
+                                    // update hasn't yet arrived. For the future, I think we could
+                                    // set the last message early in chat construction to remove
+                                    // this workaround.
+                                    .map(Message::date)
+                                    .unwrap_or_default()
+                            })
+                    },
+                    &[
+                        draft_message_expression.clone().upcast(),
+                        last_message_expression.clone().upcast(),
+                    ],
                 );
                 let timestamp_expression = gtk::ClosureExpression::new(
                     |args| -> String {
@@ -203,7 +232,7 @@ impl Row {
                 );
                 timestamp_expression.bind(&*self_.timestamp_label, "label", Some(chat));
 
-                // Last message label bindings
+                // Last message and draft message label bindings
                 let content_expression = gtk::PropertyExpression::new(
                     Message::static_type(),
                     Some(&last_message_expression),
@@ -212,19 +241,39 @@ impl Row {
                 // FIXME: the sender name should be part of this expression.
                 let stringified_message_expression = gtk::ClosureExpression::new(
                     |args| {
-                        let last_message = args[1].get::<Message>().unwrap();
-                        stringify_message(last_message)
+                        // Either, if there is a draft message, retrieve the content from it. ...
+                        args[1]
+                            .get::<BoxedDraftMessage>()
+                            .unwrap()
+                            .0
+                            .as_ref()
+                            .map(|message| {
+                                format!(
+                                    "<span foreground=\"#e01b24\">{}:</span> {}",
+                                    gettext("Draft"),
+                                    stringify_draft_message(message)
+                                )
+                            })
+                            .unwrap_or_else(|| {
+                                // ... Or, if there is no draft message use the content of the
+                                // last message.
+                                args[2]
+                                    .get::<Message>()
+                                    // TODO: Sometimes just unwrapping here crashes because the
+                                    // update hasn't yet arrived. For the future, I think we could
+                                    // set the last message early in chat construction to remove
+                                    // this workaround.
+                                    .map(stringify_message)
+                                    .unwrap_or_default()
+                            })
                     },
                     &[
+                        draft_message_expression.upcast(),
                         last_message_expression.upcast(),
                         content_expression.upcast(),
                     ],
                 );
-                stringified_message_expression.bind(
-                    &*self_.last_message_label,
-                    "label",
-                    Some(chat),
-                );
+                stringified_message_expression.bind(&*self_.message_label, "label", Some(chat));
 
                 // Unread count label bindings
                 let unread_count_visibility_expression = gtk::ClosureExpression::new(
@@ -408,61 +457,16 @@ fn stringify_message(message: Message) -> String {
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
-        MessageContent::MessagePhoto(data) => format!(
-            "{}{}",
-            gettext("Photo"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
-        MessageContent::MessageAudio(data) => format!(
-            "{} - {}{}",
-            data.audio.performer,
-            data.audio.title,
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
-        MessageContent::MessageAnimation(data) => format!(
-            "{}{}",
-            gettext("GIF"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
-        MessageContent::MessageVideo(data) => format!(
-            "{}{}",
-            gettext("Video"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
-        MessageContent::MessageDocument(data) => format!(
-            "{}{}",
-            data.document.file_name,
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
-        MessageContent::MessageVoiceNote(data) => format!(
-            "{}{}",
-            gettext("Voice message"),
-            if data.caption.text.is_empty() {
-                String::new()
-            } else {
-                format!(", {}", dim_and_escape(&data.caption.text))
-            }
-        ),
+        MessageContent::MessagePhoto(data) => stringify_message_photo(&data.caption.text),
+        MessageContent::MessageAudio(data) => {
+            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text)
+        }
+        MessageContent::MessageAnimation(data) => stringify_message_animation(&data.caption.text),
+        MessageContent::MessageVideo(data) => stringify_message_video(&data.caption.text),
+        MessageContent::MessageDocument(data) => {
+            stringify_message_document(&data.document.file_name, &data.caption.text)
+        }
+        MessageContent::MessageVoiceNote(data) => stringify_message_voice_note(&data.caption.text),
         MessageContent::MessageCall(data) => {
             match data.discard_reason {
                 CallDiscardReason::Declined => {
@@ -566,6 +570,101 @@ fn stringify_made_message_call(is_outgoing: bool, data: MessageCall) -> String {
     } else {
         gettext("Incoming call")
     }
+}
+
+fn stringify_draft_message(message: &DraftMessage) -> String {
+    match &message.input_message_text {
+        InputMessageContent::InputMessageAnimation(data) => {
+            stringify_message_animation(&data.caption.text)
+        }
+        InputMessageContent::InputMessageAudio(data) => {
+            stringify_message_audio(&data.performer, &data.title, &data.caption.text)
+        }
+        InputMessageContent::InputMessageDocument(data) => {
+            stringify_message_document(&gettext("Document"), &data.caption.text)
+        }
+        InputMessageContent::InputMessagePhoto(data) => stringify_message_photo(&data.caption.text),
+        InputMessageContent::InputMessageSticker(_) => gettext("Sticker"),
+        InputMessageContent::InputMessageText(data) => dim_and_escape(&data.text.text),
+        InputMessageContent::InputMessageVideo(data) => stringify_message_video(&data.caption.text),
+        InputMessageContent::InputMessageVoiceNote(data) => {
+            stringify_message_voice_note(&data.caption.text)
+        }
+        _ => gettext("Unsupported message"),
+    }
+}
+
+fn stringify_message_animation(caption_text: &str) -> String {
+    format!(
+        "{}{}",
+        gettext("GIF"),
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
+}
+
+fn stringify_message_audio(performer: &str, title: &str, caption_text: &str) -> String {
+    format!(
+        "{} - {}{}",
+        performer,
+        title,
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
+}
+
+fn stringify_message_document(file_name: &str, caption_text: &str) -> String {
+    format!(
+        "{}{}",
+        file_name,
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
+}
+
+fn stringify_message_photo(caption_text: &str) -> String {
+    format!(
+        "{}{}",
+        gettext("Photo"),
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
+}
+
+fn stringify_message_video(caption_text: &str) -> String {
+    format!(
+        "{}{}",
+        gettext("Video"),
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
+}
+
+fn stringify_message_voice_note(caption_text: &str) -> String {
+    format!(
+        "{}{}",
+        gettext("Voice message"),
+        if caption_text.is_empty() {
+            String::new()
+        } else {
+            format!(", {}", dim_and_escape(caption_text))
+        }
+    )
 }
 
 fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {

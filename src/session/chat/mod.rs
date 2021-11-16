@@ -10,7 +10,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdgrand::enums::{self, ChatType, Update};
-use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings};
+use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::Avatar;
 use crate::Session;
@@ -18,6 +18,10 @@ use crate::Session;
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatType")]
 pub struct BoxedChatType(ChatType);
+
+#[derive(Clone, Debug, Default, glib::GBoxed)]
+#[gboxed(type_name = "BoxedDraftMessage")]
+pub struct BoxedDraftMessage(pub Option<DraftMessage>);
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatNotificationSettings")]
@@ -38,7 +42,7 @@ mod imp {
         pub order: Cell<i64>,
         pub is_pinned: Cell<bool>,
         pub unread_count: Cell<i32>,
-        pub draft_message: RefCell<String>,
+        pub draft_message: RefCell<BoxedDraftMessage>,
         pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub history: OnceCell<History>,
         pub session: OnceCell<Session>,
@@ -117,11 +121,11 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpec::new_boxed(
                         "draft-message",
                         "Draft Message",
                         "The draft message of this chat",
-                        None,
+                        BoxedDraftMessage::static_type(),
                         glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_boxed(
@@ -256,6 +260,7 @@ impl Chat {
             ("type", &type_),
             ("title", &chat.title),
             ("avatar", &avatar),
+            ("draft-message", &BoxedDraftMessage(chat.draft_message)),
             ("unread-count", &chat.unread_count),
             (
                 "notification-settings",
@@ -318,14 +323,7 @@ impl Chat {
                 self.set_unread_count(update.unread_count);
             }
             Update::ChatDraftMessage(update) => {
-                let mut draft_message = String::new();
-                if let Some(message) = update.draft_message {
-                    let content = message.input_message_text;
-                    if let enums::InputMessageContent::InputMessageText(content) = content {
-                        draft_message = content.text.text;
-                    }
-                }
-                self.set_draft_message(draft_message);
+                self.set_draft_message(BoxedDraftMessage(update.draft_message));
             }
             _ => {}
         }
@@ -402,12 +400,12 @@ impl Chat {
         }
     }
 
-    pub fn draft_message(&self) -> String {
+    pub fn draft_message(&self) -> BoxedDraftMessage {
         self.property("draft-message").unwrap().get().unwrap()
     }
 
-    fn set_draft_message(&self, draft_message: String) {
-        if self.draft_message() != draft_message {
+    fn set_draft_message(&self, draft_message: BoxedDraftMessage) {
+        if self.draft_message().0 != draft_message.0 {
             self.set_property("draft-message", &draft_message).unwrap();
         }
     }
