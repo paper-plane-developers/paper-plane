@@ -113,8 +113,13 @@
   font-size: 0.95em;
 }
 
-.chat-action-bar {
-  margin: 6px;
+.chat-action-bar entry {
+  padding: 0;
+}
+
+.chat-action-bar scrolledwindow scrollbar  {
+  box-shadow: none;
+  background: none;
 }
 
 .chat-action-bar scrolledwindow slider {
@@ -122,13 +127,12 @@
 }
 
 .chat-action-bar textview {
-  background-color: alpha(@view_fg_color, 0.08);
-  border-radius: 12px;
-  padding: 2px;
+  background: none;
+  color: inherit;
 }
 
-.chat-action-bar text {
-  background-color: transparent;
+.chat-action-bar textview text {
+  background: none;
 }
 
 .qr-code-quite-zone {
