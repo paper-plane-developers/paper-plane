@@ -12,8 +12,11 @@ use self::session::Session;
 use self::window::Window;
 
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
-use gettextrs::LocaleCategory;
-use gtk::{gio, glib};
+use gettextrs::{gettext, LocaleCategory};
+use gtk::{
+    gio, glib,
+    prelude::{ApplicationExt, IsA},
+};
 use once_cell::sync::Lazy;
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
@@ -36,6 +39,32 @@ fn main() {
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = Application::new();
+    let app = setup_cli(Application::new());
+
+    // Command line handling
+    app.connect_handle_local_options(|_, dict| {
+        if dict.contains("version") {
+            // Print version ...
+            println!("telegrand {}", config::VERSION);
+            // ... and exit application.
+            1
+        } else {
+            -1
+        }
+    });
+
     app.run();
+}
+
+fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
+    app.add_main_option(
+        "version",
+        b'v'.into(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::None,
+        &gettext("Prints application version"),
+        None,
+    );
+
+    app
 }
