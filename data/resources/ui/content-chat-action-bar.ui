@@ -2,11 +2,10 @@
 <interface>
   <template class="ContentChatActionBar" parent="GtkWidget">
     <property name="layout-manager">
-      <object class="GtkBoxLayout">
-        <property name="spacing">6</property>
-      </object>
+      <object class="GtkBoxLayout"/>
     </property>
     <style>
+      <class name="toolbar"/>
       <class name="chat-action-bar"/>
     </style>
     <child>
