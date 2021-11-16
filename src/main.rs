@@ -17,11 +17,13 @@ use gtk::{
     gio, glib,
     prelude::{ApplicationExt, ApplicationExtManual, IsA},
 };
-use once_cell::sync::Lazy;
-use std::str::FromStr;
+use once_cell::sync::{Lazy, OnceCell};
+use std::{path::PathBuf, str::FromStr};
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
+
+pub static DATA_DIR: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() {
     // Prepare i18n
@@ -60,6 +62,18 @@ fn main() {
             std::env::set_var("RUST_LOG", log_level.as_str());
             pretty_env_logger::init();
 
+            DATA_DIR
+                .set(
+                    #[cfg(not(debug_assertions))]
+                    default_data_dir(),
+                    #[cfg(debug_assertions)]
+                    dict.lookup::<String>("data-dir")
+                        .unwrap()
+                        .map(PathBuf::from)
+                        .unwrap_or_else(default_data_dir),
+                )
+                .unwrap();
+
             -1
         }
     });
@@ -86,5 +100,22 @@ fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
         Some("error|warn|info|debug|trace"),
     );
 
+    #[cfg(debug_assertions)]
+    app.add_main_option(
+        "data-dir",
+        b'd'.into(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::String,
+        &gettext("Specify a different data directory"),
+        Some(&gettext("DIRECTORY")),
+    );
+
     app
+}
+
+fn default_data_dir() -> PathBuf {
+    // TODO: In the future when multi account is a thing, only use the parent directory.
+    PathBuf::from(glib::user_data_dir().to_str().unwrap())
+        .join("telegrand")
+        .join("db0")
 }
