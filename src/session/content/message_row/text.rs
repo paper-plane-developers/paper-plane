@@ -10,8 +10,8 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-bubble.ui")]
-    pub struct MessageBubble {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-text.ui")]
+    pub struct MessageText {
         pub sender_color_class: RefCell<Option<String>>,
         #[template_child]
         pub sender_label: TemplateChild<gtk::Label>,
@@ -20,9 +20,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for MessageBubble {
-        const NAME: &'static str = "ContentMessageBubble";
-        type Type = super::MessageBubble;
+    impl ObjectSubclass for MessageText {
+        const NAME: &'static str = "ContentMessageText";
+        type Type = super::MessageText;
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
@@ -34,34 +34,34 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessageBubble {
+    impl ObjectImpl for MessageText {
         fn dispose(&self, _obj: &Self::Type) {
             self.sender_label.unparent();
             self.content_label.unparent();
         }
     }
 
-    impl WidgetImpl for MessageBubble {}
+    impl WidgetImpl for MessageText {}
 }
 
 glib::wrapper! {
-    pub struct MessageBubble(ObjectSubclass<imp::MessageBubble>)
+    pub struct MessageText(ObjectSubclass<imp::MessageText>)
         @extends gtk::Widget;
 }
 
-impl Default for MessageBubble {
+impl Default for MessageText {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl MessageBubble {
+impl MessageText {
     pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create MessageBubble")
+        glib::Object::new(&[]).expect("Failed to create MessageText")
     }
 
     pub fn set_message(&self, message: &Message) {
-        let self_ = imp::MessageBubble::from_instance(self);
+        let self_ = imp::MessageText::from_instance(self);
 
         if message.is_outgoing() {
             self.add_css_class("outgoing");
