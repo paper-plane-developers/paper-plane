@@ -1,10 +1,15 @@
+mod bubble;
+mod sticker;
+
+use self::bubble::MessageBubble;
+use self::sticker::MessageSticker;
+
 use adw::prelude::BinExt;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::content::{MessageBubble, MessageSticker};
 
 mod imp {
     use super::*;
