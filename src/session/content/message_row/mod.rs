@@ -1,10 +1,15 @@
+mod sticker;
+mod text;
+
+use self::sticker::MessageSticker;
+use self::text::MessageText;
+
 use adw::prelude::BinExt;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{Message, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::content::{MessageBubble, MessageSticker};
 
 mod imp {
     use super::*;
@@ -128,11 +133,11 @@ impl MessageRow {
                 let content = if let Some(Ok(content)) = self_
                     .content_bin
                     .child()
-                    .map(|w| w.downcast::<MessageBubble>())
+                    .map(|w| w.downcast::<MessageText>())
                 {
                     content
                 } else {
-                    let content = MessageBubble::new();
+                    let content = MessageText::new();
                     self_.content_bin.set_child(Some(&content));
                     content
                 };

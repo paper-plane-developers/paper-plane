@@ -4,7 +4,8 @@ use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{ChatType, MessageContent};
 
 use crate::session::chat::{Item, ItemType};
-use crate::session::content::{EventRow, MessageRow};
+use crate::session::content::message_row::MessageRow;
+use crate::session::content::EventRow;
 
 mod imp {
     use super::*;

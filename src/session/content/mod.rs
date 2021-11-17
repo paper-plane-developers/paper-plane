@@ -2,18 +2,13 @@ mod chat_action_bar;
 mod chat_history;
 mod event_row;
 mod item_row;
-mod message_bubble;
 mod message_row;
-mod message_sticker;
 mod user_dialog;
 
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
 use self::event_row::EventRow;
 use self::item_row::ItemRow;
-use self::message_bubble::MessageBubble;
-use self::message_row::MessageRow;
-use self::message_sticker::MessageSticker;
 use self::user_dialog::UserDialog;
 
 use gtk::glib;
