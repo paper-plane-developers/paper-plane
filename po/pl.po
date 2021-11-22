@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the telegrand package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: telegrand\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-08 19:44+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/com.github.melix99.telegrand.desktop.in.in:3
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
+msgid "Telegrand"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:4
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+msgid "A Telegram client optimized for the GNOME desktop"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:6
+#: data/com.github.melix99.telegrand.gschema.xml.in:7
+msgid "Default window width"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:11
+#: data/com.github.melix99.telegrand.gschema.xml.in:12
+msgid "Default window height"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:16
+msgid "Default window maximized behaviour"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/com.github.melix99.telegrand.gschema.xml.in:22
+msgid "Use Telegram's test data center"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+msgid "Main window"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
+msgid "Marco Melorio"
+msgstr ""
+
+#: data/resources/ui/content.ui:22
+msgid "No Chat Selected"
+msgstr ""
+
+#: data/resources/ui/content.ui:23
+msgid "Select a chat to start messaging."
+msgstr ""
+
+#: data/resources/ui/login.ui:14
+msgid "_Previous"
+msgstr ""
+
+#: data/resources/ui/login.ui:25
+msgid "_Next"
+msgstr ""
+
+#: data/resources/ui/login.ui:55
+msgid "Welcome to Telegrand"
+msgstr ""
+
+#: data/resources/ui/login.ui:74
+msgid "Phone Number"
+msgstr ""
+
+#: data/resources/ui/login.ui:95
+msgid "Advanced"
+msgstr ""
+
+#: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
+msgid "Encryption Key"
+msgstr ""
+
+#: data/resources/ui/login.ui:110
+msgid "Use Test Data Center"
+msgstr ""
+
+#: data/resources/ui/login.ui:111
+msgid "This requires a restart to apply"
+msgstr ""
+
+#: data/resources/ui/login.ui:149
+msgid "Enter the Verification Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:168
+msgid "Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:205
+msgid "Register New Account"
+msgstr ""
+
+#: data/resources/ui/login.ui:225
+msgid "First Name"
+msgstr ""
+
+#: data/resources/ui/login.ui:242
+msgid "Last Name"
+msgstr ""
+
+#: data/resources/ui/login.ui:205
+msgid "Enter Your Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:224
+msgid "Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:261
+msgid "Enter the Encryption Key"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:6
+msgid "_Log Out"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:12
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:16
+msgid "_About Telegrand"
+msgstr ""
+
+#: src/window.rs:45 src/session/sidebar/chat_row.rs:240
+msgid "Photo"
+msgstr ""
+
+#: src/window.rs:64 src/session/sidebar/chat_row.rs:259
+msgid "GIF"
+msgstr ""
+
+#: src/window.rs:73 src/session/sidebar/chat_row.rs:268
+msgid "Video"
+msgstr ""
+
+#: src/window.rs::91 src/session/sidebar/chat_row.rs:286
+msgid "Voice message"
+msgstr ""
+
+#. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
+#: src/window.rs::110 src/session/sidebar/chat_row.rs:311
+msgid "{} joined Telegram"
+msgstr ""
+
+#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
+msgid "Unsupported message"
+msgstr ""
+
+#: src/window.rs:409
+msgid "Incoming call"
+msgstr ""
+
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:104
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:107
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row.rs:95
+msgid "This message is unsupported"
+msgstr ""
+
+#: src/session/sidebar/chat_row.rs:318
+msgid "You"
+msgstr ""
+
+#. Translators: This is the hint that is shown to the user on the registratian page.
+#. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
+#. Translators: Insert a '\n' in the text to produce a line break.
+#. Translators: The text 'Terms of Service' within the tag '<a href=\"\">Terms of Service</a>' is
+#. Translators: displayed as a clickable link. Please translate the text within the tags and take
+#. Translators: care of keeping the link intact.
+#: data/resources/ui/login.ui:281
+msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+
+#: src/login.rs:251
+msgid "Do You Accept the Terms of Service?"
+msgstr ""
+
+#: src/login.rs:255
+msgid "Terms of Service"
+msgstr ""
