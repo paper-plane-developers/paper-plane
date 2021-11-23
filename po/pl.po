@@ -8,201 +8,205 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-11-24 08:53+0000\n"
+"Last-Translator: Carlod <carlod@disroot.org>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.10-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
+msgstr "Klient Telegrama dostosowany do środowiska GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "Domyślna szerokość okna"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "Domyślna wysokość okna"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Domyślne zachowanie zmaksymalizowanego okna"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "Użyj testowego centrum danych Telegrama"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "Główne okno"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "Nie Wybrano Chatu"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "Wybierz chat, aby zacząć pisać."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_Poprzedni"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_Następny"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "Witamy w aplikacji Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "Numer Telefonu"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "Zaawansowane"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "Klucz Szyfrujący"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "Użyj Testowego Centrum Danych"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "Wymagane ponowne uruchomienie, aby zastosować"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "Wpisz Kod Weryfikacyjny"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "Kod"
 
 #: data/resources/ui/login.ui:205
 msgid "Register New Account"
-msgstr ""
+msgstr "Zarejestruj Nowe Konto"
 
 #: data/resources/ui/login.ui:225
 msgid "First Name"
-msgstr ""
+msgstr "Imię"
 
 #: data/resources/ui/login.ui:242
 msgid "Last Name"
-msgstr ""
+msgstr "Nazwisko"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "Wpisz Swoje Hasło"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "Hasło"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "Wpisz Klucz Szyfrujący"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "Ogólne"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Pokaż Skróty Klawiszowe"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Wyjdź"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "_Wyloguj Się"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_Skróty Klawiszowe"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_O Telegrandzie"
 
 #: src/window.rs:45 src/session/sidebar/chat_row.rs:240
 msgid "Photo"
-msgstr ""
+msgstr "Zdjęcie"
 
 #: src/window.rs:64 src/session/sidebar/chat_row.rs:259
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:73 src/session/sidebar/chat_row.rs:268
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: src/window.rs::91 src/session/sidebar/chat_row.rs:286
 msgid "Voice message"
-msgstr ""
+msgstr "Wiadomość głosowa"
 
 #. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
 #: src/window.rs::110 src/session/sidebar/chat_row.rs:311
 msgid "{} joined Telegram"
-msgstr ""
+msgstr "{} dołączył do Telegrama"
 
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
-msgstr ""
+msgstr "Nieznana wiadomość"
 
 #: src/window.rs:409
 msgid "Incoming call"
-msgstr ""
+msgstr "Przychodzące połączenie"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%B %e %Y"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Ta wiadomość jest nieznana"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr ""
+msgstr " "
 
 #. Translators: This is the hint that is shown to the user on the registratian page.
 #. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
@@ -213,11 +217,13 @@ msgstr ""
 #: data/resources/ui/login.ui:281
 msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Poprzez założenie konta,\n"
+"akceptujesz <a href=\"\">Zasady Korzystania z Usługi </a>."
 
 #: src/login.rs:251
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Czy Akceptujesz Zasady korzystania z Usługi?"
 
 #: src/login.rs:255
 msgid "Terms of Service"
-msgstr ""
+msgstr "Zasady Korzystania z Usługi"
