@@ -162,6 +162,16 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::ChatUnreadMentionCount(ref update_) => {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
+            Update::MessageMentionRead(ref update_) => {
+                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             Update::ChatReadInbox(ref update_) => {
                 if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);

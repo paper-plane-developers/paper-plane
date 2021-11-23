@@ -36,6 +36,8 @@ mod imp {
         #[template_child]
         pub pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
+        pub unread_mention_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub unread_count_label: TemplateChild<gtk::Label>,
     }
 
@@ -145,6 +147,11 @@ impl Row {
                     Chat::static_type(),
                     gtk::NONE_EXPRESSION,
                     "draft-message",
+                );
+                let unread_mention_count_expression = gtk::PropertyExpression::new(
+                    Chat::static_type(),
+                    gtk::NONE_EXPRESSION,
+                    "unread-mention-count",
                 );
                 let unread_count_expression = gtk::PropertyExpression::new(
                     Chat::static_type(),
@@ -275,13 +282,31 @@ impl Row {
                 );
                 stringified_message_expression.bind(&*self_.message_label, "label", Some(chat));
 
+                // Unread mention count label bindings
+                let unread_mention_count_visibility_expression = gtk::ClosureExpression::new(
+                    |args| {
+                        let unread_mention_count = args[1].get::<i32>().unwrap();
+                        unread_mention_count > 0
+                    },
+                    &[unread_mention_count_expression.clone().upcast()],
+                );
+                unread_mention_count_visibility_expression.bind(
+                    &*self_.unread_mention_label,
+                    "visible",
+                    Some(chat),
+                );
+
                 // Unread count label bindings
                 let unread_count_visibility_expression = gtk::ClosureExpression::new(
                     |args| {
                         let unread_count = args[1].get::<i32>().unwrap();
-                        unread_count > 0
+                        let unread_mention_count = args[2].get::<i32>().unwrap();
+                        unread_count > 0 && (unread_mention_count != 1 || unread_count > 1)
                     },
-                    &[unread_count_expression.clone().upcast()],
+                    &[
+                        unread_count_expression.clone().upcast(),
+                        unread_mention_count_expression.upcast(),
+                    ],
                 );
                 let scope_notification_settings_expression = gtk::PropertyExpression::new(
                     Session::static_type(),

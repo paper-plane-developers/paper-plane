@@ -26,6 +26,16 @@
   font-size: 0.95em;
 }
 
+.chat-list row .unread-mention-count {
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
+  font-size: 0.8em;
+  font-weight: bold;
+  min-width: 1.7em;
+  border-radius: 9999px;
+  padding: 2px 0px;
+}
+
 .chat-list row .unread-count {
   color: @accent_fg_color;
   font-size: 0.8em;

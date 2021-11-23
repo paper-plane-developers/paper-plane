@@ -229,6 +229,8 @@ impl Session {
             | Update::ChatLastMessage(_)
             | Update::ChatNotificationSettings(_)
             | Update::ChatPosition(_)
+            | Update::ChatUnreadMentionCount(_)
+            | Update::MessageMentionRead(_)
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_)
             | Update::DeleteMessages(_) => {

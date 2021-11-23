@@ -66,6 +66,16 @@
               </object>
             </child>
             <child>
+              <object class="GtkLabel" id="unread_mention_label">
+                <property name="valign">center</property>
+                <property name="justify">center</property>
+                <property name="label">@</property>
+                <style>
+                  <class name="unread-mention-count"/>
+                </style>
+              </object>
+            </child>
+            <child>
               <object class="GtkLabel" id="unread_count_label">
                 <property name="valign">center</property>
                 <property name="ellipsize">end</property>
