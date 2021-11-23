@@ -41,6 +41,7 @@ mod imp {
         pub last_message: RefCell<Option<Message>>,
         pub order: Cell<i64>,
         pub is_pinned: Cell<bool>,
+        pub unread_mention_count: Cell<i32>,
         pub unread_count: Cell<i32>,
         pub draft_message: RefCell<BoxedDraftMessage>,
         pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
@@ -110,6 +111,15 @@ mod imp {
                         "Is Pinned",
                         "The parameter to determine if this chat is pinned in the chat list",
                         false,
+                        glib::ParamFlags::READWRITE,
+                    ),
+                    glib::ParamSpec::new_int(
+                        "unread-mention-count",
+                        "Unread Mention Count",
+                        "The unread mention count of this chat",
+                        std::i32::MIN,
+                        std::i32::MAX,
+                        0,
                         glib::ParamFlags::READWRITE,
                     ),
                     glib::ParamSpec::new_int(
@@ -190,6 +200,10 @@ mod imp {
                     let is_pinned = value.get().unwrap();
                     self.is_pinned.set(is_pinned);
                 }
+                "unread-mention-count" => {
+                    let unread_mention_count = value.get().unwrap();
+                    self.unread_mention_count.set(unread_mention_count);
+                }
                 "unread-count" => {
                     let unread_count = value.get().unwrap();
                     self.unread_count.set(unread_count);
@@ -219,6 +233,7 @@ mod imp {
                 "last-message" => self.last_message.borrow().to_value(),
                 "order" => self.order.get().to_value(),
                 "is-pinned" => self.is_pinned.get().to_value(),
+                "unread-mention-count" => self.unread_mention_count.get().to_value(),
                 "unread-count" => self.unread_count.get().to_value(),
                 "draft-message" => self.draft_message.borrow().to_value(),
                 "notification-settings" => self
@@ -261,6 +276,7 @@ impl Chat {
             ("title", &chat.title),
             ("avatar", &avatar),
             ("draft-message", &BoxedDraftMessage(chat.draft_message)),
+            ("unread-mention-count", &chat.unread_mention_count),
             ("unread-count", &chat.unread_count),
             (
                 "notification-settings",
@@ -318,6 +334,12 @@ impl Chat {
                     self.set_order(update.position.order);
                     self.set_is_pinned(update.position.is_pinned);
                 }
+            }
+            Update::ChatUnreadMentionCount(update) => {
+                self.set_unread_mention_count(update.unread_mention_count);
+            }
+            Update::MessageMentionRead(update) => {
+                self.set_unread_mention_count(update.unread_mention_count);
             }
             Update::ChatReadInbox(update) => {
                 self.set_unread_count(update.unread_count);
@@ -387,6 +409,20 @@ impl Chat {
     fn set_is_pinned(&self, is_pinned: bool) {
         if self.is_pinned() != is_pinned {
             self.set_property("is-pinned", &is_pinned).unwrap();
+        }
+    }
+
+    pub fn unread_mention_count(&self) -> i32 {
+        self.property("unread-mention-count")
+            .unwrap()
+            .get()
+            .unwrap()
+    }
+
+    fn set_unread_mention_count(&self, unread_mention_count: i32) {
+        if self.unread_mention_count() != unread_mention_count {
+            self.set_property("unread-mention-count", &unread_mention_count)
+                .unwrap();
         }
     }
 
