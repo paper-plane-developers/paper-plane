@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-11-24 08:53+0000\n"
+"PO-Revision-Date: 2021-11-26 18:54+0000\n"
 "Last-Translator: Carlod <carlod@disroot.org>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
@@ -206,7 +206,7 @@ msgstr "Ta wiadomość jest nieznana"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr " "
+msgstr "Ty"
 
 #. Translators: This is the hint that is shown to the user on the registratian page.
 #. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
