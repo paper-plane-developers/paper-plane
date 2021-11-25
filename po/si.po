@@ -8,18 +8,21 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-11-26 18:54+0000\n"
+"Last-Translator: HelaBasa <R45XvezA@protonmail.ch>\n"
+"Language-Team: Sinhala <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/si/>\n"
 "Language: si\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.10-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "ටෙලිග්‍රෑන්ඩ්"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
@@ -29,17 +32,17 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "ග්නෝම්;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "පෙරනිමි කවුළුවේ පළල"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "පෙරනිමි කවුළුවේ උස"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
@@ -48,15 +51,15 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "ටෙලිග්‍රෑම් අත්හදා බැලීමේ දත්ත මධ්‍ය. භාවිතා කරන්න"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "ප්‍රධාන කවුළුව"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "මාර්කෝ මෙලෝරියෝ"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
@@ -68,23 +71,23 @@ msgstr ""
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "_පෙර"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "_ඊළඟ"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "ටෙලිග්‍රෑන්ඩ් වෙත සාදරයෙන් පිළිගනිමු"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "දුරකථන අංකය"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "වැඩිදුර"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
@@ -92,11 +95,11 @@ msgstr ""
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "අත්හදා බැලීමේ දත්ත මධ්‍ය. භාවිතා කරන්න"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "මෙය යෙදීමට නැවත ආරම්භ කළ යුතුය"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
@@ -104,27 +107,27 @@ msgstr ""
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "කේතය"
 
 #: data/resources/ui/login.ui:205
 msgid "Register New Account"
-msgstr ""
+msgstr "ගිණුමක් ලියාපදිංචි කරන්න"
 
 #: data/resources/ui/login.ui:225
 msgid "First Name"
-msgstr ""
+msgstr "මුල් නම"
 
 #: data/resources/ui/login.ui:242
 msgid "Last Name"
-msgstr ""
+msgstr "අග නම"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "මුරපදය ඇතුල් කරන්න"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "මුරපදය"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
@@ -138,12 +141,12 @@ msgstr ""
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "කෙටිමං පෙන්වන්න"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "ඉවත් වන්න"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -151,11 +154,11 @@ msgstr ""
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "_යතුරුපුවරුවේ කෙටිමං"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_ටෙලිග්‍රෑන්ඩ් ගැන"
 
 #: src/window.rs:45 src/session/sidebar/chat_row.rs:240
 msgid "Photo"
@@ -163,11 +166,11 @@ msgstr ""
 
 #: src/window.rs:64 src/session/sidebar/chat_row.rs:259
 msgid "GIF"
-msgstr ""
+msgstr "චලරූ"
 
 #: src/window.rs:73 src/session/sidebar/chat_row.rs:268
 msgid "Video"
-msgstr ""
+msgstr "දෘශ්‍යකය"
 
 #: src/window.rs::91 src/session/sidebar/chat_row.rs:286
 msgid "Voice message"
@@ -180,7 +183,7 @@ msgstr ""
 
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
-msgstr ""
+msgstr "සහාය නොදක්වන පණිවිඩයකි"
 
 #: src/window.rs:409
 msgid "Incoming call"
@@ -189,20 +192,20 @@ msgstr ""
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%Y %B %e"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr ""
+msgstr "මෙම පණිවිඩයට සහාය නොදක්වයි"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr ""
+msgstr "ඔබ"
 
 #. Translators: This is the hint that is shown to the user on the registratian page.
 #. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
@@ -216,8 +219,8 @@ msgstr ""
 
 #: src/login.rs:251
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "ඔබ සේවාවේ නියම පිළිගන්නවාද?"
 
 #: src/login.rs:255
 msgid "Terms of Service"
-msgstr ""
+msgstr "සේවාවේ නියම"
