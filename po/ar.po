@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: 2021-11-27 15:35+0000\n"
+"PO-Revision-Date: 2021-11-28 13:18+0000\n"
 "Last-Translator: abidin toumi <abidin24@disroot.org>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ar/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "تليغراند"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
@@ -33,7 +33,7 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;غنوم؛"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
@@ -47,7 +47,7 @@ msgstr "الارتفاع الافتراضي للنافذة"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "سلوكة التكبير الافتراضي للنافذة"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
@@ -72,15 +72,15 @@ msgstr "اختر محادثة لتبدأ التراسل."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "ال_سابق"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "ال_تالي"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr "مرحبًا في Telegrand"
+msgstr "مرحبًا في تليغراند"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
@@ -151,15 +151,15 @@ msgstr "خروج"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "_خروج"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "اختصارات _لوحة المفاتيح"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "_حول تليغراند"
 
 #: src/window.rs:45 src/session/sidebar/chat_row.rs:240
 msgid "Photo"
