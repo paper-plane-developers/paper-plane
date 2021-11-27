@@ -8,13 +8,17 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-11-27 15:35+0000\n"
+"Last-Translator: abidin toumi <abidin24@disroot.org>\n"
+"Language-Team: Arabic <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 4.10-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -34,12 +38,12 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "العرض الافتراضي للنافذة"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "الارتفاع الافتراضي للنافذة"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
@@ -52,7 +56,7 @@ msgstr ""
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "النافذة الرئيسية"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
@@ -60,11 +64,11 @@ msgstr ""
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "لم تختر أي محادثة"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "اختر محادثة لتبدأ التراسل."
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
@@ -76,19 +80,19 @@ msgstr ""
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "مرحبًا في Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "رقم الهاتف"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "متقدّم"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "مفتاح التشفير"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
@@ -96,54 +100,54 @@ msgstr ""
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "لتطبيقه أعد التشغيل"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "أدخل رمز التحقق"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "الرمز"
 
 #: data/resources/ui/login.ui:205
 msgid "Register New Account"
-msgstr ""
+msgstr "سجّل حسبًا جديدًا"
 
 #: data/resources/ui/login.ui:225
 msgid "First Name"
-msgstr ""
+msgstr "الاسم"
 
 #: data/resources/ui/login.ui:242
 msgid "Last Name"
-msgstr ""
+msgstr "اللقب"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "أدخل كلمة المرور"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "كلمة المرور"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "أدخل مفتاح التشفير"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "أظهر الإختصارات"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "خروج"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -159,7 +163,7 @@ msgstr ""
 
 #: src/window.rs:45 src/session/sidebar/chat_row.rs:240
 msgid "Photo"
-msgstr ""
+msgstr "صورة"
 
 #: src/window.rs:64 src/session/sidebar/chat_row.rs:259
 msgid "GIF"
@@ -167,42 +171,42 @@ msgstr ""
 
 #: src/window.rs:73 src/session/sidebar/chat_row.rs:268
 msgid "Video"
-msgstr ""
+msgstr "فيديو"
 
 #: src/window.rs::91 src/session/sidebar/chat_row.rs:286
 msgid "Voice message"
-msgstr ""
+msgstr "رسالة صوتية"
 
 #. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
 #: src/window.rs::110 src/session/sidebar/chat_row.rs:311
 msgid "{} joined Telegram"
-msgstr ""
+msgstr "انضم {} لتليغرام"
 
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
-msgstr ""
+msgstr "رسالة غير مدعومة"
 
 #: src/window.rs:409
 msgid "Incoming call"
-msgstr ""
+msgstr "مكالمة واردة"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%e %B %Y"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr ""
+msgstr "هذه الرسالة غير مدعومة"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr ""
+msgstr "أنت"
 
 #. Translators: This is the hint that is shown to the user on the registratian page.
 #. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
@@ -212,12 +216,12 @@ msgstr ""
 #. Translators: care of keeping the link intact.
 #: data/resources/ui/login.ui:281
 msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
-msgstr ""
+msgstr "بالتسجيل أنت توافق على <a href=\"\">شروط الاستخدام</a>."
 
 #: src/login.rs:251
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "هل تقبل شروط الاستخدام؟"
 
 #: src/login.rs:255
 msgid "Terms of Service"
-msgstr ""
+msgstr "شروط الاستخدام"
