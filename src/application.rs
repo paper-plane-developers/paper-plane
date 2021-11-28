@@ -158,7 +158,11 @@ impl Application {
             .transient_for(&self.main_window())
             .modal(true)
             .authors(vec!["Marco Melorio".into(), "Marcus Behrendt".into()])
-            .artists(vec!["Marco Melorio".into()])
+            .artists(vec![
+                "Marco Melorio".into(),
+                "Mateus Santos".into(),
+                "noëlle".into(),
+            ])
             .build();
 
         dialog.show();
