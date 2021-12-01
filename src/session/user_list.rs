@@ -15,7 +15,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct UserList {
-        pub list: RefCell<IndexMap<i32, User>>,
+        pub list: RefCell<IndexMap<i64, User>>,
         pub session: OnceCell<Session>,
     }
 
@@ -104,7 +104,7 @@ impl UserList {
         self.item_added();
     }
 
-    pub fn get_or_create_user(&self, user_id: i32) -> User {
+    pub fn get_or_create_user(&self, user_id: i64) -> User {
         let self_ = imp::UserList::from_instance(self);
 
         let mut list = self_.list.borrow_mut();
