@@ -107,8 +107,8 @@ impl ChatList {
 
     pub fn fetch(&self, client_id: i32) {
         RUNTIME.spawn(async move {
-            functions::GetChats::new()
-                .limit(i32::MAX)
+            functions::LoadChats::new()
+                .limit(20)
                 .send(client_id)
                 .await
                 .unwrap();
