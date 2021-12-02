@@ -9,10 +9,10 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
 "PO-Revision-Date: 2021-11-26 18:54+0000\n"
-"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
-"Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
-"telegrand/fa/>\n"
-"Language: fa\n"
+"Last-Translator: HelaBasa <R45XvezA@protonmail.ch>\n"
+"Language-Team: Sinhala <https://hosted.weblate.org/projects/telegrand/"
+"telegrand/si/>\n"
+"Language: si\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,154 +22,205 @@ msgstr ""
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr "تلگراند"
+msgstr "ටෙලිග්‍රෑන්ඩ්"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "یک کارخواه تلگرام بهینه شده برای میزکار گنوم"
+msgstr ""
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr "Gnome;GTK;گنوم؛جی‌تی‌کی؛"
+msgstr "ග්නෝම්;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr "پهنای پیش‌گزیدهٔ پنجره"
+msgstr "පෙරනිමි කවුළුවේ පළල"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr "بلندای پیش‌گزیدهٔ پنجره"
+msgstr "පෙරනිමි කවුළුවේ උස"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr "رفتار بیشینه شدن پنجرهٔ پیش‌گزیده"
+msgstr ""
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr "استفاده از مرکز داده آزمایشی تلگرام"
+msgstr "ටෙලිග්‍රෑම් අත්හදා බැලීමේ දත්ත මධ්‍ය. භාවිතා කරන්න"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr "پنجرهٔ اصلی"
+msgstr "ප්‍රධාන කවුළුව"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr "مارکو ملوريو"
+msgstr "මාර්කෝ මෙලෝරියෝ"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr "هیچ گپی گزیده نشده"
+msgstr ""
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr "برای آغاز پیام‌رسانی، گپی را برگزینید."
+msgstr ""
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr "_پیشین"
+msgstr "_පෙර"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr "_بعدی"
+msgstr "_ඊළඟ"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr "به تلگراند خوش آمدید"
+msgstr "ටෙලිග්‍රෑන්ඩ් වෙත සාදරයෙන් පිළිගනිමු"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr "شماره تلفن"
+msgstr "දුරකථන අංකය"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr "پیشرفته"
+msgstr "වැඩිදුර"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr "کلید رمزگذاری"
+msgstr ""
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr "استفاده از مرکز داده آزمایشی"
+msgstr "අත්හදා බැලීමේ දත්ත මධ්‍ය. භාවිතා කරන්න"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr "این برای اعمال نیاز به راه‌اندازی مجدد دارد"
+msgstr "මෙය යෙදීමට නැවත ආරම්භ කළ යුතුය"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr "کد تایید را وارد کنید"
+msgstr ""
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr "کد"
+msgstr "කේතය"
+
+#: data/resources/ui/login.ui:205
+msgid "Register New Account"
+msgstr "ගිණුමක් ලියාපදිංචි කරන්න"
+
+#: data/resources/ui/login.ui:225
+msgid "First Name"
+msgstr "මුල් නම"
+
+#: data/resources/ui/login.ui:242
+msgid "Last Name"
+msgstr "අග නම"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr "گذرواژه خود را وارد کنید"
+msgstr "මුරපදය ඇතුල් කරන්න"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr "گذرواژه"
+msgstr "මුරපදය"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr "کلید رمزگذاری را وارد کنید"
+msgstr ""
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr "عمومی"
+msgstr ""
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "نمایش میانبرها"
+msgstr "කෙටිමං පෙන්වන්න"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr "ترک کردن"
+msgstr "ඉවත් වන්න"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr "_خروج"
+msgstr ""
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr "_میانبرهای صفحه‌کلید"
+msgstr "_යතුරුපුවරුවේ කෙටිමං"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr "_درباره تلگراند"
+msgstr "_ටෙලිග්‍රෑන්ඩ් ගැන"
+
+#: src/window.rs:45 src/session/sidebar/chat_row.rs:240
+msgid "Photo"
+msgstr ""
+
+#: src/window.rs:64 src/session/sidebar/chat_row.rs:259
+msgid "GIF"
+msgstr "චලරූ"
+
+#: src/window.rs:73 src/session/sidebar/chat_row.rs:268
+msgid "Video"
+msgstr "දෘශ්‍යකය"
+
+#: src/window.rs::91 src/session/sidebar/chat_row.rs:286
+msgid "Voice message"
+msgstr ""
+
+#. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
+#: src/window.rs::110 src/session/sidebar/chat_row.rs:311
+msgid "{} joined Telegram"
+msgstr ""
 
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
-msgstr "پیام پشتیبانی نشده"
+msgstr "සහාය නොදක්වන පණිවිඩයකි"
 
 #: src/window.rs:409
 msgid "Incoming call"
-msgstr "تماس دریافتی"
+msgstr ""
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%Y %B %e"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr "این پیام پشتیبانی نمی‌شود"
+msgstr "මෙම පණිවිඩයට සහාය නොදක්වයි"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr "شما"
+msgstr "ඔබ"
+
+#. Translators: This is the hint that is shown to the user on the registratian page.
+#. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
+#. Translators: Insert a '\n' in the text to produce a line break.
+#. Translators: The text 'Terms of Service' within the tag '<a href=\"\">Terms of Service</a>' is
+#. Translators: displayed as a clickable link. Please translate the text within the tags and take
+#. Translators: care of keeping the link intact.
+#: data/resources/ui/login.ui:281
+msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+
+#: src/login.rs:251
+msgid "Do You Accept the Terms of Service?"
+msgstr "ඔබ සේවාවේ නියම පිළිගන්නවාද?"
+
+#: src/login.rs:255
+msgid "Terms of Service"
+msgstr "සේවාවේ නියම"
