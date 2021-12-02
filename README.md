@@ -46,7 +46,7 @@ The following packages are required to build Telegrand:
 - cargo
 - GTK4
 - libadwaita (latest git revision)
-- TDLib 1.7.0
+- TDLib 1.7.9
 
 #### Instructions
 

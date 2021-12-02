@@ -19,7 +19,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct User {
-        pub id: Cell<i32>,
+        pub id: Cell<i64>,
         pub type_: RefCell<BoxedUserType>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
@@ -40,12 +40,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpec::new_int64(
                         "id",
                         "Id",
                         "The id of this user",
-                        std::i32::MIN,
-                        std::i32::MAX,
+                        std::i64::MIN,
+                        std::i64::MAX,
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
@@ -157,7 +157,7 @@ glib::wrapper! {
 }
 
 impl User {
-    pub fn new(id: i32, session: &Session) -> Self {
+    pub fn new(id: i64, session: &Session) -> Self {
         let avatar = Avatar::new(session);
         glib::Object::new(&[("id", &id), ("avatar", &avatar)]).expect("Failed to create User")
     }
@@ -180,7 +180,7 @@ impl User {
         }
     }
 
-    pub fn id(&self) -> i32 {
+    pub fn id(&self) -> i64 {
         let self_ = imp::User::from_instance(self);
         self_.id.get()
     }

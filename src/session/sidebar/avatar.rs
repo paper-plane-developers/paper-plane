@@ -277,7 +277,7 @@ impl Avatar {
     }
 }
 
-fn interlocutor_id(chat: &Chat) -> Option<i32> {
+fn interlocutor_id(chat: &Chat) -> Option<i64> {
     match chat.type_() {
         ChatType::Private(private) => Some(private.user_id),
         ChatType::Secret(secret) => Some(secret.user_id),

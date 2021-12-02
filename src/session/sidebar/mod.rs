@@ -27,8 +27,8 @@ mod imp {
         pub filter: RefCell<Option<gtk::CustomFilter>>,
         pub selection: RefCell<Option<gtk::SingleSelection>>,
         pub searched_chats: RefCell<Vec<i64>>,
-        pub searched_users: RefCell<Vec<i32>>,
-        pub already_searched_users: RefCell<Vec<i32>>,
+        pub searched_users: RefCell<Vec<i64>>,
+        pub already_searched_users: RefCell<Vec<i64>>,
         #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
