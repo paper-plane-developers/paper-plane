@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="proxy_operation_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Delete</attribute>
+        <attribute name="action">proxy.delete</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Edit</attribute>
+        <attribute name="action">proxy.edit</attribute>
+      </item>
+    </section>
+  </menu>
+  <template class="ProxyRow" parent="GtkBox">
+    <property name="orientation">horizontal</property>
+    <property name="spacing">12</property>
+    <!-- <property name="halign">start</property> -->
+    <style>
+      <class name="proxy-row"></class>
+    </style>
+    <child>
+      <object class="GtkCheckButton" id="check_button">
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="halign">start</property>
+        <property name="hexpand">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="halign">start</property>
+            <property name="hexpand">True</property>
+            <property name="spacing">10</property>
+            <child>
+              <object class="GtkLabel" id="type_label">
+                <!-- <property name="margin-start">12</property> -->
+                <style>
+                  <class name="type"></class>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="server_label">
+                <!-- <property name="halign">start</property>
+                <property name="hexpand">True</property> -->
+                <style>
+                  <class name="address"></class>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="state_label">
+            <property name="label">Test label</property>
+            <property name="visible">False</property>
+            <property name="halign">start</property>
+            <property name="hexpand">True</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuButton" id="menu_button">
+        <property name="icon-name">view-more-symbolic</property>
+        <property name="menu-model">proxy_operation_menu</property>
+        <property name="halign">end</property>
+        <property name="hexpand">True</property>
+        <style>
+          <class name="circular"></class>
+          <class name="menu-button"></class>
+        </style>
+      </object>
+    </child>
+  </template>
+</interface>

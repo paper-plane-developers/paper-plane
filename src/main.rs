@@ -6,6 +6,7 @@ mod preferences_window;
 mod session;
 mod utils;
 mod window;
+mod proxy;
 
 use self::application::Application;
 use self::login::Login;
@@ -20,6 +21,7 @@ use gtk::{
     prelude::{ApplicationExt, ApplicationExtManual, IsA},
 };
 use once_cell::sync::{Lazy, OnceCell};
+
 use std::{path::PathBuf, str::FromStr};
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
@@ -60,6 +62,8 @@ fn main() {
             // TODO: Change to syslog when tdlib v1.8 is out where messages can be redirected.
             std::env::set_var("RUST_LOG", log_level.as_str());
             pretty_env_logger::init();
+
+
 
             DATA_DIR
                 .set(

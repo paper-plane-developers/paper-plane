@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ProxyWindow" parent="AdwPreferencesWindow">
+    <property name="title" translatable="yes">ProxyWindow</property>
+    <property name="default-width">400</property>
+    <!-- <property name="default-height">100</property> -->
+    <child>
+      <object class="GtkStack" id="proxy_stack">
+        <property name="transition-type">crossfade</property>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">main-page</property>
+            <property name="title">Proxy</property>
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="AdwHeaderBar">
+                    <property name="title-widget">
+                      <object class="AdwWindowTitle">
+                        <property name="title" translatable="yes">Proxy</property>
+                      </object>
+                    </property>
+                    <style>
+                      <class name="flat" />
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPreferencesPage">
+                    <property name="title" translatable="yes">Proxy</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-start">6</property>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="margin-end">6</property>
+                        <property name="margin-start">6</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Enable Proxy</property>
+                            <property name="activatable_widget">proxy_enable_switch</property>
+                            <child>
+                              <object class="GtkSwitch" id="proxy_enable_switch">
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="margin-end">6</property>
+                        <property name="margin-start">6</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="title" translatable="yes">Add Proxy</property>
+                            <property name="activatable_widget">proxy_add_button</property>
+                            <child>
+                              <object class="GtkButton" id="proxy_add_button">
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup" >
+                        <property name="margin-end">6</property>
+                        <property name="margin-start">6</property>
+                        <child>
+                          <object class="GtkBox" id="proxy_list">
+                            <property name="spacing">12</property>
+                            <property name="orientation">vertical</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">proxy-handle</property>
+            <property name="child">
+              <object class="ProxyHandleDialog" id="proxy_handle_dialog"></object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

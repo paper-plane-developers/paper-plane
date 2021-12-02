@@ -151,7 +151,7 @@ impl Window {
 
     fn create_client(&self) {
         let client_id = tdgrand::create_client();
-
+        
         let self_ = imp::Window::from_instance(self);
         self_.clients.borrow_mut().insert(client_id, None);
         self_.active_client_id.set(client_id);
@@ -232,7 +232,6 @@ impl Window {
                 }
             }
         });
-
         self_.receiver_handle.replace(Some(handle));
     }
 
@@ -274,7 +273,6 @@ impl Window {
                     if let Some(session) = session {
                         self_.main_stack.remove(&session);
                     }
-
                     self.create_client();
                 } else {
                     self_
@@ -366,6 +364,11 @@ impl Window {
                 .await
                 .unwrap();
         });
+    }
+
+    pub fn client_id(&self) -> i32 {
+        let self_ = imp::Window::from_instance(self);
+        self_.active_client_id.get()
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {

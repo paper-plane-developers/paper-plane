@@ -7,6 +7,9 @@ use log::{debug, info};
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
 use crate::PreferencesWindow;
 use crate::Window;
+// use crate::ProxyWindow;
+use crate::proxy::proxy_window::ProxyWindow;
+use crate::proxy::proxy_handle_dialog::ProxyTypes;
 
 mod imp {
     use super::*;
@@ -31,6 +34,9 @@ mod imp {
     impl ApplicationImpl for Application {
         fn activate(&self, app: &Self::Type) {
             debug!("GtkApplication<Application>::activate");
+
+            // register
+            ProxyTypes::static_type();
 
             if let Some(window) = self.window.get() {
                 let window = window.upgrade().unwrap();
@@ -71,6 +77,7 @@ mod imp {
 
 glib::wrapper! {
     pub struct Application(ObjectSubclass<imp::Application>)
+        
         @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionMap, gio::ActionGroup;
 }
@@ -109,6 +116,14 @@ impl Application {
         }));
         self.add_action(&action_quit);
 
+        // Proxy
+        let action_proxy = gio::SimpleAction::new("proxy", None);
+        action_proxy.connect_activate(clone!(@weak self as app => move |_, _| {
+            app.show_proxy(app.main_window().client_id())
+        }));
+        self.add_action(&action_proxy);
+
+
         // Preferences
         let action_preferences = gio::SimpleAction::new("preferences", None);
         action_preferences.connect_activate(clone!(@weak self as app => move |_, _| {
@@ -142,6 +157,13 @@ impl Application {
         }
     }
 
+    fn show_proxy(&self, client_id: i32){
+        let proxy = ProxyWindow::new(client_id);
+        proxy.set_transient_for(Some(&self.main_window()));
+        proxy.set_modal(true);
+        proxy.present();
+    }
+ 
     fn show_preferences(&self) {
         let preferences = PreferencesWindow::new();
         preferences.set_transient_for(Some(&self.main_window()));

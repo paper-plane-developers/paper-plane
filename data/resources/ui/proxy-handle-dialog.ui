@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ProxyHandleDialog" parent="GtkWidget">
+    <!-- <property name="default-width">400</property> -->
+    <!-- <property name="default-height">500</property> -->
+    <!-- <property name="modal">False</property> -->
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="orientation">vertical</property>
+      </object>
+    </property>
+      <child>
+        <object class="AdwHeaderBar">
+          <property name="title-widget">
+            <object class="AdwWindowTitle">
+              <property name="title" translatable="yes">Add Proxy</property>
+            </object>
+          </property>
+          <style>
+            <class name="flat" />
+          </style>
+        </object>
+      </child>
+      <child>
+        <object class="AdwClamp">
+          <property name="valign">center</property>
+          <property name="margin-end">10</property>
+          <property name="margin-top">10</property>
+          <property name="margin-start">10</property>
+          <property name="margin-bottom">10</property>
+          <property name="child">
+            <object class="GtkBox">
+              <property name="orientation">vertical</property>
+              <child>
+                <object class="GtkListBox">
+                  <child>
+                    <object class="AdwComboRow" id="proxy_types">
+                      <property name="title">Proxy Type</property>
+                      <property name="subtitle">Choose a Type</property>
+                      <property name="model">
+                        <object class="AdwEnumListModel">
+                          <property name="enum-type">ProxyTypes</property>
+                        </object>
+                      </property>
+                      <property name="expression">
+                        <lookup type="AdwEnumListItem" name="name" />
+                      </property>
+                    </object>
+                  </child>
+                  <child>
+                    <object class="GtkListBoxRow">
+                      <property name="focusable">False</property>
+                      <property name="selectable">False</property>
+                      <property name="activatable">False</property>
+                      <property name="child">
+                        <object class="GtkBox">
+                          <property name="orientation">vertical</property>
+                          <child>
+                            <object class="GtkLabel" id="label">
+                              <property name="valign">start</property>
+                              <property name="label">Socket address</property>
+                              <style>
+                                <class name="dim-label" />
+                              </style>
+                            </object>
+                          </child>
+                          <child>
+                            <object class="GtkBox">
+                              <property name="orientation">horizontal</property>
+                              <child>
+                                <object class="GtkEntry" id="proxy_address_entry">
+                                  <property name="activates-default">True</property>
+                                  <property name="max-length">32</property>
+                                  <property name="placeholder-text" translatable="yes">Proxy Address</property>
+                                  <property name="margin-top">6</property>
+                                  <property name="margin-bottom">6</property>
+                                  <property name="margin-start">6</property>
+                                  <property name="margin-end">6</property>
+                                </object>
+                              </child>
+                              <child>
+                                <object class="GtkEntry" id="proxy_port_entry">
+                                  <property name="placeholder-text" translatable="yes">Port</property>
+                                  <property name="max-length">5</property>
+                                  <property name="margin-top">6</property>
+                                  <property name="margin-bottom">6</property>
+                                  <property name="margin-start">6</property>
+                                  <property name="margin-end">0</property>
+                                </object>
+                              </child>
+                            </object>
+                          </child>
+                        </object>
+                      </property>
+                    </object>
+                  </child>
+                  <child>
+                    <object class="GtkListBoxRow">
+                      <property name="focusable">False</property>
+                      <property name="selectable">False</property>
+                      <property name="activatable">False</property>
+                      <property name="child">
+                        <object class="GtkBox">
+                          <property name="orientation">vertical</property>
+                          <child>
+                            <object class="GtkLabel" id="label_2">
+                              <property name="valign">start</property>
+                              <property name="label">Credentials (optional)</property>
+                              <style>
+                                <class name="dim-label" />
+                              </style>
+                            </object>
+                          </child>
+                          <child>
+                            <object class="GtkBox">
+                              <property name="orientation">horizontal</property>
+                              <child>
+                                <object class="GtkEntry" id="proxy_auth_username_entry">
+                                  <property name="activates-default">True</property>
+                                  <property name="placeholder-text" translatable="yes">Username</property>
+                                  <property name="margin-top">6</property>
+                                  <property name="margin-bottom">6</property>
+                                  <property name="margin-start">6</property>
+                                  <property name="margin-end">6</property>
+                                </object>
+                              </child>
+                              <child>
+                                <object class="GtkEntry" id="proxy_auth_passwd_entry">
+                                  <property name="placeholder-text" translatable="yes">Password</property>
+                                  <property name="margin-top">6</property>
+                                  <property name="margin-bottom">6</property>
+                                  <property name="margin-start">6</property>
+                                  <property name="margin-end">0</property>
+                                </object>
+                              </child>
+                            </object>
+                          </child>
+                        </object>
+                      </property>
+                    </object>
+                  </child>
+                </object>
+              </child>
+              <child>
+                <object class="GtkBox">
+                  <property name="orientation">vertical</property>
+                  <child>
+                    <object class="GtkButton" id="proxy_save_button">
+                      <property name="halign">end</property>
+                      <property name="valign">end</property>
+                      <property name="margin-top">10</property>
+                      <property name="action-name">proxy.save-proxy</property>
+                      <property name="label" translatable="yes">Save</property>
+                    </object>
+                  </child>
+                </object>
+              </child>
+            </object>
+          </property>
+        </object>
+      </child>
+  </template>
+</interface>

@@ -53,6 +53,8 @@ mod imp {
         #[template_child]
         pub use_test_dc_switch: TemplateChild<gtk::Switch>,
         #[template_child]
+        pub open_proxy_settings_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub qr_code_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub qr_code_image: TemplateChild<gtk::Image>,
@@ -551,6 +553,7 @@ impl Login {
         );
     }
 
+
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let self_ = imp::Login::from_instance(self);
 
@@ -635,6 +638,9 @@ impl Login {
             .to_str()
             .expect("Data directory path is not a valid unicode string")
             .to_owned();
+
+        println!("{}",database_directory);
+
 
         let system_language_code = {
             let locale = Locale::current().to_string();
