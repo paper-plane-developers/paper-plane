@@ -63,6 +63,10 @@ mod imp {
             Content::static_type();
             Self::bind_template(klass);
 
+            klass.install_action("content.go-back", None, move |widget, _, _| {
+                let self_ = Self::from_instance(widget);
+                self_.leaflet.navigate(adw::NavigationDirection::Back);
+            });
             klass.install_action("session.log-out", None, move |widget, _, _| {
                 widget.log_out();
             });
@@ -198,6 +202,17 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            self.leaflet.connect_child_transition_running_notify(
+                clone!(@weak obj => move |leaflet| {
+                    if !leaflet.is_child_transition_running()
+                        && leaflet.visible_child().unwrap() == *Self::from_instance(&obj).sidebar {
+
+                        // We deselect the chat when the transition to the sidebar is finished.
+                        obj.set_selected_chat(None);
+                    }
+                }),
+            );
 
             obj.fetch_me();
             obj.fetch_chats();
@@ -345,8 +360,6 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
         if selected_chat.is_some() {
             self_.leaflet.navigate(adw::NavigationDirection::Forward);
-        } else {
-            self_.leaflet.navigate(adw::NavigationDirection::Back);
         }
 
         self_.selected_chat.replace(selected_chat);
