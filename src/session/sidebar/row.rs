@@ -21,6 +21,7 @@ mod imp {
     pub struct Row {
         /// A `Chat` or `User`
         pub item: RefCell<Option<glib::Object>>,
+        pub bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
         pub avatar: TemplateChild<Avatar>,
         #[template_child]
@@ -126,6 +127,11 @@ impl Row {
         }
 
         let self_ = imp::Row::from_instance(self);
+        let mut bindings = self_.bindings.borrow_mut();
+
+        while let Some(binding) = bindings.pop() {
+            binding.unwatch();
+        }
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
@@ -175,7 +181,8 @@ impl Row {
                 );
 
                 // Title label bindings
-                title_expression.bind(&*self_.title_label, "label", Some(chat));
+                let title_binding = title_expression.bind(&*self_.title_label, "label", Some(chat));
+                bindings.push(title_binding);
 
                 // Timestamp label bindings
                 let date_expression = gtk::ClosureExpression::new(
@@ -237,7 +244,9 @@ impl Row {
                     },
                     &[date_expression.upcast()],
                 );
-                timestamp_expression.bind(&*self_.timestamp_label, "label", Some(chat));
+                let timestamp_binding =
+                    timestamp_expression.bind(&*self_.timestamp_label, "label", Some(chat));
+                bindings.push(timestamp_binding);
 
                 // Last message and draft message label bindings
                 let content_expression = gtk::PropertyExpression::new(
@@ -280,7 +289,9 @@ impl Row {
                         content_expression.upcast(),
                     ],
                 );
-                stringified_message_expression.bind(&*self_.message_label, "label", Some(chat));
+                let message_binding =
+                    stringified_message_expression.bind(&*self_.message_label, "label", Some(chat));
+                bindings.push(message_binding);
 
                 // Unread mention count label bindings
                 let unread_mention_count_visibility_expression = gtk::ClosureExpression::new(
@@ -290,11 +301,12 @@ impl Row {
                     },
                     &[unread_mention_count_expression.clone().upcast()],
                 );
-                unread_mention_count_visibility_expression.bind(
+                let unread_binding = unread_mention_count_visibility_expression.bind(
                     &*self_.unread_mention_label,
                     "visible",
                     Some(chat),
                 );
+                bindings.push(unread_binding);
 
                 // Unread count label bindings
                 let unread_count_visibility_expression = gtk::ClosureExpression::new(
@@ -356,17 +368,21 @@ impl Row {
                         scope_notification_settings_expression.upcast(),
                     ],
                 );
-                unread_count_expression.bind(&*self_.unread_count_label, "label", Some(chat));
-                unread_count_visibility_expression.bind(
+                let unread_binding =
+                    unread_count_expression.bind(&*self_.unread_count_label, "label", Some(chat));
+                bindings.push(unread_binding);
+                let unread_binding = unread_count_visibility_expression.bind(
                     &*self_.unread_count_label,
                     "visible",
                     Some(chat),
                 );
-                unread_count_css_expression.bind(
+                bindings.push(unread_binding);
+                let unread_binding = unread_count_css_expression.bind(
                     &*self_.unread_count_label,
                     "css-classes",
                     Some(chat),
                 );
+                bindings.push(unread_binding);
 
                 // Pin icon bindings
                 let pin_visibility_expression = gtk::ClosureExpression::new(
@@ -380,7 +396,9 @@ impl Row {
                         unread_count_expression.upcast(),
                     ],
                 );
-                pin_visibility_expression.bind(&*self_.pin_icon, "visible", Some(chat));
+                let pin_binding =
+                    pin_visibility_expression.bind(&*self_.pin_icon, "visible", Some(chat));
+                bindings.push(pin_binding);
             } else if let Some(user) = item.downcast_ref::<User>() {
                 self_.timestamp_label.set_visible(false);
                 self_.bottom_box.set_visible(false);
@@ -389,7 +407,9 @@ impl Row {
                 let full_name_expression = User::full_name_expression(&user_expression);
 
                 // Title label bindings
-                full_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
+                let title_binding =
+                    full_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
+                bindings.push(title_binding);
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
             }
