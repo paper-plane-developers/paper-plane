@@ -88,9 +88,8 @@ mod imp {
         fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
             self.list
                 .borrow()
-                .values()
-                .nth(position as usize)
-                .map(glib::object::Cast::upcast_ref::<glib::Object>)
+                .get_index(position as usize)
+                .map(|(_, c)| c.upcast_ref())
                 .cloned()
         }
     }
