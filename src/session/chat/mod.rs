@@ -29,6 +29,7 @@ pub struct BoxedChatNotificationSettings(pub ChatNotificationSettings);
 
 mod imp {
     use super::*;
+    use glib::WeakRef;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
@@ -46,7 +47,7 @@ mod imp {
         pub draft_message: RefCell<BoxedDraftMessage>,
         pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub history: OnceCell<History>,
-        pub session: OnceCell<Session>,
+        pub session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -217,10 +218,7 @@ mod imp {
                     self.notification_settings
                         .replace(Some(notification_settings));
                 }
-                "session" => {
-                    let session = value.get().unwrap();
-                    self.session.set(session).unwrap();
-                }
+                "session" => self.session.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
         }
@@ -243,7 +241,7 @@ mod imp {
                     .unwrap()
                     .to_value(),
                 "history" => self.history.get().to_value(),
-                "session" => self.session.get().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -469,7 +467,8 @@ impl Chat {
     }
 
     pub fn session(&self) -> Session {
-        self.property("session").unwrap().get().unwrap()
+        let self_ = imp::Chat::from_instance(self);
+        self_.session.upgrade().unwrap()
     }
 
     pub fn title_expression(&self) -> gtk::Expression {
