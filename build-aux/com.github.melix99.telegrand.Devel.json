@@ -58,6 +58,17 @@
             ]
         },
         {
+            "name": "gtk",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/gtk.git",
+                    "tag": "4.5.0"
+                }
+            ]
+        },
+        {
             "name": "libadwaita",
             "buildsystem": "meson",
             "config-opts": [
