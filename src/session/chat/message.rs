@@ -25,6 +25,7 @@ impl MessageSender {
 
 mod imp {
     use super::*;
+    use glib::WeakRef;
     use once_cell::sync::{Lazy, OnceCell};
     use std::cell::{Cell, RefCell};
 
@@ -35,7 +36,7 @@ mod imp {
         pub is_outgoing: Cell<bool>,
         pub date: Cell<i32>,
         pub content: RefCell<Option<BoxedMessageContent>>,
-        pub chat: OnceCell<Chat>,
+        pub chat: WeakRef<Chat>,
     }
 
     #[glib::object_subclass]
@@ -120,7 +121,7 @@ mod imp {
                     let content = value.get().unwrap();
                     self.content.replace(Some(content));
                 }
-                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
+                "chat" => self.chat.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
         }
@@ -204,9 +205,9 @@ impl Message {
         }
     }
 
-    pub fn chat(&self) -> &Chat {
+    pub fn chat(&self) -> Chat {
         let self_ = imp::Message::from_instance(self);
-        self_.chat.get().unwrap()
+        self_.chat.upgrade().unwrap()
     }
 
     pub fn sender_name_expression(&self) -> gtk::Expression {

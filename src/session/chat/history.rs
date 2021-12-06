@@ -12,13 +12,14 @@ use crate::utils::do_async;
 
 mod imp {
     use super::*;
-    use once_cell::sync::{Lazy, OnceCell};
+    use glib::WeakRef;
+    use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
     pub struct History {
-        pub chat: OnceCell<Chat>,
+        pub chat: WeakRef<Chat>,
         pub loading: Cell<bool>,
         pub list: RefCell<VecDeque<Item>>,
         pub message_map: RefCell<HashMap<i64, Message>>,
@@ -64,10 +65,7 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "chat" => {
-                    let chat = value.get().unwrap();
-                    self.chat.set(chat).unwrap();
-                }
+                "chat" => self.chat.set(Some(&value.get().unwrap())),
                 "loading" => obj.set_loading(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -75,7 +73,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "chat" => self.chat.get().to_value(),
+                "chat" => obj.chat().to_value(),
                 "loading" => obj.loading().to_value(),
                 _ => unimplemented!(),
             }
@@ -365,7 +363,8 @@ impl History {
     }
 
     pub fn chat(&self) -> Chat {
-        self.property("chat").unwrap().get().unwrap()
+        let self_ = imp::History::from_instance(self);
+        self_.chat.upgrade().unwrap()
     }
 
     pub fn set_loading(&self, loading: bool) {
