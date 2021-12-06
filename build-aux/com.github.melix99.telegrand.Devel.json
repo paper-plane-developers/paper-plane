@@ -74,7 +74,34 @@
             ]
         },
         {
+            "name": "tdlib-prebuilt",
+            "only-arches": [ "x86_64", "aarch64" ],
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D libtdjson.so.* /app/lib",
+                "ln -sf /app/lib/libtdjson.so.* /app/lib/libtdjson.so",
+                "install -D pkgconfig/* /app/lib/pkgconfig"
+            ],
+            "sources": [
+                {
+                    "only-arches": [ "x86_64" ],
+                    "type": "archive",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.7.9/tdjson-x86_64.zip",
+                    "sha256": "2be3e2227d8e1dbf5265fb6e27c288300f4c78754b5802579b7221db26de6aa6",
+                    "strip-components": 0
+                },
+                {
+                    "only-arches": [ "aarch64" ],
+                    "type": "archive",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.7.9/tdjson-aarch64.zip",
+                    "sha256": "d02fb846c1a2570014b177afd39047303887ee369c618971b1167e01f10e221b",
+                    "strip-components": 0
+                }
+            ]
+        },
+        {
             "name": "tdlib",
+            "skip-arches": [ "x86_64", "aarch64" ],
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
