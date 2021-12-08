@@ -290,6 +290,12 @@ impl Session {
             | Update::DeleteMessages(_) => {
                 self.chat_list().handle_update(update);
             }
+            Update::UnreadMessageCount(ref update_) => {
+                // TODO: Also handle archived chats
+                if let tdgrand::enums::ChatList::Main = update_.chat_list {
+                    self.chat_list().handle_update(update)
+                }
+            }
             Update::ScopeNotificationSettings(update) => {
                 let settings = BoxedScopeNotificationSettings(Some(update.notification_settings));
                 match update.scope {

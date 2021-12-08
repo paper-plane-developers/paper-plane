@@ -14,11 +14,12 @@ mod imp {
     use glib::subclass::Signal;
     use indexmap::IndexMap;
     use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub struct ChatList {
         pub list: RefCell<IndexMap<i64, Chat>>,
+        pub unread_count: Cell<i32>,
         pub session: OnceCell<Session>,
     }
 
@@ -40,13 +41,24 @@ mod imp {
 
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
-                    "session",
-                    "Session",
-                    "The session",
-                    Session::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                )]
+                vec![
+                    glib::ParamSpec::new_int(
+                        "unread-count",
+                        "Unread-Count",
+                        "The unread count of this chat list",
+                        0,
+                        i32::MAX,
+                        0,
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
+                        "session",
+                        "Session",
+                        "The session",
+                        Session::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                ]
             });
 
             PROPERTIES.as_ref()
@@ -54,12 +66,16 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
+                "unread-count" => {
+                    let unread_count = value.get().unwrap();
+                    obj.set_unread_count(unread_count);
+                }
                 "session" => {
                     let session = value.get().unwrap();
                     self.session.set(session).unwrap();
@@ -68,8 +84,9 @@ mod imp {
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
+                "unread-count" => obj.unread_count().to_value(),
                 "session" => self.session.get().to_value(),
                 _ => unimplemented!(),
             }
@@ -126,6 +143,9 @@ impl ChatList {
         let self_ = imp::ChatList::from_instance(self);
 
         match update {
+            Update::UnreadMessageCount(ref update) => {
+                self.set_unread_count(update.unread_count);
+            }
             Update::NewMessage(ref update_) => {
                 if let Some(chat) = self_.list.borrow().get(&update_.message.chat_id) {
                     chat.handle_update(update);
@@ -225,6 +245,22 @@ impl ChatList {
         let list = self_.list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
+    }
+
+    pub fn unread_count(&self) -> i32 {
+        let self_ = imp::ChatList::from_instance(self);
+        self_.unread_count.get()
+    }
+
+    pub fn set_unread_count(&self, unread_count: i32) {
+        if self.unread_count() == unread_count {
+            return;
+        }
+
+        let self_ = imp::ChatList::from_instance(self);
+        self_.unread_count.set(unread_count);
+
+        self.notify("unread-count");
     }
 
     pub fn session(&self) -> Session {
