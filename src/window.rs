@@ -321,7 +321,7 @@ impl Window {
                         if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =
                             chat.type_()
                         {
-                            let sender_name = sender_name(&data.message.sender, &chat);
+                            let sender_name = sender_name(&data.message.sender_id, &chat);
                             title.insert_str(0, &format!("{} – ", sender_name));
                         }
 
@@ -486,13 +486,13 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
                 if message.is_outgoing {
                     gettext("You removed the group photo")
                 } else {
-                    let sender_name = sender_name(&message.sender, chat);
+                    let sender_name = sender_name(&message.sender_id, chat);
                     gettext!("{} removed the group photo", sender_name)
                 }
             }
         },
         MessageContent::MessageContactRegistered => {
-            gettext!("{} joined Telegram", sender_name(&message.sender, chat))
+            gettext!("{} joined Telegram", sender_name(&message.sender_id, chat))
         }
         _ => gettext("Unsupported message"),
     }

@@ -102,9 +102,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "crc32fast"
-version = "1.2.1"
+version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81156fece84ab6a9f2afdb109ce3ae577e42b1228441eded99bd77f627953b1a"
+checksum = "738c290dfaea84fc1ca15ad9c168d083b05a714e1efddd8edaab678dc28d2836"
 dependencies = [
  "cfg-if",
 ]
@@ -953,9 +953,9 @@ dependencies = [
 
 [[package]]
 name = "serde_with"
-version = "1.10.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "062b87e45d8f26714eacfaef0ed9a583e2bfd50ebd96bdd3c200733bd5758e2c"
+checksum = "ad6056b4cb69b6e43e3a0f055def223380baecc99da683884f205bf347f7c4b3"
 dependencies = [
  "rustversion",
  "serde",
@@ -1055,7 +1055,7 @@ dependencies = [
 [[package]]
 name = "tdgrand"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#0f964cd3a8a6ad08bd259d9009c5f23466d0ee9a"
+source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
 dependencies = [
  "log",
  "once_cell",
@@ -1071,7 +1071,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-gen"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#0f964cd3a8a6ad08bd259d9009c5f23466d0ee9a"
+source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
 dependencies = [
  "tdgrand-tl-parser",
 ]
@@ -1079,7 +1079,7 @@ dependencies = [
 [[package]]
 name = "tdgrand-tl-parser"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#0f964cd3a8a6ad08bd259d9009c5f23466d0ee9a"
+source = "git+https://github.com/melix99/tdgrand?branch=main#5d0b3b7470dbc1362af62a624f6f4cc3876ec3d9"
 dependencies = [
  "crc32fast",
 ]
@@ -1139,9 +1139,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.12.0"
+version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2c2416fdedca8443ae44b4527de1ea633af61d8f7169ffa6e72c5b53d24efcc"
+checksum = "70e992e41e0d2fb9f755b37446f20900f64446ef54874f40a60c78f021ac6144"
 dependencies = [
  "autocfg",
  "num_cpus",
