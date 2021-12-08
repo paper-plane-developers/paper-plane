@@ -484,9 +484,12 @@ impl Session {
             clone!(@weak self as obj => move |result| async move {
                 let TelegramUser::User(me) = result.unwrap();
 
+                let me = User::from_td_object(me, &obj);
+                obj.user_list().insert_user(me.clone());
+
                 imp::Session::from_instance(&obj)
                     .me
-                    .replace(obj.user_list().get_or_create_user(me.id).into());
+                    .replace(Some(me));
 
                 obj.notify("me");
             }),
