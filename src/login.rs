@@ -255,10 +255,13 @@ impl Login {
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(data) => {
+                let size = 192;
+                let bytes_per_pixel = 3;
+
                 let data_luma = qrcode_generator::to_image_from_str(
                     data.link,
                     qrcode_generator::QrCodeEcc::Low,
-                    192,
+                    size,
                 )
                 .unwrap();
 
@@ -266,18 +269,18 @@ impl Login {
                     // gdk::Texture only knows 3 byte color spaces, thus convert Luma.
                     data_luma
                         .into_iter()
-                        .flat_map(|p| (0..3).map(move |_| p))
+                        .flat_map(|p| (0..bytes_per_pixel).map(move |_| p))
                         .collect::<Vec<_>>(),
                 );
 
                 self_
                     .qr_code_image
                     .set_paintable(Some(&gdk::MemoryTexture::new(
-                        192,
-                        192,
+                        size as i32,
+                        size as i32,
                         gdk::MemoryFormat::R8g8b8,
                         &bytes,
-                        1,
+                        size * bytes_per_pixel,
                     )));
 
                 self_.qr_code_bin.set_visible(true);
