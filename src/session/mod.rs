@@ -24,7 +24,7 @@ use self::secret_chat_list::SecretChatList;
 use self::sidebar::Sidebar;
 use self::supergroup::Supergroup;
 use self::supergroup_list::SupergroupList;
-use self::user::User;
+pub use self::user::User;
 use self::user_list::UserList;
 
 use glib::{clone, SyncSender};
@@ -34,8 +34,13 @@ use tdgrand::enums::{NotificationSettingsScope, Update, User as TelegramUser};
 use tdgrand::functions;
 use tdgrand::types::{File, ScopeNotificationSettings};
 
-use crate::utils::do_async;
+use crate::session_manager::DatabaseInfo;
+use crate::utils::{do_async, log_out};
 use crate::RUNTIME;
+
+#[derive(Clone, Debug, glib::GBoxed)]
+#[gboxed(type_name = "BoxedDatabaseInfo")]
+pub struct BoxedDatabaseInfo(pub DatabaseInfo);
 
 #[derive(Clone, Debug, Default, glib::GBoxed)]
 #[gboxed(type_name = "BoxedScopeNotificationSettings")]
@@ -51,6 +56,7 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
     pub struct Session {
         pub client_id: Cell<i32>,
+        pub database_info: OnceCell<BoxedDatabaseInfo>,
         pub me: RefCell<Option<User>>,
         pub chat_list: OnceCell<ChatList>,
         pub user_list: OnceCell<UserList>,
@@ -83,7 +89,7 @@ mod imp {
                 self_.leaflet.navigate(adw::NavigationDirection::Back);
             });
             klass.install_action("session.log-out", None, move |widget, _, _| {
-                widget.log_out();
+                log_out(widget.client_id());
             });
         }
 
@@ -103,6 +109,13 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpec::new_boxed(
+                        "database-info",
+                        "Database Info",
+                        "The information about the database of this session",
+                        BoxedDatabaseInfo::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_object(
@@ -193,6 +206,10 @@ mod imp {
                     let client_id = value.get().unwrap();
                     self.client_id.set(client_id);
                 }
+                "database-info" => {
+                    let database_info = value.get().unwrap();
+                    self.database_info.set(database_info).unwrap();
+                }
                 "selected-chat" => {
                     let selected_chat = value.get().unwrap();
                     obj.set_selected_chat(selected_chat);
@@ -219,6 +236,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
+                "database-info" => obj.database_info().to_value(),
                 "me" => obj.me().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
@@ -268,8 +286,12 @@ glib::wrapper! {
 }
 
 impl Session {
-    pub fn new(client_id: i32) -> Self {
-        glib::Object::new(&[("client-id", &client_id)]).expect("Failed to create Session")
+    pub fn new(client_id: i32, database_info: DatabaseInfo) -> Self {
+        glib::Object::new(&[
+            ("client-id", &client_id),
+            ("database-info", &BoxedDatabaseInfo(database_info)),
+        ])
+        .expect("Failed to create Session")
     }
 
     pub fn handle_update(&self, update: Update) {
@@ -377,16 +399,14 @@ impl Session {
         }
     }
 
-    fn log_out(&self) {
-        let client_id = self.client_id();
-        RUNTIME.spawn(async move {
-            functions::LogOut::new().send(client_id).await.unwrap();
-        });
-    }
-
     pub fn client_id(&self) -> i32 {
         let self_ = imp::Session::from_instance(self);
         self_.client_id.get()
+    }
+
+    pub fn database_info(&self) -> &BoxedDatabaseInfo {
+        let self_ = imp::Session::from_instance(self);
+        self_.database_info.get().unwrap()
     }
 
     pub fn me(&self) -> Option<User> {
@@ -506,5 +526,11 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
         let client_id = self_.client_id.get();
         self.chat_list().fetch(client_id);
+    }
+
+    pub fn set_sessions(&self, sessions: &gtk::SelectionModel) {
+        imp::Session::from_instance(self)
+            .sidebar
+            .set_sessions(sessions, self);
     }
 }

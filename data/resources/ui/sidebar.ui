@@ -33,15 +33,37 @@
       <object class="AdwHeaderBar" id="header_bar">
         <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
         <child type="start">
-          <object class="GtkToggleButton">
-            <property name="icon-name">system-search-symbolic</property>
-            <property name="active" bind-source="search_bar" bind-property="search-mode-enabled" bind-flags="bidirectional|sync-create"/>
+          <object class="GtkMenuButton">
+            <property name="popover">
+              <object class="SessionSwitcher" id="session_switcher"/>
+            </property>
+            <style>
+              <class name="image-button"/>
+            </style>
+            <property name="child">
+              <object class="ComponentsAvatar">
+                <property name="size">24</property>
+                <binding name="item">
+                  <lookup name="avatar" type="User">
+                    <lookup name="me" type="Session">
+                      <lookup name="session">Sidebar</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </property>
           </object>
         </child>
         <child type="end">
           <object class="GtkMenuButton">
             <property name="icon-name">open-menu-symbolic</property>
             <property name="menu-model">primary_menu</property>
+          </object>
+        </child>
+        <child type="end">
+          <object class="GtkToggleButton">
+            <property name="icon-name">system-search-symbolic</property>
+            <property name="active" bind-source="search_bar" bind-property="search-mode-enabled" bind-flags="bidirectional|sync-create"/>
           </object>
         </child>
       </object>
