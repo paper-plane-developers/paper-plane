@@ -654,8 +654,8 @@ fn stringify_message_animation(caption_text: &str) -> String {
 fn stringify_message_audio(performer: &str, title: &str, caption_text: &str) -> String {
     format!(
         "{} - {}{}",
-        performer,
-        title,
+        escape(performer),
+        escape(title),
         if caption_text.is_empty() {
             String::new()
         } else {
@@ -667,7 +667,7 @@ fn stringify_message_audio(performer: &str, title: &str, caption_text: &str) -> 
 fn stringify_message_document(file_name: &str, caption_text: &str) -> String {
     format!(
         "{}{}",
-        file_name,
+        escape(file_name),
         if caption_text.is_empty() {
             String::new()
         } else {
