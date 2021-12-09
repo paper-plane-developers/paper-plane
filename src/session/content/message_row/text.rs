@@ -71,13 +71,13 @@ impl MessageText {
 
         // Show sender label, if needed
         let show_sender = {
-            if !message.is_outgoing() {
+            if message.is_outgoing() {
+                matches!(message.sender(), MessageSender::Chat(_))
+            } else {
                 matches!(
                     message.chat().type_(),
                     ChatType::BasicGroup(_) | ChatType::Supergroup(_)
                 )
-            } else {
-                false
             }
         };
         if show_sender {
