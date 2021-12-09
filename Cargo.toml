@@ -16,4 +16,4 @@ pretty_env_logger = "0.4"
 qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.5"
 tdgrand = { git = "https://github.com/melix99/tdgrand", branch = "main" }
-tokio = { version = "1.12", features = ["rt-multi-thread"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
