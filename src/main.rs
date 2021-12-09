@@ -54,10 +54,7 @@ fn main() {
             let log_level = match dict.lookup::<String>("log-level").unwrap() {
                 Some(level) => log::Level::from_str(&level).expect("Error on parsing log-level"),
                 // Standard log levels if not specified by user
-                #[cfg(not(debug_assertions))]
-                None => log::Level::Info,
-                #[cfg(debug_assertions)]
-                None => log::Level::Debug,
+                None => log::Level::Warn,
             };
 
             // TODO: Change to syslog when tdlib v1.8 is out where messages can be redirected.

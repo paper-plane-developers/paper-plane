@@ -16,6 +16,7 @@ mod imp {
     pub struct Avatar {
         /// A `Chat` or `User`
         pub item: RefCell<Option<glib::Object>>,
+        pub binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub is_online: Cell<bool>,
         // The first Option indicates whether we've once tried to compile the shader. The second
         // Option contains the compiled shader.
@@ -162,6 +163,8 @@ impl Avatar {
         }
 
         if let Some(session) = self.ancestor(Session::static_type()) {
+            let self_ = imp::Avatar::from_instance(self);
+
             let me_expression =
                 gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
 
@@ -181,7 +184,10 @@ impl Avatar {
                 },
                 &[me_expression.upcast(), interlocutor_status_expression],
             );
-            interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
+
+            let is_online_binding =
+                interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
+            self_.binding.replace(Some(is_online_binding));
         }
     }
 
@@ -197,15 +203,13 @@ impl Avatar {
 
         let self_ = imp::Avatar::from_instance(self);
 
+        if let Some(binding) = self_.binding.take() {
+            binding.unwatch();
+        }
+
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                let avatar_item_expression = gtk::PropertyExpression::new(
-                    Chat::static_type(),
-                    gtk::NONE_EXPRESSION,
-                    "avatar",
-                );
-
-                avatar_item_expression.bind(&*self_.avatar, "item", Some(chat));
+                self_.avatar.set_item(Some(chat.avatar().to_owned()));
 
                 if let Some(interlocutor_id) = interlocutor_id(chat) {
                     let interlocutor = chat
@@ -216,13 +220,7 @@ impl Avatar {
                     self.setup_is_online_binding(&interlocutor);
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
-                let avatar_item_expression = gtk::PropertyExpression::new(
-                    User::static_type(),
-                    gtk::NONE_EXPRESSION,
-                    "avatar",
-                );
-
-                avatar_item_expression.bind(&*self_.avatar, "item", Some(user));
+                self_.avatar.set_item(Some(user.avatar().to_owned()));
 
                 self.setup_is_online_binding(user);
             } else {
