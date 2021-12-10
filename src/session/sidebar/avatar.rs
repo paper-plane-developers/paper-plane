@@ -159,6 +159,7 @@ impl Avatar {
 
     fn setup_is_online_binding(&self, user: &User) {
         if !matches!(user.type_().0, UserType::Regular) {
+            self.set_is_online(false);
             return;
         }
 
@@ -211,13 +212,16 @@ impl Avatar {
             if let Some(chat) = item.downcast_ref::<Chat>() {
                 self_.avatar.set_item(Some(chat.avatar().to_owned()));
 
-                if let Some(interlocutor_id) = interlocutor_id(chat) {
+                match interlocutor_id(chat) {
+                    Some(interlocutor_id) => {
                     let interlocutor = chat
                         .session()
                         .user_list()
                         .get_or_create_user(interlocutor_id);
 
                     self.setup_is_online_binding(&interlocutor);
+                    }
+                    None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
                 self_.avatar.set_item(Some(user.avatar().to_owned()));
