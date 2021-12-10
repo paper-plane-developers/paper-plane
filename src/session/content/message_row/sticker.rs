@@ -1,18 +1,17 @@
 use glib::clone;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::{enums::MessageContent, types::File};
 
 use crate::session::chat::Message;
+use crate::session::content::message_row::StickerPaintable;
 
 mod imp {
     use super::*;
-    use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-sticker.ui")]
     pub struct MessageSticker {
-        pub width: Cell<i32>,
-        pub height: Cell<i32>,
+        pub paintable: StickerPaintable,
         #[template_child]
         pub picture: TemplateChild<gtk::Picture>,
     }
@@ -33,31 +32,18 @@ mod imp {
     }
 
     impl ObjectImpl for MessageSticker {
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            self.picture.set_paintable(Some(&self.paintable));
+        }
+
         fn dispose(&self, _obj: &Self::Type) {
             self.picture.unparent();
         }
     }
 
-    impl WidgetImpl for MessageSticker {
-        fn measure(
-            &self,
-            _widget: &Self::Type,
-            orientation: gtk::Orientation,
-            _for_size: i32,
-        ) -> (i32, i32, i32, i32) {
-            let size = if let gtk::Orientation::Horizontal = orientation {
-                self.width.get()
-            } else {
-                self.height.get()
-            };
-
-            (size, size, -1, -1)
-        }
-
-        fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
-            self.picture.allocate(width, height, baseline, None);
-        }
-    }
+    impl WidgetImpl for MessageSticker {}
 }
 
 glib::wrapper! {
@@ -79,21 +65,9 @@ impl MessageSticker {
     pub fn set_message(&self, message: &Message) {
         if let MessageContent::MessageSticker(data) = message.content().0 {
             let self_ = imp::MessageSticker::from_instance(self);
-
-            // Scale the sticker to fit it in a small container, but keeping its
-            // original aspect ratio
-            let max_size = 200;
-            if data.sticker.width > data.sticker.height {
-                self_.width.set(max_size);
-                self_
-                    .height
-                    .set(data.sticker.height * max_size / data.sticker.width);
-            } else {
-                self_.height.set(max_size);
-                self_
-                    .width
-                    .set(data.sticker.width * max_size / data.sticker.height);
-            }
+            self_
+                .paintable
+                .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
             if data.sticker.sticker.local.is_downloading_completed {
                 self.load_sticker(&data.sticker.sticker.local.path);
@@ -122,7 +96,37 @@ impl MessageSticker {
 
     fn load_sticker(&self, path: &str) {
         let self_ = imp::MessageSticker::from_instance(self);
-        let media = gtk::MediaFile::for_filename(path);
-        self_.picture.set_paintable(Some(&media));
+        let file = gio::File::for_path(path);
+        let future = clone!(@weak self_.paintable as paintable => async move {
+            match file.load_bytes_async_future().await {
+                Ok((bytes, _)) => {
+                    let image = webp::Decoder::new(&bytes)
+                        .decode()
+                        .unwrap()
+                        .to_image()
+                        .into_rgba8();
+
+                    let flat_samples = image.into_flat_samples();
+
+                    let (stride, width, height) = flat_samples.extents();
+                    let gtk_stride = stride * width;
+
+                    let bytes = glib::Bytes::from_owned(flat_samples.samples);
+                    let texture = gdk::MemoryTexture::new(
+                        width as i32,
+                        height as i32,
+                        gdk::MemoryFormat::R8g8b8a8,
+                        &bytes,
+                        gtk_stride,
+                    );
+                    paintable.set_texture(Some(texture.upcast()));
+                }
+                Err(e) => {
+                    log::warn!("Failed to load a sticker: {}", e);
+                }
+            }
+        });
+
+        glib::MainContext::default().spawn_local(future);
     }
 }
