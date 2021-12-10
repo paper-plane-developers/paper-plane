@@ -1,3 +1,5 @@
+use super::Sidebar;
+
 use gtk::{glib, gsk, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{ChatType, UserStatus, UserType};
 
@@ -159,36 +161,45 @@ impl Avatar {
 
     fn setup_is_online_binding(&self, user: &User) {
         if !matches!(user.type_().0, UserType::Regular) {
+            self.set_is_online(false);
             return;
         }
 
-        if let Some(session) = self.ancestor(Session::static_type()) {
-            let self_ = imp::Avatar::from_instance(self);
+        // This should never panic as there must always be a `Sidebar` as ancestor having a
+        // `Session`.
+        let session = self
+            .ancestor(Sidebar::static_type())
+            .unwrap()
+            .downcast_ref::<Sidebar>()
+            .unwrap()
+            .session()
+            .unwrap();
 
-            let me_expression =
-                gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
+        let me_expression =
+            gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
 
-            let user_expression = gtk::ConstantExpression::new(user);
-            let interlocutor_status_expression = User::status_expression(&user_expression);
+        let user_expression = gtk::ConstantExpression::new(user);
+        let interlocutor_status_expression = User::status_expression(&user_expression);
 
-            let user_id = user.id();
-            let interlocutor_is_online_expression = gtk::ClosureExpression::new(
-                move |args| {
-                    let maybe_me = args[1].get::<User>();
-                    maybe_me
-                        .map(|me| {
-                            let user_status = args[2].get::<BoxedUserStatus>().unwrap().0;
-                            matches!(user_status, UserStatus::Online(_)) && me.id() != user_id
-                        })
-                        .unwrap_or_default()
-                },
-                &[me_expression.upcast(), interlocutor_status_expression],
-            );
+        let user_id = user.id();
+        let interlocutor_is_online_expression = gtk::ClosureExpression::new(
+            move |args| {
+                let maybe_me = args[1].get::<User>();
+                maybe_me
+                    .map(|me| {
+                        let user_status = args[2].get::<BoxedUserStatus>().unwrap().0;
+                        matches!(user_status, UserStatus::Online(_)) && me.id() != user_id
+                    })
+                    .unwrap_or_default()
+            },
+            &[me_expression.upcast(), interlocutor_status_expression],
+        );
 
-            let is_online_binding =
-                interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
-            self_.binding.replace(Some(is_online_binding));
-        }
+        let is_online_binding =
+            interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
+
+        let self_ = imp::Avatar::from_instance(self);
+        self_.binding.replace(Some(is_online_binding));
     }
 
     pub fn item(&self) -> Option<glib::Object> {
@@ -211,13 +222,16 @@ impl Avatar {
             if let Some(chat) = item.downcast_ref::<Chat>() {
                 self_.avatar.set_item(Some(chat.avatar().to_owned()));
 
-                if let Some(interlocutor_id) = interlocutor_id(chat) {
-                    let interlocutor = chat
-                        .session()
-                        .user_list()
-                        .get_or_create_user(interlocutor_id);
+                match interlocutor_id(chat) {
+                    Some(interlocutor_id) => {
+                        let interlocutor = chat
+                            .session()
+                            .user_list()
+                            .get_or_create_user(interlocutor_id);
 
-                    self.setup_is_online_binding(&interlocutor);
+                        self.setup_is_online_binding(&interlocutor);
+                    }
+                    None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
                 self_.avatar.set_item(Some(user.avatar().to_owned()));
