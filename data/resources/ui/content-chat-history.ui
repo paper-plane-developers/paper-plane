@@ -41,6 +41,7 @@
             </style>
             <property name="child">
               <object class="AdwClampScrollable">
+                <property name="vscroll-policy">natural</property>
                 <property name="child">
                   <object class="GtkListView" id="list_view">
                     <property name="factory">

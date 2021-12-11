@@ -1,7 +1,9 @@
 mod sticker;
+mod sticker_paintable;
 mod text;
 
 use self::sticker::MessageSticker;
+use self::sticker_paintable::StickerPaintable;
 use self::text::MessageText;
 
 use adw::prelude::BinExt;

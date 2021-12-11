@@ -17,3 +17,4 @@ qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.5"
 tdgrand = { git = "https://github.com/melix99/tdgrand", branch = "main" }
 tokio = { version = "1", features = ["rt-multi-thread"] }
+webp = "0.2"
