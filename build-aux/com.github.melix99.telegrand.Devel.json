@@ -64,7 +64,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.5.0"
+                    "commit": "4cd0a397940eb6ab6ed08436a06f7f0d0468e40c"
                 }
             ]
         },
