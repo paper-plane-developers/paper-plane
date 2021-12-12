@@ -5,7 +5,9 @@
       <object class="GtkBinLayout"/>
     </property>
     <child>
-      <object class="GtkPicture" id="picture"/>
+      <object class="GtkPicture" id="picture">
+        <property name="can-shrink">False</property>
+      </object>
     </child>
   </template>
 </interface>
