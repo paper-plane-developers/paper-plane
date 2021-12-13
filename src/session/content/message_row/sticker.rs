@@ -48,12 +48,10 @@ glib::wrapper! {
 }
 
 impl MessageSticker {
-    pub fn new(message: &Message) -> Self {
-        glib::Object::new(&[("message", message)]).expect("Failed to create MessageSticker")
-    }
-
     fn update_widget(&self) {
         if let Some(message) = self.message() {
+            let message = message.downcast_ref::<Message>().unwrap();
+
             if let MessageContent::MessageSticker(data) = message.content().0 {
                 let self_ = imp::MessageSticker::from_instance(self);
                 self_
@@ -67,15 +65,15 @@ impl MessageSticker {
                         glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
                     receiver.attach(
-                    None,
-                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                        if file.local.is_downloading_completed {
-                            obj.load_sticker(&file.local.path);
-                        }
+                        None,
+                        clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
+                            if file.local.is_downloading_completed {
+                                obj.load_sticker(&file.local.path);
+                            }
 
-                        glib::Continue(true)
-                    }),
-                );
+                            glib::Continue(true)
+                        }),
+                    );
 
                     message
                         .chat()

@@ -1,12 +1,9 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{MessageContent, MessageSender as TelegramMessageSender, Update};
+use tdgrand::enums::{MessageSender as TelegramMessageSender, Update};
 use tdgrand::types::Message as TelegramMessage;
 
+use crate::session::chat::BoxedMessageContent;
 use crate::session::{Chat, User};
-
-#[derive(Clone, Debug, PartialEq, glib::GBoxed)]
-#[gboxed(type_name = "BoxedMessageContent")]
-pub struct BoxedMessageContent(pub MessageContent);
 
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "MessageSender")]

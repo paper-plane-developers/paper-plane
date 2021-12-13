@@ -37,6 +37,8 @@ rust_sources = files(
   'session/chat/item.rs',
   'session/chat/message.rs',
   'session/chat/mod.rs',
+  'session/chat/sponsored_message.rs',
+  'session/chat/sponsored_message_list.rs',
   'session/components/avatar.rs',
   'session/components/mod.rs',
   'session/content/chat_action_bar.rs',

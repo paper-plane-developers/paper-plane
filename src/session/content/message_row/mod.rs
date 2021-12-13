@@ -9,7 +9,7 @@ pub use self::text::MessageText;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::ChatType;
 
-use crate::session::chat::{Message, MessageSender};
+use crate::session::chat::{Message, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
 
 const AVATAR_SIZE: i32 = 32;
@@ -22,7 +22,8 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct MessageRow {
-        pub message: RefCell<Option<Message>>,
+        /// A `Message` or `SponsoredMessage`
+        pub message: RefCell<Option<glib::Object>>,
         pub content: RefCell<Option<gtk::Widget>>,
         pub avatar: RefCell<Option<Avatar>>,
         pub is_outgoing: Cell<bool>,
@@ -43,7 +44,7 @@ mod imp {
                         "message",
                         "Message",
                         "The message represented by this row",
-                        Message::static_type(),
+                        glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpec::new_object(
@@ -199,34 +200,24 @@ glib::wrapper! {
 }
 
 pub trait MessageRowExt: IsA<MessageRow> {
-    fn message(&self) -> Option<Message> {
+    fn new(message: &glib::Object) -> Self;
+
+    fn message(&self) -> Option<glib::Object> {
         let self_ = imp::MessageRow::from_instance(self.upcast_ref());
         self_.message.borrow().to_owned()
     }
 
-    fn set_message(&self, message: Option<Message>) {
+    fn set_message(&self, message: Option<glib::Object>) {
         if self.message() == message {
             return;
         }
 
         let self_ = imp::MessageRow::from_instance(self.upcast_ref());
         if let Some(ref message) = message {
-            self_.is_outgoing.set(message.is_outgoing());
+            if let Some(message) = message.downcast_ref::<Message>() {
+                self_.is_outgoing.set(message.is_outgoing());
 
-            if let Some(content) = self_.content.borrow().as_ref() {
-                if message.is_outgoing() {
-                    content.set_margin_start(AVATAR_SIZE + SPACING);
-                    content.set_margin_end(0);
-                    content.add_css_class("outgoing");
-                } else {
-                    content.set_margin_start(0);
-                    content.set_margin_end(AVATAR_SIZE + SPACING);
-                    content.remove_css_class("outgoing");
-                }
-            }
-
-            let show_avatar = {
-                if !message.is_outgoing() {
+                let show_avatar = if !message.is_outgoing() {
                     match message.chat().type_() {
                         ChatType::BasicGroup(_) => true,
                         ChatType::Supergroup(data) => !data.is_channel,
@@ -234,28 +225,44 @@ pub trait MessageRowExt: IsA<MessageRow> {
                     }
                 } else {
                     false
-                }
-            };
-            if show_avatar {
-                let avatar_item = match message.sender() {
-                    MessageSender::User(user) => user.avatar().clone(),
-                    MessageSender::Chat(chat) => chat.avatar().clone(),
                 };
+                if show_avatar {
+                    let avatar_item = match message.sender() {
+                        MessageSender::User(user) => user.avatar().clone(),
+                        MessageSender::Chat(chat) => chat.avatar().clone(),
+                    };
 
-                if self_.avatar.borrow().is_none() {
-                    let avatar = Avatar::new();
-                    avatar.set_size(AVATAR_SIZE);
-                    avatar.set_item(Some(avatar_item));
-                    avatar.set_parent(self.upcast_ref());
-                    self_.avatar.replace(Some(avatar));
-                } else if let Some(avatar) = self_.avatar.borrow().as_ref() {
-                    avatar.set_item(Some(avatar_item));
+                    if self_.avatar.borrow().is_none() {
+                        let avatar = Avatar::new();
+                        avatar.set_size(AVATAR_SIZE);
+                        avatar.set_item(Some(avatar_item));
+                        avatar.set_parent(self.upcast_ref());
+                        self_.avatar.replace(Some(avatar));
+                    } else if let Some(avatar) = self_.avatar.borrow().as_ref() {
+                        avatar.set_item(Some(avatar_item));
+                    }
+                } else {
+                    if let Some(avatar) = self_.avatar.borrow().as_ref() {
+                        avatar.unparent();
+                    }
+                    self_.avatar.replace(None);
                 }
+            } else if message.downcast_ref::<SponsoredMessage>().is_some() {
+                self_.is_outgoing.set(false);
             } else {
-                if let Some(avatar) = self_.avatar.borrow().as_ref() {
-                    avatar.unparent();
-                }
-                self_.avatar.replace(None);
+                unreachable!("Unexpected message type: {:?}", message);
+            }
+        }
+
+        if let Some(content) = self_.content.borrow().as_ref() {
+            if self_.is_outgoing.get() {
+                content.set_margin_start(AVATAR_SIZE + SPACING);
+                content.set_margin_end(0);
+                content.add_css_class("outgoing");
+            } else {
+                content.set_margin_start(0);
+                content.set_margin_end(AVATAR_SIZE + SPACING);
+                content.remove_css_class("outgoing");
             }
         }
 
@@ -295,7 +302,11 @@ pub trait MessageRowExt: IsA<MessageRow> {
     }
 }
 
-impl<T: IsA<MessageRow>> MessageRowExt for T {}
+impl<T: glib::object::IsClass + IsA<glib::Object> + IsA<MessageRow>> MessageRowExt for T {
+    fn new(message: &glib::Object) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessageRow")
+    }
+}
 
 unsafe impl<T: WidgetImpl + ObjectImpl + 'static> IsSubclassable<T> for MessageRow {
     fn class_init(class: &mut glib::Class<Self>) {
