@@ -3,7 +3,7 @@ use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::{enums::MessageContent, types::File};
 
 use crate::session::chat::Message;
-use crate::session::content::message_row::StickerPaintable;
+use crate::session::content::{message_row::StickerPaintable, MessageRow, MessageRowExt};
 
 mod imp {
     use super::*;
@@ -20,7 +20,7 @@ mod imp {
     impl ObjectSubclass for MessageSticker {
         const NAME: &'static str = "ContentMessageSticker";
         type Type = super::MessageSticker;
-        type ParentType = gtk::Widget;
+        type ParentType = MessageRow;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -34,12 +34,8 @@ mod imp {
     impl ObjectImpl for MessageSticker {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
             self.picture.set_paintable(Some(&self.paintable));
-        }
-
-        fn dispose(&self, _obj: &Self::Type) {
-            self.picture.unparent();
+            obj.connect_message_notify(|obj, _| obj.update_widget());
         }
     }
 
@@ -48,34 +44,29 @@ mod imp {
 
 glib::wrapper! {
     pub struct MessageSticker(ObjectSubclass<imp::MessageSticker>)
-        @extends gtk::Widget;
-}
-
-impl Default for MessageSticker {
-    fn default() -> Self {
-        Self::new()
-    }
+        @extends gtk::Widget, MessageRow;
 }
 
 impl MessageSticker {
-    pub fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create MessageSticker")
+    pub fn new(message: &Message) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessageSticker")
     }
 
-    pub fn set_message(&self, message: &Message) {
-        if let MessageContent::MessageSticker(data) = message.content().0 {
-            let self_ = imp::MessageSticker::from_instance(self);
-            self_
-                .paintable
-                .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
+    fn update_widget(&self) {
+        if let Some(message) = self.message() {
+            if let MessageContent::MessageSticker(data) = message.content().0 {
+                let self_ = imp::MessageSticker::from_instance(self);
+                self_
+                    .paintable
+                    .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
-            if data.sticker.sticker.local.is_downloading_completed {
-                self.load_sticker(&data.sticker.sticker.local.path);
-            } else {
-                let (sender, receiver) =
-                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
+                if data.sticker.sticker.local.is_downloading_completed {
+                    self.load_sticker(&data.sticker.sticker.local.path);
+                } else {
+                    let (sender, receiver) =
+                        glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
-                receiver.attach(
+                    receiver.attach(
                     None,
                     clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                         if file.local.is_downloading_completed {
@@ -86,10 +77,11 @@ impl MessageSticker {
                     }),
                 );
 
-                message
-                    .chat()
-                    .session()
-                    .download_file(data.sticker.sticker.id, sender);
+                    message
+                        .chat()
+                        .session()
+                        .download_file(data.sticker.sticker.id, sender);
+                }
             }
         }
     }

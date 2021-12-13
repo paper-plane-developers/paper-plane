@@ -1,11 +1,11 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::MessageContent;
 
 use crate::session::chat::{Item, ItemType};
-use crate::session::content::message_row::MessageRow;
-use crate::session::content::EventRow;
+use crate::session::content::message_row::{MessageSticker, MessageText};
+use crate::session::content::{EventRow, MessageRowExt};
 
 mod imp {
     use super::*;
@@ -89,45 +89,23 @@ impl ItemRow {
         if let Some(ref item) = item {
             match item.type_() {
                 ItemType::Message(message) => match message.content().0 {
-                    MessageContent::MessageChatDeletePhoto => {
-                        let is_outgoing = message.is_outgoing();
-                        let is_channel = if let ChatType::Supergroup(data) = message.chat().type_()
+                    MessageContent::MessageSticker(data) if !data.sticker.is_animated => {
+                        if let Some(Ok(child)) =
+                            self.child().map(|w| w.downcast::<MessageSticker>())
                         {
-                            data.is_channel
+                            child.set_message(Some(message.to_owned()));
                         } else {
-                            false
-                        };
-
-                        let sender_name_expression = message.sender_name_expression();
-                        let label_expression = gtk::ClosureExpression::new(
-                            move |args| {
-                                if is_channel {
-                                    gettext("Channel photo removed")
-                                } else if is_outgoing {
-                                    gettext("You removed the group photo")
-                                } else {
-                                    let name = args[1].get::<&str>().unwrap();
-                                    gettext!("{} removed the group photo", name)
-                                }
-                            },
-                            &[sender_name_expression],
-                        );
-
-                        let child = self.get_or_create_event_row();
-                        label_expression.bind(&child, "label", Some(&child));
+                            let child = MessageSticker::new(message);
+                            self.set_child(Some(&child));
+                        }
                     }
                     _ => {
-                        let child = if let Some(Ok(child)) =
-                            self.child().map(|w| w.downcast::<MessageRow>())
-                        {
-                            child
+                        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<MessageText>()) {
+                            child.set_message(Some(message.to_owned()));
                         } else {
-                            let child = MessageRow::new();
+                            let child = MessageText::new(message);
                             self.set_child(Some(&child));
-                            child
-                        };
-
-                        child.set_message(message);
+                        }
                     }
                 },
                 ItemType::DayDivider(date) => {

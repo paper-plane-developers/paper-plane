@@ -9,6 +9,7 @@ use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
 use self::event_row::EventRow;
 use self::item_row::ItemRow;
+use self::message_row::{MessageRow, MessageRowExt};
 use self::user_dialog::UserDialog;
 
 use gtk::glib;
