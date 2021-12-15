@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageSticker" parent="GtkWidget">
-    <property name="layout-manager">
-      <object class="GtkBinLayout"/>
+  <template class="ContentMessageSticker" parent="ContentMessageRow">
+    <property name="content">
+      <object class="GtkPicture" id="picture"/>
     </property>
-    <child>
-      <object class="GtkPicture" id="picture">
-        <property name="can-shrink">False</property>
-      </object>
-    </child>
   </template>
 </interface>

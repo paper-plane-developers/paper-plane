@@ -1,8 +1,9 @@
 use glib::clone;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::ChatType;
 
 use crate::session::{
+    chat::SponsoredMessageList,
     content::{ChatActionBar, ItemRow, UserDialog},
     Chat,
 };
@@ -18,6 +19,7 @@ mod imp {
     pub struct ChatHistory {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
+        pub sponsored_message_list: RefCell<Option<SponsoredMessageList>>,
         #[template_child]
         pub list_view: TemplateChild<gtk::ListView>,
     }
@@ -163,7 +165,28 @@ impl ChatHistory {
                 _ => self.action_set_enabled("chat-history.view-info", false),
             }
 
-            let selection = gtk::NoSelection::new(Some(&chat.history()));
+            let list = gio::ListStore::new(gio::ListModel::static_type());
+            list.append(&chat.history());
+
+            if matches!(chat.type_(), ChatType::Supergroup(data) if data.is_channel) {
+                let mut sponsored_message_list_ref = self_.sponsored_message_list.borrow_mut();
+                let sponsored_message_list = match *sponsored_message_list_ref {
+                    None => {
+                        let sponsored_message_list = SponsoredMessageList::new();
+                        *sponsored_message_list_ref = Some(sponsored_message_list);
+                        sponsored_message_list_ref.as_ref().unwrap()
+                    }
+                    Some(ref sponsored_message_list) => {
+                        sponsored_message_list.clear();
+                        sponsored_message_list
+                    }
+                };
+                sponsored_message_list.fetch(chat);
+                list.append(sponsored_message_list);
+            }
+
+            let model = gtk::FlattenListModel::new(Some(&list));
+            let selection = gtk::NoSelection::new(Some(&model));
             self_.list_view.set_model(Some(&selection));
         }
 

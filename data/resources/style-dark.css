@@ -2,7 +2,7 @@
   background-color: @dark_2;
 }
 
-.chat-history row .message-bubble:not(.outgoing) {
+.message-bubble:not(.outgoing) {
   background-color: alpha(white, 0.1);
 }
 

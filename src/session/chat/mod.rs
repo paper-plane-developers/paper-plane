@@ -1,15 +1,19 @@
 mod history;
 mod item;
 mod message;
+mod sponsored_message;
+mod sponsored_message_list;
 
 use self::history::History;
 pub use self::item::{Item, ItemType};
-pub use self::message::{BoxedMessageContent, Message, MessageSender};
+pub use self::message::{Message, MessageSender};
+pub use self::sponsored_message::SponsoredMessage;
+pub use self::sponsored_message_list::SponsoredMessageList;
 
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{self, ChatType, Update};
+use tdgrand::enums::{self, ChatType, MessageContent, Update};
 use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::Avatar;
@@ -26,6 +30,10 @@ pub struct BoxedDraftMessage(pub Option<DraftMessage>);
 #[derive(Clone, Debug, glib::GBoxed)]
 #[gboxed(type_name = "BoxedChatNotificationSettings")]
 pub struct BoxedChatNotificationSettings(pub ChatNotificationSettings);
+
+#[derive(Clone, Debug, PartialEq, glib::GBoxed)]
+#[gboxed(type_name = "BoxedMessageContent")]
+pub struct BoxedMessageContent(pub MessageContent);
 
 mod imp {
     use super::*;

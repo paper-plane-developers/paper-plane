@@ -1,11 +1,11 @@
 use adw::{prelude::BinExt, subclass::prelude::BinImpl};
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::MessageContent;
 
-use crate::session::chat::{Item, ItemType};
-use crate::session::content::message_row::MessageRow;
-use crate::session::content::EventRow;
+use crate::session::chat::{Item, ItemType, SponsoredMessage};
+use crate::session::content::message_row::{MessageSticker, MessageText};
+use crate::session::content::{EventRow, MessageRow, MessageRowExt};
 
 mod imp {
     use super::*;
@@ -14,7 +14,8 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct ItemRow {
-        pub item: RefCell<Option<Item>>,
+        /// An `Item` or `SponsoredMessage`
+        pub item: RefCell<Option<glib::Object>>,
     }
 
     #[glib::object_subclass]
@@ -31,11 +32,10 @@ mod imp {
                     "item",
                     "Item",
                     "The item represented by this row",
-                    Item::static_type(),
-                    glib::ParamFlags::READWRITE,
+                    glib::Object::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                 )]
             });
-
             PROPERTIES.as_ref()
         }
 
@@ -80,74 +80,74 @@ impl ItemRow {
         glib::Object::new(&[]).expect("Failed to create ItemRow")
     }
 
-    pub fn item(&self) -> Option<Item> {
+    pub fn item(&self) -> Option<glib::Object> {
         let self_ = imp::ItemRow::from_instance(self);
-        self_.item.borrow().clone()
+        self_.item.borrow().to_owned()
     }
 
-    fn set_item(&self, item: Option<Item>) {
-        if let Some(ref item) = item {
-            match item.type_() {
-                ItemType::Message(message) => match message.content().0 {
-                    MessageContent::MessageChatDeletePhoto => {
-                        let is_outgoing = message.is_outgoing();
-                        let is_channel = if let ChatType::Supergroup(data) = message.chat().type_()
-                        {
-                            data.is_channel
-                        } else {
-                            false
-                        };
+    pub fn set_item(&self, item: Option<glib::Object>) {
+        if self.item() == item {
+            return;
+        }
 
-                        let sender_name_expression = message.sender_name_expression();
-                        let label_expression = gtk::ClosureExpression::new(
-                            move |args| {
-                                if is_channel {
-                                    gettext("Channel photo removed")
-                                } else if is_outgoing {
-                                    gettext("You removed the group photo")
-                                } else {
-                                    let name = args[1].get::<&str>().unwrap();
-                                    gettext!("{} removed the group photo", name)
-                                }
-                            },
-                            &[sender_name_expression],
-                        );
+        if let Some(ref item) = item {
+            if let Some(item) = item.downcast_ref::<Item>() {
+                match item.type_() {
+                    ItemType::Message(message) => {
+                        let content = message.content().0;
+                        let message = message.to_owned().upcast();
+
+                        match content {
+                            MessageContent::MessageSticker(data) if !data.sticker.is_animated => {
+                                self.set_child_row::<MessageSticker>(message)
+                            }
+                            _ => self.set_child_row::<MessageText>(message),
+                        }
+                    }
+                    ItemType::DayDivider(date) => {
+                        let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year()
+                        {
+                            // Translators: This is a date format in the day divider without the year
+                            gettext("%B %e")
+                        } else {
+                            // Translators: This is a date format in the day divider with the year
+                            gettext("%B %e, %Y")
+                        };
+                        let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
 
                         let child = self.get_or_create_event_row();
-                        label_expression.bind(&child, "label", Some(&child));
+                        child.set_label(&date);
                     }
-                    _ => {
-                        let child = if let Some(Ok(child)) =
-                            self.child().map(|w| w.downcast::<MessageRow>())
-                        {
-                            child
-                        } else {
-                            let child = MessageRow::new();
-                            self.set_child(Some(&child));
-                            child
-                        };
-
-                        child.set_message(message);
-                    }
-                },
-                ItemType::DayDivider(date) => {
-                    let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year() {
-                        // Translators: This is a date format in the day divider without the year
-                        gettext("%B %e")
-                    } else {
-                        // Translators: This is a date format in the day divider with the year
-                        gettext("%B %e, %Y")
-                    };
-                    let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
-
-                    let child = self.get_or_create_event_row();
-                    child.set_label(&date);
                 }
+            } else if let Some(sponsored_message) = item.downcast_ref::<SponsoredMessage>() {
+                let content = &sponsored_message.content().0;
+                if !matches!(content, MessageContent::MessageText(_)) {
+                    log::warn!("Unexpected sponsored message of type: {:?}", content);
+                }
+
+                self.set_child_row::<MessageText>(sponsored_message.to_owned().upcast());
+            } else {
+                unreachable!("Unexpected item type: {:?}", item);
             }
         }
 
         let self_ = imp::ItemRow::from_instance(self);
         self_.item.replace(item);
+
+        self.notify("item");
+    }
+
+    fn set_child_row<M: IsA<gtk::Widget> + IsA<MessageRow> + MessageRowExt>(
+        &self,
+        message: glib::Object,
+    ) {
+        match self.child().and_then(|w| w.downcast::<M>().ok()) {
+            Some(child) => child.set_message(Some(message)),
+            None => {
+                let child = M::new(&message);
+                self.set_child(Some(&child));
+            }
+        }
     }
 
     fn get_or_create_event_row(&self) -> EventRow {
