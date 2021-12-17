@@ -202,6 +202,13 @@ impl Message {
         }
     }
 
+    pub fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_notify_local(Some("content"), f)
+    }
+
     pub fn chat(&self) -> Chat {
         let self_ = imp::Message::from_instance(self);
         self_.chat.upgrade().unwrap()

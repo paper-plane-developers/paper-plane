@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessagePhoto" parent="ContentMessageRow">
+    <property name="content">
+      <object class="ContentMessageMedia" id="media"/>
+    </property>
+  </template>
+</interface>

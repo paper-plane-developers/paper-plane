@@ -81,6 +81,18 @@
   color: @accent_fg_color;
 }
 
+.message-media {
+  padding: 2px;
+}
+
+.message-media .media-picture {
+  border-radius: 10px;
+}
+
+.message-media.with-caption .media-picture {
+  border-radius: 10px 10px 4px 4px;
+}
+
 .event-row {
   font-size: 0.8em;
   padding: 3px;

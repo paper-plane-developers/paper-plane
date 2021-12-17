@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessageMedia" parent="GtkWidget">
+    <style>
+      <class name="message-bubble"/>
+      <class name="message-media"/>
+    </style>
+    <child>
+      <object class="GtkBox" id="content">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="ContentMediaPicture" id="picture">
+            <property name="overflow">hidden</property>
+            <style>
+              <class name="media-picture"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="caption_label">
+            <property name="selectable">True</property>
+            <property name="use-markup">True</property>
+            <property name="wrap">True</property>
+            <property name="wrap-mode">word-char</property>
+            <property name="xalign">0</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">4</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="visible">False</property>
+            <style>
+              <class name="message-text"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
