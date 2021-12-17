@@ -164,6 +164,25 @@ impl ProxyRow {
         }
     }
 
+    pub fn disable_proxy(&self) {
+        let self_ = imp::ProxyRow::from_instance(self);
+        let client_id = self.client_id();
+        self_.check_button.set_active(false);
+
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            async move { functions::DisableProxy::new().send(client_id).await },
+            clone!(@weak self as app => move |result| async move {
+                match result {
+                    Err(err) => {
+                        log::error!("Received an error for EnableProxy: {}", err.code);
+                    },
+                    Ok(_) => {},
+                }
+            }),
+        );
+    }
+
     fn enable_proxy(&self) {
         let self_ = imp::ProxyRow::from_instance(self);
         let proxy_id = self_.proxy.borrow().id;

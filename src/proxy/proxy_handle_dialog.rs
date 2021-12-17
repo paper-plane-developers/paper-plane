@@ -151,7 +151,7 @@ impl ProxyHandleDialog {
             .text()
             .to_string()
             .parse::<i32>()
-            .unwrap_or(0);
+            .unwrap_or(8080);
         let client_id = self.client_id();
         let proxy_type = self.proxy_type();
 

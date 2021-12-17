@@ -1,10 +1,12 @@
 use super::proxy_handle_dialog::ProxyHandleDialog;
-use crate::utils::do_async;
-use glib::clone;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use crate::proxy::proxy_row::ProxyRow;
-use tdgrand::{enums, functions} ;
 use adw::subclass::prelude::*;
+use glib::clone;
+use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use tdgrand::{enums, functions};
+
+use crate::config;
+use crate::proxy::proxy_row::ProxyRow;
+use crate::utils::do_async;
 
 mod imp {
     use super::*;
@@ -33,9 +35,7 @@ mod imp {
         type Type = super::ProxyWindow;
         type ParentType = adw::PreferencesWindow;
 
-
         fn class_init(klass: &mut Self::Class) {
-
             Self::bind_template(klass);
         }
 
@@ -78,6 +78,19 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
+            let self_ = imp::ProxyWindow::from_instance(obj);
+
+            let use_proxy_switch = &*self_.proxy_enable_switch;
+            let settings = gio::Settings::new(config::APP_ID);
+            settings
+                .bind("use-proxy", use_proxy_switch, "state")
+                .build();
+
+            if self_.proxy_enable_switch.is_active() {
+                obj.proxy_set_enable()
+            } else {
+                obj.proxy_set_disable()
+            }
 
             obj.setup_bindings();
             obj.init_exits_proxies();
@@ -103,6 +116,16 @@ impl ProxyWindow {
     fn setup_bindings(&self) {
         let self_ = imp::ProxyWindow::from_instance(self);
 
+        self_.proxy_enable_switch.connect_active_notify(
+            clone!(@weak self as app => move |switch| {
+                if switch.is_active() {
+                     app.proxy_set_enable()
+                } else {
+                    app.proxy_set_disable()
+                }
+            }),
+        );
+
         self_
             .proxy_add_button
             .connect_clicked(clone!(@weak self as app => move |_| {
@@ -123,6 +146,7 @@ impl ProxyWindow {
         match visible_page.as_str() {
             "main-page" => {
                 self.init_exits_proxies();
+                self.set_default_height(300);
             }
             "proxy-handle" => {
                 self.set_default_height(300);
@@ -147,6 +171,26 @@ impl ProxyWindow {
                 }
             }),
         );
+    }
+    fn proxy_set_enable(&self) {
+        let self_ = imp::ProxyWindow::from_instance(self);
+        self_.proxy_list.get().set_sensitive(true);
+        self_.proxy_add_button.get().set_sensitive(true);
+        self.init_exits_proxies();
+    }
+
+    fn proxy_set_disable(&self) {
+        let self_ = imp::ProxyWindow::from_instance(self);
+        self_.proxy_list.get().set_sensitive(false);
+        self_.proxy_add_button.get().set_sensitive(false);
+
+        let list_model = self_.proxy_list.get().observe_children();
+
+        for i in 0..list_model.n_items() {
+            if let Some(item) = list_model.item(i) {
+                item.dynamic_cast::<ProxyRow>().unwrap().disable_proxy();
+            };
+        }
     }
 
     fn set_proxies(&self, proxies: &enums::Proxies) {
@@ -186,5 +230,4 @@ impl ProxyWindow {
         let self_ = imp::ProxyWindow::from_instance(self);
         self_.proxy_stack.set_visible_child_name("main-page");
     }
-
 }

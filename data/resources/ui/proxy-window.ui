@@ -3,7 +3,7 @@
   <template class="ProxyWindow" parent="AdwPreferencesWindow">
     <property name="title" translatable="yes">ProxyWindow</property>
     <property name="default-width">400</property>
-    <!-- <property name="default-height">100</property> -->
+    <property name="default-height">300</property>
     <child>
       <object class="GtkStack" id="proxy_stack">
         <property name="transition-type">crossfade</property>
@@ -59,6 +59,7 @@
                             <child>
                               <object class="GtkButton" id="proxy_add_button">
                                 <property name="valign">center</property>
+                                <property name="icon-name">list-add-symbolic</property>
                               </object>
                             </child>
                           </object>
