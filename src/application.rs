@@ -7,7 +7,6 @@ use log::{debug, info};
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
 use crate::PreferencesWindow;
 use crate::Window;
-// use crate::ProxyWindow;
 use crate::proxy::proxy_window::ProxyWindow;
 use crate::proxy::proxy_handle_dialog::ProxyTypes;
 
@@ -77,7 +76,6 @@ mod imp {
 
 glib::wrapper! {
     pub struct Application(ObjectSubclass<imp::Application>)
-        
         @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionMap, gio::ActionGroup;
 }

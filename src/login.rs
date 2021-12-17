@@ -553,7 +553,6 @@ impl Login {
         );
     }
 
-
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let self_ = imp::Login::from_instance(self);
 
@@ -638,9 +637,6 @@ impl Login {
             .to_str()
             .expect("Data directory path is not a valid unicode string")
             .to_owned();
-
-        println!("{}",database_directory);
-
 
         let system_language_code = {
             let locale = Locale::current().to_string();
