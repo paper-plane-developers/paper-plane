@@ -57,7 +57,7 @@ rust_sources = files(
   'proxy/mod.rs',
   'proxy/proxy_handle_dialog.rs',
   'proxy/proxy_row.rs',
-  'proxy/window.rs',
+  'proxy/proxy_window.rs',
 )
 
 sources = [rust_sources, cargo_sources]
