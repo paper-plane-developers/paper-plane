@@ -54,6 +54,10 @@ rust_sources = files(
   'session/sidebar/avatar.rs',
   'session/sidebar/mod.rs',
   'session/sidebar/row.rs',
+  'proxy/mod.rs',
+  'proxy/proxy_handle_dialog.rs',
+  'proxy/proxy_row.rs',
+  'proxy/window.rs',
 )
 
 sources = [rust_sources, cargo_sources]

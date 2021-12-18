@@ -5,10 +5,10 @@ use gtk::{gio, glib};
 use log::{debug, info};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::proxy::proxy_handle_dialog::ProxyTypes;
+use crate::proxy::proxy_window::ProxyWindow;
 use crate::PreferencesWindow;
 use crate::Window;
-use crate::proxy::proxy_window::ProxyWindow;
-use crate::proxy::proxy_handle_dialog::ProxyTypes;
 
 mod imp {
     use super::*;
@@ -121,7 +121,6 @@ impl Application {
         }));
         self.add_action(&action_proxy);
 
-
         // Preferences
         let action_preferences = gio::SimpleAction::new("preferences", None);
         action_preferences.connect_activate(clone!(@weak self as app => move |_, _| {
@@ -155,13 +154,13 @@ impl Application {
         }
     }
 
-    fn show_proxy(&self, client_id: i32){
+    fn show_proxy(&self, client_id: i32) {
         let proxy = ProxyWindow::new(client_id);
         proxy.set_transient_for(Some(&self.main_window()));
         proxy.set_modal(true);
         proxy.present();
     }
- 
+
     fn show_preferences(&self) {
         let preferences = PreferencesWindow::new();
         preferences.set_transient_for(Some(&self.main_window()));

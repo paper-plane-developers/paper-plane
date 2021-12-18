@@ -151,7 +151,7 @@ impl Window {
 
     fn create_client(&self) {
         let client_id = tdgrand::create_client();
-        
+
         let self_ = imp::Window::from_instance(self);
         self_.clients.borrow_mut().insert(client_id, None);
         self_.active_client_id.set(client_id);
