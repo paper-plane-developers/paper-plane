@@ -309,12 +309,21 @@ impl Session {
         let self_ = imp::Session::from_instance(self);
 
         let mut downloading_files = self_.downloading_files.borrow_mut();
-        if let Entry::Occupied(entry) = downloading_files.entry(file.id) {
-            for sender in entry.get() {
-                sender.send(file.clone()).unwrap();
-            }
+        if let Entry::Occupied(mut entry) = downloading_files.entry(file.id) {
+            // Keep only the senders with which it was possible to send successfully.
+            // It is indeed possible that the object that created the sender and receiver and
+            // attached it to the default main context has been disposed in the meantime.
+            // This is problematic if it is now tried to upgrade a weak reference of this object in
+            // the receiver closure.
+            // It will either panic directly if `@default-panic` is used or the sender will return
+            // an error in the `SyncSender::send()` function if
+            // `default-return glib::Continue(false)` is used. In the latter case, the Receiver
+            // will be detached from the main context, which will cause the sending to fail.
+            entry
+                .get_mut()
+                .retain(|sender| sender.send(file.clone()).is_ok());
 
-            if file.local.is_downloading_completed {
+            if file.local.is_downloading_completed || entry.get().is_empty() {
                 entry.remove();
             }
         }
