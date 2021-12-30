@@ -31,6 +31,8 @@ rust_sources = files(
   'session/avatar.rs',
   'session/chat_list.rs',
   'session/mod.rs',
+  'session/supergroup.rs',
+  'session/supergroup_list.rs',
   'session/user.rs',
   'session/user_list.rs',
   'session/chat/history.rs',

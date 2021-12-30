@@ -4,6 +4,8 @@ mod chat_list;
 mod components;
 mod content;
 mod sidebar;
+mod supergroup;
+mod supergroup_list;
 mod user;
 mod user_list;
 
@@ -12,6 +14,8 @@ pub use self::chat::Chat;
 use self::chat_list::ChatList;
 use self::content::Content;
 use self::sidebar::Sidebar;
+use self::supergroup::Supergroup;
+use self::supergroup_list::SupergroupList;
 use self::user::User;
 use self::user_list::UserList;
 
@@ -42,6 +46,7 @@ mod imp {
         pub me: RefCell<Option<User>>,
         pub chat_list: OnceCell<ChatList>,
         pub user_list: OnceCell<UserList>,
+        pub supergroup_list: SupergroupList,
         pub selected_chat: RefCell<Option<Chat>>,
         pub private_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
         pub group_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
@@ -109,6 +114,13 @@ mod imp {
                         "User List",
                         "The list of users of this session",
                         ChatList::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
+                        "supergroup-list",
+                        "Supergroup List",
+                        "The list of supergroups of this session",
+                        SupergroupList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpec::new_object(
@@ -186,6 +198,7 @@ mod imp {
                 "me" => obj.me().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
+                "supergroup-list" => obj.supergroup_list().to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
@@ -268,6 +281,7 @@ impl Session {
             Update::User(_) | Update::UserStatus(_) => {
                 self.user_list().handle_update(update);
             }
+            Update::Supergroup(_) => self.supergroup_list().handle_update(&update),
             Update::File(update) => {
                 self.handle_file_update(update.file);
             }
@@ -354,6 +368,10 @@ impl Session {
     pub fn user_list(&self) -> &UserList {
         let self_ = imp::Session::from_instance(self);
         self_.user_list.get_or_init(|| UserList::new(self))
+    }
+
+    pub fn supergroup_list(&self) -> &SupergroupList {
+        &imp::Session::from_instance(self).supergroup_list
     }
 
     fn selected_chat(&self) -> Option<Chat> {
