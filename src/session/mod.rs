@@ -5,6 +5,8 @@ mod chat;
 mod chat_list;
 mod components;
 mod content;
+mod secret_chat;
+mod secret_chat_list;
 mod sidebar;
 mod supergroup;
 mod supergroup_list;
@@ -17,6 +19,8 @@ use self::basic_group_list::BasicGroupList;
 pub use self::chat::Chat;
 use self::chat_list::ChatList;
 use self::content::Content;
+use self::secret_chat::SecretChat;
+use self::secret_chat_list::SecretChatList;
 use self::sidebar::Sidebar;
 use self::supergroup::Supergroup;
 use self::supergroup_list::SupergroupList;
@@ -52,6 +56,7 @@ mod imp {
         pub user_list: OnceCell<UserList>,
         pub basic_group_list: OnceCell<BasicGroupList>,
         pub supergroup_list: OnceCell<SupergroupList>,
+        pub secret_chat_list: OnceCell<SecretChatList>,
         pub selected_chat: RefCell<Option<Chat>>,
         pub private_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
         pub group_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
@@ -136,6 +141,13 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpec::new_object(
+                        "secret-chat-list",
+                        "Secret Chat List",
+                        "The list of secret chats of this session",
+                        SecretChatList::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpec::new_object(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
@@ -212,6 +224,7 @@ mod imp {
                 "user-list" => obj.user_list().to_value(),
                 "basic-group-list" => obj.basic_group_list().to_value(),
                 "supergroup-list" => obj.supergroup_list().to_value(),
+                "secret-chat-list" => obj.secret_chat_list().to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
@@ -296,6 +309,7 @@ impl Session {
             }
             Update::BasicGroup(_) => self.basic_group_list().handle_update(&update),
             Update::Supergroup(_) => self.supergroup_list().handle_update(&update),
+            Update::SecretChat(_) => self.secret_chat_list().handle_update(&update),
             Update::File(update) => {
                 self.handle_file_update(update.file);
             }
@@ -392,6 +406,13 @@ impl Session {
     pub fn supergroup_list(&self) -> &SupergroupList {
         let self_ = imp::Session::from_instance(self);
         self_.supergroup_list.get_or_init(SupergroupList::new)
+    }
+
+    pub fn secret_chat_list(&self) -> &SecretChatList {
+        let self_ = imp::Session::from_instance(self);
+        self_
+            .secret_chat_list
+            .get_or_init(|| SecretChatList::new(self))
     }
 
     fn selected_chat(&self) -> Option<Chat> {
