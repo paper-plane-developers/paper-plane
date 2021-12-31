@@ -1,11 +1,10 @@
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::ChatType;
 
 use crate::session::{
     chat::SponsoredMessage,
     content::{ChatActionBar, ItemRow, UserDialog},
-    Chat, Session,
+    Chat, ChatType, Session,
 };
 use crate::spawn;
 
@@ -136,9 +135,8 @@ impl ChatHistory {
 
     fn open_info_dialog(&self) {
         if let Some(chat) = self.chat() {
-            if let ChatType::Private(data) = chat.type_() {
-                let user = chat.session().user_list().get_or_create_user(data.user_id);
-                let dialog = UserDialog::new(&self.parent_window(), &user);
+            if let ChatType::Private(user) = chat.type_() {
+                let dialog = UserDialog::new(&self.parent_window(), user);
                 dialog.show();
             }
         }
@@ -175,7 +173,7 @@ impl ChatHistory {
             }
 
             // Request sponsored message, if needed
-            let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(data) if data.is_channel)
+            let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
                 let list = gio::ListStore::new(gio::ListModel::static_type());
                 list.append(&chat.history());

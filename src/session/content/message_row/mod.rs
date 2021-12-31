@@ -7,10 +7,10 @@ use self::sticker_paintable::StickerPaintable;
 pub use self::text::MessageText;
 
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::ChatType;
 
 use crate::session::chat::{Message, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
+use crate::session::ChatType;
 
 const AVATAR_SIZE: i32 = 32;
 const SPACING: i32 = 6;
@@ -220,7 +220,7 @@ pub trait MessageRowExt: IsA<MessageRow> {
                 let show_avatar = if !message.is_outgoing() {
                     match message.chat().type_() {
                         ChatType::BasicGroup(_) => true,
-                        ChatType::Supergroup(data) => !data.is_channel,
+                        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
                         _ => false,
                     }
                 } else {

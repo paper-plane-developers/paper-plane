@@ -4,15 +4,14 @@ use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tdgrand::enums::{
-    self, AuthorizationState, ChatType, MessageContent, MessageSender as TelegramMessageSender,
-    Update,
+    self, AuthorizationState, MessageContent, MessageSender as TelegramMessageSender, Update,
 };
 use tdgrand::functions;
 use tdgrand::types::{self, Message as TelegramMessage};
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
-use crate::session::Chat;
+use crate::session::{Chat, ChatType};
 use crate::Application;
 use crate::Session;
 use crate::RUNTIME;
@@ -318,9 +317,7 @@ impl Window {
                         let body = stringify_message_content(&data.message, &chat);
 
                         // Add the sender's name to the title if the chat is a group
-                        if let enums::ChatType::BasicGroup(_) | enums::ChatType::Supergroup(_) =
-                            chat.type_()
-                        {
+                        if let ChatType::BasicGroup(_) | ChatType::Supergroup(_) = chat.type_() {
                             let sender_name = sender_name(&data.message.sender_id, &chat);
                             title.insert_str(0, &format!("{} – ", sender_name));
                         }
@@ -481,7 +478,9 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
             }
         ),
         MessageContent::MessageChatDeletePhoto => match chat.type_() {
-            ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
+            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                gettext("Channel photo removed")
+            }
             _ => {
                 if message.is_outgoing {
                     gettext("You removed the group photo")
