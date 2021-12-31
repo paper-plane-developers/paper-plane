@@ -13,15 +13,60 @@ pub use self::sponsored_message_list::SponsoredMessageList;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{self, ChatType, MessageContent, Update};
+use tdgrand::enums::{self, ChatType as TdChatType, MessageContent, Update};
 use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
-use crate::session::Avatar;
+use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
 use crate::Session;
 
 #[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "BoxedChatType")]
-pub struct BoxedChatType(ChatType);
+#[gboxed(type_name = "ChatType")]
+pub enum ChatType {
+    Private(User),
+    BasicGroup(BasicGroup),
+    Supergroup(Supergroup),
+    Secret(SecretChat),
+}
+
+impl ChatType {
+    pub fn from_td_object(_type: &TdChatType, session: &Session) -> Self {
+        match _type {
+            TdChatType::Private(data) => {
+                let user = session.user_list().get_or_create_user(data.user_id);
+                Self::Private(user)
+            }
+            TdChatType::BasicGroup(data) => {
+                let basic_group = session
+                    .basic_group_list()
+                    .get(&data.basic_group_id)
+                    .expect("Failed to get expected BasicGroup");
+                Self::BasicGroup(basic_group)
+            }
+            TdChatType::Supergroup(data) => {
+                let supergroup = session
+                    .supergroup_list()
+                    .get(&data.supergroup_id)
+                    .expect("Failed to get expected Supergroup");
+                Self::Supergroup(supergroup)
+            }
+            TdChatType::Secret(data) => {
+                let secret_chat = session
+                    .secret_chat_list()
+                    .get(&data.secret_chat_id)
+                    .expect("Failed to get expected SecretChat");
+                Self::Secret(secret_chat)
+            }
+        }
+    }
+
+    pub fn user(&self) -> Option<&User> {
+        Some(match self {
+            ChatType::Private(user) => user,
+            ChatType::Secret(secret_chat) => secret_chat.user(),
+            _ => return None,
+        })
+    }
+}
 
 #[derive(Clone, Debug, Default, glib::GBoxed)]
 #[gboxed(type_name = "BoxedDraftMessage")]
@@ -38,7 +83,7 @@ pub struct BoxedMessageContent(pub MessageContent);
 mod imp {
     use super::*;
     use glib::WeakRef;
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::{sync::Lazy, unsync::OnceCell};
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
@@ -82,8 +127,8 @@ mod imp {
                         "type",
                         "Type",
                         "The type of this chat",
-                        BoxedChatType::static_type(),
-                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        ChatType::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_string(
                         "title",
@@ -170,7 +215,6 @@ mod imp {
                     ),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 
@@ -186,10 +230,7 @@ mod imp {
                     let id = value.get().unwrap();
                     self.id.set(id);
                 }
-                "type" => {
-                    let type_ = value.get::<BoxedChatType>().unwrap();
-                    self.type_.set(type_.0).unwrap();
-                }
+                "type" => self.type_.set(value.get().unwrap()).unwrap(),
                 "title" => {
                     let title = value.get().unwrap();
                     self.title.replace(title);
@@ -234,6 +275,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => self.id.get().to_value(),
+                "type" => obj.type_().to_value(),
                 "title" => self.title.borrow().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-message" => self.last_message.borrow().to_value(),
@@ -272,7 +314,7 @@ glib::wrapper! {
 
 impl Chat {
     pub fn new(chat: TelegramChat, session: Session) -> Self {
-        let type_ = BoxedChatType(chat.r#type);
+        let type_ = ChatType::from_td_object(&chat.r#type, &session);
         let avatar = Avatar::new(&session);
         avatar.update_from_chat_photo(chat.photo);
 

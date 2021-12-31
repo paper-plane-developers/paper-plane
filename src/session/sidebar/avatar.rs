@@ -1,7 +1,7 @@
 use super::Sidebar;
 
 use gtk::{glib, gsk, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::{ChatType, UserStatus, UserType};
+use tdgrand::enums::{UserStatus, UserType};
 
 use crate::session::user::BoxedUserStatus;
 use crate::session::{Chat, Session, User};
@@ -222,15 +222,8 @@ impl Avatar {
             if let Some(chat) = item.downcast_ref::<Chat>() {
                 self_.avatar.set_item(Some(chat.avatar().to_owned()));
 
-                match interlocutor_id(chat) {
-                    Some(interlocutor_id) => {
-                        let interlocutor = chat
-                            .session()
-                            .user_list()
-                            .get_or_create_user(interlocutor_id);
-
-                        self.setup_is_online_binding(&interlocutor);
-                    }
+                match chat.type_().user() {
+                    Some(user) => self.setup_is_online_binding(&user),
                     None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
@@ -286,13 +279,5 @@ impl Avatar {
         };
 
         self_.mask_shader.replace(Some(compiled_shader));
-    }
-}
-
-fn interlocutor_id(chat: &Chat) -> Option<i64> {
-    match chat.type_() {
-        ChatType::Private(private) => Some(private.user_id),
-        ChatType::Secret(secret) => Some(secret.user_id),
-        _ => None,
     }
 }

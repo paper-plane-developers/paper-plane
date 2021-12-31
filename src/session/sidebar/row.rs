@@ -1,14 +1,14 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
-use tdgrand::enums::{CallDiscardReason, ChatType, InputMessageContent, MessageContent};
+use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
 use tdgrand::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, Message, MessageSender,
 };
 use crate::session::sidebar::Avatar;
-use crate::session::{BoxedScopeNotificationSettings, Chat, Session, User};
+use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
 use crate::utils::{dim_and_escape, escape, human_friendly_duration};
 
 mod imp {
@@ -328,8 +328,8 @@ impl Row {
                             "private-chats-notification-settings"
                         }
                         ChatType::BasicGroup(_) => "group-chats-notification-settings",
-                        ChatType::Supergroup(data) => {
-                            if data.is_channel {
+                        ChatType::Supergroup(supergroup) => {
+                            if supergroup.is_channel() {
                                 "channel-chats-notification-settings"
                             } else {
                                 "group-chats-notification-settings"
@@ -423,7 +423,7 @@ impl Row {
 fn stringify_message(message: Message) -> String {
     let mut show_sender = match message.chat().type_() {
         ChatType::BasicGroup(_) => true,
-        ChatType::Supergroup(data) => !data.is_channel,
+        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
         ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
     };
 
@@ -551,7 +551,9 @@ fn stringify_message(message: Message) -> String {
             show_sender = false;
 
             match message.chat().type_() {
-                ChatType::Supergroup(data) if data.is_channel => gettext("Channel photo removed"),
+                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                    gettext("Channel photo removed")
+                }
                 _ => {
                     if message.is_outgoing() {
                         gettext("You removed the group photo")

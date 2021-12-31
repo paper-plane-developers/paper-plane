@@ -1,11 +1,11 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::{ChatType, MessageContent};
+use tdgrand::enums::MessageContent;
 
 use crate::session::{
     chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage},
     content::{MessageRow, MessageRowExt},
-    Chat,
+    Chat, ChatType,
 };
 use crate::utils::parse_formatted_text;
 

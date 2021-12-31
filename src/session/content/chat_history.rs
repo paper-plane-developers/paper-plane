@@ -1,11 +1,10 @@
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::enums::ChatType;
 
 use crate::session::{
     chat::SponsoredMessageList,
     content::{ChatActionBar, ItemRow, UserDialog},
-    Chat,
+    Chat, ChatType,
 };
 
 mod imp {
@@ -136,8 +135,7 @@ impl ChatHistory {
 
     fn open_info_dialog(&self) {
         if let Some(chat) = self.chat() {
-            if let ChatType::Private(data) = chat.type_() {
-                let user = chat.session().user_list().get_or_create_user(data.user_id);
+            if let ChatType::Private(user) = chat.type_() {
                 let dialog = UserDialog::new(&self.parent_window(), &user);
                 dialog.show();
             }
@@ -168,7 +166,7 @@ impl ChatHistory {
             let list = gio::ListStore::new(gio::ListModel::static_type());
             list.append(&chat.history());
 
-            if matches!(chat.type_(), ChatType::Supergroup(data) if data.is_channel) {
+            if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel()) {
                 let mut sponsored_message_list_ref = self_.sponsored_message_list.borrow_mut();
                 let sponsored_message_list = match *sponsored_message_list_ref {
                     None => {
