@@ -8,201 +8,204 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-08 19:44+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-01-02 09:54+0000\n"
+"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"telegrand/telegrand/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
 msgid "Telegrand"
-msgstr ""
+msgstr "Telegrand"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:4
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
+msgstr "为 GNOME 桌面优化的 Telegram 客户端"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr ""
+msgstr "Gnome;GTK;"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "默认窗口宽度"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "默认窗口宽度"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "默认窗口最大化行为"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid "Use Telegram's test data center"
-msgstr ""
+msgstr "使用 Telegram 的测试数据中心"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "主窗口"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:22
 msgid "No Chat Selected"
-msgstr ""
+msgstr "未选中对话"
 
 #: data/resources/ui/content.ui:23
 msgid "Select a chat to start messaging."
-msgstr ""
+msgstr "请选择一个对话开始聊天。"
 
 #: data/resources/ui/login.ui:14
 msgid "_Previous"
-msgstr ""
+msgstr "上一个(_P)"
 
 #: data/resources/ui/login.ui:25
 msgid "_Next"
-msgstr ""
+msgstr "下一个(_N)"
 
 #: data/resources/ui/login.ui:55
 msgid "Welcome to Telegrand"
-msgstr ""
+msgstr "欢迎使用 Telegrand"
 
 #: data/resources/ui/login.ui:74
 msgid "Phone Number"
-msgstr ""
+msgstr "电话号码"
 
 #: data/resources/ui/login.ui:95
 msgid "Advanced"
-msgstr ""
+msgstr "高级"
 
 #: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
 msgid "Encryption Key"
-msgstr ""
+msgstr "密钥"
 
 #: data/resources/ui/login.ui:110
 msgid "Use Test Data Center"
-msgstr ""
+msgstr "使用测试数据中心"
 
 #: data/resources/ui/login.ui:111
 msgid "This requires a restart to apply"
-msgstr ""
+msgstr "此操作需要重启才能应用"
 
 #: data/resources/ui/login.ui:149
 msgid "Enter the Verification Code"
-msgstr ""
+msgstr "输入验证码"
 
 #: data/resources/ui/login.ui:168
 msgid "Code"
-msgstr ""
+msgstr "代码"
 
 #: data/resources/ui/login.ui:205
 msgid "Register New Account"
-msgstr ""
+msgstr "注册新帐户"
 
 #: data/resources/ui/login.ui:225
 msgid "First Name"
-msgstr ""
+msgstr "名字"
 
 #: data/resources/ui/login.ui:242
 msgid "Last Name"
-msgstr ""
+msgstr "姓氏"
 
 #: data/resources/ui/login.ui:205
 msgid "Enter Your Password"
-msgstr ""
+msgstr "输入你的密码"
 
 #: data/resources/ui/login.ui:224
 msgid "Password"
-msgstr ""
+msgstr "密码"
 
 #: data/resources/ui/login.ui:261
 msgid "Enter the Encryption Key"
-msgstr ""
+msgstr "输入密钥"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "常规"
 
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "显示快捷键"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr ""
+msgstr "登出(_L)"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "快捷键(_K)"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_About Telegrand"
-msgstr ""
+msgstr "关于 Telgrand(_A)"
 
 #: src/window.rs:45 src/session/sidebar/chat_row.rs:240
 msgid "Photo"
-msgstr ""
+msgstr "照片"
 
 #: src/window.rs:64 src/session/sidebar/chat_row.rs:259
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:73 src/session/sidebar/chat_row.rs:268
 msgid "Video"
-msgstr ""
+msgstr "视频"
 
 #: src/window.rs::91 src/session/sidebar/chat_row.rs:286
 msgid "Voice message"
-msgstr ""
+msgstr "语音消息"
 
 #. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
 #: src/window.rs::110 src/session/sidebar/chat_row.rs:311
 msgid "{} joined Telegram"
-msgstr ""
+msgstr "{} 已加入 Telegram"
 
 #: src/window.rs:112 src/session/sidebar/chat_row.rs:313
 msgid "Unsupported message"
-msgstr ""
+msgstr "不支持的消息"
 
 #: src/window.rs:409
 msgid "Incoming call"
-msgstr ""
+msgstr "来电"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:104
 msgid "%B %e"
-msgstr ""
+msgstr "%-m月%-d日"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:107
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%Y年%-m月%-d日"
 
 #: src/session/content/message_row.rs:95
 msgid "This message is unsupported"
-msgstr ""
+msgstr "此消息不受支持"
 
 #: src/session/sidebar/chat_row.rs:318
 msgid "You"
-msgstr ""
+msgstr "你"
 
 #. Translators: This is the hint that is shown to the user on the registratian page.
 #. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
@@ -213,11 +216,13 @@ msgstr ""
 #: data/resources/ui/login.ui:281
 msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"要通过注册，\n"
+"需要你同意<a href=\"\">服务条款</a>。"
 
 #: src/login.rs:251
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "你接受此服务条款吗？"
 
 #: src/login.rs:255
 msgid "Terms of Service"
-msgstr ""
+msgstr "服务条款"
