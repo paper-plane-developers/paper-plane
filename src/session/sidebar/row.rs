@@ -213,7 +213,7 @@ impl Row {
                     ],
                 );
                 let timestamp_expression = gtk::ClosureExpression::new(
-                    |args| -> String {
+                    |args| {
                         let date = args[1].get::<i32>().unwrap();
 
                         let datetime_now = glib::DateTime::new_now_local().unwrap();
@@ -226,11 +226,8 @@ impl Row {
 
                         if hours_difference <= 16 {
                             // Show the time
-                            let mut time = datetime.format("%X").unwrap().to_string();
-
-                            // Remove seconds
-                            time.replace_range(5..8, "");
-                            time
+                            // Translators: This is a time format for the chat list without seconds
+                            datetime.format(&gettext("%l:%M %p")).unwrap().to_string()
                         } else if days_difference < 6 {
                             // Show the day of the week
                             datetime.format("%a").unwrap().to_string()
