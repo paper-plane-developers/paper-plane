@@ -1,7 +1,8 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::types::SponsoredMessage as TelegramSponsoredMessage;
+use tdgrand::{enums, functions::GetChatSponsoredMessage, types::Error as TdError};
 
 use crate::session::{chat::BoxedMessageContent, Chat};
+use crate::Session;
 
 mod imp {
     use super::*;
@@ -11,7 +12,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct SponsoredMessage {
-        pub id: Cell<i32>,
+        pub message_id: Cell<i64>,
         pub content: OnceCell<BoxedMessageContent>,
         pub sponsor_chat: WeakRef<Chat>,
     }
@@ -27,19 +28,19 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int(
-                        "id",
-                        "Id",
-                        "The id of this sponsored message",
-                        std::i32::MIN,
-                        std::i32::MAX,
+                    glib::ParamSpec::new_int64(
+                        "message-id",
+                        "Message Id",
+                        "The id of this message",
+                        std::i64::MIN,
+                        std::i64::MAX,
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpec::new_boxed(
                         "content",
                         "Content",
-                        "The content of this sponsored message",
+                        "The content of this message",
                         BoxedMessageContent::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
@@ -63,7 +64,7 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
+                "message-id" => self.message_id.set(value.get().unwrap()),
                 "content" => self.content.set(value.get().unwrap()).unwrap(),
                 "sponsor-chat" => self.sponsor_chat.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
@@ -72,7 +73,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => obj.id().to_value(),
+                "message-id" => obj.message_id().to_value(),
                 "content" => obj.content().to_value(),
                 "sponsor-chat" => obj.sponsor_chat().to_value(),
                 _ => unimplemented!(),
@@ -86,19 +87,30 @@ glib::wrapper! {
 }
 
 impl SponsoredMessage {
-    pub fn new(message: TelegramSponsoredMessage, sponsor_chat: &Chat) -> Self {
-        let content = BoxedMessageContent(message.content);
-        glib::Object::new(&[
-            ("id", &message.id),
+    pub async fn request(chat_id: i64, session: &Session) -> Result<Self, TdError> {
+        let enums::SponsoredMessage::SponsoredMessage(sponsored_message) =
+            GetChatSponsoredMessage::new()
+                .chat_id(chat_id)
+                .send(session.client_id())
+                .await?;
+
+        let content = BoxedMessageContent(sponsored_message.content);
+        let sponsor_chat = session
+            .chat_list()
+            .get_chat(sponsored_message.sponsor_chat_id)
+            .expect("Failed to get expected Chat");
+
+        Ok(glib::Object::new(&[
+            ("message-id", &sponsored_message.message_id),
             ("content", &content),
-            ("sponsor-chat", sponsor_chat),
+            ("sponsor-chat", &sponsor_chat),
         ])
-        .expect("Failed to create SponsoredMessage")
+        .expect("Failed to create ChatSponsoredMessage"))
     }
 
-    pub fn id(&self) -> i32 {
+    pub fn message_id(&self) -> i64 {
         let self_ = imp::SponsoredMessage::from_instance(self);
-        self_.id.get()
+        self_.message_id.get()
     }
 
     pub fn content(&self) -> &BoxedMessageContent {
