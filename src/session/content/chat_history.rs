@@ -3,10 +3,11 @@ use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::ChatType;
 
 use crate::session::{
-    chat::SponsoredMessageList,
+    chat::SponsoredMessage,
     content::{ChatActionBar, ItemRow, UserDialog},
-    Chat,
+    Chat, Session,
 };
+use crate::spawn;
 
 mod imp {
     use super::*;
@@ -19,7 +20,6 @@ mod imp {
     pub struct ChatHistory {
         pub compact: Cell<bool>,
         pub chat: RefCell<Option<Chat>>,
-        pub sponsored_message_list: RefCell<Option<SponsoredMessageList>>,
         #[template_child]
         pub list_view: TemplateChild<gtk::ListView>,
     }
@@ -148,6 +148,15 @@ impl ChatHistory {
         self.root()?.downcast().ok()
     }
 
+    fn request_sponsored_message(&self, session: &Session, chat_id: i64, list: &gio::ListStore) {
+        spawn!(clone!(@weak session, @weak list => async move {
+            match SponsoredMessage::request(chat_id, &session).await {
+                Ok(sponsored_message) => list.append(&sponsored_message),
+                Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),
+            }
+        }));
+    }
+
     pub fn chat(&self) -> Option<Chat> {
         let self_ = imp::ChatHistory::from_instance(self);
         self_.chat.borrow().clone()
@@ -165,28 +174,24 @@ impl ChatHistory {
                 _ => self.action_set_enabled("chat-history.view-info", false),
             }
 
-            let list = gio::ListStore::new(gio::ListModel::static_type());
-            list.append(&chat.history());
+            // Request sponsored message, if needed
+            let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(data) if data.is_channel)
+            {
+                let list = gio::ListStore::new(gio::ListModel::static_type());
+                list.append(&chat.history());
 
-            if matches!(chat.type_(), ChatType::Supergroup(data) if data.is_channel) {
-                let mut sponsored_message_list_ref = self_.sponsored_message_list.borrow_mut();
-                let sponsored_message_list = match *sponsored_message_list_ref {
-                    None => {
-                        let sponsored_message_list = SponsoredMessageList::new();
-                        *sponsored_message_list_ref = Some(sponsored_message_list);
-                        sponsored_message_list_ref.as_ref().unwrap()
-                    }
-                    Some(ref sponsored_message_list) => {
-                        sponsored_message_list.clear();
-                        sponsored_message_list
-                    }
-                };
-                sponsored_message_list.fetch(chat);
-                list.append(sponsored_message_list);
-            }
+                // We need to create a list here so that we can append the sponsored message
+                // to the chat history in the GtkListView using a GtkFlattenListModel
+                let sponsored_message_list = gio::ListStore::new(SponsoredMessage::static_type());
+                list.append(&sponsored_message_list);
+                self.request_sponsored_message(&chat.session(), chat.id(), &sponsored_message_list);
 
-            let model = gtk::FlattenListModel::new(Some(&list));
-            let selection = gtk::NoSelection::new(Some(&model));
+                gtk::FlattenListModel::new(Some(&list)).upcast()
+            } else {
+                chat.history().upcast()
+            };
+
+            let selection = gtk::NoSelection::new(Some(&chat_history));
             self_.list_view.set_model(Some(&selection));
         }
 

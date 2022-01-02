@@ -2,13 +2,11 @@ mod history;
 mod item;
 mod message;
 mod sponsored_message;
-mod sponsored_message_list;
 
 use self::history::History;
 pub use self::item::{Item, ItemType};
 pub use self::message::{Message, MessageSender};
 pub use self::sponsored_message::SponsoredMessage;
-pub use self::sponsored_message_list::SponsoredMessageList;
 
 use gtk::glib;
 use gtk::prelude::*;
