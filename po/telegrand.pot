@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-08 19:44+0200\n"
+"POT-Creation-Date: 2022-01-02 02:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,6 +43,7 @@ msgid "Default window height"
 msgstr ""
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
+#: data/com.github.melix99.telegrand.gschema.xml.in:17
 msgid "Default window maximized behaviour"
 msgstr ""
 
@@ -51,84 +52,166 @@ msgstr ""
 msgid "Use Telegram's test data center"
 msgstr ""
 
+#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/resources/ui/preferences-window.ui:9
+msgid "Color Scheme"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:32
+msgid "The color scheme to be used in the app"
+msgstr ""
+
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:32
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
 msgid "Marco Melorio"
 msgstr ""
 
-#: data/resources/ui/content.ui:22
+#: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
 msgstr ""
 
-#: data/resources/ui/content.ui:23
+#: data/resources/ui/content.ui:24
 msgid "Select a chat to start messaging."
 msgstr ""
 
-#: data/resources/ui/login.ui:14
+#: data/resources/ui/content-chat-history.ui:94
+msgid "View Info"
+msgstr ""
+
+#: data/resources/ui/content-user-dialog.ui:52
+msgid "Mobile"
+msgstr ""
+
+#: data/resources/ui/content-user-dialog.ui:58
+msgid "Username"
+msgstr ""
+
+#: data/resources/ui/login.ui:40
 msgid "_Previous"
 msgstr ""
 
-#: data/resources/ui/login.ui:25
+#: data/resources/ui/login.ui:69
 msgid "_Next"
 msgstr ""
 
-#: data/resources/ui/login.ui:55
+#: data/resources/ui/login.ui:98
 msgid "Welcome to Telegrand"
 msgstr ""
 
-#: data/resources/ui/login.ui:74
+#: data/resources/ui/login.ui:117
 msgid "Phone Number"
 msgstr ""
 
-#: data/resources/ui/login.ui:95
+#: data/resources/ui/login.ui:139
+msgid "_Log in using QR code"
+msgstr ""
+
+#: data/resources/ui/login.ui:177
 msgid "Advanced"
 msgstr ""
 
-#: data/resources/ui/login.ui:98 data/resources/ui/login.ui:280
-msgid "Encryption Key"
-msgstr ""
-
-#: data/resources/ui/login.ui:110
+#: data/resources/ui/login.ui:181
 msgid "Use Test Data Center"
 msgstr ""
 
-#: data/resources/ui/login.ui:111
+#: data/resources/ui/login.ui:182
 msgid "This requires a restart to apply"
 msgstr ""
 
-#: data/resources/ui/login.ui:149
+#: data/resources/ui/login.ui:218
+msgid "Scan Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:219
+msgid "Scan this code with another Telegram app logged into your account."
+msgstr ""
+
+#: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
 msgstr ""
 
-#: data/resources/ui/login.ui:168
+#: data/resources/ui/login.ui:272 data/resources/ui/login.ui:685
 msgid "Code"
 msgstr ""
 
-#: data/resources/ui/login.ui:205
+#: data/resources/ui/login.ui:311
 msgid "Register New Account"
 msgstr ""
 
-#: data/resources/ui/login.ui:225
+#: data/resources/ui/login.ui:331
 msgid "First Name"
 msgstr ""
 
-#: data/resources/ui/login.ui:242
+#: data/resources/ui/login.ui:348
 msgid "Last Name"
 msgstr ""
 
-#: data/resources/ui/login.ui:205
+#: data/resources/ui/login.ui:387
+msgid ""
+"By signing up,\n"
+"you agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+
+#: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
 msgstr ""
 
-#: data/resources/ui/login.ui:224
+#: data/resources/ui/login.ui:422
 msgid "Password"
 msgstr ""
 
-#: data/resources/ui/login.ui:261
-msgid "Enter the Encryption Key"
+#: data/resources/ui/login.ui:437
+msgid "Hint"
+msgstr ""
+
+#: data/resources/ui/login.ui:460
+msgid "_Forgot password?"
+msgstr ""
+
+#: data/resources/ui/login.ui:523
+msgid "Use Recovery Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:536
+msgid ""
+"When you set your cloud password, you provided a recovery email address. We "
+"can send you a code to this email address that you can use to reset your "
+"password."
+msgstr ""
+
+#: data/resources/ui/login.ui:555
+msgid "_Send recovery code"
+msgstr ""
+
+#: data/resources/ui/login.ui:617
+msgid "Account Deletion"
+msgstr ""
+
+#: data/resources/ui/login.ui:644
+msgid "_Delete Account"
+msgstr ""
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
+msgstr ""
+
+#: data/resources/ui/login.ui:707
+msgid "_Unable to access your email?"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:6
+msgid "Appearance"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:12
+msgid "Follow System Colors"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:23
+msgid "Dark Theme"
 msgstr ""
 
 #: data/resources/ui/shortcuts.ui:11
@@ -146,79 +229,150 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr ""
 
+#: data/resources/ui/shortcuts.ui:28
+msgctxt "shortcut window"
+msgid "Chat List"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:31
+msgctxt "shortcut window"
+msgid "Search Chats"
+msgstr ""
+
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
 msgstr ""
 
 #: data/resources/ui/sidebar.ui:12
-msgid "_Keyboard Shortcuts"
+msgid "_Preferences"
 msgstr ""
 
 #: data/resources/ui/sidebar.ui:16
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:20
 msgid "_About Telegrand"
 msgstr ""
 
-#: src/window.rs:45 src/session/sidebar/chat_row.rs:240
-msgid "Photo"
-msgstr ""
-
-#: src/window.rs:64 src/session/sidebar/chat_row.rs:259
-msgid "GIF"
-msgstr ""
-
-#: src/window.rs:73 src/session/sidebar/chat_row.rs:268
-msgid "Video"
-msgstr ""
-
-#: src/window.rs::91 src/session/sidebar/chat_row.rs:286
-msgid "Voice message"
-msgstr ""
-
-#. Translators: '{}' is the placeholder for the full name of the contact who joined Telegram
-#: src/window.rs::110 src/session/sidebar/chat_row.rs:311
-msgid "{} joined Telegram"
-msgstr ""
-
-#: src/window.rs:112 src/session/sidebar/chat_row.rs:313
-msgid "Unsupported message"
-msgstr ""
-
-#: src/window.rs:409
+#: src/window.rs:334 src/session/sidebar/row.rs:613
 msgid "Incoming call"
 msgstr ""
 
+#: src/window.rs:426 src/session/sidebar/row.rs:500
+#: src/session/sidebar/row.rs:629
+msgid "Sticker"
+msgstr ""
+
+#: src/window.rs:430 src/session/sidebar/row.rs:679
+msgid "Photo"
+msgstr ""
+
+#: src/window.rs:449 src/session/sidebar/row.rs:642
+msgid "GIF"
+msgstr ""
+
+#: src/window.rs:458 src/session/sidebar/row.rs:691
+msgid "Video"
+msgstr ""
+
+#: src/window.rs:476 src/session/sidebar/row.rs:703
+msgid "Voice message"
+msgstr ""
+
+#: src/window.rs:484 src/session/sidebar/row.rs:551
+msgid "Channel photo removed"
+msgstr ""
+
+#: src/window.rs:487 src/session/sidebar/row.rs:554
+msgid "You removed the group photo"
+msgstr ""
+
+#: src/window.rs:497 src/session/sidebar/row.rs:567
+#: src/session/sidebar/row.rs:635
+msgid "Unsupported message"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:231
+msgid "Unsupported draft message type"
+msgstr ""
+
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:104
+#: src/session/content/item_row.rs:111
 msgid "%B %e"
 msgstr ""
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:107
+#: src/session/content/item_row.rs:114
 msgid "%B %e, %Y"
 msgstr ""
 
-#: src/session/content/message_row.rs:95
+#: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
 msgstr ""
 
-#: src/session/sidebar/chat_row.rs:318
+#. Show the time
+#. Translators: This is a time format for the chat list without seconds
+#: src/session/sidebar/row.rs:230
+msgid "%l:%M %p"
+msgstr ""
+
+#: src/session/sidebar/row.rs:266
+msgid "Draft"
+msgstr ""
+
+#: src/session/sidebar/row.rs:438
+msgid "You joined the group"
+msgstr ""
+
+#: src/session/sidebar/row.rs:463
+msgid ", "
+msgstr ""
+
+#: src/session/sidebar/row.rs:480
+msgid "You left the group"
+msgstr ""
+
+#: src/session/sidebar/row.rs:520
+msgid "Declined outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:522
+msgid "Declined outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:528
+msgid "Declined incoming video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:530
+msgid "Declined incoming call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:540
+msgid "Cancelled call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:542
+msgid "Missed call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:572
 msgid "You"
 msgstr ""
 
-#. Translators: This is the hint that is shown to the user on the registratian page.
-#. Translators: Ideally, it consist of 2 lines but it may need more in order to be not ellipsized.
-#. Translators: Insert a '\n' in the text to produce a line break.
-#. Translators: The text 'Terms of Service' within the tag '<a href=\"\">Terms of Service</a>' is
-#. Translators: displayed as a clickable link. Please translate the text within the tags and take
-#. Translators: care of keeping the link intact.
-#: data/resources/ui/login.ui:281
-msgid "By signing up,\nyou agree to the <a href=\"\">Terms of Service</a>."
+#: src/session/sidebar/row.rs:597
+msgid "Outgoing video call"
 msgstr ""
 
-#: src/login.rs:251
-msgid "Do You Accept the Terms of Service?"
+#: src/session/sidebar/row.rs:599
+msgid "Outgoing call"
 msgstr ""
 
-#: src/login.rs:255
-msgid "Terms of Service"
+#: src/session/sidebar/row.rs:611
+msgid "Incoming video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:626
+msgid "Document"
 msgstr ""
