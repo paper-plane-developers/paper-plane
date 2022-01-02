@@ -3,11 +3,16 @@ data/com.github.melix99.telegrand.gschema.xml.in
 data/com.github.melix99.telegrand.metainfo.xml.in.in
 
 data/resources/ui/content.ui
+data/resources/ui/content-chat-history.ui
+data/resources/ui/content-user-dialog.ui
 data/resources/ui/login.ui
+data/resources/ui/preferences-window.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/sidebar.ui
 
+src/utils.rs
 src/window.rs
+src/session/content/chat_action_bar.rs
 src/session/content/item_row.rs
-src/session/content/message_row.rs
-src/session/sidebar/chat_row.rs
+src/session/content/message_row/text.rs
+src/session/sidebar/row.rs
