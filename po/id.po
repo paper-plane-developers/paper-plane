@@ -47,7 +47,7 @@ msgstr "Tinggi jendela default"
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 #: data/com.github.melix99.telegrand.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr ""
+msgstr "Perilaku maksimal jendela default"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
@@ -57,11 +57,11 @@ msgstr "Gunakan data center percobaan Telegram"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Skema Warna"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Skema warna untuk digunakan dalam aplikasi"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -81,15 +81,15 @@ msgstr "Pilih sebuah obrolan untuk mulai mengobrol."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Lihat Info"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Ponsel"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Nama pengguna"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -109,7 +109,7 @@ msgstr "Nomor Telepon"
 
 #: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Masuk dengan kode QR"
 
 #: data/resources/ui/login.ui:177
 msgid "Advanced"
@@ -129,7 +129,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
-msgstr ""
+msgstr "Pindai kode ini dengan aplikasi Telegram lain yang masuk ke akun Anda."
 
 #: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
@@ -141,21 +141,23 @@ msgstr "Kode"
 
 #: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr ""
+msgstr "Buat akun baru"
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
-msgstr ""
+msgstr "Nama depan"
 
 #: data/resources/ui/login.ui:348
 msgid "Last Name"
-msgstr ""
+msgstr "Nama belakang"
 
 #: data/resources/ui/login.ui:387
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Dengan mendaftar,\n"
+"anda menyetujui <a href=\"\">Persyaratan Layanan</a>."
 
 #: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
@@ -167,15 +169,15 @@ msgstr "Kata Sandi"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Bantuan"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Lupa kata sandi?"
 
 #: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Gunakan Kode Pemulihan"
 
 #: data/resources/ui/login.ui:536
 msgid ""
@@ -183,18 +185,21 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Saat Anda mengatur kata sandi cloud, Anda memberikan alamat email pemulihan. "
+"Agar kami dapat mengirimi kode ke alamat email ini yang bisa digunakan untuk "
+"mengatur ulang kata sandi Anda."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Kirim kode pemulihan"
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Hapus Akun"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Hapus Akun"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
@@ -202,19 +207,19 @@ msgstr ""
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Tidak dapat mengakses email Anda?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Tampilan"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Ikuti Warna Sistem"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Tema Gelap"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -234,12 +239,12 @@ msgstr "Berhenti"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Daftar Obrolan"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Cari Obrolan"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -247,7 +252,7 @@ msgstr "_Keluar"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferensi"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -264,19 +269,19 @@ msgstr "Panggilan masuk"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Stiker"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Foto"
 
 #: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
@@ -284,11 +289,11 @@ msgstr ""
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Foto channel dibuang"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Anda menghapus foto grup"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -302,12 +307,12 @@ msgstr ""
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:114
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%B %e, %Y"
 
 #: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
@@ -317,35 +322,35 @@ msgstr "Pesan ini tidak didukung"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%l:%M %p"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Draft"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Anda bergabung dengan grup"
 
 #: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Anda meninggalkan grup"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Panggilan video keluar ditolak"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Panggilan keluar ditolak"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Panggilan video masuk ditolak"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
@@ -353,19 +358,19 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Panggilan dibatalkan"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Panggilan tidak terjawab"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
-msgstr ""
+msgstr "Anda"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Panggilan video keluar"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
@@ -377,4 +382,8 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokumen"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
+msgstr "Masukkan Kode yang Dikirim melalui Email"
