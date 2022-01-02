@@ -1,7 +1,7 @@
 use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::borrow::Cow;
-use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
+use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent, UserType};
 use tdgrand::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
@@ -139,11 +139,7 @@ impl Row {
                 self_.bottom_box.set_visible(true);
 
                 // Chat properties expressions
-                let title_expression = gtk::PropertyExpression::new(
-                    Chat::static_type(),
-                    gtk::NONE_EXPRESSION,
-                    "title",
-                );
+                let title_expression = Chat::title_expression(chat);
                 let last_message_expression = gtk::PropertyExpression::new(
                     Chat::static_type(),
                     gtk::NONE_EXPRESSION,
@@ -404,11 +400,11 @@ impl Row {
                 self_.bottom_box.set_visible(false);
 
                 let user_expression = gtk::ConstantExpression::new(user);
-                let full_name_expression = User::full_name_expression(&user_expression);
+                let display_name_expression = User::display_name_expression(&user_expression);
 
                 // Title label bindings
                 let title_binding =
-                    full_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
+                    display_name_expression.bind(&*self_.title_label, "label", gtk::NONE_WIDGET);
                 bindings.push(title_binding);
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
@@ -723,10 +719,18 @@ fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
 
 fn stringify_user(user: &User, use_full_name: bool) -> String {
     if use_full_name {
-        format!("{} {}", user.first_name(), user.last_name())
-            .trim()
-            .into()
+        if UserType::Deleted == user.type_().0 {
+            String::from("Deleted Account")
+        } else {
+            format!("{} {}", user.first_name(), user.last_name())
+                .trim()
+                .into()
+        }
     } else {
-        user.first_name()
+        if UserType::Deleted == user.type_().0 {
+            String::from("Deleted")
+        } else {
+            user.first_name()
+        }
     }
 }

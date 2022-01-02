@@ -211,7 +211,7 @@ impl Message {
         match self.sender() {
             MessageSender::User(user) => {
                 let user_expression = gtk::ConstantExpression::new(user);
-                User::full_name_expression(&user_expression)
+                User::display_name_expression(&user_expression)
             }
             MessageSender::Chat(chat) => chat.title_expression(),
         }

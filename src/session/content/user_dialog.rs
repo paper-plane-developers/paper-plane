@@ -101,7 +101,7 @@ impl UserDialog {
         );
 
         // Bind the name
-        let name_expression = User::full_name_expression(&user_expression);
+        let name_expression = User::display_name_expression(&user_expression);
         name_expression.bind(&*self_.name_label, "label", gtk::NONE_WIDGET);
 
         // Bind the phone number
