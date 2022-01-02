@@ -1,3 +1,5 @@
+use chrono::prelude::*;
+use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{Update, UserStatus, UserType};
 
@@ -146,8 +148,39 @@ mod imp {
 
             let avatar = obj.avatar();
             let user_expression = gtk::ConstantExpression::new(obj);
-            let full_name_expression = super::User::full_name_expression(&user_expression);
-            full_name_expression.bind(avatar, "display-name", gtk::NONE_WIDGET);
+            let display_name_expression = super::User::display_name_expression(&user_expression);
+            display_name_expression.bind(avatar, "display-name", gtk::NONE_WIDGET);
+        }
+    }
+    pub fn time_ago(unix: i32) -> String {
+        let current_time = Utc::now().timestamp();
+        let unix: i64 = unix.into();
+        let time_diff = current_time - unix;
+        let minutes = time_diff / 60;
+        let hours = minutes / 60;
+        let days = hours / 24;
+        let last_seen =
+            DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(unix.into(), 0), Utc);
+        if days == 0 {
+            if hours == 0 {
+                if minutes <= 1 {
+                    gettext("just now")
+                } else {
+                    gettext!("{} minutes ago", minutes)
+                }
+            } else if hours == 1 {
+                gettext("an hour ago")
+            } else {
+                format!("{} hours ago", hours)
+            }
+        } else if days == 1 {
+            gettext!("yesterday at {}", last_seen.format("%H:%M"))
+        } else {
+            gettext!(
+                "{} at {}",
+                last_seen.format("%d:%m:%Y"),
+                last_seen.format("%H:%M")
+            )
         }
     }
 }
@@ -302,6 +335,22 @@ impl User {
         )
         .upcast()
     }
+    pub fn display_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        let full_name_expression = User::full_name_expression(&user_expression);
+        let type_expression = User::type_expression(&user_expression);
+        gtk::ClosureExpression::new(
+            move |args| -> String {
+                let mut display_name = args[1].get::<&str>().unwrap();
+                let type_ = args[2].get::<BoxedUserType>().unwrap().0;
+                if type_ == UserType::Deleted {
+                    display_name = "Deleted Account"
+                }
+                String::from(display_name)
+            },
+            &[full_name_expression, type_expression],
+        )
+        .upcast()
+    }
 
     fn status(&self) -> BoxedUserStatus {
         let self_ = imp::User::from_instance(self);
@@ -318,5 +367,41 @@ impl User {
 
     pub fn status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
         gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "status").upcast()
+    }
+    pub fn formated_status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        let type_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "type_")
+                .upcast();
+        let status_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "status")
+                .upcast();
+        gtk::ClosureExpression::new(
+            |args| -> String {
+                let user_status = &args[1].get::<BoxedUserStatus>().unwrap().0;
+                let type_ = &args[2].get::<BoxedUserType>().unwrap().0;
+                match type_ {
+                    UserType::Regular => match user_status {
+                        UserStatus::Online(_data) => gettext("online"),
+                        UserStatus::Offline(data) => {
+                            let unix = data.was_online;
+                            format!(
+                                "{} {}",
+                                gettext("last seen"),
+                                super::user::imp::time_ago(unix)
+                            )
+                        }
+                        UserStatus::Recently => gettext("last seen recently"),
+                        UserStatus::LastWeek => gettext("last seen last week"),
+                        UserStatus::LastMonth => gettext("last seen last month"),
+                        UserStatus::Empty => gettext("last seen a long time ago"),
+                    },
+                    UserType::Bot(_data) => gettext("bot"),
+                    UserType::Deleted => gettext("last seen a long time ago"),
+                    _ => String::new(),
+                }
+            },
+            &[status_expression.clone(), type_expression],
+        )
+        .upcast()
     }
 }

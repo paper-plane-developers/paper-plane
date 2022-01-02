@@ -13,7 +13,9 @@ pub use self::sponsored_message_list::SponsoredMessageList;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{self, ChatType as TdChatType, MessageContent, Update};
+use tdgrand::enums::{
+    self, ChatType as TdChatType, MessageContent, Update, UserType as TdUserType,
+};
 use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
@@ -523,6 +525,22 @@ impl Chat {
 
     pub fn title_expression(&self) -> gtk::Expression {
         let chat_expression = gtk::ConstantExpression::new(self);
-        gtk::PropertyExpression::new(Chat::static_type(), Some(&chat_expression), "title").upcast()
+        let title_expression =
+            gtk::PropertyExpression::new(Chat::static_type(), Some(&chat_expression), "title")
+                .upcast();
+        gtk::ClosureExpression::new(
+            move |args| -> String {
+                let chat_type = args[2].get::<Chat>().unwrap().type_().clone();
+                let mut title = String::from(args[1].get::<&str>().unwrap());
+                if let ChatType::Private(data) = chat_type {
+                    if data.type_().0 == TdUserType::Deleted {
+                        title = String::from("Deleted Account")
+                    }
+                }
+                title
+            },
+            &[title_expression, chat_expression.upcast()],
+        )
+        .upcast()
     }
 }
