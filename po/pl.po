@@ -58,11 +58,11 @@ msgstr "Użyj testowego centrum danych Telegrama"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Schemat Kolorów"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Schemat kolorów, który będzie używany w aplikacji"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -78,19 +78,19 @@ msgstr "Nie Wybrano Chatu"
 
 #: data/resources/ui/content.ui:24
 msgid "Select a chat to start messaging."
-msgstr "Wybierz chat, aby zacząć pisać."
+msgstr "Wybierz chat, aby rozpocząć rozmowę."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Zobacz informacje"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Telefon"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -110,7 +110,7 @@ msgstr "Numer Telefonu"
 
 #: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Zaloguj się używając kodu QR"
 
 #: data/resources/ui/login.ui:177
 msgid "Advanced"
@@ -131,6 +131,7 @@ msgstr ""
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Zeskanuj ten kod w innej zalogowanej do twojego konta aplikacji Telegrama."
 
 #: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
@@ -170,15 +171,15 @@ msgstr "Hasło"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Wskazówka"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Nie pamiętasz hasła?"
 
 #: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Użyj Kodu Odzyskiwania"
 
 #: data/resources/ui/login.ui:536
 msgid ""
@@ -186,14 +187,16 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Kiedy ustawisz hasło chmurowe, podasz nam pomocniczy adres email. Dzięki "
+"temu będziemy mogli ci wysłać kod na ten adres, żeby zresetować twoje hasło."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Wyślij kod odzyskiwania"
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Usuwanie Konta"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
@@ -205,19 +208,19 @@ msgstr ""
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Nie masz dostępu do swojego emaila?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Wygląd"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Używaj Kolorów Systemowych"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Ciemny Motytw"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -237,12 +240,12 @@ msgstr "Wyjdź"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Lista Chatów"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Przeszukaj Chaty"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -250,7 +253,7 @@ msgstr "_Wyloguj Się"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferencje"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -267,7 +270,7 @@ msgstr "Przychodzące połączenie"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Naklejka"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
@@ -287,11 +290,11 @@ msgstr "Wiadomość głosowa"
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Usunięto zdjęcie kanału"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Usunięto zdjęcie grupy"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -320,35 +323,35 @@ msgstr "Ta wiadomość jest nieznana"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%l:%M %p"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Szkic"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Dołączono do grupy"
 
 #: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Opuszczono grupę"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Odrzucono wychodzące połączenie video"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Odrzucono wychodzące połączenie"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Odrzucono przychodzące połączenie video"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
@@ -356,11 +359,11 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Odwołano połączenie"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Nieodebrane połączenie"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
@@ -368,7 +371,7 @@ msgstr "Ty"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Wychodzące połączenie video"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
@@ -380,7 +383,11 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
+msgstr "Wpisz Kod Wysłany na Maila"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Klucz Szyfrujący"
