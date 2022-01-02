@@ -57,11 +57,11 @@ msgstr "Usar o centro de dados de teste do Telegram"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Esquema de cores"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "O esquema de cores que será usado no aplicativo"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -85,11 +85,11 @@ msgstr ""
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Celular"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Nome de Usuário"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -145,17 +145,19 @@ msgstr ""
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
-msgstr ""
+msgstr "Nome"
 
 #: data/resources/ui/login.ui:348
 msgid "Last Name"
-msgstr ""
+msgstr "Sobrenome"
 
 #: data/resources/ui/login.ui:387
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Ao se cadastrar,\n"
+"você aceita os <a href=\"\">Termos de Serviço</a>."
 
 #: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
@@ -167,7 +169,7 @@ msgstr "Senha"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Dica"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
@@ -206,15 +208,15 @@ msgstr ""
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Aparência"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Seguir cores do sistema"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Tema escuro"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -234,12 +236,12 @@ msgstr "Fechar"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Lista de chats"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Pesquisar chats"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -264,19 +266,19 @@ msgstr "Chamada recebida"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Sticker"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Foto"
 
 #: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr ""
+msgstr "Vídeo"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
@@ -284,11 +286,11 @@ msgstr ""
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Foto do canal removida"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Você removeu a foto do grupo"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -321,31 +323,31 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Rascunho"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Você entrou no grupo"
 
 #: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Você saiu do grupo"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Videochamada recusada"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Chamada recusada"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Videochamada recusada"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
@@ -353,11 +355,11 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Chamada cancelada"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Chamada perdida"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
@@ -365,7 +367,7 @@ msgstr "Você"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Videochamada efetuada"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
@@ -377,6 +379,10 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
+msgstr "Documento"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
 msgstr ""
 
 #~ msgid "Encryption Key"
