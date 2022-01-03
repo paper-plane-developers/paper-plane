@@ -5,9 +5,9 @@ use self::row::Row;
 
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::{enums, functions, types};
+use tdgrand::{enums, functions};
 
-use crate::session::{Chat, User};
+use crate::session::{Chat, ChatType, User};
 use crate::utils::do_async;
 use crate::Session;
 
@@ -200,7 +200,7 @@ impl Sidebar {
                             self_.already_searched_users.borrow_mut().extend(chats.chat_ids.iter()
                                 .filter_map(|id| chat_list.get_chat(*id))
                                 .filter_map(|chat| match chat.type_() {
-                                    enums::ChatType::Private(types::ChatTypePrivate { user_id }) => Some(*user_id),
+                                    ChatType::Private(user) => Some(user.id()),
                                     _ => None
                                 }
                             ));
