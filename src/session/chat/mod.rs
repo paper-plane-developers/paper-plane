@@ -543,4 +543,20 @@ impl Chat {
         )
         .upcast()
     }
+    pub fn subtitle_expression(&self) -> gtk::Expression {
+        let _chat_expression = gtk::ConstantExpression::new(self);
+        let my_id = self.session().me().unwrap().id();
+        match self.type_() {
+            ChatType::Private(data) => {
+                let user_id = data.id();
+                if user_id != my_id {
+                    let user_expression = gtk::ConstantExpression::new(data);
+                    User::formated_status_expression(&user_expression)
+                } else {
+                    gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast()
+                }
+            }
+            _ => gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast(),
+        }
+    }
 }

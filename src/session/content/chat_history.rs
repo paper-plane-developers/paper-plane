@@ -4,7 +4,7 @@ use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use crate::session::{
     chat::SponsoredMessageList,
     content::{ChatActionBar, ItemRow, UserDialog},
-    Chat, ChatType,
+    Chat, ChatType
 };
 
 mod imp {
@@ -21,6 +21,8 @@ mod imp {
         pub sponsored_message_list: RefCell<Option<SponsoredMessageList>>,
         #[template_child]
         pub list_view: TemplateChild<gtk::ListView>,
+        #[template_child]
+        pub window_title: TemplateChild<adw::WindowTitle>,
     }
 
     #[glib::object_subclass]
@@ -193,5 +195,11 @@ impl ChatHistory {
 
         let adj = self_.list_view.vadjustment().unwrap();
         self.load_older_messages(&adj);
+        if let Some(chat) = self.chat() {
+            let title = Chat::title_expression(&chat);
+            let subtitle = Chat::subtitle_expression(&chat);
+            title.bind(&*self_.window_title, "title", gtk::NONE_WIDGET);
+            subtitle.bind(&*self_.window_title, "subtitle", gtk::NONE_WIDGET);
+        }
     }
 }

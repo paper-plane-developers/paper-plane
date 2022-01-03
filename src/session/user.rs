@@ -370,7 +370,7 @@ impl User {
     }
     pub fn formated_status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
         let type_expression =
-            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "type_")
+            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "type")
                 .upcast();
         let status_expression =
             gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "status")
