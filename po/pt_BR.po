@@ -192,7 +192,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr "Eliminação de conta"
+msgstr "Exclusão de conta"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
@@ -249,7 +249,7 @@ msgstr "_Sair"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferências"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
