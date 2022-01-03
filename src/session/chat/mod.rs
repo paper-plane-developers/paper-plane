@@ -557,6 +557,12 @@ impl Chat {
                         .upcast()
                 }
             }
+            ChatType::Supergroup(data) => Supergroup::member_count_expression(data),
+            ChatType::BasicGroup(data) => BasicGroup::member_count_expression(data),
+            ChatType::Secret(data) => {
+                let user_expression = gtk::ConstantExpression::new(data.user());
+                SecretChat::formated_status_expression(&user_expression)
+            }
             _ => {
                 gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast()
             }
