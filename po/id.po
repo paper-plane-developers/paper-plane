@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 02:09+0100\n"
+"POT-Creation-Date: 2022-01-03 22:56+0100\n"
 "PO-Revision-Date: 2021-08-25 04:33+0000\n"
 "Last-Translator: liimee <alt3753.7@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/telegrand/"
@@ -123,6 +123,10 @@ msgstr "Gunakan Data Center Percobaan"
 msgid "This requires a restart to apply"
 msgstr "Mulai ulang untuk menerapkan"
 
+#: data/resources/ui/login.ui:218
+msgid "Scan Code"
+msgstr ""
+
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
@@ -193,7 +197,7 @@ msgid "_Delete Account"
 msgstr ""
 
 #: data/resources/ui/login.ui:666
-msgid "Enter the Code Sent by Mail"
+msgid "Enter the Code Sent by E-Mail"
 msgstr ""
 
 #: data/resources/ui/login.ui:707
@@ -274,6 +278,10 @@ msgstr ""
 msgid "Video"
 msgstr ""
 
+#: src/window.rs:476 src/session/sidebar/row.rs:703
+msgid "Voice message"
+msgstr ""
+
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
 msgstr ""
@@ -286,6 +294,10 @@ msgstr ""
 #: src/session/sidebar/row.rs:635
 msgid "Unsupported message"
 msgstr "Pesan tidak didukung"
+
+#: src/session/content/chat_action_bar.rs:231
+msgid "Unsupported draft message type"
+msgstr ""
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
@@ -335,6 +347,10 @@ msgstr ""
 msgid "Declined incoming video call"
 msgstr ""
 
+#: src/session/sidebar/row.rs:530
+msgid "Declined incoming call"
+msgstr ""
+
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
 msgstr ""
@@ -349,6 +365,14 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:599
+msgid "Outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:611
+msgid "Incoming video call"
 msgstr ""
 
 #: src/session/sidebar/row.rs:626

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 02:09+0100\n"
+"POT-Creation-Date: 2022-01-03 22:56+0100\n"
 "PO-Revision-Date: 2021-09-11 23:32+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/telegrand/"
@@ -125,6 +125,10 @@ msgstr "Testrechenzentrum verwenden"
 msgid "This requires a restart to apply"
 msgstr "Dies erfordert einen Neustart zur Anwendung"
 
+#: data/resources/ui/login.ui:218
+msgid "Scan Code"
+msgstr ""
+
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
@@ -192,8 +196,12 @@ msgstr ""
 msgid "Account Deletion"
 msgstr ""
 
+#: data/resources/ui/login.ui:644
+msgid "_Delete Account"
+msgstr ""
+
 #: data/resources/ui/login.ui:666
-msgid "Enter the Code Sent by Mail"
+msgid "Enter the Code Sent by E-Mail"
 msgstr ""
 
 #: data/resources/ui/login.ui:707
@@ -291,6 +299,10 @@ msgstr ""
 msgid "Unsupported message"
 msgstr "Nicht unterstützte Nachricht"
 
+#: src/session/content/chat_action_bar.rs:231
+msgid "Unsupported draft message type"
+msgstr ""
+
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
 msgid "%B %e"
@@ -339,6 +351,10 @@ msgstr ""
 msgid "Declined incoming video call"
 msgstr ""
 
+#: src/session/sidebar/row.rs:530
+msgid "Declined incoming call"
+msgstr ""
+
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
 msgstr ""
@@ -353,6 +369,14 @@ msgstr "Sie"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:599
+msgid "Outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:611
+msgid "Incoming video call"
 msgstr ""
 
 #: src/session/sidebar/row.rs:626

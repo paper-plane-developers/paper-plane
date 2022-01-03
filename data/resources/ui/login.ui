@@ -663,7 +663,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                         <property name="child">
                           <object class="AdwStatusPage" id="password_recovery_status_page">
                             <property name="icon-name">mail-unread-symbolic</property>
-                            <property name="title" translatable="yes">Enter the Code Sent by Mail</property>
+                            <property name="title" translatable="yes">Enter the Code Sent by E-Mail</property>
                             <child>
                               <object class="AdwClamp">
                                 <property name="maximum-size">300</property>
