@@ -141,7 +141,7 @@ msgstr "Código"
 
 #: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr ""
+msgstr "Registrar nova conta"
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
@@ -192,7 +192,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Eliminação de conta"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
@@ -319,7 +319,7 @@ msgstr "Esta mensagem não é suportada"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
