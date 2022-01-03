@@ -308,12 +308,12 @@ msgstr ""
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
 msgid "%B %e"
-msgstr "%B %e"
+msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:114
 msgid "%B %e, %Y"
-msgstr "%B %e %Y"
+msgstr "%e %B %Y"
 
 #: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
