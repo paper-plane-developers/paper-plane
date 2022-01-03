@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 02:09+0100\n"
+"POT-Creation-Date: 2022-01-03 22:56+0100\n"
 "PO-Revision-Date: 2021-07-18 18:12+0000\n"
 "Last-Translator: iiiiii1wepfj <itay@itayki.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/telegrand/"
@@ -64,6 +64,10 @@ msgstr ""
 msgid "The color scheme to be used in the app"
 msgstr ""
 
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+msgid "Main window"
+msgstr ""
+
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
 msgid "Marco Melorio"
 msgstr "מרקו מלוריו"
@@ -118,6 +122,10 @@ msgstr "השתמש בשרת הבדיקות"
 
 #: data/resources/ui/login.ui:182
 msgid "This requires a restart to apply"
+msgstr ""
+
+#: data/resources/ui/login.ui:218
+msgid "Scan Code"
 msgstr ""
 
 #: data/resources/ui/login.ui:219
@@ -190,7 +198,7 @@ msgid "_Delete Account"
 msgstr ""
 
 #: data/resources/ui/login.ui:666
-msgid "Enter the Code Sent by Mail"
+msgid "Enter the Code Sent by E-Mail"
 msgstr ""
 
 #: data/resources/ui/login.ui:707
@@ -340,6 +348,10 @@ msgstr ""
 msgid "Declined incoming video call"
 msgstr ""
 
+#: src/session/sidebar/row.rs:530
+msgid "Declined incoming call"
+msgstr ""
+
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
 msgstr ""
@@ -354,6 +366,14 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:599
+msgid "Outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:611
+msgid "Incoming video call"
 msgstr ""
 
 #: src/session/sidebar/row.rs:626
