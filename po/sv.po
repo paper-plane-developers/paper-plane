@@ -317,7 +317,7 @@ msgstr "Det här meddelandet stöds inte"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%H.%M"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
@@ -377,6 +377,10 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
+msgstr ""
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
 msgstr ""
 
 #~ msgid "Encryption Key"
