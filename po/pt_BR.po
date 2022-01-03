@@ -81,7 +81,7 @@ msgstr "Selecione um chat para começar a conversar."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Ver informações"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
@@ -196,7 +196,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Excluir conta"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
