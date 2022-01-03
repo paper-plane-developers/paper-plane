@@ -4,7 +4,7 @@ use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use crate::session::{
     chat::SponsoredMessageList,
     content::{ChatActionBar, ItemRow, UserDialog},
-    Chat, ChatType
+    Chat, ChatType,
 };
 
 mod imp {

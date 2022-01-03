@@ -148,4 +148,7 @@ impl SecretChat {
         self_.state.set(state);
         self.notify("state");
     }
+    pub fn formated_status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        User::formated_status_expression(&user_expression)
+    }
 }

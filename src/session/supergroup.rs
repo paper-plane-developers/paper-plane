@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::Update;
 use tdgrand::types::Supergroup as TdSupergroup;
@@ -124,5 +125,30 @@ impl Supergroup {
     pub fn is_channel(&self) -> bool {
         let self_ = imp::Supergroup::from_instance(self);
         self_.is_channel.get()
+    }
+    pub fn member_count_expression(&self) -> gtk::Expression {
+        let supergroup_expression = gtk::ConstantExpression::new(self).upcast();
+        gtk::ClosureExpression::new(
+            move |args| -> String {
+                let group = args[1].get::<Supergroup>().unwrap();
+                let is_channel = group.is_channel();
+                let member_count = group.member_count();
+                if is_channel {
+                    if member_count > 1 {
+                        gettext!("{} subscribers", member_count)
+                    } else {
+                        gettext!("{} subscriber", member_count)
+                    }
+                } else {
+                    if member_count > 1 {
+                        gettext!("{} members", member_count)
+                    } else {
+                        gettext!("{} member", member_count)
+                    }
+                }
+            },
+            &[supergroup_expression],
+        )
+        .upcast()
     }
 }

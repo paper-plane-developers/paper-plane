@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::Update;
 use tdgrand::types::BasicGroup as TdBasicGroup;
@@ -108,5 +109,21 @@ impl BasicGroup {
         let self_ = imp::BasicGroup::from_instance(self);
         self_.member_count.set(member_count);
         self.notify("member-count");
+    }
+    pub fn member_count_expression(&self) -> gtk::Expression {
+        let basicgroup_expression = gtk::ConstantExpression::new(self).upcast();
+        gtk::ClosureExpression::new(
+            move |args| -> String {
+                let group = args[1].get::<BasicGroup>().unwrap();
+                let member_count = group.member_count();
+                if member_count > 1 {
+                    gettext!("{} members", member_count)
+                } else {
+                    gettext!("{} member", member_count)
+                }
+            },
+            &[basicgroup_expression],
+        )
+        .upcast()
     }
 }

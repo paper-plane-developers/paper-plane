@@ -553,10 +553,13 @@ impl Chat {
                     let user_expression = gtk::ConstantExpression::new(data);
                     User::formated_status_expression(&user_expression)
                 } else {
-                    gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast()
+                    gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[])
+                        .upcast()
                 }
             }
-            _ => gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast(),
+            _ => {
+                gtk::ClosureExpression::new(move |_args| -> String { String::new() }, &[]).upcast()
+            }
         }
     }
 }
