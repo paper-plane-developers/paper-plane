@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
-"PO-Revision-Date: 2022-01-04 10:57+0000\n"
+"PO-Revision-Date: 2022-01-05 21:54+0000\n"
 "Last-Translator: Rodrigo Tavares <rodrigost23@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/pt_BR/>\n"
@@ -186,8 +186,8 @@ msgid ""
 "password."
 msgstr ""
 "Quando você definiu sua senha da nuvem, você forneceu um endereço de e-mail "
-"de recuperação. Podemos enviar-lhe um código para este endereço de email que "
-"você pode usar para redefinir sua senha."
+"de recuperação. Podemos enviar-lhe um código para este endereço de e-mail "
+"que você pode usar para redefinir sua senha."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
@@ -207,7 +207,7 @@ msgstr "Digite o código enviado por e-mail"
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr "_Não consegue acessar seu email?"
+msgstr "_Não consegue acessar seu e-mail?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
