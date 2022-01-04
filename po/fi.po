@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
+"PO-Revision-Date: 2022-01-05 21:54+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/fi/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -125,7 +125,7 @@ msgstr "Tämä edellyttää uudelleenkäynnistystä, jotta voidaan soveltaa"
 
 #: data/resources/ui/login.ui:218
 msgid "Scan Code"
-msgstr ""
+msgstr "Skannaa koodi"
 
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
@@ -205,7 +205,7 @@ msgstr "_Poista tili"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Syötä sähköpostitse lähetetty koodi"
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
@@ -287,7 +287,7 @@ msgstr "Video"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
-msgstr ""
+msgstr "Ääniviesti"
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
@@ -304,7 +304,7 @@ msgstr "Ei tuettu viesti"
 
 #: src/session/content/chat_action_bar.rs:231
 msgid "Unsupported draft message type"
-msgstr ""
+msgstr "Ei tuettu sanomaluonnoksen tyyppi"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
@@ -356,7 +356,7 @@ msgstr "Saapuva videopuhelu hylätty"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Saapuva puhelu hylätty"
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
@@ -376,11 +376,11 @@ msgstr "Lähtevä videopuhelu"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
-msgstr ""
+msgstr "Lähtevä puhelu"
 
 #: src/session/sidebar/row.rs:611
 msgid "Incoming video call"
-msgstr ""
+msgstr "Saapuva videopuhelu"
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
