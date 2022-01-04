@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
 "PO-Revision-Date: 2022-01-04 10:57+0000\n"
-"Last-Translator: Alisson Lauffer <alissonvitortc@gmail.com>\n"
+"Last-Translator: Rodrigo Tavares <rodrigost23@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -386,7 +386,7 @@ msgstr "Documento"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by Mail"
-msgstr ""
+msgstr "Insira o código enviado por e-mail"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Chave de encriptação"
