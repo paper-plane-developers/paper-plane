@@ -93,6 +93,11 @@
   border-radius: 10px 10px 4px 4px;
 }
 
+.message-media progressbar>trough {
+  border: 1px solid alpha(black, 0.4);
+  min-width: 100px;
+}
+
 .event-row {
   font-size: 0.8em;
   padding: 3px;

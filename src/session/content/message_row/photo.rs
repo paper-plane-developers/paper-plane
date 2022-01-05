@@ -113,8 +113,10 @@ impl MessagePhoto {
                     .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
                 if photo_size.photo.local.is_downloading_completed {
+                    self_.media.set_download_progress(1.0);
                     self.load_photo_from_path(&photo_size.photo.local.path);
                 } else {
+                    self_.media.set_download_progress(0.0);
                     self.download_photo(photo_size.photo.id, &message.chat().session());
                 }
             }
@@ -127,8 +129,14 @@ impl MessagePhoto {
         receiver.attach(
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
+                let self_ = imp::MessagePhoto::from_instance(&obj);
+
                 if file.local.is_downloading_completed {
+                    self_.media.set_download_progress(1.0);
                     obj.load_photo_from_path(&file.local.path);
+                } else {
+                    let progress = file.local.downloaded_size as f64 / file.expected_size as f64;
+                    self_.media.set_download_progress(progress);
                 }
 
                 glib::Continue(true)

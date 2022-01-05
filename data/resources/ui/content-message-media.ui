@@ -9,11 +9,21 @@
       <object class="GtkBox" id="content">
         <property name="orientation">vertical</property>
         <child>
-          <object class="ContentMediaPicture" id="picture">
-            <property name="overflow">hidden</property>
-            <style>
-              <class name="media-picture"/>
-            </style>
+          <object class="GtkOverlay">
+            <child type="overlay">
+              <object class="GtkProgressBar" id="progress_bar">
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+              </object>
+            </child>
+            <child>
+              <object class="ContentMediaPicture" id="picture">
+                <property name="overflow">hidden</property>
+                <style>
+                  <class name="media-picture"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
         <child>

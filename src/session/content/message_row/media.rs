@@ -15,6 +15,8 @@ mod imp {
         pub picture: TemplateChild<MediaPicture>,
         #[template_child]
         pub caption_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub progress_bar: TemplateChild<gtk::ProgressBar>,
     }
 
     #[glib::object_subclass]
@@ -43,6 +45,15 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpec::new_double(
+                        "download-progress",
+                        "Download Progress",
+                        "The download progress",
+                        0.0,
+                        1.0,
+                        0.0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -57,6 +68,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "caption" => obj.set_caption(value.get().unwrap()),
+                "download-progress" => obj.set_download_progress(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -64,6 +76,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "caption" => obj.caption().to_value(),
+                "download-progress" => obj.download_progress().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -162,5 +175,22 @@ impl Media {
 
         self_.caption_label.set_label(caption);
         self.notify("caption");
+    }
+
+    pub fn download_progress(&self) -> f64 {
+        let self_ = imp::Media::from_instance(self);
+        self_.progress_bar.fraction()
+    }
+
+    pub fn set_download_progress(&self, progress: f64) {
+        if self.download_progress() == progress {
+            return;
+        }
+
+        let self_ = imp::Media::from_instance(self);
+        self_.progress_bar.set_fraction(progress);
+        self_.progress_bar.set_visible(progress < 1.0);
+
+        self.notify("download-progress");
     }
 }
