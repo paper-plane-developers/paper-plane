@@ -1,7 +1,13 @@
+mod media;
+mod media_picture;
+mod photo;
 mod sticker;
 mod sticker_paintable;
 mod text;
 
+use self::media::Media;
+use self::media_picture::MediaPicture;
+pub use self::photo::MessagePhoto;
 pub use self::sticker::MessageSticker;
 use self::sticker_paintable::StickerPaintable;
 pub use self::text::MessageText;

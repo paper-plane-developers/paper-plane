@@ -4,7 +4,7 @@ use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::MessageContent;
 
 use crate::session::chat::{Item, ItemType, SponsoredMessage};
-use crate::session::content::message_row::{MessageSticker, MessageText};
+use crate::session::content::message_row::{MessagePhoto, MessageSticker, MessageText};
 use crate::session::content::{EventRow, MessageRow, MessageRowExt};
 
 mod imp {
@@ -98,6 +98,9 @@ impl ItemRow {
                         let message = message.to_owned().upcast();
 
                         match content {
+                            MessageContent::MessagePhoto(_) => {
+                                self.set_child_row::<MessagePhoto>(message)
+                            }
                             MessageContent::MessageSticker(data) if !data.sticker.is_animated => {
                                 self.set_child_row::<MessageSticker>(message)
                             }
