@@ -1,5 +1,6 @@
 mod application;
 #[rustfmt::skip]
+#[allow(clippy::all)]
 mod config;
 mod login;
 mod preferences_window;
