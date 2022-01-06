@@ -140,25 +140,25 @@
   font-size: 0.95em;
 }
 
-.chat-action-bar entry {
+.chat-action-bar > entry {
   padding: 0;
 }
 
-.chat-action-bar scrolledwindow scrollbar  {
+.chat-action-bar > entry > scrollbar  {
   box-shadow: none;
   background: none;
 }
 
-.chat-action-bar scrolledwindow slider {
+.chat-action-bar > entry > scrollbar slider {
   min-height: 0;
 }
 
-.chat-action-bar textview {
+.chat-action-bar > entry > textview {
   background: none;
   color: inherit;
 }
 
-.chat-action-bar textview text {
+.chat-action-bar > entry > textview > text {
   background: none;
 }
 
