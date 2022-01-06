@@ -187,6 +187,18 @@
                                                 </child>
                                               </object>
                                             </child>
+                                            <child>
+                                              <object class="AdwActionRow">
+                                                <property name="title" translatable="yes">Proxy Settings</property>
+                                                <child>
+                                                  <object class="GtkButton" id="open_proxy_settings_button">
+                                                    <property name="action-name">app.proxy</property>
+                                                    <property name="icon-name">view-more-symbolic</property>
+                                                    <property name="valign">center</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
                                           </object>
                                         </child>
                                         <style>
@@ -385,7 +397,7 @@
                                     <property name="use-markup">True</property>
                                     <property name="valign">end</property>
                                     <property name="label" translatable="yes">By signing up,
-you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</property>
+                                      you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</property>
                                   </object>
                                 </property>
                               </object>

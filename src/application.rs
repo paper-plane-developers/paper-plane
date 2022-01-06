@@ -5,6 +5,8 @@ use gtk::{gio, glib};
 use log::{debug, info};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::proxy::proxy_handle_dialog::ProxyTypes;
+use crate::proxy::proxy_window::ProxyWindow;
 use crate::PreferencesWindow;
 use crate::Window;
 
@@ -31,6 +33,9 @@ mod imp {
     impl ApplicationImpl for Application {
         fn activate(&self, app: &Self::Type) {
             debug!("GtkApplication<Application>::activate");
+
+            // register
+            ProxyTypes::static_type();
 
             if let Some(window) = self.window.get() {
                 let window = window.upgrade().unwrap();
@@ -109,6 +114,13 @@ impl Application {
         }));
         self.add_action(&action_quit);
 
+        // Proxy
+        let action_proxy = gio::SimpleAction::new("proxy", None);
+        action_proxy.connect_activate(clone!(@weak self as app => move |_, _| {
+            app.show_proxy(app.main_window().client_id())
+        }));
+        self.add_action(&action_proxy);
+
         // Preferences
         let action_preferences = gio::SimpleAction::new("preferences", None);
         action_preferences.connect_activate(clone!(@weak self as app => move |_, _| {
@@ -140,6 +152,13 @@ impl Application {
                 _ => style_manager.set_color_scheme(adw::ColorScheme::PreferLight),
             }
         }
+    }
+
+    fn show_proxy(&self, client_id: i32) {
+        let proxy = ProxyWindow::new(client_id);
+        proxy.set_transient_for(Some(&self.main_window()));
+        proxy.set_modal(true);
+        proxy.present();
     }
 
     fn show_preferences(&self) {

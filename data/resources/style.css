@@ -165,3 +165,39 @@
 .qr-code-quite-zone {
   background-color: white;
 }
+
+.proxy-row .type {
+  font-size: 1.2em; 
+  font-weight: bold;
+}
+
+.proxy-row .address {
+  font-size: 1.2em; 
+  font-weight: bold;
+  color: #a9a9a9;
+}
+
+.proxy-row checkbutton radio{
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.proxy-row .menu-button button:hover {
+  opacity: 1;
+}
+
+.proxy-row .menu-button button {
+  opacity: 0.5;
+  background-color: transparent;
+}
+
+.proxy-state-text-green {
+  color: #4fad2d;
+}
+.proxy-state-text-red {
+  color: #c03d33;
+}
+
+.proxy-state-text-cyan {
+  color: #2996ad;
+}

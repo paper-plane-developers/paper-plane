@@ -4,6 +4,7 @@ mod application;
 mod config;
 mod login;
 mod preferences_window;
+mod proxy;
 mod session;
 mod utils;
 mod window;
@@ -21,6 +22,7 @@ use gtk::{
     prelude::{ApplicationExt, ApplicationExtManual, IsA},
 };
 use once_cell::sync::{Lazy, OnceCell};
+
 use std::{path::PathBuf, str::FromStr};
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =

@@ -21,6 +21,11 @@
       <summary>Use Telegram's test data center</summary>
       <description>Use Telegram's test data center</description>
     </key>
+    <key name="use-proxy" type="b">
+      <default>false</default>
+      <summary>Use Proxy</summary>
+      <description>Use the proxy function</description>
+    </key>
     <key name="color-scheme" type="s">
       <choices>
         <choice value="default"/>
