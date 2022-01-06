@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2022-01-05 21:54+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -57,11 +57,11 @@ msgstr "Bruk Telegrams testdatasenter"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Fargedrakt"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Fargepaletten brukt i programmet"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -81,15 +81,15 @@ msgstr "Velg en sludring for å starte."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Vis info"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Mobil"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Brukernavn"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -109,7 +109,7 @@ msgstr "Telefonnummer"
 
 #: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Logg inn med QR-kode"
 
 #: data/resources/ui/login.ui:177
 msgid "Advanced"
@@ -130,6 +130,8 @@ msgstr ""
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Skann denne koden med et annet Telegram-program som er innlogget på kontoen "
+"din."
 
 #: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
@@ -141,21 +143,23 @@ msgstr "Kode"
 
 #: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr ""
+msgstr "Registrer ny konto"
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
-msgstr ""
+msgstr "Fornavn"
 
 #: data/resources/ui/login.ui:348
 msgid "Last Name"
-msgstr ""
+msgstr "Etternavn"
 
 #: data/resources/ui/login.ui:387
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Ved å registrere deg\n"
+"samtykker du til <a href=\"\">tjenestevilkårene</a>."
 
 #: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
@@ -167,34 +171,37 @@ msgstr "Passord"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Hint"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Glemt passordet?"
 
 #: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Bruk gjenopprettingskode"
 
 #: data/resources/ui/login.ui:536
+#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery email address. We "
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Når du satte sky-passordet anga du en e-postadresse til gjenoppretting. En "
+"kode kan sendes til denne som du bruker til å tilbakestille passordet."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Send gjenopprettingskode"
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Kontosletting"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Slett konto"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
@@ -202,19 +209,19 @@ msgstr ""
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Har du ikke tilgang til e-postkontoen?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Følg systemet"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Mørk drakt"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -234,12 +241,12 @@ msgstr "Avslutt"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Sludreliste"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Søk i sludringer"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -247,7 +254,7 @@ msgstr "_Logg ut"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Innstillinger"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -264,19 +271,19 @@ msgstr "Innkommende anrop"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Klistremerke"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Bilde"
 
 #: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
@@ -284,11 +291,11 @@ msgstr ""
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Kanalbilde fjernet"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Du fjernet gruppebildet"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -316,36 +323,38 @@ msgstr "Denne meldingen er ustøttet"
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
+#, fuzzy
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%l:%M %p"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Kladd"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Du tok del i gruppen"
 
 #: src/session/sidebar/row.rs:463
+#, fuzzy
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Du forlot gruppen"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Avvist utgående videoanrop"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Avvist utgående anrop"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Avvist innkommende videoanrop"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
@@ -353,11 +362,11 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Avvist samtale"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Tapt anrop"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
@@ -365,7 +374,7 @@ msgstr "Du"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Utgående videosamtale"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
@@ -377,7 +386,12 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
+
+#: data/resources/ui/login.ui:666
+#, fuzzy
+msgid "Enter the Code Sent by Mail"
+msgstr "Skriv inn koden du fikk på e-post"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Krypteringsnøkkel"

@@ -59,11 +59,11 @@ msgstr "Usar el centro de datos de testeo de Telegram"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Esquema de colores"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "El esquema de colores que se utilizará en la aplicación"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -83,15 +83,15 @@ msgstr "Selecciona un chat para empezar a conversar."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Ver informaciones"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Móvil"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -270,11 +270,11 @@ msgstr ""
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Foto"
 
 #: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
@@ -319,7 +319,7 @@ msgstr "Este mensaje no está soportado"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
@@ -379,6 +379,10 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
+msgstr "Documento"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
 msgstr ""
 
 #~ msgid "Encryption Key"

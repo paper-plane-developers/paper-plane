@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
-"PO-Revision-Date: 2021-12-02 22:38+0000\n"
-"Last-Translator: Marco Melorio <marco.melorio@protonmail.com>\n"
+"PO-Revision-Date: 2022-01-05 21:54+0000\n"
+"Last-Translator: Carlod <carlod@disroot.org>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.10-dev\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -58,11 +58,11 @@ msgstr "Użyj testowego centrum danych Telegrama"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Schemat Kolorów"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Schemat kolorów, który będzie używany w aplikacji"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -74,23 +74,23 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
-msgstr "Nie Wybrano Chatu"
+msgstr "Nie wybrano konwersacji"
 
 #: data/resources/ui/content.ui:24
 msgid "Select a chat to start messaging."
-msgstr "Wybierz chat, aby zacząć pisać."
+msgstr "Wybierz czat, aby rozpocząć rozmowę."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Zobacz informacje"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Telefon"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -106,11 +106,11 @@ msgstr "Witamy w aplikacji Telegrand"
 
 #: data/resources/ui/login.ui:117
 msgid "Phone Number"
-msgstr "Numer Telefonu"
+msgstr "Numer telefonu"
 
 #: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Zaloguj się używając kodu QR"
 
 #: data/resources/ui/login.ui:177
 msgid "Advanced"
@@ -126,15 +126,16 @@ msgstr "Wymagane ponowne uruchomienie, aby zastosować"
 
 #: data/resources/ui/login.ui:218
 msgid "Scan Code"
-msgstr ""
+msgstr "Zeskanuj Kod"
 
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Zeskanuj ten kod w innej zalogowanej do twojego konta aplikacji Telegrama."
 
 #: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
-msgstr "Wpisz Kod Weryfikacyjny"
+msgstr "Wpisz kod weryfikacyjny"
 
 #: data/resources/ui/login.ui:272 data/resources/ui/login.ui:685
 msgid "Code"
@@ -142,7 +143,7 @@ msgstr "Kod"
 
 #: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr "Zarejestruj Nowe Konto"
+msgstr "Zarejestruj nowe konto"
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
@@ -158,11 +159,11 @@ msgid ""
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
 "Poprzez założenie konta,\n"
-"akceptujesz <a href=\"\">Zasady Korzystania z Usługi</a>."
+"akceptujesz <a href=\"\">Zasady korzystania z Usługi</a>."
 
 #: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
-msgstr "Wpisz Swoje Hasło"
+msgstr "Wpisz swoje hasło"
 
 #: data/resources/ui/login.ui:422
 msgid "Password"
@@ -170,15 +171,15 @@ msgstr "Hasło"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Wskazówka"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Nie pamiętasz hasła?"
 
 #: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Użyj Kodu Odzyskiwania"
 
 #: data/resources/ui/login.ui:536
 msgid ""
@@ -186,38 +187,40 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Kiedy ustawisz hasło chmurowe, podasz nam pomocniczy adres email. Dzięki "
+"temu będziemy mogli ci wysłać kod na ten adres, żeby zresetować twoje hasło."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Wyślij kod odzyskiwania"
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Usuwanie Konta"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Usuń Konto"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Wprowadź Kod Wysłany na E-maila"
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Nie masz dostępu do swojego emaila?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Wygląd"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Używaj Kolorów Systemowych"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Ciemny Motytw"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -237,28 +240,28 @@ msgstr "Wyjdź"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Lista Chatów"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Przeszukaj Chaty"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr "_Wyloguj Się"
+msgstr "_Wyloguj się"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferencje"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
-msgstr "_Skróty Klawiszowe"
+msgstr "_Skróty klawiszowe"
 
 #: data/resources/ui/sidebar.ui:20
 msgid "_About Telegrand"
-msgstr "_O Telegrandzie"
+msgstr "_O Telegrand"
 
 #: src/window.rs:334 src/session/sidebar/row.rs:613
 msgid "Incoming call"
@@ -267,7 +270,7 @@ msgstr "Przychodzące połączenie"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Naklejka"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
@@ -279,7 +282,7 @@ msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr "Video"
+msgstr "Wideo"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
@@ -287,11 +290,11 @@ msgstr "Wiadomość głosowa"
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Usunięto zdjęcie kanału"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Usunięto zdjęcie grupy"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -300,17 +303,17 @@ msgstr "Nieznana wiadomość"
 
 #: src/session/content/chat_action_bar.rs:231
 msgid "Unsupported draft message type"
-msgstr ""
+msgstr "Nieznany rodzaj szkicu wiadomości"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
 msgid "%B %e"
-msgstr "%B %e"
+msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:114
 msgid "%B %e, %Y"
-msgstr "%B %e %Y"
+msgstr "%e %B %Y"
 
 #: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
@@ -320,47 +323,47 @@ msgstr "Ta wiadomość jest nieznana"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Szkic"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Dołączono do grupy"
 
 #: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Opuszczono grupę"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Odrzucono wychodzące połączenie wideo"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Odrzucono wychodzące połączenie"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Odrzucono przychodzące połączenie wideo"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Odrzucono przychodzące połączenie"
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Odwołano połączenie"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Nieodebrane połączenie"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
@@ -368,19 +371,23 @@ msgstr "Ty"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Wychodzące połączenie wideo"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
-msgstr ""
+msgstr "Wychodzące połączenie"
 
 #: src/session/sidebar/row.rs:611
 msgid "Incoming video call"
-msgstr ""
+msgstr "Przychodzące połączenie wideo"
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
+msgstr "Wpisz Kod Wysłany na Maila"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Klucz Szyfrujący"
