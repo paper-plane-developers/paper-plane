@@ -218,25 +218,13 @@
                             <property name="title" translatable="yes">Scan Code</property>
                             <property name="description" translatable="yes">Scan this code with another Telegram app logged into your account.</property>
                             <child>
-                              <object class="GtkFrame">
-                                <property name="width-request">200</property>
-                                <property name="height-request">200</property>
+                              <object class="GtkImage" id="qr_code_image">
                                 <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="child">
-                                  <object class="AdwBin" id="qr_code_bin">
-                                    <property name="visible">False</property>
-                                    <child>
-                                      <object class="GtkImage" id="qr_code_image">
-                                        <property name="pixel-size">192</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">center</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </property>
+                                <property name="overflow">hidden</property>
+                                <property name="pixel-size">200</property>
                                 <style>
-                                  <class name="qr-code-quite-zone"/>
+                                  <class name="qr-code"/>
+                                  <class name="card"/>
                                 </style>
                               </object>
                             </child>

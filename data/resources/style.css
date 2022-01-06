@@ -162,6 +162,6 @@
   background: none;
 }
 
-.qr-code-quite-zone {
-  background-color: white;
+.qr-code:disabled {
+  filter: opacity(0.5);
 }

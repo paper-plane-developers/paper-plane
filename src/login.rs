@@ -53,8 +53,6 @@ mod imp {
         #[template_child]
         pub use_test_dc_switch: TemplateChild<gtk::Switch>,
         #[template_child]
-        pub qr_code_bin: TemplateChild<adw::Bin>,
-        #[template_child]
         pub qr_code_image: TemplateChild<gtk::Image>,
         #[template_child]
         pub code_entry: TemplateChild<gtk::Entry>,
@@ -255,7 +253,7 @@ impl Login {
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(data) => {
-                let size = 192;
+                let size = self_.qr_code_image.pixel_size() as usize;
                 let bytes_per_pixel = 3;
 
                 let data_luma = qrcode_generator::to_image_from_str(
@@ -282,8 +280,6 @@ impl Login {
                         &bytes,
                         size * bytes_per_pixel,
                     )));
-
-                self_.qr_code_bin.set_visible(true);
 
                 self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
                     "qr-code-page",
@@ -370,7 +366,6 @@ impl Login {
             }
             AuthorizationState::Ready => {
                 self.disable_actions();
-                self_.qr_code_bin.set_visible(false);
                 // Clear the qr code image save some potential memory.
                 self_
                     .qr_code_image
@@ -528,9 +523,6 @@ impl Login {
     fn leave_qr_code_page(&self) {
         self.freeze_with_previous_spinner();
 
-        let self_ = imp::Login::from_instance(self);
-        self_.qr_code_bin.set_visible(false);
-
         let client_id = self.client_id();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -540,9 +532,7 @@ impl Login {
                 functions::LogOut::new().send(client_id).await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
                 if result.is_err() {
-                    self_.qr_code_bin.set_visible(true);
                     obj.unfreeze();
                     // TODO: We also need to handle potential errors here and inform the user that
                     // the change to phone number identification failed (Toast?).
