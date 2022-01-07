@@ -41,8 +41,8 @@
   font-size: 0.8em;
   font-weight: bold;
   min-width: 0.7em;
-  border-radius: 10px;
-  padding: 2px 5px;
+  border-radius: 9999px;
+  padding: 2px 5px 0;
 }
 
 .chat-list row .unread-count-unmuted {
@@ -140,28 +140,28 @@
   font-size: 0.95em;
 }
 
-.chat-action-bar entry {
+.chat-action-bar > entry {
   padding: 0;
 }
 
-.chat-action-bar scrolledwindow scrollbar  {
+.chat-action-bar > entry > scrollbar  {
   box-shadow: none;
   background: none;
 }
 
-.chat-action-bar scrolledwindow slider {
+.chat-action-bar > entry > scrollbar slider {
   min-height: 0;
 }
 
-.chat-action-bar textview {
+.chat-action-bar > entry > textview {
   background: none;
   color: inherit;
 }
 
-.chat-action-bar textview text {
+.chat-action-bar > entry > textview > text {
   background: none;
 }
 
-.qr-code-quite-zone {
-  background-color: white;
+.qr-code:disabled {
+  filter: opacity(0.5);
 }

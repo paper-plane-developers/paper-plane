@@ -22,7 +22,7 @@ mod imp {
         pub chat: RefCell<Option<Chat>>,
         pub chat_action_in_cooldown: Cell<bool>,
         #[template_child]
-        pub frame: TemplateChild<gtk::Frame>,
+        pub scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub message_entry: TemplateChild<gtk::TextView>,
         #[template_child]
@@ -127,7 +127,7 @@ mod imp {
         }
 
         fn dispose(&self, _obj: &Self::Type) {
-            self.frame.unparent();
+            self.scrolled_window.unparent();
             self.send_message_button.unparent();
         }
     }

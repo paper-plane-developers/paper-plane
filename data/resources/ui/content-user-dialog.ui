@@ -5,16 +5,18 @@
     <property name="default-height">500</property>
     <property name="modal">True</property>
     <property name="content">
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="AdwHeaderBar">
+      <object class="GtkOverlay">
+        <child type="overlay">
+          <object class="GtkHeaderBar">
+            <property name="valign">start</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="visible">False</property>
+              </object>
+            </property>
             <style>
               <class name="flat"/>
             </style>
-            <property name="title-widget">
-              <object class="AdwWindowTitle"/>
-            </property>
           </object>
         </child>
         <child>
