@@ -159,60 +159,61 @@ impl ChatActionBar {
             .to_string()
     }
 
-    fn compose_text_message(&self) -> InputMessageContent {
-        let text = types::FormattedText {
-            text: self.message_entry_text(),
-            ..Default::default()
-        };
-        let content = types::InputMessageText {
-            text,
-            clear_draft: true,
-            ..Default::default()
-        };
+    fn compose_text_message(&self) -> Option<InputMessageContent> {
+        let text = self.message_entry_text();
+        if !text.is_empty() {
+            let formatted_text = types::FormattedText {
+                text,
+                ..Default::default()
+            };
+            let content = types::InputMessageText {
+                text: formatted_text,
+                disable_web_page_preview: false,
+                clear_draft: true,
+            };
 
-        InputMessageContent::InputMessageText(content)
+            Some(InputMessageContent::InputMessageText(content))
+        } else {
+            None
+        }
     }
 
     fn send_text_message(&self) {
         if let Some(chat) = self.chat() {
-            let message = self.compose_text_message();
-            let client_id = chat.session().client_id();
-            let chat_id = chat.id();
+            if let Some(message) = self.compose_text_message() {
+                let client_id = chat.session().client_id();
+                let chat_id = chat.id();
 
-            // Send the message
-            RUNTIME.spawn(async move {
-                functions::SendMessage::new()
-                    .chat_id(chat_id)
-                    .input_message_content(message)
-                    .send(client_id)
-                    .await
-                    .unwrap();
-            });
+                // Send the message
+                RUNTIME.spawn(functions::send_message(
+                    chat_id, 0, 0, None, message, client_id,
+                ));
 
-            // Reset message entry
-            self.imp().message_entry.buffer().set_text("");
+                // Reset message entry
+                self.imp().message_entry.buffer().set_text("");
+            }
         }
     }
 
     fn save_message_as_draft(&self) {
         if let Some(chat) = self.chat() {
-            let message = self.compose_text_message();
-            let draft_message = types::DraftMessage {
-                input_message_text: message,
-                ..Default::default()
-            };
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
+            let draft_message = self
+                .compose_text_message()
+                .map(|message| types::DraftMessage {
+                    reply_to_message_id: 0,
+                    date: glib::DateTime::now_local().unwrap().to_unix() as i32,
+                    input_message_text: message,
+                });
 
             // Save draft message
-            RUNTIME.spawn(async move {
-                functions::SetChatDraftMessage::new()
-                    .chat_id(chat_id)
-                    .draft_message(draft_message)
-                    .send(client_id)
-                    .await
-                    .unwrap();
-            });
+            RUNTIME.spawn(functions::set_chat_draft_message(
+                chat_id,
+                0,
+                draft_message,
+                client_id,
+            ));
         }
     }
 
@@ -253,13 +254,7 @@ impl ChatActionBar {
             // Send typing action
             do_async(
                 glib::PRIORITY_DEFAULT_IDLE,
-                async move {
-                    functions::SendChatAction::new()
-                        .chat_id(chat_id)
-                        .action(action)
-                        .send(client_id)
-                        .await
-                },
+                functions::send_chat_action(chat_id, 0, Some(action), client_id),
                 clone!(@weak self as obj => move |result| async move {
                     // If the request is successful, then start the actual cooldown of 5 seconds.
                     // Otherwise just cancel it right away.

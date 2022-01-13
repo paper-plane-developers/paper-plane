@@ -355,14 +355,7 @@ impl Session {
                 entry.insert(vec![sender]);
 
                 let client_id = self.client_id();
-                RUNTIME.spawn(async move {
-                    functions::DownloadFile::new()
-                        .file_id(file_id)
-                        .priority(5)
-                        .send(client_id)
-                        .await
-                        .unwrap();
-                });
+                RUNTIME.spawn(functions::download_file(file_id, 5, 0, 0, false, client_id));
             }
         }
     }

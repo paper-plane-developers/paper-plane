@@ -125,7 +125,7 @@ impl ChatList {
     pub fn fetch(&self, client_id: i32) {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
-            functions::LoadChats::new().limit(20).send(client_id),
+            functions::load_chats(None, 20, client_id),
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
                     // Error 404 means that all chats have been loaded
