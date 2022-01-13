@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="previous_button"/>
+      <widget name="next_button"/>
+    </widgets>
+  </object>
   <template class="Login" parent="AdwBin">
     <child>
       <object class="GtkStack" id="main_stack">
