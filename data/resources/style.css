@@ -1,3 +1,54 @@
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-size: 0.8em;
+}
+
+/* Account switcher */
+#account-switcher row {
+  border-radius: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+#account-switcher .user-id {
+  font-size: 12px;
+}
+
+#new-login-icon {
+  /*
+   *  2 * padding + pixel-size = size (of avatar)
+   */
+  padding: 12px;
+  background-color: @light_4;
+  border-radius: 9999px;
+}
+
+.unread-count {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+  font-weight: bold;
+  min-width: 0.7em;
+  border-radius: 9999px;
+  font-size: 0.95em;
+  padding: 2px 5px 1px;
+}
+
+.selected-avatar avatar {
+  border: 2px solid @accent_bg_color;
+}
+
+.blue-checkmark {
+  color: @light_1;
+  border-radius: 9999px;
+  border: solid @accent_bg_color 2px;
+  background-color: @accent_bg_color;
+}
+
 .chat-list {
   background: @window_bg_color;
 }

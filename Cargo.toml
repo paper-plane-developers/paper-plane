@@ -6,6 +6,8 @@ edition = "2018"
 
 [dependencies]
 adw = { version = "0.1.0-alpha-6", package = "libadwaita" }
+anyhow = "1.0"
+futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.3", package = "gtk4" }
 indexmap = "1.7"
@@ -17,4 +19,5 @@ qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.5"
 tdgrand = { git = "https://github.com/melix99/tdgrand", branch = "main" }
 tokio = { version = "1", features = ["rt-multi-thread"] }
+tokio-stream = { version = "0.1", features = ["fs"] }
 webp = "0.2"

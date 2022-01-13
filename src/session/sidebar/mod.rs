@@ -1,7 +1,9 @@
 mod avatar;
 mod row;
+mod session_switcher;
 
 use self::row::Row;
+use self::session_switcher::SessionSwitcher;
 
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
@@ -18,6 +20,8 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
+    use crate::session::components::Avatar as ComponentsAvatar;
+
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar.ui")]
     pub struct Sidebar {
@@ -31,6 +35,8 @@ mod imp {
         pub already_searched_users: RefCell<Vec<i64>>,
         #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
+        #[template_child]
+        pub session_switcher: TemplateChild<SessionSwitcher>,
         #[template_child]
         pub search_bar: TemplateChild<gtk::SearchBar>,
         #[template_child]
@@ -48,6 +54,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
+            ComponentsAvatar::static_type();
             Row::static_type();
             Self::bind_template(klass);
         }
@@ -375,5 +382,11 @@ impl Sidebar {
     pub fn session(&self) -> Option<Session> {
         let self_ = imp::Sidebar::from_instance(self);
         self_.session.borrow().to_owned()
+    }
+
+    pub fn set_sessions(&self, sessions: &gtk::SelectionModel, this_session: &Session) {
+        imp::Sidebar::from_instance(self)
+            .session_switcher
+            .set_sessions(sessions, this_session);
     }
 }

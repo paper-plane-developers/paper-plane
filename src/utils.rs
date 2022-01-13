@@ -1,12 +1,15 @@
 use gettextrs::gettext;
 use gtk::glib;
+use locale_config::Locale;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use std::future::Future;
+use std::{future::Future, path::PathBuf};
 use tdgrand::enums::TextEntityType;
-use tdgrand::types::FormattedText;
+use tdgrand::types::{self, FormattedText};
+use tdgrand::{enums, functions};
 
-use crate::RUNTIME;
+use crate::session_manager::DatabaseInfo;
+use crate::{config, APPLICATION_OPTS, RUNTIME};
 
 pub static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
@@ -139,6 +142,55 @@ pub fn human_friendly_duration(mut seconds: i32) -> String {
             gettext!("{} s", seconds)
         }
     }
+}
+
+/// Returns the Telegrand data directory (e.g. /home/bob/.local/share/telegrand).
+pub fn data_dir() -> &'static PathBuf {
+    &APPLICATION_OPTS.get().unwrap().data_dir
+}
+
+pub async fn send_tdlib_parameters(
+    client_id: i32,
+    database_info: &DatabaseInfo,
+) -> Result<enums::Ok, types::Error> {
+    let system_language_code = {
+        let locale = Locale::current().to_string();
+        if !locale.is_empty() {
+            locale
+        } else {
+            "en_US".to_string()
+        }
+    };
+    let parameters = types::TdlibParameters {
+        use_test_dc: database_info.use_test_dc,
+        database_directory: data_dir()
+            .join(&database_info.directory_base_name)
+            .to_str()
+            .expect("Data directory path is not a valid unicode string")
+            .to_owned(),
+        use_message_database: true,
+        use_secret_chats: true,
+        api_id: config::TG_API_ID,
+        api_hash: config::TG_API_HASH.to_string(),
+        system_language_code,
+        device_model: "Desktop".to_string(),
+        application_version: config::VERSION.to_string(),
+        enable_storage_optimizer: true,
+        ..types::TdlibParameters::default()
+    };
+
+    functions::SetTdlibParameters::new()
+        .parameters(parameters)
+        .send(client_id)
+        .await
+}
+
+pub fn log_out(client_id: i32) {
+    RUNTIME.spawn(async move {
+        if let Err(e) = functions::LogOut::new().send(client_id).await {
+            log::error!("Could not logout client with id={}: {:?}", client_id, e);
+        }
+    });
 }
 
 // Function from https://gitlab.gnome.org/GNOME/fractal/-/blob/fractal-next/src/utils.rs

@@ -1,5 +1,6 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{Update, UserStatus, UserType};
+use tdgrand::types::User as TelegramUser;
 
 use crate::session::Avatar;
 use crate::Session;
@@ -160,6 +161,23 @@ impl User {
     pub fn new(id: i64, session: &Session) -> Self {
         let avatar = Avatar::new(session);
         glib::Object::new(&[("id", &id), ("avatar", &avatar)]).expect("Failed to create User")
+    }
+
+    pub fn from_td_object(user: TelegramUser, session: &Session) -> Self {
+        let avatar = Avatar::new(session);
+        avatar.update_from_user_photo(user.profile_photo);
+
+        glib::Object::new(&[
+            ("id", &user.id),
+            ("type", &BoxedUserType(user.r#type)),
+            ("first-name", &user.first_name),
+            ("last-name", &user.last_name),
+            ("username", &user.username),
+            ("phone-number", &user.phone_number),
+            ("status", &BoxedUserStatus(user.status)),
+            ("avatar", &avatar),
+        ])
+        .expect("Failed to create User")
     }
 
     pub fn handle_update(&self, update: Update) {

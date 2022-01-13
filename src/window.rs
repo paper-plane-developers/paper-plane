@@ -1,28 +1,28 @@
 use gettextrs::gettext;
-use glib::{clone, SyncSender};
-use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use std::sync::atomic::{AtomicBool, Ordering};
+use gtk::glib::{clone, SyncSender};
+use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use tdgrand::enums::{
     self, AuthorizationState, MessageContent, MessageSender as TelegramMessageSender, Update,
 };
-use tdgrand::functions;
 use tdgrand::types::{self, Message as TelegramMessage};
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
+use crate::session_manager::{ClientInfo, SessionManager};
 use crate::Application;
-use crate::Session;
 use crate::RUNTIME;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use std::cell::{Cell, RefCell};
-    use std::collections::HashMap;
+    use gtk::gdk;
+    use std::cell::RefCell;
+    use std::sync::atomic::AtomicBool;
 
-    use crate::Login;
+    use crate::session_manager::SessionManager;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
@@ -30,12 +30,9 @@ mod imp {
         pub settings: gio::Settings,
         pub receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
         pub receiver_should_stop: Arc<AtomicBool>,
-        pub clients: RefCell<HashMap<i32, Option<Session>>>,
-        pub active_client_id: Cell<i32>,
+
         #[template_child]
-        pub main_stack: TemplateChild<gtk::Stack>,
-        #[template_child]
-        pub login: TemplateChild<Login>,
+        pub session_manager: TemplateChild<SessionManager>,
     }
 
     #[glib::object_subclass]
@@ -49,10 +46,7 @@ mod imp {
                 settings: gio::Settings::new(APP_ID),
                 receiver_handle: RefCell::default(),
                 receiver_should_stop: Arc::default(),
-                clients: RefCell::default(),
-                active_client_id: Cell::default(),
-                main_stack: TemplateChild::default(),
-                login: TemplateChild::default(),
+                session_manager: TemplateChild::default(),
             }
         }
 
@@ -66,8 +60,10 @@ mod imp {
                 None,
             );
 
-            klass.install_action("sidebar.begin-chats-search", None, move |widget, _, _| {
-                widget.begin_chats_search();
+            klass.install_action("sidebar.begin-chats-search", None, |widget, _, _| {
+                Self::from_instance(widget)
+                    .session_manager
+                    .begin_chats_search();
             });
         }
 
@@ -88,30 +84,14 @@ mod imp {
             // Load latest window state
             obj.load_window_size();
 
-            self.login.connect_new_session(
-                clone!(@weak obj => move |login| obj.create_session(login.client_id())),
-            );
-
-            obj.create_client();
             obj.start_receiver();
 
             // Set the online state of the active client based on
             // whether the window is active or not
-            obj.connect_is_active_notify(move |obj| {
-                let self_ = imp::Window::from_instance(obj);
-                let client_id = self_.active_client_id.get();
-                let window_is_active = obj.is_active();
-
-                RUNTIME.spawn(async move {
-                    functions::SetOption::new()
-                        .name("online".to_string())
-                        .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
-                            value: window_is_active,
-                        }))
-                        .send(client_id)
-                        .await
-                        .unwrap();
-                });
+            obj.connect_is_active_notify(|window| {
+                Self::from_instance(window)
+                    .session_manager
+                    .set_active_client_online(window.is_active());
             });
         }
     }
@@ -122,7 +102,7 @@ mod imp {
         fn close_request(&self, obj: &Self::Type) -> gtk::Inhibit {
             self.receiver_should_stop.store(true, Ordering::Release);
 
-            obj.close_clients();
+            Self::from_instance(obj).session_manager.close_clients();
             obj.wait_receiver();
 
             if let Err(err) = obj.save_window_size() {
@@ -148,56 +128,8 @@ impl Window {
         glib::Object::new(&[("application", app)]).expect("Failed to create Window")
     }
 
-    fn create_client(&self) {
-        let client_id = tdgrand::create_client();
-
-        let self_ = imp::Window::from_instance(self);
-        self_.clients.borrow_mut().insert(client_id, None);
-        self_.active_client_id.set(client_id);
-        self_.login.login_client(client_id);
-        self_.main_stack.set_visible_child(&self_.login.get());
-
-        // This call is important for login because TDLib requires the clients
-        // to do at least a request to start receiving updates.
-        RUNTIME.spawn(async move {
-            functions::SetLogVerbosityLevel::new()
-                .new_verbosity_level(if log::log_enabled!(log::Level::Trace) {
-                    5
-                } else if log::log_enabled!(log::Level::Debug) {
-                    4
-                } else if log::log_enabled!(log::Level::Info) {
-                    3
-                } else if log::log_enabled!(log::Level::Warn) {
-                    2
-                } else {
-                    0
-                })
-                .send(client_id)
-                .await
-                .unwrap();
-        });
-    }
-
-    fn close_clients(&self) {
-        let self_ = imp::Window::from_instance(self);
-
-        for client_id in self_.clients.borrow().keys() {
-            let client_id = *client_id;
-
-            // Set the client to offline and then close it
-            RUNTIME.spawn(async move {
-                functions::SetOption::new()
-                    .name("online".to_string())
-                    .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
-                        value: false,
-                    }))
-                    .send(client_id)
-                    .await
-                    .unwrap();
-
-                functions::Close::new().send(client_id).await.unwrap();
-            });
-        }
+    pub fn session_manager(&self) -> &SessionManager {
+        &*imp::Window::from_instance(self).session_manager
     }
 
     fn start_receiver(&self) {
@@ -237,7 +169,7 @@ impl Window {
 
     fn wait_receiver(&self) {
         let self_ = imp::Window::from_instance(self);
-        RUNTIME.block_on(async move {
+        RUNTIME.block_on(async {
             self_
                 .receiver_handle
                 .borrow_mut()
@@ -267,20 +199,6 @@ impl Window {
         let self_ = imp::Window::from_instance(self);
 
         match update {
-            Update::AuthorizationState(update) => {
-                if let AuthorizationState::Closed = update.authorization_state {
-                    let session = self_.clients.borrow_mut().remove(&client_id).unwrap();
-                    if let Some(session) = session {
-                        self_.main_stack.remove(&session);
-                    }
-
-                    self.create_client();
-                } else {
-                    self_
-                        .login
-                        .set_authorization_state(update.authorization_state);
-                }
-            }
             Update::NotificationGroup(update) => {
                 self.add_notifications(update.added_notifications, client_id, update.chat_id);
 
@@ -289,11 +207,7 @@ impl Window {
                     app.withdraw_notification(&notification_id.to_string());
                 }
             }
-            _ => {
-                if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
-                    session.handle_update(update);
-                }
-            }
+            _ => self_.session_manager.handle_update(update, client_id),
         }
     }
 
@@ -305,7 +219,7 @@ impl Window {
     ) {
         let self_ = imp::Window::from_instance(self);
 
-        if let Some(Some(session)) = self_.clients.borrow().get(&client_id) {
+        if let Some(ClientInfo::LoggedIn(session)) = self_.session_manager.client_info(client_id) {
             let app = self.application().unwrap();
             let chat = session.chat_list().get_chat(chat_id).unwrap();
 
@@ -344,27 +258,6 @@ impl Window {
         }
     }
 
-    fn create_session(&self, client_id: i32) {
-        let self_ = imp::Window::from_instance(self);
-        let session = Session::new(client_id);
-
-        self_.main_stack.add_child(&session);
-        self_.main_stack.set_visible_child(&session);
-        self_.clients.borrow_mut().insert(client_id, Some(session));
-
-        // Enable notifications for this client
-        RUNTIME.spawn(async move {
-            functions::SetOption::new()
-                .name("notification_group_count_max".to_string())
-                .value(enums::OptionValue::Integer(types::OptionValueInteger {
-                    value: 5,
-                }))
-                .send(client_id)
-                .await
-                .unwrap();
-        });
-    }
-
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
         let self_ = imp::Window::from_instance(self);
 
@@ -389,14 +282,6 @@ impl Window {
         let is_maximized = self_.settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
-        }
-    }
-
-    fn begin_chats_search(&self) {
-        let self_ = imp::Window::from_instance(self);
-        let active_client_id = self_.active_client_id.get();
-        if let Some(session) = self_.clients.borrow().get(&active_client_id).unwrap() {
-            session.begin_chats_search();
         }
     }
 }

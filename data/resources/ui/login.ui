@@ -169,26 +169,6 @@
                                             </child>
                                           </object>
                                         </child>
-                                        <child>
-                                          <object class="AdwExpanderRow">
-                                            <property name="focusable">False</property>
-                                            <property name="selectable">False</property>
-                                            <property name="activatable">False</property>
-                                            <property name="title" translatable="yes">Advanced</property>
-                                            <child>
-                                              <object class="AdwActionRow">
-                                                <property name="activatable_widget">use_test_dc_switch</property>
-                                                <property name="title" translatable="yes">Use Test Data Center</property>
-                                                <property name="subtitle" translatable="yes">This requires a restart to apply</property>
-                                                <child>
-                                                  <object class="GtkSwitch" id="use_test_dc_switch">
-                                                    <property name="valign">center</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
                                         <style>
                                           <class name="boxed-list"/>
                                         </style>

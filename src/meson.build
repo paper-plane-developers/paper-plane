@@ -26,6 +26,7 @@ rust_sources = files(
   'login.rs',
   'main.rs',
   'preferences_window.rs',
+  'session_manager.rs',
   'utils.rs',
   'window.rs',
   'session/avatar.rs',
@@ -62,6 +63,11 @@ rust_sources = files(
   'session/sidebar/avatar.rs',
   'session/sidebar/mod.rs',
   'session/sidebar/row.rs',
+  'session/sidebar/session_switcher/add_account.rs',
+  'session/sidebar/session_switcher/avatar_with_selection.rs',
+  'session/sidebar/session_switcher/item.rs',
+  'session/sidebar/session_switcher/mod.rs',
+  'session/sidebar/session_switcher/session_entry_row.rs',
 )
 
 sources = [rust_sources, cargo_sources]

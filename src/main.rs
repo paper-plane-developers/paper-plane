@@ -5,6 +5,7 @@ mod config;
 mod login;
 mod preferences_window;
 mod session;
+mod session_manager;
 mod utils;
 mod window;
 
@@ -26,7 +27,7 @@ use std::{path::PathBuf, str::FromStr};
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
 
-pub static DATA_DIR: OnceCell<PathBuf> = OnceCell::new();
+pub static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
 
 fn main() {
     // Prepare i18n
@@ -58,27 +59,38 @@ fn main() {
                 None => log::Level::Warn,
             };
 
+            let mut application_opts = ApplicationOptions::default();
+
             // TODO: Change to syslog when tdlib v1.8 is out where messages can be redirected.
             std::env::set_var("RUST_LOG", log_level.as_str());
             pretty_env_logger::init();
 
-            DATA_DIR
-                .set(
-                    #[cfg(not(debug_assertions))]
-                    default_data_dir(),
-                    #[cfg(debug_assertions)]
-                    dict.lookup::<String>("data-dir")
-                        .unwrap()
-                        .map(PathBuf::from)
-                        .unwrap_or_else(default_data_dir),
-                )
-                .unwrap();
+            if dict.contains("test-dc") {
+                application_opts.test_dc = true;
+            }
+
+            APPLICATION_OPTS.set(application_opts).unwrap();
 
             -1
         }
     });
 
     app.run();
+}
+
+/// Global options for the application
+#[derive(Debug)]
+pub struct ApplicationOptions {
+    pub data_dir: PathBuf,
+    pub test_dc: bool,
+}
+impl Default for ApplicationOptions {
+    fn default() -> Self {
+        Self {
+            data_dir: PathBuf::from(glib::user_data_dir().to_str().unwrap()).join("telegrand"),
+            test_dc: Default::default(),
+        }
+    }
 }
 
 fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
@@ -100,22 +112,14 @@ fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
         Some("error|warn|info|debug|trace"),
     );
 
-    #[cfg(debug_assertions)]
     app.add_main_option(
-        "data-dir",
-        b'd'.into(),
+        "test-dc",
+        b't'.into(),
         glib::OptionFlags::NONE,
-        glib::OptionArg::String,
-        &gettext("Specify a different data directory"),
-        Some(&gettext("DIRECTORY")),
+        glib::OptionArg::None,
+        &gettext("Whether to use a test data center on first account"),
+        None,
     );
 
     app
-}
-
-fn default_data_dir() -> PathBuf {
-    // TODO: In the future when multi account is a thing, only use the parent directory.
-    PathBuf::from(glib::user_data_dir().to_str().unwrap())
-        .join("telegrand")
-        .join("db0")
 }

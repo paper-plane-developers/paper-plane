@@ -1,3 +1,7 @@
+#new-login-icon {
+  background-color: @dark_2;
+}
+
 .chat-list row .unread-count-muted {
   background-color: @dark_2;
 }

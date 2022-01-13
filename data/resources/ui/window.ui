@@ -4,13 +4,7 @@
     <property name="default-width">900</property>
     <property name="default-height">600</property>
     <property name="content">
-      <object class="GtkStack" id="main_stack">
-        <property name="visible-child">login</property>
-        <property name="transition-type">crossfade</property>
-        <child>
-          <object class="Login" id="login"/>
-        </child>
-      </object>
+      <object class="SessionManager" id="session_manager"/>
     </property>
   </template>
 </interface>

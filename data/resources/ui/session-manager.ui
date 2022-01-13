@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SessionManager" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBinLayout"/>
+    </property>
+    <child>
+      <object class="GtkStack" id="main_stack">
+        <property name="visible-child">login</property>
+        <property name="transition-type">crossfade</property>
+        <child>
+          <object class="Login" id="login"/>
+        </child>
+        <child>
+          <object class="GtkStack" id="sessions"/>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
