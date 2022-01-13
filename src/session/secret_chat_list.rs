@@ -103,10 +103,7 @@ impl SecretChatList {
             match list.entry(data.secret_chat.id) {
                 Entry::Occupied(entry) => entry.get().handle_update(update),
                 Entry::Vacant(entry) => {
-                    let user = self
-                        .session()
-                        .user_list()
-                        .get_or_create_user(data.secret_chat.user_id);
+                    let user = self.session().user_list().get(data.secret_chat.user_id);
                     let secret_chat = SecretChat::from_td_object(&data.secret_chat, &user);
                     entry.insert(secret_chat);
 

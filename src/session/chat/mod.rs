@@ -30,7 +30,7 @@ impl ChatType {
     pub fn from_td_object(_type: &TdChatType, session: &Session) -> Self {
         match _type {
             TdChatType::Private(data) => {
-                let user = session.user_list().get_or_create_user(data.user_id);
+                let user = session.user_list().get(data.user_id);
                 Self::Private(user)
             }
             TdChatType::BasicGroup(data) => {

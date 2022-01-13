@@ -289,7 +289,7 @@ impl Window {
 fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
     match sender {
         TelegramMessageSender::User(data) => {
-            let user = chat.session().user_list().get_or_create_user(data.user_id);
+            let user = chat.session().user_list().get(data.user_id);
             format!("{} {}", user.first_name(), user.last_name())
                 .trim()
                 .into()

@@ -145,7 +145,7 @@ impl Message {
         let content = BoxedMessageContent(message.content);
         let sender = match message.sender_id {
             TelegramMessageSender::User(data) => {
-                let user = chat.session().user_list().get_or_create_user(data.user_id);
+                let user = chat.session().user_list().get(data.user_id);
                 MessageSender::User(user)
             }
             TelegramMessageSender::Chat(data) => {
