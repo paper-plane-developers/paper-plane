@@ -175,22 +175,14 @@ impl Avatar {
 
         let user_expression = gtk::ConstantExpression::new(user);
         let interlocutor_status_expression = user_expression.chain_property::<User>("status");
-        let me_expression = Session::this_expression("me");
 
+        let my_id = session.me().id();
         let user_id = user.id();
-        // TODO: Change `me` to a non-Option value when
-        // https://github.com/melix99/telegrand/pull/208 is merged
         let is_online_binding = gtk::ClosureExpression::new::<bool, _, _>(
-            &[
-                me_expression.upcast(),
-                interlocutor_status_expression.upcast(),
-            ],
-            closure!(
-                |_: Session, me: Option<User>, interlocutor_status: BoxedUserStatus| {
-                    matches!(interlocutor_status.0, UserStatus::Online(_))
-                        && me.map(|me| me.id()).unwrap_or_default() != user_id
-                }
-            ),
+            &[interlocutor_status_expression.upcast()],
+            closure!(|_: Session, interlocutor_status: BoxedUserStatus| {
+                matches!(interlocutor_status.0, UserStatus::Online(_)) && my_id != user_id
+            }),
         )
         .bind(self, "is-online", Some(&session));
 

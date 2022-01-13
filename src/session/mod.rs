@@ -30,12 +30,12 @@ use self::user_list::UserList;
 use glib::{clone, SyncSender};
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
-use tdgrand::enums::{NotificationSettingsScope, Update, User as TelegramUser};
+use tdgrand::enums::{NotificationSettingsScope, Update};
 use tdgrand::functions;
 use tdgrand::types::{File, ScopeNotificationSettings};
 
 use crate::session_manager::DatabaseInfo;
-use crate::utils::{do_async, log_out};
+use crate::utils::log_out;
 use crate::RUNTIME;
 
 #[derive(Clone, Debug, glib::Boxed)]
@@ -239,7 +239,7 @@ mod imp {
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
                 "database-info" => obj.database_info().to_value(),
-                "me" => obj.me().to_value(),
+                "me" => self.me.borrow().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
                 "basic-group-list" => obj.basic_group_list().to_value(),
@@ -402,8 +402,18 @@ impl Session {
         self.imp().database_info.get().unwrap()
     }
 
-    pub fn me(&self) -> Option<User> {
-        self.imp().me.borrow().clone()
+    pub fn me(&self) -> User {
+        // This is always guaranteed to be `Some`.
+        self.imp().me.borrow().clone().unwrap()
+    }
+
+    pub fn set_me(&self, me: User) {
+        let imp = self.imp();
+        if imp.me.borrow().as_ref() == Some(&me) {
+            return;
+        }
+        imp.me.replace(Some(me));
+        self.notify("me");
     }
 
     pub fn chat_list(&self) -> &ChatList {
@@ -495,26 +505,6 @@ impl Session {
             .channel_chats_notification_settings
             .replace(settings);
         self.notify("channel-chats-notification-settings")
-    }
-
-    pub fn fetch_me(&self) {
-        let client_id = self.client_id();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            async move { functions::GetMe::new().send(client_id).await },
-            clone!(@weak self as obj => move |result| async move {
-                let TelegramUser::User(me) = result.unwrap();
-
-                let me = User::from_td_object(me, &obj);
-                obj.user_list().insert_user(me.clone());
-
-                obj.imp()
-                    .me
-                    .replace(Some(me));
-
-                obj.notify("me");
-            }),
-        );
     }
 
     pub fn fetch_chats(&self) {
