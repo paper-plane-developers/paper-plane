@@ -90,9 +90,18 @@ impl SecretChatList {
         glib::Object::new(&[("session", session)]).expect("Failed to create SecretChatList")
     }
 
-    pub fn get(&self, id: i32) -> Option<SecretChat> {
+    /// Return the `SecretChat` of the specified `id`. Panics if the secret chat is not present.
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an `id` returned by TDLib, it should be expected that the
+    /// relative `SecretChat` exists in the list.
+    pub fn get(&self, id: i32) -> SecretChat {
         let self_ = imp::SecretChatList::from_instance(self);
-        self_.list.borrow().get(&id).cloned()
+        self_
+            .list
+            .borrow()
+            .get(&id)
+            .expect("Failed to get expected SecretChat")
+            .to_owned()
     }
 
     pub fn handle_update(&self, update: &Update) {
