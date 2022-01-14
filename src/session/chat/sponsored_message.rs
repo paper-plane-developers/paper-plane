@@ -95,10 +95,7 @@ impl SponsoredMessage {
                 .await?;
 
         let content = BoxedMessageContent(sponsored_message.content);
-        let sponsor_chat = session
-            .chat_list()
-            .get_chat(sponsored_message.sponsor_chat_id)
-            .expect("Failed to get expected Chat");
+        let sponsor_chat = session.chat_list().get(sponsored_message.sponsor_chat_id);
 
         Ok(glib::Object::new(&[
             ("message-id", &sponsored_message.message_id),

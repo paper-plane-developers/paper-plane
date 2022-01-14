@@ -446,7 +446,7 @@ fn stringify_message(message: Message) -> String {
                 let members = data
                     .member_user_ids
                     .into_iter()
-                    .map(|user_id| user_list.get_or_create_user(user_id))
+                    .map(|user_id| user_list.get(user_id))
                     .map(|user| stringify_user(&user, true))
                     .collect::<Vec<_>>();
 
@@ -486,11 +486,7 @@ fn stringify_message(message: Message) -> String {
                     "{} removed {}",
                     sender_name(message.sender(), true),
                     stringify_user(
-                        &message
-                            .chat()
-                            .session()
-                            .user_list()
-                            .get_or_create_user(data.user_id),
+                        &message.chat().session().user_list().get(data.user_id),
                         true
                     )
                 )

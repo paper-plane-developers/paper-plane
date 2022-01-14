@@ -30,28 +30,19 @@ impl ChatType {
     pub fn from_td_object(_type: &TdChatType, session: &Session) -> Self {
         match _type {
             TdChatType::Private(data) => {
-                let user = session.user_list().get_or_create_user(data.user_id);
+                let user = session.user_list().get(data.user_id);
                 Self::Private(user)
             }
             TdChatType::BasicGroup(data) => {
-                let basic_group = session
-                    .basic_group_list()
-                    .get(data.basic_group_id)
-                    .expect("Failed to get expected BasicGroup");
+                let basic_group = session.basic_group_list().get(data.basic_group_id);
                 Self::BasicGroup(basic_group)
             }
             TdChatType::Supergroup(data) => {
-                let supergroup = session
-                    .supergroup_list()
-                    .get(data.supergroup_id)
-                    .expect("Failed to get expected Supergroup");
+                let supergroup = session.supergroup_list().get(data.supergroup_id);
                 Self::Supergroup(supergroup)
             }
             TdChatType::Secret(data) => {
-                let secret_chat = session
-                    .secret_chat_list()
-                    .get(data.secret_chat_id)
-                    .expect("Failed to get expected SecretChat");
+                let secret_chat = session.secret_chat_list().get(data.secret_chat_id);
                 Self::Secret(secret_chat)
             }
         }

@@ -218,9 +218,18 @@ impl ChatList {
         }
     }
 
-    pub fn get_chat(&self, chat_id: i64) -> Option<Chat> {
+    /// Return the `Chat` of the specified `id`. Panics if the chat is not present.
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an `id` returned by TDLib, it should be expected that the
+    /// relative `Chat` exists in the list.
+    pub fn get(&self, id: i64) -> Chat {
         let self_ = imp::ChatList::from_instance(self);
-        self_.list.borrow().get(&chat_id).cloned()
+        self_
+            .list
+            .borrow()
+            .get(&id)
+            .expect("Failed to get expected Chat")
+            .to_owned()
     }
 
     fn insert_chat(&self, chat: TelegramChat) {

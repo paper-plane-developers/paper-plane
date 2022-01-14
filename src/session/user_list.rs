@@ -103,34 +103,38 @@ impl UserList {
         self.item_added();
     }
 
-    pub fn get_or_create_user(&self, user_id: i64) -> User {
+    /// Return the `User` of the specified `id`. Panics if the user is not present.
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an `id` returned by TDLib, it should be expected that the
+    /// relative `User` exists in the list.
+    pub fn get(&self, id: i64) -> User {
         let self_ = imp::UserList::from_instance(self);
-
-        let mut list = self_.list.borrow_mut();
-        match list.entry(user_id) {
-            Entry::Occupied(entry) => entry.get().clone(),
-            Entry::Vacant(entry) => {
-                let user = User::new(user_id, self.session());
-                entry.insert(user.clone());
-
-                drop(list);
-                self.item_added();
-
-                user
-            }
-        }
+        self_
+            .list
+            .borrow()
+            .get(&id)
+            .expect("Failed to get expected User")
+            .to_owned()
     }
 
     pub fn handle_update(&self, update: Update) {
         match update {
-            Update::User(ref data) => {
-                let user = self.get_or_create_user(data.user.id);
-                user.handle_update(update);
+            Update::User(data) => {
+                let self_ = imp::UserList::from_instance(self);
+                let mut list = self_.list.borrow_mut();
+
+                match list.entry(data.user.id) {
+                    Entry::Occupied(entry) => entry.get().handle_update(Update::User(data)),
+                    Entry::Vacant(entry) => {
+                        let user = User::from_td_object(data.user, self.session());
+                        entry.insert(user);
+
+                        drop(list);
+                        self.item_added();
+                    }
+                }
             }
-            Update::UserStatus(ref data) => {
-                let user = self.get_or_create_user(data.user_id);
-                user.handle_update(update)
-            }
+            Update::UserStatus(ref data) => self.get(data.user_id).handle_update(update),
             _ => {}
         }
     }
