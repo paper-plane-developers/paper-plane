@@ -41,10 +41,7 @@ impl ChatType {
                 Self::BasicGroup(basic_group)
             }
             TdChatType::Supergroup(data) => {
-                let supergroup = session
-                    .supergroup_list()
-                    .get(data.supergroup_id)
-                    .expect("Failed to get expected Supergroup");
+                let supergroup = session.supergroup_list().get(data.supergroup_id);
                 Self::Supergroup(supergroup)
             }
             TdChatType::Secret(data) => {

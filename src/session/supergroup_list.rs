@@ -58,9 +58,18 @@ impl SupergroupList {
         glib::Object::new(&[]).expect("Failed to create SupergroupList")
     }
 
-    pub fn get(&self, id: i64) -> Option<Supergroup> {
+    /// Return the `Supergroup` of the specified `id`. Panics if the supergroup is not present.
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an `id` returned by TDLib, it should be expected that the
+    /// relative `Supergroup` exists in the list.
+    pub fn get(&self, id: i64) -> Supergroup {
         let self_ = imp::SupergroupList::from_instance(self);
-        self_.list.borrow().get(&id).cloned()
+        self_
+            .list
+            .borrow()
+            .get(&id)
+            .expect("Failed to get expected Supergroup")
+            .to_owned()
     }
 
     pub fn handle_update(&self, update: &Update) {
