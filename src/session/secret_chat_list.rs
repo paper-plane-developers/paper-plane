@@ -116,9 +116,9 @@ impl SecretChatList {
                     let secret_chat = SecretChat::from_td_object(&data.secret_chat, &user);
                     entry.insert(secret_chat);
 
+                    let position = (list.len() - 1) as u32;
                     drop(list);
 
-                    let position = (self_.list.borrow().len() - 1) as u32;
                     self.items_changed(position, 0, 1);
                 }
             }

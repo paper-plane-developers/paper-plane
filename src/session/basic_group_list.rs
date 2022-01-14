@@ -83,9 +83,9 @@ impl BasicGroupList {
                     let basic_group = BasicGroup::from_td_object(&data.basic_group);
                     entry.insert(basic_group);
 
+                    let position = (list.len() - 1) as u32;
                     drop(list);
 
-                    let position = (self_.list.borrow().len() - 1) as u32;
                     self.items_changed(position, 0, 1);
                 }
             }
