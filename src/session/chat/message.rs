@@ -149,7 +149,7 @@ impl Message {
                 MessageSender::User(user)
             }
             TelegramMessageSender::Chat(data) => {
-                let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
+                let chat = chat.session().chat_list().get(data.chat_id);
                 MessageSender::Chat(chat)
             }
         };

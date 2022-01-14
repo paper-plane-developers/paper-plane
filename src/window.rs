@@ -221,7 +221,7 @@ impl Window {
 
         if let Some(ClientInfo::LoggedIn(session)) = self_.session_manager.client_info(client_id) {
             let app = self.application().unwrap();
-            let chat = session.chat_list().get_chat(chat_id).unwrap();
+            let chat = session.chat_list().get(chat_id);
 
             for notification in notifications {
                 let notification_id = notification.id;
@@ -295,7 +295,7 @@ fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
                 .into()
         }
         TelegramMessageSender::Chat(data) => {
-            let chat = chat.session().chat_list().get_chat(data.chat_id).unwrap();
+            let chat = chat.session().chat_list().get(data.chat_id);
             chat.title()
         }
     }

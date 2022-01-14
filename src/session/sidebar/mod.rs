@@ -205,7 +205,7 @@ impl Sidebar {
                             let chat_list = session.chat_list();
 
                             self_.already_searched_users.borrow_mut().extend(chats.chat_ids.iter()
-                                .filter_map(|id| chat_list.get_chat(*id))
+                                .map(|id| chat_list.get(*id))
                                 .filter_map(|chat| match chat.type_() {
                                     ChatType::Private(user) => Some(user.id()),
                                     _ => None
@@ -356,8 +356,8 @@ impl Sidebar {
                                 },
                                 clone!(@weak obj, @weak session => move |result| async move {
                                     if let Ok(enums::Chat::Chat(chat)) = result {
-                                        let chat = session.chat_list().get_chat(chat.id);
-                                        obj.set_selected_chat(chat);
+                                        let chat = session.chat_list().get(chat.id);
+                                        obj.set_selected_chat(Some(chat));
                                     }
                                 }),
                             );
