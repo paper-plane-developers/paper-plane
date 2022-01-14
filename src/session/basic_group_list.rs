@@ -58,9 +58,18 @@ impl BasicGroupList {
         glib::Object::new(&[]).expect("Failed to create BasicGroupList")
     }
 
-    pub fn get(&self, id: i64) -> Option<BasicGroup> {
+    /// Return the `BasicGroup` of the specified `id`. Panics if the basic group is not present.
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an `id` returned by TDLib, it should be expected that the
+    /// relative `BasicGroup` exists in the list.
+    pub fn get(&self, id: i64) -> BasicGroup {
         let self_ = imp::BasicGroupList::from_instance(self);
-        self_.list.borrow().get(&id).cloned()
+        self_
+            .list
+            .borrow()
+            .get(&id)
+            .expect("Failed to get expected BasicGroup")
+            .to_owned()
     }
 
     pub fn handle_update(&self, update: &Update) {
