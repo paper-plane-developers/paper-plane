@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-03 22:56+0100\n"
-"PO-Revision-Date: 2021-09-20 23:36+0000\n"
+"PO-Revision-Date: 2022-01-09 22:55+0000\n"
 "Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/eu/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -59,11 +59,11 @@ msgstr "Telegram-en testatze-datuen zentroa erabili"
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Koloreen eskema"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Aplikazioan erabiliko den kolore-eskema"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -83,15 +83,15 @@ msgstr "Aukeratu txat bat hizketan hasteko."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Ikusi informazioa"
 
 #: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Mugikorra"
 
 #: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Erabiltzailearen izena"
 
 #: data/resources/ui/login.ui:40
 msgid "_Previous"
@@ -111,7 +111,7 @@ msgstr "Telefono-zenbakia"
 
 #: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Saioa hasi QR kodea erabiliz"
 
 #: data/resources/ui/login.ui:177
 msgid "Advanced"
@@ -127,11 +127,13 @@ msgstr "Hori aplikatzeko, berriz hasi behar da"
 
 #: data/resources/ui/login.ui:218
 msgid "Scan Code"
-msgstr ""
+msgstr "Escanear código"
 
 #: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Eskaneatu kode hau zure kontura konektatutako Telegrameko beste aplikazio "
+"batekin."
 
 #: data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
@@ -143,21 +145,23 @@ msgstr "Kodea"
 
 #: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr ""
+msgstr "Kontu berri bat erregistratu"
 
 #: data/resources/ui/login.ui:331
 msgid "First Name"
-msgstr ""
+msgstr "Lehen izena"
 
 #: data/resources/ui/login.ui:348
 msgid "Last Name"
-msgstr ""
+msgstr "Abizenak"
 
 #: data/resources/ui/login.ui:387
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Erregistratzean,\n"
+"Onartu <a href=\"\">Zerbitzu-baldintzak</a>."
 
 #: data/resources/ui/login.ui:403
 msgid "Enter Your Password"
@@ -169,15 +173,15 @@ msgstr "Pasahitza"
 
 #: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Iradokizuna"
 
 #: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Pasahitza ahaztu duzu?"
 
 #: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Erabili berreskuratze-kodea"
 
 #: data/resources/ui/login.ui:536
 msgid ""
@@ -185,38 +189,41 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Zure pasahitza hodeian ezarri zenuenean, berreskuratzeko helbide elektroniko "
+"bat eman zenuen. Kode bat bidal diezazukegu helbide elektroniko honetara, "
+"zure pasahitza berrezartzeko."
 
 #: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Bidali berreskuratze-kodea"
 
 #: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Kontua ezabatzea"
 
 #: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Ezabatu kontua"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Idatzi posta elektronikoz bidalitako kodea"
 
 #: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Ezin zara zure posta elektronikora sartu?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Itxura"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Sistemaren koloreak jarraitu"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Gai iluna"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -236,12 +243,12 @@ msgstr "Irten"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Txat-zerrenda"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Bilatu txatak"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -249,7 +256,7 @@ msgstr "_Itxi saioa"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Lehentasunak"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -266,31 +273,31 @@ msgstr "Sarrerako deia"
 #: src/window.rs:426 src/session/sidebar/row.rs:500
 #: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Eranskailua"
 
 #: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Argazkia"
 
 #: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr ""
+msgstr "Bideoa"
 
 #: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
-msgstr ""
+msgstr "Ahots-mezua"
 
 #: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Ezabatutako kanalaren argazkia"
 
 #: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Taldeko argazkia ezabatu duzu"
 
 #: src/window.rs:497 src/session/sidebar/row.rs:567
 #: src/session/sidebar/row.rs:635
@@ -299,7 +306,7 @@ msgstr "Mezua ez dago jasanda"
 
 #: src/session/content/chat_action_bar.rs:231
 msgid "Unsupported draft message type"
-msgstr ""
+msgstr "Zirriborro motatako mezua ez da onartu"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:111
@@ -319,47 +326,47 @@ msgstr "Mezu hau ez dago jasanda"
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
-msgstr ""
+msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Zirriborroa"
 
 #: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Taldearekin bat egin duzu"
 
 #: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Taldea utzi duzu"
 
 #: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Bideo-deia atzera bota da"
 
 #: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Irteerako deia atzera bota da"
 
 #: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Sarrerako bideo-deia atzera bota da"
 
 #: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Deia atzera bota da"
 
 #: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Deia bertan behera utzi da"
 
 #: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Dei galdua"
 
 #: src/session/sidebar/row.rs:572
 msgid "You"
@@ -367,19 +374,19 @@ msgstr "Zu"
 
 #: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Irtendako bideo-deia"
 
 #: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
-msgstr ""
+msgstr "Irteten ari den deia"
 
 #: src/session/sidebar/row.rs:611
 msgid "Incoming video call"
-msgstr ""
+msgstr "Sarrerako bideo-deia"
 
 #: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokumentua"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Enkriptazio-gakoa"
