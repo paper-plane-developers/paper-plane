@@ -54,14 +54,14 @@ glib::wrapper! {
 
 impl MessagePhoto {
     fn update_widget(&self) {
-        let self_ = imp::MessagePhoto::from_instance(self);
+        let imp = self.imp();
 
-        if let Some(binding) = self_.binding.take() {
+        if let Some(binding) = imp.binding.take() {
             binding.unwatch();
         }
 
-        if let Some(old_message) = self_.old_message.upgrade() {
-            if let Some(id) = self_.handler_id.take() {
+        if let Some(old_message) = imp.old_message.upgrade() {
+            if let Some(id) = imp.handler_id.take() {
                 old_message.disconnect(id);
             }
         }
@@ -78,37 +78,36 @@ impl MessagePhoto {
                         unreachable!();
                     }
                 }))
-                .bind(&*self_.media, "caption", Some(message));
-            self_.binding.replace(Some(caption_binding));
+                .bind(&*imp.media, "caption", Some(message));
+            imp.binding.replace(Some(caption_binding));
 
             // Load photo
             let handler_id =
                 message.connect_content_notify(clone!(@weak self as obj => move |message, _| {
                     obj.update_photo(message);
                 }));
-            self_.handler_id.replace(Some(handler_id));
+            imp.handler_id.replace(Some(handler_id));
             self.update_photo(message);
         }
 
-        self_.old_message.set(self.message().as_ref());
+        imp.old_message.set(self.message().as_ref());
     }
 
     fn update_photo(&self, message: &Message) {
         if let MessageContent::MessagePhoto(data) = message.content().0 {
             if let Some(photo_size) = data.photo.sizes.last() {
-                let self_ = imp::MessagePhoto::from_instance(self);
+                let imp = self.imp();
 
                 // Reset media widget
-                self_.media.set_paintable(None);
-                self_
-                    .media
+                imp.media.set_paintable(None);
+                imp.media
                     .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
                 if photo_size.photo.local.is_downloading_completed {
-                    self_.media.set_download_progress(1.0);
+                    imp.media.set_download_progress(1.0);
                     self.load_photo_from_path(&photo_size.photo.local.path);
                 } else {
-                    self_.media.set_download_progress(0.0);
+                    imp.media.set_download_progress(0.0);
                     self.download_photo(photo_size.photo.id, &message.chat().session());
                 }
             }
@@ -121,14 +120,12 @@ impl MessagePhoto {
         receiver.attach(
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                let self_ = imp::MessagePhoto::from_instance(&obj);
-
                 if file.local.is_downloading_completed {
-                    self_.media.set_download_progress(1.0);
+                    obj.imp().media.set_download_progress(1.0);
                     obj.load_photo_from_path(&file.local.path);
                 } else {
                     let progress = file.local.downloaded_size as f64 / file.expected_size as f64;
-                    self_.media.set_download_progress(progress);
+                    obj.imp().media.set_download_progress(progress);
                 }
 
                 glib::Continue(true)
@@ -139,11 +136,10 @@ impl MessagePhoto {
     }
 
     fn load_photo_from_path(&self, path: &str) {
-        let self_ = imp::MessagePhoto::from_instance(self);
         // TODO: Consider changing this to use an async api when
         // https://github.com/gtk-rs/gtk4-rs/pull/777 is merged
         let file = gio::File::for_path(path);
-        self_
+        self.imp()
             .media
             .set_paintable(Some(gdk::Texture::from_file(&file).unwrap().upcast()));
     }

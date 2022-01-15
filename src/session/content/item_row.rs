@@ -81,8 +81,7 @@ impl ItemRow {
     }
 
     pub fn item(&self) -> Option<glib::Object> {
-        let self_ = imp::ItemRow::from_instance(self);
-        self_.item.borrow().to_owned()
+        self.imp().item.borrow().to_owned()
     }
 
     pub fn set_item(&self, item: Option<glib::Object>) {
@@ -133,9 +132,7 @@ impl ItemRow {
             }
         }
 
-        let self_ = imp::ItemRow::from_instance(self);
-        self_.item.replace(item);
-
+        self.imp().item.replace(item);
         self.notify("item");
     }
 

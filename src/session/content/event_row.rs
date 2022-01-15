@@ -84,12 +84,10 @@ impl EventRow {
     }
 
     pub fn label(&self) -> String {
-        let self_ = imp::EventRow::from_instance(self);
-        self_.label.text().to_string()
+        self.imp().label.text().to_string()
     }
 
     pub fn set_label(&self, label: &str) {
-        let self_ = imp::EventRow::from_instance(self);
-        self_.label.set_markup(label);
+        self.imp().label.set_markup(label);
     }
 }

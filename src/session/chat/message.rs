@@ -172,23 +172,19 @@ impl Message {
     }
 
     pub fn id(&self) -> i64 {
-        let self_ = imp::Message::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn sender(&self) -> &MessageSender {
-        let self_ = imp::Message::from_instance(self);
-        self_.sender.get().unwrap()
+        self.imp().sender.get().unwrap()
     }
 
     pub fn is_outgoing(&self) -> bool {
-        let self_ = imp::Message::from_instance(self);
-        self_.is_outgoing.get()
+        self.imp().is_outgoing.get()
     }
 
     pub fn date(&self) -> i32 {
-        let self_ = imp::Message::from_instance(self);
-        self_.date.get()
+        self.imp().date.get()
     }
 
     pub fn content(&self) -> BoxedMessageContent {
@@ -209,8 +205,7 @@ impl Message {
     }
 
     pub fn chat(&self) -> Chat {
-        let self_ = imp::Message::from_instance(self);
-        self_.chat.upgrade().unwrap()
+        self.imp().chat.upgrade().unwrap()
     }
 
     pub fn sender_name_expression(&self) -> gtk::Expression {

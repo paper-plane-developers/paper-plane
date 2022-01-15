@@ -95,22 +95,21 @@ impl StickerPaintable {
     }
 
     pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
-        let self_ = imp::StickerPaintable::from_instance(self);
+        let imp = self.imp();
 
         if aspect_ratio >= 1.0 {
-            self_.width.set(MAX_SIZE);
-            self_.height.set((MAX_SIZE as f64 / aspect_ratio) as i32);
+            imp.width.set(MAX_SIZE);
+            imp.height.set((MAX_SIZE as f64 / aspect_ratio) as i32);
         } else {
-            self_.width.set((MAX_SIZE as f64 * aspect_ratio) as i32);
-            self_.height.set(MAX_SIZE);
+            imp.width.set((MAX_SIZE as f64 * aspect_ratio) as i32);
+            imp.height.set(MAX_SIZE);
         }
 
         self.invalidate_size();
     }
 
     pub fn texture(&self) -> Option<gdk::Texture> {
-        let self_ = imp::StickerPaintable::from_instance(self);
-        self_.texture.borrow().to_owned()
+        self.imp().texture.borrow().to_owned()
     }
 
     pub fn set_texture(&self, texture: Option<gdk::Texture>) {
@@ -118,9 +117,7 @@ impl StickerPaintable {
             return;
         }
 
-        let self_ = imp::StickerPaintable::from_instance(self);
-        self_.texture.replace(texture);
-
+        self.imp().texture.replace(texture);
         self.invalidate_contents();
 
         self.notify("texture");

@@ -156,8 +156,7 @@ impl ChatHistory {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::ChatHistory::from_instance(self);
-        self_.chat.borrow().clone()
+        self.imp().chat.borrow().clone()
     }
 
     pub fn set_chat(&self, chat: Option<Chat>) {
@@ -165,7 +164,7 @@ impl ChatHistory {
             return;
         }
 
-        let self_ = imp::ChatHistory::from_instance(self);
+        let imp = self.imp();
         if let Some(ref chat) = chat {
             match chat.type_() {
                 ChatType::Private(_) => self.action_set_enabled("chat-history.view-info", true),
@@ -190,13 +189,13 @@ impl ChatHistory {
             };
 
             let selection = gtk::NoSelection::new(Some(&chat_history));
-            self_.list_view.set_model(Some(&selection));
+            imp.list_view.set_model(Some(&selection));
         }
 
-        self_.chat.replace(chat);
+        imp.chat.replace(chat);
         self.notify("chat");
 
-        let adj = self_.list_view.vadjustment().unwrap();
+        let adj = imp.list_view.vadjustment().unwrap();
         self.load_older_messages(&adj);
     }
 }

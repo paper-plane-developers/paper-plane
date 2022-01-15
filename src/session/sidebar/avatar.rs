@@ -194,13 +194,11 @@ impl Avatar {
         )
         .bind(self, "is-online", Some(&session));
 
-        let self_ = imp::Avatar::from_instance(self);
-        self_.binding.replace(Some(is_online_binding));
+        self.imp().binding.replace(Some(is_online_binding));
     }
 
     pub fn item(&self) -> Option<glib::Object> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.item.borrow().to_owned()
+        self.imp().item.borrow().to_owned()
     }
 
     pub fn set_item(&self, item: Option<glib::Object>) {
@@ -208,22 +206,22 @@ impl Avatar {
             return;
         }
 
-        let self_ = imp::Avatar::from_instance(self);
+        let imp = self.imp();
 
-        if let Some(binding) = self_.binding.take() {
+        if let Some(binding) = imp.binding.take() {
             binding.unwatch();
         }
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                self_.avatar.set_item(Some(chat.avatar().to_owned()));
+                imp.avatar.set_item(Some(chat.avatar().to_owned()));
 
                 match chat.type_().user() {
                     Some(user) => self.setup_is_online_binding(user),
                     None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
-                self_.avatar.set_item(Some(user.avatar().to_owned()));
+                imp.avatar.set_item(Some(user.avatar().to_owned()));
 
                 self.setup_is_online_binding(user);
             } else {
@@ -231,31 +229,28 @@ impl Avatar {
             }
         }
 
-        self_.item.replace(item);
+        imp.item.replace(item);
         self.notify("item");
     }
 
     pub fn is_online(&self) -> bool {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.is_online.get()
+        self.imp().is_online.get()
     }
 
     pub fn set_is_online(&self, is_online: bool) {
         if self.is_online() == is_online {
             return;
         }
-        let self_ = imp::Avatar::from_instance(self);
-        self_.is_online.set(is_online);
-
+        self.imp().is_online.set(is_online);
         self.notify("is-online");
     }
 
     // Inspired by
     // https://gitlab.gnome.org/GNOME/libadwaita/-/blob/1171616701bf12a1c56bbad3f0e8821208d87029/src/adw-indicator-bin.c
     fn ensure_mask_shader(&self) {
-        let self_ = imp::Avatar::from_instance(self);
+        let imp = self.imp();
 
-        if self_.mask_shader.borrow().is_some() {
+        if imp.mask_shader.borrow().is_some() {
             // We've already tried to compile the shader before.
             return;
         }
@@ -272,6 +267,6 @@ impl Avatar {
             Ok(_) => Some(shader),
         };
 
-        self_.mask_shader.replace(Some(compiled_shader));
+        imp.mask_shader.replace(Some(compiled_shader));
     }
 }

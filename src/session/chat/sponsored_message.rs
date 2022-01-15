@@ -105,17 +105,14 @@ impl SponsoredMessage {
     }
 
     pub fn message_id(&self) -> i64 {
-        let self_ = imp::SponsoredMessage::from_instance(self);
-        self_.message_id.get()
+        self.imp().message_id.get()
     }
 
     pub fn content(&self) -> &BoxedMessageContent {
-        let self_ = imp::SponsoredMessage::from_instance(self);
-        self_.content.get().unwrap()
+        self.imp().content.get().unwrap()
     }
 
     pub fn sponsor_chat(&self) -> Chat {
-        let self_ = imp::SponsoredMessage::from_instance(self);
-        self_.sponsor_chat.upgrade().unwrap()
+        self.imp().sponsor_chat.upgrade().unwrap()
     }
 }

@@ -85,8 +85,10 @@ mod imp {
             Self::bind_template(klass);
 
             klass.install_action("content.go-back", None, move |widget, _, _| {
-                let self_ = Self::from_instance(widget);
-                self_.leaflet.navigate(adw::NavigationDirection::Back);
+                widget
+                    .imp()
+                    .leaflet
+                    .navigate(adw::NavigationDirection::Back);
             });
             klass.install_action("session.log-out", None, move |widget, _, _| {
                 log_out(widget.client_id());
@@ -263,7 +265,7 @@ mod imp {
             self.leaflet.connect_child_transition_running_notify(
                 clone!(@weak obj => move |leaflet| {
                     if !leaflet.is_child_transition_running()
-                        && leaflet.visible_child().unwrap() == *Self::from_instance(&obj).sidebar {
+                        && leaflet.visible_child().unwrap() == *obj.imp().sidebar {
 
                         // We deselect the chat when the transition to the sidebar is finished.
                         obj.set_selected_chat(None);
@@ -346,9 +348,7 @@ impl Session {
     }
 
     pub fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
-        let self_ = imp::Session::from_instance(self);
-
-        let mut downloading_files = self_.downloading_files.borrow_mut();
+        let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
             Entry::Occupied(mut entry) => {
                 entry.get_mut().push(sender);
@@ -370,15 +370,13 @@ impl Session {
     }
 
     pub fn begin_chats_search(&self) {
-        let self_ = imp::Session::from_instance(self);
-        self_.leaflet.navigate(adw::NavigationDirection::Back);
-        self_.sidebar.begin_chats_search();
+        let imp = self.imp();
+        imp.leaflet.navigate(adw::NavigationDirection::Back);
+        imp.sidebar.begin_chats_search();
     }
 
     fn handle_file_update(&self, file: File) {
-        let self_ = imp::Session::from_instance(self);
-
-        let mut downloading_files = self_.downloading_files.borrow_mut();
+        let mut downloading_files = self.imp().downloading_files.borrow_mut();
         if let Entry::Occupied(mut entry) = downloading_files.entry(file.id) {
             // Keep only the senders with which it was possible to send successfully.
             // It is indeed possible that the object that created the sender and receiver and
@@ -400,50 +398,41 @@ impl Session {
     }
 
     pub fn client_id(&self) -> i32 {
-        let self_ = imp::Session::from_instance(self);
-        self_.client_id.get()
+        self.imp().client_id.get()
     }
 
     pub fn database_info(&self) -> &BoxedDatabaseInfo {
-        let self_ = imp::Session::from_instance(self);
-        self_.database_info.get().unwrap()
+        self.imp().database_info.get().unwrap()
     }
 
     pub fn me(&self) -> Option<User> {
-        let self_ = imp::Session::from_instance(self);
-        self_.me.borrow().clone()
+        self.imp().me.borrow().clone()
     }
 
     pub fn chat_list(&self) -> &ChatList {
-        let self_ = imp::Session::from_instance(self);
-        self_.chat_list.get_or_init(|| ChatList::new(self))
+        self.imp().chat_list.get_or_init(|| ChatList::new(self))
     }
 
     pub fn user_list(&self) -> &UserList {
-        let self_ = imp::Session::from_instance(self);
-        self_.user_list.get_or_init(|| UserList::new(self))
+        self.imp().user_list.get_or_init(|| UserList::new(self))
     }
 
     pub fn basic_group_list(&self) -> &BasicGroupList {
-        let self_ = imp::Session::from_instance(self);
-        self_.basic_group_list.get_or_init(BasicGroupList::new)
+        self.imp().basic_group_list.get_or_init(BasicGroupList::new)
     }
 
     pub fn supergroup_list(&self) -> &SupergroupList {
-        let self_ = imp::Session::from_instance(self);
-        self_.supergroup_list.get_or_init(SupergroupList::new)
+        self.imp().supergroup_list.get_or_init(SupergroupList::new)
     }
 
     pub fn secret_chat_list(&self) -> &SecretChatList {
-        let self_ = imp::Session::from_instance(self);
-        self_
+        self.imp()
             .secret_chat_list
             .get_or_init(|| SecretChatList::new(self))
     }
 
     fn selected_chat(&self) -> Option<Chat> {
-        let self_ = imp::Session::from_instance(self);
-        self_.selected_chat.borrow().clone()
+        self.imp().selected_chat.borrow().clone()
     }
 
     fn set_selected_chat(&self, selected_chat: Option<Chat>) {
@@ -451,54 +440,63 @@ impl Session {
             return;
         }
 
-        let self_ = imp::Session::from_instance(self);
+        let imp = self.imp();
         if selected_chat.is_some() {
-            self_.leaflet.navigate(adw::NavigationDirection::Forward);
+            imp.leaflet.navigate(adw::NavigationDirection::Forward);
         }
 
-        self_.selected_chat.replace(selected_chat);
+        imp.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 
     fn private_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
-        let self_ = imp::Session::from_instance(self);
-        self_.private_chats_notification_settings.borrow().clone()
+        self.imp()
+            .private_chats_notification_settings
+            .borrow()
+            .clone()
     }
 
     fn set_private_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
         if self.private_chats_notification_settings().0 == settings.0 {
             return;
         }
-        let self_ = imp::Session::from_instance(self);
-        self_.private_chats_notification_settings.replace(settings);
+        self.imp()
+            .private_chats_notification_settings
+            .replace(settings);
         self.notify("private-chats-notification-settings")
     }
 
     fn group_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
-        let self_ = imp::Session::from_instance(self);
-        self_.group_chats_notification_settings.borrow().clone()
+        self.imp()
+            .group_chats_notification_settings
+            .borrow()
+            .clone()
     }
 
     fn set_group_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
         if self.group_chats_notification_settings().0 == settings.0 {
             return;
         }
-        let self_ = imp::Session::from_instance(self);
-        self_.group_chats_notification_settings.replace(settings);
+        self.imp()
+            .group_chats_notification_settings
+            .replace(settings);
         self.notify("group-chats-notification-settings")
     }
 
     fn channel_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
-        let self_ = imp::Session::from_instance(self);
-        self_.channel_chats_notification_settings.borrow().clone()
+        self.imp()
+            .channel_chats_notification_settings
+            .borrow()
+            .clone()
     }
 
     fn set_channel_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
         if self.channel_chats_notification_settings().0 == settings.0 {
             return;
         }
-        let self_ = imp::Session::from_instance(self);
-        self_.channel_chats_notification_settings.replace(settings);
+        self.imp()
+            .channel_chats_notification_settings
+            .replace(settings);
         self.notify("channel-chats-notification-settings")
     }
 
@@ -513,7 +511,7 @@ impl Session {
                 let me = User::from_td_object(me, &obj);
                 obj.user_list().insert_user(me.clone());
 
-                imp::Session::from_instance(&obj)
+                obj.imp()
                     .me
                     .replace(Some(me));
 
@@ -523,14 +521,11 @@ impl Session {
     }
 
     fn fetch_chats(&self) {
-        let self_ = imp::Session::from_instance(self);
-        let client_id = self_.client_id.get();
+        let client_id = self.imp().client_id.get();
         self.chat_list().fetch(client_id);
     }
 
     pub fn set_sessions(&self, sessions: &gtk::SelectionModel) {
-        imp::Session::from_instance(self)
-            .sidebar
-            .set_sessions(sessions, self);
+        self.imp().sidebar.set_sessions(sessions, self);
     }
 }

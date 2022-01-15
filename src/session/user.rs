@@ -196,100 +196,82 @@ impl User {
     }
 
     pub fn id(&self) -> i64 {
-        let self_ = imp::User::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn type_(&self) -> BoxedUserType {
-        let self_ = imp::User::from_instance(self);
-        self_.type_.borrow().clone()
+        self.imp().type_.borrow().clone()
     }
 
     pub fn set_type(&self, type_: UserType) {
         if self.type_().0 == type_ {
             return;
         }
-        let self_ = imp::User::from_instance(self);
-        self_.type_.replace(BoxedUserType(type_));
+        self.imp().type_.replace(BoxedUserType(type_));
         self.notify("type");
     }
 
     pub fn first_name(&self) -> String {
-        let self_ = imp::User::from_instance(self);
-        self_.first_name.borrow().to_owned()
+        self.imp().first_name.borrow().to_owned()
     }
 
     fn set_first_name(&self, first_name: String) {
         if self.first_name() == first_name {
             return;
         }
-
-        let self_ = imp::User::from_instance(self);
-        self_.first_name.replace(first_name);
+        self.imp().first_name.replace(first_name);
         self.notify("first-name");
     }
 
     pub fn last_name(&self) -> String {
-        let self_ = imp::User::from_instance(self);
-        self_.last_name.borrow().to_owned()
+        self.imp().last_name.borrow().to_owned()
     }
 
     fn set_last_name(&self, last_name: String) {
         if self.last_name() == last_name {
             return;
         }
-
-        let self_ = imp::User::from_instance(self);
-        self_.last_name.replace(last_name);
+        self.imp().last_name.replace(last_name);
         self.notify("last-name");
     }
 
     pub fn username(&self) -> String {
-        let self_ = imp::User::from_instance(self);
-        self_.username.borrow().to_owned()
+        self.imp().username.borrow().to_owned()
     }
 
     fn set_username(&self, username: String) {
         if self.username() == username {
             return;
         }
-
-        let self_ = imp::User::from_instance(self);
-        self_.username.replace(username);
+        self.imp().username.replace(username);
         self.notify("username");
     }
 
     pub fn phone_number(&self) -> String {
-        let self_ = imp::User::from_instance(self);
-        self_.phone_number.borrow().to_owned()
+        self.imp().phone_number.borrow().to_owned()
     }
 
     fn set_phone_number(&self, phone_number: String) {
         if self.phone_number() == phone_number {
             return;
         }
-
-        let self_ = imp::User::from_instance(self);
-        self_.phone_number.replace(phone_number);
+        self.imp().phone_number.replace(phone_number);
         self.notify("phone-number");
     }
 
     pub fn avatar(&self) -> &Avatar {
-        let self_ = imp::User::from_instance(self);
-        self_.avatar.get().unwrap()
+        self.imp().avatar.get().unwrap()
     }
 
     pub fn status(&self) -> BoxedUserStatus {
-        let self_ = imp::User::from_instance(self);
-        self_.status.borrow().clone()
+        self.imp().status.borrow().clone()
     }
 
     pub fn set_status(&self, status: UserStatus) {
         if self.status().0 == status {
             return;
         }
-        let self_ = imp::User::from_instance(self);
-        self_.status.replace(BoxedUserStatus(status));
+        self.imp().status.replace(BoxedUserStatus(status));
         self.notify("status");
     }
 

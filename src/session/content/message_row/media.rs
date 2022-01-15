@@ -145,18 +145,15 @@ impl Media {
     }
 
     pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
-        let self_ = imp::Media::from_instance(self);
-        self_.picture.set_aspect_ratio(aspect_ratio);
+        self.imp().picture.set_aspect_ratio(aspect_ratio);
     }
 
     pub fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
-        let self_ = imp::Media::from_instance(self);
-        self_.picture.set_paintable(paintable);
+        self.imp().picture.set_paintable(paintable);
     }
 
     pub fn caption(&self) -> String {
-        let self_ = imp::Media::from_instance(self);
-        self_.caption_label.label().into()
+        self.imp().caption_label.label().into()
     }
 
     pub fn set_caption(&self, caption: &str) {
@@ -164,22 +161,21 @@ impl Media {
             return;
         }
 
-        let self_ = imp::Media::from_instance(self);
+        let imp = self.imp();
         if caption.is_empty() {
-            self_.caption_label.set_visible(false);
+            imp.caption_label.set_visible(false);
             self.remove_css_class("with-caption");
         } else {
-            self_.caption_label.set_visible(true);
+            imp.caption_label.set_visible(true);
             self.add_css_class("with-caption");
         }
 
-        self_.caption_label.set_label(caption);
+        imp.caption_label.set_label(caption);
         self.notify("caption");
     }
 
     pub fn download_progress(&self) -> f64 {
-        let self_ = imp::Media::from_instance(self);
-        self_.progress_bar.fraction()
+        self.imp().progress_bar.fraction()
     }
 
     pub fn set_download_progress(&self, progress: f64) {
@@ -187,9 +183,9 @@ impl Media {
             return;
         }
 
-        let self_ = imp::Media::from_instance(self);
-        self_.progress_bar.set_fraction(progress);
-        self_.progress_bar.set_visible(progress < 1.0);
+        let imp = self.imp();
+        imp.progress_bar.set_fraction(progress);
+        imp.progress_bar.set_visible(progress < 1.0);
 
         self.notify("download-progress");
     }

@@ -152,8 +152,7 @@ impl MediaPicture {
     }
 
     pub fn paintable(&self) -> Option<gdk::Paintable> {
-        let self_ = imp::MediaPicture::from_instance(self);
-        self_.paintable.borrow().to_owned()
+        self.imp().paintable.borrow().to_owned()
     }
 
     pub fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
@@ -161,17 +160,14 @@ impl MediaPicture {
             return;
         }
 
-        let self_ = imp::MediaPicture::from_instance(self);
-        self_.paintable.replace(paintable);
-
+        self.imp().paintable.replace(paintable);
         self.queue_draw();
 
         self.notify("paintable");
     }
 
     pub fn aspect_ratio(&self) -> f64 {
-        let self_ = imp::MediaPicture::from_instance(self);
-        self_.aspect_ratio.get()
+        self.imp().aspect_ratio.get()
     }
 
     pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
@@ -179,9 +175,7 @@ impl MediaPicture {
             return;
         }
 
-        let self_ = imp::MediaPicture::from_instance(self);
-        self_.aspect_ratio.set(aspect_ratio);
-
+        self.imp().aspect_ratio.set(aspect_ratio);
         self.queue_resize();
 
         self.notify("aspect-ratio");

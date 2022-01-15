@@ -89,7 +89,7 @@ glib::wrapper! {
 
 impl SessionSwitcher {
     pub fn set_sessions(&self, sessions: &SelectionModel, this_session: &Session) {
-        let entries = imp::SessionSwitcher::from_instance(self).entries.get();
+        let entries = self.imp().entries.get();
 
         // There is no permanent stuff to take care of,
         // so only bind and unbind are connected.

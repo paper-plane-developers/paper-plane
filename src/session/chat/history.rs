@@ -113,11 +113,11 @@ impl History {
             return;
         }
 
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
         let chat = self.chat();
         let client_id = chat.session().client_id();
         let chat_id = chat.id();
-        let oldest_message_id = self_
+        let oldest_message_id = imp
             .list
             .borrow()
             .iter()
@@ -150,12 +150,12 @@ impl History {
     }
 
     pub fn message_by_id(&self, id: i64) -> Option<Message> {
-        let self_ = imp::History::from_instance(self);
-        self_.message_map.borrow().get(&id).cloned()
+        let imp = self.imp();
+        imp.message_map.borrow().get(&id).cloned()
     }
 
     pub fn handle_update(&self, update: Update) {
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
 
         match update {
             Update::NewMessage(update) => {
@@ -165,7 +165,7 @@ impl History {
                 self.remove(update.old_message_id);
             }
             Update::MessageContent(ref update_) => {
-                if let Some(message) = self_.message_map.borrow().get(&update_.message_id) {
+                if let Some(message) = imp.message_map.borrow().get(&update_.message_id) {
                     message.handle_update(update);
                 }
             }
@@ -181,14 +181,14 @@ impl History {
     }
 
     fn items_changed(&self, position: u32, removed: u32, added: u32) {
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
 
         // Insert day dividers where needed
         let added = {
             let position = position as usize;
             let added = added as usize;
 
-            let mut list = self_.list.borrow_mut();
+            let mut list = imp.list.borrow_mut();
             let mut previous_timestamp = if position > 0 {
                 list.get(position - 1)
                     .and_then(|item| item.message_timestamp())
@@ -224,7 +224,7 @@ impl History {
             let mut removed = removed as usize;
 
             if removed > 0 {
-                let mut list = self_.list.borrow_mut();
+                let mut list = imp.list.borrow_mut();
                 let previous_item = if position > 0 {
                     list.get(position - 1)
                 } else {
@@ -257,7 +257,7 @@ impl History {
                 let position = position as usize;
                 let added = added as usize;
 
-                let mut list = self_.list.borrow_mut();
+                let mut list = imp.list.borrow_mut();
                 let last_added_timestamp = list
                     .get(position + added - 1)
                     .unwrap()
@@ -282,55 +282,48 @@ impl History {
     }
 
     pub fn append(&self, message: TelegramMessage) {
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
 
-        if let Entry::Vacant(entry) = self_.message_map.borrow_mut().entry(message.id) {
+        if let Entry::Vacant(entry) = imp.message_map.borrow_mut().entry(message.id) {
             let message = Message::new(message, &self.chat());
 
             entry.insert(message.clone());
 
-            self_
-                .list
-                .borrow_mut()
-                .push_back(Item::for_message(message));
+            imp.list.borrow_mut().push_back(Item::for_message(message));
 
-            let index = self_.list.borrow().len() - 1;
+            let index = imp.list.borrow().len() - 1;
             self.items_changed(index as u32, 0, 1);
         }
     }
 
     fn prepend(&self, messages: Vec<TelegramMessage>) {
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
         let chat = self.chat();
         let added = messages.len();
 
-        self_.list.borrow_mut().reserve(added);
+        imp.list.borrow_mut().reserve(added);
 
         for message in messages {
             let message = Message::new(message, &chat);
 
-            self_
-                .message_map
+            imp.message_map
                 .borrow_mut()
                 .insert(message.id(), message.clone());
 
-            self_
-                .list
-                .borrow_mut()
-                .push_front(Item::for_message(message));
+            imp.list.borrow_mut().push_front(Item::for_message(message));
         }
 
         self.items_changed(0, 0, added as u32);
     }
 
     fn remove(&self, message_id: i64) {
-        let self_ = imp::History::from_instance(self);
+        let imp = self.imp();
 
-        if let Some(message) = self_.message_map.borrow_mut().remove(&message_id) {
+        if let Some(message) = imp.message_map.borrow_mut().remove(&message_id) {
             // Put this in a block, so that we only need to borrow the list once and the runtime
             // borrow checker does not panic in Self::items_changed when it borrows the list again.
             let index = {
-                let mut list = self_.list.borrow_mut();
+                let mut list = imp.list.borrow_mut();
 
                 // The elements in this list are ordered. While the day dividers are ordered
                 // only by their date time, the messages are additionally sorted by their id. We
@@ -362,19 +355,15 @@ impl History {
     }
 
     pub fn chat(&self) -> Chat {
-        let self_ = imp::History::from_instance(self);
-        self_.chat.upgrade().unwrap()
+        self.imp().chat.upgrade().unwrap()
     }
 
     pub fn set_loading(&self, loading: bool) {
-        let priv_ = imp::History::from_instance(self);
-
-        priv_.loading.set(loading);
+        self.imp().loading.set(loading);
         self.notify("loading");
     }
 
     pub fn loading(&self) -> bool {
-        let priv_ = imp::History::from_instance(self);
-        priv_.loading.get()
+        self.imp().loading.get()
     }
 }

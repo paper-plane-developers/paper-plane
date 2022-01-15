@@ -98,7 +98,7 @@ impl ExtraItemObj {
     }
 
     pub fn get(&self) -> ExtraItem {
-        imp::ExtraItemObj::from_instance(self).0.get()
+        self.imp().0.get()
     }
 
     pub fn is_separator(&self) -> bool {

@@ -40,7 +40,7 @@ mod imp {
 
             let long_press_events = gtk::GestureLongPress::builder().delay_factor(2.0).build();
             long_press_events.connect_pressed(clone!(@weak obj => move |_, _, _| {
-                Self::from_instance(&obj).menu.show();
+                obj.imp().menu.show();
             }));
             // A cancelled long press event is used to emulate a normal "click" event.
             long_press_events.connect_cancelled(clone!(@weak obj => move |_| {

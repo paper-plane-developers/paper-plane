@@ -391,8 +391,7 @@ impl Chat {
     }
 
     pub fn type_(&self) -> &ChatType {
-        let self_ = imp::Chat::from_instance(self);
-        self_.type_.get().unwrap()
+        self.imp().type_.get().unwrap()
     }
 
     pub fn title(&self) -> String {
@@ -406,8 +405,7 @@ impl Chat {
     }
 
     pub fn avatar(&self) -> &Avatar {
-        let self_ = imp::Chat::from_instance(self);
-        self_.avatar.get().unwrap()
+        self.imp().avatar.get().unwrap()
     }
 
     pub fn last_message(&self) -> Option<Message> {
@@ -496,7 +494,6 @@ impl Chat {
     }
 
     pub fn session(&self) -> Session {
-        let self_ = imp::Chat::from_instance(self);
-        self_.session.upgrade().unwrap()
+        self.imp().session.upgrade().unwrap()
     }
 }

@@ -139,24 +139,24 @@ impl ChatList {
     }
 
     pub fn handle_update(&self, update: Update) {
-        let self_ = imp::ChatList::from_instance(self);
+        let imp = self.imp();
 
         match update {
             Update::UnreadMessageCount(ref update) => {
                 self.set_unread_count(update.unread_count);
             }
             Update::NewMessage(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.message.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.message.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::MessageSendSucceeded(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.message.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.message.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::MessageContent(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
@@ -164,52 +164,52 @@ impl ChatList {
                 self.insert_chat(update.chat);
             }
             Update::ChatTitle(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatPhoto(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatLastMessage(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatNotificationSettings(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatPosition(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatUnreadMentionCount(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::MessageMentionRead(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatReadInbox(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::ChatDraftMessage(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
             Update::DeleteMessages(ref update_) => {
-                if let Some(chat) = self_.list.borrow().get(&update_.chat_id) {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
                     chat.handle_update(update);
                 }
             }
@@ -222,8 +222,7 @@ impl ChatList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `Chat` exists in the list.
     pub fn get(&self, id: i64) -> Chat {
-        let self_ = imp::ChatList::from_instance(self);
-        self_
+        self.imp()
             .list
             .borrow()
             .get(&id)
@@ -233,8 +232,7 @@ impl ChatList {
 
     fn insert_chat(&self, chat: TelegramChat) {
         {
-            let self_ = imp::ChatList::from_instance(self);
-            let mut list = self_.list.borrow_mut();
+            let mut list = self.imp().list.borrow_mut();
             let chat_id = chat.id;
             let chat = Chat::new(chat, self.session());
 
@@ -249,15 +247,13 @@ impl ChatList {
     }
 
     fn item_added(&self) {
-        let self_ = imp::ChatList::from_instance(self);
-        let list = self_.list.borrow();
+        let list = self.imp().list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
     }
 
     pub fn unread_count(&self) -> i32 {
-        let self_ = imp::ChatList::from_instance(self);
-        self_.unread_count.get()
+        self.imp().unread_count.get()
     }
 
     pub fn set_unread_count(&self, unread_count: i32) {
@@ -265,9 +261,7 @@ impl ChatList {
             return;
         }
 
-        let self_ = imp::ChatList::from_instance(self);
-        self_.unread_count.set(unread_count);
-
+        self.imp().unread_count.set(unread_count);
         self.notify("unread-count");
     }
 

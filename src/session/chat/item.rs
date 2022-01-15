@@ -73,8 +73,7 @@ impl Item {
     }
 
     pub fn type_(&self) -> &ItemType {
-        let self_ = imp::Item::from_instance(self);
-        self_.type_.get().unwrap()
+        self.imp().type_.get().unwrap()
     }
 
     pub fn message(&self) -> Option<&Message> {

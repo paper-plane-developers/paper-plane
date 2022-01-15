@@ -58,17 +58,17 @@ glib::wrapper! {
 impl MessageText {
     fn update_widget(&self) {
         if let Some(message) = self.message() {
-            let self_ = imp::MessageText::from_instance(self);
-            let mut bindings = self_.bindings.borrow_mut();
+            let imp = self.imp();
+            let mut bindings = imp.bindings.borrow_mut();
 
             while let Some(binding) = bindings.pop() {
                 binding.unwatch();
             }
 
             // Remove the previous color css class
-            let mut sender_color_class = self_.sender_color_class.borrow_mut();
+            let mut sender_color_class = imp.sender_color_class.borrow_mut();
             if let Some(class) = sender_color_class.as_ref() {
-                self_.sender_label.remove_css_class(class);
+                imp.sender_label.remove_css_class(class);
                 *sender_color_class = None;
             }
 
@@ -87,7 +87,7 @@ impl MessageText {
                 if show_sender {
                     let sender_name_expression = message.sender_name_expression();
                     let sender_binding = sender_name_expression.bind(
-                        &*self_.sender_label,
+                        &*imp.sender_label,
                         "label",
                         glib::Object::NONE,
                     );
@@ -106,14 +106,14 @@ impl MessageText {
                         ];
 
                         let color_class = classes[user.id() as usize % classes.len()];
-                        self_.sender_label.add_css_class(color_class);
+                        imp.sender_label.add_css_class(color_class);
 
                         *sender_color_class = Some(color_class.into());
                     }
 
-                    self_.sender_label.set_visible(true);
+                    imp.sender_label.set_visible(true);
                 } else {
-                    self_.sender_label.set_visible(false);
+                    imp.sender_label.set_visible(false);
                 }
 
                 // Set content label expression
@@ -123,13 +123,13 @@ impl MessageText {
                             format_message_content_text(content.0)
                         }
                     ))
-                    .bind(&*self_.content_label, "label", Some(message));
+                    .bind(&*imp.content_label, "label", Some(message));
                 bindings.push(text_binding);
             } else if let Some(sponsored_message) = message.downcast_ref::<SponsoredMessage>() {
-                self_.sender_label.set_visible(true);
+                imp.sender_label.set_visible(true);
 
                 let sender_binding = Chat::this_expression("title").bind(
-                    &*self_.sender_label,
+                    &*imp.sender_label,
                     "label",
                     Some(&sponsored_message.sponsor_chat()),
                 );
@@ -141,7 +141,7 @@ impl MessageText {
                             format_message_content_text(content.0)
                         }
                     ))
-                    .bind(&*self_.content_label, "label", Some(sponsored_message));
+                    .bind(&*imp.content_label, "label", Some(sponsored_message));
                 bindings.push(text_binding);
             } else {
                 unreachable!("Unexpected message type: {:?}", message);

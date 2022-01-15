@@ -115,18 +115,17 @@ impl AvatarWithSelection {
     }
 
     pub fn set_selected(&self, selected: bool) {
-        let self_ = imp::AvatarWithSelection::from_instance(self);
-
-        self_.checkmark.set_visible(selected);
+        let imp = self.imp();
+        imp.checkmark.set_visible(selected);
 
         if selected {
-            self_.child_avatar.add_css_class("selected-avatar");
+            imp.child_avatar.add_css_class("selected-avatar");
         } else {
-            self_.child_avatar.remove_css_class("selected-avatar");
+            imp.child_avatar.remove_css_class("selected-avatar");
         }
     }
 
     pub fn avatar(&self) -> &Avatar {
-        &imp::AvatarWithSelection::from_instance(self).child_avatar
+        &self.imp().child_avatar
     }
 }

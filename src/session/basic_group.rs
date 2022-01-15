@@ -90,13 +90,11 @@ impl BasicGroup {
     }
 
     pub fn id(&self) -> i64 {
-        let self_ = imp::BasicGroup::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn member_count(&self) -> i32 {
-        let self_ = imp::BasicGroup::from_instance(self);
-        self_.member_count.get()
+        self.imp().member_count.get()
     }
 
     pub fn set_member_count(&self, member_count: i32) {
@@ -104,8 +102,7 @@ impl BasicGroup {
             return;
         }
 
-        let self_ = imp::BasicGroup::from_instance(self);
-        self_.member_count.set(member_count);
+        self.imp().member_count.set(member_count);
         self.notify("member-count");
     }
 }

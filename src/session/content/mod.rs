@@ -128,8 +128,7 @@ impl Content {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::Content::from_instance(self);
-        self_.chat.borrow().clone()
+        self.imp().chat.borrow().clone()
     }
 
     fn set_chat(&self, chat: Option<Chat>) {
@@ -137,14 +136,14 @@ impl Content {
             return;
         }
 
-        let self_ = imp::Content::from_instance(self);
+        let imp = self.imp();
         if chat.is_some() {
-            self_.stack.set_visible_child(&self_.chat_history.get());
+            imp.stack.set_visible_child(&imp.chat_history.get());
         } else {
-            self_.stack.set_visible_child(&self_.unselected_chat.get());
+            imp.stack.set_visible_child(&imp.unselected_chat.get());
         }
 
-        self_.chat.replace(chat);
+        imp.chat.replace(chat);
 
         self.notify("chat");
     }

@@ -53,8 +53,7 @@ impl MessageSticker {
             let message = message.downcast_ref::<Message>().unwrap();
 
             if let MessageContent::MessageSticker(data) = message.content().0 {
-                let self_ = imp::MessageSticker::from_instance(self);
-                self_
+                self.imp()
                     .paintable
                     .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
@@ -85,9 +84,9 @@ impl MessageSticker {
     }
 
     fn load_sticker(&self, path: &str) {
-        let self_ = imp::MessageSticker::from_instance(self);
+        let paintable = &self.imp().paintable;
         let file = gio::File::for_path(path);
-        let future = clone!(@weak self_.paintable as paintable => async move {
+        let future = clone!(@weak paintable => async move {
             match file.load_bytes_future().await {
                 Ok((bytes, _)) => {
                     let image = webp::Decoder::new(&bytes)

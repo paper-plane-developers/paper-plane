@@ -120,13 +120,13 @@ impl SessionEntryRow {
     }
 
     fn setup_expressions(&self) {
-        let self_ = imp::SessionEntryRow::from_instance(self);
+        let imp = self.imp();
         let me_expression =
             SessionEntryRow::this_expression("session").chain_property::<Session>("me");
 
         // Bind the name
         User::full_name_expression(&me_expression).bind(
-            &*self_.display_name_label,
+            &*imp.display_name_label,
             "label",
             Some(self),
         );
@@ -137,34 +137,30 @@ impl SessionEntryRow {
             .chain_closure::<String>(closure!(|_: SessionEntryRow, username: String| {
                 format!("@{}", username)
             }))
-            .bind(&*self_.username_label, "label", Some(self));
+            .bind(&*imp.username_label, "label", Some(self));
         username_expression
             .chain_closure::<bool>(closure!(|_: SessionEntryRow, username: String| {
                 !username.is_empty()
             }))
-            .bind(&*self_.username_label, "visible", Some(self));
+            .bind(&*imp.username_label, "visible", Some(self));
     }
 
     pub fn session(&self) -> Option<Session> {
-        let self_ = imp::SessionEntryRow::from_instance(self);
-        self_.session.borrow().clone()
+        self.imp().session.borrow().clone()
     }
 
     pub fn set_session(&self, session: Option<Session>) {
         if self.session() == session {
             return;
         }
-        let self_ = imp::SessionEntryRow::from_instance(self);
-        self_.session.replace(session);
+        self.imp().session.replace(session);
         self.notify("session");
     }
 
     pub fn set_hint(&self, hinted: bool) {
-        let self_ = imp::SessionEntryRow::from_instance(self);
-
-        self_.account_avatar.set_selected(hinted);
-        self_
-            .display_name_label
+        let imp = self.imp();
+        imp.account_avatar.set_selected(hinted);
+        imp.display_name_label
             .set_css_classes(if hinted { &["bold"] } else { &[] });
     }
 }

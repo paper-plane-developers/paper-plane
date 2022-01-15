@@ -92,11 +92,11 @@ impl UserDialog {
     }
 
     fn setup_expressions(&self) {
-        let self_ = imp::UserDialog::from_instance(self);
+        let imp = self.imp();
         let user_expression = UserDialog::this_expression("user");
 
         // Bind the name
-        User::full_name_expression(&user_expression).bind(&*self_.name_label, "label", Some(self));
+        User::full_name_expression(&user_expression).bind(&*imp.name_label, "label", Some(self));
 
         // Bind the phone number
         let phone_number_expression = user_expression.chain_property::<User>("phone-number");
@@ -104,12 +104,12 @@ impl UserDialog {
             .chain_closure::<String>(closure!(|_: UserDialog, phone_number: String| {
                 format!("+{}", phone_number)
             }))
-            .bind(&*self_.mobile_row, "title", Some(self));
+            .bind(&*imp.mobile_row, "title", Some(self));
         phone_number_expression
             .chain_closure::<bool>(closure!(|_: UserDialog, phone_number: String| {
                 !phone_number.is_empty()
             }))
-            .bind(&*self_.mobile_row, "visible", Some(self));
+            .bind(&*imp.mobile_row, "visible", Some(self));
 
         // Bind the username
         let username_expression = user_expression.chain_property::<User>("username");
@@ -117,16 +117,15 @@ impl UserDialog {
             .chain_closure::<String>(closure!(|_: UserDialog, username: String| {
                 format!("@{}", username)
             }))
-            .bind(&*self_.username_row, "title", Some(self));
+            .bind(&*imp.username_row, "title", Some(self));
         username_expression
             .chain_closure::<bool>(closure!(|_: UserDialog, username: String| {
                 !username.is_empty()
             }))
-            .bind(&*self_.username_row, "visible", Some(self));
+            .bind(&*imp.username_row, "visible", Some(self));
     }
 
     pub fn user(&self) -> Option<&User> {
-        let self_ = imp::UserDialog::from_instance(self);
-        self_.user.get()
+        self.imp().user.get()
     }
 }

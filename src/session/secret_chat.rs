@@ -123,27 +123,22 @@ impl SecretChat {
     }
 
     pub fn id(&self) -> i32 {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn user(&self) -> &User {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.user.get().unwrap()
+        self.imp().user.get().unwrap()
     }
 
     pub fn state(&self) -> SecretChatState {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.state.get()
+        self.imp().state.get()
     }
 
     pub fn set_state(&self, state: SecretChatState) {
         if self.state() == state {
             return;
         }
-
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.state.set(state);
+        self.imp().state.set(state);
         self.notify("state");
     }
 }

@@ -118,8 +118,7 @@ impl Row {
     }
 
     pub fn item(&self) -> Option<glib::Object> {
-        let self_ = imp::Row::from_instance(self);
-        self_.item.borrow().to_owned()
+        self.imp().item.borrow().to_owned()
     }
 
     pub fn set_item(&self, item: Option<glib::Object>) {
@@ -127,8 +126,8 @@ impl Row {
             return;
         }
 
-        let self_ = imp::Row::from_instance(self);
-        let mut bindings = self_.bindings.borrow_mut();
+        let imp = self.imp();
+        let mut bindings = imp.bindings.borrow_mut();
 
         while let Some(binding) = bindings.pop() {
             binding.unwatch();
@@ -136,8 +135,8 @@ impl Row {
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                self_.timestamp_label.set_visible(true);
-                self_.bottom_box.set_visible(true);
+                imp.timestamp_label.set_visible(true);
+                imp.bottom_box.set_visible(true);
 
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
@@ -150,7 +149,7 @@ impl Row {
 
                 // Title label bindings
                 let title_binding =
-                    Chat::this_expression("title").bind(&*self_.title_label, "label", Some(chat));
+                    Chat::this_expression("title").bind(&*imp.title_label, "label", Some(chat));
                 bindings.push(title_binding);
 
                 // Timestamp label bindings
@@ -200,7 +199,7 @@ impl Row {
                         datetime.format("%x").unwrap()
                     }
                 }))
-                .bind(&*self_.timestamp_label, "label", Some(chat));
+                .bind(&*imp.timestamp_label, "label", Some(chat));
                 bindings.push(timestamp_binding);
 
                 // Last message and draft message label bindings
@@ -241,7 +240,7 @@ impl Row {
                             })
                     }),
                 )
-                .bind(&*self_.message_label, "label", Some(chat));
+                .bind(&*imp.message_label, "label", Some(chat));
                 bindings.push(message_binding);
 
                 // Unread mention visibility binding
@@ -249,12 +248,12 @@ impl Row {
                     .chain_closure::<bool>(closure!(|_: Chat, unread_mention_count: i32| {
                         unread_mention_count > 0
                     }))
-                    .bind(&*self_.unread_mention_label, "visible", Some(chat));
+                    .bind(&*imp.unread_mention_label, "visible", Some(chat));
                 bindings.push(unread_mention_binding);
 
                 // Unread count binding
                 let unread_binding =
-                    unread_count_expression.bind(&*self_.unread_count_label, "label", Some(chat));
+                    unread_count_expression.bind(&*imp.unread_count_label, "label", Some(chat));
                 bindings.push(unread_binding);
 
                 // Unread count visibility binding
@@ -267,7 +266,7 @@ impl Row {
                         unread_count > 0 && (unread_mention_count != 1 || unread_count > 1)
                     }),
                 )
-                .bind(&*self_.unread_count_label, "visible", Some(chat));
+                .bind(&*imp.unread_count_label, "visible", Some(chat));
                 bindings.push(unread_binding);
 
                 // Unread count css classes binding
@@ -313,7 +312,7 @@ impl Row {
                         ]
                     }),
                 )
-                .bind(&*self_.unread_count_label, "css-classes", Some(chat));
+                .bind(&*imp.unread_count_label, "css-classes", Some(chat));
                 bindings.push(unread_binding);
 
                 // Pin icon visibility binding
@@ -326,16 +325,16 @@ impl Row {
                         is_pinned && unread_count <= 0
                     }),
                 )
-                .bind(&*self_.pin_icon, "visible", Some(chat));
+                .bind(&*imp.pin_icon, "visible", Some(chat));
                 bindings.push(pin_binding);
             } else if let Some(user) = item.downcast_ref::<User>() {
-                self_.timestamp_label.set_visible(false);
-                self_.bottom_box.set_visible(false);
+                imp.timestamp_label.set_visible(false);
+                imp.bottom_box.set_visible(false);
 
                 // Title label binding
                 let user_expression = gtk::ConstantExpression::new(user);
                 let title_binding = User::full_name_expression(&user_expression).bind(
-                    &*self_.title_label,
+                    &*imp.title_label,
                     "label",
                     glib::Object::NONE,
                 );
@@ -345,7 +344,7 @@ impl Row {
             }
         }
 
-        self_.item.replace(item);
+        imp.item.replace(item);
         self.notify("item");
     }
 }
