@@ -55,7 +55,7 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "chat",
                     "Chat",
                     "The chat associated with this widget",
@@ -114,10 +114,10 @@ mod imp {
                 clone!(@weak obj => @default-return Inhibit(false), move |_, key, _, modifier| {
                     if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
                         && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
-                        && (key == gdk::keys::constants::Return
-                            || key == gdk::keys::constants::KP_Enter)
+                        && (key == gdk::Key::Return
+                            || key == gdk::Key::KP_Enter)
                     {
-                        obj.activate_action("chat-action-bar.send-text-message", None);
+                        obj.activate_action("chat-action-bar.send-text-message", None).unwrap();
                         Inhibit(true)
                     } else {
                         Inhibit(false)

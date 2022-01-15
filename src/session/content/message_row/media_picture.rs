@@ -26,14 +26,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "paintable",
                         "Paintable",
                         "The paintable of the media",
                         gdk::Paintable::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_double(
+                    glib::ParamSpecDouble::new(
                         "aspect-ratio",
                         "Aspect Ratio",
                         "The aspect ratio of the media",

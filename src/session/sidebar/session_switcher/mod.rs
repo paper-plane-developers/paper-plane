@@ -120,7 +120,7 @@ impl SessionSwitcher {
         }));
 
         factory.connect_unbind(|_, list_item| {
-            list_item.set_child(gtk::NONE_WIDGET);
+            list_item.set_child(gtk::Widget::NONE);
         });
 
         entries.set_factory(Some(factory));

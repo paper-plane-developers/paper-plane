@@ -44,7 +44,7 @@ mod imp {
             }));
             // A cancelled long press event is used to emulate a normal "click" event.
             long_press_events.connect_cancelled(clone!(@weak obj => move |_| {
-                obj.activate_action("app.new-login-production-server", None);
+                obj.activate_action("app.new-login-production-server", None).unwrap();
             }));
 
             obj.add_controller(&long_press_events);

@@ -1,4 +1,5 @@
 use gettextrs::gettext;
+use glib::closure;
 use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::MessageContent;
 
@@ -71,19 +72,6 @@ impl MessageText {
                 *sender_color_class = None;
             }
 
-            let content_expression = gtk::PropertyExpression::new(
-                Message::static_type(),
-                gtk::NONE_EXPRESSION,
-                "content",
-            );
-            let text_expression = gtk::ClosureExpression::new(
-                |args| -> String {
-                    let content = args[1].get::<BoxedMessageContent>().unwrap();
-                    format_message_content_text(content.0)
-                },
-                &[content_expression.upcast()],
-            );
-
             if let Some(message) = message.downcast_ref::<Message>() {
                 // Show sender label, if needed
                 let show_sender = {
@@ -101,7 +89,7 @@ impl MessageText {
                     let sender_binding = sender_name_expression.bind(
                         &*self_.sender_label,
                         "label",
-                        gtk::NONE_WIDGET,
+                        glib::Object::NONE,
                     );
                     bindings.push(sender_binding);
 
@@ -129,26 +117,31 @@ impl MessageText {
                 }
 
                 // Set content label expression
-                let text_binding =
-                    text_expression.bind(&*self_.content_label, "label", Some(message));
+                let text_binding = Message::this_expression("content")
+                    .chain_closure::<String>(closure!(
+                        |_: Message, content: BoxedMessageContent| {
+                            format_message_content_text(content.0)
+                        }
+                    ))
+                    .bind(&*self_.content_label, "label", Some(message));
                 bindings.push(text_binding);
             } else if let Some(sponsored_message) = message.downcast_ref::<SponsoredMessage>() {
                 self_.sender_label.set_visible(true);
 
-                let chat_title_expression = gtk::PropertyExpression::new(
-                    Chat::static_type(),
-                    gtk::NONE_EXPRESSION,
-                    "title",
-                );
-                let sender_binding = chat_title_expression.bind(
+                let sender_binding = Chat::this_expression("title").bind(
                     &*self_.sender_label,
                     "label",
                     Some(&sponsored_message.sponsor_chat()),
                 );
                 bindings.push(sender_binding);
 
-                let text_binding =
-                    text_expression.bind(&*self_.content_label, "label", Some(sponsored_message));
+                let text_binding = SponsoredMessage::this_expression("content")
+                    .chain_closure::<String>(closure!(
+                        |_: SponsoredMessage, content: BoxedMessageContent| {
+                            format_message_content_text(content.0)
+                        }
+                    ))
+                    .bind(&*self_.content_label, "label", Some(sponsored_message));
                 bindings.push(text_binding);
             } else {
                 unreachable!("Unexpected message type: {:?}", message);

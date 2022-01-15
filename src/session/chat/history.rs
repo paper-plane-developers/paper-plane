@@ -29,7 +29,6 @@ mod imp {
     impl ObjectSubclass for History {
         const NAME: &'static str = "ChatHistory";
         type Type = super::History;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
@@ -37,14 +36,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "chat",
                         "Chat",
                         "The chat relative to this history",
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "loading",
                         "Loading",
                         "Whether the history is loading messages or not",

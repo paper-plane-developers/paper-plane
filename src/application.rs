@@ -148,14 +148,11 @@ impl Application {
 
     fn load_color_scheme(&self) {
         let style_manager = adw::StyleManager::default();
-        if let Some(style_manager) = style_manager {
-            let settings = gio::Settings::new(APP_ID);
-
-            match settings.string("color-scheme").as_ref() {
-                "light" => style_manager.set_color_scheme(adw::ColorScheme::ForceLight),
-                "dark" => style_manager.set_color_scheme(adw::ColorScheme::ForceDark),
-                _ => style_manager.set_color_scheme(adw::ColorScheme::PreferLight),
-            }
+        let settings = gio::Settings::new(APP_ID);
+        match settings.string("color-scheme").as_ref() {
+            "light" => style_manager.set_color_scheme(adw::ColorScheme::ForceLight),
+            "dark" => style_manager.set_color_scheme(adw::ColorScheme::ForceDark),
+            _ => style_manager.set_color_scheme(adw::ColorScheme::PreferLight),
         }
     }
 
@@ -166,7 +163,7 @@ impl Application {
     }
 
     fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialogBuilder::new()
+        let dialog = gtk::AboutDialog::builder()
             .program_name("Telegrand")
             .logo_icon_name(APP_ID)
             .license_type(gtk::License::Gpl30)

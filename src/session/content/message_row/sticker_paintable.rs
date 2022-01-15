@@ -18,14 +18,13 @@ mod imp {
     impl ObjectSubclass for StickerPaintable {
         const NAME: &'static str = "ContentStickerPaintable";
         type Type = super::StickerPaintable;
-        type ParentType = glib::Object;
         type Interfaces = (gdk::Paintable,);
     }
 
     impl ObjectImpl for StickerPaintable {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "texture",
                     "Texture",
                     "The texture of the sticker",

@@ -21,14 +21,13 @@ mod imp {
     impl ObjectSubclass for SponsoredMessage {
         const NAME: &'static str = "ChatSponsoredMessage";
         type Type = super::SponsoredMessage;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for SponsoredMessage {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int64(
+                    glib::ParamSpecInt64::new(
                         "message-id",
                         "Message Id",
                         "The id of this message",
@@ -37,14 +36,14 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "content",
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "sponsor-chat",
                         "Sponsor Chat",
                         "The chat relative to this sponsored message",

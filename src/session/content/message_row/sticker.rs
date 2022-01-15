@@ -88,7 +88,7 @@ impl MessageSticker {
         let self_ = imp::MessageSticker::from_instance(self);
         let file = gio::File::for_path(path);
         let future = clone!(@weak self_.paintable as paintable => async move {
-            match file.load_bytes_async_future().await {
+            match file.load_bytes_future().await {
                 Ok((bytes, _)) => {
                     let image = webp::Decoder::new(&bytes)
                         .decode()

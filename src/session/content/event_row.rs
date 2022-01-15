@@ -30,7 +30,7 @@ mod imp {
     impl ObjectImpl for EventRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_string(
+                vec![glib::ParamSpecString::new(
                     "label",
                     "Label",
                     "The label for this event",

@@ -1,4 +1,4 @@
-use glib::clone;
+use glib::{clone, closure};
 use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::{enums::MessageContent, types::File};
 
@@ -70,24 +70,16 @@ impl MessagePhoto {
             let message = message.downcast_ref::<Message>().unwrap();
 
             // Setup caption expression
-            let content_expression = gtk::PropertyExpression::new(
-                Message::static_type(),
-                gtk::NONE_EXPRESSION,
-                "content",
-            );
-            let text_expression = gtk::ClosureExpression::new(
-                |args| {
-                    let content = args[1].get::<BoxedMessageContent>().unwrap();
+            let caption_binding = Message::this_expression("content")
+                .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
                     if let MessageContent::MessagePhoto(data) = content.0 {
                         parse_formatted_text(data.caption)
                     } else {
                         unreachable!();
                     }
-                },
-                &[content_expression.upcast()],
-            );
-            let text_binding = text_expression.bind(&*self_.media, "caption", Some(message));
-            self_.binding.replace(Some(text_binding));
+                }))
+                .bind(&*self_.media, "caption", Some(message));
+            self_.binding.replace(Some(caption_binding));
 
             // Load photo
             let handler_id =

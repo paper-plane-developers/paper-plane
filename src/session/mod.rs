@@ -38,12 +38,12 @@ use crate::session_manager::DatabaseInfo;
 use crate::utils::{do_async, log_out};
 use crate::RUNTIME;
 
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "BoxedDatabaseInfo")]
+#[derive(Clone, Debug, glib::Boxed)]
+#[boxed_type(name = "BoxedDatabaseInfo")]
 pub struct BoxedDatabaseInfo(pub DatabaseInfo);
 
-#[derive(Clone, Debug, Default, glib::GBoxed)]
-#[gboxed(type_name = "BoxedScopeNotificationSettings")]
+#[derive(Clone, Debug, Default, glib::Boxed)]
+#[boxed_type(name = "BoxedScopeNotificationSettings")]
 pub struct BoxedScopeNotificationSettings(pub Option<ScopeNotificationSettings>);
 
 mod imp {
@@ -102,7 +102,7 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "client-id",
                         "Client Id",
                         "The client id",
@@ -111,77 +111,77 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "database-info",
                         "Database Info",
                         "The information about the database of this session",
                         BoxedDatabaseInfo::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "me",
                         "Me",
                         "The own user id of this session",
                         User::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "chat-list",
                         "Chat List",
                         "A list of chats",
                         ChatList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "user-list",
                         "User List",
                         "The list of users of this session",
                         ChatList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "basic-group-list",
                         "Basic Group List",
                         "The list of basic groups of this session",
                         BasicGroupList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "supergroup-list",
                         "Supergroup List",
                         "The list of supergroups of this session",
                         SupergroupList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "secret-chat-list",
                         "Secret Chat List",
                         "The list of secret chats of this session",
                         SecretChatList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "private-chats-notification-settings",
                         "Private Chats Notification Settings",
                         "This session's notification settings for private chats",
                         BoxedScopeNotificationSettings::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "group-chats-notification-settings",
                         "Group Chats Notification Settings",
                         "This session's notification settings for group chats",
                         BoxedScopeNotificationSettings::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "channel-chats-notification-settings",
                         "Channel Chats Notification Settings",
                         "This session's notification settings for channel chats",

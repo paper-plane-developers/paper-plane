@@ -54,7 +54,7 @@ mod imp {
             Self::bind_template(klass);
 
             klass.add_binding_action(
-                gdk::keys::constants::F,
+                gdk::Key::F,
                 gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::SHIFT_MASK,
                 "sidebar.begin-chats-search",
                 None,

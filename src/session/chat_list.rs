@@ -27,7 +27,6 @@ mod imp {
     impl ObjectSubclass for ChatList {
         const NAME: &'static str = "ChatList";
         type Type = super::ChatList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
@@ -42,7 +41,7 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "unread-count",
                         "Unread-Count",
                         "The unread count of this chat list",
@@ -51,7 +50,7 @@ mod imp {
                         0,
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",
@@ -240,7 +239,7 @@ impl ChatList {
             let chat = Chat::new(chat, self.session());
 
             chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
-                obj.emit_by_name("positions-changed", &[]).unwrap();
+                obj.emit_by_name::<()>("positions-changed", &[]);
             }));
 
             list.insert(chat_id, chat);
@@ -273,7 +272,7 @@ impl ChatList {
     }
 
     pub fn session(&self) -> Session {
-        self.property("session").unwrap().get().unwrap()
+        self.property("session")
     }
 
     pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
@@ -283,6 +282,5 @@ impl ChatList {
 
             None
         })
-        .unwrap()
     }
 }

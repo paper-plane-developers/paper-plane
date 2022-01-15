@@ -17,14 +17,13 @@ mod imp {
     impl ObjectSubclass for BasicGroup {
         const NAME: &'static str = "BasicGroup";
         type Type = super::BasicGroup;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for BasicGroup {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int64(
+                    glib::ParamSpecInt64::new(
                         "id",
                         "Id",
                         "The id of this basic group",
@@ -33,7 +32,7 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "member-count",
                         "Member Count",
                         "The number of members of this basic group",

@@ -68,21 +68,21 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "compact",
                         "Compact",
                         "Wheter a compact view is used or not",
                         false,
                         glib::ParamFlags::READWRITE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",

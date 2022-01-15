@@ -23,14 +23,13 @@ mod imp {
     impl ObjectSubclass for UserList {
         const NAME: &'static str = "UserList";
         type Type = super::UserList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
     impl ObjectImpl for UserList {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "session",
                     "Session",
                     "The session",

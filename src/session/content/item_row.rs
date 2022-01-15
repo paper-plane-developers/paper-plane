@@ -28,7 +28,7 @@ mod imp {
     impl ObjectImpl for ItemRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "item",
                     "Item",
                     "The item represented by this row",
@@ -108,8 +108,7 @@ impl ItemRow {
                         }
                     }
                     ItemType::DayDivider(date) => {
-                        let fmt = if date.year() == glib::DateTime::new_now_local().unwrap().year()
-                        {
+                        let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
                             // Translators: This is a date format in the day divider without the year
                             gettext("%B %e")
                         } else {

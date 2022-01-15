@@ -22,14 +22,13 @@ mod imp {
     impl ObjectSubclass for SecretChatList {
         const NAME: &'static str = "SecretChatList";
         type Type = super::SecretChatList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
     impl ObjectImpl for SecretChatList {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "session",
                     "Session",
                     "The session relative to this list",

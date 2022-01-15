@@ -38,14 +38,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "caption",
                         "Caption",
                         "The caption",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_double(
+                    glib::ParamSpecDouble::new(
                         "download-progress",
                         "Download Progress",
                         "The download progress",

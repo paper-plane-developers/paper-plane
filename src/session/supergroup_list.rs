@@ -18,7 +18,6 @@ mod imp {
     impl ObjectSubclass for SupergroupList {
         const NAME: &'static str = "SupergroupList";
         type Type = super::SupergroupList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 

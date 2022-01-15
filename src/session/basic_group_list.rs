@@ -18,7 +18,6 @@ mod imp {
     impl ObjectSubclass for BasicGroupList {
         const NAME: &'static str = "BasicGroupList";
         type Type = super::BasicGroupList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 

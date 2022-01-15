@@ -155,7 +155,9 @@ mod imp {
                 }));
 
             self_.tos_label.connect_activate_link(|label, _| {
-                label.activate_action("login.show-tos-dialog", None);
+                label
+                    .activate_action("login.show-tos-dialog", None)
+                    .unwrap();
                 gtk::Inhibit(true)
             });
 
@@ -375,9 +377,7 @@ impl Login {
                 self.disable_actions();
 
                 // Clear the qr code image save some potential memory.
-                self_
-                    .qr_code_image
-                    .set_paintable(None as Option<&gdk::Paintable>);
+                self_.qr_code_image.set_paintable(gdk::Paintable::NONE);
 
                 self_.session_manager.get().unwrap().add_logged_in_session(
                     self_.client_id.get(),

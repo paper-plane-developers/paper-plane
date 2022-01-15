@@ -25,35 +25,34 @@ mod imp {
     impl ObjectSubclass for Avatar {
         const NAME: &'static str = "Avatar";
         type Type = super::Avatar;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for Avatar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "image",
                         "Image",
                         "The image of this avatar",
                         gdk::Paintable::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "needed",
                         "Needed",
                         "Whether the image needs to be loaded or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "display-name",
                         "Display Name",
                         "The display name used for this avatar",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",

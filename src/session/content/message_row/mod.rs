@@ -12,7 +12,7 @@ pub use self::sticker::MessageSticker;
 use self::sticker_paintable::StickerPaintable;
 pub use self::text::MessageText;
 
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::{gdk, glib, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::{Message, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
@@ -46,14 +46,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "message",
                         "Message",
                         "The message represented by this row",
                         glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "content",
                         "Content",
                         "The content widget",
@@ -163,33 +163,27 @@ mod imp {
 
             if let Some(avatar) = self.avatar.borrow().as_ref() {
                 let (_, natural_size) = avatar.preferred_size();
-                let allocation = gtk::Allocation {
-                    x: 0,
-                    y: height - natural_size.height,
-                    width: natural_size.width,
-                    height: natural_size.height,
-                };
-
+                let allocation = gdk::Rectangle::new(
+                    0,
+                    height - natural_size.height(),
+                    natural_size.width(),
+                    natural_size.height(),
+                );
                 avatar.size_allocate(&allocation, -1);
 
-                remaining_width -= natural_size.width + SPACING;
+                remaining_width -= natural_size.width() + SPACING;
             }
 
             if let Some(content) = self.content.borrow().as_ref() {
                 let (_, natural_size) = content.preferred_size();
-                let actual_width = remaining_width.min(natural_size.width);
+                let actual_width = remaining_width.min(natural_size.width());
                 let x = if self.is_outgoing.get() {
                     width - actual_width
                 } else {
                     width - remaining_width
                 };
 
-                let allocation = gtk::Allocation {
-                    x,
-                    y: 0,
-                    width: actual_width,
-                    height,
-                };
+                let allocation = gdk::Rectangle::new(x, 0, actual_width, height);
                 content.size_allocate(&allocation, baseline);
             }
         }

@@ -5,12 +5,12 @@ use tdgrand::types::User as TdUser;
 use crate::session::Avatar;
 use crate::Session;
 
-#[derive(Clone, Debug, Default, glib::GBoxed)]
-#[gboxed(type_name = "BoxedUserType")]
+#[derive(Clone, Debug, Default, glib::Boxed)]
+#[boxed_type(name = "BoxedUserType")]
 pub struct BoxedUserType(pub UserType);
 
-#[derive(Clone, Debug, Default, glib::GBoxed)]
-#[gboxed(type_name = "BoxedUserStatus")]
+#[derive(Clone, Debug, Default, glib::Boxed)]
+#[boxed_type(name = "BoxedUserStatus")]
 pub struct BoxedUserStatus(pub UserStatus);
 
 mod imp {
@@ -34,14 +34,13 @@ mod imp {
     impl ObjectSubclass for User {
         const NAME: &'static str = "User";
         type Type = super::User;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for User {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int64(
+                    glib::ParamSpecInt64::new(
                         "id",
                         "Id",
                         "The id of this user",
@@ -50,49 +49,49 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "type",
                         "Type",
                         "The type of this user",
                         BoxedUserType::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "first-name",
                         "First Name",
                         "The first name of this user",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "last-name",
                         "Last Name",
                         "The last name of this user",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "username",
                         "Username",
                         "The username of this user",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "phone-number",
                         "Phone Number",
                         "The phone number of this user",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "avatar",
                         "Avatar",
                         "The avatar of this chat",
                         Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "status",
                         "Status",
                         "The status of this user",
@@ -147,8 +146,11 @@ mod imp {
 
             let avatar = obj.avatar();
             let user_expression = gtk::ConstantExpression::new(obj);
-            let full_name_expression = super::User::full_name_expression(&user_expression);
-            full_name_expression.bind(avatar, "display-name", gtk::NONE_WIDGET);
+            super::User::full_name_expression(&user_expression).bind(
+                avatar,
+                "display-name",
+                glib::Object::NONE,
+            );
         }
     }
 }
@@ -212,10 +214,6 @@ impl User {
         self.notify("type");
     }
 
-    pub fn type_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "type").upcast()
-    }
-
     pub fn first_name(&self) -> String {
         let self_ = imp::User::from_instance(self);
         self_.first_name.borrow().to_owned()
@@ -229,11 +227,6 @@ impl User {
         let self_ = imp::User::from_instance(self);
         self_.first_name.replace(first_name);
         self.notify("first-name");
-    }
-
-    pub fn first_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "first-name")
-            .upcast()
     }
 
     pub fn last_name(&self) -> String {
@@ -251,11 +244,6 @@ impl User {
         self.notify("last-name");
     }
 
-    pub fn last_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "last-name")
-            .upcast()
-    }
-
     pub fn username(&self) -> String {
         let self_ = imp::User::from_instance(self);
         self_.username.borrow().to_owned()
@@ -269,11 +257,6 @@ impl User {
         let self_ = imp::User::from_instance(self);
         self_.username.replace(username);
         self.notify("username");
-    }
-
-    pub fn username_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "username")
-            .upcast()
     }
 
     pub fn phone_number(&self) -> String {
@@ -291,36 +274,17 @@ impl User {
         self.notify("phone-number");
     }
 
-    pub fn phone_number_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "phone-number")
-            .upcast()
-    }
-
     pub fn avatar(&self) -> &Avatar {
         let self_ = imp::User::from_instance(self);
         self_.avatar.get().unwrap()
     }
 
-    pub fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        let first_name_expression = User::first_name_expression(user_expression);
-        let last_name_expression = User::last_name_expression(user_expression);
-
-        gtk::ClosureExpression::new(
-            move |args| -> String {
-                let first_name = args[1].get::<&str>().unwrap();
-                let last_name = args[2].get::<&str>().unwrap();
-                format!("{} {}", first_name, last_name).trim().to_owned()
-            },
-            &[first_name_expression, last_name_expression],
-        )
-        .upcast()
-    }
-
-    fn status(&self) -> BoxedUserStatus {
+    pub fn status(&self) -> BoxedUserStatus {
         let self_ = imp::User::from_instance(self);
         self_.status.borrow().clone()
     }
-    fn set_status(&self, status: UserStatus) {
+
+    pub fn set_status(&self, status: UserStatus) {
         if self.status().0 == status {
             return;
         }
@@ -329,7 +293,19 @@ impl User {
         self.notify("status");
     }
 
-    pub fn status_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "status").upcast()
+    pub fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+        let first_name_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "first-name");
+        let last_name_expression =
+            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "last-name");
+        gtk::ClosureExpression::with_callback(
+            &[first_name_expression, last_name_expression],
+            |args| {
+                let first_name = args[1].get::<String>().unwrap();
+                let last_name = args[2].get::<String>().unwrap();
+                format!("{} {}", first_name, last_name).trim().to_owned()
+            },
+        )
+        .upcast()
     }
 }
