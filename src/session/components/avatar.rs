@@ -38,14 +38,14 @@ mod imp {
             use once_cell::sync::Lazy;
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "item",
                         "Item",
                         "The avatar item displayed by this widget",
                         AvatarItem::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "size",
                         "Size",
                         "The size of this avatar",
@@ -104,20 +104,17 @@ impl Avatar {
     }
 
     fn request_avatar_image(&self) {
-        let self_ = imp::Avatar::from_instance(self);
-        if let Some(item) = &*self_.item.borrow() {
+        if let Some(item) = &*self.imp().item.borrow() {
             item.set_needed(true);
         }
     }
 
     pub fn item(&self) -> Option<AvatarItem> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.item.borrow().clone()
+        self.imp().item.borrow().clone()
     }
 
     pub fn set_item(&self, item: Option<AvatarItem>) {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.item.replace(item);
+        self.imp().item.replace(item);
 
         self.request_avatar_image();
 
@@ -125,14 +122,11 @@ impl Avatar {
     }
 
     pub fn size(&self) -> i32 {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.avatar.size()
+        self.imp().avatar.size()
     }
 
     pub fn set_size(&self, size: i32) {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.avatar.set_size(size);
-
+        self.imp().avatar.set_size(size);
         self.notify("size");
     }
 }

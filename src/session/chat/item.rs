@@ -2,8 +2,8 @@ use gtk::{glib, glib::DateTime, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::Message;
 
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "ItemType")]
+#[derive(Clone, Debug, glib::Boxed)]
+#[boxed_type(name = "ItemType")]
 pub enum ItemType {
     Message(Message),
     DayDivider(DateTime),
@@ -22,13 +22,12 @@ mod imp {
     impl ObjectSubclass for Item {
         const NAME: &'static str = "Item";
         type Type = super::Item;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for Item {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_boxed(
+                vec![glib::ParamSpecBoxed::new(
                     "type",
                     "Type",
                     "The type of this item",
@@ -74,8 +73,7 @@ impl Item {
     }
 
     pub fn type_(&self) -> &ItemType {
-        let self_ = imp::Item::from_instance(self);
-        self_.type_.get().unwrap()
+        self.imp().type_.get().unwrap()
     }
 
     pub fn message(&self) -> Option<&Message> {

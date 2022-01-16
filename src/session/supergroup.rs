@@ -18,14 +18,13 @@ mod imp {
     impl ObjectSubclass for Supergroup {
         const NAME: &'static str = "Supergroup";
         type Type = super::Supergroup;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for Supergroup {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int64(
+                    glib::ParamSpecInt64::new(
                         "id",
                         "Id",
                         "The id of this supergroup",
@@ -34,7 +33,7 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "member-count",
                         "Member Count",
                         "The number of members of this supergroup",
@@ -43,7 +42,7 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "is-channel",
                         "Is Channel",
                         "Whether the supergroup is a channel or not",
@@ -102,27 +101,22 @@ impl Supergroup {
     }
 
     pub fn id(&self) -> i64 {
-        let self_ = imp::Supergroup::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn member_count(&self) -> i32 {
-        let self_ = imp::Supergroup::from_instance(self);
-        self_.member_count.get()
+        self.imp().member_count.get()
     }
 
     pub fn set_member_count(&self, member_count: i32) {
         if self.member_count() == member_count {
             return;
         }
-
-        let self_ = imp::Supergroup::from_instance(self);
-        self_.member_count.set(member_count);
+        self.imp().member_count.set(member_count);
         self.notify("member-count");
     }
 
     pub fn is_channel(&self) -> bool {
-        let self_ = imp::Supergroup::from_instance(self);
-        self_.is_channel.get()
+        self.imp().is_channel.get()
     }
 }

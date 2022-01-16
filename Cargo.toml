@@ -2,14 +2,14 @@
 name = "telegrand"
 version = "0.1.0"
 authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-adw = { version = "0.1.0-alpha-6", package = "libadwaita" }
+adw = { version = "0.1", package = "libadwaita" }
 anyhow = "1.0"
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.3", package = "gtk4" }
+gtk = { version = "0.4", package = "gtk4" }
 indexmap = "1.7"
 locale_config = "0.3"
 log = "0.4"

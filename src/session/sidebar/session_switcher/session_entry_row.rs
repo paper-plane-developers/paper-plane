@@ -1,5 +1,6 @@
 use super::avatar_with_selection::AvatarWithSelection;
 
+use glib::closure;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 
 use crate::session::{Session, User};
@@ -15,7 +16,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/session-entry-row.ui")]
     pub struct SessionEntryRow {
         pub session: RefCell<Option<Session>>,
-        pub bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
         pub account_avatar: TemplateChild<AvatarWithSelection>,
         #[template_child]
@@ -48,7 +48,7 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session that this entry represents",
@@ -57,7 +57,7 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT_ONLY
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "hint",
                         "Selection hint",
                         "The hint of the session that owns the account switcher which this entry belongs to",
@@ -94,6 +94,11 @@ mod imp {
             }
         }
 
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+            obj.setup_expressions();
+        }
+
         fn dispose(&self, _obj: &Self::Type) {
             self.account_avatar.unparent();
             self.center_box.unparent();
@@ -114,91 +119,48 @@ impl SessionEntryRow {
         glib::Object::new(&[("session", session)]).expect("Failed to create SessionEntryRow")
     }
 
-    fn session(&self) -> Option<Session> {
-        let self_ = imp::SessionEntryRow::from_instance(self);
-        self_.session.borrow().clone()
+    fn setup_expressions(&self) {
+        let imp = self.imp();
+        let me_expression =
+            SessionEntryRow::this_expression("session").chain_property::<Session>("me");
+
+        // Bind the name
+        User::full_name_expression(&me_expression).bind(
+            &*imp.display_name_label,
+            "label",
+            Some(self),
+        );
+
+        // Bind the username
+        let username_expression = me_expression.chain_property::<User>("username");
+        username_expression
+            .chain_closure::<String>(closure!(|_: SessionEntryRow, username: String| {
+                format!("@{}", username)
+            }))
+            .bind(&*imp.username_label, "label", Some(self));
+        username_expression
+            .chain_closure::<bool>(closure!(|_: SessionEntryRow, username: String| {
+                !username.is_empty()
+            }))
+            .bind(&*imp.username_label, "visible", Some(self));
+    }
+
+    pub fn session(&self) -> Option<Session> {
+        self.imp().session.borrow().clone()
     }
 
     pub fn set_session(&self, session: Option<Session>) {
         if self.session() == session {
             return;
         }
-
-        let self_ = imp::SessionEntryRow::from_instance(self);
-        let mut bindings = self_.bindings.borrow_mut();
-
-        while let Some(binding) = bindings.pop() {
-            binding.unwatch();
-        }
-
-        if let Some(ref session) = session {
-            let me_expression =
-                gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
-
-            let display_name_expression = gtk::ClosureExpression::new(
-                |args| {
-                    let maybe_me = args[1].get::<User>();
-                    maybe_me
-                        .ok()
-                        .map(|user| {
-                            let last_name = user.last_name();
-                            if last_name.is_empty() {
-                                user.first_name()
-                            } else {
-                                format!("{} {}", user.first_name(), last_name)
-                            }
-                        })
-                        .unwrap_or_default()
-                },
-                &[me_expression.clone().upcast()],
-            );
-            let display_name_binding =
-                display_name_expression.bind(&*self_.display_name_label, "label", Some(session));
-            bindings.push(display_name_binding);
-
-            let username_label_expression = gtk::ClosureExpression::new(
-                |args| {
-                    let maybe_me = args[1].get::<User>();
-                    maybe_me
-                        .ok()
-                        .as_ref()
-                        .map(User::username)
-                        .filter(|username| !username.is_empty())
-                        .map(|username| format!("@{}", username))
-                        .unwrap_or_default()
-                },
-                &[me_expression.upcast()],
-            );
-            let username_label_binding =
-                username_label_expression.bind(&*self_.username_label, "label", Some(session));
-            bindings.push(username_label_binding);
-
-            let username_visibility_expression = gtk::ClosureExpression::new(
-                |args| {
-                    let label = args[1].get::<&str>().unwrap();
-                    !label.is_empty()
-                },
-                &[username_label_expression.upcast()],
-            );
-            let username_visibility_binding = username_visibility_expression.bind(
-                &*self_.username_label,
-                "visible",
-                Some(session),
-            );
-            bindings.push(username_visibility_binding);
-        }
-
-        self_.session.replace(session);
-
+        self.imp().session.replace(session);
         self.notify("session");
     }
 
     pub fn set_hint(&self, hinted: bool) {
-        let self_ = imp::SessionEntryRow::from_instance(self);
-
-        self_.account_avatar.set_selected(hinted);
-        self_
-            .display_name_label
+        let imp = self.imp();
+        imp.account_avatar.set_selected(hinted);
+        imp.display_name_label
             .set_css_classes(if hinted { &["bold"] } else { &[] });
     }
 }

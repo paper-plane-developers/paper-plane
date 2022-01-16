@@ -89,7 +89,7 @@ glib::wrapper! {
 
 impl SessionSwitcher {
     pub fn set_sessions(&self, sessions: &SelectionModel, this_session: &Session) {
-        let entries = imp::SessionSwitcher::from_instance(self).entries.get();
+        let entries = self.imp().entries.get();
 
         // There is no permanent stuff to take care of,
         // so only bind and unbind are connected.
@@ -120,7 +120,7 @@ impl SessionSwitcher {
         }));
 
         factory.connect_unbind(|_, list_item| {
-            list_item.set_child(gtk::NONE_WIDGET);
+            list_item.set_child(gtk::Widget::NONE);
         });
 
         entries.set_factory(Some(factory));

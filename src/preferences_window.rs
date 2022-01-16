@@ -38,15 +38,13 @@ mod imp {
             // If the system supports color schemes, load the 'Follow system colors'
             // switch state, otherwise make that switch insensitive
             let style_manager = adw::StyleManager::default();
-            if let Some(style_manager) = style_manager {
-                if style_manager.system_supports_color_schemes() {
-                    let settings = gio::Settings::new(APP_ID);
-                    let follow_system_colors = settings.string("color-scheme") == "default";
-                    self.follow_system_colors_switch
-                        .set_active(follow_system_colors);
-                } else {
-                    self.follow_system_colors_switch.set_sensitive(false);
-                }
+            if style_manager.system_supports_color_schemes() {
+                let settings = gio::Settings::new(APP_ID);
+                let follow_system_colors = settings.string("color-scheme") == "default";
+                self.follow_system_colors_switch
+                    .set_active(follow_system_colors);
+            } else {
+                self.follow_system_colors_switch.set_sensitive(false);
             }
 
             obj.setup_bindings();
@@ -76,34 +74,30 @@ impl PreferencesWindow {
     }
 
     fn setup_bindings(&self) {
-        let self_ = imp::PreferencesWindow::from_instance(self);
+        let imp = self.imp();
 
         // 'Follow system colors' switch state handling
-        self_
-            .follow_system_colors_switch
+        imp.follow_system_colors_switch
             .connect_active_notify(|switch| {
                 let style_manager = adw::StyleManager::default();
-                if let Some(style_manager) = style_manager {
-                    let settings = gio::Settings::new(APP_ID);
-                    if switch.is_active() {
-                        // Prefer light theme unless the system prefers dark colors
-                        style_manager.set_color_scheme(adw::ColorScheme::PreferLight);
-                        settings.set_string("color-scheme", "default").unwrap();
-                    } else {
-                        // Set default state for the dark theme switch
-                        style_manager.set_color_scheme(adw::ColorScheme::ForceLight);
-                        settings.set_string("color-scheme", "light").unwrap();
-                    }
+                let settings = gio::Settings::new(APP_ID);
+                if switch.is_active() {
+                    // Prefer light theme unless the system prefers dark colors
+                    style_manager.set_color_scheme(adw::ColorScheme::PreferLight);
+                    settings.set_string("color-scheme", "default").unwrap();
+                } else {
+                    // Set default state for the dark theme switch
+                    style_manager.set_color_scheme(adw::ColorScheme::ForceLight);
+                    settings.set_string("color-scheme", "light").unwrap();
                 }
             });
 
         // 'Dark theme' switch state handling
-        let follow_system_colors_switch = &*self_.follow_system_colors_switch;
-        self_.dark_theme_switch.connect_active_notify(
+        let follow_system_colors_switch = &*imp.follow_system_colors_switch;
+        imp.dark_theme_switch.connect_active_notify(
             clone!(@weak follow_system_colors_switch => move |switch| {
                 if !follow_system_colors_switch.is_active() {
-                let style_manager = adw::StyleManager::default();
-                if let Some(style_manager) = style_manager {
+                    let style_manager = adw::StyleManager::default();
                     let settings = gio::Settings::new(APP_ID);
                     if switch.is_active() {
                         // Dark mode
@@ -115,25 +109,21 @@ impl PreferencesWindow {
                         settings.set_string("color-scheme", "light").unwrap();
                     }
                 }
-                }
             }),
         );
 
         // Make the 'Dark theme' switch insensitive if the 'Follow system colors'
         // switch is active
-        self_
-            .follow_system_colors_switch
-            .bind_property("active", &*self_.dark_theme_switch, "sensitive")
+        imp.follow_system_colors_switch
+            .bind_property("active", &*imp.dark_theme_switch, "sensitive")
             .flags(glib::BindingFlags::SYNC_CREATE | glib::BindingFlags::INVERT_BOOLEAN)
             .build();
 
         // Have the 'Dark theme' switch state always updated with the dark state
         let style_manager = adw::StyleManager::default();
-        if let Some(style_manager) = style_manager {
-            style_manager
-                .bind_property("dark", &*self_.dark_theme_switch, "active")
-                .flags(glib::BindingFlags::SYNC_CREATE)
-                .build();
-        }
+        style_manager
+            .bind_property("dark", &*imp.dark_theme_switch, "active")
+            .flags(glib::BindingFlags::SYNC_CREATE)
+            .build();
     }
 }

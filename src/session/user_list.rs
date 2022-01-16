@@ -23,14 +23,13 @@ mod imp {
     impl ObjectSubclass for UserList {
         const NAME: &'static str = "UserList";
         type Type = super::UserList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
     impl ObjectImpl for UserList {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "session",
                     "Session",
                     "The session",
@@ -95,8 +94,7 @@ impl UserList {
 
     pub fn insert_user(&self, user: User) {
         {
-            let self_ = imp::UserList::from_instance(self);
-            let mut list = self_.list.borrow_mut();
+            let mut list = self.imp().list.borrow_mut();
             list.insert(user.id(), user);
         }
 
@@ -108,8 +106,7 @@ impl UserList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `User` exists in the list.
     pub fn get(&self, id: i64) -> User {
-        let self_ = imp::UserList::from_instance(self);
-        self_
+        self.imp()
             .list
             .borrow()
             .get(&id)
@@ -120,8 +117,7 @@ impl UserList {
     pub fn handle_update(&self, update: Update) {
         match update {
             Update::User(data) => {
-                let self_ = imp::UserList::from_instance(self);
-                let mut list = self_.list.borrow_mut();
+                let mut list = self.imp().list.borrow_mut();
 
                 match list.entry(data.user.id) {
                     Entry::Occupied(entry) => entry.get().handle_update(Update::User(data)),
@@ -140,14 +136,12 @@ impl UserList {
     }
 
     fn item_added(&self) {
-        let self_ = imp::UserList::from_instance(self);
-        let list = self_.list.borrow();
+        let list = self.imp().list.borrow();
         let position = list.len() - 1;
         self.items_changed(position as u32, 0, 1);
     }
 
     pub fn session(&self) -> &Session {
-        let self_ = imp::UserList::from_instance(self);
-        self_.session.get().unwrap()
+        self.imp().session.get().unwrap()
     }
 }

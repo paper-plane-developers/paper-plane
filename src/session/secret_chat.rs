@@ -1,12 +1,11 @@
-use glib::GEnum;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{SecretChatState as TdSecretChatState, Update};
 use tdgrand::types::SecretChat as TdSecretChat;
 
 use crate::session::User;
 
-#[derive(Debug, Clone, Copy, PartialEq, GEnum)]
-#[genum(type_name = "SecretChatState")]
+#[derive(Debug, Clone, Copy, PartialEq, glib::Enum)]
+#[enum_type(name = "SecretChatState")]
 pub enum SecretChatState {
     Pending,
     Ready,
@@ -45,14 +44,13 @@ mod imp {
     impl ObjectSubclass for SecretChat {
         const NAME: &'static str = "SecretChat";
         type Type = super::SecretChat;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for SecretChat {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "id",
                         "Id",
                         "The id of this secret chat",
@@ -61,14 +59,14 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "user",
                         "User",
                         "The interlocutor in this chat",
                         User::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_enum(
+                    glib::ParamSpecEnum::new(
                         "state",
                         "State",
                         "The state of this secret chat",
@@ -125,27 +123,22 @@ impl SecretChat {
     }
 
     pub fn id(&self) -> i32 {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn user(&self) -> &User {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.user.get().unwrap()
+        self.imp().user.get().unwrap()
     }
 
     pub fn state(&self) -> SecretChatState {
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.state.get()
+        self.imp().state.get()
     }
 
     pub fn set_state(&self, state: SecretChatState) {
         if self.state() == state {
             return;
         }
-
-        let self_ = imp::SecretChat::from_instance(self);
-        self_.state.set(state);
+        self.imp().state.set(state);
         self.notify("state");
     }
 }

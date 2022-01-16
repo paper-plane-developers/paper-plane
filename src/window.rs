@@ -54,16 +54,14 @@ mod imp {
             Self::bind_template(klass);
 
             klass.add_binding_action(
-                gdk::keys::constants::F,
+                gdk::Key::F,
                 gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::SHIFT_MASK,
                 "sidebar.begin-chats-search",
                 None,
             );
 
             klass.install_action("sidebar.begin-chats-search", None, |widget, _, _| {
-                Self::from_instance(widget)
-                    .session_manager
-                    .begin_chats_search();
+                widget.imp().session_manager.begin_chats_search();
             });
         }
 
@@ -89,7 +87,8 @@ mod imp {
             // Set the online state of the active client based on
             // whether the window is active or not
             obj.connect_is_active_notify(|window| {
-                Self::from_instance(window)
+                window
+                    .imp()
                     .session_manager
                     .set_active_client_online(window.is_active());
             });
@@ -102,7 +101,7 @@ mod imp {
         fn close_request(&self, obj: &Self::Type) -> gtk::Inhibit {
             self.receiver_should_stop.store(true, Ordering::Release);
 
-            Self::from_instance(obj).session_manager.close_clients();
+            self.session_manager.close_clients();
             obj.wait_receiver();
 
             if let Err(err) = obj.save_window_size() {
@@ -129,12 +128,12 @@ impl Window {
     }
 
     pub fn session_manager(&self) -> &SessionManager {
-        &*imp::Window::from_instance(self).session_manager
+        &*self.imp().session_manager
     }
 
     fn start_receiver(&self) {
-        let self_ = imp::Window::from_instance(self);
-        let receiver_should_stop = self_.receiver_should_stop.clone();
+        let imp = self.imp();
+        let receiver_should_stop = imp.receiver_should_stop.clone();
         let sender = Arc::new(self.create_update_sender());
         let handle = RUNTIME.spawn(async move {
             loop {
@@ -164,13 +163,12 @@ impl Window {
             }
         });
 
-        self_.receiver_handle.replace(Some(handle));
+        imp.receiver_handle.replace(Some(handle));
     }
 
     fn wait_receiver(&self) {
-        let self_ = imp::Window::from_instance(self);
         RUNTIME.block_on(async {
-            self_
+            self.imp()
                 .receiver_handle
                 .borrow_mut()
                 .as_mut()
@@ -196,8 +194,6 @@ impl Window {
     }
 
     fn handle_update(&self, update: Update, client_id: i32) {
-        let self_ = imp::Window::from_instance(self);
-
         match update {
             Update::NotificationGroup(update) => {
                 self.add_notifications(update.added_notifications, client_id, update.chat_id);
@@ -207,7 +203,7 @@ impl Window {
                     app.withdraw_notification(&notification_id.to_string());
                 }
             }
-            _ => self_.session_manager.handle_update(update, client_id),
+            _ => self.imp().session_manager.handle_update(update, client_id),
         }
     }
 
@@ -217,9 +213,9 @@ impl Window {
         client_id: i32,
         chat_id: i64,
     ) {
-        let self_ = imp::Window::from_instance(self);
-
-        if let Some(ClientInfo::LoggedIn(session)) = self_.session_manager.client_info(client_id) {
+        if let Some(ClientInfo::LoggedIn(session)) =
+            self.imp().session_manager.client_info(client_id)
+        {
             let app = self.application().unwrap();
             let chat = session.chat_list().get(chat_id);
 
@@ -259,27 +255,26 @@ impl Window {
     }
 
     fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let self_ = imp::Window::from_instance(self);
+        let imp = self.imp();
 
         let (width, height) = self.default_size();
-        self_.settings.set_int("window-width", width)?;
-        self_.settings.set_int("window-height", height)?;
+        imp.settings.set_int("window-width", width)?;
+        imp.settings.set_int("window-height", height)?;
 
-        self_
-            .settings
+        imp.settings
             .set_boolean("is-maximized", self.is_maximized())?;
 
         Ok(())
     }
 
     fn load_window_size(&self) {
-        let self_ = imp::Window::from_instance(self);
+        let imp = self.imp();
 
-        let width = self_.settings.int("window-width");
-        let height = self_.settings.int("window-height");
+        let width = imp.settings.int("window-width");
+        let height = imp.settings.int("window-height");
         self.set_default_size(width, height);
 
-        let is_maximized = self_.settings.boolean("is-maximized");
+        let is_maximized = imp.settings.boolean("is-maximized");
         if is_maximized {
             self.maximize();
         }

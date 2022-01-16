@@ -147,15 +147,15 @@ mod imp {
 
             // On each page change, decide which button to hide/show and which actions to
             // (de)activate.
-            let self_ = imp::Login::from_instance(obj);
-            self_
-                .content
+            self.content
                 .connect_visible_child_name_notify(clone!(@weak obj => move |_| {
                     obj.update_actions_for_visible_page()
                 }));
 
-            self_.tos_label.connect_activate_link(|label, _| {
-                label.activate_action("login.show-tos-dialog", None);
+            self.tos_label.connect_activate_link(|label, _| {
+                label
+                    .activate_action("login.show-tos-dialog", None)
+                    .unwrap();
                 gtk::Inhibit(true)
             });
 
@@ -185,43 +185,40 @@ impl Login {
     }
 
     pub fn set_session_manager(&self, session_manager: SessionManager) {
-        imp::Login::from_instance(self)
-            .session_manager
-            .set(session_manager)
-            .unwrap();
+        self.imp().session_manager.set(session_manager).unwrap();
     }
 
     pub fn login_client(&self, client_id: i32, database_info: DatabaseInfo) {
-        let self_ = imp::Login::from_instance(self);
-        self_.client_id.set(client_id);
+        let imp = self.imp();
+        imp.client_id.set(client_id);
 
-        self_.database_info.replace(Some(database_info));
+        imp.database_info.replace(Some(database_info));
 
         // We don't know what login page to show at this point, so we show an empty page until we
         // receive an AuthenticationState that will eventually show the related login page.
-        self_.main_stack.set_visible_child_name("empty-page");
+        imp.main_stack.set_visible_child_name("empty-page");
 
-        self_.phone_number_entry.set_text("");
-        self_.registration_first_name_entry.set_text("");
-        self_.registration_last_name_entry.set_text("");
-        self_.code_entry.set_text("");
-        self_.password_entry.set_text("");
+        imp.phone_number_entry.set_text("");
+        imp.registration_first_name_entry.set_text("");
+        imp.registration_last_name_entry.set_text("");
+        imp.code_entry.set_text("");
+        imp.password_entry.set_text("");
     }
 
     pub fn set_authorization_state(&self, state: AuthorizationState) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
         match state {
             AuthorizationState::WaitTdlibParameters => {
-                let client_id = self_.client_id.get();
-                let database_info = self_.database_info.borrow().clone().unwrap();
+                let client_id = imp.client_id.get();
+                let database_info = imp.database_info.borrow().clone().unwrap();
                 do_async(
                     glib::PRIORITY_DEFAULT_IDLE,
                     async move { send_tdlib_parameters(client_id, &database_info).await },
                     clone!(@weak self as obj => move |result| async move {
                         if let Err(err) = result {
                             show_error_label(
-                                &imp::Login::from_instance(&obj).welcome_page_error_label,
+                                &obj.imp().welcome_page_error_label,
                                 &err.message
                             );
                         }
@@ -235,32 +232,31 @@ impl Login {
                 // The page 'phone-number-page' is the first page and thus the visible page by
                 // default. This means that no transition will happen when we receive
                 // 'WaitPhoneNumber'. In this case, we have to update the actions manually.
-                if self_.content.visible_child_name().unwrap() == "phone-number-page" {
+                if imp.content.visible_child_name().unwrap() == "phone-number-page" {
                     self.update_actions_for_visible_page();
                 }
 
                 // Hide the spinner before entering 'phone-number-page'.
-                self_
-                    .phone_number_use_qr_code_stack
+                imp.phone_number_use_qr_code_stack
                     .set_visible_child_name("image");
 
                 self.navigate_to_page(
                     "phone-number-page",
-                    [&*self_.phone_number_entry],
-                    Some(&self_.welcome_page_error_label),
-                    Some(&*self_.phone_number_entry),
+                    [&*imp.phone_number_entry],
+                    Some(&imp.welcome_page_error_label),
+                    Some(&*imp.phone_number_entry),
                 );
             }
             AuthorizationState::WaitCode(_) => {
                 self.navigate_to_page(
                     "code-page",
-                    [&*self_.code_entry],
-                    Some(&self_.code_error_label),
-                    Some(&*self_.code_entry),
+                    [&*imp.code_entry],
+                    Some(&imp.code_error_label),
+                    Some(&*imp.code_entry),
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(data) => {
-                let size = self_.qr_code_image.pixel_size() as usize;
+                let size = imp.qr_code_image.pixel_size() as usize;
                 let bytes_per_pixel = 3;
 
                 let data_luma = qrcode_generator::to_image_from_str(
@@ -278,8 +274,7 @@ impl Login {
                         .collect::<Vec<_>>(),
                 );
 
-                self_
-                    .qr_code_image
+                imp.qr_code_image
                     .set_paintable(Some(&gdk::MemoryTexture::new(
                         size as i32,
                         size as i32,
@@ -296,42 +291,39 @@ impl Login {
                 );
             }
             AuthorizationState::WaitRegistration(data) => {
-                self_.show_tos_popup.set(data.terms_of_service.show_popup);
-                self_
-                    .tos_text
+                imp.show_tos_popup.set(data.terms_of_service.show_popup);
+                imp.tos_text
                     .replace(parse_formatted_text(data.terms_of_service.text));
 
                 self.navigate_to_page(
                     "registration-page",
                     [
-                        &*self_.registration_first_name_entry,
-                        &*self_.registration_last_name_entry,
+                        &*imp.registration_first_name_entry,
+                        &*imp.registration_last_name_entry,
                     ],
-                    Some(&self_.registration_error_label),
-                    Some(&*self_.registration_first_name_entry),
+                    Some(&imp.registration_error_label),
+                    Some(&*imp.registration_first_name_entry),
                 );
             }
             AuthorizationState::WaitPassword(data) => {
                 // If we do RequestAuthenticationPasswordRecovery we will land in this arm again.
                 // To avoid transition back, clearing the entries and to save cpu time, we check
                 // whether we are in the password-forgot-page.
-                if self_.content.visible_child_name().unwrap() == "password-forgot-page" {
+                if imp.content.visible_child_name().unwrap() == "password-forgot-page" {
                     return;
                 }
 
                 // When we enter the password page, the password to be entered should be masked by
                 // default, so the peek icon is turned off and on again.
-                self_.password_entry.set_show_peek_icon(false);
-                self_.password_entry.set_show_peek_icon(true);
+                imp.password_entry.set_show_peek_icon(false);
+                imp.password_entry.set_show_peek_icon(true);
 
-                self_
-                    .password_hint_action_row
+                imp.password_hint_action_row
                     .set_visible(!data.password_hint.is_empty());
-                self_.password_hint_label.set_text(&data.password_hint);
+                imp.password_hint_label.set_text(&data.password_hint);
 
                 let account_deletion_preface = if data.has_recovery_email_address {
-                    self_
-                        .password_recovery_status_page
+                    imp.password_recovery_status_page
                         .set_description(Some(&gettext!(
                             "The code was sent to {}.",
                             data.recovery_email_address_pattern
@@ -340,48 +332,44 @@ impl Login {
                             "One way to continue using your account is to delete your account and then recreate it"
                         )
                 } else {
-                    self_.password_recovery_status_page.set_description(None);
+                    imp.password_recovery_status_page.set_description(None);
                     gettext(
                         "Since you have not provided a recovery email address, the only way to continue using your account is to delete your account and then recreate it"
                     )
                 };
 
-                self_.account_deletion_description_label.set_label(&format!(
+                imp.account_deletion_description_label.set_label(&format!(
                     "{}. {}",
                     account_deletion_preface,
                     gettext(
                         "Please note, you will lose all your chats and messages, along with any media and files you shared!"
                     )
                 ));
-                self_
-                    .password_recovery_code_send_box
+                imp.password_recovery_code_send_box
                     .set_visible(data.has_recovery_email_address);
-                self_
-                    .has_recovery_email_address
+                imp.has_recovery_email_address
                     .set(data.has_recovery_email_address);
 
                 // When we first enter WaitPassword, we assume that the mail with the recovery
                 // code hasn't been sent, yet.
-                self_.password_recovery_expired.set(true);
+                imp.password_recovery_expired.set(true);
 
                 self.navigate_to_page(
                     "password-page",
-                    [&*self_.password_entry],
-                    Some(&self_.password_error_label),
-                    Some(&*self_.password_entry),
+                    [&*imp.password_entry],
+                    Some(&imp.password_error_label),
+                    Some(&*imp.password_entry),
                 );
             }
             AuthorizationState::Ready => {
                 self.disable_actions();
 
                 // Clear the qr code image save some potential memory.
-                self_
-                    .qr_code_image
-                    .set_paintable(None as Option<&gdk::Paintable>);
+                imp.qr_code_image.set_paintable(gdk::Paintable::NONE);
 
-                self_.session_manager.get().unwrap().add_logged_in_session(
-                    self_.client_id.get(),
-                    self_.database_info.take().unwrap(),
+                imp.session_manager.get().unwrap().add_logged_in_session(
+                    imp.client_id.get(),
+                    imp.database_info.take().unwrap(),
                     true,
                 );
             }
@@ -400,7 +388,7 @@ impl Login {
         I: IntoIterator<Item = &'a E>,
         W: IsA<gtk::Widget>,
     {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
         // Before transition to the page, be sure to reset the error label because it still might
         // contain an error message from the time when it was previously visited.
@@ -412,11 +400,11 @@ impl Login {
             .into_iter()
             .for_each(|editable| editable.set_text(""));
 
-        self_.content.set_visible_child_name(page_name);
+        imp.content.set_visible_child_name(page_name);
 
         // After we've transitioned to a new login page, let's be sure that we set the stack here
         // to an ancestor widget of the login leaflet because we might still be in the empty page.
-        self_.main_stack.set_visible_child_name("login-flow-page");
+        imp.main_stack.set_visible_child_name("login-flow-page");
 
         self.unfreeze();
         if let Some(widget_to_focus) = widget_to_focus {
@@ -425,11 +413,11 @@ impl Login {
     }
 
     fn update_actions_for_visible_page(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        let visible_page = self_.content.visible_child_name().unwrap();
+        let visible_page = imp.content.visible_child_name().unwrap();
 
-        let is_previous_valid = self_
+        let is_previous_valid = imp
             .session_manager
             .get()
             .map(|session_manager| session_manager.sessions().n_items() > 0)
@@ -439,8 +427,8 @@ impl Login {
         let is_next_valid = visible_page.as_str() != "password-forgot-page"
             && visible_page.as_str() != "qr-code-page";
 
-        self_.previous_button.set_visible(is_previous_valid);
-        self_.next_button.set_visible(is_next_valid);
+        imp.previous_button.set_visible(is_previous_valid);
+        imp.next_button.set_visible(is_next_valid);
 
         self.action_set_enabled("login.previous", is_previous_valid);
         self.action_set_enabled("login.next", is_next_valid);
@@ -451,7 +439,7 @@ impl Login {
         );
         self.action_set_enabled(
             "login.recover-password",
-            visible_page == "password-forgot-page" && self_.has_recovery_email_address.get(),
+            visible_page == "password-forgot-page" && imp.has_recovery_email_address.get(),
         );
         self.action_set_enabled(
             "login.show-no-email-access-dialog",
@@ -465,26 +453,22 @@ impl Login {
     }
 
     fn previous(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        match self_.content.visible_child_name().unwrap().as_str() {
+        match imp.content.visible_child_name().unwrap().as_str() {
             "phone-number-page" => {
                 self.freeze_with_previous_spinner();
 
                 // Logout the client when login is aborted.
-                log_out(self_.client_id.get());
-                self_
-                    .session_manager
-                    .get()
-                    .unwrap()
-                    .switch_to_sessions(None);
+                log_out(imp.client_id.get());
+                imp.session_manager.get().unwrap().switch_to_sessions(None);
             }
             "qr-code-page" => self.leave_qr_code_page(),
             "password-forgot-page" => self.navigate_to_page::<gtk::Editable, _, _>(
                 "password-page",
                 [],
                 None,
-                Some(&*self_.password_entry),
+                Some(&*imp.password_entry),
             ),
             "password-recovery-page" => self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
                 "password-forgot-page",
@@ -496,7 +480,7 @@ impl Login {
                 "phone-number-page",
                 [],
                 None,
-                Some(&*self_.phone_number_entry),
+                Some(&*imp.phone_number_entry),
             ),
         }
     }
@@ -504,14 +488,14 @@ impl Login {
     fn next(&self) {
         self.freeze_with_next_spinner();
 
-        let self_ = imp::Login::from_instance(self);
-        let visible_page = self_.content.visible_child_name().unwrap();
+        let imp = self.imp();
+        let visible_page = imp.content.visible_child_name().unwrap();
 
         match visible_page.as_str() {
             "phone-number-page" => self.send_phone_number(),
             "code-page" => self.send_code(),
             "registration-page" => {
-                if self_.show_tos_popup.get() {
+                if imp.show_tos_popup.get() {
                     // Force the ToS dialog for the user before he can proceed
                     self.show_tos_dialog(true);
                 } else {
@@ -528,12 +512,11 @@ impl Login {
     fn request_qr_code(&self) {
         self.freeze();
 
-        let self_ = imp::Login::from_instance(self);
-        self_
-            .phone_number_use_qr_code_stack
+        let imp = self.imp();
+        imp.phone_number_use_qr_code_stack
             .set_visible_child_name("spinner");
 
-        let other_user_ids = self_
+        let other_user_ids = imp
             .session_manager
             .get()
             .unwrap()
@@ -541,7 +524,7 @@ impl Login {
             .into_iter()
             .map(|user| user.id())
             .collect();
-        let client_id = self_.client_id.get();
+        let client_id = imp.client_id.get();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -551,11 +534,11 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
+                let imp = obj.imp();
                 obj.handle_user_result(
                     result,
-                    &self_.welcome_page_error_label,
-                    &*self_.phone_number_entry
+                    &imp.welcome_page_error_label,
+                    &*imp.phone_number_entry
                 );
             }),
         );
@@ -564,23 +547,20 @@ impl Login {
     fn leave_qr_code_page(&self) {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
-        let self_ = imp::Login::from_instance(self);
-        let use_test_dc = self_.database_info.borrow().as_ref().unwrap().use_test_dc;
+        let imp = self.imp();
+        let use_test_dc = imp.database_info.borrow().as_ref().unwrap().use_test_dc;
 
-        log_out(self_.client_id.get());
-        self_
-            .session_manager
+        log_out(imp.client_id.get());
+        imp.session_manager
             .get()
             .unwrap()
             .add_new_session(use_test_dc);
     }
 
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
-        let self_ = imp::Login::from_instance(self);
-
         let builder = gtk::MessageDialog::builder()
             .use_markup(true)
-            .secondary_text(&*self_.tos_text.borrow())
+            .secondary_text(&*self.imp().tos_text.borrow())
             .modal(true)
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap());
 
@@ -622,35 +602,31 @@ impl Login {
 
     fn freeze(&self) {
         self.disable_actions();
-        imp::Login::from_instance(self).content.set_sensitive(false);
+        self.imp().content.set_sensitive(false);
     }
 
     fn freeze_with_previous_spinner(&self) {
         self.freeze();
 
-        let self_ = imp::Login::from_instance(self);
-        self_.previous_stack.set_visible_child_name("spinner");
+        self.imp().previous_stack.set_visible_child_name("spinner");
     }
 
     fn freeze_with_next_spinner(&self) {
         self.freeze();
 
-        let self_ = imp::Login::from_instance(self);
-        self_
-            .next_stack
-            .set_visible_child(&self_.next_spinner.get());
+        let imp = self.imp();
+        imp.next_stack.set_visible_child(&imp.next_spinner.get());
     }
 
     fn unfreeze(&self) {
-        let self_ = imp::Login::from_instance(self);
-        self_.previous_stack.set_visible_child_name("text");
-        self_.next_stack.set_visible_child(&self_.next_label.get());
-        self_.content.set_sensitive(true);
+        let imp = self.imp();
+        imp.previous_stack.set_visible_child_name("text");
+        imp.next_stack.set_visible_child(&imp.next_label.get());
+        imp.content.set_sensitive(true);
     }
 
     fn send_encryption_key(&self) {
-        let self_ = imp::Login::from_instance(self);
-        let client_id = self_.client_id.get();
+        let client_id = self.imp().client_id.get();
         let encryption_key = "".to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -663,7 +639,7 @@ impl Login {
             clone!(@weak self as obj => move |result| async move {
                 if let Err(err) = result {
                     show_error_label(
-                        &imp::Login::from_instance(&obj).welcome_page_error_label,
+                        &obj.imp().welcome_page_error_label,
                         &err.message
                     )
                 }
@@ -672,12 +648,12 @@ impl Login {
     }
 
     fn send_phone_number(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        reset_error_label(&self_.welcome_page_error_label);
+        reset_error_label(&imp.welcome_page_error_label);
 
-        let client_id = self_.client_id.get();
-        let phone_number = self_.phone_number_entry.text();
+        let client_id = imp.client_id.get();
+        let phone_number = imp.phone_number_entry.text();
 
         // Check if we are already have an account logged in with that phone_number.
         let phone_number_digits = phone_number
@@ -685,19 +661,18 @@ impl Login {
             .filter(|c| c.is_digit(10))
             .collect::<String>();
 
-        let session_manager = self_.session_manager.get().unwrap();
+        let session_manager = imp.session_manager.get().unwrap();
 
         match session_manager.session_index_for(
-            self_.database_info.borrow().as_ref().unwrap().use_test_dc,
+            imp.database_info.borrow().as_ref().unwrap().use_test_dc,
             &phone_number_digits,
         ) {
             Some(pos) => {
                 // We just figured out that we already have an open session for that account.
                 // Therefore we logout the client, with which we wanted to log in and delete its
                 // just created database directory.
-                log_out(self_.client_id.get());
-                self_
-                    .session_manager
+                log_out(imp.client_id.get());
+                imp.session_manager
                     .get()
                     .unwrap()
                     .switch_to_sessions(Some(pos));
@@ -712,11 +687,11 @@ impl Login {
                             .await
                     },
                     clone!(@weak self as obj => move |result| async move {
-                        let self_ = imp::Login::from_instance(&obj);
+                        let imp = obj.imp();
                         obj.handle_user_result(
                             result,
-                            &self_.welcome_page_error_label,
-                            &*self_.phone_number_entry
+                            &imp.welcome_page_error_label,
+                            &*imp.phone_number_entry
                         );
                     }),
                 );
@@ -725,12 +700,12 @@ impl Login {
     }
 
     fn send_code(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        reset_error_label(&self_.code_error_label);
+        reset_error_label(&imp.code_error_label);
 
-        let client_id = self_.client_id.get();
-        let code = self_.code_entry.text().to_string();
+        let client_id = imp.client_id.get();
+        let code = imp.code_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -740,20 +715,20 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
-                obj.handle_user_result(result, &self_.code_error_label, &*self_.code_entry);
+                let imp = obj.imp();
+                obj.handle_user_result(result, &imp.code_error_label, &*imp.code_entry);
             }),
         );
     }
 
     fn send_registration(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        reset_error_label(&self_.registration_error_label);
+        reset_error_label(&imp.registration_error_label);
 
-        let client_id = self_.client_id.get();
-        let first_name = self_.registration_first_name_entry.text().to_string();
-        let last_name = self_.registration_last_name_entry.text().to_string();
+        let client_id = imp.client_id.get();
+        let first_name = imp.registration_first_name_entry.text().to_string();
+        let last_name = imp.registration_last_name_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -764,23 +739,23 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
+                let imp = obj.imp();
                 obj.handle_user_result(
                     result,
-                    &self_.registration_error_label,
-                    &*self_.registration_first_name_entry
+                    &imp.registration_error_label,
+                    &*imp.registration_first_name_entry
                 );
             }),
         );
     }
 
     fn send_password(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        reset_error_label(&self_.password_error_label);
+        reset_error_label(&imp.password_error_label);
 
-        let client_id = self_.client_id.get();
-        let password = self_.password_entry.text().to_string();
+        let client_id = imp.client_id.get();
+        let password = imp.password_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -790,27 +765,26 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
+                let imp = obj.imp();
                 obj.handle_user_result(
                     result,
-                    &self_.password_error_label,
-                    &*self_.password_entry
+                    &imp.password_error_label,
+                    &*imp.password_entry
                 );
             }),
         );
     }
 
     fn recover_password(&self) {
-        let self_ = imp::Login::from_instance(self);
+        let imp = self.imp();
 
-        if self_.password_recovery_expired.get() {
+        if imp.password_recovery_expired.get() {
             // We need to tell tdlib to send us the recovery code via mail (again).
             self.freeze();
-            self_
-                .password_send_code_stack
+            imp.password_send_code_stack
                 .set_visible_child_name("spinner");
 
-            let client_id = imp::Login::from_instance(self).client_id.get();
+            let client_id = imp.client_id.get();
             do_async(
                 glib::PRIORITY_DEFAULT_IDLE,
                 async move {
@@ -819,22 +793,22 @@ impl Login {
                         .await
                 },
                 clone!(@weak self as obj => move |result| async move {
-                    let self_ = imp::Login::from_instance(&obj);
+                    let imp = obj.imp();
 
                     // Remove the spinner from the button.
-                    self_
+                    imp
                         .password_send_code_stack
                         .set_visible_child_name("image");
 
                     if result.is_ok() {
                         // Save that we do not need to resend the mail when we enter the recovery
                         // page the next time.
-                        self_.password_recovery_expired.set(false);
+                        imp.password_recovery_expired.set(false);
                         obj.navigate_to_page(
                             "password-recovery-page",
-                            [&*self_.password_recovery_code_entry],
-                            Some(&self_.password_recovery_error_label),
-                            Some(&*self_.password_recovery_code_entry),
+                            [&*imp.password_recovery_code_entry],
+                            Some(&imp.password_recovery_error_label),
+                            Some(&*imp.password_recovery_code_entry),
                         );
                     } else {
                         obj.update_actions_for_visible_page();
@@ -848,9 +822,9 @@ impl Login {
             // The code has been send already via mail.
             self.navigate_to_page(
                 "password-recovery-page",
-                [&*self_.password_recovery_code_entry],
-                Some(&self_.password_recovery_error_label),
-                Some(&*self_.password_recovery_code_entry),
+                [&*imp.password_recovery_code_entry],
+                Some(&imp.password_recovery_error_label),
+                Some(&*imp.password_recovery_code_entry),
             );
         }
     }
@@ -880,7 +854,7 @@ impl Login {
 
             if matches!(response_id, gtk::ResponseType::Accept) {
                 obj.freeze();
-                let client_id = imp::Login::from_instance(&obj).client_id.get();
+                let client_id = obj.imp().client_id.get();
                 do_async(
                     glib::PRIORITY_DEFAULT_IDLE,
                     async move {
@@ -901,7 +875,7 @@ impl Login {
                     }),
                 );
             } else {
-                imp::Login::from_instance(&obj)
+                obj.imp()
                     .password_entry
                     .grab_focus();
             }
@@ -909,9 +883,9 @@ impl Login {
     }
 
     fn send_password_recovery_code(&self) {
-        let self_ = imp::Login::from_instance(self);
-        let client_id = self_.client_id.get();
-        let recovery_code = self_.password_recovery_code_entry.text().to_string();
+        let imp = self.imp();
+        let client_id = imp.client_id.get();
+        let recovery_code = imp.password_recovery_code_entry.text().to_string();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             async move {
@@ -921,24 +895,24 @@ impl Login {
                     .await
             },
             clone!(@weak self as obj => move |result| async move {
-                let self_ = imp::Login::from_instance(&obj);
+                let imp = obj.imp();
 
                 if let Err(err) = result {
                     if err.message == "PASSWORD_RECOVERY_EXPIRED" {
                         // The same procedure is used as for the official client (as far as I
                         // understood from the code). Alternatively, we could send the user a new
                         // code, indicate that and stay on the recovery page.
-                        self_.password_recovery_expired.set(true);
+                        imp.password_recovery_expired.set(true);
                         obj.navigate_to_page::<gtk::Editable, _, _>(
                             "password-page", [],
                             None,
-                            Some(&*self_.password_entry)
+                            Some(&*imp.password_entry)
                         );
                     } else {
                         obj.handle_user_error(
                             &err,
-                            &self_.password_recovery_error_label,
-                            &*self_.password_recovery_code_entry
+                            &imp.password_recovery_error_label,
+                            &*imp.password_recovery_code_entry
                         );
                     }
                 }
@@ -970,7 +944,7 @@ impl Login {
                     None,
                 );
             } else {
-                imp::Login::from_instance(&obj)
+                obj.imp()
                     .password_recovery_code_entry
                     .grab_focus();
             }

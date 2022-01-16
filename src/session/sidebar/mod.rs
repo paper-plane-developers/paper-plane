@@ -68,21 +68,21 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "compact",
                         "Compact",
                         "Wheter a compact view is used or not",
                         false,
                         glib::ParamFlags::READWRITE,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "selected-chat",
                         "Selected Chat",
                         "The selected chat in this sidebar",
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",
@@ -162,19 +162,19 @@ impl Sidebar {
     }
 
     pub fn begin_chats_search(&self) {
-        let self_ = imp::Sidebar::from_instance(self);
-        self_.search_bar.set_search_mode(true);
-        self_.search_entry.grab_focus();
+        let imp = self.imp();
+        imp.search_bar.set_search_mode(true);
+        imp.search_entry.grab_focus();
     }
 
     fn search(&self, query: String) {
-        let self_ = imp::Sidebar::from_instance(self);
-        self_.searched_chats.borrow_mut().clear();
-        self_.searched_users.borrow_mut().clear();
-        self_.already_searched_users.borrow_mut().clear();
+        let imp = self.imp();
+        imp.searched_chats.borrow_mut().clear();
+        imp.searched_users.borrow_mut().clear();
+        imp.already_searched_users.borrow_mut().clear();
 
         if query.is_empty() {
-            if let Some(filter) = self_.filter.borrow().as_ref() {
+            if let Some(filter) = imp.filter.borrow().as_ref() {
                 filter.changed(gtk::FilterChange::Different);
             }
         } else {
@@ -196,15 +196,15 @@ impl Sidebar {
                 },
                 clone!(@weak self as obj => move |result| async move {
                     if let Ok(enums::Chats::Chats(chats)) = result {
-                        let self_ = imp::Sidebar::from_instance(&obj);
+                        let imp = obj.imp();
 
-                        if let Some(filter) = self_.filter.borrow().as_ref() {
+                        if let Some(filter) = imp.filter.borrow().as_ref() {
                             let session = obj
                                 .session()
                                 .expect("The session needs to be set to be able to search");
                             let chat_list = session.chat_list();
 
-                            self_.already_searched_users.borrow_mut().extend(chats.chat_ids.iter()
+                            imp.already_searched_users.borrow_mut().extend(chats.chat_ids.iter()
                                 .map(|id| chat_list.get(*id))
                                 .filter_map(|chat| match chat.type_() {
                                     ChatType::Private(user) => Some(user.id()),
@@ -212,7 +212,7 @@ impl Sidebar {
                                 }
                             ));
 
-                            self_.searched_chats.borrow_mut().extend(chats.chat_ids);
+                            imp.searched_chats.borrow_mut().extend(chats.chat_ids);
                             filter.changed(gtk::FilterChange::Different);
                         }
                     }
@@ -231,10 +231,10 @@ impl Sidebar {
                 },
                 clone!(@weak self as obj => move |result| async move {
                     if let Ok(enums::Users::Users(users)) = result {
-                        let self_ = imp::Sidebar::from_instance(&obj);
+                        let imp = obj.imp();
 
-                        if let Some(filter) = self_.filter.borrow().as_ref() {
-                            self_.searched_users.borrow_mut().extend(users.user_ids);
+                        if let Some(filter) = imp.filter.borrow().as_ref() {
+                            imp.searched_users.borrow_mut().extend(users.user_ids);
                             filter.changed(gtk::FilterChange::Different);
                         }
                     }
@@ -244,8 +244,7 @@ impl Sidebar {
     }
 
     fn selected_chat(&self) -> Option<Chat> {
-        let self_ = imp::Sidebar::from_instance(self);
-        self_.selected_chat.borrow().clone()
+        self.imp().selected_chat.borrow().clone()
     }
 
     fn set_selected_chat(&self, selected_chat: Option<Chat>) {
@@ -256,17 +255,16 @@ impl Sidebar {
         // TODO: change the selection in the sidebar if it's
         // different from the current selection
 
-        let self_ = imp::Sidebar::from_instance(self);
+        let imp = self.imp();
         if selected_chat.is_none() {
-            self_
-                .selection
+            imp.selection
                 .borrow()
                 .as_ref()
                 .unwrap()
                 .set_selected(gtk::INVALID_LIST_POSITION);
         }
 
-        self_.selected_chat.replace(selected_chat);
+        imp.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
     }
 
@@ -275,7 +273,7 @@ impl Sidebar {
             return;
         }
 
-        let self_ = imp::Sidebar::from_instance(self);
+        let imp = self.imp();
 
         if let Some(ref session) = session {
             // Merge ChatList and UserList into a single list model
@@ -286,17 +284,17 @@ impl Sidebar {
 
             let filter = gtk::CustomFilter::new(
                 clone!(@weak self as obj => @default-return false, move |item| {
-                    let self_ = imp::Sidebar::from_instance(&obj);
-                    let is_searching = !self_.search_entry.text().is_empty();
+                    let imp = obj.imp();
+                    let is_searching = !imp.search_entry.text().is_empty();
 
                     if is_searching {
                         if let Some(chat) = item.downcast_ref::<Chat>() {
-                            self_.searched_chats.borrow().contains(&chat.id())
+                            imp.searched_chats.borrow().contains(&chat.id())
                         } else if let Some(user) = item.downcast_ref::<User>() {
                             // Show searched users, but only the ones that haven't
                             // already been searched by the chats search
-                            !self_.already_searched_users.borrow().contains(&user.id())
-                                && self_.searched_users.borrow().contains(&user.id())
+                            !imp.already_searched_users.borrow().contains(&user.id())
+                                && imp.searched_users.borrow().contains(&user.id())
                         } else {
                             false
                         }
@@ -370,22 +368,21 @@ impl Sidebar {
                 }),
             );
 
-            self_.list_view.set_model(Some(&selection));
-            self_.filter.replace(Some(filter));
-            self_.selection.replace(Some(selection));
+            imp.list_view.set_model(Some(&selection));
+            imp.filter.replace(Some(filter));
+            imp.selection.replace(Some(selection));
         }
 
-        self_.session.replace(session);
+        imp.session.replace(session);
         self.notify("session");
     }
 
     pub fn session(&self) -> Option<Session> {
-        let self_ = imp::Sidebar::from_instance(self);
-        self_.session.borrow().to_owned()
+        self.imp().session.borrow().to_owned()
     }
 
     pub fn set_sessions(&self, sessions: &gtk::SelectionModel, this_session: &Session) {
-        imp::Sidebar::from_instance(self)
+        self.imp()
             .session_switcher
             .set_sessions(sessions, this_session);
     }

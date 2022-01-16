@@ -1,5 +1,6 @@
 use super::Sidebar;
 
+use glib::closure;
 use gtk::{glib, gsk, prelude::*, subclass::prelude::*, CompositeTemplate};
 use tdgrand::enums::{UserStatus, UserType};
 
@@ -50,14 +51,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "item",
                         "Item",
                         "The item of this avatar",
                         glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "is-online",
                         "Is Online",
                         "Whether this SidebarAvatar's user is online",
@@ -109,7 +110,7 @@ mod imp {
 
             let child_snapshot = gtk::Snapshot::new();
             widget.snapshot_child(&*self.avatar, &child_snapshot);
-            let child_node = child_snapshot.free_to_node().unwrap();
+            let child_node = child_snapshot.to_node();
 
             widget.ensure_mask_shader();
 
@@ -119,10 +120,7 @@ mod imp {
                 snapshot.push_gl_shader(
                     compiled_mask_shader,
                     &child_node.bounds(),
-                    gsk::ShaderArgsBuilder::new(compiled_mask_shader, None)
-                        .to_args()
-                        .as_ref()
-                        .unwrap(),
+                    &gsk::ShaderArgsBuilder::new(compiled_mask_shader, None).to_args(),
                 );
             }
 
@@ -175,36 +173,32 @@ impl Avatar {
             .session()
             .unwrap();
 
-        let me_expression =
-            gtk::PropertyExpression::new(Session::static_type(), gtk::NONE_EXPRESSION, "me");
-
         let user_expression = gtk::ConstantExpression::new(user);
-        let interlocutor_status_expression = User::status_expression(&user_expression);
+        let interlocutor_status_expression = user_expression.chain_property::<User>("status");
+        let me_expression = Session::this_expression("me");
 
         let user_id = user.id();
-        let interlocutor_is_online_expression = gtk::ClosureExpression::new(
-            move |args| {
-                let maybe_me = args[1].get::<User>();
-                maybe_me
-                    .map(|me| {
-                        let user_status = args[2].get::<BoxedUserStatus>().unwrap().0;
-                        matches!(user_status, UserStatus::Online(_)) && me.id() != user_id
-                    })
-                    .unwrap_or_default()
-            },
-            &[me_expression.upcast(), interlocutor_status_expression],
-        );
+        // TODO: Change `me` to a non-Option value when
+        // https://github.com/melix99/telegrand/pull/208 is merged
+        let is_online_binding = gtk::ClosureExpression::new::<bool, _, _>(
+            &[
+                me_expression.upcast(),
+                interlocutor_status_expression.upcast(),
+            ],
+            closure!(
+                |_: Session, me: Option<User>, interlocutor_status: BoxedUserStatus| {
+                    matches!(interlocutor_status.0, UserStatus::Online(_))
+                        && me.map(|me| me.id()).unwrap_or_default() != user_id
+                }
+            ),
+        )
+        .bind(self, "is-online", Some(&session));
 
-        let is_online_binding =
-            interlocutor_is_online_expression.bind(self, "is-online", Some(&session));
-
-        let self_ = imp::Avatar::from_instance(self);
-        self_.binding.replace(Some(is_online_binding));
+        self.imp().binding.replace(Some(is_online_binding));
     }
 
     pub fn item(&self) -> Option<glib::Object> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.item.borrow().to_owned()
+        self.imp().item.borrow().to_owned()
     }
 
     pub fn set_item(&self, item: Option<glib::Object>) {
@@ -212,22 +206,22 @@ impl Avatar {
             return;
         }
 
-        let self_ = imp::Avatar::from_instance(self);
+        let imp = self.imp();
 
-        if let Some(binding) = self_.binding.take() {
+        if let Some(binding) = imp.binding.take() {
             binding.unwatch();
         }
 
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                self_.avatar.set_item(Some(chat.avatar().to_owned()));
+                imp.avatar.set_item(Some(chat.avatar().to_owned()));
 
                 match chat.type_().user() {
                     Some(user) => self.setup_is_online_binding(user),
                     None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
-                self_.avatar.set_item(Some(user.avatar().to_owned()));
+                imp.avatar.set_item(Some(user.avatar().to_owned()));
 
                 self.setup_is_online_binding(user);
             } else {
@@ -235,39 +229,34 @@ impl Avatar {
             }
         }
 
-        self_.item.replace(item);
+        imp.item.replace(item);
         self.notify("item");
     }
 
     pub fn is_online(&self) -> bool {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.is_online.get()
+        self.imp().is_online.get()
     }
 
     pub fn set_is_online(&self, is_online: bool) {
         if self.is_online() == is_online {
             return;
         }
-        let self_ = imp::Avatar::from_instance(self);
-        self_.is_online.set(is_online);
-
+        self.imp().is_online.set(is_online);
         self.notify("is-online");
     }
 
     // Inspired by
     // https://gitlab.gnome.org/GNOME/libadwaita/-/blob/1171616701bf12a1c56bbad3f0e8821208d87029/src/adw-indicator-bin.c
     fn ensure_mask_shader(&self) {
-        let self_ = imp::Avatar::from_instance(self);
+        let imp = self.imp();
 
-        if self_.mask_shader.borrow().is_some() {
+        if imp.mask_shader.borrow().is_some() {
             // We've already tried to compile the shader before.
             return;
         }
 
-        let native = self.native().unwrap();
-        let renderer = native.renderer().unwrap();
-
         let shader = gsk::GLShader::from_resource("/org/gnome/Adwaita/glsl/mask.glsl");
+        let renderer = self.native().unwrap().renderer();
         let compiled_shader = match shader.compile(&renderer) {
             Err(e) => {
                 // If shaders aren't supported, the error doesn't matter and we just silently fall
@@ -278,6 +267,6 @@ impl Avatar {
             Ok(_) => Some(shader),
         };
 
-        self_.mask_shader.replace(Some(compiled_shader));
+        imp.mask_shader.replace(Some(compiled_shader));
     }
 }

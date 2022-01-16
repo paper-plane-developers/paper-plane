@@ -18,7 +18,6 @@ mod imp {
     impl ObjectSubclass for BasicGroupList {
         const NAME: &'static str = "BasicGroupList";
         type Type = super::BasicGroupList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
@@ -63,8 +62,7 @@ impl BasicGroupList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `BasicGroup` exists in the list.
     pub fn get(&self, id: i64) -> BasicGroup {
-        let self_ = imp::BasicGroupList::from_instance(self);
-        self_
+        self.imp()
             .list
             .borrow()
             .get(&id)
@@ -74,8 +72,7 @@ impl BasicGroupList {
 
     pub fn handle_update(&self, update: &Update) {
         if let Update::BasicGroup(data) = update {
-            let self_ = imp::BasicGroupList::from_instance(self);
-            let mut list = self_.list.borrow_mut();
+            let mut list = self.imp().list.borrow_mut();
 
             match list.entry(data.basic_group.id) {
                 Entry::Occupied(entry) => entry.get().handle_update(update),

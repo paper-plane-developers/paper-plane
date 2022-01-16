@@ -12,7 +12,7 @@ pub use self::sticker::MessageSticker;
 use self::sticker_paintable::StickerPaintable;
 pub use self::text::MessageText;
 
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::{gdk, glib, prelude::*, subclass::prelude::*};
 
 use crate::session::chat::{Message, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
@@ -46,14 +46,14 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "message",
                         "Message",
                         "The message represented by this row",
                         glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "content",
                         "Content",
                         "The content widget",
@@ -163,33 +163,27 @@ mod imp {
 
             if let Some(avatar) = self.avatar.borrow().as_ref() {
                 let (_, natural_size) = avatar.preferred_size();
-                let allocation = gtk::Allocation {
-                    x: 0,
-                    y: height - natural_size.height,
-                    width: natural_size.width,
-                    height: natural_size.height,
-                };
-
+                let allocation = gdk::Rectangle::new(
+                    0,
+                    height - natural_size.height(),
+                    natural_size.width(),
+                    natural_size.height(),
+                );
                 avatar.size_allocate(&allocation, -1);
 
-                remaining_width -= natural_size.width + SPACING;
+                remaining_width -= natural_size.width() + SPACING;
             }
 
             if let Some(content) = self.content.borrow().as_ref() {
                 let (_, natural_size) = content.preferred_size();
-                let actual_width = remaining_width.min(natural_size.width);
+                let actual_width = remaining_width.min(natural_size.width());
                 let x = if self.is_outgoing.get() {
                     width - actual_width
                 } else {
                     width - remaining_width
                 };
 
-                let allocation = gtk::Allocation {
-                    x,
-                    y: 0,
-                    width: actual_width,
-                    height,
-                };
+                let allocation = gdk::Rectangle::new(x, 0, actual_width, height);
                 content.size_allocate(&allocation, baseline);
             }
         }
@@ -209,8 +203,7 @@ pub trait MessageRowExt: IsA<MessageRow> {
     fn new(message: &glib::Object) -> Self;
 
     fn message(&self) -> Option<glib::Object> {
-        let self_ = imp::MessageRow::from_instance(self.upcast_ref());
-        self_.message.borrow().to_owned()
+        self.upcast_ref().imp().message.borrow().to_owned()
     }
 
     fn set_message(&self, message: Option<glib::Object>) {
@@ -218,10 +211,10 @@ pub trait MessageRowExt: IsA<MessageRow> {
             return;
         }
 
-        let self_ = imp::MessageRow::from_instance(self.upcast_ref());
+        let imp = self.upcast_ref().imp();
         if let Some(ref message) = message {
             if let Some(message) = message.downcast_ref::<Message>() {
-                self_.is_outgoing.set(message.is_outgoing());
+                imp.is_outgoing.set(message.is_outgoing());
 
                 let show_avatar = if !message.is_outgoing() {
                     match message.chat().type_() {
@@ -238,30 +231,30 @@ pub trait MessageRowExt: IsA<MessageRow> {
                         MessageSender::Chat(chat) => chat.avatar().clone(),
                     };
 
-                    if self_.avatar.borrow().is_none() {
+                    if imp.avatar.borrow().is_none() {
                         let avatar = Avatar::new();
                         avatar.set_size(AVATAR_SIZE);
                         avatar.set_item(Some(avatar_item));
                         avatar.set_parent(self.upcast_ref());
-                        self_.avatar.replace(Some(avatar));
-                    } else if let Some(avatar) = self_.avatar.borrow().as_ref() {
+                        imp.avatar.replace(Some(avatar));
+                    } else if let Some(avatar) = imp.avatar.borrow().as_ref() {
                         avatar.set_item(Some(avatar_item));
                     }
                 } else {
-                    if let Some(avatar) = self_.avatar.borrow().as_ref() {
+                    if let Some(avatar) = imp.avatar.borrow().as_ref() {
                         avatar.unparent();
                     }
-                    self_.avatar.replace(None);
+                    imp.avatar.replace(None);
                 }
             } else if message.downcast_ref::<SponsoredMessage>().is_some() {
-                self_.is_outgoing.set(false);
+                imp.is_outgoing.set(false);
             } else {
                 unreachable!("Unexpected message type: {:?}", message);
             }
         }
 
-        if let Some(content) = self_.content.borrow().as_ref() {
-            if self_.is_outgoing.get() {
+        if let Some(content) = imp.content.borrow().as_ref() {
+            if imp.is_outgoing.get() {
                 content.set_margin_start(AVATAR_SIZE + SPACING);
                 content.set_margin_end(0);
                 content.add_css_class("outgoing");
@@ -272,7 +265,7 @@ pub trait MessageRowExt: IsA<MessageRow> {
             }
         }
 
-        self_.message.replace(message);
+        imp.message.replace(message);
         self.notify("message");
     }
 
@@ -284,8 +277,7 @@ pub trait MessageRowExt: IsA<MessageRow> {
     }
 
     fn content(&self) -> Option<gtk::Widget> {
-        let self_ = imp::MessageRow::from_instance(self.upcast_ref());
-        self_.content.borrow().to_owned()
+        self.upcast_ref().imp().content.borrow().to_owned()
     }
 
     fn set_content(&self, content: Option<gtk::Widget>) {
@@ -293,9 +285,9 @@ pub trait MessageRowExt: IsA<MessageRow> {
             return;
         }
 
-        let self_ = imp::MessageRow::from_instance(self.upcast_ref());
+        let imp = self.upcast_ref().imp();
 
-        if let Some(content) = self_.content.borrow().as_ref() {
+        if let Some(content) = imp.content.borrow().as_ref() {
             content.unparent();
         }
 
@@ -303,7 +295,7 @@ pub trait MessageRowExt: IsA<MessageRow> {
             content.set_parent(self.upcast_ref());
         }
 
-        self_.content.replace(content);
+        imp.content.replace(content);
         self.notify("content");
     }
 }

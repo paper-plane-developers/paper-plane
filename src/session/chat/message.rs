@@ -5,8 +5,8 @@ use tdgrand::types::Message as TelegramMessage;
 use crate::session::chat::BoxedMessageContent;
 use crate::session::{Chat, User};
 
-#[derive(Clone, Debug, glib::GBoxed)]
-#[gboxed(type_name = "MessageSender")]
+#[derive(Clone, Debug, glib::Boxed)]
+#[boxed_type(name = "MessageSender")]
 pub enum MessageSender {
     User(User),
     Chat(Chat),
@@ -40,14 +40,13 @@ mod imp {
     impl ObjectSubclass for Message {
         const NAME: &'static str = "ChatMessage";
         type Type = super::Message;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for Message {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_int64(
+                    glib::ParamSpecInt64::new(
                         "id",
                         "Id",
                         "The id of this message",
@@ -56,21 +55,21 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "sender",
                         "Sender",
                         "The sender of this message",
                         MessageSender::static_type(),
                         glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "is-outgoing",
                         "Is Outgoing",
                         "Whether this message is outgoing or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_int(
+                    glib::ParamSpecInt::new(
                         "date",
                         "Date",
                         "The point in time when this message was sent",
@@ -79,14 +78,14 @@ mod imp {
                         0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
-                    glib::ParamSpec::new_boxed(
+                    glib::ParamSpecBoxed::new(
                         "content",
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "chat",
                         "Chat",
                         "The chat relative to this message",
@@ -173,32 +172,28 @@ impl Message {
     }
 
     pub fn id(&self) -> i64 {
-        let self_ = imp::Message::from_instance(self);
-        self_.id.get()
+        self.imp().id.get()
     }
 
     pub fn sender(&self) -> &MessageSender {
-        let self_ = imp::Message::from_instance(self);
-        self_.sender.get().unwrap()
+        self.imp().sender.get().unwrap()
     }
 
     pub fn is_outgoing(&self) -> bool {
-        let self_ = imp::Message::from_instance(self);
-        self_.is_outgoing.get()
+        self.imp().is_outgoing.get()
     }
 
     pub fn date(&self) -> i32 {
-        let self_ = imp::Message::from_instance(self);
-        self_.date.get()
+        self.imp().date.get()
     }
 
     pub fn content(&self) -> BoxedMessageContent {
-        self.property("content").unwrap().get().unwrap()
+        self.property("content")
     }
 
     fn set_content(&self, content: BoxedMessageContent) {
         if self.content() != content {
-            self.set_property("content", &content).unwrap();
+            self.set_property("content", &content);
         }
     }
 
@@ -210,8 +205,7 @@ impl Message {
     }
 
     pub fn chat(&self) -> Chat {
-        let self_ = imp::Message::from_instance(self);
-        self_.chat.upgrade().unwrap()
+        self.imp().chat.upgrade().unwrap()
     }
 
     pub fn sender_name_expression(&self) -> gtk::Expression {
@@ -220,7 +214,9 @@ impl Message {
                 let user_expression = gtk::ConstantExpression::new(user);
                 User::full_name_expression(&user_expression)
             }
-            MessageSender::Chat(chat) => chat.title_expression(),
+            MessageSender::Chat(chat) => gtk::ConstantExpression::new(chat)
+                .chain_property::<Chat>("title")
+                .upcast(),
         }
     }
 }

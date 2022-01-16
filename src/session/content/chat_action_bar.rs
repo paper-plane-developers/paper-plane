@@ -55,7 +55,7 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpec::new_object(
+                vec![glib::ParamSpecObject::new(
                     "chat",
                     "Chat",
                     "The chat associated with this widget",
@@ -114,10 +114,10 @@ mod imp {
                 clone!(@weak obj => @default-return Inhibit(false), move |_, key, _, modifier| {
                     if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
                         && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
-                        && (key == gdk::keys::constants::Return
-                            || key == gdk::keys::constants::KP_Enter)
+                        && (key == gdk::Key::Return
+                            || key == gdk::Key::KP_Enter)
                     {
-                        obj.activate_action("chat-action-bar.send-text-message", None);
+                        obj.activate_action("chat-action-bar.send-text-message", None).unwrap();
                         Inhibit(true)
                     } else {
                         Inhibit(false)
@@ -152,8 +152,7 @@ impl ChatActionBar {
     }
 
     fn message_entry_text(&self) -> String {
-        let self_ = imp::ChatActionBar::from_instance(self);
-        let buffer = self_.message_entry.buffer();
+        let buffer = self.imp().message_entry.buffer();
         buffer
             .text(&buffer.start_iter(), &buffer.end_iter(), true)
             .trim()
@@ -191,9 +190,7 @@ impl ChatActionBar {
             });
 
             // Reset message entry
-            let self_ = imp::ChatActionBar::from_instance(self);
-            let buffer = self_.message_entry.buffer();
-            buffer.set_text("");
+            self.imp().message_entry.buffer().set_text("");
         }
     }
 
@@ -232,13 +229,12 @@ impl ChatActionBar {
             })
             .unwrap_or_default();
 
-        let self_ = imp::ChatActionBar::from_instance(self);
-        self_.message_entry.buffer().set_text(&*message_text);
+        self.imp().message_entry.buffer().set_text(&*message_text);
     }
 
     fn send_chat_action(&self, action: ChatAction) {
-        let self_ = imp::ChatActionBar::from_instance(self);
-        if self_.chat_action_in_cooldown.get() {
+        let imp = self.imp();
+        if imp.chat_action_in_cooldown.get() {
             return;
         }
 
@@ -247,7 +243,7 @@ impl ChatActionBar {
             let chat_id = chat.id();
 
             // Enable chat action cooldown right away
-            self_.chat_action_in_cooldown.set(true);
+            imp.chat_action_in_cooldown.set(true);
 
             // Send typing action
             do_async(
@@ -264,12 +260,10 @@ impl ChatActionBar {
                     // Otherwise just cancel it right away.
                     if result.is_ok() {
                         glib::timeout_add_seconds_local_once(5, clone!(@weak obj =>move || {
-                            let self_ = imp::ChatActionBar::from_instance(&obj);
-                            self_.chat_action_in_cooldown.set(false);
+                            obj.imp().chat_action_in_cooldown.set(false);
                         }));
                     } else {
-                        let self_ = imp::ChatActionBar::from_instance(&obj);
-                        self_.chat_action_in_cooldown.set(false);
+                        obj.imp().chat_action_in_cooldown.set(false);
                     }
                 }),
             );
@@ -277,8 +271,7 @@ impl ChatActionBar {
     }
 
     pub fn chat(&self) -> Option<Chat> {
-        let self_ = imp::ChatActionBar::from_instance(self);
-        self_.chat.borrow().clone()
+        self.imp().chat.borrow().clone()
     }
 
     fn set_chat(&self, chat: Option<Chat>) {
@@ -288,15 +281,15 @@ impl ChatActionBar {
 
         self.save_message_as_draft();
 
-        let self_ = imp::ChatActionBar::from_instance(self);
+        let imp = self.imp();
 
         if let Some(ref chat) = chat {
             self.load_draft_message(chat.draft_message());
 
-            self_.chat_action_in_cooldown.set(false);
+            imp.chat_action_in_cooldown.set(false);
         }
 
-        self_.chat.replace(chat);
+        imp.chat.replace(chat);
         self.notify("chat");
     }
 }

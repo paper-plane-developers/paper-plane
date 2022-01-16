@@ -18,7 +18,6 @@ mod imp {
     impl ObjectSubclass for SupergroupList {
         const NAME: &'static str = "SupergroupList";
         type Type = super::SupergroupList;
-        type ParentType = glib::Object;
         type Interfaces = (gio::ListModel,);
     }
 
@@ -63,8 +62,7 @@ impl SupergroupList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `Supergroup` exists in the list.
     pub fn get(&self, id: i64) -> Supergroup {
-        let self_ = imp::SupergroupList::from_instance(self);
-        self_
+        self.imp()
             .list
             .borrow()
             .get(&id)
@@ -74,8 +72,7 @@ impl SupergroupList {
 
     pub fn handle_update(&self, update: &Update) {
         if let Update::Supergroup(data) = update {
-            let self_ = imp::SupergroupList::from_instance(self);
-            let mut list = self_.list.borrow_mut();
+            let mut list = self.imp().list.borrow_mut();
 
             match list.entry(data.supergroup.id) {
                 Entry::Occupied(entry) => entry.get().handle_update(update),

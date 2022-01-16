@@ -165,11 +165,11 @@ mod imp {
                                 recently_used_sessions,
                                 database_infos
                             } => {
-                                let self_ = Self::from_instance(&obj);
+                                let imp = obj.imp();
 
-                                self_.recently_used_sessions.replace(recently_used_sessions);
+                                imp.recently_used_sessions.replace(recently_used_sessions);
 
-                                self_.initial_sessions_to_handle
+                                imp.initial_sessions_to_handle
                                     .set(database_infos.len() as u32);
 
                                 database_infos.into_iter().for_each(|database_info| {
@@ -199,15 +199,13 @@ impl SessionManager {
     /// Returns the active client id if it is logged in or `None` if it isn't logged in
     /// (e.g. during authorization).
     fn active_logged_in_client_id(&self) -> Option<i32> {
-        let self_ = imp::SessionManager::from_instance(self);
+        let imp = self.imp();
 
-        self_
-            .main_stack
+        imp.main_stack
             .visible_child()
-            .filter(|widget| widget == self_.sessions.get().upcast_ref::<gtk::Widget>())
+            .filter(|widget| widget == imp.sessions.get().upcast_ref::<gtk::Widget>())
             .map(|_| {
-                self_
-                    .sessions
+                imp.sessions
                     .visible_child()
                     .unwrap()
                     .downcast_ref::<Session>()
@@ -237,11 +235,7 @@ impl SessionManager {
 
     /// Returns the `ClientInfo` for the given client id.
     pub fn client_info(&self, client_id: i32) -> Option<ClientInfo> {
-        imp::SessionManager::from_instance(self)
-            .clients
-            .borrow()
-            .get(&client_id)
-            .cloned()
+        self.imp().clients.borrow().get(&client_id).cloned()
     }
 
     /// Returns the index of the logged in session that matches the passed parameters or `None` if
@@ -280,10 +274,10 @@ impl SessionManager {
     /// back to the last session. Secondly, it will be called with a position if the phone number
     /// entered already has a session.
     pub fn switch_to_sessions(&self, pos: Option<u32>) {
-        let self_ = imp::SessionManager::from_instance(self);
-        self_.main_stack.set_visible_child(&*self_.sessions);
+        let imp = self.imp();
+        imp.main_stack.set_visible_child(&*imp.sessions);
         if let Some(pos) = pos {
-            self_.sessions.pages().select_item(pos, true);
+            imp.sessions.pages().select_item(pos, true);
         }
     }
 
@@ -293,8 +287,7 @@ impl SessionManager {
     /// number page and to check the session' phone numbers in order to not have 2 sessions of the
     /// same account.
     pub fn sessions(&self) -> gtk::SelectionModel {
-        let self_ = imp::SessionManager::from_instance(self);
-        self_.sessions.pages()
+        self.imp().sessions.pages()
     }
 
     /// This functions will be invoked when the active client has changed.
@@ -304,20 +297,20 @@ impl SessionManager {
     ///
     /// This is invoked when the visible child of the main stack or the sessions stack changes.
     fn on_active_session_changed(&self) {
-        let self_ = imp::SessionManager::from_instance(self);
+        let imp = self.imp();
 
-        if let Some(session) = self_
+        if let Some(session) = imp
             .sessions
             .visible_child()
             .and_then(|widget| widget.downcast::<Session>().ok())
         {
             self.transfer_online_status(session.client_id());
 
-            if self_.main_stack.visible_child() == Some(self_.sessions.clone().upcast()) {
+            if imp.main_stack.visible_child() == Some(imp.sessions.clone().upcast()) {
                 let database_dir_base_name = session.database_info().0.directory_base_name.clone();
 
                 {
-                    let mut recently_used_sessions = self_.recently_used_sessions.borrow_mut();
+                    let mut recently_used_sessions = imp.recently_used_sessions.borrow_mut();
                     remove_from_vec(&mut *recently_used_sessions, &database_dir_base_name);
                     recently_used_sessions.push(database_dir_base_name);
                 }
@@ -338,7 +331,7 @@ impl SessionManager {
     /// Transfers the online status to this given new active client id. All other clients' online
     /// status are set to `false`.
     fn transfer_online_status(&self, active_client_id: i32) {
-        imp::SessionManager::from_instance(self)
+        self.imp()
             .clients
             .borrow()
             .values()
@@ -364,9 +357,7 @@ impl SessionManager {
     pub fn add_existing_session(&self, database_info: DatabaseInfo) {
         let client_id = tdgrand::create_client();
 
-        let self_ = imp::SessionManager::from_instance(self);
-
-        self_.clients.borrow_mut().insert(
+        self.imp().clients.borrow_mut().insert(
             client_id,
             ClientInfo::Auth {
                 // Important: Here, we basically say that we just want to wait for
@@ -390,14 +381,14 @@ impl SessionManager {
     /// This function initializes everything that's needed for adding a new session for the given
     /// client id.
     fn init_new_session(&self, client_id: i32, use_test_dc: bool) {
-        let self_ = imp::SessionManager::from_instance(self);
+        let imp = self.imp();
 
         let database_info = DatabaseInfo {
             directory_base_name: generate_database_dir_base_name(),
             use_test_dc,
         };
 
-        self_.clients.borrow_mut().insert(
+        imp.clients.borrow_mut().insert(
             client_id,
             ClientInfo::Auth {
                 // Important: Here, we state that this client will have to go through the login
@@ -407,9 +398,9 @@ impl SessionManager {
             },
         );
 
-        self_.login.login_client(client_id, database_info);
+        imp.login.login_client(client_id, database_info);
 
-        self_.main_stack.set_visible_child(&*self_.login);
+        imp.main_stack.set_visible_child(&*imp.login);
     }
 
     /// This function is called when a session is in the process of logging out.
@@ -418,14 +409,14 @@ impl SessionManager {
     /// logged in session. Furthermore, the recently used sessions order file will be overwritten.
     fn set_session_logging_out(&self, client_info: &ClientInfo) {
         if let ClientInfo::LoggedIn(ref session) = client_info {
-            let self_ = imp::SessionManager::from_instance(self);
+            let imp = self.imp();
 
-            self_.sessions.remove(session);
+            imp.sessions.remove(session);
 
             let database_dir_base_name = &session.database_info().0.directory_base_name;
 
             if !remove_from_vec(
-                &mut *self_.recently_used_sessions.borrow_mut(),
+                &mut *imp.recently_used_sessions.borrow_mut(),
                 database_dir_base_name,
             ) {
                 log::warn!(
@@ -434,10 +425,10 @@ impl SessionManager {
                 );
             }
 
-            if self_.sessions.pages().n_items() > 0 {
+            if imp.sessions.pages().n_items() > 0 {
                 // Important: This must not put as an expression in the `select_item` method
                 // but rather stay here as a statement. Else, a borrow error will occur.
-                let active_session_index = self_
+                let active_session_index = imp
                     .recently_used_sessions
                     .borrow()
                     .last()
@@ -464,10 +455,7 @@ impl SessionManager {
                     })
                     .unwrap_or_default();
 
-                self_
-                    .sessions
-                    .pages()
-                    .select_item(active_session_index, true);
+                imp.sessions.pages().select_item(active_session_index, true);
             } else {
                 // There are no sessions left. Thus go back to login.
                 self.add_new_session(APPLICATION_OPTS.get().unwrap().test_dc);
@@ -481,11 +469,9 @@ impl SessionManager {
     /// Function cleaning up, which is called by the application windows on closing. It sets all
     /// clients offline.
     pub fn close_clients(&self) {
-        let self_ = imp::SessionManager::from_instance(self);
-
         // Create a future to close the sessions.
         let close_sessions_future = futures::future::join_all(
-            self_
+            self.imp()
                 .clients
                 .borrow()
                 .iter()
@@ -511,15 +497,13 @@ impl SessionManager {
     }
 
     pub fn handle_update(&self, update: Update, client_id: i32) {
-        let self_ = imp::SessionManager::from_instance(self);
-
         match update {
             Update::AuthorizationState(update) => {
                 self.handle_authorization_state(update, client_id);
             }
             update => {
                 if let ClientInfo::LoggedIn(session) =
-                    self_.clients.borrow().get(&client_id).unwrap()
+                    self.imp().clients.borrow().get(&client_id).unwrap()
                 {
                     session.handle_update(update)
                 }
@@ -532,11 +516,11 @@ impl SessionManager {
     /// widget. Otherwise, if the client was already authorized from previous a application run,
     /// the session is created directly in this function.
     fn handle_authorization_state(&self, update: UpdateAuthorizationState, client_id: i32) {
-        let self_ = imp::SessionManager::from_instance(self);
+        let imp = self.imp();
 
         if let AuthorizationState::Closed = update.authorization_state {
             if let ClientInfo::LoggingOut(database_dir_base_name) =
-                self_.clients.borrow_mut().remove(&client_id).unwrap()
+                imp.clients.borrow_mut().remove(&client_id).unwrap()
             {
                 RUNTIME.spawn(async move {
                     if let Err(e) =
@@ -553,7 +537,7 @@ impl SessionManager {
 
         if let AuthorizationState::LoggingOut = update.authorization_state {
             self.set_session_logging_out(&client_info);
-            self_.clients.borrow_mut().insert(
+            imp.clients.borrow_mut().insert(
                 client_id,
                 ClientInfo::LoggingOut(client_info.database_dir_base_name().to_owned()),
             );
@@ -567,8 +551,7 @@ impl SessionManager {
         } = client_info
         {
             if !maybe_authorized {
-                self_
-                    .login
+                imp.login
                     .set_authorization_state(update.authorization_state);
             } else {
                 // Client doesn't need to authorize. So we can skip the login procedure.
@@ -599,7 +582,7 @@ impl SessionManager {
                         );
                     }
                     AuthorizationState::Ready => {
-                        let is_last_used = self_
+                        let is_last_used = imp
                             .recently_used_sessions
                             .borrow()
                             .iter()
@@ -613,13 +596,13 @@ impl SessionManager {
                     _ => {
                         // Our assumption that the database's session we found at application start
                         // would not need to authorize was wrong. So we handle it correctly.
-                        if self_.initial_sessions_to_handle.get() == 1
+                        if imp.initial_sessions_to_handle.get() == 1
                             && APPLICATION_OPTS.get().unwrap().test_dc == database_info.use_test_dc
                         {
                             // Handle it over to `login.rs`.
 
                             // Overwrite ClientInfo.
-                            self_.clients.borrow_mut().insert(
+                            imp.clients.borrow_mut().insert(
                                 client_id,
                                 ClientInfo::Auth {
                                     maybe_authorized: false,
@@ -627,10 +610,9 @@ impl SessionManager {
                                 },
                             );
 
-                            self_.login.login_client(client_id, database_info);
+                            imp.login.login_client(client_id, database_info);
 
-                            self_
-                                .login
+                            imp.login
                                 .set_authorization_state(update.authorization_state);
                         } else {
                             log_out(client_id);
@@ -643,12 +625,10 @@ impl SessionManager {
 
     /// Function that is used to overwrite the recently used sessions file.
     fn save_recently_used_sessions(&self) {
-        let self_ = imp::SessionManager::from_instance(self);
-
         let settings = gio::Settings::new(crate::config::APP_ID);
         if let Err(e) = settings.set_strv(
             "recently-used-sessions",
-            self_
+            self.imp()
                 .recently_used_sessions
                 .borrow()
                 .iter()
@@ -671,29 +651,28 @@ impl SessionManager {
         database_info: DatabaseInfo,
         visible: bool,
     ) {
-        let self_ = imp::SessionManager::from_instance(self);
+        let imp = self.imp();
         let session = Session::new(client_id, database_info);
 
-        self_.sessions.add_child(&session);
-        session.set_sessions(&self_.sessions.pages());
+        imp.sessions.add_child(&session);
+        session.set_sessions(&imp.sessions.pages());
 
-        self_
-            .clients
+        imp.clients
             .borrow_mut()
             .insert(client_id, ClientInfo::LoggedIn(session.clone()));
 
-        let auth_session_present = self_
+        let auth_session_present = imp
             .clients
             .borrow()
             .values()
             .any(|client_info| matches!(client_info, ClientInfo::Auth { .. }));
 
-        if (self_.main_stack.visible_child() != Some(self_.sessions.clone().upcast())
+        if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
             && !auth_session_present)
             || visible
         {
-            self_.sessions.set_visible_child(&session);
-            self_.main_stack.set_visible_child(&*self_.sessions);
+            imp.sessions.set_visible_child(&session);
+            imp.main_stack.set_visible_child(&*imp.sessions);
         }
 
         // Enable notifications for this client
@@ -711,8 +690,9 @@ impl SessionManager {
 
     pub fn begin_chats_search(&self) {
         if let Some(client_id) = self.active_logged_in_client_id() {
-            let self_ = imp::SessionManager::from_instance(self);
-            if let ClientInfo::LoggedIn(session) = self_.clients.borrow().get(&client_id).unwrap() {
+            if let ClientInfo::LoggedIn(session) =
+                self.imp().clients.borrow().get(&client_id).unwrap()
+            {
                 session.begin_chats_search();
             }
         }

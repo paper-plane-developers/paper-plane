@@ -25,35 +25,34 @@ mod imp {
     impl ObjectSubclass for Avatar {
         const NAME: &'static str = "Avatar";
         type Type = super::Avatar;
-        type ParentType = glib::Object;
     }
 
     impl ObjectImpl for Avatar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "image",
                         "Image",
                         "The image of this avatar",
                         gdk::Paintable::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpec::new_boolean(
+                    glib::ParamSpecBoolean::new(
                         "needed",
                         "Needed",
                         "Whether the image needs to be loaded or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_string(
+                    glib::ParamSpecString::new(
                         "display-name",
                         "Display Name",
                         "The display name used for this avatar",
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpec::new_object(
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",
@@ -117,9 +116,7 @@ impl Avatar {
             return;
         }
 
-        let self_ = imp::Avatar::from_instance(self);
-
-        if let Some(file) = &*self_.image_file.borrow() {
+        if let Some(file) = &*self.imp().image_file.borrow() {
             if file.local.is_downloading_completed {
                 let gfile = gio::File::for_path(&file.local.path);
                 let texture = gdk::Texture::from_file(&gfile).unwrap();
@@ -144,10 +141,8 @@ impl Avatar {
     }
 
     fn set_image_file(&self, file: Option<File>) {
-        let self_ = imp::Avatar::from_instance(self);
         let is_some = file.is_some();
-
-        self_.image_file.replace(file);
+        self.imp().image_file.replace(file);
 
         if is_some {
             self.load();
@@ -157,20 +152,16 @@ impl Avatar {
     }
 
     pub fn image(&self) -> Option<gdk::Paintable> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.image.borrow().clone()
+        self.imp().image.borrow().clone()
     }
 
     fn set_image(&self, image: Option<gdk::Paintable>) {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.image.replace(image);
-
+        self.imp().image.replace(image);
         self.notify("image");
     }
 
     pub fn needed(&self) -> bool {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.needed.get()
+        self.imp().needed.get()
     }
 
     pub fn set_needed(&self, needed: bool) {
@@ -178,8 +169,7 @@ impl Avatar {
             return;
         }
 
-        let self_ = imp::Avatar::from_instance(self);
-        self_.needed.set(needed);
+        self.imp().needed.set(needed);
 
         if needed {
             self.load();
@@ -189,8 +179,7 @@ impl Avatar {
     }
 
     pub fn display_name(&self) -> Option<String> {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.display_name.borrow().clone()
+        self.imp().display_name.borrow().clone()
     }
 
     pub fn set_display_name(&self, display_name: Option<String>) {
@@ -198,14 +187,11 @@ impl Avatar {
             return;
         }
 
-        let self_ = imp::Avatar::from_instance(self);
-        self_.display_name.replace(display_name);
-
+        self.imp().display_name.replace(display_name);
         self.notify("display-name");
     }
 
     pub fn session(&self) -> &Session {
-        let self_ = imp::Avatar::from_instance(self);
-        self_.session.get().unwrap()
+        self.imp().session.get().unwrap()
     }
 }
