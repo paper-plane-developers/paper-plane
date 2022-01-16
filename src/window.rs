@@ -11,7 +11,7 @@ use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
-use crate::session_manager::{ClientInfo, SessionManager};
+use crate::session_manager::{ClientState, SessionManager};
 use crate::Application;
 use crate::RUNTIME;
 
@@ -213,11 +213,12 @@ impl Window {
         client_id: i32,
         chat_id: i64,
     ) {
-        if let Some(ClientInfo::LoggedIn(session)) =
-            self.imp().session_manager.client_info(client_id)
+        let client = self.imp().session_manager.client(client_id);
+        if let Some(ref client) =
+            client.filter(|client| matches!(client.state, ClientState::LoggedIn))
         {
             let app = self.application().unwrap();
-            let chat = session.chat_list().get(chat_id);
+            let chat = client.session.chat_list().get(chat_id);
 
             for notification in notifications {
                 let notification_id = notification.id;

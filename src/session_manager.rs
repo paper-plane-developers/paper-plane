@@ -46,9 +46,24 @@ use crate::utils::{data_dir, do_async, log_out, send_tdlib_parameters};
 use crate::APPLICATION_OPTS;
 use crate::RUNTIME;
 
-/// Struct for storing information about a td client.
+/// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
-pub enum ClientInfo {
+pub struct Client {
+    /// The `Session` of this client.
+    pub session: Session,
+    /// The `ClientState` of this client.
+    pub state: ClientState,
+}
+
+impl Client {
+    fn database_dir_base_name(&self) -> &str {
+        &self.session.database_info().0.directory_base_name
+    }
+}
+
+/// Enum for storing information about the state of an TDLib client.
+#[derive(Clone, Debug)]
+pub enum ClientState {
     /// The client is currently in the authorization state. Every client, even those that were
     /// logged in during a previous run of the application will need to go through this state
     /// again.
@@ -60,28 +75,11 @@ pub enum ClientInfo {
         /// So, we use this information to bypass the login process (phone number -> auth code ->
         /// ... -> ready) and to just wait for the `AuthorizationState::Ready` update.
         maybe_authorized: bool,
-        // The information about the session's database.
-        database_info: DatabaseInfo,
     },
     /// The client is logged and has a `Session`.
-    LoggedIn(
-        /// The `Session` of this client.
-        Session,
-    ),
+    LoggedIn,
     /// The client is currently in the process of logging out
-    LoggingOut(
-        /// The name of the database directory.
-        String,
-    ),
-}
-impl ClientInfo {
-    fn database_dir_base_name(&self) -> &str {
-        match self {
-            Self::Auth { database_info, .. } => &database_info.directory_base_name,
-            Self::LoggedIn(session) => &session.database_info().0.directory_base_name,
-            Self::LoggingOut(database_dir_base_name) => database_dir_base_name,
-        }
-    }
+    LoggingOut,
 }
 
 mod imp {
@@ -101,7 +99,7 @@ mod imp {
         /// The number sessions to load/handle at application start. This number will indirectly be
         /// determined in [`analyze_data_dir()`]
         pub initial_sessions_to_handle: Cell<u32>,
-        pub clients: RefCell<HashMap<i32, ClientInfo>>,
+        pub clients: RefCell<HashMap<i32, Client>>,
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -233,8 +231,8 @@ impl SessionManager {
             .collect()
     }
 
-    /// Returns the `ClientInfo` for the given client id.
-    pub fn client_info(&self, client_id: i32) -> Option<ClientInfo> {
+    /// Returns the `Client` for the given client id.
+    pub fn client(&self, client_id: i32) -> Option<Client> {
         self.imp().clients.borrow().get(&client_id).cloned()
     }
 
@@ -335,8 +333,8 @@ impl SessionManager {
             .clients
             .borrow()
             .values()
-            .filter_map(|client_info| match client_info {
-                ClientInfo::LoggedIn(session) => Some(session.client_id()),
+            .filter_map(|client| match client.state {
+                ClientState::LoggedIn => Some(client.session.client_id()),
                 _ => None,
             })
             .for_each(|client_id| {
@@ -359,11 +357,13 @@ impl SessionManager {
 
         self.imp().clients.borrow_mut().insert(
             client_id,
-            ClientInfo::Auth {
-                // Important: Here, we basically say that we just want to wait for
-                // `AuthorizationState::Ready` and skip the login process.
-                maybe_authorized: true,
-                database_info,
+            Client {
+                session: Session::new(client_id, database_info),
+                state: ClientState::Auth {
+                    // Important: Here, we basically say that we just want to wait for
+                    // `AuthorizationState::Ready` and skip the login process.
+                    maybe_authorized: true,
+                },
             },
         );
 
@@ -388,17 +388,21 @@ impl SessionManager {
             use_test_dc,
         };
 
+        let session = Session::new(client_id, database_info);
+
         imp.clients.borrow_mut().insert(
             client_id,
-            ClientInfo::Auth {
-                // Important: Here, we state that this client will have to go through the login
-                // process.
-                maybe_authorized: false,
-                database_info: database_info.clone(),
+            Client {
+                session: session.clone(),
+                state: ClientState::Auth {
+                    // Important: Here, we state that this client will have to go through the login
+                    // process.
+                    maybe_authorized: false,
+                },
             },
         );
 
-        imp.login.login_client(client_id, database_info);
+        imp.login.login_client(client_id, session);
 
         imp.main_stack.set_visible_child(&*imp.login);
     }
@@ -407,13 +411,13 @@ impl SessionManager {
     ///
     /// Among other things, it switches to the last session or to the login page, if called from a
     /// logged in session. Furthermore, the recently used sessions order file will be overwritten.
-    fn set_session_logging_out(&self, client_info: &ClientInfo) {
-        if let ClientInfo::LoggedIn(ref session) = client_info {
+    fn set_session_logging_out(&self, client: &Client) {
+        if let ClientState::LoggedIn = client.state {
             let imp = self.imp();
 
-            imp.sessions.remove(session);
+            imp.sessions.remove(&client.session);
 
-            let database_dir_base_name = &session.database_info().0.directory_base_name;
+            let database_dir_base_name = client.database_dir_base_name();
 
             if !remove_from_vec(
                 &mut *imp.recently_used_sessions.borrow_mut(),
@@ -475,8 +479,8 @@ impl SessionManager {
                 .clients
                 .borrow()
                 .iter()
-                .filter_map(|(client_id, client_info)| match client_info {
-                    ClientInfo::Auth { .. } | ClientInfo::LoggedIn(_) => Some(client_id),
+                .filter_map(|(client_id, client)| match client.state {
+                    ClientState::Auth { .. } | ClientState::LoggedIn => Some(client_id),
                     _ => None,
                 })
                 .cloned()
@@ -501,13 +505,14 @@ impl SessionManager {
             Update::AuthorizationState(update) => {
                 self.handle_authorization_state(update, client_id);
             }
-            update => {
-                if let ClientInfo::LoggedIn(session) =
-                    self.imp().clients.borrow().get(&client_id).unwrap()
-                {
-                    session.handle_update(update)
-                }
-            }
+            update => self
+                .imp()
+                .clients
+                .borrow()
+                .get(&client_id)
+                .unwrap()
+                .session
+                .handle_update(update),
         }
     }
 
@@ -519,9 +524,9 @@ impl SessionManager {
         let imp = self.imp();
 
         if let AuthorizationState::Closed = update.authorization_state {
-            if let ClientInfo::LoggingOut(database_dir_base_name) =
-                imp.clients.borrow_mut().remove(&client_id).unwrap()
-            {
+            let client = imp.clients.borrow_mut().remove(&client_id).unwrap();
+            if let ClientState::LoggingOut = client.state {
+                let database_dir_base_name = client.database_dir_base_name().to_owned();
                 RUNTIME.spawn(async move {
                     if let Err(e) =
                         fs::remove_dir_all(data_dir().join(database_dir_base_name)).await
@@ -533,23 +538,22 @@ impl SessionManager {
             return;
         }
 
-        let client_info = self.client_info(client_id).unwrap();
+        let client = self.client(client_id).unwrap();
 
         if let AuthorizationState::LoggingOut = update.authorization_state {
-            self.set_session_logging_out(&client_info);
+            self.set_session_logging_out(&client);
             imp.clients.borrow_mut().insert(
                 client_id,
-                ClientInfo::LoggingOut(client_info.database_dir_base_name().to_owned()),
+                Client {
+                    session: client.session,
+                    state: ClientState::LoggingOut,
+                },
             );
 
             return;
         }
 
-        if let ClientInfo::Auth {
-            maybe_authorized,
-            database_info,
-        } = client_info
-        {
+        if let ClientState::Auth { maybe_authorized } = client.state {
             if !maybe_authorized {
                 imp.login
                     .set_authorization_state(update.authorization_state);
@@ -557,6 +561,7 @@ impl SessionManager {
                 // Client doesn't need to authorize. So we can skip the login procedure.
                 match &update.authorization_state {
                     AuthorizationState::WaitTdlibParameters => {
+                        let database_info = client.session.database_info().0.clone();
                         do_async(
                             glib::PRIORITY_DEFAULT_IDLE,
                             async move { send_tdlib_parameters(client_id, &database_info).await },
@@ -588,29 +593,33 @@ impl SessionManager {
                             .iter()
                             .rev()
                             .next()
-                            .map(|last| &database_info.directory_base_name == last)
+                            .map(|last| client.database_dir_base_name() == last)
                             .unwrap_or_default();
 
-                        self.add_logged_in_session(client_id, database_info, is_last_used);
+                        self.add_logged_in_session(client_id, client.session, is_last_used);
                     }
                     _ => {
+                        let database_info = client.session.database_info().0.clone();
+
                         // Our assumption that the database's session we found at application start
                         // would not need to authorize was wrong. So we handle it correctly.
-                        if imp.initial_sessions_to_handle.get() == 1
-                            && APPLICATION_OPTS.get().unwrap().test_dc == database_info.use_test_dc
+                        if APPLICATION_OPTS.get().unwrap().test_dc == database_info.use_test_dc
+                            && imp.initial_sessions_to_handle.get() == 1
                         {
                             // Handle it over to `login.rs`.
 
-                            // Overwrite ClientInfo.
+                            // Overwrite Client.
                             imp.clients.borrow_mut().insert(
                                 client_id,
-                                ClientInfo::Auth {
-                                    maybe_authorized: false,
-                                    database_info: database_info.clone(),
+                                Client {
+                                    session: client.session.clone(),
+                                    state: ClientState::Auth {
+                                        maybe_authorized: false,
+                                    },
                                 },
                             );
 
-                            imp.login.login_client(client_id, database_info);
+                            imp.login.login_client(client_id, client.session);
 
                             imp.login
                                 .set_authorization_state(update.authorization_state);
@@ -645,27 +654,28 @@ impl SessionManager {
 
     /// Within this function a new `Session` is created based on the passed client id. This session
     /// is then added to the session stack.
-    pub fn add_logged_in_session(
-        &self,
-        client_id: i32,
-        database_info: DatabaseInfo,
-        visible: bool,
-    ) {
+    pub fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
         let imp = self.imp();
-        let session = Session::new(client_id, database_info);
+
+        session.fetch_me();
+        session.fetch_chats();
 
         imp.sessions.add_child(&session);
         session.set_sessions(&imp.sessions.pages());
 
-        imp.clients
-            .borrow_mut()
-            .insert(client_id, ClientInfo::LoggedIn(session.clone()));
+        imp.clients.borrow_mut().insert(
+            client_id,
+            Client {
+                session: session.clone(),
+                state: ClientState::LoggedIn,
+            },
+        );
 
         let auth_session_present = imp
             .clients
             .borrow()
             .values()
-            .any(|client_info| matches!(client_info, ClientInfo::Auth { .. }));
+            .any(|client| matches!(client.state, ClientState::Auth { .. }));
 
         if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
             && !auth_session_present)
@@ -690,10 +700,10 @@ impl SessionManager {
 
     pub fn begin_chats_search(&self) {
         if let Some(client_id) = self.active_logged_in_client_id() {
-            if let ClientInfo::LoggedIn(session) =
-                self.imp().clients.borrow().get(&client_id).unwrap()
-            {
-                session.begin_chats_search();
+            let clients = self.imp().clients.borrow();
+            let client = clients.get(&client_id).unwrap();
+            if let ClientState::LoggedIn = client.state {
+                client.session.begin_chats_search();
             }
         }
     }
