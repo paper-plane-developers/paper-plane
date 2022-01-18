@@ -57,6 +57,7 @@ jobs:
         arch: [x86_64, aarch64]
       # Don't fail the whole workflow if one architecture fails
       fail-fast: false
+    needs: [rustfmt, clippy]
     steps:
       - uses: actions/checkout@v2
       # Docker is required by the docker/setup-qemu-action which enables emulation
