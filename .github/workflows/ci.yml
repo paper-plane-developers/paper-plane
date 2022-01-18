@@ -30,13 +30,6 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v2
-      - name: Create dummy versions of configured file
-        run: |
-          sed \
-            -e 's/str =.*;/str = "";/g' \
-            -e 's/i32 =.*;/i32 = 0;/g' \
-            src/config.rs.in \
-            > src/config.rs
       - name: Build dependencies
         run: |
           flatpak-builder \
