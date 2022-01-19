@@ -5,11 +5,11 @@ use tdgrand::types::User as TdUser;
 use crate::session::Avatar;
 use crate::Session;
 
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserType")]
 pub struct BoxedUserType(pub UserType);
 
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserStatus")]
 pub struct BoxedUserStatus(pub UserStatus);
 
@@ -21,13 +21,13 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct User {
         pub id: Cell<i64>,
-        pub type_: RefCell<BoxedUserType>,
+        pub type_: RefCell<Option<BoxedUserType>>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
         pub username: RefCell<String>,
         pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
-        pub status: RefCell<BoxedUserStatus>,
+        pub status: RefCell<Option<BoxedUserStatus>>,
     }
 
     #[glib::object_subclass]
@@ -196,14 +196,14 @@ impl User {
     }
 
     pub fn type_(&self) -> BoxedUserType {
-        self.imp().type_.borrow().to_owned()
+        self.imp().type_.borrow().as_ref().unwrap().to_owned()
     }
 
     pub fn set_type(&self, type_: BoxedUserType) {
-        if self.type_() == type_ {
+        if self.imp().type_.borrow().as_ref() == Some(&type_) {
             return;
         }
-        self.imp().type_.replace(type_);
+        self.imp().type_.replace(Some(type_));
         self.notify("type");
     }
 
@@ -260,14 +260,14 @@ impl User {
     }
 
     pub fn status(&self) -> BoxedUserStatus {
-        self.imp().status.borrow().clone()
+        self.imp().status.borrow().as_ref().unwrap().to_owned()
     }
 
     pub fn set_status(&self, status: BoxedUserStatus) {
-        if self.status() == status {
+        if self.imp().status.borrow().as_ref() == Some(&status) {
             return;
         }
-        self.imp().status.replace(status);
+        self.imp().status.replace(Some(status));
         self.notify("status");
     }
 
