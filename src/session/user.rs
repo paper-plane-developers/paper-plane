@@ -9,7 +9,7 @@ use crate::Session;
 #[boxed_type(name = "BoxedUserType")]
 pub struct BoxedUserType(pub UserType);
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
+#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserStatus")]
 pub struct BoxedUserStatus(pub UserStatus);
 
@@ -118,9 +118,7 @@ mod imp {
                 "username" => obj.set_username(value.get().unwrap()),
                 "phone-number" => obj.set_phone_number(value.get().unwrap()),
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
-                "status" => {
-                    self.status.replace(value.get().unwrap());
-                }
+                "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -183,12 +181,12 @@ impl User {
                 self.set_last_name(data.user.last_name);
                 self.set_username(data.user.username);
                 self.set_phone_number(data.user.phone_number);
-                self.set_status(data.user.status);
+                self.set_status(BoxedUserStatus(data.user.status));
 
                 self.avatar()
                     .update_from_user_photo(data.user.profile_photo);
             }
-            Update::UserStatus(data) => self.set_status(data.status),
+            Update::UserStatus(data) => self.set_status(BoxedUserStatus(data.status)),
             _ => {}
         }
     }
@@ -265,11 +263,11 @@ impl User {
         self.imp().status.borrow().clone()
     }
 
-    pub fn set_status(&self, status: UserStatus) {
-        if self.status().0 == status {
+    pub fn set_status(&self, status: BoxedUserStatus) {
+        if self.status() == status {
             return;
         }
-        self.imp().status.replace(BoxedUserStatus(status));
+        self.imp().status.replace(status);
         self.notify("status");
     }
 
