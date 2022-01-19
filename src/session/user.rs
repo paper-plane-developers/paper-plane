@@ -211,7 +211,7 @@ impl User {
         self.imp().first_name.borrow().to_owned()
     }
 
-    fn set_first_name(&self, first_name: String) {
+    pub fn set_first_name(&self, first_name: String) {
         if self.first_name() == first_name {
             return;
         }
@@ -223,7 +223,7 @@ impl User {
         self.imp().last_name.borrow().to_owned()
     }
 
-    fn set_last_name(&self, last_name: String) {
+    pub fn set_last_name(&self, last_name: String) {
         if self.last_name() == last_name {
             return;
         }
@@ -235,7 +235,7 @@ impl User {
         self.imp().username.borrow().to_owned()
     }
 
-    fn set_username(&self, username: String) {
+    pub fn set_username(&self, username: String) {
         if self.username() == username {
             return;
         }
@@ -247,7 +247,7 @@ impl User {
         self.imp().phone_number.borrow().to_owned()
     }
 
-    fn set_phone_number(&self, phone_number: String) {
+    pub fn set_phone_number(&self, phone_number: String) {
         if self.phone_number() == phone_number {
             return;
         }
