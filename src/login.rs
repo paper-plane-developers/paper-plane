@@ -8,7 +8,8 @@ use gtk::{
 use tdgrand::{enums::AuthorizationState, functions, types};
 
 use crate::{
-    session_manager::{DatabaseInfo, SessionManager},
+    session::Session,
+    session_manager::SessionManager,
     utils::{do_async, log_out, parse_formatted_text, send_tdlib_parameters},
 };
 
@@ -24,7 +25,7 @@ mod imp {
     pub struct Login {
         pub session_manager: OnceCell<SessionManager>,
         pub client_id: Cell<i32>,
-        pub database_info: RefCell<Option<DatabaseInfo>>,
+        pub session: RefCell<Option<Session>>,
         pub tos_text: RefCell<String>,
         pub show_tos_popup: Cell<bool>,
         pub has_recovery_email_address: Cell<bool>,
@@ -188,11 +189,11 @@ impl Login {
         self.imp().session_manager.set(session_manager).unwrap();
     }
 
-    pub fn login_client(&self, client_id: i32, database_info: DatabaseInfo) {
+    pub fn login_client(&self, client_id: i32, session: Session) {
         let imp = self.imp();
         imp.client_id.set(client_id);
 
-        imp.database_info.replace(Some(database_info));
+        imp.session.replace(Some(session));
 
         // We don't know what login page to show at this point, so we show an empty page until we
         // receive an AuthenticationState that will eventually show the related login page.
@@ -211,7 +212,14 @@ impl Login {
         match state {
             AuthorizationState::WaitTdlibParameters => {
                 let client_id = imp.client_id.get();
-                let database_info = imp.database_info.borrow().clone().unwrap();
+                let database_info = imp
+                    .session
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .database_info()
+                    .0
+                    .clone();
                 do_async(
                     glib::PRIORITY_DEFAULT_IDLE,
                     async move { send_tdlib_parameters(client_id, &database_info).await },
@@ -369,7 +377,7 @@ impl Login {
 
                 imp.session_manager.get().unwrap().add_logged_in_session(
                     imp.client_id.get(),
-                    imp.database_info.take().unwrap(),
+                    imp.session.take().unwrap(),
                     true,
                 );
             }
@@ -548,7 +556,14 @@ impl Login {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
         let imp = self.imp();
-        let use_test_dc = imp.database_info.borrow().as_ref().unwrap().use_test_dc;
+        let use_test_dc = imp
+            .session
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .database_info()
+            .0
+            .use_test_dc;
 
         log_out(imp.client_id.get());
         imp.session_manager
@@ -664,7 +679,13 @@ impl Login {
         let session_manager = imp.session_manager.get().unwrap();
 
         match session_manager.session_index_for(
-            imp.database_info.borrow().as_ref().unwrap().use_test_dc,
+            imp.session
+                .borrow()
+                .as_ref()
+                .unwrap()
+                .database_info()
+                .0
+                .use_test_dc,
             &phone_number_digits,
         ) {
             Some(pos) => {

@@ -272,9 +272,6 @@ mod imp {
                     }
                 }),
             );
-
-            obj.fetch_me();
-            obj.fetch_chats();
         }
     }
 
@@ -500,7 +497,7 @@ impl Session {
         self.notify("channel-chats-notification-settings")
     }
 
-    fn fetch_me(&self) {
+    pub fn fetch_me(&self) {
         let client_id = self.client_id();
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
@@ -520,7 +517,7 @@ impl Session {
         );
     }
 
-    fn fetch_chats(&self) {
+    pub fn fetch_chats(&self) {
         let client_id = self.imp().client_id.get();
         self.chat_list().fetch(client_id);
     }
