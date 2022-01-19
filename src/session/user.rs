@@ -87,7 +87,7 @@ mod imp {
                     glib::ParamSpecObject::new(
                         "avatar",
                         "Avatar",
-                        "The avatar of this chat",
+                        "The avatar of this user",
                         Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
