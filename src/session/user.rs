@@ -5,7 +5,7 @@ use tdgrand::types::User as TdUser;
 use crate::session::Avatar;
 use crate::Session;
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
+#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserType")]
 pub struct BoxedUserType(pub UserType);
 
@@ -112,9 +112,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
-                "type" => {
-                    self.type_.replace(value.get().unwrap());
-                }
+                "type" => obj.set_type(value.get().unwrap()),
                 "first-name" => obj.set_first_name(value.get().unwrap()),
                 "last-name" => obj.set_last_name(value.get().unwrap()),
                 "username" => obj.set_username(value.get().unwrap()),
@@ -180,7 +178,7 @@ impl User {
     pub fn handle_update(&self, update: Update) {
         match update {
             Update::User(data) => {
-                self.set_type(data.user.r#type);
+                self.set_type(BoxedUserType(data.user.r#type));
                 self.set_first_name(data.user.first_name);
                 self.set_last_name(data.user.last_name);
                 self.set_username(data.user.username);
@@ -200,14 +198,14 @@ impl User {
     }
 
     pub fn type_(&self) -> BoxedUserType {
-        self.imp().type_.borrow().clone()
+        self.imp().type_.borrow().to_owned()
     }
 
-    pub fn set_type(&self, type_: UserType) {
-        if self.type_().0 == type_ {
+    pub fn set_type(&self, type_: BoxedUserType) {
+        if self.type_() == type_ {
             return;
         }
-        self.imp().type_.replace(BoxedUserType(type_));
+        self.imp().type_.replace(type_);
         self.notify("type");
     }
 
