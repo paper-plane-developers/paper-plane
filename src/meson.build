@@ -20,73 +20,35 @@ run_command(
   check: true
 )
 
-rust_sources = files(
-  'application.rs',
-  'config.rs',
-  'login.rs',
-  'main.rs',
-  'preferences_window.rs',
-  'session_manager.rs',
-  'utils.rs',
-  'window.rs',
-  'session/avatar.rs',
-  'session/basic_group.rs',
-  'session/basic_group_list.rs',
-  'session/chat_list.rs',
-  'session/mod.rs',
-  'session/secret_chat.rs',
-  'session/secret_chat_list.rs',
-  'session/supergroup.rs',
-  'session/supergroup_list.rs',
-  'session/user.rs',
-  'session/user_list.rs',
-  'session/chat/history.rs',
-  'session/chat/item.rs',
-  'session/chat/message.rs',
-  'session/chat/mod.rs',
-  'session/chat/sponsored_message.rs',
-  'session/components/avatar.rs',
-  'session/components/mod.rs',
-  'session/content/chat_action_bar.rs',
-  'session/content/chat_history.rs',
-  'session/content/event_row.rs',
-  'session/content/item_row.rs',
-  'session/content/mod.rs',
-  'session/content/user_dialog.rs',
-  'session/content/message_row/media.rs',
-  'session/content/message_row/media_picture.rs',
-  'session/content/message_row/mod.rs',
-  'session/content/message_row/photo.rs',
-  'session/content/message_row/sticker.rs',
-  'session/content/message_row/sticker_paintable.rs',
-  'session/content/message_row/text.rs',
-  'session/sidebar/avatar.rs',
-  'session/sidebar/mod.rs',
-  'session/sidebar/row.rs',
-  'session/sidebar/session_switcher/add_account.rs',
-  'session/sidebar/session_switcher/avatar_with_selection.rs',
-  'session/sidebar/session_switcher/item.rs',
-  'session/sidebar/session_switcher/mod.rs',
-  'session/sidebar/session_switcher/session_entry_row.rs',
-)
+cargo_options = [ '--manifest-path', meson.source_root() / 'Cargo.toml' ]
+cargo_options += [ '--target-dir', meson.build_root() / 'src' ]
 
-sources = [rust_sources, cargo_sources]
+if get_option('profile') == 'default'
+  cargo_options += [ '--release' ]
+  rust_target = 'release'
+  message('Building in release mode')
+else
+  rust_target = 'debug'
+  message('Building in debug mode')
+endif
 
-custom_target(
+cargo_env = [ 'CARGO_HOME=' + meson.build_root() / 'cargo-home' ]
+
+cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
-  input: sources,
+  build_always_stale: true,
   output: meson.project_name(),
   console: true,
   install: true,
   install_dir: bindir,
   depends: resources,
   command: [
-    cargo_script,
-    meson.build_root(),
-    meson.source_root(),
-    '@OUTPUT@',
-    profile,
-    meson.project_name(),
+    'env',
+    cargo_env,
+    cargo, 'build',
+    cargo_options,
+    '&&',
+    'cp', 'src' / rust_target / meson.project_name(), '@OUTPUT@',
   ]
 )
