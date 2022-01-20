@@ -138,7 +138,7 @@ mod imp {
                         "user-list",
                         "User List",
                         "The list of users of this session",
-                        ChatList::static_type(),
+                        UserList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
