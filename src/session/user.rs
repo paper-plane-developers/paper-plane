@@ -54,35 +54,45 @@ mod imp {
                         "Type",
                         "The type of this user",
                         BoxedUserType::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecString::new(
                         "first-name",
                         "First Name",
                         "The first name of this user",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        Some(""),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecString::new(
                         "last-name",
                         "Last Name",
                         "The last name of this user",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        Some(""),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecString::new(
                         "username",
                         "Username",
                         "The username of this user",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        Some(""),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecString::new(
                         "phone-number",
                         "Phone Number",
                         "The phone number of this user",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        Some(""),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "avatar",
@@ -96,7 +106,9 @@ mod imp {
                         "Status",
                         "The status of this user",
                         BoxedUserStatus::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                 ]
             });
@@ -113,10 +125,18 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "type" => obj.set_type(value.get().unwrap()),
-                "first-name" => obj.set_first_name(value.get().unwrap()),
-                "last-name" => obj.set_last_name(value.get().unwrap()),
-                "username" => obj.set_username(value.get().unwrap()),
-                "phone-number" => obj.set_phone_number(value.get().unwrap()),
+                "first-name" => {
+                    obj.set_first_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "last-name" => {
+                    obj.set_last_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "username" => {
+                    obj.set_username(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "phone-number" => {
+                    obj.set_phone_number(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
                 "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
@@ -182,7 +202,6 @@ impl User {
                 self.set_username(data.user.username);
                 self.set_phone_number(data.user.phone_number);
                 self.set_status(BoxedUserStatus(data.user.status));
-
                 self.avatar()
                     .update_from_user_photo(data.user.profile_photo);
             }
