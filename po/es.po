@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-08 12:56+0000\n"
-"Last-Translator: Óscar Fernández Díaz <oscfdezdz@tuta.io>\n"
+"PO-Revision-Date: 2022-01-22 08:57+0000\n"
+"Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -53,12 +53,14 @@ msgstr "Comportamiento predeterminado de ventana maximizada"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Sesiones utilizadas recientemente"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"La lista ordenada de las sesiones utilizadas recientemente por su nombre de "
+"directorio de la base de datos"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -79,16 +81,15 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Servidor de producción"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "_Servidor de pruebas"
 
 #: data/resources/ui/add-account-row.ui:33
-#, fuzzy
 msgid "_Add Account"
-msgstr "_Eliminar cuenta"
+msgstr "_Añadir cuenta"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -275,31 +276,36 @@ msgstr "_Acerca de Telegrand"
 msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
-msgstr ""
+msgstr "Una forma de seguir utilizando tu cuenta es borrarla y volver a crearla"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Dado que no has facilitado una dirección de correo electrónico de "
+"recuperación, la única forma de seguir utilizando tu cuenta es eliminarla y "
+"volver a crearla"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"¡Ten en cuenta que perderás todos tus chats y mensajes, junto con los medios "
+"y archivos que hayas compartido!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "¿Aceptas las Condiciones del Servicio?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Condiciones del Servicio"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Advertencia"
 
 #: src/login.rs:857
 msgid ""
@@ -308,20 +314,26 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"¡Perderás todos tus chats y mensajes, junto con los medios y archivos que "
+"hayas compartido!\n"
+"\n"
+"¿Quieres eliminar tu cuenta?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Lo sentimos"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Si no puedes restablecer el acceso al correo electrónico, las opciones que "
+"te quedan son recordar tu contraseña o eliminar y volver a crear tu cuenta."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_Volver"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
