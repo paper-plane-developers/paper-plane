@@ -62,7 +62,7 @@ mod imp {
                         "first-name",
                         "First Name",
                         "The first name of this user",
-                        None,
+                        Some(""),
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
@@ -71,7 +71,7 @@ mod imp {
                         "last-name",
                         "Last Name",
                         "The last name of this user",
-                        None,
+                        Some(""),
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
@@ -80,7 +80,7 @@ mod imp {
                         "username",
                         "Username",
                         "The username of this user",
-                        None,
+                        Some(""),
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
@@ -89,7 +89,7 @@ mod imp {
                         "phone-number",
                         "Phone Number",
                         "The phone number of this user",
-                        None,
+                        Some(""),
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
@@ -125,10 +125,18 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "type" => obj.set_type(value.get().unwrap()),
-                "first-name" => obj.set_first_name(value.get().unwrap()),
-                "last-name" => obj.set_last_name(value.get().unwrap()),
-                "username" => obj.set_username(value.get().unwrap()),
-                "phone-number" => obj.set_phone_number(value.get().unwrap()),
+                "first-name" => {
+                    obj.set_first_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "last-name" => {
+                    obj.set_last_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "username" => {
+                    obj.set_username(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
+                "phone-number" => {
+                    obj.set_phone_number(value.get::<Option<String>>().unwrap().unwrap_or_default())
+                }
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
                 "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
