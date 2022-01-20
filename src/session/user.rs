@@ -5,11 +5,11 @@ use tdgrand::types::User as TdUser;
 use crate::session::Avatar;
 use crate::Session;
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserType")]
 pub struct BoxedUserType(pub UserType);
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserStatus")]
 pub struct BoxedUserStatus(pub UserStatus);
 
@@ -21,13 +21,13 @@ mod imp {
     #[derive(Debug, Default)]
     pub struct User {
         pub id: Cell<i64>,
-        pub type_: RefCell<BoxedUserType>,
+        pub type_: RefCell<Option<BoxedUserType>>,
         pub first_name: RefCell<String>,
         pub last_name: RefCell<String>,
         pub username: RefCell<String>,
         pub phone_number: RefCell<String>,
         pub avatar: OnceCell<Avatar>,
-        pub status: RefCell<BoxedUserStatus>,
+        pub status: RefCell<Option<BoxedUserStatus>>,
     }
 
     #[glib::object_subclass]
@@ -87,7 +87,7 @@ mod imp {
                     glib::ParamSpecObject::new(
                         "avatar",
                         "Avatar",
-                        "The avatar of this chat",
+                        "The avatar of this user",
                         Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
@@ -112,17 +112,13 @@ mod imp {
         ) {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
-                "type" => {
-                    self.type_.replace(value.get().unwrap());
-                }
+                "type" => obj.set_type(value.get().unwrap()),
                 "first-name" => obj.set_first_name(value.get().unwrap()),
                 "last-name" => obj.set_last_name(value.get().unwrap()),
                 "username" => obj.set_username(value.get().unwrap()),
                 "phone-number" => obj.set_phone_number(value.get().unwrap()),
                 "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
-                "status" => {
-                    self.status.replace(value.get().unwrap());
-                }
+                "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -180,17 +176,17 @@ impl User {
     pub fn handle_update(&self, update: Update) {
         match update {
             Update::User(data) => {
-                self.set_type(data.user.r#type);
+                self.set_type(BoxedUserType(data.user.r#type));
                 self.set_first_name(data.user.first_name);
                 self.set_last_name(data.user.last_name);
                 self.set_username(data.user.username);
                 self.set_phone_number(data.user.phone_number);
-                self.set_status(data.user.status);
+                self.set_status(BoxedUserStatus(data.user.status));
 
                 self.avatar()
                     .update_from_user_photo(data.user.profile_photo);
             }
-            Update::UserStatus(data) => self.set_status(data.status),
+            Update::UserStatus(data) => self.set_status(BoxedUserStatus(data.status)),
             _ => {}
         }
     }
@@ -200,14 +196,14 @@ impl User {
     }
 
     pub fn type_(&self) -> BoxedUserType {
-        self.imp().type_.borrow().clone()
+        self.imp().type_.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub fn set_type(&self, type_: UserType) {
-        if self.type_().0 == type_ {
+    pub fn set_type(&self, type_: BoxedUserType) {
+        if self.imp().type_.borrow().as_ref() == Some(&type_) {
             return;
         }
-        self.imp().type_.replace(BoxedUserType(type_));
+        self.imp().type_.replace(Some(type_));
         self.notify("type");
     }
 
@@ -215,7 +211,7 @@ impl User {
         self.imp().first_name.borrow().to_owned()
     }
 
-    fn set_first_name(&self, first_name: String) {
+    pub fn set_first_name(&self, first_name: String) {
         if self.first_name() == first_name {
             return;
         }
@@ -227,7 +223,7 @@ impl User {
         self.imp().last_name.borrow().to_owned()
     }
 
-    fn set_last_name(&self, last_name: String) {
+    pub fn set_last_name(&self, last_name: String) {
         if self.last_name() == last_name {
             return;
         }
@@ -239,7 +235,7 @@ impl User {
         self.imp().username.borrow().to_owned()
     }
 
-    fn set_username(&self, username: String) {
+    pub fn set_username(&self, username: String) {
         if self.username() == username {
             return;
         }
@@ -251,7 +247,7 @@ impl User {
         self.imp().phone_number.borrow().to_owned()
     }
 
-    fn set_phone_number(&self, phone_number: String) {
+    pub fn set_phone_number(&self, phone_number: String) {
         if self.phone_number() == phone_number {
             return;
         }
@@ -264,14 +260,14 @@ impl User {
     }
 
     pub fn status(&self) -> BoxedUserStatus {
-        self.imp().status.borrow().clone()
+        self.imp().status.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub fn set_status(&self, status: UserStatus) {
-        if self.status().0 == status {
+    pub fn set_status(&self, status: BoxedUserStatus) {
+        if self.imp().status.borrow().as_ref() == Some(&status) {
             return;
         }
-        self.imp().status.replace(BoxedUserStatus(status));
+        self.imp().status.replace(Some(status));
         self.notify("status");
     }
 
