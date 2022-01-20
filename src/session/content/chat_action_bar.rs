@@ -1,9 +1,7 @@
-use gettextrs::gettext;
 use glib::{clone, signal::Inhibit};
 use gtk::{gdk, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use std::borrow::Cow;
 use tdgrand::{
-    enums::{self, ChatAction, InputMessageContent},
+    enums::{ChatAction, InputMessageContent},
     functions, types,
 };
 
@@ -217,15 +215,21 @@ impl ChatActionBar {
     }
 
     fn load_draft_message(&self, message: BoxedDraftMessage) {
-        // TODO: Load more message types
         let message_text = message
             .0
             .as_ref()
-            .map(|message| match message.input_message_text {
-                enums::InputMessageContent::InputMessageText(ref content) => {
-                    Cow::Borrowed(content.text.text.as_str())
+            .map(|message| {
+                if let InputMessageContent::InputMessageText(ref content) =
+                    message.input_message_text
+                {
+                    content.text.text.as_ref()
+                } else {
+                    log::warn!(
+                        "Unexpected draft message type: {:?}",
+                        message.input_message_text
+                    );
+                    ""
                 }
-                _ => Cow::Owned(gettext("Unsupported draft message type")),
             })
             .unwrap_or_default();
 

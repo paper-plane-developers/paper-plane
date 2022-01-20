@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-03 22:56+0100\n"
+"POT-Creation-Date: 2022-01-20 15:54+0100\n"
 "PO-Revision-Date: 2022-01-05 21:54+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/telegrand/"
@@ -50,9 +50,13 @@ msgid "Default window maximized behaviour"
 msgstr "Comportement par défaut de la fenêtre maximisée"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
+msgid "Recently used sessions"
+msgstr ""
+
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-msgid "Use Telegram's test data center"
-msgstr "Utiliser le centre de données de test de Telegram"
+msgid ""
+"The ordered list of recently used sessions by their database directory name"
+msgstr ""
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -71,6 +75,19 @@ msgstr "Fenêtre principale"
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
+#: data/resources/ui/add-account-row.ui:6
+msgid "_Production Server"
+msgstr ""
+
+#: data/resources/ui/add-account-row.ui:10
+msgid "_Test Server"
+msgstr ""
+
+#: data/resources/ui/add-account-row.ui:33
+#, fuzzy
+msgid "_Add Account"
+msgstr "_Supprimer le compte"
+
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
 msgstr "Aucune discussion sélectionnée"
@@ -83,76 +100,64 @@ msgstr "Sélectionnez une discussion pour commencer à échanger des messages."
 msgid "View Info"
 msgstr "Voir les infos"
 
-#: data/resources/ui/content-user-dialog.ui:52
+#: data/resources/ui/content-user-dialog.ui:54
 msgid "Mobile"
 msgstr "Mobile"
 
-#: data/resources/ui/content-user-dialog.ui:58
+#: data/resources/ui/content-user-dialog.ui:60
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: data/resources/ui/login.ui:40
+#: data/resources/ui/login.ui:47
 msgid "_Previous"
 msgstr "_Précédent"
 
-#: data/resources/ui/login.ui:69
+#: data/resources/ui/login.ui:76
 msgid "_Next"
 msgstr "_Suivant"
 
-#: data/resources/ui/login.ui:98
+#: data/resources/ui/login.ui:105
 msgid "Welcome to Telegrand"
 msgstr "Bienvenue sur Telegrand"
 
-#: data/resources/ui/login.ui:117
+#: data/resources/ui/login.ui:124
 msgid "Phone Number"
 msgstr "Numéro de téléphone"
 
-#: data/resources/ui/login.ui:139
+#: data/resources/ui/login.ui:146
 msgid "_Log in using QR code"
 msgstr "Se connecter à l'aide du code QR"
 
-#: data/resources/ui/login.ui:177
-msgid "Advanced"
-msgstr "Avancé"
-
-#: data/resources/ui/login.ui:181
-msgid "Use Test Data Center"
-msgstr "Utiliser le centre de données de test"
-
-#: data/resources/ui/login.ui:182
-msgid "This requires a restart to apply"
-msgstr "Ceci nécessite un redémarrage pour être appliquée"
-
-#: data/resources/ui/login.ui:218
+#: data/resources/ui/login.ui:205
 msgid "Scan Code"
 msgstr "Scanner le code"
 
-#: data/resources/ui/login.ui:219
+#: data/resources/ui/login.ui:206
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
 "Scannez ce code avec une autre application Telegram connectée à votre compte."
 
-#: data/resources/ui/login.ui:253
+#: data/resources/ui/login.ui:228
 msgid "Enter the Verification Code"
 msgstr "Entrez le code de vérification"
 
-#: data/resources/ui/login.ui:272 data/resources/ui/login.ui:685
+#: data/resources/ui/login.ui:247 data/resources/ui/login.ui:660
 msgid "Code"
 msgstr "Code"
 
-#: data/resources/ui/login.ui:311
+#: data/resources/ui/login.ui:286
 msgid "Register New Account"
 msgstr "Créer un nouveau compte"
 
-#: data/resources/ui/login.ui:331
+#: data/resources/ui/login.ui:306
 msgid "First Name"
 msgstr "Prénom"
 
-#: data/resources/ui/login.ui:348
+#: data/resources/ui/login.ui:323
 msgid "Last Name"
 msgstr "Nom de famille"
 
-#: data/resources/ui/login.ui:387
+#: data/resources/ui/login.ui:362
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -160,27 +165,27 @@ msgstr ""
 "En vous inscrivant,\n"
 "vous acceptez les <a href=\"\">Conditions de service</a>."
 
-#: data/resources/ui/login.ui:403
+#: data/resources/ui/login.ui:378
 msgid "Enter Your Password"
 msgstr "Entrez votre mot de passe"
 
-#: data/resources/ui/login.ui:422
+#: data/resources/ui/login.ui:397
 msgid "Password"
 msgstr "Mot de passe"
 
-#: data/resources/ui/login.ui:437
+#: data/resources/ui/login.ui:412
 msgid "Hint"
 msgstr "Indice"
 
-#: data/resources/ui/login.ui:460
+#: data/resources/ui/login.ui:435
 msgid "_Forgot password?"
 msgstr "_Mot de passe oublié ?"
 
-#: data/resources/ui/login.ui:523
+#: data/resources/ui/login.ui:498
 msgid "Use Recovery Code"
 msgstr "Utiliser un code de récupération"
 
-#: data/resources/ui/login.ui:536
+#: data/resources/ui/login.ui:511
 msgid ""
 "When you set your cloud password, you provided a recovery email address. We "
 "can send you a code to this email address that you can use to reset your "
@@ -190,23 +195,23 @@ msgstr ""
 "adresse électronique de récupération. Nous pouvons vous envoyer un code à "
 "cette adresse que vous pouvez utiliser pour réinitialiser votre mot de passe."
 
-#: data/resources/ui/login.ui:555
+#: data/resources/ui/login.ui:530
 msgid "_Send recovery code"
 msgstr "_Envoyer le code de récupération"
 
-#: data/resources/ui/login.ui:617
+#: data/resources/ui/login.ui:592
 msgid "Account Deletion"
 msgstr "Suppression du compte"
 
-#: data/resources/ui/login.ui:644
+#: data/resources/ui/login.ui:619
 msgid "_Delete Account"
 msgstr "_Supprimer le compte"
 
-#: data/resources/ui/login.ui:666
+#: data/resources/ui/login.ui:641
 msgid "Enter the Code Sent by E-Mail"
 msgstr "Entrez le code envoyé par courriel"
 
-#: data/resources/ui/login.ui:707
+#: data/resources/ui/login.ui:682
 msgid "_Unable to access your email?"
 msgstr "Impossible d'accéder à vos courriels ?"
 
@@ -263,131 +268,193 @@ msgstr "_Raccourcis clavier"
 msgid "_About Telegrand"
 msgstr "_À propos de Telegrand"
 
-#: src/window.rs:334 src/session/sidebar/row.rs:613
+#: src/login.rs:340
+msgid ""
+"One way to continue using your account is to delete your account and then "
+"recreate it"
+msgstr ""
+
+#: src/login.rs:345
+msgid ""
+"Since you have not provided a recovery email address, the only way to "
+"continue using your account is to delete your account and then recreate it"
+msgstr ""
+
+#: src/login.rs:353
+msgid ""
+"Please note, you will lose all your chats and messages, along with any media "
+"and files you shared!"
+msgstr ""
+
+#: src/login.rs:585
+msgid "Do You Accept the Terms of Service?"
+msgstr ""
+
+#: src/login.rs:589
+msgid "Terms of Service"
+msgstr ""
+
+#: src/login.rs:855
+msgid "Warning"
+msgstr ""
+
+#: src/login.rs:857
+msgid ""
+"You will lose all your chats and messages, along with any media and files "
+"you shared!\n"
+"\n"
+"Do you want to delete your account?"
+msgstr ""
+
+#: src/login.rs:946
+msgid "Sorry"
+msgstr ""
+
+#: src/login.rs:948
+msgid ""
+"If you can't restore access to the email, your remaining options are either "
+"to remember your password or to delete and recreate your account."
+msgstr ""
+
+#: src/login.rs:955
+msgid "_Go Back"
+msgstr ""
+
+#: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
 msgstr "Appel entrant"
 
-#: src/window.rs:426 src/session/sidebar/row.rs:500
-#: src/session/sidebar/row.rs:629
+#: src/window.rs:304 src/session/sidebar/row.rs:428
+#: src/session/sidebar/row.rs:559
 msgid "Sticker"
 msgstr "Autocollant"
 
-#: src/window.rs:430 src/session/sidebar/row.rs:679
+#: src/window.rs:308 src/session/sidebar/row.rs:609
 msgid "Photo"
 msgstr "Photo"
 
-#: src/window.rs:449 src/session/sidebar/row.rs:642
+#: src/window.rs:327 src/session/sidebar/row.rs:572
 msgid "GIF"
 msgstr "GIF"
 
-#: src/window.rs:458 src/session/sidebar/row.rs:691
+#: src/window.rs:336 src/session/sidebar/row.rs:621
 msgid "Video"
 msgstr "Vidéo"
 
-#: src/window.rs:476 src/session/sidebar/row.rs:703
+#: src/window.rs:354 src/session/sidebar/row.rs:633
 msgid "Voice message"
 msgstr "Message vocal"
 
-#: src/window.rs:484 src/session/sidebar/row.rs:551
+#: src/window.rs:363 src/session/sidebar/row.rs:480
 msgid "Channel photo removed"
 msgstr "Photo du canal supprimée"
 
-#: src/window.rs:487 src/session/sidebar/row.rs:554
+#: src/window.rs:367 src/session/sidebar/row.rs:484
 msgid "You removed the group photo"
 msgstr "Vous avez supprimé la photo du groupe"
 
-#: src/window.rs:497 src/session/sidebar/row.rs:567
-#: src/session/sidebar/row.rs:635
+#: src/window.rs:377 src/session/sidebar/row.rs:497
+#: src/session/sidebar/row.rs:565
 msgid "Unsupported message"
 msgstr "Message non pris en charge"
 
-#: src/session/content/chat_action_bar.rs:231
-msgid "Unsupported draft message type"
-msgstr "Type de brouillon non pris en charge"
-
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:111
+#: src/session/content/item_row.rs:112
 msgid "%B %e"
 msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:114
+#: src/session/content/item_row.rs:115
 msgid "%B %e, %Y"
 msgstr "%e %B %Y"
 
-#: src/session/content/message_row/text.rs:163
+#: src/session/content/message_row/text.rs:156
 msgid "This message is unsupported"
 msgstr "Ce message n'est pas pris en charge"
 
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
-#: src/session/sidebar/row.rs:230
+#: src/session/sidebar/row.rs:190
 msgid "%l:%M %p"
 msgstr "%H:%M"
 
-#: src/session/sidebar/row.rs:266
+#: src/session/sidebar/row.rs:226
 msgid "Draft"
 msgstr "Brouillon"
 
-#: src/session/sidebar/row.rs:438
+#: src/session/sidebar/row.rs:370
 msgid "You joined the group"
 msgstr "Vous avez rejoint le groupe"
 
-#: src/session/sidebar/row.rs:463
+#: src/session/sidebar/row.rs:395
 msgid ", "
 msgstr ", "
 
-#: src/session/sidebar/row.rs:480
+#: src/session/sidebar/row.rs:412
 msgid "You left the group"
 msgstr "Vous avez quitté le groupe"
 
-#: src/session/sidebar/row.rs:520
+#: src/session/sidebar/row.rs:448
 msgid "Declined outgoing video call"
 msgstr "Appel vidéo sortant refusé"
 
-#: src/session/sidebar/row.rs:522
+#: src/session/sidebar/row.rs:450
 msgid "Declined outgoing call"
 msgstr "Appel sortant refusé"
 
-#: src/session/sidebar/row.rs:528
+#: src/session/sidebar/row.rs:456
 msgid "Declined incoming video call"
 msgstr "Appel vidéo entrant refusé"
 
-#: src/session/sidebar/row.rs:530
+#: src/session/sidebar/row.rs:458
 msgid "Declined incoming call"
 msgstr "Appel entrant refusé"
 
-#: src/session/sidebar/row.rs:540
+#: src/session/sidebar/row.rs:468
 msgid "Cancelled call"
 msgstr "Appel annulé"
 
-#: src/session/sidebar/row.rs:542
+#: src/session/sidebar/row.rs:470
 msgid "Missed call"
 msgstr "Appel manqué"
 
-#: src/session/sidebar/row.rs:572
+#: src/session/sidebar/row.rs:502
 msgid "You"
 msgstr "Vous"
 
-#: src/session/sidebar/row.rs:597
+#: src/session/sidebar/row.rs:527
 msgid "Outgoing video call"
 msgstr "Appel vidéo sortant"
 
-#: src/session/sidebar/row.rs:599
+#: src/session/sidebar/row.rs:529
 msgid "Outgoing call"
 msgstr "Appel sortant"
 
-#: src/session/sidebar/row.rs:611
+#: src/session/sidebar/row.rs:541
 msgid "Incoming video call"
 msgstr "Appel vidéo entrant"
 
-#: src/session/sidebar/row.rs:626
+#: src/session/sidebar/row.rs:556
 msgid "Document"
 msgstr "Document"
 
-#: data/resources/ui/login.ui:666
-msgid "Enter the Code Sent by Mail"
-msgstr "Entrez le code envoyé par courriel"
+#~ msgid "Use Telegram's test data center"
+#~ msgstr "Utiliser le centre de données de test de Telegram"
+
+#~ msgid "Advanced"
+#~ msgstr "Avancé"
+
+#~ msgid "Use Test Data Center"
+#~ msgstr "Utiliser le centre de données de test"
+
+#~ msgid "This requires a restart to apply"
+#~ msgstr "Ceci nécessite un redémarrage pour être appliquée"
+
+#~ msgid "Unsupported draft message type"
+#~ msgstr "Type de brouillon non pris en charge"
+
+#~ msgid "Enter the Code Sent by Mail"
+#~ msgstr "Entrez le code envoyé par courriel"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Clé de chiffrement"
