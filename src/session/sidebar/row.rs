@@ -159,9 +159,9 @@ impl Row {
                         last_message_expression.clone().upcast(),
                     ],
                     closure!(|_: Chat,
-                              draft_message: BoxedDraftMessage,
+                              draft_message: Option<BoxedDraftMessage>,
                               last_message: Option<Message>| {
-                        draft_message.0.map(|m| m.date).unwrap_or_else(|| {
+                        draft_message.map(|m| m.0.date).unwrap_or_else(|| {
                             // ... Or, if there is no draft message use the timestamp of the
                             // last message.
                             last_message
@@ -213,18 +213,16 @@ impl Row {
                         content_expression.upcast(),
                     ],
                     closure!(|_: Chat,
-                              draft_message: BoxedDraftMessage,
+                              draft_message: Option<BoxedDraftMessage>,
                               last_message: Option<Message>,
                               _content: BoxedMessageContent| {
                         // Either, if there is a draft message, retrieve the content from it. ...
                         draft_message
-                            .0
-                            .as_ref()
                             .map(|message| {
                                 format!(
                                     "<span foreground=\"#e01b24\">{}:</span> {}",
                                     gettext("Draft"),
-                                    stringify_draft_message(message)
+                                    stringify_draft_message(&message.0)
                                 )
                             })
                             .unwrap_or_else(|| {

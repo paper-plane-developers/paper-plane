@@ -57,9 +57,9 @@ impl ChatType {
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedDraftMessage")]
-pub struct BoxedDraftMessage(pub Option<DraftMessage>);
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedDraftMessage", nullable)]
+pub struct BoxedDraftMessage(pub DraftMessage);
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedChatNotificationSettings")]
@@ -86,7 +86,7 @@ mod imp {
         pub is_pinned: Cell<bool>,
         pub unread_mention_count: Cell<i32>,
         pub unread_count: Cell<i32>,
-        pub draft_message: RefCell<BoxedDraftMessage>,
+        pub draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub history: OnceCell<History>,
         pub session: WeakRef<Session>,
@@ -280,6 +280,8 @@ impl Chat {
     pub fn new(chat: TelegramChat, session: Session) -> Self {
         let type_ = ChatType::from_td_object(&chat.r#type, &session);
         let avatar = Avatar::new(&session);
+        let draft_message = chat.draft_message.map(BoxedDraftMessage);
+
         avatar.update_from_chat_photo(chat.photo);
 
         glib::Object::new(&[
@@ -287,7 +289,7 @@ impl Chat {
             ("type", &type_),
             ("title", &chat.title),
             ("avatar", &avatar),
-            ("draft-message", &BoxedDraftMessage(chat.draft_message)),
+            ("draft-message", &draft_message),
             ("unread-mention-count", &chat.unread_mention_count),
             ("unread-count", &chat.unread_count),
             (
@@ -359,7 +361,7 @@ impl Chat {
                 self.set_unread_count(update.unread_count);
             }
             Update::ChatDraftMessage(update) => {
-                self.set_draft_message(BoxedDraftMessage(update.draft_message));
+                self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
             }
             _ => {}
         }
@@ -456,11 +458,11 @@ impl Chat {
         self.notify("unread-count");
     }
 
-    pub fn draft_message(&self) -> BoxedDraftMessage {
+    pub fn draft_message(&self) -> Option<BoxedDraftMessage> {
         self.imp().draft_message.borrow().to_owned()
     }
 
-    pub fn set_draft_message(&self, draft_message: BoxedDraftMessage) {
+    pub fn set_draft_message(&self, draft_message: Option<BoxedDraftMessage>) {
         if self.draft_message() == draft_message {
             return;
         }
