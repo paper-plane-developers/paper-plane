@@ -57,11 +57,11 @@ impl ChatType {
     }
 }
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
+#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedDraftMessage")]
 pub struct BoxedDraftMessage(pub Option<DraftMessage>);
 
-#[derive(Clone, Debug, glib::Boxed)]
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedChatNotificationSettings")]
 pub struct BoxedChatNotificationSettings(pub ChatNotificationSettings);
 
@@ -122,8 +122,10 @@ mod imp {
                         "title",
                         "Title",
                         "The title of this chat",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        Some(""),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "avatar",
@@ -137,7 +139,7 @@ mod imp {
                         "Last Message",
                         "The last message sent on this chat",
                         Message::static_type(),
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt64::new(
                         "order",
@@ -146,14 +148,14 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-pinned",
                         "Is Pinned",
                         "The parameter to determine if this chat is pinned in the chat list",
                         false,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt::new(
                         "unread-mention-count",
@@ -162,7 +164,9 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt::new(
                         "unread-count",
@@ -171,21 +175,27 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoxed::new(
                         "draft-message",
                         "Draft Message",
                         "The draft message of this chat",
                         BoxedDraftMessage::static_type(),
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoxed::new(
                         "notification-settings",
                         "Notification Settings",
                         "The notification settings of this chat",
                         BoxedChatNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "history",
@@ -208,53 +218,25 @@ mod imp {
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "id" => {
-                    let id = value.get().unwrap();
-                    self.id.set(id);
-                }
+                "id" => self.id.set(value.get().unwrap()),
                 "type" => self.type_.set(value.get().unwrap()).unwrap(),
                 "title" => {
-                    let title = value.get().unwrap();
-                    self.title.replace(title);
+                    obj.set_title(value.get::<Option<String>>().unwrap().unwrap_or_default())
                 }
-                "avatar" => {
-                    self.avatar.set(value.get().unwrap()).unwrap();
-                }
-                "last-message" => {
-                    let last_message = value.get().unwrap();
-                    self.last_message.replace(last_message);
-                }
-                "order" => {
-                    let order = value.get().unwrap();
-                    self.order.set(order);
-                }
-                "is-pinned" => {
-                    let is_pinned = value.get().unwrap();
-                    self.is_pinned.set(is_pinned);
-                }
-                "unread-mention-count" => {
-                    let unread_mention_count = value.get().unwrap();
-                    self.unread_mention_count.set(unread_mention_count);
-                }
-                "unread-count" => {
-                    let unread_count = value.get().unwrap();
-                    self.unread_count.set(unread_count);
-                }
-                "draft-message" => {
-                    let draft_message = value.get().unwrap();
-                    self.draft_message.replace(draft_message);
-                }
-                "notification-settings" => {
-                    let notification_settings = value.get().unwrap();
-                    self.notification_settings
-                        .replace(Some(notification_settings));
-                }
+                "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
+                "last-message" => obj.set_last_message(value.get().unwrap()),
+                "order" => obj.set_order(value.get().unwrap()),
+                "is-pinned" => obj.set_is_pinned(value.get().unwrap()),
+                "unread-mention-count" => obj.set_unread_mention_count(value.get().unwrap()),
+                "unread-count" => obj.set_unread_count(value.get().unwrap()),
+                "draft-message" => obj.set_draft_message(value.get().unwrap()),
+                "notification-settings" => obj.set_notification_settings(value.get().unwrap()),
                 "session" => self.session.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
@@ -262,23 +244,18 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "id" => self.id.get().to_value(),
+                "id" => obj.id().to_value(),
                 "type" => obj.type_().to_value(),
-                "title" => self.title.borrow().to_value(),
+                "title" => obj.title().to_value(),
                 "avatar" => obj.avatar().to_value(),
-                "last-message" => self.last_message.borrow().to_value(),
-                "order" => self.order.get().to_value(),
-                "is-pinned" => self.is_pinned.get().to_value(),
-                "unread-mention-count" => self.unread_mention_count.get().to_value(),
-                "unread-count" => self.unread_count.get().to_value(),
-                "draft-message" => self.draft_message.borrow().to_value(),
-                "notification-settings" => self
-                    .notification_settings
-                    .borrow()
-                    .as_ref()
-                    .unwrap()
-                    .to_value(),
-                "history" => self.history.get().to_value(),
+                "last-message" => obj.last_message().to_value(),
+                "order" => obj.order().to_value(),
+                "is-pinned" => obj.is_pinned().to_value(),
+                "unread-mention-count" => obj.unread_mention_count().to_value(),
+                "unread-count" => obj.unread_count().to_value(),
+                "draft-message" => obj.draft_message().to_value(),
+                "notification-settings" => obj.notification_settings().to_value(),
+                "history" => obj.history().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
@@ -362,7 +339,9 @@ impl Chat {
                 }
             }
             Update::ChatNotificationSettings(update) => {
-                self.set_notification_settings(update.notification_settings);
+                self.set_notification_settings(BoxedChatNotificationSettings(
+                    update.notification_settings,
+                ));
             }
             Update::ChatPosition(update) => {
                 if let enums::ChatList::Main = update.position.list {
@@ -387,7 +366,7 @@ impl Chat {
     }
 
     pub fn id(&self) -> i64 {
-        self.property("id")
+        self.imp().id.get()
     }
 
     pub fn type_(&self) -> &ChatType {
@@ -395,13 +374,15 @@ impl Chat {
     }
 
     pub fn title(&self) -> String {
-        self.property("title")
+        self.imp().title.borrow().to_owned()
     }
 
-    fn set_title(&self, title: String) {
-        if self.title() != title {
-            self.set_property("title", &title);
+    pub fn set_title(&self, title: String) {
+        if self.title() == title {
+            return;
         }
+        self.imp().title.replace(title);
+        self.notify("title");
     }
 
     pub fn avatar(&self) -> &Avatar {
@@ -409,23 +390,27 @@ impl Chat {
     }
 
     pub fn last_message(&self) -> Option<Message> {
-        self.property("last-message")
+        self.imp().last_message.borrow().to_owned()
     }
 
-    fn set_last_message(&self, last_message: Option<Message>) {
-        if self.last_message() != last_message {
-            self.set_property("last-message", &last_message);
+    pub fn set_last_message(&self, last_message: Option<Message>) {
+        if self.last_message() == last_message {
+            return;
         }
+        self.imp().last_message.replace(last_message);
+        self.notify("last-message");
     }
 
     pub fn order(&self) -> i64 {
-        self.property("order")
+        self.imp().order.get()
     }
 
-    fn set_order(&self, order: i64) {
-        if self.order() != order {
-            self.set_property("order", &order);
+    pub fn set_order(&self, order: i64) {
+        if self.order() == order {
+            return;
         }
+        self.imp().order.set(order);
+        self.notify("order");
     }
 
     pub fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
@@ -436,61 +421,74 @@ impl Chat {
     }
 
     pub fn is_pinned(&self) -> bool {
-        self.property("is-pinned")
+        self.imp().is_pinned.get()
     }
 
-    fn set_is_pinned(&self, is_pinned: bool) {
-        if self.is_pinned() != is_pinned {
-            self.set_property("is-pinned", &is_pinned);
+    pub fn set_is_pinned(&self, is_pinned: bool) {
+        if self.is_pinned() == is_pinned {
+            return;
         }
+        self.imp().is_pinned.set(is_pinned);
+        self.notify("is-pinned");
     }
 
     pub fn unread_mention_count(&self) -> i32 {
-        self.property("unread-mention-count")
+        self.imp().unread_mention_count.get()
     }
 
-    fn set_unread_mention_count(&self, unread_mention_count: i32) {
-        if self.unread_mention_count() != unread_mention_count {
-            self.set_property("unread-mention-count", &unread_mention_count);
+    pub fn set_unread_mention_count(&self, unread_mention_count: i32) {
+        if self.unread_mention_count() == unread_mention_count {
+            return;
         }
+        self.imp().unread_mention_count.set(unread_mention_count);
+        self.notify("unread-mention-count");
     }
 
     pub fn unread_count(&self) -> i32 {
-        self.property("unread-count")
+        self.imp().unread_count.get()
     }
 
-    fn set_unread_count(&self, unread_count: i32) {
-        if self.unread_count() != unread_count {
-            self.set_property("unread-count", &unread_count);
+    pub fn set_unread_count(&self, unread_count: i32) {
+        if self.unread_count() == unread_count {
+            return;
         }
+        self.imp().unread_count.set(unread_count);
+        self.notify("unread-count");
     }
 
     pub fn draft_message(&self) -> BoxedDraftMessage {
-        self.property("draft-message")
+        self.imp().draft_message.borrow().to_owned()
     }
 
-    fn set_draft_message(&self, draft_message: BoxedDraftMessage) {
-        if self.draft_message().0 != draft_message.0 {
-            self.set_property("draft-message", &draft_message);
+    pub fn set_draft_message(&self, draft_message: BoxedDraftMessage) {
+        if self.draft_message() == draft_message {
+            return;
         }
+        self.imp().draft_message.replace(draft_message);
+        self.notify("draft-message");
     }
 
-    pub fn notification_settings(&self) -> ChatNotificationSettings {
-        self.property::<BoxedChatNotificationSettings>("notification-settings")
-            .0
+    pub fn notification_settings(&self) -> BoxedChatNotificationSettings {
+        self.imp()
+            .notification_settings
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .to_owned()
     }
 
-    fn set_notification_settings(&self, notification_settings: ChatNotificationSettings) {
-        if self.notification_settings() != notification_settings {
-            self.set_property(
-                "notification-settings",
-                &BoxedChatNotificationSettings(notification_settings),
-            );
+    pub fn set_notification_settings(&self, notification_settings: BoxedChatNotificationSettings) {
+        if self.imp().notification_settings.borrow().as_ref() == Some(&notification_settings) {
+            return;
         }
+        self.imp()
+            .notification_settings
+            .replace(Some(notification_settings));
+        self.notify("notification-settings");
     }
 
-    pub fn history(&self) -> History {
-        self.property("history")
+    pub fn history(&self) -> &History {
+        self.imp().history.get().unwrap()
     }
 
     pub fn session(&self) -> Session {

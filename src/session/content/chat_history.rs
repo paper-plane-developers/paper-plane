@@ -175,7 +175,7 @@ impl ChatHistory {
             let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
                 let list = gio::ListStore::new(gio::ListModel::static_type());
-                list.append(&chat.history());
+                list.append(chat.history());
 
                 // We need to create a list here so that we can append the sponsored message
                 // to the chat history in the GtkListView using a GtkFlattenListModel
@@ -185,7 +185,7 @@ impl ChatHistory {
 
                 gtk::FlattenListModel::new(Some(&list)).upcast()
             } else {
-                chat.history().upcast()
+                chat.history().to_owned().upcast()
             };
 
             let selection = gtk::NoSelection::new(Some(&chat_history));
