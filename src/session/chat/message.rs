@@ -83,7 +83,9 @@ mod imp {
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "chat",
@@ -94,29 +96,22 @@ mod imp {
                     ),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 
         fn set_property(
             &self,
-            _obj: &Self::Type,
+            obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
-                "sender" => {
-                    let sender = value.get::<MessageSender>().unwrap();
-                    self.sender.set(sender).unwrap();
-                }
+                "sender" => self.sender.set(value.get().unwrap()).unwrap(),
                 "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
                 "date" => self.date.set(value.get().unwrap()),
-                "content" => {
-                    let content = value.get().unwrap();
-                    self.content.replace(Some(content));
-                }
+                "content" => obj.set_content(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
@@ -127,7 +122,7 @@ mod imp {
                 "id" => obj.id().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
                 "date" => obj.date().to_value(),
-                "content" => self.content.borrow().as_ref().unwrap().to_value(),
+                "content" => obj.content().to_value(),
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
@@ -188,13 +183,15 @@ impl Message {
     }
 
     pub fn content(&self) -> BoxedMessageContent {
-        self.property("content")
+        self.imp().content.borrow().as_ref().unwrap().to_owned()
     }
 
-    fn set_content(&self, content: BoxedMessageContent) {
-        if self.content() != content {
-            self.set_property("content", &content);
+    pub fn set_content(&self, content: BoxedMessageContent) {
+        if self.imp().content.borrow().as_ref() == Some(&content) {
+            return;
         }
+        self.imp().content.replace(Some(content));
+        self.notify("content");
     }
 
     pub fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
