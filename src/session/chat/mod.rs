@@ -264,8 +264,6 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            self.history.set(History::new(obj)).unwrap();
-
             let avatar = obj.avatar();
             super::Chat::this_expression("title").bind(avatar, "display-name", Some(obj));
         }
@@ -490,7 +488,7 @@ impl Chat {
     }
 
     pub fn history(&self) -> &History {
-        self.imp().history.get().unwrap()
+        self.imp().history.get_or_init(|| History::new(self))
     }
 
     pub fn session(&self) -> Session {
