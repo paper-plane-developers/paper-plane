@@ -16,6 +16,7 @@ mod imp {
         pub(super) image: RefCell<Option<gdk::Paintable>>,
         pub(super) needed: Cell<bool>,
         pub(super) display_name: RefCell<Option<String>>,
+        pub(super) icon_name: RefCell<Option<String>>,
         pub(super) session: OnceCell<Session>,
 
         pub(super) image_file: RefCell<Option<File>>,
@@ -52,6 +53,13 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecString::new(
+                        "icon-name",
+                        "Icon Name",
+                        "The icon name used for this avatar",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpecObject::new(
                         "session",
                         "Session",
@@ -75,6 +83,7 @@ mod imp {
             match pspec.name() {
                 "needed" => obj.set_needed(value.get().unwrap()),
                 "display-name" => obj.set_display_name(value.get().unwrap()),
+                "icon-name" => obj.set_icon_name(value.get().unwrap()),
                 "session" => self.session.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
@@ -85,6 +94,7 @@ mod imp {
                 "image" => obj.image().to_value(),
                 "needed" => obj.needed().to_value(),
                 "display-name" => obj.display_name().to_value(),
+                "icon-name" => obj.icon_name().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
@@ -189,6 +199,19 @@ impl Avatar {
 
         self.imp().display_name.replace(display_name);
         self.notify("display-name");
+    }
+
+    pub(crate) fn icon_name(&self) -> Option<String> {
+        self.imp().icon_name.borrow().clone()
+    }
+
+    pub(crate) fn set_icon_name(&self, icon_name: Option<String>) {
+        if self.icon_name() == icon_name {
+            return;
+        }
+
+        self.imp().icon_name.replace(icon_name);
+        self.notify("icon-name");
     }
 
     pub(crate) fn session(&self) -> &Session {

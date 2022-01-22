@@ -1,3 +1,4 @@
+use glib::closure;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -81,6 +82,11 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+            obj.setup_expressions();
+        }
     }
 
     impl WidgetImpl for Avatar {}
@@ -101,6 +107,58 @@ impl Default for Avatar {
 impl Avatar {
     pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ComponentsAvatar")
+    }
+
+    fn setup_expressions(&self) {
+        let item_expression = Self::this_expression("item");
+
+        let icon_name_expression = item_expression.chain_property::<AvatarItem>("icon-name");
+
+        let custom_image_expression = item_expression.chain_property::<AvatarItem>("image");
+        let custom_image_expression =
+            gtk::ClosureExpression::new::<Option<gtk::gdk::Paintable>, _, _>(
+                &[
+                    icon_name_expression.clone().upcast(),
+                    custom_image_expression.upcast(),
+                ],
+                closure!(|_: Self,
+                          icon_name: Option<String>,
+                          cusom_image: Option<gtk::gdk::Paintable>| {
+                    match icon_name {
+                        Some(_) => None,
+                        None => cusom_image,
+                    }
+                }),
+            );
+
+        let show_initials_expression = icon_name_expression.chain_closure::<bool>(closure!(
+            |_: Self, icon_name: Option<String>| icon_name.is_none()
+        ));
+
+        let text_expression = item_expression.chain_property::<AvatarItem>("display-name");
+        let text_expression = gtk::ClosureExpression::new::<Option<String>, _, _>(
+            &[
+                icon_name_expression.clone().upcast(),
+                text_expression.upcast(),
+            ],
+            closure!(
+                |_: Self, icon_name: Option<String>, display_name: Option<String>| {
+                    icon_name
+                        // If we use an icon for the avatar, we always want its color to be blue. As
+                        // AdwAvatar doesn't allow us to set the color in an explicit manner, we are
+                        // forced to use this workaround.
+                        .map(|_| Some(String::from("-")))
+                        .unwrap_or(display_name)
+                }
+            ),
+        );
+
+        let imp = self.imp();
+
+        icon_name_expression.bind(&*imp.avatar, "icon-name", Some(self));
+        custom_image_expression.bind(&*imp.avatar, "custom-image", Some(self));
+        show_initials_expression.bind(&*imp.avatar, "show-initials", Some(self));
+        text_expression.bind(&*imp.avatar, "text", Some(self));
     }
 
     fn request_avatar_image(&self) {

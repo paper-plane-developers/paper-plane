@@ -12,6 +12,7 @@ pub(crate) use self::item::{Item, ItemType};
 pub(crate) use self::message::{Message, MessageSender};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
+use glib::closure;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -277,9 +278,7 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            let avatar = obj.avatar();
-            super::Chat::this_expression("title").bind(avatar, "display-name", Some(obj));
+            obj.setup_expressions();
         }
     }
 }
@@ -311,6 +310,25 @@ impl Chat {
             ("session", &session),
         ])
         .expect("Failed to create Chat")
+    }
+
+    fn setup_expressions(&self) {
+        let is_me_expression = Self::this_expression("session").chain_property::<Session>("me");
+
+        let icon_name_expression = is_me_expression.chain_closure::<Option<String>>(closure!(
+            |self_: Self, me: Option<User>| {
+                if me.map(|me| me.id() == self_.id()).unwrap_or_default() {
+                    Some("user-bookmarks-symbolic")
+                } else {
+                    None
+                }
+            }
+        ));
+
+        let avatar = self.avatar();
+
+        icon_name_expression.bind(avatar, "icon-name", Some(self));
+        Self::this_expression("title").bind(avatar, "display-name", Some(self));
     }
 
     pub(crate) fn handle_update(&self, update: Update) {

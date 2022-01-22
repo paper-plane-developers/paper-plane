@@ -2,19 +2,7 @@
 <interface>
   <template class="ComponentsAvatar" parent="AdwBin">
     <property name="child">
-      <object class="AdwAvatar" id="avatar">
-        <property name="show-initials">True</property>
-        <binding name="custom-image">
-          <lookup name="image" type="Avatar">
-            <lookup name="item">ComponentsAvatar</lookup>
-          </lookup>
-        </binding>
-        <binding name="text">
-          <lookup name="display-name" type="Avatar">
-            <lookup name="item">ComponentsAvatar</lookup>
-          </lookup>
-        </binding>
-      </object>
+      <object class="AdwAvatar" id="avatar"/>
     </property>
   </template>
 </interface>
