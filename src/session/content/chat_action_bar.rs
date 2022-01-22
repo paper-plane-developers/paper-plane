@@ -214,19 +214,18 @@ impl ChatActionBar {
         }
     }
 
-    fn load_draft_message(&self, message: BoxedDraftMessage) {
+    fn load_draft_message(&self, message: Option<BoxedDraftMessage>) {
         let message_text = message
-            .0
             .as_ref()
             .map(|message| {
                 if let InputMessageContent::InputMessageText(ref content) =
-                    message.input_message_text
+                    message.0.input_message_text
                 {
                     content.text.text.as_ref()
                 } else {
                     log::warn!(
                         "Unexpected draft message type: {:?}",
-                        message.input_message_text
+                        message.0.input_message_text
                     );
                     ""
                 }
