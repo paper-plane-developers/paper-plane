@@ -15,13 +15,7 @@
               </object>
             </child>
             <child type="title">
-              <object class="AdwWindowTitle">
-                <binding name="title">
-                  <lookup name="title">
-                    <lookup name="chat">ContentChatHistory</lookup>
-                  </lookup>
-                </binding>
-              </object>
+              <object class="AdwWindowTitle" id="window_title"/>
             </child>
             <child type="end">
               <object class="GtkMenuButton">

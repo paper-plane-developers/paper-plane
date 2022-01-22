@@ -12,6 +12,7 @@ pub(crate) use self::item::{Item, ItemType};
 pub(crate) use self::message::{Message, MessageSender};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
+use gettextrs::gettext;
 use glib::closure;
 use gtk::glib;
 use gtk::prelude::*;
@@ -540,5 +541,17 @@ impl Chat {
 
     pub(crate) fn session(&self) -> Session {
         self.imp().session.upgrade().unwrap()
+    }
+
+    pub(crate) fn is_own_chat(&self) -> bool {
+        self.type_().user() == Some(&self.session().me())
+    }
+
+    pub(crate) fn display_name_expression(&self) -> gtk::Expression {
+        if self.is_own_chat() {
+            gtk::ConstantExpression::new(&gettext("Saved Messages")).upcast()
+        } else {
+            Self::this_expression("title").upcast()
+        }
     }
 }

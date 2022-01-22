@@ -153,7 +153,8 @@ impl Row {
 
                 // Title label bindings
                 let title_binding =
-                    Chat::this_expression("title").bind(&*imp.title_label, "label", Some(chat));
+                    chat.display_name_expression()
+                        .bind(&*imp.title_label, "label", Some(chat));
                 bindings.push(title_binding);
 
                 // Timestamp label bindings

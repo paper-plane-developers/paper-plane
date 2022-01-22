@@ -19,6 +19,9 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
+        pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
+        #[template_child]
+        pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
         pub(super) list_view: TemplateChild<gtk::ListView>,
     }
@@ -165,11 +168,22 @@ impl ChatHistory {
         }
 
         let imp = self.imp();
+
+        if let Some(binding) = imp.binding.take() {
+            binding.unwatch();
+        }
+
         if let Some(ref chat) = chat {
             match chat.type_() {
                 ChatType::Private(_) => self.action_set_enabled("chat-history.view-info", true),
                 _ => self.action_set_enabled("chat-history.view-info", false),
             }
+
+            // Title label bindings
+            let title_binding =
+                chat.display_name_expression()
+                    .bind(&*imp.window_title, "title", Some(chat));
+            imp.binding.replace(Some(title_binding));
 
             // Request sponsored message, if needed
             let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
