@@ -217,7 +217,7 @@ impl SessionManager {
         let sessions = self.sessions();
 
         (0..sessions.n_items())
-            .filter_map(|pos| {
+            .map(|pos| {
                 sessions
                     .item(pos)
                     .unwrap()
@@ -254,13 +254,13 @@ impl SessionManager {
                 .downcast::<Session>()
                 .unwrap();
 
-            session
-                .me()
-                .filter(|me| {
-                    on_test_dc == session.database_info().0.use_test_dc
-                        && me.phone_number().replace(" ", "") == phone_number_digits
-                })
-                .map(|_| pos)
+            if on_test_dc == session.database_info().0.use_test_dc
+                && session.me().phone_number().replace(" ", "") == phone_number_digits
+            {
+                Some(pos)
+            } else {
+                None
+            }
         })
     }
 
@@ -655,47 +655,55 @@ impl SessionManager {
     /// Within this function a new `Session` is created based on the passed client id. This session
     /// is then added to the session stack.
     pub fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
-        let imp = self.imp();
+        do_async(
+            glib::PRIORITY_DEFAULT_IDLE,
+            functions::GetMe::new().send(client_id),
+            clone!(@weak self as obj => move |result| async move {
+                let enums::User::User(me) = result.unwrap();
 
-        session.fetch_me();
-        session.fetch_chats();
+                session.set_me_from_id(me.id);
+                session.fetch_chats();
 
-        imp.sessions.add_child(&session);
-        session.set_sessions(&imp.sessions.pages());
+                let imp = obj.imp();
 
-        imp.clients.borrow_mut().insert(
-            client_id,
-            Client {
-                session: session.clone(),
-                state: ClientState::LoggedIn,
-            },
+                imp.sessions.add_child(&session);
+                session.set_sessions(&imp.sessions.pages());
+
+                imp.clients.borrow_mut().insert(
+                    client_id,
+                    Client {
+                        session: session.clone(),
+                        state: ClientState::LoggedIn,
+                    },
+                );
+
+                let auth_session_present = imp
+                    .clients
+                    .borrow()
+                    .values()
+                    .any(|client| matches!(client.state, ClientState::Auth { .. }));
+
+                if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
+                    && !auth_session_present)
+                    || visible
+                {
+                    imp.sessions.set_visible_child(&session);
+                    imp.main_stack.set_visible_child(&*imp.sessions);
+                }
+
+                // Enable notifications for this client
+                RUNTIME.spawn(async move {
+                    functions::SetOption::new()
+                        .name("notification_group_count_max".to_string())
+                        .value(enums::OptionValue::Integer(types::OptionValueInteger {
+                            value: 5,
+                        }))
+                        .send(client_id)
+                        .await
+                        .unwrap();
+                });
+            }),
         );
-
-        let auth_session_present = imp
-            .clients
-            .borrow()
-            .values()
-            .any(|client| matches!(client.state, ClientState::Auth { .. }));
-
-        if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
-            && !auth_session_present)
-            || visible
-        {
-            imp.sessions.set_visible_child(&session);
-            imp.main_stack.set_visible_child(&*imp.sessions);
-        }
-
-        // Enable notifications for this client
-        RUNTIME.spawn(async move {
-            functions::SetOption::new()
-                .name("notification_group_count_max".to_string())
-                .value(enums::OptionValue::Integer(types::OptionValueInteger {
-                    value: 5,
-                }))
-                .send(client_id)
-                .await
-                .unwrap();
-        });
     }
 
     pub fn begin_chats_search(&self) {
