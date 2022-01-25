@@ -4,8 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::types::Message as TdMessage;
 
-use crate::session::chat::message_forward_info::MessageForwardInfo;
-use crate::session::chat::BoxedMessageContent;
+use crate::session::chat::{BoxedMessageContent, MessageForwardInfo, MessageForwardOrigin};
 use crate::session::{Chat, Session, User};
 
 #[derive(Clone, Debug, glib::Boxed)]
@@ -33,6 +32,13 @@ impl MessageSender {
         match self {
             MessageSender::User(user) => Some(user),
             _ => None,
+        }
+    }
+
+    pub(crate) fn id(&self) -> i64 {
+        match self {
+            Self::User(user) => user.id(),
+            Self::Chat(chat) => chat.id(),
         }
     }
 }
@@ -244,6 +250,32 @@ impl Message {
             MessageSender::Chat(chat) => gtk::ConstantExpression::new(chat)
                 .chain_property::<Chat>("title")
                 .upcast(),
+        }
+    }
+
+    pub(crate) fn sender_display_name_expression(&self) -> gtk::Expression {
+        if self.chat().is_own_chat() {
+            self.forward_info()
+                .map(MessageForwardInfo::origin)
+                .map(|forward_origin| match forward_origin {
+                    MessageForwardOrigin::User(user) => {
+                        let user_expression = gtk::ObjectExpression::new(user);
+                        User::full_name_expression(&user_expression)
+                    }
+                    MessageForwardOrigin::Chat { chat, .. }
+                    | MessageForwardOrigin::Channel { chat, .. } => {
+                        gtk::ConstantExpression::new(chat)
+                            .chain_property::<Chat>("title")
+                            .upcast()
+                    }
+                    MessageForwardOrigin::HiddenUser { sender_name }
+                    | MessageForwardOrigin::MessageImport { sender_name } => {
+                        gtk::ConstantExpression::new(&sender_name).upcast()
+                    }
+                })
+                .unwrap_or_else(|| self.sender_display_name_expression())
+        } else {
+            self.sender_name_expression()
         }
     }
 }
