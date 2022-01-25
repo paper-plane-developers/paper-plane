@@ -16,7 +16,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib};
 
-use crate::session::chat::{Message, MessageSender, SponsoredMessage};
+use crate::session::chat::{Message, MessageForwardOrigin, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
 use crate::session::ChatType;
 
@@ -218,21 +218,33 @@ pub(crate) trait MessageRowExt: IsA<MessageRow> {
             if let Some(message) = message.downcast_ref::<Message>() {
                 imp.is_outgoing.set(message.is_outgoing());
 
-                let show_avatar = if !message.is_outgoing() {
-                    match message.chat().type_() {
-                        ChatType::BasicGroup(_) => true,
-                        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
-                        _ => false,
+                let avatar_item = if message.chat().is_own_chat() {
+                    if message.is_outgoing() {
+                        None
+                    } else {
+                        Some(match message.forward_info().unwrap().origin() {
+                            MessageForwardOrigin::User(user) => user.avatar().clone(),
+                            MessageForwardOrigin::Chat { chat, .. }
+                            | MessageForwardOrigin::Channel { chat, .. } => chat.avatar().clone(),
+                            MessageForwardOrigin::HiddenUser { sender_name }
+                            | MessageForwardOrigin::MessageImport { sender_name } => {
+                                message.chat().session().sender_name_avatar(sender_name)
+                            }
+                        })
                     }
-                } else {
-                    false
-                };
-                if show_avatar {
-                    let avatar_item = match message.sender() {
+                } else if !message.is_outgoing()
+                    && (matches!(message.chat().type_(), ChatType::BasicGroup(_))
+                        || matches!(message.chat().type_(), ChatType::Supergroup(supergroup) if !supergroup.is_channel()))
+                {
+                    Some(match message.sender() {
                         MessageSender::User(user) => user.avatar().clone(),
                         MessageSender::Chat(chat) => chat.avatar().clone(),
-                    };
+                    })
+                } else {
+                    None
+                };
 
+                if let Some(avatar_item) = avatar_item {
                     if imp.avatar.borrow().is_none() {
                         let avatar = Avatar::new();
                         avatar.set_size(AVATAR_SIZE);
