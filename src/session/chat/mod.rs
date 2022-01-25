@@ -3,6 +3,7 @@ mod action_list;
 mod history;
 mod item;
 mod message;
+mod message_forward_info;
 mod sponsored_message;
 
 pub(crate) use self::action::ChatAction;
@@ -10,6 +11,7 @@ pub(crate) use self::action_list::ChatActionList;
 use self::history::History;
 pub(crate) use self::item::{Item, ItemType};
 pub(crate) use self::message::{Message, MessageSender};
+pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
 use gettextrs::gettext;

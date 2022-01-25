@@ -4,6 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::types::Message as TdMessage;
 
+use crate::session::chat::message_forward_info::MessageForwardInfo;
 use crate::session::chat::BoxedMessageContent;
 use crate::session::{Chat, Session, User};
 
@@ -50,6 +51,7 @@ mod imp {
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
         pub(super) chat: WeakRef<Chat>,
+        pub(super) forward_info: OnceCell<Option<MessageForwardInfo>>,
     }
 
     #[glib::object_subclass]
@@ -110,6 +112,13 @@ mod imp {
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
+                    glib::ParamSpecObject::new(
+                        "forward-info",
+                        "Forward Info",
+                        "The forward info of this message",
+                        MessageForwardInfo::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -129,6 +138,7 @@ mod imp {
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => obj.set_content(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
+                "forward-info" => self.forward_info.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
@@ -140,6 +150,7 @@ mod imp {
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
                 "chat" => obj.chat().to_value(),
+                "forward-info" => obj.forward_info().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -164,6 +175,12 @@ impl Message {
             ("date", &message.date),
             ("content", &content),
             ("chat", chat),
+            (
+                "forward-info",
+                &message
+                    .forward_info
+                    .map(|forward_info| MessageForwardInfo::from_td_object(forward_info, chat)),
+            ),
         ])
         .expect("Failed to create Message")
     }
@@ -212,6 +229,10 @@ impl Message {
 
     pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
+    }
+
+    pub(crate) fn forward_info(&self) -> Option<&MessageForwardInfo> {
+        self.imp().forward_info.get().unwrap().as_ref()
     }
 
     pub(crate) fn sender_name_expression(&self) -> gtk::Expression {
