@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-09 22:55+0000\n"
+"PO-Revision-Date: 2022-01-22 08:57+0000\n"
 "Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/eu/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -53,12 +53,14 @@ msgstr "Leiho maximizatuaren portaera lehenetsia"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Duela gutxi erabilitako saioak"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"Duela gutxi erabilitako saioen zerrenda ordenatua, datu-basearen direktorioa "
+"izenarekin"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -79,16 +81,15 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Produkzio-zerbitzaria"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "_Proben zerbitzaria"
 
 #: data/resources/ui/add-account-row.ui:33
-#, fuzzy
 msgid "_Add Account"
-msgstr "_Ezabatu kontua"
+msgstr "_Kontu bat gehitu"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -276,30 +277,35 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
+"Zure kontua erabiltzen jarraitzeko aukera bat da ezabatu eta berriro sortzea"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Berreskuratzeko helbide elektronikorik eman ez duzunez, zure kontua "
+"erabiltzen jarraitzeko modu bakarra ezabatzea eta berriro sortzea da"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"Kontuan izan zure txat eta mezu guztiak galduko dituzula, partekatu dituzun "
+"bitarteko eta artxiboekin batera!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Zerbitzuaren Baldintzak onartzen dituzu?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Zerbitzuaren Baldintzak"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Oharra"
 
 #: src/login.rs:857
 msgid ""
@@ -308,20 +314,27 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"Txat eta mezu guztiak galduko dituzu, partekatu dituzun bitarteko eta "
+"artxiboekin batera!\n"
+"\n"
+"Zure kontua ezabatu nahi duzu?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Barkatu"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Posta elektronikorako sarbidea berrezarri ezin baduzu, geratzen zaizkizun "
+"aukerak zure pasahitza gogoratzea edo zure kontua ezabatu eta berriro "
+"sortzea dira."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_Itzuli"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"

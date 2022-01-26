@@ -61,11 +61,11 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Färgschema"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Färgschemat som ska användas i appen"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -97,128 +97,135 @@ msgstr "Välj en chatt för att börja skicka meddelanden."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Visa information"
 
-#: data/resources/ui/content-user-dialog.ui:54
+#: data/resources/ui/content-user-dialog.ui:52
 msgid "Mobile"
-msgstr ""
+msgstr "Mobil"
 
-#: data/resources/ui/content-user-dialog.ui:60
+#: data/resources/ui/content-user-dialog.ui:58
 msgid "Username"
-msgstr ""
+msgstr "Användarnamn"
 
-#: data/resources/ui/login.ui:47
+#: data/resources/ui/login.ui:47 data/resources/ui/login.ui:40
 msgid "_Previous"
 msgstr "_Föregående"
 
-#: data/resources/ui/login.ui:76
+#: data/resources/ui/login.ui:76 data/resources/ui/login.ui:69
 msgid "_Next"
 msgstr "_Nästa"
 
-#: data/resources/ui/login.ui:105
+#: data/resources/ui/login.ui:105 data/resources/ui/login.ui:98
 msgid "Welcome to Telegrand"
 msgstr "Välkommen till Telegrand"
 
-#: data/resources/ui/login.ui:124
+#: data/resources/ui/login.ui:124 data/resources/ui/login.ui:117
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: data/resources/ui/login.ui:146
+#: data/resources/ui/login.ui:139
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Logga in med QR-kod"
 
-#: data/resources/ui/login.ui:205
+#: data/resources/ui/login.ui:218
 msgid "Scan Code"
-msgstr ""
+msgstr "Skanna kod"
 
-#: data/resources/ui/login.ui:206
+#: data/resources/ui/login.ui:219
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Skanna denna kod med en annan Telegram-app som är inloggad på ditt konto."
 
-#: data/resources/ui/login.ui:228
+#: data/resources/ui/login.ui:228 data/resources/ui/login.ui:253
 msgid "Enter the Verification Code"
 msgstr "Ange verifieringskoden"
 
 #: data/resources/ui/login.ui:247 data/resources/ui/login.ui:660
+#: data/resources/ui/login.ui:272 data/resources/ui/login.ui:685
 msgid "Code"
 msgstr "Kod"
 
-#: data/resources/ui/login.ui:286
+#: data/resources/ui/login.ui:311
 msgid "Register New Account"
-msgstr ""
+msgstr "Registrera nytt konto"
 
-#: data/resources/ui/login.ui:306
+#: data/resources/ui/login.ui:331
 msgid "First Name"
-msgstr ""
+msgstr "Förnamn"
 
-#: data/resources/ui/login.ui:323
+#: data/resources/ui/login.ui:348
 msgid "Last Name"
-msgstr ""
+msgstr "Efternamn"
 
-#: data/resources/ui/login.ui:362
+#: data/resources/ui/login.ui:387
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Genom att bli medlem,\n"
+"går du med på <a href=\"\">användarvillkoren</a>."
 
-#: data/resources/ui/login.ui:378
+#: data/resources/ui/login.ui:378 data/resources/ui/login.ui:403
 msgid "Enter Your Password"
 msgstr "Ange ditt lösenord"
 
-#: data/resources/ui/login.ui:397
+#: data/resources/ui/login.ui:397 data/resources/ui/login.ui:422
 msgid "Password"
 msgstr "Lösenord"
 
-#: data/resources/ui/login.ui:412
+#: data/resources/ui/login.ui:437
 msgid "Hint"
-msgstr ""
+msgstr "Ledtråd"
 
-#: data/resources/ui/login.ui:435
+#: data/resources/ui/login.ui:460
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_Glömt lösenord?"
 
-#: data/resources/ui/login.ui:498
+#: data/resources/ui/login.ui:523
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Använd återställningskod"
 
-#: data/resources/ui/login.ui:511
+#: data/resources/ui/login.ui:536
 msgid ""
 "When you set your cloud password, you provided a recovery email address. We "
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"När du angav ditt molnlösenord angav du en återställningse-postadress. Vi "
+"kan skicka en kod till denna e-postadress som du kan använda för att "
+"återställa ditt lösenord."
 
-#: data/resources/ui/login.ui:530
+#: data/resources/ui/login.ui:555
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Skicka återställningskod"
 
-#: data/resources/ui/login.ui:592
+#: data/resources/ui/login.ui:617
 msgid "Account Deletion"
-msgstr ""
+msgstr "Radering av konto"
 
-#: data/resources/ui/login.ui:619
+#: data/resources/ui/login.ui:644
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Radera konto"
 
-#: data/resources/ui/login.ui:641
+#: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Ange koden skickad via e-post"
 
-#: data/resources/ui/login.ui:682
+#: data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Kan du inte komma åt din e-post?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Följ systemfärger"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Mörkt tema"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -238,12 +245,12 @@ msgstr "Avsluta"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Chattlista"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Sök chattar"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -251,7 +258,7 @@ msgstr "_Logga ut"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Inställningar"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -313,135 +320,151 @@ msgstr ""
 msgid "_Go Back"
 msgstr ""
 
-#: src/window.rs:242 src/session/sidebar/row.rs:543
+#: src/window.rs:242 src/session/sidebar/row.rs:543 src/window.rs:334
+#: src/session/sidebar/row.rs:613
 msgid "Incoming call"
 msgstr "Inkommande samtal"
 
-#: src/window.rs:304 src/session/sidebar/row.rs:428
-#: src/session/sidebar/row.rs:559
+#: src/window.rs:426 src/session/sidebar/row.rs:500
+#: src/session/sidebar/row.rs:629
 msgid "Sticker"
-msgstr ""
+msgstr "Klistermärke"
 
-#: src/window.rs:308 src/session/sidebar/row.rs:609
+#: src/window.rs:430 src/session/sidebar/row.rs:679
 msgid "Photo"
-msgstr ""
+msgstr "Bild"
 
-#: src/window.rs:327 src/session/sidebar/row.rs:572
+#: src/window.rs:449 src/session/sidebar/row.rs:642
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
-#: src/window.rs:336 src/session/sidebar/row.rs:621
+#: src/window.rs:458 src/session/sidebar/row.rs:691
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
-#: src/window.rs:354 src/session/sidebar/row.rs:633
+#: src/window.rs:476 src/session/sidebar/row.rs:703
 msgid "Voice message"
-msgstr ""
+msgstr "Röstmeddelande"
 
-#: src/window.rs:363 src/session/sidebar/row.rs:480
+#: src/window.rs:484 src/session/sidebar/row.rs:551
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Kanalbild borttagen"
 
-#: src/window.rs:367 src/session/sidebar/row.rs:484
+#: src/window.rs:487 src/session/sidebar/row.rs:554
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Du tog bort kanalbilden"
 
 #: src/window.rs:377 src/session/sidebar/row.rs:497
-#: src/session/sidebar/row.rs:565
+#: src/session/sidebar/row.rs:565 src/window.rs:497
+#: src/session/sidebar/row.rs:567 src/session/sidebar/row.rs:635
 msgid "Unsupported message"
 msgstr "Icke-stött meddelande"
 
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:112
+#: src/session/content/item_row.rs:112 src/session/content/item_row.rs:111
 msgid "%B %e"
 msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:115
+#: src/session/content/item_row.rs:115 src/session/content/item_row.rs:114
 msgid "%B %e, %Y"
 msgstr "%e %B %Y"
 
 #: src/session/content/message_row/text.rs:156
+#: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
 msgstr "Det här meddelandet stöds inte"
 
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
-#: src/session/sidebar/row.rs:190
+#: src/session/sidebar/row.rs:190 src/session/sidebar/row.rs:230
 msgid "%l:%M %p"
 msgstr "%H.%M"
 
-#: src/session/sidebar/row.rs:226
+#: src/session/sidebar/row.rs:266
 msgid "Draft"
-msgstr ""
+msgstr "Utkast"
 
-#: src/session/sidebar/row.rs:370
+#: src/session/sidebar/row.rs:438
 msgid "You joined the group"
-msgstr ""
+msgstr "Du gick med i gruppen"
 
-#: src/session/sidebar/row.rs:395
+#: src/session/sidebar/row.rs:463
 msgid ", "
-msgstr ""
+msgstr ", "
 
-#: src/session/sidebar/row.rs:412
+#: src/session/sidebar/row.rs:480
 msgid "You left the group"
-msgstr ""
+msgstr "Du lämnade gruppen"
 
-#: src/session/sidebar/row.rs:448
+#: src/session/sidebar/row.rs:520
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Nekat utgående videosamtal"
 
-#: src/session/sidebar/row.rs:450
+#: src/session/sidebar/row.rs:522
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Nekat utgående samtal"
 
-#: src/session/sidebar/row.rs:456
+#: src/session/sidebar/row.rs:528
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Nekat inkommande videosamtal"
 
-#: src/session/sidebar/row.rs:458
+#: src/session/sidebar/row.rs:530
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Nekat inkommande samtal"
 
-#: src/session/sidebar/row.rs:468
+#: src/session/sidebar/row.rs:540
 msgid "Cancelled call"
-msgstr ""
+msgstr "Avbrutet samtal"
 
-#: src/session/sidebar/row.rs:470
+#: src/session/sidebar/row.rs:542
 msgid "Missed call"
-msgstr ""
+msgstr "Missat samtal"
 
-#: src/session/sidebar/row.rs:502
+#: src/session/sidebar/row.rs:502 src/session/sidebar/row.rs:572
 msgid "You"
 msgstr "Du"
 
-#: src/session/sidebar/row.rs:527
+#: src/session/sidebar/row.rs:597
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Utgående videosamtal"
 
-#: src/session/sidebar/row.rs:529
+#: src/session/sidebar/row.rs:599
 msgid "Outgoing call"
-msgstr ""
+msgstr "Utgående samtal"
 
-#: src/session/sidebar/row.rs:541
+#: src/session/sidebar/row.rs:611
 msgid "Incoming video call"
-msgstr ""
+msgstr "Inkommande videosamtal"
 
-#: src/session/sidebar/row.rs:556
+#: src/session/sidebar/row.rs:626
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
-#~ msgid "Use Telegram's test data center"
-#~ msgstr "Använd Telegrams testdatacenter"
+#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/com.github.melix99.telegrand.gschema.xml.in:22
+msgid "Use Telegram's test data center"
+msgstr "Använd Telegrams testdatacenter"
 
-#~ msgid "Advanced"
-#~ msgstr "Avancerade alternativ"
+#: data/resources/ui/login.ui:177
+msgid "Advanced"
+msgstr "Avancerade alternativ"
 
-#~ msgid "Use Test Data Center"
-#~ msgstr "Använd testdatacenter"
+#: data/resources/ui/login.ui:181
+msgid "Use Test Data Center"
+msgstr "Använd testdatacenter"
 
-#~ msgid "This requires a restart to apply"
-#~ msgstr "Detta kräver en omstart för att gälla"
+#: data/resources/ui/login.ui:182
+msgid "This requires a restart to apply"
+msgstr "Detta kräver en omstart för att gälla"
+
+#: src/session/content/chat_action_bar.rs:231
+msgid "Unsupported draft message type"
+msgstr "Utkastmeddelandetypen stöds inte"
+
+#: data/resources/ui/login.ui:666
+msgid "Enter the Code Sent by Mail"
+msgstr "Ange koden skickad via e-post"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Krypteringsnyckel"

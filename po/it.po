@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-05 21:54+0000\n"
+"PO-Revision-Date: 2022-01-22 08:57+0000\n"
 "Last-Translator: Michael Moroni <michaelmoroni@disroot.org>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -51,12 +51,14 @@ msgstr "Comportamento predefinito della massimizzazione della finestra"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Sessioni recentemente usate"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"La lista ordinata delle sessioni recentemente usate secondo il loro nome di "
+"database"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -77,16 +79,15 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "Server di _produzione"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "Server _test"
 
 #: data/resources/ui/add-account-row.ui:33
-#, fuzzy
 msgid "_Add Account"
-msgstr "Elimina account"
+msgstr "_Aggiungi account"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -274,30 +275,35 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
+"Un modo per continuare a usare il tuo account è eliminarlo e poi ricrearlo"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Dato che non hai inserito un indirizzo email di recupero, l'unico modo per "
+"continuare a usare il tuo account è eliminarlo e poi ricrearlo"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"Nota bene: perderai tutte le tue chat e messaggi, assieme a tutti i media e "
+"file che hai condiviso!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Accetti i termini di servizio?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Termini di servizio"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Attenzione"
 
 #: src/login.rs:857
 msgid ""
@@ -306,20 +312,27 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"Perderai tutte le tue chat e i messaggi, assieme a tutti i media e file che "
+"hai condiviso!\n"
+"\n"
+"Vuoi eliminare il tuo account?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Mi dispiace"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Se non puoi ripristinare l'accesso alle email, le opzioni rimaste sono "
+"quelle di ricordarti la tua password o di cancellare e ricreare il tuo "
+"account."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "Indietro"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
