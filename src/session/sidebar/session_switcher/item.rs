@@ -15,7 +15,7 @@ mod imp {
     use std::cell::Cell;
 
     #[derive(Debug, Default)]
-    pub struct ExtraItemObj(pub Cell<super::ExtraItem>);
+    pub(crate) struct ExtraItemObj(pub(super) Cell<super::ExtraItem>);
 
     #[glib::object_subclass]
     impl ObjectSubclass for ExtraItemObj {
@@ -64,7 +64,7 @@ mod imp {
 #[derive(Debug, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
 #[repr(u32)]
 #[enum_type(name = "ExtraItem")]
-pub enum ExtraItem {
+pub(crate) enum ExtraItem {
     Separator = 0,
     AddAccount = 1,
 }
@@ -80,7 +80,7 @@ impl Default for ExtraItem {
 }
 
 glib::wrapper! {
-    pub struct ExtraItemObj(ObjectSubclass<imp::ExtraItemObj>);
+    pub(crate) struct ExtraItemObj(ObjectSubclass<imp::ExtraItemObj>);
 }
 
 impl From<&ExtraItem> for ExtraItemObj {
@@ -90,7 +90,7 @@ impl From<&ExtraItem> for ExtraItemObj {
 }
 
 impl ExtraItemObj {
-    pub fn list_store() -> ListStore {
+    pub(crate) fn list_store() -> ListStore {
         ExtraItem::VALUES.iter().map(ExtraItemObj::from).fold(
             ListStore::new(ExtraItemObj::static_type()),
             |list_items, item| {
@@ -100,13 +100,13 @@ impl ExtraItemObj {
         )
     }
 
-    pub fn get(&self) -> ExtraItem {
+    pub(crate) fn get(&self) -> ExtraItem {
         self.imp().0.get()
     }
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Item {
+pub(crate) enum Item {
     Session(Session, bool),
     Separator,
     AddAccount,
@@ -133,7 +133,7 @@ impl TryFrom<glib::Object> for Item {
 }
 
 impl Item {
-    pub fn set_hint(self, this_session: Session) -> Self {
+    pub(crate) fn set_hint(self, this_session: Session) -> Self {
         match self {
             Self::Session(session, _) => {
                 let hinted = this_session == session;
@@ -143,7 +143,7 @@ impl Item {
         }
     }
 
-    pub fn build_widget(&self) -> gtk::Widget {
+    pub(crate) fn build_widget(&self) -> gtk::Widget {
         match self {
             Self::Session(ref session, hinted) => {
                 let session_entry = SessionEntryRow::new(session);

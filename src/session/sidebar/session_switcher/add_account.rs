@@ -11,13 +11,13 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/add-account-row.ui")]
-    pub struct AddAccountRow {
+    pub(crate) struct AddAccountRow {
         #[template_child]
-        pub image: TemplateChild<gtk::Image>,
+        pub(super) image: TemplateChild<gtk::Image>,
         #[template_child]
-        pub label: TemplateChild<gtk::Label>,
+        pub(super) label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub menu: TemplateChild<gtk::PopoverMenu>,
+        pub(super) menu: TemplateChild<gtk::PopoverMenu>,
     }
 
     #[glib::object_subclass]
@@ -61,13 +61,13 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct AddAccountRow(ObjectSubclass<imp::AddAccountRow>)
+    pub(crate) struct AddAccountRow(ObjectSubclass<imp::AddAccountRow>)
         @extends gtk::Widget,
         @implements gtk::Accessible;
 }
 
 impl AddAccountRow {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create AddAccountRow")
     }
 }

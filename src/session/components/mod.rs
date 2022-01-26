@@ -1,3 +1,3 @@
 mod avatar;
 
-pub use self::avatar::Avatar;
+pub(crate) use self::avatar::Avatar;

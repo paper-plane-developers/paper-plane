@@ -15,7 +15,7 @@ use crate::session::{Chat, ChatType, User};
 use crate::utils::do_async;
 use crate::Session;
 
-pub use self::avatar::Avatar;
+pub(crate) use self::avatar::Avatar;
 
 mod imp {
     use super::*;
@@ -26,27 +26,27 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar.ui")]
-    pub struct Sidebar {
-        pub compact: Cell<bool>,
-        pub selected_chat: RefCell<Option<Chat>>,
-        pub session: RefCell<Option<Session>>,
-        pub filter: RefCell<Option<gtk::CustomFilter>>,
-        pub selection: RefCell<Option<gtk::SingleSelection>>,
-        pub searched_chats: RefCell<Vec<i64>>,
-        pub searched_users: RefCell<Vec<i64>>,
-        pub already_searched_users: RefCell<Vec<i64>>,
+    pub(crate) struct Sidebar {
+        pub(super) compact: Cell<bool>,
+        pub(super) selected_chat: RefCell<Option<Chat>>,
+        pub(super) session: RefCell<Option<Session>>,
+        pub(super) filter: RefCell<Option<gtk::CustomFilter>>,
+        pub(super) selection: RefCell<Option<gtk::SingleSelection>>,
+        pub(super) searched_chats: RefCell<Vec<i64>>,
+        pub(super) searched_users: RefCell<Vec<i64>>,
+        pub(super) already_searched_users: RefCell<Vec<i64>>,
         #[template_child]
-        pub header_bar: TemplateChild<adw::HeaderBar>,
+        pub(super) header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
-        pub session_switcher: TemplateChild<SessionSwitcher>,
+        pub(super) session_switcher: TemplateChild<SessionSwitcher>,
         #[template_child]
-        pub search_bar: TemplateChild<gtk::SearchBar>,
+        pub(super) search_bar: TemplateChild<gtk::SearchBar>,
         #[template_child]
-        pub search_entry: TemplateChild<gtk::SearchEntry>,
+        pub(super) search_entry: TemplateChild<gtk::SearchEntry>,
         #[template_child]
-        pub scrolled_window: TemplateChild<gtk::ScrolledWindow>,
+        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
-        pub list_view: TemplateChild<gtk::ListView>,
+        pub(super) list_view: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -148,7 +148,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Sidebar(ObjectSubclass<imp::Sidebar>)
+    pub(crate) struct Sidebar(ObjectSubclass<imp::Sidebar>)
         @extends gtk::Widget;
 }
 
@@ -159,11 +159,11 @@ impl Default for Sidebar {
 }
 
 impl Sidebar {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Sidebar")
     }
 
-    pub fn begin_chats_search(&self) {
+    pub(crate) fn begin_chats_search(&self) {
         let imp = self.imp();
         imp.search_bar.set_search_mode(true);
         imp.search_entry.grab_focus();
@@ -258,7 +258,7 @@ impl Sidebar {
         self.notify("selected-chat");
     }
 
-    pub fn set_session(&self, session: Option<Session>) {
+    pub(crate) fn set_session(&self, session: Option<Session>) {
         if self.session() == session {
             return;
         }
@@ -362,11 +362,11 @@ impl Sidebar {
         self.notify("session");
     }
 
-    pub fn session(&self) -> Option<Session> {
+    pub(crate) fn session(&self) -> Option<Session> {
         self.imp().session.borrow().to_owned()
     }
 
-    pub fn set_sessions(&self, sessions: &gtk::SelectionModel, this_session: &Session) {
+    pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel, this_session: &Session) {
         self.imp()
             .session_switcher
             .set_sessions(sessions, this_session);

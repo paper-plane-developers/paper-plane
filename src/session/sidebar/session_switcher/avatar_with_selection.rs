@@ -14,11 +14,11 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/avatar-with-selection.ui")]
-    pub struct AvatarWithSelection {
+    pub(crate) struct AvatarWithSelection {
         #[template_child]
-        pub child_avatar: TemplateChild<Avatar>,
+        pub(super) child_avatar: TemplateChild<Avatar>,
         #[template_child]
-        pub checkmark: TemplateChild<gtk::Image>,
+        pub(super) checkmark: TemplateChild<gtk::Image>,
     }
 
     #[glib::object_subclass]
@@ -100,7 +100,7 @@ mod imp {
 
 glib::wrapper! {
     /// A widget displaying an `Avatar` for an `Account`.
-    pub struct AvatarWithSelection(ObjectSubclass<imp::AvatarWithSelection>)
+    pub(crate) struct AvatarWithSelection(ObjectSubclass<imp::AvatarWithSelection>)
         @extends gtk::Widget, adw::Bin,
         @implements gtk::Accessible;
 }
@@ -112,11 +112,11 @@ impl Default for AvatarWithSelection {
 }
 
 impl AvatarWithSelection {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create AvatarWithSelection")
     }
 
-    pub fn set_selected(&self, selected: bool) {
+    pub(crate) fn set_selected(&self, selected: bool) {
         let imp = self.imp();
         imp.checkmark.set_visible(selected);
 

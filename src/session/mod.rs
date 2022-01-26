@@ -16,7 +16,7 @@ mod user_list;
 use self::avatar::Avatar;
 use self::basic_group::BasicGroup;
 use self::basic_group_list::BasicGroupList;
-pub use self::chat::{Chat, ChatType};
+pub(crate) use self::chat::{Chat, ChatType};
 use self::chat_list::ChatList;
 use self::content::Content;
 use self::secret_chat::SecretChat;
@@ -24,7 +24,7 @@ use self::secret_chat_list::SecretChatList;
 use self::sidebar::Sidebar;
 use self::supergroup::Supergroup;
 use self::supergroup_list::SupergroupList;
-pub use self::user::User;
+pub(crate) use self::user::User;
 use self::user_list::UserList;
 
 use glib::{clone, SyncSender};
@@ -43,11 +43,11 @@ use crate::RUNTIME;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedDatabaseInfo")]
-pub struct BoxedDatabaseInfo(pub DatabaseInfo);
+pub(crate) struct BoxedDatabaseInfo(pub(crate) DatabaseInfo);
 
 #[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]
-pub struct BoxedScopeNotificationSettings(pub ScopeNotificationSettings);
+pub(crate) struct BoxedScopeNotificationSettings(pub(crate) ScopeNotificationSettings);
 
 mod imp {
     use super::*;
@@ -57,24 +57,27 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
-    pub struct Session {
-        pub client_id: Cell<i32>,
-        pub database_info: OnceCell<BoxedDatabaseInfo>,
-        pub me: WeakRef<User>,
-        pub chat_list: OnceCell<ChatList>,
-        pub user_list: OnceCell<UserList>,
-        pub basic_group_list: OnceCell<BasicGroupList>,
-        pub supergroup_list: OnceCell<SupergroupList>,
-        pub secret_chat_list: OnceCell<SecretChatList>,
-        pub selected_chat: RefCell<Option<Chat>>,
-        pub private_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
-        pub group_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
-        pub channel_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
-        pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
+    pub(crate) struct Session {
+        pub(super) client_id: Cell<i32>,
+        pub(super) database_info: OnceCell<BoxedDatabaseInfo>,
+        pub(super) me: WeakRef<User>,
+        pub(super) chat_list: OnceCell<ChatList>,
+        pub(super) user_list: OnceCell<UserList>,
+        pub(super) basic_group_list: OnceCell<BasicGroupList>,
+        pub(super) supergroup_list: OnceCell<SupergroupList>,
+        pub(super) secret_chat_list: OnceCell<SecretChatList>,
+        pub(super) selected_chat: RefCell<Option<Chat>>,
+        pub(super) private_chats_notification_settings:
+            RefCell<Option<BoxedScopeNotificationSettings>>,
+        pub(super) group_chats_notification_settings:
+            RefCell<Option<BoxedScopeNotificationSettings>>,
+        pub(super) channel_chats_notification_settings:
+            RefCell<Option<BoxedScopeNotificationSettings>>,
+        pub(super) downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
-        pub leaflet: TemplateChild<adw::Leaflet>,
+        pub(super) leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
-        pub sidebar: TemplateChild<Sidebar>,
+        pub(super) sidebar: TemplateChild<Sidebar>,
     }
 
     #[glib::object_subclass]
@@ -280,12 +283,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Session(ObjectSubclass<imp::Session>)
+    pub(crate) struct Session(ObjectSubclass<imp::Session>)
         @extends gtk::Widget, adw::Bin;
 }
 
 impl Session {
-    pub fn new(client_id: i32, database_info: DatabaseInfo) -> Self {
+    pub(crate) fn new(client_id: i32, database_info: DatabaseInfo) -> Self {
         glib::Object::new(&[
             ("client-id", &client_id),
             ("database-info", &BoxedDatabaseInfo(database_info)),
@@ -293,7 +296,7 @@ impl Session {
         .expect("Failed to create Session")
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         match update {
             Update::NewMessage(_)
             | Update::MessageSendSucceeded(_)
@@ -345,7 +348,7 @@ impl Session {
         }
     }
 
-    pub fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
+    pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
             Entry::Occupied(mut entry) => {
@@ -360,7 +363,7 @@ impl Session {
         }
     }
 
-    pub fn begin_chats_search(&self) {
+    pub(crate) fn begin_chats_search(&self) {
         let imp = self.imp();
         imp.leaflet.navigate(adw::NavigationDirection::Back);
         imp.sidebar.begin_chats_search();
@@ -388,42 +391,42 @@ impl Session {
         }
     }
 
-    pub fn client_id(&self) -> i32 {
+    pub(crate) fn client_id(&self) -> i32 {
         self.imp().client_id.get()
     }
 
-    pub fn database_info(&self) -> &BoxedDatabaseInfo {
+    pub(crate) fn database_info(&self) -> &BoxedDatabaseInfo {
         self.imp().database_info.get().unwrap()
     }
 
-    pub fn me(&self) -> User {
+    pub(crate) fn me(&self) -> User {
         self.imp().me.upgrade().unwrap()
     }
 
-    pub fn set_me_from_id(&self, my_id: i64) {
+    pub(crate) fn set_me_from_id(&self, my_id: i64) {
         let imp = self.imp();
         assert!(imp.me.upgrade().is_none());
         imp.me.set(Some(&self.user_list().get(my_id)));
         self.notify("me");
     }
 
-    pub fn chat_list(&self) -> &ChatList {
+    pub(crate) fn chat_list(&self) -> &ChatList {
         self.imp().chat_list.get_or_init(|| ChatList::new(self))
     }
 
-    pub fn user_list(&self) -> &UserList {
+    pub(crate) fn user_list(&self) -> &UserList {
         self.imp().user_list.get_or_init(|| UserList::new(self))
     }
 
-    pub fn basic_group_list(&self) -> &BasicGroupList {
+    pub(crate) fn basic_group_list(&self) -> &BasicGroupList {
         self.imp().basic_group_list.get_or_init(BasicGroupList::new)
     }
 
-    pub fn supergroup_list(&self) -> &SupergroupList {
+    pub(crate) fn supergroup_list(&self) -> &SupergroupList {
         self.imp().supergroup_list.get_or_init(SupergroupList::new)
     }
 
-    pub fn secret_chat_list(&self) -> &SecretChatList {
+    pub(crate) fn secret_chat_list(&self) -> &SecretChatList {
         self.imp()
             .secret_chat_list
             .get_or_init(|| SecretChatList::new(self))
@@ -507,12 +510,12 @@ impl Session {
         self.notify("channel-chats-notification-settings")
     }
 
-    pub fn fetch_chats(&self) {
+    pub(crate) fn fetch_chats(&self) {
         let client_id = self.imp().client_id.get();
         self.chat_list().fetch(client_id);
     }
 
-    pub fn set_sessions(&self, sessions: &gtk::SelectionModel) {
+    pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel) {
         self.imp().sidebar.set_sessions(sessions, self);
     }
 }

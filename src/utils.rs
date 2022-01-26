@@ -12,11 +12,11 @@ use tdlib::{enums, functions};
 use crate::session_manager::DatabaseInfo;
 use crate::{config, APPLICATION_OPTS, RUNTIME};
 
-pub static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
+static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
-pub const MESSAGE_TRUNCATED_LENGTH: usize = 21;
+pub(crate) const MESSAGE_TRUNCATED_LENGTH: usize = 21;
 
-pub fn escape(text: &str) -> String {
+pub(crate) fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
@@ -24,16 +24,16 @@ pub fn escape(text: &str) -> String {
         .replace('"', "&quot;")
 }
 
-pub fn dim(text: &str) -> String {
+pub(crate) fn dim(text: &str) -> String {
     // The alpha value should be kept in sync with Adwaita's dim-label alpha value
     format!("<span alpha=\"55%\">{}</span>", text)
 }
 
-pub fn dim_and_escape(text: &str) -> String {
+pub(crate) fn dim_and_escape(text: &str) -> String {
     dim(&escape(text))
 }
 
-pub fn linkify(text: &str) -> String {
+pub(crate) fn linkify(text: &str) -> String {
     if !PROTOCOL_RE.is_match(text) {
         format!("http://{}", text)
     } else {
@@ -41,7 +41,7 @@ pub fn linkify(text: &str) -> String {
     }
 }
 
-pub fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
+pub(crate) fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
     match entity {
         TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
         TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
@@ -58,7 +58,7 @@ pub fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
     }
 }
 
-pub fn parse_formatted_text(formatted_text: FormattedText) -> String {
+pub(crate) fn parse_formatted_text(formatted_text: FormattedText) -> String {
     let mut entities = formatted_text.entities.iter();
     let mut entity = entities.next();
     let mut output = String::new();
@@ -121,7 +121,7 @@ pub fn parse_formatted_text(formatted_text: FormattedText) -> String {
     output
 }
 
-pub fn human_friendly_duration(mut seconds: i32) -> String {
+pub(crate) fn human_friendly_duration(mut seconds: i32) -> String {
     let hours = seconds / (60 * 60);
     if hours > 0 {
         seconds %= 60 * 60;
@@ -148,11 +148,11 @@ pub fn human_friendly_duration(mut seconds: i32) -> String {
 }
 
 /// Returns the Telegrand data directory (e.g. /home/bob/.local/share/telegrand).
-pub fn data_dir() -> &'static PathBuf {
+pub(crate) fn data_dir() -> &'static PathBuf {
     &APPLICATION_OPTS.get().unwrap().data_dir
 }
 
-pub async fn send_tdlib_parameters(
+pub(crate) async fn send_tdlib_parameters(
     client_id: i32,
     database_info: &DatabaseInfo,
 ) -> Result<enums::Ok, types::Error> {
@@ -185,7 +185,7 @@ pub async fn send_tdlib_parameters(
     functions::set_tdlib_parameters(parameters, client_id).await
 }
 
-pub fn log_out(client_id: i32) {
+pub(crate) fn log_out(client_id: i32) {
     RUNTIME.spawn(async move {
         if let Err(e) = functions::log_out(client_id).await {
             log::error!("Could not logout client with id={}: {:?}", client_id, e);
@@ -194,7 +194,7 @@ pub fn log_out(client_id: i32) {
 }
 
 // Function from https://gitlab.gnome.org/GNOME/fractal/-/blob/fractal-next/src/utils.rs
-pub fn do_async<
+pub(crate) fn do_async<
     R: Send + 'static,
     F1: Future<Output = R> + Send + 'static,
     F2: Future<Output = ()> + 'static,

@@ -19,70 +19,70 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
-    pub struct Login {
-        pub session_manager: OnceCell<SessionManager>,
-        pub client_id: Cell<i32>,
-        pub session: RefCell<Option<Session>>,
-        pub tos_text: RefCell<String>,
-        pub show_tos_popup: Cell<bool>,
-        pub has_recovery_email_address: Cell<bool>,
-        pub password_recovery_expired: Cell<bool>,
+    pub(crate) struct Login {
+        pub(super) session_manager: OnceCell<SessionManager>,
+        pub(super) client_id: Cell<i32>,
+        pub(super) session: RefCell<Option<Session>>,
+        pub(super) tos_text: RefCell<String>,
+        pub(super) show_tos_popup: Cell<bool>,
+        pub(super) has_recovery_email_address: Cell<bool>,
+        pub(super) password_recovery_expired: Cell<bool>,
         #[template_child]
-        pub outer_box: TemplateChild<gtk::Box>,
+        pub(super) outer_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub previous_button: TemplateChild<gtk::Button>,
+        pub(super) previous_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub previous_stack: TemplateChild<gtk::Stack>,
+        pub(super) previous_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub next_button: TemplateChild<gtk::Button>,
+        pub(super) next_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub next_stack: TemplateChild<gtk::Stack>,
+        pub(super) next_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub next_label: TemplateChild<gtk::Label>,
+        pub(super) next_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub next_spinner: TemplateChild<gtk::Spinner>,
+        pub(super) next_spinner: TemplateChild<gtk::Spinner>,
         #[template_child]
-        pub content: TemplateChild<adw::Leaflet>,
+        pub(super) content: TemplateChild<adw::Leaflet>,
         #[template_child]
-        pub phone_number_entry: TemplateChild<gtk::Entry>,
+        pub(super) phone_number_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub phone_number_use_qr_code_stack: TemplateChild<gtk::Stack>,
+        pub(super) phone_number_use_qr_code_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub welcome_page_error_label: TemplateChild<gtk::Label>,
+        pub(super) welcome_page_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub qr_code_image: TemplateChild<gtk::Image>,
+        pub(super) qr_code_image: TemplateChild<gtk::Image>,
         #[template_child]
-        pub code_entry: TemplateChild<gtk::Entry>,
+        pub(super) code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub code_error_label: TemplateChild<gtk::Label>,
+        pub(super) code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub registration_first_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_first_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub registration_last_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_last_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub registration_error_label: TemplateChild<gtk::Label>,
+        pub(super) registration_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub tos_label: TemplateChild<gtk::Label>,
+        pub(super) tos_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub password_entry: TemplateChild<gtk::PasswordEntry>,
+        pub(super) password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
-        pub password_hint_action_row: TemplateChild<adw::ActionRow>,
+        pub(super) password_hint_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
-        pub password_hint_label: TemplateChild<gtk::Label>,
+        pub(super) password_hint_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub password_error_label: TemplateChild<gtk::Label>,
+        pub(super) password_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub password_recovery_code_send_box: TemplateChild<gtk::Box>,
+        pub(super) password_recovery_code_send_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub password_send_code_stack: TemplateChild<gtk::Stack>,
+        pub(super) password_send_code_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub account_deletion_description_label: TemplateChild<gtk::Label>,
+        pub(super) account_deletion_description_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub password_recovery_status_page: TemplateChild<adw::StatusPage>,
+        pub(super) password_recovery_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub password_recovery_code_entry: TemplateChild<gtk::Entry>,
+        pub(super) password_recovery_code_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub password_recovery_error_label: TemplateChild<gtk::Label>,
+        pub(super) password_recovery_error_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -167,7 +167,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Login(ObjectSubclass<imp::Login>)
+    pub(crate) struct Login(ObjectSubclass<imp::Login>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -178,15 +178,15 @@ impl Default for Login {
 }
 
 impl Login {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Login")
     }
 
-    pub fn set_session_manager(&self, session_manager: SessionManager) {
+    pub(crate) fn set_session_manager(&self, session_manager: SessionManager) {
         self.imp().session_manager.set(session_manager).unwrap();
     }
 
-    pub fn login_client(&self, client_id: i32, session: Session) {
+    pub(crate) fn login_client(&self, client_id: i32, session: Session) {
         let imp = self.imp();
         imp.client_id.set(client_id);
 
@@ -199,7 +199,7 @@ impl Login {
         imp.password_entry.set_text("");
     }
 
-    pub fn set_authorization_state(&self, state: AuthorizationState) {
+    pub(crate) fn set_authorization_state(&self, state: AuthorizationState) {
         let imp = self.imp();
 
         match state {

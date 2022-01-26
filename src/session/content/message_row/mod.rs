@@ -7,10 +7,10 @@ mod text;
 
 use self::media::Media;
 use self::media_picture::MediaPicture;
-pub use self::photo::MessagePhoto;
-pub use self::sticker::MessageSticker;
+pub(crate) use self::photo::MessagePhoto;
+pub(crate) use self::sticker::MessageSticker;
 use self::sticker_paintable::StickerPaintable;
-pub use self::text::MessageText;
+pub(crate) use self::text::MessageText;
 
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -29,12 +29,12 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct MessageRow {
+    pub(crate) struct MessageRow {
         /// A `Message` or `SponsoredMessage`
-        pub message: RefCell<Option<glib::Object>>,
-        pub content: RefCell<Option<gtk::Widget>>,
-        pub avatar: RefCell<Option<Avatar>>,
-        pub is_outgoing: Cell<bool>,
+        pub(super) message: RefCell<Option<glib::Object>>,
+        pub(super) content: RefCell<Option<gtk::Widget>>,
+        pub(super) avatar: RefCell<Option<Avatar>>,
+        pub(super) is_outgoing: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -197,11 +197,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MessageRow(ObjectSubclass<imp::MessageRow>)
+    pub(crate) struct MessageRow(ObjectSubclass<imp::MessageRow>)
         @extends gtk::Widget;
 }
 
-pub trait MessageRowExt: IsA<MessageRow> {
+pub(crate) trait MessageRowExt: IsA<MessageRow> {
     fn new(message: &glib::Object) -> Self;
 
     fn message(&self) -> Option<glib::Object> {

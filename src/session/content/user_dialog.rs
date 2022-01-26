@@ -12,14 +12,14 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-user-dialog.ui")]
-    pub struct UserDialog {
-        pub user: OnceCell<User>,
+    pub(crate) struct UserDialog {
+        pub(super) user: OnceCell<User>,
         #[template_child]
-        pub name_label: TemplateChild<gtk::Label>,
+        pub(super) name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub mobile_row: TemplateChild<adw::ActionRow>,
+        pub(super) mobile_row: TemplateChild<adw::ActionRow>,
         #[template_child]
-        pub username_row: TemplateChild<adw::ActionRow>,
+        pub(super) username_row: TemplateChild<adw::ActionRow>,
     }
 
     #[glib::object_subclass]
@@ -83,12 +83,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct UserDialog(ObjectSubclass<imp::UserDialog>)
+    pub(crate) struct UserDialog(ObjectSubclass<imp::UserDialog>)
         @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
 impl UserDialog {
-    pub fn new(parent_window: &Option<gtk::Window>, user: &User) -> Self {
+    pub(crate) fn new(parent_window: &Option<gtk::Window>, user: &User) -> Self {
         glib::Object::new(&[("transient-for", parent_window), ("user", user)])
             .expect("Failed to create UserDialog")
     }
@@ -127,7 +127,7 @@ impl UserDialog {
             .bind(&*imp.username_row, "visible", Some(self));
     }
 
-    pub fn user(&self) -> Option<&User> {
+    pub(crate) fn user(&self) -> Option<&User> {
         self.imp().user.get()
     }
 }

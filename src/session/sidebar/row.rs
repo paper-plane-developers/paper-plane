@@ -22,28 +22,28 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
-    pub struct Row {
+    pub(crate) struct Row {
         /// A `Chat` or `User`
-        pub item: RefCell<Option<glib::Object>>,
-        pub bindings: RefCell<Vec<gtk::ExpressionWatch>>,
+        pub(super) item: RefCell<Option<glib::Object>>,
+        pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
-        pub avatar: TemplateChild<Avatar>,
+        pub(super) avatar: TemplateChild<Avatar>,
         #[template_child]
-        pub main_box: TemplateChild<gtk::Box>,
+        pub(super) main_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub bottom_box: TemplateChild<gtk::Box>,
+        pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub title_label: TemplateChild<gtk::Label>,
+        pub(super) title_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub timestamp_label: TemplateChild<gtk::Label>,
+        pub(super) timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub bottom_label: TemplateChild<gtk::Label>,
+        pub(super) bottom_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub pin_icon: TemplateChild<gtk::Image>,
+        pub(super) pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
-        pub unread_mention_label: TemplateChild<gtk::Label>,
+        pub(super) unread_mention_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub unread_count_label: TemplateChild<gtk::Label>,
+        pub(super) unread_count_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -105,7 +105,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Row(ObjectSubclass<imp::Row>)
+    pub(crate) struct Row(ObjectSubclass<imp::Row>)
         @extends gtk::Widget;
 }
 
@@ -116,15 +116,15 @@ impl Default for Row {
 }
 
 impl Row {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Row")
     }
 
-    pub fn item(&self) -> Option<glib::Object> {
+    pub(crate) fn item(&self) -> Option<glib::Object> {
         self.imp().item.borrow().to_owned()
     }
 
-    pub fn set_item(&self, item: Option<glib::Object>) {
+    pub(crate) fn set_item(&self, item: Option<glib::Object>) {
         if self.item() == item {
             return;
         }

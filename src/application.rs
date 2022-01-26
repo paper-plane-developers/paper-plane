@@ -14,8 +14,8 @@ mod imp {
     use once_cell::sync::OnceCell;
 
     #[derive(Debug, Default)]
-    pub struct Application {
-        pub window: OnceCell<WeakRef<Window>>,
+    pub(crate) struct Application {
+        pub(super) window: OnceCell<WeakRef<Window>>,
     }
 
     #[glib::object_subclass]
@@ -69,7 +69,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Application(ObjectSubclass<imp::Application>)
+    pub(crate) struct Application(ObjectSubclass<imp::Application>)
         @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionMap, gio::ActionGroup;
 }
@@ -81,7 +81,7 @@ impl Default for Application {
 }
 
 impl Application {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(APP_ID)),
             ("flags", &gio::ApplicationFlags::empty()),

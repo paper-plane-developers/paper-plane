@@ -16,13 +16,13 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-text.ui")]
-    pub struct MessageText {
-        pub sender_color_class: RefCell<Option<String>>,
-        pub bindings: RefCell<Vec<gtk::ExpressionWatch>>,
+    pub(crate) struct MessageText {
+        pub(super) sender_color_class: RefCell<Option<String>>,
+        pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
-        pub sender_label: TemplateChild<gtk::Label>,
+        pub(super) sender_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub content_label: TemplateChild<gtk::Label>,
+        pub(super) content_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -51,7 +51,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MessageText(ObjectSubclass<imp::MessageText>)
+    pub(crate) struct MessageText(ObjectSubclass<imp::MessageText>)
         @extends gtk::Widget, MessageRow;
 }
 

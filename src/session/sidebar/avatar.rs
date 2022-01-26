@@ -18,20 +18,20 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]
-    pub struct Avatar {
+    pub(crate) struct Avatar {
         /// A `Chat` or `User`
-        pub item: RefCell<Option<glib::Object>>,
-        pub binding: RefCell<Option<gtk::ExpressionWatch>>,
-        pub is_online: Cell<bool>,
+        pub(super) item: RefCell<Option<glib::Object>>,
+        pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
+        pub(super) is_online: Cell<bool>,
         // The first Option indicates whether we've once tried to compile the shader. The second
         // Option contains the compiled shader.
-        pub mask_shader: RefCell<Option<Option<gsk::GLShader>>>,
+        pub(super) mask_shader: RefCell<Option<Option<gsk::GLShader>>>,
         #[template_child]
-        pub avatar: TemplateChild<ComponentsAvatar>,
+        pub(super) avatar: TemplateChild<ComponentsAvatar>,
         #[template_child]
-        pub online_indicator_mask: TemplateChild<adw::Bin>,
+        pub(super) online_indicator_mask: TemplateChild<adw::Bin>,
         #[template_child]
-        pub online_indicator_dot: TemplateChild<adw::Bin>,
+        pub(super) online_indicator_dot: TemplateChild<adw::Bin>,
     }
 
     #[glib::object_subclass]
@@ -144,7 +144,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Avatar(ObjectSubclass<imp::Avatar>)
+    pub(crate) struct Avatar(ObjectSubclass<imp::Avatar>)
         @extends gtk::Widget;
 }
 
@@ -155,7 +155,7 @@ impl Default for Avatar {
 }
 
 impl Avatar {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create SidebarAvatar")
     }
 
@@ -189,11 +189,11 @@ impl Avatar {
         self.imp().binding.replace(Some(is_online_binding));
     }
 
-    pub fn item(&self) -> Option<glib::Object> {
+    pub(crate) fn item(&self) -> Option<glib::Object> {
         self.imp().item.borrow().to_owned()
     }
 
-    pub fn set_item(&self, item: Option<glib::Object>) {
+    pub(crate) fn set_item(&self, item: Option<glib::Object>) {
         if self.item() == item {
             return;
         }
@@ -225,11 +225,11 @@ impl Avatar {
         self.notify("item");
     }
 
-    pub fn is_online(&self) -> bool {
+    pub(crate) fn is_online(&self) -> bool {
         self.imp().is_online.get()
     }
 
-    pub fn set_is_online(&self, is_online: bool) {
+    pub(crate) fn set_is_online(&self, is_online: bool) {
         if self.is_online() == is_online {
             return;
         }

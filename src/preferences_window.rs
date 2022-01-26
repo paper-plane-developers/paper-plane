@@ -11,11 +11,11 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/preferences-window.ui")]
-    pub struct PreferencesWindow {
+    pub(crate) struct PreferencesWindow {
         #[template_child]
-        pub follow_system_colors_switch: TemplateChild<gtk::Switch>,
+        pub(super) follow_system_colors_switch: TemplateChild<gtk::Switch>,
         #[template_child]
-        pub dark_theme_switch: TemplateChild<gtk::Switch>,
+        pub(super) dark_theme_switch: TemplateChild<gtk::Switch>,
     }
 
     #[glib::object_subclass]
@@ -60,7 +60,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct PreferencesWindow(ObjectSubclass<imp::PreferencesWindow>)
+    pub(crate) struct PreferencesWindow(ObjectSubclass<imp::PreferencesWindow>)
         @extends gtk::Widget, gtk::Window, adw::Window, adw::PreferencesWindow;
 }
 
@@ -71,7 +71,7 @@ impl Default for PreferencesWindow {
 }
 
 impl PreferencesWindow {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create PreferencesWindow")
     }
 

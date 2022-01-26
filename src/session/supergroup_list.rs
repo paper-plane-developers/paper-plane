@@ -12,8 +12,8 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct SupergroupList {
-        pub list: RefCell<IndexMap<i64, Supergroup>>,
+    pub(crate) struct SupergroupList {
+        pub(super) list: RefCell<IndexMap<i64, Supergroup>>,
     }
 
     #[glib::object_subclass]
@@ -44,7 +44,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SupergroupList(ObjectSubclass<imp::SupergroupList>)
+    pub(crate) struct SupergroupList(ObjectSubclass<imp::SupergroupList>)
         @implements gio::ListModel;
 }
 
@@ -55,7 +55,7 @@ impl Default for SupergroupList {
 }
 
 impl SupergroupList {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create SupergroupList")
     }
 
@@ -63,7 +63,7 @@ impl SupergroupList {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `Supergroup` exists in the list.
-    pub fn get(&self, id: i64) -> Supergroup {
+    pub(crate) fn get(&self, id: i64) -> Supergroup {
         self.imp()
             .list
             .borrow()
@@ -72,7 +72,7 @@ impl SupergroupList {
             .to_owned()
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::Supergroup(data) = update {
             let mut list = self.imp().list.borrow_mut();
 

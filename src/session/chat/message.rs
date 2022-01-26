@@ -9,13 +9,13 @@ use crate::session::{Chat, Session, User};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageSender")]
-pub enum MessageSender {
+pub(crate) enum MessageSender {
     User(User),
     Chat(Chat),
 }
 
 impl MessageSender {
-    pub fn from_td_object(sender: &TdMessageSender, session: &Session) -> Self {
+    pub(crate) fn from_td_object(sender: &TdMessageSender, session: &Session) -> Self {
         match sender {
             TdMessageSender::User(data) => {
                 let user = session.user_list().get(data.user_id);
@@ -28,7 +28,7 @@ impl MessageSender {
         }
     }
 
-    pub fn as_user(&self) -> Option<&User> {
+    pub(crate) fn as_user(&self) -> Option<&User> {
         match self {
             MessageSender::User(user) => Some(user),
             _ => None,
@@ -43,13 +43,13 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct Message {
-        pub id: Cell<i64>,
-        pub sender: OnceCell<MessageSender>,
-        pub is_outgoing: Cell<bool>,
-        pub date: Cell<i32>,
-        pub content: RefCell<Option<BoxedMessageContent>>,
-        pub chat: WeakRef<Chat>,
+    pub(crate) struct Message {
+        pub(super) id: Cell<i64>,
+        pub(super) sender: OnceCell<MessageSender>,
+        pub(super) is_outgoing: Cell<bool>,
+        pub(super) date: Cell<i32>,
+        pub(super) content: RefCell<Option<BoxedMessageContent>>,
+        pub(super) chat: WeakRef<Chat>,
     }
 
     #[glib::object_subclass]
@@ -147,11 +147,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Message(ObjectSubclass<imp::Message>);
+    pub(crate) struct Message(ObjectSubclass<imp::Message>);
 }
 
 impl Message {
-    pub fn new(message: TdMessage, chat: &Chat) -> Self {
+    pub(crate) fn new(message: TdMessage, chat: &Chat) -> Self {
         let content = BoxedMessageContent(message.content);
 
         glib::Object::new(&[
@@ -168,34 +168,34 @@ impl Message {
         .expect("Failed to create Message")
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         if let Update::MessageContent(data) = update {
             let new_content = BoxedMessageContent(data.new_content);
             self.set_content(new_content);
         }
     }
 
-    pub fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
 
-    pub fn sender(&self) -> &MessageSender {
+    pub(crate) fn sender(&self) -> &MessageSender {
         self.imp().sender.get().unwrap()
     }
 
-    pub fn is_outgoing(&self) -> bool {
+    pub(crate) fn is_outgoing(&self) -> bool {
         self.imp().is_outgoing.get()
     }
 
-    pub fn date(&self) -> i32 {
+    pub(crate) fn date(&self) -> i32 {
         self.imp().date.get()
     }
 
-    pub fn content(&self) -> BoxedMessageContent {
+    pub(crate) fn content(&self) -> BoxedMessageContent {
         self.imp().content.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub fn set_content(&self, content: BoxedMessageContent) {
+    pub(crate) fn set_content(&self, content: BoxedMessageContent) {
         if self.imp().content.borrow().as_ref() == Some(&content) {
             return;
         }
@@ -203,18 +203,18 @@ impl Message {
         self.notify("content");
     }
 
-    pub fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+    pub(crate) fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
         &self,
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("content"), f)
     }
 
-    pub fn chat(&self) -> Chat {
+    pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
     }
 
-    pub fn sender_name_expression(&self) -> gtk::Expression {
+    pub(crate) fn sender_name_expression(&self) -> gtk::Expression {
         match self.sender() {
             MessageSender::User(user) => {
                 let user_expression = gtk::ConstantExpression::new(user);

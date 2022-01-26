@@ -16,18 +16,18 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/session-entry-row.ui")]
-    pub struct SessionEntryRow {
-        pub session: RefCell<Option<Session>>,
+    pub(crate) struct SessionEntryRow {
+        pub(super) session: RefCell<Option<Session>>,
         #[template_child]
-        pub account_avatar: TemplateChild<AvatarWithSelection>,
+        pub(super) account_avatar: TemplateChild<AvatarWithSelection>,
         #[template_child]
-        pub center_box: TemplateChild<gtk::Box>,
+        pub(super) center_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub display_name_label: TemplateChild<gtk::Label>,
+        pub(super) display_name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub username_label: TemplateChild<gtk::Label>,
+        pub(super) username_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub unread_count_label: TemplateChild<gtk::Label>,
+        pub(super) unread_count_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -112,12 +112,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SessionEntryRow(ObjectSubclass<imp::SessionEntryRow>)
+    pub(crate) struct SessionEntryRow(ObjectSubclass<imp::SessionEntryRow>)
         @extends gtk::Widget, @implements gtk::Accessible;
 }
 
 impl SessionEntryRow {
-    pub fn new(session: &Session) -> Self {
+    pub(crate) fn new(session: &Session) -> Self {
         glib::Object::new(&[("session", session)]).expect("Failed to create SessionEntryRow")
     }
 
@@ -147,11 +147,11 @@ impl SessionEntryRow {
             .bind(&*imp.username_label, "visible", Some(self));
     }
 
-    pub fn session(&self) -> Option<Session> {
+    pub(crate) fn session(&self) -> Option<Session> {
         self.imp().session.borrow().clone()
     }
 
-    pub fn set_session(&self, session: Option<Session>) {
+    pub(crate) fn set_session(&self, session: Option<Session>) {
         if self.session() == session {
             return;
         }
@@ -159,7 +159,7 @@ impl SessionEntryRow {
         self.notify("session");
     }
 
-    pub fn set_hint(&self, hinted: bool) {
+    pub(crate) fn set_hint(&self, hinted: bool) {
         let imp = self.imp();
         imp.account_avatar.set_selected(hinted);
         imp.display_name_label

@@ -14,9 +14,9 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct UserList {
-        pub list: RefCell<IndexMap<i64, User>>,
-        pub session: OnceCell<Session>,
+    pub(crate) struct UserList {
+        pub(super) list: RefCell<IndexMap<i64, User>>,
+        pub(super) session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -83,12 +83,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct UserList(ObjectSubclass<imp::UserList>)
+    pub(crate) struct UserList(ObjectSubclass<imp::UserList>)
         @implements gio::ListModel;
 }
 
 impl UserList {
-    pub fn new(session: &Session) -> Self {
+    pub(crate) fn new(session: &Session) -> Self {
         glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
     }
 
@@ -96,7 +96,7 @@ impl UserList {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `User` exists in the list.
-    pub fn get(&self, id: i64) -> User {
+    pub(crate) fn get(&self, id: i64) -> User {
         self.imp()
             .list
             .borrow()
@@ -105,7 +105,7 @@ impl UserList {
             .to_owned()
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         match update {
             Update::User(data) => {
                 let mut list = self.imp().list.borrow_mut();
@@ -132,7 +132,7 @@ impl UserList {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub fn session(&self) -> &Session {
+    pub(crate) fn session(&self) -> &Session {
         self.imp().session.get().unwrap()
     }
 }

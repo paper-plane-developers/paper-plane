@@ -16,11 +16,11 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
-    pub struct ChatHistory {
-        pub compact: Cell<bool>,
-        pub chat: RefCell<Option<Chat>>,
+    pub(crate) struct ChatHistory {
+        pub(super) compact: Cell<bool>,
+        pub(super) chat: RefCell<Option<Chat>>,
         #[template_child]
-        pub list_view: TemplateChild<gtk::ListView>,
+        pub(super) list_view: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -110,7 +110,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
+    pub(crate) struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -121,7 +121,7 @@ impl Default for ChatHistory {
 }
 
 impl ChatHistory {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatHistory")
     }
 
@@ -155,11 +155,11 @@ impl ChatHistory {
         }));
     }
 
-    pub fn chat(&self) -> Option<Chat> {
+    pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }
 
-    pub fn set_chat(&self, chat: Option<Chat>) {
+    pub(crate) fn set_chat(&self, chat: Option<Chat>) {
         if self.chat() == chat {
             return;
         }

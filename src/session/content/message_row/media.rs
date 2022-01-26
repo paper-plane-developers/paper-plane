@@ -10,15 +10,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-media.ui")]
-    pub struct Media {
+    pub(crate) struct Media {
         #[template_child]
-        pub content: TemplateChild<gtk::Box>,
+        pub(super) content: TemplateChild<gtk::Box>,
         #[template_child]
-        pub picture: TemplateChild<MediaPicture>,
+        pub(super) picture: TemplateChild<MediaPicture>,
         #[template_child]
-        pub caption_label: TemplateChild<gtk::Label>,
+        pub(super) caption_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub progress_bar: TemplateChild<gtk::ProgressBar>,
+        pub(super) progress_bar: TemplateChild<gtk::ProgressBar>,
     }
 
     #[glib::object_subclass]
@@ -131,7 +131,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Media(ObjectSubclass<imp::Media>)
+    pub(crate) struct Media(ObjectSubclass<imp::Media>)
         @extends gtk::Widget;
 }
 
@@ -142,23 +142,23 @@ impl Default for Media {
 }
 
 impl Media {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Media")
     }
 
-    pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
+    pub(crate) fn set_aspect_ratio(&self, aspect_ratio: f64) {
         self.imp().picture.set_aspect_ratio(aspect_ratio);
     }
 
-    pub fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
+    pub(crate) fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
         self.imp().picture.set_paintable(paintable);
     }
 
-    pub fn caption(&self) -> String {
+    pub(crate) fn caption(&self) -> String {
         self.imp().caption_label.label().into()
     }
 
-    pub fn set_caption(&self, caption: &str) {
+    pub(crate) fn set_caption(&self, caption: &str) {
         if self.caption() == caption {
             return;
         }
@@ -176,11 +176,11 @@ impl Media {
         self.notify("caption");
     }
 
-    pub fn download_progress(&self) -> f64 {
+    pub(crate) fn download_progress(&self) -> f64 {
         self.imp().progress_bar.fraction()
     }
 
-    pub fn set_download_progress(&self, progress: f64) {
+    pub(crate) fn set_download_progress(&self, progress: f64) {
         if self.download_progress() == progress {
             return;
         }

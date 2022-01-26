@@ -18,10 +18,10 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct ChatList {
-        pub list: RefCell<IndexMap<i64, Chat>>,
-        pub unread_count: Cell<i32>,
-        pub session: OnceCell<Session>,
+    pub(crate) struct ChatList {
+        pub(super) list: RefCell<IndexMap<i64, Chat>>,
+        pub(super) unread_count: Cell<i32>,
+        pub(super) session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
@@ -113,16 +113,16 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ChatList(ObjectSubclass<imp::ChatList>)
+    pub(crate) struct ChatList(ObjectSubclass<imp::ChatList>)
         @implements gio::ListModel;
 }
 
 impl ChatList {
-    pub fn new(session: &Session) -> Self {
+    pub(crate) fn new(session: &Session) -> Self {
         glib::Object::new(&[("session", session)]).expect("Failed to create ChatList")
     }
 
-    pub fn fetch(&self, client_id: i32) {
+    pub(crate) fn fetch(&self, client_id: i32) {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             functions::load_chats(None, 20, client_id),
@@ -139,7 +139,7 @@ impl ChatList {
         );
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         let imp = self.imp();
 
         match update {
@@ -227,7 +227,7 @@ impl ChatList {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `Chat` exists in the list.
-    pub fn get(&self, id: i64) -> Chat {
+    pub(crate) fn get(&self, id: i64) -> Chat {
         self.imp()
             .list
             .borrow()
@@ -258,11 +258,11 @@ impl ChatList {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub fn unread_count(&self) -> i32 {
+    pub(crate) fn unread_count(&self) -> i32 {
         self.imp().unread_count.get()
     }
 
-    pub fn set_unread_count(&self, unread_count: i32) {
+    pub(crate) fn set_unread_count(&self, unread_count: i32) {
         if self.unread_count() == unread_count {
             return;
         }
@@ -271,11 +271,14 @@ impl ChatList {
         self.notify("unread-count");
     }
 
-    pub fn session(&self) -> Session {
+    pub(crate) fn session(&self) -> Session {
         self.property("session")
     }
 
-    pub fn connect_positions_changed<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
+    pub(crate) fn connect_positions_changed<F: Fn(&Self) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
         self.connect_local("positions-changed", true, move |values| {
             let obj = values[0].get::<Self>().unwrap();
             f(&obj);

@@ -12,13 +12,13 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct Avatar {
-        pub image: RefCell<Option<gdk::Paintable>>,
-        pub needed: Cell<bool>,
-        pub display_name: RefCell<Option<String>>,
-        pub session: OnceCell<Session>,
+    pub(crate) struct Avatar {
+        pub(super) image: RefCell<Option<gdk::Paintable>>,
+        pub(super) needed: Cell<bool>,
+        pub(super) display_name: RefCell<Option<String>>,
+        pub(super) session: OnceCell<Session>,
 
-        pub image_file: RefCell<Option<File>>,
+        pub(super) image_file: RefCell<Option<File>>,
     }
 
     #[glib::object_subclass]
@@ -93,20 +93,20 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Avatar(ObjectSubclass<imp::Avatar>);
+    pub(crate) struct Avatar(ObjectSubclass<imp::Avatar>);
 }
 
 impl Avatar {
-    pub fn new(session: &Session) -> Self {
+    pub(crate) fn new(session: &Session) -> Self {
         glib::Object::new(&[("session", session)]).expect("Failed to create Avatar")
     }
 
-    pub fn update_from_chat_photo(&self, chat_photo: Option<ChatPhotoInfo>) {
+    pub(crate) fn update_from_chat_photo(&self, chat_photo: Option<ChatPhotoInfo>) {
         let image_file = chat_photo.map(|data| data.small);
         self.set_image_file(image_file);
     }
 
-    pub fn update_from_user_photo(&self, user_photo: Option<ProfilePhoto>) {
+    pub(crate) fn update_from_user_photo(&self, user_photo: Option<ProfilePhoto>) {
         let image_file = user_photo.map(|data| data.small);
         self.set_image_file(image_file);
     }
@@ -151,7 +151,7 @@ impl Avatar {
         }
     }
 
-    pub fn image(&self) -> Option<gdk::Paintable> {
+    pub(crate) fn image(&self) -> Option<gdk::Paintable> {
         self.imp().image.borrow().clone()
     }
 
@@ -160,11 +160,11 @@ impl Avatar {
         self.notify("image");
     }
 
-    pub fn needed(&self) -> bool {
+    pub(crate) fn needed(&self) -> bool {
         self.imp().needed.get()
     }
 
-    pub fn set_needed(&self, needed: bool) {
+    pub(crate) fn set_needed(&self, needed: bool) {
         if self.needed() == needed {
             return;
         }
@@ -178,11 +178,11 @@ impl Avatar {
         self.notify("needed");
     }
 
-    pub fn display_name(&self) -> Option<String> {
+    pub(crate) fn display_name(&self) -> Option<String> {
         self.imp().display_name.borrow().clone()
     }
 
-    pub fn set_display_name(&self, display_name: Option<String>) {
+    pub(crate) fn set_display_name(&self, display_name: Option<String>) {
         if self.display_name() == display_name {
             return;
         }
@@ -191,7 +191,7 @@ impl Avatar {
         self.notify("display-name");
     }
 
-    pub fn session(&self) -> &Session {
+    pub(crate) fn session(&self) -> &Session {
         self.imp().session.get().unwrap()
     }
 }

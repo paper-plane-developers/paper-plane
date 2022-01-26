@@ -6,7 +6,7 @@ use crate::session::chat::{Chat, MessageSender};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedChatActionType")]
-pub struct BoxedChatActionType(pub enums::ChatAction);
+pub(crate) struct BoxedChatActionType(pub(crate) enums::ChatAction);
 
 mod imp {
     use super::*;
@@ -17,10 +17,10 @@ mod imp {
     use once_cell::unsync::OnceCell;
 
     #[derive(Debug, Default)]
-    pub struct ChatAction {
-        pub type_: OnceCell<BoxedChatActionType>,
-        pub sender: OnceCell<MessageSender>,
-        pub chat: WeakRef<Chat>,
+    pub(crate) struct ChatAction {
+        pub(super) type_: OnceCell<BoxedChatActionType>,
+        pub(super) sender: OnceCell<MessageSender>,
+        pub(super) chat: WeakRef<Chat>,
     }
 
     #[glib::object_subclass]
@@ -87,11 +87,15 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ChatAction(ObjectSubclass<imp::ChatAction>);
+    pub(crate) struct ChatAction(ObjectSubclass<imp::ChatAction>);
 }
 
 impl ChatAction {
-    pub fn new(type_: enums::ChatAction, sender: &enums::MessageSender, chat: &Chat) -> Self {
+    pub(crate) fn new(
+        type_: enums::ChatAction,
+        sender: &enums::MessageSender,
+        chat: &Chat,
+    ) -> Self {
         glib::Object::new(&[
             ("type", &BoxedChatActionType(type_)),
             (
@@ -103,15 +107,15 @@ impl ChatAction {
         .expect("Failed to create ChatAction")
     }
 
-    pub fn type_(&self) -> &BoxedChatActionType {
+    pub(crate) fn type_(&self) -> &BoxedChatActionType {
         self.imp().type_.get().unwrap()
     }
 
-    pub fn sender(&self) -> &MessageSender {
+    pub(crate) fn sender(&self) -> &MessageSender {
         self.imp().sender.get().unwrap()
     }
 
-    pub fn chat(&self) -> Chat {
+    pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
     }
 }

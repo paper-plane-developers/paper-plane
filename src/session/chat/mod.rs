@@ -5,12 +5,12 @@ mod item;
 mod message;
 mod sponsored_message;
 
-pub use self::action::ChatAction;
-pub use self::action_list::ChatActionList;
+pub(crate) use self::action::ChatAction;
+pub(crate) use self::action_list::ChatActionList;
 use self::history::History;
-pub use self::item::{Item, ItemType};
-pub use self::message::{Message, MessageSender};
-pub use self::sponsored_message::SponsoredMessage;
+pub(crate) use self::item::{Item, ItemType};
+pub(crate) use self::message::{Message, MessageSender};
+pub(crate) use self::sponsored_message::SponsoredMessage;
 
 use gtk::glib;
 use gtk::prelude::*;
@@ -23,7 +23,7 @@ use crate::Session;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
-pub enum ChatType {
+pub(crate) enum ChatType {
     Private(User),
     BasicGroup(BasicGroup),
     Supergroup(Supergroup),
@@ -31,7 +31,7 @@ pub enum ChatType {
 }
 
 impl ChatType {
-    pub fn from_td_object(_type: &TdChatType, session: &Session) -> Self {
+    pub(crate) fn from_td_object(_type: &TdChatType, session: &Session) -> Self {
         match _type {
             TdChatType::Private(data) => {
                 let user = session.user_list().get(data.user_id);
@@ -52,7 +52,7 @@ impl ChatType {
         }
     }
 
-    pub fn user(&self) -> Option<&User> {
+    pub(crate) fn user(&self) -> Option<&User> {
         Some(match self {
             ChatType::Private(user) => user,
             ChatType::Secret(secret_chat) => secret_chat.user(),
@@ -63,15 +63,15 @@ impl ChatType {
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedDraftMessage", nullable)]
-pub struct BoxedDraftMessage(pub DraftMessage);
+pub(crate) struct BoxedDraftMessage(pub(crate) DraftMessage);
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedChatNotificationSettings")]
-pub struct BoxedChatNotificationSettings(pub ChatNotificationSettings);
+pub(crate) struct BoxedChatNotificationSettings(pub(crate) ChatNotificationSettings);
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedMessageContent")]
-pub struct BoxedMessageContent(pub MessageContent);
+pub(crate) struct BoxedMessageContent(pub(crate) MessageContent);
 
 mod imp {
     use super::*;
@@ -81,21 +81,21 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct Chat {
-        pub id: Cell<i64>,
-        pub type_: OnceCell<ChatType>,
-        pub title: RefCell<String>,
-        pub avatar: OnceCell<Avatar>,
-        pub last_message: RefCell<Option<Message>>,
-        pub order: Cell<i64>,
-        pub is_pinned: Cell<bool>,
-        pub unread_mention_count: Cell<i32>,
-        pub unread_count: Cell<i32>,
-        pub draft_message: RefCell<Option<BoxedDraftMessage>>,
-        pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
-        pub history: OnceCell<History>,
-        pub actions: OnceCell<ChatActionList>,
-        pub session: WeakRef<Session>,
+    pub(crate) struct Chat {
+        pub(super) id: Cell<i64>,
+        pub(super) type_: OnceCell<ChatType>,
+        pub(super) title: RefCell<String>,
+        pub(super) avatar: OnceCell<Avatar>,
+        pub(super) last_message: RefCell<Option<Message>>,
+        pub(super) order: Cell<i64>,
+        pub(super) is_pinned: Cell<bool>,
+        pub(super) unread_mention_count: Cell<i32>,
+        pub(super) unread_count: Cell<i32>,
+        pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
+        pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
+        pub(super) history: OnceCell<History>,
+        pub(super) actions: OnceCell<ChatActionList>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -285,11 +285,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Chat(ObjectSubclass<imp::Chat>);
+    pub(crate) struct Chat(ObjectSubclass<imp::Chat>);
 }
 
 impl Chat {
-    pub fn new(chat: TelegramChat, session: Session) -> Self {
+    pub(crate) fn new(chat: TelegramChat, session: Session) -> Self {
         let type_ = ChatType::from_td_object(&chat.r#type, &session);
         let avatar = Avatar::new(&session);
         let draft_message = chat.draft_message.map(BoxedDraftMessage);
@@ -313,7 +313,7 @@ impl Chat {
         .expect("Failed to create Chat")
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         match update {
             Update::NewMessage(_)
             | Update::MessageSendSucceeded(_)
@@ -385,19 +385,19 @@ impl Chat {
         }
     }
 
-    pub fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
 
-    pub fn type_(&self) -> &ChatType {
+    pub(crate) fn type_(&self) -> &ChatType {
         self.imp().type_.get().unwrap()
     }
 
-    pub fn title(&self) -> String {
+    pub(crate) fn title(&self) -> String {
         self.imp().title.borrow().to_owned()
     }
 
-    pub fn set_title(&self, title: String) {
+    pub(crate) fn set_title(&self, title: String) {
         if self.title() == title {
             return;
         }
@@ -405,15 +405,15 @@ impl Chat {
         self.notify("title");
     }
 
-    pub fn avatar(&self) -> &Avatar {
+    pub(crate) fn avatar(&self) -> &Avatar {
         self.imp().avatar.get().unwrap()
     }
 
-    pub fn last_message(&self) -> Option<Message> {
+    pub(crate) fn last_message(&self) -> Option<Message> {
         self.imp().last_message.borrow().to_owned()
     }
 
-    pub fn set_last_message(&self, last_message: Option<Message>) {
+    pub(crate) fn set_last_message(&self, last_message: Option<Message>) {
         if self.last_message() == last_message {
             return;
         }
@@ -421,11 +421,11 @@ impl Chat {
         self.notify("last-message");
     }
 
-    pub fn order(&self) -> i64 {
+    pub(crate) fn order(&self) -> i64 {
         self.imp().order.get()
     }
 
-    pub fn set_order(&self, order: i64) {
+    pub(crate) fn set_order(&self, order: i64) {
         if self.order() == order {
             return;
         }
@@ -433,18 +433,18 @@ impl Chat {
         self.notify("order");
     }
 
-    pub fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+    pub(crate) fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
         &self,
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("order"), f)
     }
 
-    pub fn is_pinned(&self) -> bool {
+    pub(crate) fn is_pinned(&self) -> bool {
         self.imp().is_pinned.get()
     }
 
-    pub fn set_is_pinned(&self, is_pinned: bool) {
+    pub(crate) fn set_is_pinned(&self, is_pinned: bool) {
         if self.is_pinned() == is_pinned {
             return;
         }
@@ -452,11 +452,11 @@ impl Chat {
         self.notify("is-pinned");
     }
 
-    pub fn unread_mention_count(&self) -> i32 {
+    pub(crate) fn unread_mention_count(&self) -> i32 {
         self.imp().unread_mention_count.get()
     }
 
-    pub fn set_unread_mention_count(&self, unread_mention_count: i32) {
+    pub(crate) fn set_unread_mention_count(&self, unread_mention_count: i32) {
         if self.unread_mention_count() == unread_mention_count {
             return;
         }
@@ -464,11 +464,11 @@ impl Chat {
         self.notify("unread-mention-count");
     }
 
-    pub fn unread_count(&self) -> i32 {
+    pub(crate) fn unread_count(&self) -> i32 {
         self.imp().unread_count.get()
     }
 
-    pub fn set_unread_count(&self, unread_count: i32) {
+    pub(crate) fn set_unread_count(&self, unread_count: i32) {
         if self.unread_count() == unread_count {
             return;
         }
@@ -476,11 +476,11 @@ impl Chat {
         self.notify("unread-count");
     }
 
-    pub fn draft_message(&self) -> Option<BoxedDraftMessage> {
+    pub(crate) fn draft_message(&self) -> Option<BoxedDraftMessage> {
         self.imp().draft_message.borrow().to_owned()
     }
 
-    pub fn set_draft_message(&self, draft_message: Option<BoxedDraftMessage>) {
+    pub(crate) fn set_draft_message(&self, draft_message: Option<BoxedDraftMessage>) {
         if self.draft_message() == draft_message {
             return;
         }
@@ -488,7 +488,7 @@ impl Chat {
         self.notify("draft-message");
     }
 
-    pub fn notification_settings(&self) -> BoxedChatNotificationSettings {
+    pub(crate) fn notification_settings(&self) -> BoxedChatNotificationSettings {
         self.imp()
             .notification_settings
             .borrow()
@@ -497,7 +497,10 @@ impl Chat {
             .to_owned()
     }
 
-    pub fn set_notification_settings(&self, notification_settings: BoxedChatNotificationSettings) {
+    pub(crate) fn set_notification_settings(
+        &self,
+        notification_settings: BoxedChatNotificationSettings,
+    ) {
         if self.imp().notification_settings.borrow().as_ref() == Some(&notification_settings) {
             return;
         }
@@ -507,17 +510,17 @@ impl Chat {
         self.notify("notification-settings");
     }
 
-    pub fn history(&self) -> &History {
+    pub(crate) fn history(&self) -> &History {
         self.imp().history.get_or_init(|| History::new(self))
     }
 
-    pub fn actions(&self) -> &ChatActionList {
+    pub(crate) fn actions(&self) -> &ChatActionList {
         self.imp()
             .actions
             .get_or_init(|| ChatActionList::from(self))
     }
 
-    pub fn session(&self) -> Session {
+    pub(crate) fn session(&self) -> Session {
         self.imp().session.upgrade().unwrap()
     }
 }

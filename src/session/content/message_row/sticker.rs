@@ -14,10 +14,10 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-sticker.ui")]
-    pub struct MessageSticker {
-        pub paintable: StickerPaintable,
+    pub(crate) struct MessageSticker {
+        pub(super) paintable: StickerPaintable,
         #[template_child]
-        pub picture: TemplateChild<gtk::Picture>,
+        pub(super) picture: TemplateChild<gtk::Picture>,
     }
 
     #[glib::object_subclass]
@@ -47,7 +47,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MessageSticker(ObjectSubclass<imp::MessageSticker>)
+    pub(crate) struct MessageSticker(ObjectSubclass<imp::MessageSticker>)
         @extends gtk::Widget, MessageRow;
 }
 

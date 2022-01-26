@@ -12,9 +12,9 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct MediaPicture {
-        pub paintable: RefCell<Option<gdk::Paintable>>,
-        pub aspect_ratio: Cell<f64>,
+    pub(crate) struct MediaPicture {
+        pub(super) paintable: RefCell<Option<gdk::Paintable>>,
+        pub(super) aspect_ratio: Cell<f64>,
     }
 
     #[glib::object_subclass]
@@ -138,7 +138,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MediaPicture(ObjectSubclass<imp::MediaPicture>)
+    pub(crate) struct MediaPicture(ObjectSubclass<imp::MediaPicture>)
         @extends gtk::Widget;
 }
 
@@ -149,15 +149,15 @@ impl Default for MediaPicture {
 }
 
 impl MediaPicture {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ContentMediaPicture")
     }
 
-    pub fn paintable(&self) -> Option<gdk::Paintable> {
+    pub(crate) fn paintable(&self) -> Option<gdk::Paintable> {
         self.imp().paintable.borrow().to_owned()
     }
 
-    pub fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
+    pub(crate) fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
         if self.paintable() == paintable {
             return;
         }
@@ -168,11 +168,11 @@ impl MediaPicture {
         self.notify("paintable");
     }
 
-    pub fn aspect_ratio(&self) -> f64 {
+    pub(crate) fn aspect_ratio(&self) -> f64 {
         self.imp().aspect_ratio.get()
     }
 
-    pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
+    pub(crate) fn set_aspect_ratio(&self, aspect_ratio: f64) {
         if self.aspect_ratio() == aspect_ratio {
             return;
         }
