@@ -103,14 +103,6 @@ impl ExtraItemObj {
     pub fn get(&self) -> ExtraItem {
         self.imp().0.get()
     }
-
-    pub fn is_separator(&self) -> bool {
-        self.get() == ExtraItem::Separator
-    }
-
-    pub fn is_add_account(&self) -> bool {
-        self.get() == ExtraItem::AddAccount
-    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

@@ -126,8 +126,4 @@ impl AvatarWithSelection {
             imp.child_avatar.remove_css_class("selected-avatar");
         }
     }
-
-    pub fn avatar(&self) -> &Avatar {
-        &self.imp().child_avatar
-    }
 }

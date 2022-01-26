@@ -92,15 +92,6 @@ impl UserList {
         glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
     }
 
-    pub fn insert_user(&self, user: User) {
-        {
-            let mut list = self.imp().list.borrow_mut();
-            list.insert(user.id(), user);
-        }
-
-        self.item_added();
-    }
-
     /// Return the `User` of the specified `id`. Panics if the user is not present.
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
