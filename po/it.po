@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-22 08:57+0000\n"
-"Last-Translator: Michael Moroni <michaelmoroni@disroot.org>\n"
+"PO-Revision-Date: 2022-02-01 22:52+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
 "Language: it\n"
@@ -193,9 +193,9 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
-"Quando imposti la tua password cloud, fornisci un'email di recupero. Noi "
-"possiamo inviarti un codice a questa email che può essere usato per cambiare "
-"la tua password."
+"Quando imposti la tua password cloud, fornisci un'e-mail di recupero. Noi "
+"possiamo inviarti un codice a questa e-mail che può essere usato per "
+"cambiare la tua password."
 
 #: data/resources/ui/login.ui:530
 msgid "_Send recovery code"
@@ -211,11 +211,11 @@ msgstr "Elimina account"
 
 #: data/resources/ui/login.ui:641
 msgid "Enter the Code Sent by E-Mail"
-msgstr "Inserisci il codice inviato via email"
+msgstr "Inserisci il codice inviato via e-mail"
 
 #: data/resources/ui/login.ui:682
 msgid "_Unable to access your email?"
-msgstr "Impossibile accedere all'email?"
+msgstr "Impossibile accedere all'e-mail?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
@@ -282,7 +282,7 @@ msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
-"Dato che non hai inserito un indirizzo email di recupero, l'unico modo per "
+"Dato che non hai inserito un indirizzo e-mail di recupero, l'unico modo per "
 "continuare a usare il tuo account è eliminarlo e poi ricrearlo"
 
 #: src/login.rs:353
@@ -326,7 +326,7 @@ msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
-"Se non puoi ripristinare l'accesso alle email, le opzioni rimaste sono "
+"Se non puoi ripristinare l'accesso alle e-mail, le opzioni rimaste sono "
 "quelle di ricordarti la tua password o di cancellare e ricreare il tuo "
 "account."
 
