@@ -46,7 +46,7 @@
           <object class="GtkBox" id="bottom_box">
             <property name="spacing">6</property>
             <child>
-              <object class="GtkLabel" id="message_label">
+              <object class="GtkLabel" id="bottom_label">
                 <property name="hexpand">True</property>
                 <property name="ellipsize">end</property>
                 <property name="single-line-mode">True</property>

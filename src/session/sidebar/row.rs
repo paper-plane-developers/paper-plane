@@ -6,7 +6,8 @@ use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
 use tdgrand::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
-    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, Message, MessageSender,
+    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
+    ChatActionList, Message, MessageSender,
 };
 use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
@@ -34,7 +35,7 @@ mod imp {
         #[template_child]
         pub timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub message_label: TemplateChild<gtk::Label>,
+        pub bottom_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
@@ -140,6 +141,7 @@ impl Row {
 
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
+                let actions_expression = Chat::this_expression("actions");
                 let unread_mention_count_expression = Chat::this_expression("unread-mention-count");
                 let unread_count_expression = Chat::this_expression("unread-count");
                 let is_pinned_expression = Chat::this_expression("is-pinned");
@@ -202,43 +204,54 @@ impl Row {
                 .bind(&*imp.timestamp_label, "label", Some(chat));
                 bindings.push(timestamp_binding);
 
-                // Last message and draft message label bindings
+                // Actions, draft message and last message bindings.
                 let content_expression =
                     last_message_expression.chain_property::<Message>("content");
                 // FIXME: the sender name should be part of this expression.
                 let message_binding = gtk::ClosureExpression::new::<String, _, _>(
                     &[
+                        // TODO: In the future, consider making this a bit more efficient: We
+                        // sometimes don't need to update if for example an action was removed that
+                        // was not in the group of recent actions.
+                        actions_expression.upcast(),
                         draft_message_expression.upcast(),
                         last_message_expression.upcast(),
                         content_expression.upcast(),
                     ],
                     closure!(|_: Chat,
+                              actions: ChatActionList,
                               draft_message: Option<BoxedDraftMessage>,
                               last_message: Option<Message>,
                               _content: BoxedMessageContent| {
-                        // Either, if there is a draft message, retrieve the content from it. ...
-                        draft_message
-                            .map(|message| {
+                        actions
+                            .last()
+                            .map(|action| {
                                 format!(
-                                    "<span foreground=\"#e01b24\">{}:</span> {}",
-                                    gettext("Draft"),
-                                    stringify_draft_message(&message.0)
+                                    "<span foreground=\"#3584e4\">{}</span>",
+                                    stringify_action(&action)
                                 )
                             })
-                            .unwrap_or_else(|| {
-                                // ... Or, if there is no draft message use the content of the
-                                // last message.
+                            .or_else(|| {
+                                draft_message.map(|message| {
+                                    format!(
+                                        "<span foreground=\"#e01b24\">{}:</span> {}",
+                                        gettext("Draft"),
+                                        stringify_draft_message(&message.0)
+                                    )
+                                })
+                            })
+                            .or_else(|| {
                                 last_message
                                     // TODO: Sometimes just unwrapping here crashes because the
                                     // update hasn't yet arrived. For the future, I think we could
                                     // set the last message early in chat construction to remove
                                     // this workaround.
                                     .map(stringify_message)
-                                    .unwrap_or_default()
                             })
+                            .unwrap_or_default()
                     }),
                 )
-                .bind(&*imp.message_label, "label", Some(chat));
+                .bind(&*imp.bottom_label, "label", Some(chat));
                 bindings.push(message_binding);
 
                 // Unread mention visibility binding
@@ -635,6 +648,279 @@ fn stringify_message_voice_note(caption_text: &str) -> String {
             format!(", {}", dim_and_escape(caption_text))
         }
     )
+}
+
+fn stringify_action(action: &ChatAction) -> String {
+    use tdgrand::enums::ChatAction::*;
+
+    let show_sender = matches!(
+        action.chat().type_(),
+        ChatType::BasicGroup(_) | ChatType::Supergroup(_)
+    );
+
+    let td_action = &action.type_().0;
+
+    let action_group = action.chat().actions().group(td_action);
+
+    match td_action {
+        ChoosingContact => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is choosing a contact",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are choosing contacts",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are choosing contacts", len),
+                }
+            } else {
+                gettext("choosing a contact")
+            }
+        }
+        ChoosingLocation => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is choosing a location",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are choosing locations",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are choosing locations", len),
+                }
+            } else {
+                gettext("choosing a location")
+            }
+        }
+        ChoosingSticker => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is choosing a sticker",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are choosing stickers",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are choosing stickers", len),
+                }
+            } else {
+                gettext("choosing a sticker")
+            }
+        }
+        RecordingVideo => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is recording a video",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are recording videos",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are recording videos", len),
+                }
+            } else {
+                gettext("recording a video")
+            }
+        }
+        RecordingVideoNote => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is recording a video note",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are recording video notes",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are recording video notes", len),
+                }
+            } else {
+                gettext("recording a video note")
+            }
+        }
+        RecordingVoiceNote => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is recording a voice note",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are recording voice notes",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are recording voice notes", len),
+                }
+            } else {
+                gettext("recording a voice note")
+            }
+        }
+        StartPlayingGame => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is playing a game",
+                        sender_name(action_group[0].sender(), false)
+                    ),
+                    2 => gettext!(
+                        "{} and {} are playing games",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are playing games", len),
+                }
+            } else {
+                gettext("playing a game")
+            }
+        }
+        Typing => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!("{} is typing", sender_name(action_group[0].sender(), false)),
+                    2 => gettext!(
+                        "{} and {} are typing",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are typing", len),
+                }
+            } else {
+                gettext("typing")
+            }
+        }
+        UploadingDocument(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is uploading a document ({}%)",
+                        sender_name(action_group[0].sender(), false),
+                        action.progress,
+                    ),
+                    2 => gettext!(
+                        "{} and {} are uploading documents",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are uploading documents", len),
+                }
+            } else {
+                gettext!("uploading a document ({}%)", action.progress)
+            }
+        }
+        UploadingPhoto(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is uploading a photo ({}%)",
+                        sender_name(action_group[0].sender(), false),
+                        action.progress,
+                    ),
+                    2 => gettext!(
+                        "{} and {} are uploading photos",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are uploading photos", len),
+                }
+            } else {
+                gettext!("uploading a photo ({}%)", action.progress)
+            }
+        }
+        UploadingVideo(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is uploading a video ({}%)",
+                        sender_name(action_group[0].sender(), false),
+                        action.progress,
+                    ),
+                    2 => gettext!(
+                        "{} and {} are uploading videos",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are uploading videos", len),
+                }
+            } else {
+                gettext!("uploading a video ({}%)", action.progress)
+            }
+        }
+        UploadingVideoNote(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is uploading a video note ({}%)",
+                        sender_name(action_group[0].sender(), false),
+                        action.progress,
+                    ),
+                    2 => gettext!(
+                        "{} and {} are uploading video notes",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are uploading video notes", len),
+                }
+            } else {
+                gettext!("uploading a video note ({}%)", action.progress)
+            }
+        }
+        UploadingVoiceNote(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is uploading a voice note ({}%)",
+                        sender_name(action_group[0].sender(), false),
+                        action.progress,
+                    ),
+                    2 => gettext!(
+                        "{} and {} are uploading voice notes",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                    ),
+                    len => gettext!("{} people are uploading voice notes", len),
+                }
+            } else {
+                gettext!("uploading a voice note ({}%)", action.progress)
+            }
+        }
+        WatchingAnimations(action) => {
+            if show_sender {
+                match action_group.len() {
+                    1 => gettext!(
+                        "{} is watching an animation {}",
+                        sender_name(action_group[0].sender(), false),
+                        action.emoji
+                    ),
+                    2 => gettext!(
+                        "{} and {} are watching animations {}",
+                        sender_name(action_group[0].sender(), false),
+                        sender_name(action_group[1].sender(), false),
+                        action.emoji
+                    ),
+                    len => gettext!("{} people are watching animations {}", len, action.emoji),
+                }
+            } else {
+                gettext("watching an animation")
+            }
+        }
+        Cancel => unreachable!(),
+    }
 }
 
 fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
