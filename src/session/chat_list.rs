@@ -213,6 +213,11 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::ChatAction(ref update_) => {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             _ => {}
         }
     }

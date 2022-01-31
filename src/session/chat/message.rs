@@ -26,6 +26,13 @@ impl MessageSender {
         }
     }
 
+    pub fn id(&self) -> i64 {
+        match self {
+            Self::User(user) => user.id(),
+            Self::Chat(chat) => chat.id(),
+        }
+    }
+
     pub fn as_user(&self) -> Option<&User> {
         match self {
             MessageSender::User(user) => Some(user),

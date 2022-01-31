@@ -309,7 +309,8 @@ impl Session {
             | Update::MessageMentionRead(_)
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_)
-            | Update::DeleteMessages(_) => {
+            | Update::DeleteMessages(_)
+            | Update::ChatAction(_) => {
                 self.chat_list().handle_update(update);
             }
             Update::UnreadMessageCount(ref update_) => {

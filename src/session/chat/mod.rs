@@ -1,8 +1,12 @@
+mod action;
+mod action_list;
 mod history;
 mod item;
 mod message;
 mod sponsored_message;
 
+pub use self::action::ChatAction;
+pub use self::action_list::ChatActionList;
 use self::history::History;
 pub use self::item::{Item, ItemType};
 pub use self::message::{Message, MessageSender};
@@ -89,6 +93,7 @@ mod imp {
         pub draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub history: OnceCell<History>,
+        pub actions: OnceCell<ChatActionList>,
         pub session: WeakRef<Session>,
     }
 
@@ -205,6 +210,13 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
+                        "actions",
+                        "Actions",
+                        "The chronologically ordered actions of this chat",
+                        ChatActionList::static_type(),
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",
@@ -256,6 +268,7 @@ mod imp {
                 "draft-message" => obj.draft_message().to_value(),
                 "notification-settings" => obj.notification_settings().to_value(),
                 "history" => obj.history().to_value(),
+                "actions" => obj.actions().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
@@ -360,6 +373,12 @@ impl Chat {
             }
             Update::ChatDraftMessage(update) => {
                 self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
+            }
+            Update::ChatAction(update) => {
+                self.actions().handle_update(update);
+                // TODO: Remove this at some point. Widgets should use the `items-changed` signal
+                // for updating their state in the future.
+                self.notify("actions");
             }
             _ => {}
         }
@@ -489,6 +508,12 @@ impl Chat {
 
     pub fn history(&self) -> &History {
         self.imp().history.get_or_init(|| History::new(self))
+    }
+
+    pub fn actions(&self) -> &ChatActionList {
+        self.imp()
+            .actions
+            .get_or_init(|| ChatActionList::from(self))
     }
 
     pub fn session(&self) -> Session {
