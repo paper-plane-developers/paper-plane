@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-12 09:56+0000\n"
-"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+"PO-Revision-Date: 2022-02-01 22:52+0000\n"
+"Last-Translator: YASAN <yasandev@gmail.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -84,9 +84,8 @@ msgid "_Test Server"
 msgstr ""
 
 #: data/resources/ui/add-account-row.ui:33
-#, fuzzy
 msgid "_Add Account"
-msgstr "_حذف حساب"
+msgstr "_افزودن حساب"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -270,7 +269,7 @@ msgstr "_درباره تلگراند"
 msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
-msgstr ""
+msgstr "یک راه برای ادامه استفاده از حسابتان حذف و ساخت دوباره‌ي آن است"
 
 #: src/login.rs:345
 msgid ""
