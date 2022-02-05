@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-02-01 22:52+0000\n"
-"Last-Translator: YASAN <yasandev@gmail.com>\n"
+"PO-Revision-Date: 2022-02-06 15:56+0000\n"
+"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/fa/>\n"
 "Language: fa\n"
@@ -51,12 +51,13 @@ msgstr "رفتار بیشینه شدن پنجرهٔ پیش‌گزیده"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "نشست‌های به تازگی استفاده شده"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"سیاههٔ ترتیبی نشست‌های به تازگی استفاده شده با نام شاخهٔ پایگاه داده‌شان"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -77,11 +78,11 @@ msgstr "مارکو ملوريو"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "کارساز _محصول"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "کارساز _آزمون"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
@@ -269,31 +270,35 @@ msgstr "_درباره تلگراند"
 msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
-msgstr "یک راه برای ادامه استفاده از حسابتان حذف و ساخت دوباره‌ي آن است"
+msgstr "یک راه برای ادامهٔ استفاده از حسابتان، حذف و ساخت دوباره‌اش است"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"از آن‌جا که نشانی رایانامهٔ بازیابی‌ای فراهم نکرده‌اید، تنها راه ادامهٔ "
+"استفاده از حسابتان، حذف حساب و ساخت دوباره‌اش است"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"به خاطر داشته باشید که تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و "
+"پرونده‌ای که هم‌رسانده‌اید از دست خواهید داد!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "شرایط خدمت را می‌پذیرید؟"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "شرایط خدمت"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "هشدار"
 
 #: src/login.rs:857
 msgid ""
@@ -302,20 +307,26 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و پرونده‌ای که هم‌رسانده‌اید "
+"از دست خواهید داد!\n"
+"\n"
+"می‌خواهید حسابتان را حذف کنید؟"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "ببخشید"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"اگر نتوانستید دسترسی به رایانامه را بازیابید، تنها گزینه‌های پیش رویتان به "
+"خاطر آوردن گذرواژه‌تان یا حذف و ساخت دوبارهٔ حسابتان است."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_بازگشت"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
