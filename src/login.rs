@@ -31,7 +31,7 @@ mod imp {
         pub has_recovery_email_address: Cell<bool>,
         pub password_recovery_expired: Cell<bool>,
         #[template_child]
-        pub main_stack: TemplateChild<gtk::Stack>,
+        pub outer_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -194,10 +194,6 @@ impl Login {
         imp.client_id.set(client_id);
 
         imp.session.replace(Some(session));
-
-        // We don't know what login page to show at this point, so we show an empty page until we
-        // receive an AuthenticationState that will eventually show the related login page.
-        imp.main_stack.set_visible_child_name("empty-page");
 
         imp.phone_number_entry.set_text("");
         imp.registration_first_name_entry.set_text("");
@@ -380,6 +376,9 @@ impl Login {
                     imp.session.take().unwrap(),
                     true,
                 );
+
+                // Make everything invisible.
+                imp.outer_box.set_visible(false);
             }
             _ => {}
         }
@@ -410,9 +409,8 @@ impl Login {
 
         imp.content.set_visible_child_name(page_name);
 
-        // After we've transitioned to a new login page, let's be sure that we set the stack here
-        // to an ancestor widget of the login leaflet because we might still be in the empty page.
-        imp.main_stack.set_visible_child_name("login-flow-page");
+        // Make sure everything is visible.
+        imp.outer_box.set_visible(true);
 
         self.unfreeze();
         if let Some(widget_to_focus) = widget_to_focus {
