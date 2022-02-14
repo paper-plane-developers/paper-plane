@@ -284,7 +284,9 @@ impl History {
     pub fn append(&self, message: TelegramMessage) {
         let imp = self.imp();
 
-        if let Entry::Vacant(entry) = imp.message_map.borrow_mut().entry(message.id) {
+        let mut message_map = imp.message_map.borrow_mut();
+
+        if let Entry::Vacant(entry) = message_map.entry(message.id) {
             let message = Message::new(message, &self.chat());
 
             entry.insert(message.clone());
@@ -292,6 +294,10 @@ impl History {
             imp.list.borrow_mut().push_back(Item::for_message(message));
 
             let index = imp.list.borrow().len() - 1;
+
+            // We always need to drop all references before handing over control. Else, we could end
+            // up with a borrowing error somewhere else.
+            drop(message_map);
             self.items_changed(index as u32, 0, 1);
         }
     }
