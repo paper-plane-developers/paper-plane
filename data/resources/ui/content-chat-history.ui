@@ -40,7 +40,7 @@
               <class name="chat-history"/>
             </style>
             <property name="child">
-              <object class="AdwClampScrollable">
+              <object class="AdwClampScrollable" id="chat_clamp">
                 <property name="vscroll-policy">natural</property>
                 <property name="child">
                   <object class="GtkListView" id="list_view">
@@ -75,7 +75,7 @@
           <object class="GtkSeparator"/>
         </child>
         <child>
-          <object class="AdwClamp">
+          <object class="AdwClamp" id="action_bar_clamp">
             <property name="child">
               <object class="ContentChatActionBar">
                 <binding name="chat">

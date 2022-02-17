@@ -31,6 +31,35 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Chat Settings</property>
+            <child>
+              <object class="AdwExpanderRow" id="custom_chat_width_exp_row">
+                <property name="title" translatable="yes">Use Custom Chat Width</property>
+                <property name="show-enable-switch">True</property>
+                  <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Chat Width</property>
+                    <child>
+                      <object class="GtkSpinButton" id="chat_width_spin_btn">
+                        <property name="margin-top">5</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="adjustment">
+                          <object class="GtkAdjustment">
+                            <property name="lower">600</property>
+                            <property name="upper">4000</property>
+                            <property name="step_increment">10</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </template>

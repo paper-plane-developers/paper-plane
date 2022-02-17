@@ -13,6 +13,8 @@ use crate::{config, APPLICATION_OPTS, RUNTIME};
 
 pub static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
+pub const DEFAULT_CHAT_SIZE: i32 = 600;
+
 pub fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")

@@ -1,3 +1,4 @@
+use adw::traits::ExpanderRowExt;
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 
@@ -14,6 +15,10 @@ mod imp {
         pub follow_system_colors_switch: TemplateChild<gtk::Switch>,
         #[template_child]
         pub dark_theme_switch: TemplateChild<gtk::Switch>,
+        #[template_child]
+        pub chat_width_spin_btn: TemplateChild<gtk::SpinButton>,
+        #[template_child]
+        pub custom_chat_width_exp_row: TemplateChild<adw::ExpanderRow>,
     }
 
     #[glib::object_subclass]
@@ -125,5 +130,32 @@ impl PreferencesWindow {
             .bind_property("dark", &*imp.dark_theme_switch, "active")
             .flags(glib::BindingFlags::SYNC_CREATE)
             .build();
+
+        // Initial chat width setup
+        let settings = gio::Settings::new(APP_ID);
+        imp.custom_chat_width_exp_row
+            .set_enable_expansion(settings.boolean("use-custom-chat-width"));
+        imp.chat_width_spin_btn
+            .set_value(settings.int("custom-chat-width") as f64);
+
+        // 'Use custom chat width' ExpanderRow state handling
+        imp.custom_chat_width_exp_row
+            .connect_enable_expansion_notify(|exp_row| {
+                let settings = gio::Settings::new(APP_ID);
+                if exp_row.enables_expansion() {
+                    settings.set_boolean("use-custom-chat-width", true).unwrap();
+                } else {
+                    settings
+                        .set_boolean("use-custom-chat-width", false)
+                        .unwrap();
+                }
+            });
+
+        // Saving changed 'custom chat width' value
+        imp.chat_width_spin_btn.connect_value_changed(|spin| {
+            gio::Settings::new(APP_ID)
+                .set_int("custom-chat-width", spin.value_as_int())
+                .unwrap();
+        });
     }
 }

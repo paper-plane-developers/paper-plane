@@ -31,5 +31,15 @@
       <summary>Color Scheme</summary>
       <description>The color scheme to be used in the app</description>
     </key>
+    <key name="custom-chat-width" type="i">
+      <default>600</default>
+      <summary>Custom chat width</summary>
+      <description>Custom chat width</description>
+    </key>
+    <key name="use-custom-chat-width" type="b">
+      <default>false</default>
+      <summary>Use Custom chat width</summary>
+      <description>Whether or not to use custom chat width</description>
+    </key>
   </schema>
 </schemalist>

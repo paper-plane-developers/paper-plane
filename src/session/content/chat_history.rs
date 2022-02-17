@@ -1,12 +1,14 @@
 use glib::clone;
 use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
 
+use crate::config::APP_ID;
 use crate::session::{
     chat::SponsoredMessage,
     content::{ChatActionBar, ItemRow, UserDialog},
     Chat, ChatType, Session,
 };
 use crate::spawn;
+use crate::utils::DEFAULT_CHAT_SIZE;
 
 mod imp {
     use super::*;
@@ -21,6 +23,10 @@ mod imp {
         pub chat: RefCell<Option<Chat>>,
         #[template_child]
         pub list_view: TemplateChild<gtk::ListView>,
+        #[template_child]
+        pub chat_clamp: TemplateChild<adw::ClampScrollable>,
+        #[template_child]
+        pub action_bar_clamp: TemplateChild<adw::Clamp>,
     }
 
     #[glib::object_subclass]
@@ -197,5 +203,18 @@ impl ChatHistory {
 
         let adj = imp.list_view.vadjustment().unwrap();
         self.load_older_messages(&adj);
+
+        //Setup chat width
+        let settings = gio::Settings::new(APP_ID);
+        if settings.boolean("use-custom-chat-width") {
+            imp.chat_clamp
+                .set_maximum_size(settings.int("custom-chat-width"));
+        } else {
+            imp.chat_clamp.set_maximum_size(DEFAULT_CHAT_SIZE);
+        }
+        imp.chat_clamp
+            .bind_property("maximum-size", &*imp.action_bar_clamp, "maximum-size")
+            .flags(glib::BindingFlags::SYNC_CREATE)
+            .build();
     }
 }
