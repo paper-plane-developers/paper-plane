@@ -1,6 +1,6 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tdgrand::enums::{MessageSender as TdMessageSender, Update};
-use tdgrand::types::Message as TelegramMessage;
+use tdgrand::types::Message as TdMessage;
 
 use crate::session::chat::BoxedMessageContent;
 use crate::session::{Chat, Session, User};
@@ -149,7 +149,7 @@ glib::wrapper! {
 }
 
 impl Message {
-    pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
+    pub fn new(message: TdMessage, chat: &Chat) -> Self {
         let content = BoxedMessageContent(message.content);
 
         glib::Object::new(&[
