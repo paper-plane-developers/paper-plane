@@ -1,9 +1,9 @@
 use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::enums::{MessageSender as TelegramMessageSender, Update};
-use tdgrand::types::Message as TelegramMessage;
+use tdgrand::enums::{MessageSender as TdMessageSender, Update};
+use tdgrand::types::Message as TdMessage;
 
 use crate::session::chat::BoxedMessageContent;
-use crate::session::{Chat, User};
+use crate::session::{Chat, Session, User};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageSender")]
@@ -11,7 +11,28 @@ pub enum MessageSender {
     User(User),
     Chat(Chat),
 }
+
 impl MessageSender {
+    pub fn from_td_object(sender: &TdMessageSender, session: &Session) -> Self {
+        match sender {
+            TdMessageSender::User(data) => {
+                let user = session.user_list().get(data.user_id);
+                MessageSender::User(user)
+            }
+            TdMessageSender::Chat(data) => {
+                let chat = session.chat_list().get(data.chat_id);
+                MessageSender::Chat(chat)
+            }
+        }
+    }
+
+    pub fn id(&self) -> i64 {
+        match self {
+            Self::User(user) => user.id(),
+            Self::Chat(chat) => chat.id(),
+        }
+    }
+
     pub fn as_user(&self) -> Option<&User> {
         match self {
             MessageSender::User(user) => Some(user),
@@ -135,22 +156,15 @@ glib::wrapper! {
 }
 
 impl Message {
-    pub fn new(message: TelegramMessage, chat: &Chat) -> Self {
+    pub fn new(message: TdMessage, chat: &Chat) -> Self {
         let content = BoxedMessageContent(message.content);
-        let sender = match message.sender_id {
-            TelegramMessageSender::User(data) => {
-                let user = chat.session().user_list().get(data.user_id);
-                MessageSender::User(user)
-            }
-            TelegramMessageSender::Chat(data) => {
-                let chat = chat.session().chat_list().get(data.chat_id);
-                MessageSender::Chat(chat)
-            }
-        };
 
         glib::Object::new(&[
             ("id", &message.id),
-            ("sender", &sender),
+            (
+                "sender",
+                &MessageSender::from_td_object(&message.sender_id, &chat.session()),
+            ),
             ("is-outgoing", &message.is_outgoing),
             ("date", &message.date),
             ("content", &content),
