@@ -101,6 +101,7 @@ mod imp {
         /// determined in [`analyze_data_dir()`]
         pub(super) initial_sessions_to_handle: Cell<u32>,
         pub(super) clients: RefCell<HashMap<i32, Client>>,
+        pub(super) wait_me_handlers: RefCell<HashMap<i32, glib::SignalHandlerId>>,
         #[template_child]
         pub(super) main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -506,14 +507,14 @@ impl SessionManager {
             Update::AuthorizationState(update) => {
                 self.handle_authorization_state(update, client_id);
             }
-            update => self
-                .imp()
-                .clients
-                .borrow()
-                .get(&client_id)
-                .unwrap()
-                .session
-                .handle_update(update),
+            update => {
+                let clients = self.imp().clients.borrow();
+                let session = clients.get(&client_id).unwrap().session.clone();
+
+                // Drop the reference before giving hand over control.
+                drop(clients);
+                session.handle_update(update);
+            }
         }
     }
 
@@ -660,46 +661,70 @@ impl SessionManager {
             clone!(@weak self as obj => move |result| async move {
                 let enums::User::User(me) = result.unwrap();
 
-                session.set_me_from_id(me.id);
-                session.fetch_chats();
-
-                let imp = obj.imp();
-
-                imp.sessions.add_child(&session);
-                session.set_sessions(&imp.sessions.pages());
-
-                imp.clients.borrow_mut().insert(
-                    client_id,
-                    Client {
-                        session: session.clone(),
-                        state: ClientState::LoggedIn,
+                match session.user_list().try_get(me.id) {
+                    None => {
+                        log::warn!("Own user has not yet arrived. Waiting…");
+                        let wait_me_handler = session.user_list().connect_items_changed(
+                            clone!(@weak obj, @weak session => move |list, _, _, added| {
+                                if added > 0 {
+                                    if let Some(me) = list.try_get(me.id) {
+                                        log::warn!("Own user arrived.");
+                                        obj.add_logged_in_session_(client_id, &session, &me, visible)
+                                    }
+                                }
+                            }),
+                        );
+                        obj.imp().wait_me_handlers.borrow_mut().insert(client_id, wait_me_handler);
                     },
-                );
-
-                let auth_session_present = imp
-                    .clients
-                    .borrow()
-                    .values()
-                    .any(|client| matches!(client.state, ClientState::Auth { .. }));
-
-                if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
-                    && !auth_session_present)
-                    || visible
-                {
-                    imp.sessions.set_visible_child(&session);
-                    imp.main_stack.set_visible_child(&*imp.sessions);
+                    Some(me) => obj.add_logged_in_session_(client_id, &session, &me, visible),
                 }
-
-                // Enable notifications for this client
-                RUNTIME.spawn(functions::set_option(
-                    "notification_group_count_max".to_string(),
-                    Some(enums::OptionValue::Integer(types::OptionValueInteger {
-                        value: 5,
-                    })),
-                    client_id,
-                ));
             }),
         );
+    }
+
+    fn add_logged_in_session_(&self, client_id: i32, session: &Session, me: &User, visible: bool) {
+        let imp = self.imp();
+
+        if let Some(handler) = imp.wait_me_handlers.borrow_mut().remove(&client_id) {
+            session.user_list().disconnect(handler);
+        }
+
+        session.set_me(me);
+        session.fetch_chats();
+
+        imp.sessions.add_child(session);
+        session.set_sessions(&imp.sessions.pages());
+
+        imp.clients.borrow_mut().insert(
+            client_id,
+            Client {
+                session: session.clone(),
+                state: ClientState::LoggedIn,
+            },
+        );
+
+        let auth_session_present = imp
+            .clients
+            .borrow()
+            .values()
+            .any(|client| matches!(client.state, ClientState::Auth { .. }));
+
+        if (imp.main_stack.visible_child() != Some(imp.sessions.clone().upcast())
+            && !auth_session_present)
+            || visible
+        {
+            imp.sessions.set_visible_child(session);
+            imp.main_stack.set_visible_child(&*imp.sessions);
+        }
+
+        // Enable notifications for this client
+        RUNTIME.spawn(functions::set_option(
+            "notification_group_count_max".to_string(),
+            Some(enums::OptionValue::Integer(types::OptionValueInteger {
+                value: 5,
+            })),
+            client_id,
+        ));
     }
 
     pub(crate) fn begin_chats_search(&self) {
