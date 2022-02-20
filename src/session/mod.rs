@@ -419,10 +419,10 @@ impl Session {
         self.imp().me.upgrade().unwrap()
     }
 
-    pub(crate) fn set_me_from_id(&self, my_id: i64) {
+    pub(crate) fn set_me(&self, me: &User) {
         let imp = self.imp();
         assert!(imp.me.upgrade().is_none());
-        imp.me.set(Some(&self.user_list().get(my_id)));
+        imp.me.set(Some(me));
         self.notify("me");
     }
 

@@ -97,12 +97,11 @@ impl UserList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `User` exists in the list.
     pub(crate) fn get(&self, id: i64) -> User {
-        self.imp()
-            .list
-            .borrow()
-            .get(&id)
-            .expect("Failed to get expected User")
-            .to_owned()
+        self.try_get(id).expect("Failed to get expected User")
+    }
+
+    pub(crate) fn try_get(&self, id: i64) -> Option<User> {
+        self.imp().list.borrow().get(&id).cloned()
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
