@@ -43,9 +43,9 @@ use crate::RUNTIME;
 #[boxed_type(name = "BoxedDatabaseInfo")]
 pub struct BoxedDatabaseInfo(pub DatabaseInfo);
 
-#[derive(Clone, Debug, Default, glib::Boxed)]
-#[boxed_type(name = "BoxedScopeNotificationSettings")]
-pub struct BoxedScopeNotificationSettings(pub Option<ScopeNotificationSettings>);
+#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]
+pub struct BoxedScopeNotificationSettings(pub ScopeNotificationSettings);
 
 mod imp {
     use super::*;
@@ -65,9 +65,9 @@ mod imp {
         pub supergroup_list: OnceCell<SupergroupList>,
         pub secret_chat_list: OnceCell<SecretChatList>,
         pub selected_chat: RefCell<Option<Chat>>,
-        pub private_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
-        pub group_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
-        pub channel_chats_notification_settings: RefCell<BoxedScopeNotificationSettings>,
+        pub private_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
+        pub group_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
+        pub channel_chats_notification_settings: RefCell<Option<BoxedScopeNotificationSettings>>,
         pub downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub leaflet: TemplateChild<adw::Leaflet>,
@@ -218,18 +218,15 @@ mod imp {
                     obj.set_selected_chat(selected_chat);
                 }
                 "private-chats-notification-settings" => {
-                    let scope_notification_settings =
-                        value.get::<BoxedScopeNotificationSettings>().unwrap();
+                    let scope_notification_settings = value.get().unwrap();
                     obj.set_private_chats_notification_settings(scope_notification_settings);
                 }
                 "group-chats-notification-settings" => {
-                    let scope_notification_settings =
-                        value.get::<BoxedScopeNotificationSettings>().unwrap();
+                    let scope_notification_settings = value.get().unwrap();
                     obj.set_group_chats_notification_settings(scope_notification_settings);
                 }
                 "channel-chats-notification-settings" => {
-                    let scope_notification_settings =
-                        value.get::<BoxedScopeNotificationSettings>().unwrap();
+                    let scope_notification_settings = value.get().unwrap();
                     obj.set_channel_chats_notification_settings(scope_notification_settings);
                 }
                 _ => unimplemented!(),
@@ -320,7 +317,7 @@ impl Session {
                 }
             }
             Update::ScopeNotificationSettings(update) => {
-                let settings = BoxedScopeNotificationSettings(Some(update.notification_settings));
+                let settings = Some(BoxedScopeNotificationSettings(update.notification_settings));
                 match update.scope {
                     NotificationSettingsScope::PrivateChats => {
                         self.set_private_chats_notification_settings(settings);
@@ -455,15 +452,18 @@ impl Session {
         self.notify("selected-chat");
     }
 
-    fn private_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
+    fn private_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {
         self.imp()
             .private_chats_notification_settings
             .borrow()
             .clone()
     }
 
-    fn set_private_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
-        if self.private_chats_notification_settings().0 == settings.0 {
+    fn set_private_chats_notification_settings(
+        &self,
+        settings: Option<BoxedScopeNotificationSettings>,
+    ) {
+        if self.private_chats_notification_settings() == settings {
             return;
         }
         self.imp()
@@ -472,15 +472,18 @@ impl Session {
         self.notify("private-chats-notification-settings")
     }
 
-    fn group_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
+    fn group_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {
         self.imp()
             .group_chats_notification_settings
             .borrow()
             .clone()
     }
 
-    fn set_group_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
-        if self.group_chats_notification_settings().0 == settings.0 {
+    fn set_group_chats_notification_settings(
+        &self,
+        settings: Option<BoxedScopeNotificationSettings>,
+    ) {
+        if self.group_chats_notification_settings() == settings {
             return;
         }
         self.imp()
@@ -489,15 +492,18 @@ impl Session {
         self.notify("group-chats-notification-settings")
     }
 
-    fn channel_chats_notification_settings(&self) -> BoxedScopeNotificationSettings {
+    fn channel_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {
         self.imp()
             .channel_chats_notification_settings
             .borrow()
             .clone()
     }
 
-    fn set_channel_chats_notification_settings(&self, settings: BoxedScopeNotificationSettings) {
-        if self.channel_chats_notification_settings().0 == settings.0 {
+    fn set_channel_chats_notification_settings(
+        &self,
+        settings: Option<BoxedScopeNotificationSettings>,
+    ) {
+        if self.channel_chats_notification_settings() == settings {
             return;
         }
         self.imp()
