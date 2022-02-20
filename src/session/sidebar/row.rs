@@ -302,12 +302,14 @@ impl Row {
                     ],
                     closure!(|_: Chat,
                               notification_settings: BoxedChatNotificationSettings,
-                              scope_notification_settings: BoxedScopeNotificationSettings| {
+                              scope_notification_settings: Option<
+                        BoxedScopeNotificationSettings,
+                    >| {
                         vec![
                             "unread-count".to_string(),
                             if notification_settings.0.use_default_mute_for {
-                                if scope_notification_settings.0
-                                    .map(|s| s.mute_for > 0)
+                                if scope_notification_settings
+                                    .map(|s| s.0.mute_for > 0)
                                     .unwrap_or(notification_settings.0.mute_for > 0)
                                 {
                                     "unread-count-muted"
