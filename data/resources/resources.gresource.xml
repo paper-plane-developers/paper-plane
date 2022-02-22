@@ -17,6 +17,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-sticker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-text.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/phone-number-input.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/preferences-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/session-entry-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/session-manager.ui</file>
