@@ -646,20 +646,12 @@ impl Login {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
         let imp = self.imp();
-        let use_test_dc = imp
-            .session
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .database_info()
-            .0
-            .use_test_dc;
 
         log_out(imp.client_id.get()).await;
         imp.session_manager
             .get()
             .unwrap()
-            .add_new_session(use_test_dc);
+            .add_new_session(self.use_test_dc());
     }
 
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
@@ -759,16 +751,7 @@ impl Login {
 
         let session_manager = imp.session_manager.get().unwrap();
 
-        match session_manager.session_index_for(
-            imp.session
-                .borrow()
-                .as_ref()
-                .unwrap()
-                .database_info()
-                .0
-                .use_test_dc,
-            &phone_number_digits,
-        ) {
+        match session_manager.session_index_for(self.use_test_dc(), &phone_number_digits) {
             Some(pos) => {
                 // We just figured out that we already have an open session for that account.
                 // Therefore we logout the client, with which we wanted to log in and delete its
@@ -1024,6 +1007,17 @@ impl Login {
                     .grab_focus();
             }
         }));
+    }
+
+    fn use_test_dc(&self) -> bool {
+        self.imp()
+            .session
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .database_info()
+            .0
+            .use_test_dc
     }
 
     fn handle_user_result<T, W: IsA<gtk::Widget>>(
