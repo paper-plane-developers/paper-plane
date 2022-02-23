@@ -19,7 +19,7 @@ use tdlib::enums::{self, ChatType as TdChatType, MessageContent, Update};
 use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
-use crate::Session;
+use crate::{monad_boxed_type, Session};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
@@ -61,17 +61,9 @@ impl ChatType {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedDraftMessage", nullable)]
-pub(crate) struct BoxedDraftMessage(pub(crate) DraftMessage);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatNotificationSettings")]
-pub(crate) struct BoxedChatNotificationSettings(pub(crate) ChatNotificationSettings);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedMessageContent")]
-pub(crate) struct BoxedMessageContent(pub(crate) MessageContent);
+monad_boxed_type!(BoxedDraftMessage(DraftMessage) impls Clone, Debug, PartialEq is nullable);
+monad_boxed_type!(BoxedChatNotificationSettings(ChatNotificationSettings) impls Clone, Debug, PartialEq);
+monad_boxed_type!(BoxedMessageContent(MessageContent) impls Clone, Debug, PartialEq);
 
 mod imp {
     use super::*;

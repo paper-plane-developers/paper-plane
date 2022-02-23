@@ -5,15 +5,10 @@ use tdlib::enums::{Update, UserStatus, UserType};
 use tdlib::types::User as TdUser;
 
 use crate::session::Avatar;
-use crate::Session;
+use crate::{monad_boxed_type, Session};
 
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedUserType")]
-pub(crate) struct BoxedUserType(pub(crate) UserType);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedUserStatus")]
-pub(crate) struct BoxedUserStatus(pub(crate) UserStatus);
+monad_boxed_type!(BoxedUserType(UserType) impls Clone, Debug, PartialEq);
+monad_boxed_type!(BoxedUserStatus(UserStatus) impls Clone, Debug, PartialEq);
 
 mod imp {
     use super::*;

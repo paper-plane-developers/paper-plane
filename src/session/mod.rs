@@ -39,15 +39,14 @@ use tdlib::types::{File, ScopeNotificationSettings};
 
 use crate::session_manager::DatabaseInfo;
 use crate::utils::log_out;
-use crate::RUNTIME;
+use crate::{monad_boxed_type, RUNTIME};
 
-#[derive(Clone, Debug, glib::Boxed)]
-#[boxed_type(name = "BoxedDatabaseInfo")]
-pub(crate) struct BoxedDatabaseInfo(pub(crate) DatabaseInfo);
-
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]
-pub(crate) struct BoxedScopeNotificationSettings(pub(crate) ScopeNotificationSettings);
+monad_boxed_type!(BoxedDatabaseInfo(DatabaseInfo) impls Clone, Debug);
+monad_boxed_type!(
+    BoxedScopeNotificationSettings(ScopeNotificationSettings)
+    impls Clone, Debug, Default, PartialEq
+    is nullable
+);
 
 mod imp {
     use super::*;

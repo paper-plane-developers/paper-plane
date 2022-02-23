@@ -3,6 +3,7 @@ mod application;
 #[allow(clippy::all)]
 mod config;
 mod login;
+mod macros;
 mod preferences_window;
 mod session;
 mod session_manager;
