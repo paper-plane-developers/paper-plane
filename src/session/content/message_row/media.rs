@@ -1,4 +1,6 @@
-use gtk::{gdk, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, glib, CompositeTemplate};
 
 use crate::session::content::message_row::MediaPicture;
 

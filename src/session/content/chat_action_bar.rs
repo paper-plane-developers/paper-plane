@@ -1,11 +1,13 @@
-use glib::{clone, signal::Inhibit};
-use gtk::{gdk, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::{
-    enums::{ChatAction, InputMessageContent},
-    functions, types,
-};
+use glib::clone;
+use glib::signal::Inhibit;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, glib, CompositeTemplate};
+use tdgrand::enums::{ChatAction, InputMessageContent};
+use tdgrand::{functions, types};
 
-use crate::session::{chat::BoxedDraftMessage, Chat};
+use crate::session::chat::BoxedDraftMessage;
+use crate::session::Chat;
 use crate::utils::do_async;
 use crate::RUNTIME;
 

@@ -1,7 +1,9 @@
 use super::Sidebar;
 
 use glib::closure;
-use gtk::{glib, gsk, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{glib, gsk, CompositeTemplate};
 use tdgrand::enums::{UserStatus, UserType};
 
 use crate::session::user::BoxedUserStatus;

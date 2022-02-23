@@ -76,7 +76,8 @@ pub struct BoxedMessageContent(pub MessageContent);
 mod imp {
     use super::*;
     use glib::WeakRef;
-    use once_cell::{sync::Lazy, unsync::OnceCell};
+    use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]

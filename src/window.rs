@@ -1,6 +1,8 @@
 use gettextrs::gettext;
 use gtk::glib::{clone, SyncSender};
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib, CompositeTemplate};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use tdgrand::enums::{
@@ -12,8 +14,7 @@ use tokio::task;
 use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
 use crate::session_manager::{ClientState, SessionManager};
-use crate::Application;
-use crate::RUNTIME;
+use crate::{Application, RUNTIME};
 
 mod imp {
     use super::*;

@@ -2,8 +2,9 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
+use tdgrand::enums::Update;
+use tdgrand::functions;
 use tdgrand::types::Chat as TelegramChat;
-use tdgrand::{enums::Update, functions};
 
 use crate::session::Chat;
 use crate::utils::do_async;

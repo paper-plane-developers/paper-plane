@@ -1,5 +1,6 @@
-use gtk::gio;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib};
 use std::mem;
 use tdgrand::{enums, types};
 

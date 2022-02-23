@@ -1,5 +1,7 @@
 use glib::clone;
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib, CompositeTemplate};
 
 use crate::config::APP_ID;
 

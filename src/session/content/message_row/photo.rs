@@ -1,9 +1,13 @@
 use glib::{clone, closure};
-use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::{enums::MessageContent, types::File};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, gio, glib, CompositeTemplate};
+use tdgrand::enums::MessageContent;
+use tdgrand::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
-use crate::session::content::{message_row::Media, MessageRow, MessageRowExt};
+use crate::session::content::message_row::Media;
+use crate::session::content::{MessageRow, MessageRowExt};
 use crate::utils::parse_formatted_text;
 use crate::Session;
 

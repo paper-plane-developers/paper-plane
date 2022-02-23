@@ -32,7 +32,9 @@
 
 use futures::{TryFutureExt, TryStreamExt};
 use glib::clone;
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib, CompositeTemplate};
 use std::borrow::Borrow;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tdgrand::enums::{self, AuthorizationState, Update};
@@ -43,8 +45,7 @@ use tokio_stream::wrappers::ReadDirStream;
 
 use crate::session::{Session, User};
 use crate::utils::{data_dir, do_async, log_out, send_tdlib_parameters};
-use crate::APPLICATION_OPTS;
-use crate::RUNTIME;
+use crate::{APPLICATION_OPTS, RUNTIME};
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]

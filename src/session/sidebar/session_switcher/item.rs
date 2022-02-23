@@ -1,7 +1,10 @@
 use super::add_account::AddAccountRow;
 use super::session_entry_row::SessionEntryRow;
 
-use gtk::{gio::ListStore, glib, prelude::*, subclass::prelude::*};
+use gtk::gio::ListStore;
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use std::convert::TryFrom;
 
 use crate::session::Session;

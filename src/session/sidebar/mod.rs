@@ -6,7 +6,9 @@ use self::row::Row;
 use self::session_switcher::SessionSwitcher;
 
 use glib::clone;
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib, CompositeTemplate};
 use tdgrand::{enums, functions};
 
 use crate::session::{Chat, ChatType, User};

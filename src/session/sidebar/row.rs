@@ -1,6 +1,8 @@
 use gettextrs::gettext;
 use glib::closure;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 use std::borrow::Cow;
 use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
 use tdgrand::types::{DraftMessage, MessageCall};

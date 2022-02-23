@@ -1,4 +1,6 @@
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use tdgrand::enums::{MessageSender as TdMessageSender, Update};
 use tdgrand::types::Message as TdMessage;
 

@@ -1,13 +1,13 @@
 use gettextrs::gettext;
 use glib::closure;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 use tdgrand::enums::MessageContent;
 
-use crate::session::{
-    chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage},
-    content::{MessageRow, MessageRowExt},
-    Chat, ChatType,
-};
+use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
+use crate::session::content::{MessageRow, MessageRowExt};
+use crate::session::{Chat, ChatType};
 use crate::utils::parse_formatted_text;
 
 mod imp {

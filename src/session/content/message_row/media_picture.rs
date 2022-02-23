@@ -1,4 +1,6 @@
-use gtk::{gdk, glib, graphene, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, glib, graphene};
 
 const MIN_WIDTH: i32 = 100;
 const MIN_HEIGHT: i32 = 100;
