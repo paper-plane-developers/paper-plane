@@ -76,7 +76,7 @@ impl MessagePhoto {
             // Setup caption expression
             let caption_binding = Message::this_expression("content")
                 .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
-                    if let MessageContent::MessagePhoto(data) = content.0 {
+                    if let MessageContent::MessagePhoto(data) = content.into() {
                         parse_formatted_text(data.caption)
                     } else {
                         unreachable!();
@@ -98,7 +98,7 @@ impl MessagePhoto {
     }
 
     fn update_photo(&self, message: &Message) {
-        if let MessageContent::MessagePhoto(data) = message.content().0 {
+        if let MessageContent::MessagePhoto(data) = message.content().into() {
             if let Some(photo_size) = data.photo.sizes.last() {
                 let imp = self.imp();
 

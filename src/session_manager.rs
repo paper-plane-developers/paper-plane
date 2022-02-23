@@ -58,7 +58,7 @@ pub(crate) struct Client {
 
 impl Client {
     fn database_dir_base_name(&self) -> &str {
-        &self.session.database_info().0.directory_base_name
+        &self.session.database_info().directory_base_name
     }
 }
 
@@ -259,7 +259,7 @@ impl SessionManager {
                 .downcast::<Session>()
                 .unwrap();
 
-            if on_test_dc == session.database_info().0.use_test_dc
+            if on_test_dc == session.database_info().use_test_dc
                 && session.me().phone_number().replace(' ', "") == phone_number_digits
             {
                 Some(pos)
@@ -310,7 +310,7 @@ impl SessionManager {
             self.transfer_online_status(session.client_id());
 
             if imp.main_stack.visible_child() == Some(imp.sessions.clone().upcast()) {
-                let database_dir_base_name = session.database_info().0.directory_base_name.clone();
+                let database_dir_base_name = session.database_info().directory_base_name.clone();
 
                 {
                     let mut recently_used_sessions = imp.recently_used_sessions.borrow_mut();
@@ -450,7 +450,7 @@ impl SessionManager {
                                 .downcast::<Session>()
                                 .unwrap();
 
-                            if &session.database_info().0.directory_base_name
+                            if &session.database_info().directory_base_name
                                 == database_dir_base_name
                             {
                                 Some(pos)
@@ -562,7 +562,7 @@ impl SessionManager {
                 // Client doesn't need to authorize. So we can skip the login procedure.
                 match &update.authorization_state {
                     AuthorizationState::WaitTdlibParameters => {
-                        let database_info = client.session.database_info().0.clone();
+                        let database_info = client.session.database_info().clone();
                         do_async(
                             glib::PRIORITY_DEFAULT_IDLE,
                             async move { send_tdlib_parameters(client_id, &database_info).await },
@@ -598,7 +598,7 @@ impl SessionManager {
                         self.add_logged_in_session(client_id, client.session, is_last_used);
                     }
                     _ => {
-                        let database_info = client.session.database_info().0.clone();
+                        let database_info = client.session.database_info().clone();
 
                         // Our assumption that the database's session we found at application start
                         // would not need to authorize was wrong. So we handle it correctly.

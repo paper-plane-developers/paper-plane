@@ -99,7 +99,7 @@ impl ItemRow {
             if let Some(item) = item.downcast_ref::<Item>() {
                 match item.type_() {
                     ItemType::Message(message) => {
-                        let content = message.content().0;
+                        let content = message.content().into();
 
                         match content {
                             MessageContent::MessagePhoto(_) => {
@@ -330,7 +330,7 @@ impl ItemRow {
                     }
                 }
             } else if let Some(sponsored_message) = item.downcast_ref::<SponsoredMessage>() {
-                let content = &sponsored_message.content().0;
+                let content = &**sponsored_message.content();
                 if !matches!(content, MessageContent::MessageText(_)) {
                     log::warn!("Unexpected sponsored message of type: {:?}", content);
                 }
@@ -370,8 +370,7 @@ impl ItemRow {
 }
 
 fn sender_name(user: &User) -> String {
-    let type_ = user.type_().0;
-    if type_ == UserType::Deleted {
+    if *user.type_() == UserType::Deleted {
         gettext("Deleted Account")
     } else {
         format!("{} {}", user.first_name(), user.last_name())
@@ -386,7 +385,7 @@ fn sender_display_name(message: &Message) -> String {
 }
 fn stringify_pinned_message_content(message: Option<Message>) -> String {
     match message {
-        Some(data) => match data.content().0 {
+        Some(data) => match data.content().into() {
             MessageContent::MessageText(data) => {
                 let msg = data.text.text;
                 if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {

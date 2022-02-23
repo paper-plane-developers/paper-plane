@@ -222,13 +222,13 @@ impl ChatActionBar {
             .as_ref()
             .map(|message| {
                 if let InputMessageContent::InputMessageText(ref content) =
-                    message.0.input_message_text
+                    message.input_message_text
                 {
                     content.text.text.as_ref()
                 } else {
                     log::warn!(
                         "Unexpected draft message type: {:?}",
-                        message.0.input_message_text
+                        message.input_message_text
                     );
                     ""
                 }

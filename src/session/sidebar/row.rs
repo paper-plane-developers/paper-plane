@@ -165,7 +165,7 @@ impl Row {
                     closure!(|_: Chat,
                               draft_message: Option<BoxedDraftMessage>,
                               last_message: Option<Message>| {
-                        draft_message.map(|m| m.0.date).unwrap_or_else(|| {
+                        draft_message.map(|m| m.date).unwrap_or_else(|| {
                             // ... Or, if there is no draft message use the timestamp of the
                             // last message.
                             last_message
@@ -238,7 +238,7 @@ impl Row {
                                     format!(
                                         "<span foreground=\"#e01b24\">{}:</span> {}",
                                         gettext("Draft"),
-                                        stringify_draft_message(&message.0)
+                                        stringify_draft_message(&*message)
                                     )
                                 })
                             })
@@ -309,16 +309,16 @@ impl Row {
                     >| {
                         vec![
                             "unread-count".to_string(),
-                            if notification_settings.0.use_default_mute_for {
+                            if notification_settings.use_default_mute_for {
                                 if scope_notification_settings
-                                    .map(|s| s.0.mute_for > 0)
-                                    .unwrap_or(notification_settings.0.mute_for > 0)
+                                    .map(|s| s.mute_for > 0)
+                                    .unwrap_or(notification_settings.mute_for > 0)
                                 {
                                     "unread-count-muted"
                                 } else {
                                     "unread-count-unmuted"
                                 }
-                            } else if notification_settings.0.mute_for > 0 {
+                            } else if notification_settings.mute_for > 0 {
                                 "unread-count-muted"
                             } else {
                                 "unread-count-unmuted"
@@ -371,7 +371,7 @@ fn stringify_message(message: Message) -> String {
         ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
     };
 
-    let text_content = match message.content().0 {
+    let text_content = match message.content().into() {
         MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
         MessageContent::MessageBasicGroupChatCreate(_) => {
             show_sender = false;
@@ -1040,7 +1040,7 @@ fn stringify_user(user: &User, use_full_name: bool) -> String {
 
 fn stringify_pinned_message_content(message: Option<Message>) -> String {
     match message {
-        Some(data) => match data.content().0 {
+        Some(data) => match data.content().into() {
             MessageContent::MessageText(data) => {
                 let msg = data.text.text;
                 if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {

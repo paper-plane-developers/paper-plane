@@ -225,7 +225,6 @@ impl Login {
                     .as_ref()
                     .unwrap()
                     .database_info()
-                    .0
                     .clone();
                 do_async(
                     glib::PRIORITY_DEFAULT_IDLE,
@@ -646,7 +645,6 @@ impl Login {
             .as_ref()
             .unwrap()
             .database_info()
-            .0
             .use_test_dc;
 
         log_out(imp.client_id.get());
@@ -764,7 +762,6 @@ impl Login {
                 .as_ref()
                 .unwrap()
                 .database_info()
-                .0
                 .use_test_dc,
             &phone_number_digits,
         ) {

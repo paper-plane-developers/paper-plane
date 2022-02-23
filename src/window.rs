@@ -383,7 +383,7 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
                 "{} pinned {}",
                 sender_name(&message.sender_id, chat),
                 match chat.history().message_by_id(data.message_id) {
-                    Some(data) => match data.content().0 {
+                    Some(data) => match data.content().into() {
                         MessageContent::MessageText(data) => {
                             let msg = data.text.text;
                             if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {

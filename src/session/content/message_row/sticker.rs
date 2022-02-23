@@ -56,7 +56,7 @@ impl MessageSticker {
         if let Some(message) = self.message() {
             let message = message.downcast_ref::<Message>().unwrap();
 
-            if let MessageContent::MessageSticker(data) = message.content().0 {
+            if let MessageContent::MessageSticker(data) = message.content().into() {
                 self.imp()
                     .paintable
                     .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);

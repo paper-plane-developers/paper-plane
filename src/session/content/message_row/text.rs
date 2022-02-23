@@ -120,7 +120,7 @@ impl MessageText {
                 let text_binding = Message::this_expression("content")
                     .chain_closure::<String>(closure!(
                         |_: Message, content: BoxedMessageContent| {
-                            format_message_content_text(content.0)
+                            format_message_content_text(content.into())
                         }
                     ))
                     .bind(&*imp.content_label, "label", Some(message));
@@ -138,7 +138,7 @@ impl MessageText {
                 let text_binding = SponsoredMessage::this_expression("content")
                     .chain_closure::<String>(closure!(
                         |_: SponsoredMessage, content: BoxedMessageContent| {
-                            format_message_content_text(content.0)
+                            format_message_content_text(content.into())
                         }
                     ))
                     .bind(&*imp.content_label, "label", Some(sponsored_message));

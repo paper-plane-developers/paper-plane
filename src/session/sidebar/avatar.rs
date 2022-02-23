@@ -160,7 +160,7 @@ impl Avatar {
     }
 
     fn setup_is_online_binding(&self, user: &User) {
-        if !matches!(user.type_().0, UserType::Regular) {
+        if !matches!(*user.type_(), UserType::Regular) {
             self.set_is_online(false);
             return;
         }
@@ -181,7 +181,7 @@ impl Avatar {
             .chain_property::<User>("status")
             .chain_closure::<bool>(closure!(
                 |_: Session, interlocutor_status: BoxedUserStatus| {
-                    matches!(interlocutor_status.0, UserStatus::Online(_)) && my_id != user_id
+                    matches!(*interlocutor_status, UserStatus::Online(_)) && my_id != user_id
                 }
             ))
             .bind(self, "is-online", Some(&session));
