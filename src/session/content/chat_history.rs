@@ -1,11 +1,11 @@
 use glib::clone;
-use gtk::{gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib, CompositeTemplate};
 
-use crate::session::{
-    chat::SponsoredMessage,
-    content::{ChatActionBar, ItemRow, UserDialog},
-    Chat, ChatType, Session,
-};
+use crate::session::chat::SponsoredMessage;
+use crate::session::content::{ChatActionBar, ItemRow, UserDialog};
+use crate::session::{Chat, ChatType, Session};
 use crate::spawn;
 
 mod imp {

@@ -1,4 +1,7 @@
-use gtk::{glib, glib::DateTime, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::glib::DateTime;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 
 use crate::session::chat::Message;
 

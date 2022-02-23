@@ -1,4 +1,6 @@
-use gtk::{gio, glib, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib};
 use indexmap::map::Entry;
 use tdgrand::enums::Update;
 

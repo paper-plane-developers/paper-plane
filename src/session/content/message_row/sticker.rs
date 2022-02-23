@@ -1,9 +1,13 @@
 use glib::clone;
-use gtk::{gdk, gio, glib, prelude::*, subclass::prelude::*, CompositeTemplate};
-use tdgrand::{enums::MessageContent, types::File};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, gio, glib, CompositeTemplate};
+use tdgrand::enums::MessageContent;
+use tdgrand::types::File;
 
 use crate::session::chat::Message;
-use crate::session::content::{message_row::StickerPaintable, MessageRow, MessageRowExt};
+use crate::session::content::message_row::StickerPaintable;
+use crate::session::content::{MessageRow, MessageRowExt};
 
 mod imp {
     use super::*;

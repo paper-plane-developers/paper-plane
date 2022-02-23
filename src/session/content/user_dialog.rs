@@ -1,5 +1,7 @@
 use glib::closure;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 
 use crate::session::User;
 

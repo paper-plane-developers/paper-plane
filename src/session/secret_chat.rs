@@ -1,4 +1,6 @@
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use tdgrand::enums::{SecretChatState as TdSecretChatState, Update};
 use tdgrand::types::SecretChat as TdSecretChat;
 
@@ -30,7 +32,8 @@ impl SecretChatState {
 
 mod imp {
     use super::*;
-    use once_cell::{sync::Lazy, unsync::OnceCell};
+    use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::Cell;
 
     #[derive(Debug, Default)]

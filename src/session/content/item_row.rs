@@ -1,6 +1,9 @@
-use adw::{prelude::BinExt, subclass::prelude::BinImpl};
+use adw::prelude::BinExt;
+use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 use tdgrand::enums::MessageContent;
 
 use crate::session::chat::{Item, ItemType, SponsoredMessage};

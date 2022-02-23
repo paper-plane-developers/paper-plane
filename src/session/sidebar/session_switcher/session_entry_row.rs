@@ -1,7 +1,9 @@
 use super::avatar_with_selection::AvatarWithSelection;
 
 use glib::closure;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 
 use crate::session::{Session, User};
 

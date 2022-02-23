@@ -1,5 +1,7 @@
 use adw::subclass::prelude::*;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 
 use crate::session::components::Avatar;
 use crate::session::Avatar as AvatarItem;

@@ -5,8 +5,7 @@ use gtk::{gio, glib};
 use log::{debug, info};
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
-use crate::PreferencesWindow;
-use crate::Window;
+use crate::{PreferencesWindow, Window};
 
 mod imp {
     use super::*;

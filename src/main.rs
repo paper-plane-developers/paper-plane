@@ -17,12 +17,11 @@ use self::window::Window;
 
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};
-use gtk::{
-    gio, glib,
-    prelude::{ApplicationExt, ApplicationExtManual, IsA},
-};
+use gtk::prelude::{ApplicationExt, ApplicationExtManual, IsA};
+use gtk::{gio, glib};
 use once_cell::sync::{Lazy, OnceCell};
-use std::{path::PathBuf, str::FromStr};
+use std::path::PathBuf;
+use std::str::FromStr;
 
 pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());

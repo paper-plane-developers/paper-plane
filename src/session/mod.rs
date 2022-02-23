@@ -29,7 +29,9 @@ use self::user_list::UserList;
 
 use glib::{clone, SyncSender};
 use gtk::glib::WeakRef;
-use gtk::{glib, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
 use tdgrand::enums::{NotificationSettingsScope, Update};
 use tdgrand::functions;

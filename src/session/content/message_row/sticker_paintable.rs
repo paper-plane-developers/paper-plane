@@ -1,4 +1,6 @@
-use gtk::{gdk, glib, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, glib};
 
 const MAX_SIZE: i32 = 200;
 

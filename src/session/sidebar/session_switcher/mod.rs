@@ -5,13 +5,11 @@ mod session_entry_row;
 
 use super::session_switcher::item::{ExtraItemObj, Item as SessionSwitcherItem};
 
-use gtk::{
-    gio::{self, ListModel, ListStore},
-    glib::{self, clone},
-    prelude::*,
-    subclass::prelude::*,
-    CompositeTemplate, SelectionModel,
-};
+use gtk::gio::{self, ListModel, ListStore};
+use gtk::glib::{self, clone};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{CompositeTemplate, SelectionModel};
 use std::convert::TryFrom;
 
 use crate::session::Session;

@@ -1,17 +1,14 @@
 use gettextrs::gettext;
-use gtk::{
-    gdk,
-    glib::{self, clone},
-    prelude::*,
-    subclass::prelude::*,
-};
-use tdgrand::{enums::AuthorizationState, functions, types};
+use gtk::gdk;
+use gtk::glib::{self, clone};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use tdgrand::enums::AuthorizationState;
+use tdgrand::{functions, types};
 
-use crate::{
-    session::Session,
-    session_manager::SessionManager,
-    utils::{do_async, log_out, parse_formatted_text, send_tdlib_parameters},
-};
+use crate::session::Session;
+use crate::session_manager::SessionManager;
+use crate::utils::{do_async, log_out, parse_formatted_text, send_tdlib_parameters};
 
 mod imp {
     use super::*;

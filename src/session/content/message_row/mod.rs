@@ -12,7 +12,9 @@ pub use self::sticker::MessageSticker;
 use self::sticker_paintable::StickerPaintable;
 pub use self::text::MessageText;
 
-use gtk::{gdk, glib, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gdk, glib};
 
 use crate::session::chat::{Message, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;

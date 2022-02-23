@@ -1,13 +1,19 @@
-use gtk::{glib, prelude::*, subclass::prelude::*};
-use tdgrand::{enums, functions::GetChatSponsoredMessage, types::Error as TdError};
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use tdgrand::enums;
+use tdgrand::functions::GetChatSponsoredMessage;
+use tdgrand::types::Error as TdError;
 
-use crate::session::{chat::BoxedMessageContent, Chat};
+use crate::session::chat::BoxedMessageContent;
+use crate::session::Chat;
 use crate::Session;
 
 mod imp {
     use super::*;
     use glib::WeakRef;
-    use once_cell::{sync::Lazy, unsync::OnceCell};
+    use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::Cell;
 
     #[derive(Debug, Default)]

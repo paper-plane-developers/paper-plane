@@ -1,5 +1,7 @@
 use glib::clone;
-use gtk::{gio, glib, prelude::*, subclass::prelude::*};
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::{gio, glib};
 use std::cmp::Ordering;
 use std::collections::hash_map::Entry;
 use tdgrand::enums::{self, Update};
