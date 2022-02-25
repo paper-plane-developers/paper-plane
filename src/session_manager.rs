@@ -256,7 +256,7 @@ impl SessionManager {
                 .unwrap();
 
             if on_test_dc == session.database_info().0.use_test_dc
-                && session.me().phone_number().replace(" ", "") == phone_number_digits
+                && session.me().phone_number().replace(' ', "") == phone_number_digits
             {
                 Some(pos)
             } else {
