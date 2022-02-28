@@ -13,7 +13,7 @@ use crate::session::chat::{
 };
 use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
-use crate::utils::{dim_and_escape, escape, human_friendly_duration};
+use crate::utils::{dim_and_escape, escape, human_friendly_duration, MESSAGE_TRUNCATED_LENGTH};
 
 mod imp {
     use super::*;
@@ -398,20 +398,52 @@ fn stringify_message(message: Message) -> String {
                     .collect::<Vec<_>>();
 
                 let (last_member, first_members) = members.split_last().unwrap();
-
+                if message.is_outgoing() {
+                    gettext!(
+                        "You added {}",
+                        if first_members.is_empty() {
+                            Cow::Borrowed(last_member)
+                        } else {
+                            Cow::Owned(gettext!(
+                                "{} and {}",
+                                first_members.join(&gettext(", ")),
+                                last_member
+                            ))
+                        }
+                    )
+                } else {
+                    gettext!(
+                        "{} added {}",
+                        sender_name(message.sender(), true),
+                        if first_members.is_empty() {
+                            Cow::Borrowed(last_member)
+                        } else {
+                            Cow::Owned(gettext!(
+                                "{} and {}",
+                                first_members.join(&gettext(", ")),
+                                last_member
+                            ))
+                        }
+                    )
+                }
+            }
+        }
+        MessageContent::MessageChatJoinByLink => {
+            show_sender = false;
+            if message.is_outgoing() {
+                gettext("You joined the group via invite link")
+            } else {
                 gettext!(
-                    "{} added {}",
-                    sender_name(message.sender(), true),
-                    if first_members.is_empty() {
-                        Cow::Borrowed(last_member)
-                    } else {
-                        Cow::Owned(gettext!(
-                            "{} and {}",
-                            first_members.join(&gettext(", ")),
-                            last_member
-                        ))
-                    }
+                    "{} joined the group via invite link",
+                    sender_name(message.sender(), true)
                 )
+            }
+        }
+        MessageContent::MessageChatJoinByRequest => {
+            if message.is_outgoing() {
+                gettext("You joined the group")
+            } else {
+                gettext!("{} joined the group", sender_name(message.sender(), true))
             }
         }
         MessageContent::MessageChatDeleteMember(data) => {
@@ -501,6 +533,61 @@ fn stringify_message(message: Message) -> String {
                         gettext!(
                             "{} removed the group photo",
                             sender_name(message.sender(), true)
+                        )
+                    }
+                }
+            }
+        }
+        MessageContent::MessageChatChangePhoto(_) => {
+            show_sender = false;
+            match message.chat().type_() {
+                ChatType::Supergroup(data) if data.is_channel() => gettext("Channel photo changed"),
+                _ => {
+                    if message.is_outgoing() {
+                        gettext("You changed group photo")
+                    } else {
+                        gettext!(
+                            "{} changed group photo",
+                            sender_name(message.sender(), true)
+                        )
+                    }
+                }
+            }
+        }
+        MessageContent::MessagePinMessage(data) => {
+            show_sender = false;
+
+            if message.is_outgoing() {
+                gettext!(
+                    "You pinned {}",
+                    stringify_pinned_message_content(
+                        message.chat().history().message_by_id(data.message_id)
+                    )
+                )
+            } else {
+                gettext!(
+                    "{} pinned {}",
+                    sender_name(message.sender(), true),
+                    stringify_pinned_message_content(
+                        message.chat().history().message_by_id(data.message_id)
+                    )
+                )
+            }
+        }
+        MessageContent::MessageChatChangeTitle(data) => {
+            show_sender = false;
+            match message.chat().type_() {
+                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                    gettext!("Channel name was changed to «{}»", data.title)
+                }
+                _ => {
+                    if message.is_outgoing() {
+                        gettext("You changed group name to «{}»")
+                    } else {
+                        gettext!(
+                            "{} changed group name to «{}»",
+                            sender_name(message.sender(), true),
+                            data.title
                         )
                     }
                 }
@@ -941,5 +1028,35 @@ fn stringify_user(user: &User, use_full_name: bool) -> String {
             .into()
     } else {
         user.first_name()
+    }
+}
+
+fn stringify_pinned_message_content(message: Option<Message>) -> String {
+    match message {
+        Some(data) => match data.content().0 {
+            MessageContent::MessageText(data) => {
+                let msg = data.text.text;
+                if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {
+                    gettext!(
+                        "«{}…»",
+                        msg.chars()
+                            .take(MESSAGE_TRUNCATED_LENGTH - 1)
+                            .collect::<String>()
+                    )
+                } else {
+                    gettext!("«{}»", msg)
+                }
+            }
+            MessageContent::MessagePhoto(_) => gettext("a photo"),
+            MessageContent::MessageVideo(_) => gettext("a video"),
+            MessageContent::MessageSticker(data) => {
+                gettext!("a {} sticker", data.sticker.emoji)
+            }
+            MessageContent::MessageAnimation(_) => gettext("a GIF"),
+            MessageContent::MessageDocument(_) => gettext("a file"),
+            MessageContent::MessageAudio(_) => gettext("an audio file"),
+            _ => gettext("a message"),
+        },
+        None => gettext("a deleted message"),
     }
 }

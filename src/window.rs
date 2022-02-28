@@ -14,6 +14,7 @@ use tokio::task;
 use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
 use crate::session_manager::{ClientState, SessionManager};
+use crate::utils::MESSAGE_TRUNCATED_LENGTH;
 use crate::{Application, RUNTIME};
 
 mod imp {
@@ -364,14 +365,73 @@ fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
                 gettext("Channel photo removed")
             }
             _ => {
-                if message.is_outgoing {
-                    gettext("You removed the group photo")
-                } else {
-                    let sender_name = sender_name(&message.sender_id, chat);
-                    gettext!("{} removed the group photo", sender_name)
-                }
+                let sender_name = sender_name(&message.sender_id, chat);
+                gettext!("{} removed the group photo", sender_name)
             }
         },
+        MessageContent::MessageChatChangePhoto(_) => match chat.type_() {
+            ChatType::Supergroup(data) if data.is_channel() => gettext("Channel photo changed"),
+            _ => {
+                gettext!(
+                    "{} changed group photo",
+                    sender_name(&message.sender_id, chat),
+                )
+            }
+        },
+        MessageContent::MessagePinMessage(data) => {
+            gettext!(
+                "{} pinned {}",
+                sender_name(&message.sender_id, chat),
+                match chat.history().message_by_id(data.message_id) {
+                    Some(data) => match data.content().0 {
+                        MessageContent::MessageText(data) => {
+                            let msg = data.text.text;
+                            if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {
+                                gettext!(
+                                    "«{}…»",
+                                    msg.chars()
+                                        .take(MESSAGE_TRUNCATED_LENGTH - 1)
+                                        .collect::<String>()
+                                )
+                            } else {
+                                gettext!("«{}»", msg)
+                            }
+                        }
+                        MessageContent::MessagePhoto(_) => gettext("a photo"),
+                        MessageContent::MessageVideo(_) => gettext("a video"),
+                        MessageContent::MessageSticker(data) => {
+                            gettext!("a {} sticker", data.sticker.emoji)
+                        }
+                        MessageContent::MessageAnimation(_) => gettext("a GIF"),
+                        MessageContent::MessageDocument(_) => gettext("a file"),
+                        MessageContent::MessageAudio(_) => gettext("an audio file"),
+                        _ => gettext("a message"),
+                    },
+                    None => gettext("a deleted message"),
+                }
+            )
+        }
+        MessageContent::MessageChatChangeTitle(data) => match chat.type_() {
+            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                gettext!("Channel name was changed to «{}»", data.title)
+            }
+            _ => {
+                gettext!(
+                    "{} changed group name to «{}»",
+                    sender_name(&message.sender_id, chat),
+                    data.title
+                )
+            }
+        },
+        MessageContent::MessageChatJoinByLink => {
+            gettext!(
+                "{} joined the group via invite link",
+                sender_name(&message.sender_id, chat)
+            )
+        }
+        MessageContent::MessageChatJoinByRequest => {
+            gettext!("{} joined the group", sender_name(&message.sender_id, chat))
+        }
         MessageContent::MessageContactRegistered => {
             gettext!("{} joined Telegram", sender_name(&message.sender_id, chat))
         }
