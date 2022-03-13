@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-02-09 07:54+0000\n"
-"Last-Translator: Carlod <carlod@disroot.org>\n"
+"PO-Revision-Date: 2022-03-15 07:58+0000\n"
+"Last-Translator: Radek Raczkowski <rdkracz@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
 "Language: pl\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -52,13 +52,13 @@ msgstr "Domyślne zachowanie zmaksymalizowanego okna"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr "Ostatnio używana sesja"
+msgstr "Ostatnio używane sesje"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
-"Lista ostatnio używanych sesji uporządkowana względem nazwy lokalizacji bazy "
+"Lista ostatnio używanych sesji uporządkowana względem nazwy katalogu bazy "
 "danych"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
@@ -92,7 +92,7 @@ msgstr "_Dodaj Konto"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
-msgstr "Nie wybrano konwersacji"
+msgstr "Nie wybrano czatu"
 
 #: data/resources/ui/content.ui:24
 msgid "Select a chat to start messaging."
@@ -196,8 +196,8 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
-"Kiedy ustawisz hasło chmurowe, podasz nam pomocniczy adres email. Dzięki "
-"temu będziemy mogli ci wysłać kod na ten adres, żeby zresetować twoje hasło."
+"Kiedy ustawiałeś hasło do chmury, podałeś nam pomocniczy adres email. Możemy "
+"wysłać ci kod na ten adres, który możesz użyć, żeby zresetować twoje hasło."
 
 #: data/resources/ui/login.ui:530 data/resources/ui/login.ui:555
 msgid "_Send recovery code"
@@ -213,7 +213,7 @@ msgstr "_Usuń Konto"
 
 #: data/resources/ui/login.ui:641 data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr "Wprowadź Kod Wysłany na E-maila"
+msgstr "Wprowadź kod wysłany na E-mail"
 
 #: data/resources/ui/login.ui:682 data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
@@ -239,7 +239,7 @@ msgstr "Ogólne"
 #: data/resources/ui/shortcuts.ui:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "Pokaż Skróty Klawiszowe"
+msgstr "Pokaż skróty klawiszowe"
 
 #: data/resources/ui/shortcuts.ui:20
 msgctxt "shortcut window"
@@ -249,12 +249,12 @@ msgstr "Wyjdź"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr "Lista Chatów"
+msgstr "Lista czatów"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr "Przeszukaj Chaty"
+msgstr "Przeszukaj czaty"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -277,28 +277,28 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
-"Jednym sposobem, aby móc dalej korzystać ze swojego konta jest usunięcie "
-"konta i ponowne jego stworzenie"
+"Jednym ze sposobów, aby móc dalej korzystać ze swojego konta, jest jego "
+"usunięcie i ponowne stworzenie"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
-"Jako, że nie podano zapasowego adresu email jedynym sposobem by kontynuować "
-"używanie twojego konta jest usunięcie konta i ponowne jego stworzenie"
+"Jako że nie podałeś pomocniczego adresu e-mail, jedynym sposobem, by "
+"kontynuować używanie twojego konta jest jego usunięcie i ponowne stworzenie"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
-"Prosze wziąć pod uwagę, że stracisz wszystkie czaty i wiadomości wraz ze "
-"wszystkimi multimediami i plikami, które wysłano!"
+"Weź proszę pod uwagę, że stracisz wszystkie czaty i wiadomości wraz ze "
+"wszystkimi multimediami i plikami, które udostępniłeś!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr "Czy Akceptujesz Zasady korzystania z Usługi?"
+msgstr "Czy akceptujesz Zasady korzystania z Usługi?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
@@ -316,7 +316,7 @@ msgid ""
 "Do you want to delete your account?"
 msgstr ""
 "Stracisz wszystkie swoje czaty i wiadomości wraz ze wszystkimi multimediami "
-"oraz plikami, które udostępniono!\n"
+"oraz plikami, które udostępniłeś!\n"
 "\n"
 "Czy chcesz usunąć swoje konto?"
 
@@ -330,7 +330,7 @@ msgid ""
 "to remember your password or to delete and recreate your account."
 msgstr ""
 "Jeśli stracisz dostęp do emaila, twoimi pozostałymi opcjami będzie "
-"zapamiętanie hasła albo ponowne stworzenie konta."
+"zapamiętanie hasła albo usunięcie i ponowne stworzenie konta."
 
 #: src/login.rs:955
 msgid "_Go Back"
@@ -381,7 +381,7 @@ msgstr "Usunięto zdjęcie grupy"
 #: src/session/sidebar/row.rs:565 src/window.rs:497
 #: src/session/sidebar/row.rs:567 src/session/sidebar/row.rs:635
 msgid "Unsupported message"
-msgstr "Nieznana wiadomość"
+msgstr "Nieobsługiwana wiadomość"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:112 src/session/content/item_row.rs:111
@@ -396,7 +396,7 @@ msgstr "%e %B %Y"
 #: src/session/content/message_row/text.rs:156
 #: src/session/content/message_row/text.rs:163
 msgid "This message is unsupported"
-msgstr "Ta wiadomość jest nieznana"
+msgstr "Ta wiadomość jest nieobsługiwana"
 
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
@@ -483,11 +483,11 @@ msgstr "Wymagane ponowne uruchomienie, aby zastosować"
 
 #: src/session/content/chat_action_bar.rs:231
 msgid "Unsupported draft message type"
-msgstr "Nieznany rodzaj szkicu wiadomości"
+msgstr "Nieobsługiwany rodzaj szkicu wiadomości"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by Mail"
-msgstr "Wpisz Kod Wysłany na Maila"
+msgstr "Wprowadź kod wysłany na Maila"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Klucz Szyfrujący"
