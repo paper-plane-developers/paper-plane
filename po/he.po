@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-02-28 18:25+0000\n"
-"Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
+"PO-Revision-Date: 2022-03-02 16:59+0000\n"
+"Last-Translator: Yosef Or Boczko <yoseforb@gnome.org>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/he/>\n"
 "Language: he\n"
@@ -430,7 +430,7 @@ msgstr "שיחה שלא נענתה"
 
 #: src/session/sidebar/row.rs:502
 msgid "You"
-msgstr "הנך"
+msgstr "אני"
 
 #: src/session/sidebar/row.rs:527
 msgid "Outgoing video call"
