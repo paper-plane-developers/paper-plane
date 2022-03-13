@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-02-02 23:53+0000\n"
-"Last-Translator: Ícar N. S. <icar.nin@pm.me>\n"
+"PO-Revision-Date: 2022-03-15 07:58+0000\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ca/>\n"
 "Language: ca\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -28,9 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
-"Un client GTK del Telegram construit per estar ben integrat amb l'entorn "
-"d'escriptori del GNOME"
+msgstr "Un client en GTK del Telegram optimitzat per a l’escriptori GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -65,11 +63,11 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr "Esquema de colors"
+msgstr "Combinació de colors"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "L'esquema de colors usat per l'aplicació"
+msgstr "La combinació de colors utilitzada per l’aplicació"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -85,23 +83,23 @@ msgstr "Servidor de _producció"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr "_Servidor de proves"
+msgstr "Servidor de p_roves"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
-msgstr "_Afegiu un compte"
+msgstr "_Afegeix un compte"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
-msgstr "Cap xat seleccionat"
+msgstr "No s’ha seleccionat cap xat"
 
 #: data/resources/ui/content.ui:24
 msgid "Select a chat to start messaging."
-msgstr "Selecciona un xat per começar a enviar missatges."
+msgstr "Seleccioneu un xat per a començar a comunicar-vos."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr "Visualitzeu la informació"
+msgstr "Mostra la informació"
 
 #: data/resources/ui/content-user-dialog.ui:54
 msgid "Mobile"
@@ -109,7 +107,7 @@ msgstr "Mòbil"
 
 #: data/resources/ui/content-user-dialog.ui:60
 msgid "Username"
-msgstr "Nom d'usuari"
+msgstr "Nom d’usuari"
 
 #: data/resources/ui/login.ui:47
 msgid "_Previous"
@@ -121,7 +119,7 @@ msgstr "_Següent"
 
 #: data/resources/ui/login.ui:105
 msgid "Welcome to Telegrand"
-msgstr "Benvingut/da al Telegrand"
+msgstr "Us donem la benvinguda al Telegrand"
 
 #: data/resources/ui/login.ui:124
 msgid "Phone Number"
@@ -129,7 +127,7 @@ msgstr "Número de telèfon"
 
 #: data/resources/ui/login.ui:146
 msgid "_Log in using QR code"
-msgstr "_Inicieu sessió amb el codi QR"
+msgstr "_Inicia una sessió amb un codi QR"
 
 #: data/resources/ui/login.ui:205
 msgid "Scan Code"
@@ -167,7 +165,7 @@ msgid ""
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
 "En registrar-vos,\n"
-"esteu d'acord amb les <a href=\"\">Condicions de servei</a>."
+"esteu d’acord amb les <a href=\"\">condicions del servei</a>."
 
 #: data/resources/ui/login.ui:378
 msgid "Enter Your Password"
@@ -202,7 +200,7 @@ msgstr ""
 
 #: data/resources/ui/login.ui:530
 msgid "_Send recovery code"
-msgstr "_Envieu el codi de recuperació"
+msgstr "_Envia un codi de recuperació"
 
 #: data/resources/ui/login.ui:592
 msgid "Account Deletion"
@@ -210,7 +208,7 @@ msgstr "Supressió del compte"
 
 #: data/resources/ui/login.ui:619
 msgid "_Delete Account"
-msgstr "_Suprimiu el compte"
+msgstr "_Suprimeix el compte"
 
 #: data/resources/ui/login.ui:641
 msgid "Enter the Code Sent by E-Mail"
@@ -263,7 +261,7 @@ msgstr "_Tanca la sessió"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr "_Paràmetres"
+msgstr "_Preferències"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -271,7 +269,7 @@ msgstr "_Dreceres de teclat"
 
 #: data/resources/ui/sidebar.ui:20
 msgid "_About Telegrand"
-msgstr "_Sobre el Telegrand"
+msgstr "_Quant al Telegrand"
 
 #: src/login.rs:340
 msgid ""
@@ -287,7 +285,7 @@ msgid ""
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
 "Com que no heu proporcionat una adreça de correu electrònic de recuperació, "
-"l'única manera de continuar utilitzant el seu compte és suprimir-lo i "
+"l’única manera de continuar utilitzant el vostre compte és suprimir-lo i "
 "després tornar a crear-lo"
 
 #: src/login.rs:353
@@ -295,16 +293,16 @@ msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
-"Tingueu en compte que perdreu tots els seus xats i missatges, juntament amb "
-"qualsevol mitjà i fitxer que hàgiu compartit!"
+"Tingueu en compte que perdreu tots els vostres xats i missatges, juntament "
+"amb qualsevol mitjà i fitxer que hàgiu compartit."
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr "Accepteu les condicions d'ús?"
+msgstr "Accepteu les condicions d’ús?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr "Condicions d'ús"
+msgstr "Condicions d’ús"
 
 #: src/login.rs:855
 msgid "Warning"
@@ -324,19 +322,19 @@ msgstr ""
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr "Ho sentim"
+msgstr "Ens sap greu"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
-"Si no podeu restaurar l'accés al correu electrònic, les opcions restants són "
+"Si no podeu restaurar l’accés al correu electrònic, les opcions restants són "
 "recordar la vostra contrasenya o suprimir i tornar a crear el vostre compte."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr "Tornar _enrere"
+msgstr "Torna _enrere"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
@@ -365,7 +363,7 @@ msgstr "Missatge de veu"
 
 #: src/window.rs:363 src/session/sidebar/row.rs:480
 msgid "Channel photo removed"
-msgstr "S'ha eliminat la foto del canal"
+msgstr "S’ha eliminat la foto del canal"
 
 #: src/window.rs:367 src/session/sidebar/row.rs:484
 msgid "You removed the group photo"
@@ -374,7 +372,7 @@ msgstr "Heu eliminat la foto del grup"
 #: src/window.rs:377 src/session/sidebar/row.rs:497
 #: src/session/sidebar/row.rs:565
 msgid "Unsupported message"
-msgstr "Missatge no suportat"
+msgstr "El missatge no és compatible"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:112
@@ -388,7 +386,7 @@ msgstr "%e de %B del %Y"
 
 #: src/session/content/message_row/text.rs:156
 msgid "This message is unsupported"
-msgstr "Aquest missatge no està suportat"
+msgstr "Aquest missatge no és compatible"
 
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
@@ -414,19 +412,19 @@ msgstr "Heu abandonat el grup"
 
 #: src/session/sidebar/row.rs:448
 msgid "Declined outgoing video call"
-msgstr "S'ha refusat la trucada de vídeo"
+msgstr "S’ha refusat la trucada de vídeo sortint"
 
 #: src/session/sidebar/row.rs:450
 msgid "Declined outgoing call"
-msgstr "S'ha refusat la trucada"
+msgstr "S’ha refusat la trucada sortint"
 
 #: src/session/sidebar/row.rs:456
 msgid "Declined incoming video call"
-msgstr "S'ha refusat la trucada de vídeo entrant"
+msgstr "S’ha refusat la trucada de vídeo entrant"
 
 #: src/session/sidebar/row.rs:458
 msgid "Declined incoming call"
-msgstr "S'ha refusat la trucada entrant"
+msgstr "S’ha refusat la trucada entrant"
 
 #: src/session/sidebar/row.rs:468
 msgid "Cancelled call"
@@ -438,15 +436,15 @@ msgstr "Trucada perduda"
 
 #: src/session/sidebar/row.rs:502
 msgid "You"
-msgstr "Tu"
+msgstr "Vós"
 
 #: src/session/sidebar/row.rs:527
 msgid "Outgoing video call"
-msgstr "Trucada de vídeo"
+msgstr "Trucada de vídeo sortint"
 
 #: src/session/sidebar/row.rs:529
 msgid "Outgoing call"
-msgstr "Trucada"
+msgstr "Trucada sortint"
 
 #: src/session/sidebar/row.rs:541
 msgid "Incoming video call"
