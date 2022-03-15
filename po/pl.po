@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-03-15 07:58+0000\n"
+"PO-Revision-Date: 2022-03-16 12:55+0000\n"
 "Last-Translator: Radek Raczkowski <rdkracz@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
@@ -213,7 +213,7 @@ msgstr "_Usuń Konto"
 
 #: data/resources/ui/login.ui:641 data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by E-Mail"
-msgstr "Wprowadź kod wysłany na E-mail"
+msgstr "Wprowadź kod wysłany na e-mail"
 
 #: data/resources/ui/login.ui:682 data/resources/ui/login.ui:707
 msgid "_Unable to access your email?"
@@ -487,7 +487,7 @@ msgstr "Nieobsługiwany rodzaj szkicu wiadomości"
 
 #: data/resources/ui/login.ui:666
 msgid "Enter the Code Sent by Mail"
-msgstr "Wprowadź kod wysłany na Maila"
+msgstr "Wprowadź kod wysłany mailem"
 
 #~ msgid "Encryption Key"
 #~ msgstr "Klucz Szyfrujący"
