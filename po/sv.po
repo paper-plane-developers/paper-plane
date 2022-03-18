@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2021-09-11 23:32+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2022-03-18 15:05+0000\n"
+"Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/sv/>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -51,12 +51,14 @@ msgstr "Standard fönstermaximeringsbeteende"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Nyligen använda sessioner"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"Den ordnade listan över senast använda sessioner efter deras "
+"databaskatalognamn"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -77,15 +79,15 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Produktionsserver"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "_Testserver"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
-msgstr ""
+msgstr "_Lägg till konto"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -273,30 +275,36 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
+"Ett sätt att fortsätta använda ditt konto är att ta bort ditt konto och "
+"sedan återskapa det"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Eftersom du inte har angett en återställningsadress är det enda sättet att "
+"fortsätta använda ditt konto att ta bort ditt konto och sedan återskapa det"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"Observera att du kommer att förlora alla dina chattar och meddelanden, "
+"tillsammans med alla media och filer du delat!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Godkänner du användarvillkoren?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Användarvillkoren"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Varning"
 
 #: src/login.rs:857
 msgid ""
@@ -305,20 +313,27 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"Du kommer att förlora alla dina chattar och meddelanden, tillsammans med "
+"alla media och filer du delat!\n"
+"\n"
+"Vill du ta bort ditt konto?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Förlåt"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Om du inte kan återställa åtkomsten till din e-post är dina återstående "
+"alternativ antingen att komma ihåg ditt lösenord eller att ta bort och "
+"återskapa ditt konto."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_Gå tillbaka"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543 src/window.rs:334
 #: src/session/sidebar/row.rs:613
