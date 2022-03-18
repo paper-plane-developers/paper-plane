@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-22 08:57+0000\n"
-"Last-Translator: Sergio Varela <sergitroll9@gmail.com>\n"
+"PO-Revision-Date: 2022-03-15 07:58+0000\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -28,9 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
-"Un cliente GTK de Telegram creado para estar bien integrado con el entorno "
-"de escritorio GNOME"
+msgstr "Un cliente GTK de Telegram optimizado para el escritorio GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -39,17 +37,17 @@ msgstr "Gnome;GTK;"
 #: data/com.github.melix99.telegrand.gschema.xml.in:6
 #: data/com.github.melix99.telegrand.gschema.xml.in:7
 msgid "Default window width"
-msgstr "Ancho de ventana predeterminado"
+msgstr "Anchura de ventana predeterminada"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:11
 #: data/com.github.melix99.telegrand.gschema.xml.in:12
 msgid "Default window height"
-msgstr "Altura de ventana predeterminado"
+msgstr "Altura de ventana predeterminada"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 #: data/com.github.melix99.telegrand.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Comportamiento predeterminado de ventana maximizada"
+msgstr "Comportamiento predeterminado de maximización de ventana"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
@@ -65,11 +63,11 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr "Esquema de colores"
+msgstr "Combinación de colores"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "El esquema de colores que se usará en la aplicación"
+msgstr "La combinación de colores que se utilizará en la aplicación"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -81,11 +79,11 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr "_Servidor de producción"
+msgstr "Servidor de _producción"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr "_Servidor de pruebas"
+msgstr "Servidor de p_ruebas"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
@@ -101,7 +99,7 @@ msgstr "Seleccione un chat para empezar a conversar."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr "Ver informaciones"
+msgstr "Ver información"
 
 #: data/resources/ui/content-user-dialog.ui:54
 msgid "Mobile"
@@ -113,7 +111,7 @@ msgstr "Nombre de usuario"
 
 #: data/resources/ui/login.ui:47
 msgid "_Previous"
-msgstr "_Previo"
+msgstr "A_nterior"
 
 #: data/resources/ui/login.ui:76
 msgid "_Next"
@@ -121,7 +119,7 @@ msgstr "_Siguiente"
 
 #: data/resources/ui/login.ui:105
 msgid "Welcome to Telegrand"
-msgstr "Bienvenido a Telegrand"
+msgstr "Le damos la bienvenida a Telegrand"
 
 #: data/resources/ui/login.ui:124
 msgid "Phone Number"
@@ -129,7 +127,7 @@ msgstr "Número de teléfono"
 
 #: data/resources/ui/login.ui:146
 msgid "_Log in using QR code"
-msgstr "_Iniciar sesión usando el código QR"
+msgstr "_Acceder mediante código QR"
 
 #: data/resources/ui/login.ui:205
 msgid "Scan Code"
@@ -166,7 +164,7 @@ msgid ""
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
 "Al registrarse,\n"
-"acepta las <a href=\"\">Condiciones de servicio</a>."
+"acepta las <a href=\"\">condiciones del servicio</a>."
 
 #: data/resources/ui/login.ui:378
 msgid "Enter Your Password"
@@ -276,15 +274,16 @@ msgstr "_Acerca de Telegrand"
 msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
-msgstr "Una forma de seguir utilizando tu cuenta es borrarla y volver a crearla"
+msgstr ""
+"Una forma de seguir utilizando su cuenta es eliminarla y volver a crearla"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
-"Dado que no has facilitado una dirección de correo electrónico de "
-"recuperación, la única forma de seguir utilizando tu cuenta es eliminarla y "
+"Dado que no ha facilitado una dirección de correo electrónico de "
+"recuperación, la única forma de seguir utilizando su cuenta es eliminarla y "
 "volver a crearla"
 
 #: src/login.rs:353
@@ -292,20 +291,20 @@ msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
-"¡Ten en cuenta que perderás todos tus chats y mensajes, junto con los medios "
-"y archivos que hayas compartido!"
+"Tenga en cuenta que perderá todos sus chats y mensajes, junto con los medios "
+"y archivos que haya compartido."
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr "¿Aceptas las Condiciones del Servicio?"
+msgstr "¿Acepta las condiciones del servicio?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr "Condiciones del Servicio"
+msgstr "Condiciones del servicio"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr "Advertencia"
+msgstr "Atención"
 
 #: src/login.rs:857
 msgid ""
@@ -314,10 +313,10 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
-"¡Perderás todos tus chats y mensajes, junto con los medios y archivos que "
-"hayas compartido!\n"
+"Perderá todos sus chats y mensajes, junto con los medios y archivos que haya "
+"compartido.\n"
 "\n"
-"¿Quieres eliminar tu cuenta?"
+"¿Quiere eliminar su cuenta?"
 
 #: src/login.rs:946
 msgid "Sorry"
@@ -328,8 +327,8 @@ msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
-"Si no puedes restablecer el acceso al correo electrónico, las opciones que "
-"te quedan son recordar tu contraseña o eliminar y volver a crear tu cuenta."
+"Si no puede restablecer el acceso al correo electrónico, las opciones que le "
+"quedan son recordar su contraseña o eliminar y volver a crear su cuenta."
 
 #: src/login.rs:955
 msgid "_Go Back"
@@ -371,7 +370,7 @@ msgstr "Ha eliminado la foto de grupo"
 #: src/window.rs:377 src/session/sidebar/row.rs:497
 #: src/session/sidebar/row.rs:565
 msgid "Unsupported message"
-msgstr "Mensaje no soportado"
+msgstr "Mensaje no admitido"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:112
@@ -385,7 +384,7 @@ msgstr "%e de %B del %Y"
 
 #: src/session/content/message_row/text.rs:156
 msgid "This message is unsupported"
-msgstr "Este mensaje no está soportado"
+msgstr "Este mensaje no está admitido"
 
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
