@@ -182,15 +182,12 @@ pub async fn send_tdlib_parameters(
         ..types::TdlibParameters::default()
     };
 
-    functions::SetTdlibParameters::new()
-        .parameters(parameters)
-        .send(client_id)
-        .await
+    functions::set_tdlib_parameters(parameters, client_id).await
 }
 
 pub fn log_out(client_id: i32) {
     RUNTIME.spawn(async move {
-        if let Err(e) = functions::LogOut::new().send(client_id).await {
+        if let Err(e) = functions::log_out(client_id).await {
             log::error!("Could not logout client with id={}: {:?}", client_id, e);
         }
     });

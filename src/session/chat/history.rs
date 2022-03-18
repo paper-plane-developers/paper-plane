@@ -131,19 +131,11 @@ impl History {
 
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
-            async move {
-                functions::GetChatHistory::new()
-                    .chat_id(chat_id)
-                    .from_message_id(oldest_message_id)
-                    .limit(20)
-                    .send(client_id)
-                    .await
-            },
+            functions::get_chat_history(chat_id, oldest_message_id, 0, 20, false, client_id),
             clone!(@weak self as obj => move |result| async move {
                 if let Ok(enums::Messages::Messages(result)) = result {
-                    if let Some(messages) = result.messages {
-                        obj.prepend(messages);
-                    }
+                    let messages = result.messages.into_iter().flatten().collect();
+                    obj.prepend(messages);
                 }
 
                 obj.set_loading(false);

@@ -649,20 +649,27 @@ fn stringify_made_message_call(is_outgoing: bool, data: MessageCall) -> String {
 fn stringify_draft_message(message: &DraftMessage) -> String {
     match &message.input_message_text {
         InputMessageContent::InputMessageAnimation(data) => {
-            stringify_message_animation(&data.caption.text)
+            stringify_message_animation(data.caption.as_ref().map_or("", |c| &c.text))
         }
-        InputMessageContent::InputMessageAudio(data) => {
-            stringify_message_audio(&data.performer, &data.title, &data.caption.text)
+        InputMessageContent::InputMessageAudio(data) => stringify_message_audio(
+            &data.performer,
+            &data.title,
+            data.caption.as_ref().map_or("", |c| &c.text),
+        ),
+        InputMessageContent::InputMessageDocument(data) => stringify_message_document(
+            &gettext("Document"),
+            data.caption.as_ref().map_or("", |c| &c.text),
+        ),
+        InputMessageContent::InputMessagePhoto(data) => {
+            stringify_message_photo(data.caption.as_ref().map_or("", |c| &c.text))
         }
-        InputMessageContent::InputMessageDocument(data) => {
-            stringify_message_document(&gettext("Document"), &data.caption.text)
-        }
-        InputMessageContent::InputMessagePhoto(data) => stringify_message_photo(&data.caption.text),
         InputMessageContent::InputMessageSticker(_) => gettext("Sticker"),
         InputMessageContent::InputMessageText(data) => dim_and_escape(&data.text.text),
-        InputMessageContent::InputMessageVideo(data) => stringify_message_video(&data.caption.text),
+        InputMessageContent::InputMessageVideo(data) => {
+            stringify_message_video(data.caption.as_ref().map_or("", |c| &c.text))
+        }
         InputMessageContent::InputMessageVoiceNote(data) => {
-            stringify_message_voice_note(&data.caption.text)
+            stringify_message_voice_note(data.caption.as_ref().map_or("", |c| &c.text))
         }
         _ => gettext("Unsupported message"),
     }

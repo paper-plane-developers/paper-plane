@@ -323,7 +323,7 @@ impl SessionManager {
     /// application `Window` when its active state has changed.
     pub fn set_active_client_online(&self, value: bool) {
         if let Some(client_id) = self.active_logged_in_client_id() {
-            RUNTIME.spawn(async move { set_online(client_id, value).await.unwrap() });
+            RUNTIME.spawn(set_online(client_id, value));
         }
     }
 
@@ -339,15 +339,11 @@ impl SessionManager {
                 _ => None,
             })
             .for_each(|client_id| {
-                RUNTIME.spawn(async move {
-                    set_online(
-                        client_id,
-                        // Session switching is only possible when the window is active.
-                        client_id == active_client_id,
-                    )
-                    .await
-                    .unwrap()
-                });
+                RUNTIME.spawn(set_online(
+                    client_id,
+                    // Session switching is only possible when the window is active.
+                    client_id == active_client_id,
+                ));
             });
     }
 
@@ -486,8 +482,7 @@ impl SessionManager {
                 })
                 .cloned()
                 .map(|client_id| {
-                    set_online(client_id, false)
-                        .and_then(move |_| functions::Close::new().send(client_id))
+                    set_online(client_id, false).and_then(move |_| functions::close(client_id))
                 }),
         );
 
@@ -577,9 +572,7 @@ impl SessionManager {
                         let encryption_key = "".to_string();
                         do_async(
                             glib::PRIORITY_DEFAULT_IDLE,
-                            functions::CheckDatabaseEncryptionKey::new()
-                                .encryption_key(encryption_key)
-                                .send(client_id),
+                            functions::check_database_encryption_key(encryption_key, client_id),
                             |result| async {
                                 if let Err(e) = result {
                                     panic!("Error on sending encryption key: {:?}", e);
@@ -658,7 +651,7 @@ impl SessionManager {
     pub fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
-            functions::GetMe::new().send(client_id),
+            functions::get_me(client_id),
             clone!(@weak self as obj => move |result| async move {
                 let enums::User::User(me) = result.unwrap();
 
@@ -693,16 +686,13 @@ impl SessionManager {
                 }
 
                 // Enable notifications for this client
-                RUNTIME.spawn(async move {
-                    functions::SetOption::new()
-                        .name("notification_group_count_max".to_string())
-                        .value(enums::OptionValue::Integer(types::OptionValueInteger {
-                            value: 5,
-                        }))
-                        .send(client_id)
-                        .await
-                        .unwrap();
-                });
+                RUNTIME.spawn(functions::set_option(
+                    "notification_group_count_max".to_string(),
+                    Some(enums::OptionValue::Integer(types::OptionValueInteger {
+                        value: 5,
+                    })),
+                    client_id,
+                ));
             }),
         );
     }
@@ -843,32 +833,32 @@ fn generate_database_dir_base_name() -> String {
 
 /// Helper function for setting the online status of a client.
 async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
-    functions::SetOption::new()
-        .name("online".to_string())
-        .value(enums::OptionValue::Boolean(types::OptionValueBoolean {
+    functions::set_option(
+        "online".to_string(),
+        Some(enums::OptionValue::Boolean(types::OptionValueBoolean {
             value,
-        }))
-        .send(client_id)
-        .await
+        })),
+        client_id,
+    )
+    .await
 }
 
 /// Helper function for setting the tdlib log level.
 fn send_log_level(client_id: i32) {
-    RUNTIME.spawn(
-        functions::SetLogVerbosityLevel::new()
-            .new_verbosity_level(if log::log_enabled!(log::Level::Trace) {
-                5
-            } else if log::log_enabled!(log::Level::Debug) {
-                4
-            } else if log::log_enabled!(log::Level::Info) {
-                3
-            } else if log::log_enabled!(log::Level::Warn) {
-                2
-            } else {
-                0
-            })
-            .send(client_id),
-    );
+    RUNTIME.spawn(functions::set_log_verbosity_level(
+        if log::log_enabled!(log::Level::Trace) {
+            5
+        } else if log::log_enabled!(log::Level::Debug) {
+            4
+        } else if log::log_enabled!(log::Level::Info) {
+            3
+        } else if log::log_enabled!(log::Level::Warn) {
+            2
+        } else {
+            0
+        },
+        client_id,
+    ));
 }
 
 /// Helper function for removing an element from a [`Vec`] based on an equality comparison.

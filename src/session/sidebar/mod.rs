@@ -189,13 +189,7 @@ impl Sidebar {
             let query_clone = query.clone();
             do_async(
                 glib::PRIORITY_DEFAULT_IDLE,
-                async move {
-                    functions::SearchChats::new()
-                        .query(query_clone)
-                        .limit(100)
-                        .send(client_id)
-                        .await
-                },
+                functions::search_chats(query_clone, 100, client_id),
                 clone!(@weak self as obj => move |result| async move {
                     if let Ok(enums::Chats::Chats(chats)) = result {
                         let imp = obj.imp();
@@ -224,13 +218,7 @@ impl Sidebar {
             // Search contacts
             do_async(
                 glib::PRIORITY_DEFAULT_IDLE,
-                async move {
-                    functions::SearchContacts::new()
-                        .query(query)
-                        .limit(100)
-                        .send(client_id)
-                        .await
-                },
+                functions::search_contacts(query, 100, client_id),
                 clone!(@weak self as obj => move |result| async move {
                     if let Ok(enums::Users::Users(users)) = result {
                         let imp = obj.imp();
@@ -348,12 +336,7 @@ impl Sidebar {
                             let client_id = session.client_id();
                             do_async(
                                 glib::PRIORITY_DEFAULT_IDLE,
-                                async move {
-                                    functions::CreatePrivateChat::new()
-                                        .user_id(user_id)
-                                        .send(client_id)
-                                        .await
-                                },
+                                functions::create_private_chat(user_id, false, client_id),
                                 clone!(@weak obj, @weak session => move |result| async move {
                                     if let Ok(enums::Chat::Chat(chat)) = result {
                                         let chat = session.chat_list().get(chat.id);
