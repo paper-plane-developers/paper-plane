@@ -46,7 +46,7 @@ The following packages are required to build Telegrand:
 - cargo
 - GTK >= 4.5.0
 - libadwaita
-- TDLib 1.8.0
+- TDLib 1.8.2
 - [Telegram API Credentials](https://my.telegram.org/) (optional, but recommended)
 
 #### Instructions

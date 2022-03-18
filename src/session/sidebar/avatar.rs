@@ -112,7 +112,7 @@ mod imp {
 
             let child_snapshot = gtk::Snapshot::new();
             widget.snapshot_child(&*self.avatar, &child_snapshot);
-            let child_node = child_snapshot.to_node();
+            let child_node = child_snapshot.to_node().unwrap();
 
             widget.ensure_mask_shader();
 
