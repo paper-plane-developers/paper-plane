@@ -5,7 +5,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::borrow::Cow;
-use tdgrand::enums::{MessageContent, UserType};
+use tdgrand::enums::{MessageContent, StickerType, UserType};
 
 use crate::session::chat::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage};
 use crate::session::content::message_row::{MessagePhoto, MessageSticker, MessageText};
@@ -105,7 +105,10 @@ impl ItemRow {
                             MessageContent::MessagePhoto(_) => {
                                 self.set_child_row::<MessagePhoto>(message.to_owned().upcast())
                             }
-                            MessageContent::MessageSticker(data) if !data.sticker.is_animated => {
+                            MessageContent::MessageSticker(data)
+                                if matches!(data.sticker.r#type, StickerType::Static)
+                                    || matches!(data.sticker.r#type, StickerType::Mask(_)) =>
+                            {
                                 self.set_child_row::<MessageSticker>(message.to_owned().upcast())
                             }
                             MessageContent::MessageChatChangeTitle(data) => {
