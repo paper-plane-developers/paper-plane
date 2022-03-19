@@ -1,8 +1,8 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::Update;
-use tdgrand::types::Supergroup as TdSupergroup;
+use tdlib::enums::Update;
+use tdlib::types::Supergroup as TdSupergroup;
 
 mod imp {
     use super::*;

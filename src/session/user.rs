@@ -1,8 +1,8 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{Update, UserStatus, UserType};
-use tdgrand::types::User as TdUser;
+use tdlib::enums::{Update, UserStatus, UserType};
+use tdlib::types::User as TdUser;
 
 use crate::session::Avatar;
 use crate::Session;

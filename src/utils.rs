@@ -5,9 +5,9 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use std::future::Future;
 use std::path::PathBuf;
-use tdgrand::enums::TextEntityType;
-use tdgrand::types::{self, FormattedText};
-use tdgrand::{enums, functions};
+use tdlib::enums::TextEntityType;
+use tdlib::types::{self, FormattedText};
+use tdlib::{enums, functions};
 
 use crate::session_manager::DatabaseInfo;
 use crate::{config, APPLICATION_OPTS, RUNTIME};

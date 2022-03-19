@@ -9,7 +9,7 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
-use tdgrand::{enums, functions};
+use tdlib::{enums, functions};
 
 use crate::session::{Chat, ChatType, User};
 use crate::utils::do_async;

@@ -2,7 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::mem;
-use tdgrand::{enums, types};
+use tdlib::{enums, types};
 
 use crate::session::chat::{Chat, ChatAction};
 

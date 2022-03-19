@@ -3,8 +3,8 @@ use glib::signal::Inhibit;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
-use tdgrand::enums::{ChatAction, InputMessageContent};
-use tdgrand::{functions, types};
+use tdlib::enums::{ChatAction, InputMessageContent};
+use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::Chat;

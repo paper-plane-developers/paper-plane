@@ -33,9 +33,9 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
-use tdgrand::enums::{NotificationSettingsScope, Update};
-use tdgrand::functions;
-use tdgrand::types::{File, ScopeNotificationSettings};
+use tdlib::enums::{NotificationSettingsScope, Update};
+use tdlib::functions;
+use tdlib::types::{File, ScopeNotificationSettings};
 
 use crate::session_manager::DatabaseInfo;
 use crate::utils::log_out;
@@ -314,7 +314,7 @@ impl Session {
             }
             Update::UnreadMessageCount(ref update_) => {
                 // TODO: Also handle archived chats
-                if let tdgrand::enums::ChatList::Main = update_.chat_list {
+                if let tdlib::enums::ChatList::Main = update_.chat_list {
                     self.chat_list().handle_update(update)
                 }
             }

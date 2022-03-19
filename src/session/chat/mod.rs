@@ -15,8 +15,8 @@ pub use self::sponsored_message::SponsoredMessage;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{self, ChatType as TdChatType, MessageContent, Update};
-use tdgrand::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
+use tdlib::enums::{self, ChatType as TdChatType, MessageContent, Update};
+use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
 use crate::Session;

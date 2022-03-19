@@ -4,7 +4,7 @@ use glib::closure;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, gsk, CompositeTemplate};
-use tdgrand::enums::{UserStatus, UserType};
+use tdlib::enums::{UserStatus, UserType};
 
 use crate::session::user::BoxedUserStatus;
 use crate::session::{Chat, Session, User};

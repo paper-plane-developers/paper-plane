@@ -3,7 +3,7 @@ use glib::closure;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
-use tdgrand::enums::MessageContent;
+use tdlib::enums::MessageContent;
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
 use crate::session::content::{MessageRow, MessageRowExt};

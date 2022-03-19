@@ -37,9 +37,9 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use std::borrow::Borrow;
 use std::time::{SystemTime, UNIX_EPOCH};
-use tdgrand::enums::{self, AuthorizationState, Update};
-use tdgrand::functions;
-use tdgrand::types::{self, UpdateAuthorizationState};
+use tdlib::enums::{self, AuthorizationState, Update};
+use tdlib::functions;
+use tdlib::types::{self, UpdateAuthorizationState};
 use tokio::fs;
 use tokio_stream::wrappers::ReadDirStream;
 
@@ -350,7 +350,7 @@ impl SessionManager {
     /// This function is used to add/load an existing session that already had the
     /// `AuthorizationState::Ready` state from a previous application run.
     pub fn add_existing_session(&self, database_info: DatabaseInfo) {
-        let client_id = tdgrand::create_client();
+        let client_id = tdlib::create_client();
 
         self.imp().clients.borrow_mut().insert(
             client_id,
@@ -370,7 +370,7 @@ impl SessionManager {
     /// This function is used to add a new session for a so far unknown account. This means it will
     /// go through the login process.
     pub fn add_new_session(&self, use_test_dc: bool) {
-        let client_id = tdgrand::create_client();
+        let client_id = tdlib::create_client();
         self.init_new_session(client_id, use_test_dc);
         send_log_level(client_id);
     }

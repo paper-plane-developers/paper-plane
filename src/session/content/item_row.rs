@@ -5,7 +5,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::borrow::Cow;
-use tdgrand::enums::{MessageContent, StickerType, UserType};
+use tdlib::enums::{MessageContent, StickerType, UserType};
 
 use crate::session::chat::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage};
 use crate::session::content::message_row::{MessagePhoto, MessageSticker, MessageText};

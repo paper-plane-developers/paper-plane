@@ -4,9 +4,9 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::cmp::Ordering;
 use std::collections::hash_map::Entry;
-use tdgrand::enums::{self, Update};
-use tdgrand::functions;
-use tdgrand::types::Message as TelegramMessage;
+use tdlib::enums::{self, Update};
+use tdlib::functions;
+use tdlib::types::Message as TelegramMessage;
 
 use crate::session::chat::{Item, ItemType, Message};
 use crate::session::Chat;
