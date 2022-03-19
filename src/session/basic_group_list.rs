@@ -2,7 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use indexmap::map::Entry;
-use tdgrand::enums::Update;
+use tdlib::enums::Update;
 
 use crate::session::BasicGroup;
 

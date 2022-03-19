@@ -1,8 +1,8 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{MessageSender as TdMessageSender, Update};
-use tdgrand::types::Message as TdMessage;
+use tdlib::enums::{MessageSender as TdMessageSender, Update};
+use tdlib::types::Message as TdMessage;
 
 use crate::session::chat::BoxedMessageContent;
 use crate::session::{Chat, Session, User};

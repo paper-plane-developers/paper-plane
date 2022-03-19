@@ -1,8 +1,8 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::{SecretChatState as TdSecretChatState, Update};
-use tdgrand::types::SecretChat as TdSecretChat;
+use tdlib::enums::{SecretChatState as TdSecretChatState, Update};
+use tdlib::types::SecretChat as TdSecretChat;
 
 use crate::session::User;
 

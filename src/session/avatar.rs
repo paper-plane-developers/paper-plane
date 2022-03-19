@@ -2,7 +2,7 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
-use tdgrand::types::{ChatPhotoInfo, File, ProfilePhoto};
+use tdlib::types::{ChatPhotoInfo, File, ProfilePhoto};
 
 use crate::Session;
 

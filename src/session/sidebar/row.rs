@@ -4,8 +4,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::borrow::Cow;
-use tdgrand::enums::{CallDiscardReason, InputMessageContent, MessageContent};
-use tdgrand::types::{DraftMessage, MessageCall};
+use tdlib::enums::{CallDiscardReason, InputMessageContent, MessageContent};
+use tdlib::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
@@ -749,7 +749,7 @@ fn stringify_message_voice_note(caption_text: &str) -> String {
 }
 
 fn stringify_action(action: &ChatAction) -> String {
-    use tdgrand::enums::ChatAction::*;
+    use tdlib::enums::ChatAction::*;
 
     let show_sender = matches!(
         action.chat().type_(),

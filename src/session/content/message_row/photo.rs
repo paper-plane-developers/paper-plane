@@ -2,8 +2,8 @@ use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib, CompositeTemplate};
-use tdgrand::enums::MessageContent;
-use tdgrand::types::File;
+use tdlib::enums::MessageContent;
+use tdlib::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::content::message_row::Media;

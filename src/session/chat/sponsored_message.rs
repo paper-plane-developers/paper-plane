@@ -1,8 +1,8 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::types::Error as TdError;
-use tdgrand::{enums, functions};
+use tdlib::types::Error as TdError;
+use tdlib::{enums, functions};
 
 use crate::session::chat::BoxedMessageContent;
 use crate::session::Chat;

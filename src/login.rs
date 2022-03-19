@@ -3,8 +3,8 @@ use gtk::gdk;
 use gtk::glib::{self, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdgrand::enums::AuthorizationState;
-use tdgrand::{functions, types};
+use tdlib::enums::AuthorizationState;
+use tdlib::{functions, types};
 
 use crate::session::Session;
 use crate::session_manager::SessionManager;

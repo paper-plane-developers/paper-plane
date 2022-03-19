@@ -5,10 +5,10 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use tdgrand::enums::{
+use tdlib::enums::{
     self, AuthorizationState, MessageContent, MessageSender as TelegramMessageSender, Update,
 };
-use tdgrand::types::{self, Message as TelegramMessage};
+use tdlib::types::{self, Message as TelegramMessage};
 use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
@@ -142,7 +142,7 @@ impl Window {
                 let receiver_should_stop = receiver_should_stop.clone();
                 let sender = sender.clone();
                 let stop = task::spawn_blocking(move || {
-                    if let Some((update, client_id)) = tdgrand::receive() {
+                    if let Some((update, client_id)) = tdlib::receive() {
                         if receiver_should_stop.load(Ordering::Acquire) {
                             if let Update::AuthorizationState(ref update) = update {
                                 if let AuthorizationState::Closed = update.authorization_state {

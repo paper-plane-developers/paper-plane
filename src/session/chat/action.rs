@@ -1,6 +1,6 @@
 use gtk::glib;
 use gtk::subclass::prelude::*;
-use tdgrand::enums;
+use tdlib::enums;
 
 use crate::session::chat::{Chat, MessageSender};
 

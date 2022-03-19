@@ -649,9 +649,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.120"
+version = "0.2.121"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad5c14e80759d0939d013e6ca49930e59fc53dd8e5009132f76240c179380c09"
+checksum = "efaa7b300f3b5fe8eb6bf21ce3895e1751d9665086af2d64b42f19701015ff4f"
 
 [[package]]
 name = "libwebp-sys"
@@ -1083,9 +1083,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "tdgrand"
+name = "tdlib"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#af2d02c7f444eb7e9ca913226ce86bcde424cdea"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1036994567aa8f3b811fccad6ed6398838638753c1cbdf0b55b40be78d5f448"
 dependencies = [
  "futures-channel",
  "log",
@@ -1093,22 +1094,24 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_with",
- "tdgrand-tl-gen",
- "tdgrand-tl-parser",
+ "tdlib-tl-gen",
+ "tdlib-tl-parser",
 ]
 
 [[package]]
-name = "tdgrand-tl-gen"
+name = "tdlib-tl-gen"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#af2d02c7f444eb7e9ca913226ce86bcde424cdea"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90c1138279b5aa1b4378846bb03ef2a1b6f74c91586852d2c5406d3719e387fe"
 dependencies = [
- "tdgrand-tl-parser",
+ "tdlib-tl-parser",
 ]
 
 [[package]]
-name = "tdgrand-tl-parser"
+name = "tdlib-tl-parser"
 version = "0.1.0"
-source = "git+https://github.com/melix99/tdgrand?branch=main#af2d02c7f444eb7e9ca913226ce86bcde424cdea"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "622c9bd699bdf76ff30aea8b3e62cd6950a9817d9451f268b3892166c68a7ae8"
 
 [[package]]
 name = "telegrand"
@@ -1126,7 +1129,7 @@ dependencies = [
  "pretty_env_logger",
  "qrcode-generator",
  "regex",
- "tdgrand",
+ "tdlib",
  "tokio",
  "tokio-stream",
  "webp",
