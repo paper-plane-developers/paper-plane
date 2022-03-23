@@ -12,10 +12,10 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/components-avatar.ui")]
-    pub struct Avatar {
-        pub item: RefCell<Option<AvatarItem>>,
+    pub(crate) struct Avatar {
+        pub(super) item: RefCell<Option<AvatarItem>>,
         #[template_child]
-        pub avatar: TemplateChild<adw::Avatar>,
+        pub(super) avatar: TemplateChild<adw::Avatar>,
     }
 
     #[glib::object_subclass]
@@ -88,7 +88,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Avatar(ObjectSubclass<imp::Avatar>)
+    pub(crate) struct Avatar(ObjectSubclass<imp::Avatar>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -99,7 +99,7 @@ impl Default for Avatar {
 }
 
 impl Avatar {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ComponentsAvatar")
     }
 
@@ -109,11 +109,11 @@ impl Avatar {
         }
     }
 
-    pub fn item(&self) -> Option<AvatarItem> {
+    pub(crate) fn item(&self) -> Option<AvatarItem> {
         self.imp().item.borrow().clone()
     }
 
-    pub fn set_item(&self, item: Option<AvatarItem>) {
+    pub(crate) fn set_item(&self, item: Option<AvatarItem>) {
         self.imp().item.replace(item);
 
         self.request_avatar_image();
@@ -121,11 +121,11 @@ impl Avatar {
         self.notify("item");
     }
 
-    pub fn size(&self) -> i32 {
+    pub(crate) fn size(&self) -> i32 {
         self.imp().avatar.size()
     }
 
-    pub fn set_size(&self, size: i32) {
+    pub(crate) fn set_size(&self, size: i32) {
         self.imp().avatar.set_size(size);
         self.notify("size");
     }

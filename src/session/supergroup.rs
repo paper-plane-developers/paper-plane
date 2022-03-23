@@ -10,10 +10,10 @@ mod imp {
     use std::cell::Cell;
 
     #[derive(Debug, Default)]
-    pub struct Supergroup {
-        pub id: Cell<i64>,
-        pub member_count: Cell<i32>,
-        pub is_channel: Cell<bool>,
+    pub(crate) struct Supergroup {
+        pub(super) id: Cell<i64>,
+        pub(super) member_count: Cell<i32>,
+        pub(super) is_channel: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -85,11 +85,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Supergroup(ObjectSubclass<imp::Supergroup>);
+    pub(crate) struct Supergroup(ObjectSubclass<imp::Supergroup>);
 }
 
 impl Supergroup {
-    pub fn from_td_object(supergroup: &TdSupergroup) -> Self {
+    pub(crate) fn from_td_object(supergroup: &TdSupergroup) -> Self {
         glib::Object::new(&[
             ("id", &supergroup.id),
             ("member-count", &supergroup.member_count),
@@ -98,21 +98,21 @@ impl Supergroup {
         .expect("Failed to create Supergroup")
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::Supergroup(data) = update {
             self.set_member_count(data.supergroup.member_count);
         }
     }
 
-    pub fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
 
-    pub fn member_count(&self) -> i32 {
+    pub(crate) fn member_count(&self) -> i32 {
         self.imp().member_count.get()
     }
 
-    pub fn set_member_count(&self, member_count: i32) {
+    pub(crate) fn set_member_count(&self, member_count: i32) {
         if self.member_count() == member_count {
             return;
         }
@@ -120,7 +120,7 @@ impl Supergroup {
         self.notify("member-count");
     }
 
-    pub fn is_channel(&self) -> bool {
+    pub(crate) fn is_channel(&self) -> bool {
         self.imp().is_channel.get()
     }
 }

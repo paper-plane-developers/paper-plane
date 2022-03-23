@@ -18,12 +18,12 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-photo.ui")]
-    pub struct MessagePhoto {
-        pub binding: RefCell<Option<gtk::ExpressionWatch>>,
-        pub handler_id: RefCell<Option<glib::SignalHandlerId>>,
-        pub old_message: WeakRef<glib::Object>,
+    pub(crate) struct MessagePhoto {
+        pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
+        pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) old_message: WeakRef<glib::Object>,
         #[template_child]
-        pub media: TemplateChild<Media>,
+        pub(super) media: TemplateChild<Media>,
     }
 
     #[glib::object_subclass]
@@ -52,7 +52,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MessagePhoto(ObjectSubclass<imp::MessagePhoto>)
+    pub(crate) struct MessagePhoto(ObjectSubclass<imp::MessagePhoto>)
         @extends gtk::Widget, MessageRow;
 }
 

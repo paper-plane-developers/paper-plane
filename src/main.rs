@@ -23,10 +23,10 @@ use once_cell::sync::{Lazy, OnceCell};
 use std::path::PathBuf;
 use std::str::FromStr;
 
-pub static RUNTIME: Lazy<tokio::runtime::Runtime> =
+pub(crate) static RUNTIME: Lazy<tokio::runtime::Runtime> =
     Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
 
-pub static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
+pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
 
 fn main() {
     // Prepare i18n
@@ -79,9 +79,9 @@ fn main() {
 
 /// Global options for the application
 #[derive(Debug)]
-pub struct ApplicationOptions {
-    pub data_dir: PathBuf,
-    pub test_dc: bool,
+pub(crate) struct ApplicationOptions {
+    pub(crate) data_dir: PathBuf,
+    pub(crate) test_dc: bool,
 }
 impl Default for ApplicationOptions {
     fn default() -> Self {

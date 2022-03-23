@@ -16,10 +16,10 @@ mod imp {
     use std::cell::Cell;
 
     #[derive(Debug, Default)]
-    pub struct SponsoredMessage {
-        pub message_id: Cell<i64>,
-        pub content: OnceCell<BoxedMessageContent>,
-        pub sponsor_chat: WeakRef<Chat>,
+    pub(crate) struct SponsoredMessage {
+        pub(super) message_id: Cell<i64>,
+        pub(super) content: OnceCell<BoxedMessageContent>,
+        pub(super) sponsor_chat: WeakRef<Chat>,
     }
 
     #[glib::object_subclass]
@@ -87,11 +87,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SponsoredMessage(ObjectSubclass<imp::SponsoredMessage>);
+    pub(crate) struct SponsoredMessage(ObjectSubclass<imp::SponsoredMessage>);
 }
 
 impl SponsoredMessage {
-    pub async fn request(chat_id: i64, session: &Session) -> Result<Self, TdError> {
+    pub(crate) async fn request(chat_id: i64, session: &Session) -> Result<Self, TdError> {
         let enums::SponsoredMessage::SponsoredMessage(sponsored_message) =
             functions::get_chat_sponsored_message(chat_id, session.client_id()).await?;
 
@@ -106,15 +106,15 @@ impl SponsoredMessage {
         .expect("Failed to create ChatSponsoredMessage"))
     }
 
-    pub fn message_id(&self) -> i64 {
+    pub(crate) fn message_id(&self) -> i64 {
         self.imp().message_id.get()
     }
 
-    pub fn content(&self) -> &BoxedMessageContent {
+    pub(crate) fn content(&self) -> &BoxedMessageContent {
         self.imp().content.get().unwrap()
     }
 
-    pub fn sponsor_chat(&self) -> Chat {
+    pub(crate) fn sponsor_chat(&self) -> Chat {
         self.imp().sponsor_chat.upgrade().unwrap()
     }
 }

@@ -19,9 +19,9 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct ItemRow {
+    pub(crate) struct ItemRow {
         /// An `Item` or `SponsoredMessage`
-        pub item: RefCell<Option<glib::Object>>,
+        pub(super) item: RefCell<Option<glib::Object>>,
     }
 
     #[glib::object_subclass]
@@ -71,7 +71,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ItemRow(ObjectSubclass<imp::ItemRow>)
+    pub(crate) struct ItemRow(ObjectSubclass<imp::ItemRow>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -82,15 +82,15 @@ impl Default for ItemRow {
 }
 
 impl ItemRow {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ItemRow")
     }
 
-    pub fn item(&self) -> Option<glib::Object> {
+    pub(crate) fn item(&self) -> Option<glib::Object> {
         self.imp().item.borrow().to_owned()
     }
 
-    pub fn set_item(&self, item: Option<glib::Object>) {
+    pub(crate) fn set_item(&self, item: Option<glib::Object>) {
         if self.item() == item {
             return;
         }
@@ -369,7 +369,7 @@ impl ItemRow {
     }
 }
 
-pub fn sender_name(user: &User) -> String {
+fn sender_name(user: &User) -> String {
     let type_ = user.type_().0;
     if type_ == UserType::Deleted {
         gettext("Deleted Account")

@@ -9,11 +9,11 @@ use crate::Session;
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserType")]
-pub struct BoxedUserType(pub UserType);
+pub(crate) struct BoxedUserType(pub(crate) UserType);
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserStatus")]
-pub struct BoxedUserStatus(pub UserStatus);
+pub(crate) struct BoxedUserStatus(pub(crate) UserStatus);
 
 mod imp {
     use super::*;
@@ -21,15 +21,15 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct User {
-        pub id: Cell<i64>,
-        pub type_: RefCell<Option<BoxedUserType>>,
-        pub first_name: RefCell<String>,
-        pub last_name: RefCell<String>,
-        pub username: RefCell<String>,
-        pub phone_number: RefCell<String>,
-        pub avatar: OnceCell<Avatar>,
-        pub status: RefCell<Option<BoxedUserStatus>>,
+    pub(crate) struct User {
+        pub(super) id: Cell<i64>,
+        pub(super) type_: RefCell<Option<BoxedUserType>>,
+        pub(super) first_name: RefCell<String>,
+        pub(super) last_name: RefCell<String>,
+        pub(super) username: RefCell<String>,
+        pub(super) phone_number: RefCell<String>,
+        pub(super) avatar: OnceCell<Avatar>,
+        pub(super) status: RefCell<Option<BoxedUserStatus>>,
     }
 
     #[glib::object_subclass]
@@ -174,11 +174,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct User(ObjectSubclass<imp::User>);
+    pub(crate) struct User(ObjectSubclass<imp::User>);
 }
 
 impl User {
-    pub fn from_td_object(user: TdUser, session: &Session) -> Self {
+    pub(crate) fn from_td_object(user: TdUser, session: &Session) -> Self {
         let avatar = Avatar::new(session);
         avatar.update_from_user_photo(user.profile_photo);
 
@@ -195,7 +195,7 @@ impl User {
         .expect("Failed to create User")
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         match update {
             Update::User(data) => {
                 self.set_type(BoxedUserType(data.user.r#type));
@@ -212,15 +212,15 @@ impl User {
         }
     }
 
-    pub fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
 
-    pub fn type_(&self) -> BoxedUserType {
+    pub(crate) fn type_(&self) -> BoxedUserType {
         self.imp().type_.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub fn set_type(&self, type_: BoxedUserType) {
+    pub(crate) fn set_type(&self, type_: BoxedUserType) {
         if self.imp().type_.borrow().as_ref() == Some(&type_) {
             return;
         }
@@ -228,11 +228,11 @@ impl User {
         self.notify("type");
     }
 
-    pub fn first_name(&self) -> String {
+    pub(crate) fn first_name(&self) -> String {
         self.imp().first_name.borrow().to_owned()
     }
 
-    pub fn set_first_name(&self, first_name: String) {
+    pub(crate) fn set_first_name(&self, first_name: String) {
         if self.first_name() == first_name {
             return;
         }
@@ -240,11 +240,11 @@ impl User {
         self.notify("first-name");
     }
 
-    pub fn last_name(&self) -> String {
+    pub(crate) fn last_name(&self) -> String {
         self.imp().last_name.borrow().to_owned()
     }
 
-    pub fn set_last_name(&self, last_name: String) {
+    pub(crate) fn set_last_name(&self, last_name: String) {
         if self.last_name() == last_name {
             return;
         }
@@ -252,11 +252,11 @@ impl User {
         self.notify("last-name");
     }
 
-    pub fn username(&self) -> String {
+    pub(crate) fn username(&self) -> String {
         self.imp().username.borrow().to_owned()
     }
 
-    pub fn set_username(&self, username: String) {
+    pub(crate) fn set_username(&self, username: String) {
         if self.username() == username {
             return;
         }
@@ -264,11 +264,11 @@ impl User {
         self.notify("username");
     }
 
-    pub fn phone_number(&self) -> String {
+    pub(crate) fn phone_number(&self) -> String {
         self.imp().phone_number.borrow().to_owned()
     }
 
-    pub fn set_phone_number(&self, phone_number: String) {
+    pub(crate) fn set_phone_number(&self, phone_number: String) {
         if self.phone_number() == phone_number {
             return;
         }
@@ -276,15 +276,15 @@ impl User {
         self.notify("phone-number");
     }
 
-    pub fn avatar(&self) -> &Avatar {
+    pub(crate) fn avatar(&self) -> &Avatar {
         self.imp().avatar.get().unwrap()
     }
 
-    pub fn status(&self) -> BoxedUserStatus {
+    pub(crate) fn status(&self) -> BoxedUserStatus {
         self.imp().status.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub fn set_status(&self, status: BoxedUserStatus) {
+    pub(crate) fn set_status(&self, status: BoxedUserStatus) {
         if self.imp().status.borrow().as_ref() == Some(&status) {
             return;
         }
@@ -292,7 +292,7 @@ impl User {
         self.notify("status");
     }
 
-    pub fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
+    pub(crate) fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
         let first_name_expression =
             gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "first-name");
         let last_name_expression =

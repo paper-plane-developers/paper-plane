@@ -8,7 +8,7 @@ use crate::session::User;
 
 #[derive(Debug, Clone, Copy, PartialEq, glib::Enum)]
 #[enum_type(name = "SecretChatState")]
-pub enum SecretChatState {
+pub(crate) enum SecretChatState {
     Pending,
     Ready,
     Closed,
@@ -21,7 +21,7 @@ impl Default for SecretChatState {
 }
 
 impl SecretChatState {
-    pub fn from_td_object(state: &TdSecretChatState) -> Self {
+    pub(crate) fn from_td_object(state: &TdSecretChatState) -> Self {
         match state {
             TdSecretChatState::Pending => Self::Pending,
             TdSecretChatState::Ready => Self::Ready,
@@ -37,10 +37,10 @@ mod imp {
     use std::cell::Cell;
 
     #[derive(Debug, Default)]
-    pub struct SecretChat {
-        pub id: Cell<i32>,
-        pub user: OnceCell<User>,
-        pub state: Cell<SecretChatState>,
+    pub(crate) struct SecretChat {
+        pub(super) id: Cell<i32>,
+        pub(super) user: OnceCell<User>,
+        pub(super) state: Cell<SecretChatState>,
     }
 
     #[glib::object_subclass]
@@ -111,35 +111,35 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SecretChat(ObjectSubclass<imp::SecretChat>);
+    pub(crate) struct SecretChat(ObjectSubclass<imp::SecretChat>);
 }
 
 impl SecretChat {
-    pub fn from_td_object(secret_chat: &TdSecretChat, user: &User) -> Self {
+    pub(crate) fn from_td_object(secret_chat: &TdSecretChat, user: &User) -> Self {
         let state = SecretChatState::from_td_object(&secret_chat.state);
         glib::Object::new(&[("id", &secret_chat.id), ("user", user), ("state", &state)])
             .expect("Failed to create SecretChat")
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::SecretChat(data) = update {
             self.set_state(SecretChatState::from_td_object(&data.secret_chat.state));
         }
     }
 
-    pub fn id(&self) -> i32 {
+    pub(crate) fn id(&self) -> i32 {
         self.imp().id.get()
     }
 
-    pub fn user(&self) -> &User {
+    pub(crate) fn user(&self) -> &User {
         self.imp().user.get().unwrap()
     }
 
-    pub fn state(&self) -> SecretChatState {
+    pub(crate) fn state(&self) -> SecretChatState {
         self.imp().state.get()
     }
 
-    pub fn set_state(&self, state: SecretChatState) {
+    pub(crate) fn set_state(&self, state: SecretChatState) {
         if self.state() == state {
             return;
         }

@@ -21,9 +21,9 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-session-switcher.ui")]
-    pub struct SessionSwitcher {
+    pub(crate) struct SessionSwitcher {
         #[template_child]
-        pub entries: TemplateChild<gtk::ListView>,
+        pub(super) entries: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -80,13 +80,13 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SessionSwitcher(ObjectSubclass<imp::SessionSwitcher>)
+    pub(crate) struct SessionSwitcher(ObjectSubclass<imp::SessionSwitcher>)
         @extends gtk::Widget, gtk::Popover,
         @implements gtk::Accessible, gio::ListModel;
 }
 
 impl SessionSwitcher {
-    pub fn set_sessions(&self, sessions: &SelectionModel, this_session: &Session) {
+    pub(crate) fn set_sessions(&self, sessions: &SelectionModel, this_session: &Session) {
         let entries = self.imp().entries.get();
 
         // There is no permanent stuff to take care of,

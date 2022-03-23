@@ -9,9 +9,9 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-event-row.ui")]
-    pub struct EventRow {
+    pub(crate) struct EventRow {
         #[template_child]
-        pub label: TemplateChild<gtk::Label>,
+        pub(super) label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -70,7 +70,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct EventRow(ObjectSubclass<imp::EventRow>)
+    pub(crate) struct EventRow(ObjectSubclass<imp::EventRow>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -81,15 +81,15 @@ impl Default for EventRow {
 }
 
 impl EventRow {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create EventRow")
     }
 
-    pub fn label(&self) -> String {
+    pub(crate) fn label(&self) -> String {
         self.imp().label.text().to_string()
     }
 
-    pub fn set_label(&self, label: &str) {
+    pub(crate) fn set_label(&self, label: &str) {
         self.imp().label.set_markup(label);
     }
 }

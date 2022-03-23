@@ -28,13 +28,13 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
-    pub struct Window {
-        pub settings: gio::Settings,
-        pub receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
-        pub receiver_should_stop: Arc<AtomicBool>,
+    pub(crate) struct Window {
+        pub(super) settings: gio::Settings,
+        pub(super) receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
+        pub(super) receiver_should_stop: Arc<AtomicBool>,
 
         #[template_child]
-        pub session_manager: TemplateChild<SessionManager>,
+        pub(super) session_manager: TemplateChild<SessionManager>,
     }
 
     #[glib::object_subclass]
@@ -120,16 +120,16 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Window(ObjectSubclass<imp::Window>)
+    pub(crate) struct Window(ObjectSubclass<imp::Window>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow;
 }
 
 impl Window {
-    pub fn new(app: &Application) -> Self {
+    pub(crate) fn new(app: &Application) -> Self {
         glib::Object::new(&[("application", app)]).expect("Failed to create Window")
     }
 
-    pub fn session_manager(&self) -> &SessionManager {
+    pub(crate) fn session_manager(&self) -> &SessionManager {
         &*self.imp().session_manager
     }
 

@@ -12,8 +12,8 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct BasicGroupList {
-        pub list: RefCell<IndexMap<i64, BasicGroup>>,
+    pub(crate) struct BasicGroupList {
+        pub(super) list: RefCell<IndexMap<i64, BasicGroup>>,
     }
 
     #[glib::object_subclass]
@@ -44,7 +44,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct BasicGroupList(ObjectSubclass<imp::BasicGroupList>)
+    pub(crate) struct BasicGroupList(ObjectSubclass<imp::BasicGroupList>)
         @implements gio::ListModel;
 }
 
@@ -55,7 +55,7 @@ impl Default for BasicGroupList {
 }
 
 impl BasicGroupList {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create BasicGroupList")
     }
 
@@ -63,7 +63,7 @@ impl BasicGroupList {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `BasicGroup` exists in the list.
-    pub fn get(&self, id: i64) -> BasicGroup {
+    pub(crate) fn get(&self, id: i64) -> BasicGroup {
         self.imp()
             .list
             .borrow()
@@ -72,7 +72,7 @@ impl BasicGroupList {
             .to_owned()
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::BasicGroup(data) = update {
             let mut list = self.imp().list.borrow_mut();
 

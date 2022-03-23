@@ -10,9 +10,9 @@ mod imp {
     use std::cell::Cell;
 
     #[derive(Debug, Default)]
-    pub struct BasicGroup {
-        pub id: Cell<i64>,
-        pub member_count: Cell<i32>,
+    pub(crate) struct BasicGroup {
+        pub(super) id: Cell<i64>,
+        pub(super) member_count: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -75,11 +75,11 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct BasicGroup(ObjectSubclass<imp::BasicGroup>);
+    pub(crate) struct BasicGroup(ObjectSubclass<imp::BasicGroup>);
 }
 
 impl BasicGroup {
-    pub fn from_td_object(basic_group: &TdBasicGroup) -> Self {
+    pub(crate) fn from_td_object(basic_group: &TdBasicGroup) -> Self {
         glib::Object::new(&[
             ("id", &basic_group.id),
             ("member-count", &basic_group.member_count),
@@ -87,21 +87,21 @@ impl BasicGroup {
         .expect("Failed to create BasicGroup")
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::BasicGroup(data) = update {
             self.set_member_count(data.basic_group.member_count);
         }
     }
 
-    pub fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
 
-    pub fn member_count(&self) -> i32 {
+    pub(crate) fn member_count(&self) -> i32 {
         self.imp().member_count.get()
     }
 
-    pub fn set_member_count(&self, member_count: i32) {
+    pub(crate) fn set_member_count(&self, member_count: i32) {
         if self.member_count() == member_count {
             return;
         }

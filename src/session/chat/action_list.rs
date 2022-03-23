@@ -15,9 +15,9 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct ChatActionList {
-        pub list: RefCell<IndexMap<i64, ChatAction>>,
-        pub chat: WeakRef<Chat>,
+    pub(crate) struct ChatActionList {
+        pub(super) list: RefCell<IndexMap<i64, ChatAction>>,
+        pub(super) chat: WeakRef<Chat>,
     }
 
     #[glib::object_subclass]
@@ -83,7 +83,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ChatActionList(ObjectSubclass<imp::ChatActionList>)
+    pub(crate) struct ChatActionList(ObjectSubclass<imp::ChatActionList>)
         @implements gio::ListModel;
 }
 
@@ -94,7 +94,7 @@ impl From<&Chat> for ChatActionList {
 }
 
 impl ChatActionList {
-    pub fn handle_update(&self, update: types::UpdateChatAction) {
+    pub(crate) fn handle_update(&self, update: types::UpdateChatAction) {
         let imp = self.imp();
 
         let sender_id = match &update.sender_id {
@@ -119,11 +119,11 @@ impl ChatActionList {
         }
     }
 
-    pub fn chat(&self) -> Chat {
+    pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
     }
 
-    pub fn last(&self) -> Option<ChatAction> {
+    pub(crate) fn last(&self) -> Option<ChatAction> {
         self.imp()
             .list
             .borrow()
@@ -132,7 +132,7 @@ impl ChatActionList {
             .cloned()
     }
 
-    pub fn group(&self, action: &enums::ChatAction) -> Vec<ChatAction> {
+    pub(crate) fn group(&self, action: &enums::ChatAction) -> Vec<ChatAction> {
         let discriminant = mem::discriminant(action);
         self.imp()
             .list

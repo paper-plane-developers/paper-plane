@@ -7,7 +7,7 @@ use crate::session::chat::Message;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ItemType")]
-pub enum ItemType {
+pub(crate) enum ItemType {
     Message(Message),
     DayDivider(DateTime),
 }
@@ -17,8 +17,8 @@ mod imp {
     use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default)]
-    pub struct Item {
-        pub type_: OnceCell<ItemType>,
+    pub(crate) struct Item {
+        pub(super) type_: OnceCell<ItemType>,
     }
 
     #[glib::object_subclass]
@@ -61,25 +61,25 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Item(ObjectSubclass<imp::Item>);
+    pub(crate) struct Item(ObjectSubclass<imp::Item>);
 }
 
 impl Item {
-    pub fn for_message(message: Message) -> Self {
+    pub(crate) fn for_message(message: Message) -> Self {
         let type_ = ItemType::Message(message);
         glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
     }
 
-    pub fn for_day_divider(day: DateTime) -> Self {
+    pub(crate) fn for_day_divider(day: DateTime) -> Self {
         let type_ = ItemType::DayDivider(day);
         glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
     }
 
-    pub fn type_(&self) -> &ItemType {
+    pub(crate) fn type_(&self) -> &ItemType {
         self.imp().type_.get().unwrap()
     }
 
-    pub fn message(&self) -> Option<&Message> {
+    pub(crate) fn message(&self) -> Option<&Message> {
         if let ItemType::Message(message) = self.type_() {
             Some(message)
         } else {
@@ -87,7 +87,7 @@ impl Item {
         }
     }
 
-    pub fn message_timestamp(&self) -> Option<DateTime> {
+    pub(crate) fn message_timestamp(&self) -> Option<DateTime> {
         if let ItemType::Message(message) = self.type_() {
             Some(
                 glib::DateTime::from_unix_utc(message.date().into())

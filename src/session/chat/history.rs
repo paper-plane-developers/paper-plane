@@ -20,11 +20,11 @@ mod imp {
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
-    pub struct History {
-        pub chat: WeakRef<Chat>,
-        pub loading: Cell<bool>,
-        pub list: RefCell<VecDeque<Item>>,
-        pub message_map: RefCell<HashMap<i64, Message>>,
+    pub(crate) struct History {
+        pub(super) chat: WeakRef<Chat>,
+        pub(super) loading: Cell<bool>,
+        pub(super) list: RefCell<VecDeque<Item>>,
+        pub(super) message_map: RefCell<HashMap<i64, Message>>,
     }
 
     #[glib::object_subclass]
@@ -101,16 +101,16 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct History(ObjectSubclass<imp::History>)
+    pub(crate) struct History(ObjectSubclass<imp::History>)
         @implements gio::ListModel;
 }
 
 impl History {
-    pub fn new(chat: &Chat) -> Self {
+    pub(crate) fn new(chat: &Chat) -> Self {
         glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
     }
 
-    pub fn load_older_messages(&self) {
+    pub(crate) fn load_older_messages(&self) {
         if self.loading() {
             return;
         }
@@ -143,12 +143,12 @@ impl History {
         );
     }
 
-    pub fn message_by_id(&self, id: i64) -> Option<Message> {
+    pub(crate) fn message_by_id(&self, id: i64) -> Option<Message> {
         let imp = self.imp();
         imp.message_map.borrow().get(&id).cloned()
     }
 
-    pub fn handle_update(&self, update: Update) {
+    pub(crate) fn handle_update(&self, update: Update) {
         let imp = self.imp();
 
         match update {
@@ -275,7 +275,7 @@ impl History {
             .items_changed(position, removed, added);
     }
 
-    pub fn append(&self, message: TelegramMessage) {
+    pub(crate) fn append(&self, message: TelegramMessage) {
         let imp = self.imp();
 
         let mut message_map = imp.message_map.borrow_mut();
@@ -354,16 +354,16 @@ impl History {
         }
     }
 
-    pub fn chat(&self) -> Chat {
+    pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
     }
 
-    pub fn set_loading(&self, loading: bool) {
+    pub(crate) fn set_loading(&self, loading: bool) {
         self.imp().loading.set(loading);
         self.notify("loading");
     }
 
-    pub fn loading(&self) -> bool {
+    pub(crate) fn loading(&self) -> bool {
         self.imp().loading.get()
     }
 }

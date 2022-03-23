@@ -18,15 +18,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-action-bar.ui")]
-    pub struct ChatActionBar {
-        pub chat: RefCell<Option<Chat>>,
-        pub chat_action_in_cooldown: Cell<bool>,
+    pub(crate) struct ChatActionBar {
+        pub(super) chat: RefCell<Option<Chat>>,
+        pub(super) chat_action_in_cooldown: Cell<bool>,
         #[template_child]
-        pub scrolled_window: TemplateChild<gtk::ScrolledWindow>,
+        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
-        pub message_entry: TemplateChild<gtk::TextView>,
+        pub(super) message_entry: TemplateChild<gtk::TextView>,
         #[template_child]
-        pub send_message_button: TemplateChild<gtk::Button>,
+        pub(super) send_message_button: TemplateChild<gtk::Button>,
     }
 
     #[glib::object_subclass]
@@ -136,7 +136,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct ChatActionBar(ObjectSubclass<imp::ChatActionBar>)
+    pub(crate) struct ChatActionBar(ObjectSubclass<imp::ChatActionBar>)
         @extends gtk::Widget;
 }
 
@@ -147,7 +147,7 @@ impl Default for ChatActionBar {
 }
 
 impl ChatActionBar {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
@@ -270,7 +270,7 @@ impl ChatActionBar {
         }
     }
 
-    pub fn chat(&self) -> Option<Chat> {
+    pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }
 

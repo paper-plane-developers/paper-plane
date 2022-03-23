@@ -15,9 +15,9 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub struct SecretChatList {
-        pub list: RefCell<IndexMap<i32, SecretChat>>,
-        pub session: WeakRef<Session>,
+    pub(crate) struct SecretChatList {
+        pub(super) list: RefCell<IndexMap<i32, SecretChat>>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -82,12 +82,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SecretChatList(ObjectSubclass<imp::SecretChatList>)
+    pub(crate) struct SecretChatList(ObjectSubclass<imp::SecretChatList>)
         @implements gio::ListModel;
 }
 
 impl SecretChatList {
-    pub fn new(session: &Session) -> Self {
+    pub(crate) fn new(session: &Session) -> Self {
         glib::Object::new(&[("session", session)]).expect("Failed to create SecretChatList")
     }
 
@@ -95,7 +95,7 @@ impl SecretChatList {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `SecretChat` exists in the list.
-    pub fn get(&self, id: i32) -> SecretChat {
+    pub(crate) fn get(&self, id: i32) -> SecretChat {
         self.imp()
             .list
             .borrow()
@@ -104,7 +104,7 @@ impl SecretChatList {
             .to_owned()
     }
 
-    pub fn handle_update(&self, update: &Update) {
+    pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::SecretChat(data) = update {
             let mut list = self.imp().list.borrow_mut();
 
@@ -124,7 +124,7 @@ impl SecretChatList {
         }
     }
 
-    pub fn session(&self) -> Session {
+    pub(crate) fn session(&self) -> Session {
         self.imp().session.upgrade().unwrap()
     }
 }

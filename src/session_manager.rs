@@ -49,11 +49,11 @@ use crate::{APPLICATION_OPTS, RUNTIME};
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
-pub struct Client {
+pub(crate) struct Client {
     /// The `Session` of this client.
-    pub session: Session,
+    pub(crate) session: Session,
     /// The `ClientState` of this client.
-    pub state: ClientState,
+    pub(crate) state: ClientState,
 }
 
 impl Client {
@@ -64,7 +64,7 @@ impl Client {
 
 /// Enum for storing information about the state of an TDLib client.
 #[derive(Clone, Debug)]
-pub enum ClientState {
+pub(crate) enum ClientState {
     /// The client is currently in the authorization state. Every client, even those that were
     /// logged in during a previous run of the application will need to go through this state
     /// again.
@@ -93,20 +93,20 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/session-manager.ui")]
-    pub struct SessionManager {
+    pub(crate) struct SessionManager {
         /// The order of the recently used sessions. The string stored in the `Vec` represents the
         /// session's database directory name.
-        pub recently_used_sessions: RefCell<Vec<String>>,
+        pub(super) recently_used_sessions: RefCell<Vec<String>>,
         /// The number sessions to load/handle at application start. This number will indirectly be
         /// determined in [`analyze_data_dir()`]
-        pub initial_sessions_to_handle: Cell<u32>,
-        pub clients: RefCell<HashMap<i32, Client>>,
+        pub(super) initial_sessions_to_handle: Cell<u32>,
+        pub(super) clients: RefCell<HashMap<i32, Client>>,
         #[template_child]
-        pub main_stack: TemplateChild<gtk::Stack>,
+        pub(super) main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub login: TemplateChild<Login>,
+        pub(super) login: TemplateChild<Login>,
         #[template_child]
-        pub sessions: TemplateChild<gtk::Stack>,
+        pub(super) sessions: TemplateChild<gtk::Stack>,
     }
 
     #[glib::object_subclass]
@@ -190,7 +190,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SessionManager(ObjectSubclass<imp::SessionManager>)
+    pub(crate) struct SessionManager(ObjectSubclass<imp::SessionManager>)
         @extends gtk::Widget;
 }
 
@@ -214,7 +214,7 @@ impl SessionManager {
     }
 
     /// Function that returns all currently logged in users.
-    pub fn logged_in_users(&self) -> Vec<User> {
+    pub(crate) fn logged_in_users(&self) -> Vec<User> {
         let sessions = self.sessions();
 
         (0..sessions.n_items())
@@ -233,7 +233,7 @@ impl SessionManager {
     }
 
     /// Returns the `Client` for the given client id.
-    pub fn client(&self, client_id: i32) -> Option<Client> {
+    pub(crate) fn client(&self, client_id: i32) -> Option<Client> {
         self.imp().clients.borrow().get(&client_id).cloned()
     }
 
@@ -242,7 +242,11 @@ impl SessionManager {
     ///
     /// This function is mainly used to check if a logged in session already exists for an account
     /// to prevent two sessions for the same account.
-    pub fn session_index_for(&self, on_test_dc: bool, phone_number_digits: &str) -> Option<u32> {
+    pub(crate) fn session_index_for(
+        &self,
+        on_test_dc: bool,
+        phone_number_digits: &str,
+    ) -> Option<u32> {
         let sessions = self.sessions();
 
         (0..sessions.n_items()).find_map(|pos| {
@@ -272,7 +276,7 @@ impl SessionManager {
     /// First, it will be called when the `back` button is pressed on the phone number page to go
     /// back to the last session. Secondly, it will be called with a position if the phone number
     /// entered already has a session.
-    pub fn switch_to_sessions(&self, pos: Option<u32>) {
+    pub(crate) fn switch_to_sessions(&self, pos: Option<u32>) {
         let imp = self.imp();
         imp.main_stack.set_visible_child(&*imp.sessions);
         if let Some(pos) = pos {
@@ -285,7 +289,7 @@ impl SessionManager {
     /// Is mainly used by `Login` to check whether the back button should be visible on the phone
     /// number page and to check the session' phone numbers in order to not have 2 sessions of the
     /// same account.
-    pub fn sessions(&self) -> gtk::SelectionModel {
+    pub(crate) fn sessions(&self) -> gtk::SelectionModel {
         self.imp().sessions.pages()
     }
 
@@ -321,7 +325,7 @@ impl SessionManager {
 
     /// Sets the online status for the active logged in client. This will be called from the
     /// application `Window` when its active state has changed.
-    pub fn set_active_client_online(&self, value: bool) {
+    pub(crate) fn set_active_client_online(&self, value: bool) {
         if let Some(client_id) = self.active_logged_in_client_id() {
             RUNTIME.spawn(set_online(client_id, value));
         }
@@ -349,7 +353,7 @@ impl SessionManager {
 
     /// This function is used to add/load an existing session that already had the
     /// `AuthorizationState::Ready` state from a previous application run.
-    pub fn add_existing_session(&self, database_info: DatabaseInfo) {
+    pub(crate) fn add_existing_session(&self, database_info: DatabaseInfo) {
         let client_id = tdlib::create_client();
 
         self.imp().clients.borrow_mut().insert(
@@ -369,8 +373,9 @@ impl SessionManager {
 
     /// This function is used to add a new session for a so far unknown account. This means it will
     /// go through the login process.
-    pub fn add_new_session(&self, use_test_dc: bool) {
+    pub(crate) fn add_new_session(&self, use_test_dc: bool) {
         let client_id = tdlib::create_client();
+
         self.init_new_session(client_id, use_test_dc);
         send_log_level(client_id);
     }
@@ -469,7 +474,7 @@ impl SessionManager {
 
     /// Function cleaning up, which is called by the application windows on closing. It sets all
     /// clients offline.
-    pub fn close_clients(&self) {
+    pub(crate) fn close_clients(&self) {
         // Create a future to close the sessions.
         let close_sessions_future = futures::future::join_all(
             self.imp()
@@ -496,7 +501,7 @@ impl SessionManager {
         });
     }
 
-    pub fn handle_update(&self, update: Update, client_id: i32) {
+    pub(crate) fn handle_update(&self, update: Update, client_id: i32) {
         match update {
             Update::AuthorizationState(update) => {
                 self.handle_authorization_state(update, client_id);
@@ -648,7 +653,7 @@ impl SessionManager {
 
     /// Within this function a new `Session` is created based on the passed client id. This session
     /// is then added to the session stack.
-    pub fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
+    pub(crate) fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
         do_async(
             glib::PRIORITY_DEFAULT_IDLE,
             functions::get_me(client_id),
@@ -697,7 +702,7 @@ impl SessionManager {
         );
     }
 
-    pub fn begin_chats_search(&self) {
+    pub(crate) fn begin_chats_search(&self) {
         if let Some(client_id) = self.active_logged_in_client_id() {
             let clients = self.imp().clients.borrow();
             let client = clients.get(&client_id).unwrap();
@@ -710,16 +715,16 @@ impl SessionManager {
 
 /// A struct for storing information about a session's database.
 #[derive(Clone, Debug)]
-pub struct DatabaseInfo {
+pub(crate) struct DatabaseInfo {
     // The base name of the database directory.
-    pub directory_base_name: String,
+    pub(crate) directory_base_name: String,
     // Whether this database uses a test dc.
-    pub use_test_dc: bool,
+    pub(crate) use_test_dc: bool,
 }
 
 /// A struct for representing the state of the data directory.
 #[derive(Debug)]
-pub enum DatadirState {
+pub(crate) enum DatadirState {
     /// There are no sessions at all. This probably means that the application is started for the
     /// first time or the data directory has been deleted by the user.
     Empty,

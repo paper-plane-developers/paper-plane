@@ -10,10 +10,10 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub struct StickerPaintable {
-        pub texture: RefCell<Option<gdk::Texture>>,
-        pub width: Cell<i32>,
-        pub height: Cell<i32>,
+    pub(crate) struct StickerPaintable {
+        pub(super) texture: RefCell<Option<gdk::Texture>>,
+        pub(super) width: Cell<i32>,
+        pub(super) height: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -82,7 +82,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct StickerPaintable(ObjectSubclass<imp::StickerPaintable>) @implements gdk::Paintable;
+    pub(crate) struct StickerPaintable(ObjectSubclass<imp::StickerPaintable>) @implements gdk::Paintable;
 }
 
 impl Default for StickerPaintable {
@@ -92,11 +92,11 @@ impl Default for StickerPaintable {
 }
 
 impl StickerPaintable {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create StickerPaintable")
     }
 
-    pub fn set_aspect_ratio(&self, aspect_ratio: f64) {
+    pub(crate) fn set_aspect_ratio(&self, aspect_ratio: f64) {
         let imp = self.imp();
 
         if aspect_ratio >= 1.0 {
@@ -110,11 +110,11 @@ impl StickerPaintable {
         self.invalidate_size();
     }
 
-    pub fn texture(&self) -> Option<gdk::Texture> {
+    pub(crate) fn texture(&self) -> Option<gdk::Texture> {
         self.imp().texture.borrow().to_owned()
     }
 
-    pub fn set_texture(&self, texture: Option<gdk::Texture>) {
+    pub(crate) fn set_texture(&self, texture: Option<gdk::Texture>) {
         if self.texture() == texture {
             return;
         }

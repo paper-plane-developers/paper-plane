@@ -27,15 +27,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content.ui")]
-    pub struct Content {
-        pub compact: Cell<bool>,
-        pub chat: RefCell<Option<Chat>>,
+    pub(crate) struct Content {
+        pub(super) compact: Cell<bool>,
+        pub(super) chat: RefCell<Option<Chat>>,
         #[template_child]
-        pub stack: TemplateChild<gtk::Stack>,
+        pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub unselected_chat: TemplateChild<gtk::Box>,
+        pub(super) unselected_chat: TemplateChild<gtk::Box>,
         #[template_child]
-        pub chat_history: TemplateChild<ChatHistory>,
+        pub(super) chat_history: TemplateChild<ChatHistory>,
     }
 
     #[glib::object_subclass]
@@ -112,7 +112,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct Content(ObjectSubclass<imp::Content>)
+    pub(crate) struct Content(ObjectSubclass<imp::Content>)
         @extends gtk::Widget, adw::Bin;
 }
 
@@ -123,11 +123,11 @@ impl Default for Content {
 }
 
 impl Content {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Content")
     }
 
-    pub fn chat(&self) -> Option<Chat> {
+    pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }
 
