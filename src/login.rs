@@ -385,12 +385,12 @@ impl Login {
                             data.recovery_email_address_pattern
                         )));
                     gettext(
-                            "One way to continue using your account is to delete your account and then recreate it"
-                        )
+                        "One way to continue using your account is to delete and then recreate it",
+                    )
                 } else {
                     imp.password_recovery_status_page.set_description(None);
                     gettext(
-                        "Since you have not provided a recovery email address, the only way to continue using your account is to delete your account and then recreate it"
+                        "Since you have not provided a recovery e-mail address, the only way to continue using your account is to delete and then recreate it"
                     )
                 };
 
@@ -691,7 +691,7 @@ impl Login {
         let dialog = if user_needs_to_accept {
             builder
                 .buttons(gtk::ButtonsType::YesNo)
-                .text(&gettext("Do You Accept the Terms of Service?"))
+                .text(&gettext("Do you accept the Terms of Service?"))
         } else {
             builder
                 .buttons(gtk::ButtonsType::Ok)
@@ -1010,7 +1010,7 @@ impl Login {
         let dialog = gtk::MessageDialog::builder()
             .text(&gettext("Sorry"))
             .secondary_text(&gettext(
-                "If you can't restore access to the email, your remaining options are either to remember your password or to delete and recreate your account.",
+                "If you can't restore access to the e-mail, your remaining options are either to remember your password or to delete and then recreate your account.",
             ))
             .buttons(gtk::ButtonsType::Close)
             .modal(true)

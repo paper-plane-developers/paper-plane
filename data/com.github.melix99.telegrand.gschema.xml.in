@@ -19,7 +19,7 @@
     <key name="recently-used-sessions" type="as">
       <default>[]</default>
       <summary>Recently used sessions</summary>
-      <description>The ordered list of recently used sessions by their database directory name</description>
+      <description>A list of most recently used sessions, sorted by their database directory names</description>
     </key>
     <key name="color-scheme" type="s">
       <choices>
