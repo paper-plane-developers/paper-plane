@@ -84,7 +84,7 @@
                 <property name="child">
                   <object class="AdwStatusPage">
                     <property name="icon-name">user-available-symbolic</property>
-                    <property name="title" translatable="yes">Welcome to Telegrand</property>
+                    <property name="title" translatable="yes">Welcome</property>
                     <child>
                       <object class="AdwClamp">
                         <property name="maximum-size">300</property>
@@ -242,7 +242,7 @@
                                         <property name="child">
                                           <object class="GtkLabel">
                                             <property name="justify">center</property>
-                                            <property name="label" translatable="true">Code cannot be sent anymore.</property>
+                                            <property name="label" translatable="true">The code cannot be sent anymore.</property>
                                             <property name="valign">center</property>
                                             <property name="wrap">True</property>
                                             <property name="wrap-mode">word</property>
@@ -516,7 +516,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                         <property name="justify">center</property>
                                         <!--  Mimick the status page description margins. -->
                                         <property name="margin-bottom">36</property>
-                                        <property name="label" translatable="yes">When you set your cloud password, you provided a recovery email address. We can send you a code to this email address that you can use to reset your password.</property>
+                                        <property name="label" translatable="yes">When you set your cloud password, you provided a recovery e-mail address. A code can be sent there to reset your password.</property>
                                       </object>
                                     </child>
                                   </object>
@@ -646,7 +646,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                 <property name="child">
                   <object class="AdwStatusPage" id="password_recovery_status_page">
                     <property name="icon-name">mail-unread-symbolic</property>
-                    <property name="title" translatable="yes">Enter the Code Sent by E-Mail</property>
+                    <property name="title" translatable="yes">Enter the code e-mailed to you</property>
                     <child>
                       <object class="AdwClamp">
                         <property name="maximum-size">300</property>
@@ -687,7 +687,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                     <property name="activatable">True</property>
                                     <property name="action-name">login.show-no-email-access-dialog</property>
                                     <property name="use-underline">True</property>
-                                    <property name="title" translatable="yes">_Unable to access your email?</property>
+                                    <property name="title" translatable="yes">_Unable to access your e-mail?</property>
                                     <child>
                                       <object class="GtkImage">
                                         <property name="icon_name">go-next-symbolic</property>
