@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-01-05 21:54+0000\n"
+"PO-Revision-Date: 2022-03-26 19:09+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/nb_NO/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -28,7 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
+msgstr "En Telegram-klient optimalisert for GNOME-skrivebordet"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -51,12 +51,13 @@ msgstr "Forvalgt oppførsel for maksimert vindu"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Nylig brukte økter"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
+#, fuzzy
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
-msgstr ""
+msgstr "Liste over nylig brukte økter sortert etter databasemappenavn"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
@@ -69,7 +70,7 @@ msgstr "Fargepaletten brukt i programmet"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr ""
+msgstr "Hovedvindu"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
 msgid "Marco Melorio"
@@ -77,11 +78,11 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Produksjonstjener"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "_Testtjener"
 
 #: data/resources/ui/add-account-row.ui:33
 #, fuzzy
@@ -130,7 +131,7 @@ msgstr "_Logg inn med QR-kode"
 
 #: data/resources/ui/login.ui:205
 msgid "Scan Code"
-msgstr ""
+msgstr "Skann kode"
 
 #: data/resources/ui/login.ui:206
 msgid "Scan this code with another Telegram app logged into your account."
@@ -209,8 +210,9 @@ msgid "_Delete Account"
 msgstr "_Slett konto"
 
 #: data/resources/ui/login.ui:641
+#, fuzzy
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Skriv inn koden sendt per e-post"
 
 #: data/resources/ui/login.ui:682
 msgid "_Unable to access your email?"
@@ -274,30 +276,35 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
+"En måte å fortsette å bruke kontoen din er å slette den og så gjenskape den"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Siden du ikke har angitt en e-postadresse for gjenoppretting er den eneste "
+"måten å fortsette å bruke kontoen å slette den og så gjenskape den"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"Merk, du vil miste alle sludringene og meldingene dine, sammen med all media "
+"og filer du har delt."
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Godtar du tjenestevilkårene?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Tjenestevilkår"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Advarsel"
 
 #: src/login.rs:857
 msgid ""
@@ -306,20 +313,26 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"Du vil miste alle sludringene og meldingene dine, sammen med all media og "
+"filer du har delt.\n"
+"\n"
+"Slett kontoen?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Beklager"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Hvis du ikke får tilgang til e-postadressen kan du enten huske passordet, "
+"eller slette og så gjenskape kontoen din."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_Gå tilbake"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
@@ -344,7 +357,7 @@ msgstr "Video"
 
 #: src/window.rs:354 src/session/sidebar/row.rs:633
 msgid "Voice message"
-msgstr ""
+msgstr "Talemelding"
 
 #: src/window.rs:363 src/session/sidebar/row.rs:480
 msgid "Channel photo removed"
@@ -411,7 +424,7 @@ msgstr "Avvist innkommende videoanrop"
 
 #: src/session/sidebar/row.rs:458
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Avslått innkommende anrop"
 
 #: src/session/sidebar/row.rs:468
 msgid "Cancelled call"
@@ -431,11 +444,11 @@ msgstr "Utgående videosamtale"
 
 #: src/session/sidebar/row.rs:529
 msgid "Outgoing call"
-msgstr ""
+msgstr "Utgående anrop"
 
 #: src/session/sidebar/row.rs:541
 msgid "Incoming video call"
-msgstr ""
+msgstr "Innkommende videoanrop"
 
 #: src/session/sidebar/row.rs:556
 msgid "Document"
