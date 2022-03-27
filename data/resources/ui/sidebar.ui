@@ -44,10 +44,8 @@
               <object class="ComponentsAvatar">
                 <property name="size">24</property>
                 <binding name="item">
-                  <lookup name="avatar" type="User">
-                    <lookup name="me" type="Session">
-                      <lookup name="session">Sidebar</lookup>
-                    </lookup>
+                  <lookup name="me" type="Session">
+                    <lookup name="session">Sidebar</lookup>
                   </lookup>
                 </binding>
               </object>

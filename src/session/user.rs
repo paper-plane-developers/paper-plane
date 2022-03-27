@@ -17,7 +17,8 @@ pub(crate) struct BoxedUserStatus(pub(crate) UserStatus);
 
 mod imp {
     use super::*;
-    use once_cell::sync::{Lazy, OnceCell};
+    use glib::WeakRef;
+    use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
@@ -28,8 +29,9 @@ mod imp {
         pub(super) last_name: RefCell<String>,
         pub(super) username: RefCell<String>,
         pub(super) phone_number: RefCell<String>,
-        pub(super) avatar: OnceCell<Avatar>,
+        pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) status: RefCell<Option<BoxedUserStatus>>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -96,12 +98,12 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpecObject::new(
+                    glib::ParamSpecBoxed::new(
                         "avatar",
                         "Avatar",
                         "The avatar of this user",
                         Avatar::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoxed::new(
                         "status",
@@ -111,6 +113,13 @@ mod imp {
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpecObject::new(
+                        "session",
+                        "Session",
+                        "The session",
+                        Session::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                 ]
             });
@@ -139,8 +148,9 @@ mod imp {
                 "phone-number" => {
                     obj.set_phone_number(value.get::<Option<String>>().unwrap().unwrap_or_default())
                 }
-                "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
+                "avatar" => obj.set_avatar(value.get().unwrap()),
                 "status" => obj.set_status(value.get().unwrap()),
+                "session" => self.session.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
         }
@@ -155,20 +165,9 @@ mod imp {
                 "phone-number" => obj.phone_number().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "status" => obj.status().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
-        }
-
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-
-            let avatar = obj.avatar();
-            let user_expression = gtk::ConstantExpression::new(obj);
-            super::User::full_name_expression(&user_expression).bind(
-                avatar,
-                "display-name",
-                glib::Object::NONE,
-            );
         }
     }
 }
@@ -179,8 +178,7 @@ glib::wrapper! {
 
 impl User {
     pub(crate) fn from_td_object(user: TdUser, session: &Session) -> Self {
-        let avatar = Avatar::new(session);
-        avatar.update_from_user_photo(user.profile_photo);
+        let avatar = user.profile_photo.map(Avatar::from);
 
         glib::Object::new(&[
             ("id", &user.id),
@@ -191,6 +189,7 @@ impl User {
             ("phone-number", &user.phone_number),
             ("status", &BoxedUserStatus(user.status)),
             ("avatar", &avatar),
+            ("session", &session),
         ])
         .expect("Failed to create User")
     }
@@ -204,8 +203,7 @@ impl User {
                 self.set_username(data.user.username);
                 self.set_phone_number(data.user.phone_number);
                 self.set_status(BoxedUserStatus(data.user.status));
-                self.avatar()
-                    .update_from_user_photo(data.user.profile_photo);
+                self.set_avatar(data.user.profile_photo.map(Into::into));
             }
             Update::UserStatus(data) => self.set_status(BoxedUserStatus(data.status)),
             _ => {}
@@ -276,8 +274,23 @@ impl User {
         self.notify("phone-number");
     }
 
-    pub(crate) fn avatar(&self) -> &Avatar {
-        self.imp().avatar.get().unwrap()
+    pub(crate) fn avatar(&self) -> Option<Avatar> {
+        self.imp().avatar.borrow().to_owned()
+    }
+
+    pub(crate) fn set_avatar(&self, avatar: Option<Avatar>) {
+        if self.avatar() == avatar {
+            return;
+        }
+        self.imp().avatar.replace(avatar);
+        self.notify("avatar");
+    }
+
+    pub(crate) fn connect_avatar_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_notify_local(Some("avatar"), f)
     }
 
     pub(crate) fn status(&self) -> BoxedUserStatus {
@@ -290,6 +303,10 @@ impl User {
         }
         self.imp().status.replace(Some(status));
         self.notify("status");
+    }
+
+    pub(crate) fn session(&self) -> Session {
+        self.imp().session.upgrade().unwrap()
     }
 
     pub(crate) fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {

@@ -15,7 +15,6 @@ pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOr
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
 use gettextrs::gettext;
-use glib::closure;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -89,7 +88,7 @@ mod imp {
         pub(super) id: Cell<i64>,
         pub(super) type_: OnceCell<ChatType>,
         pub(super) title: RefCell<String>,
-        pub(super) avatar: OnceCell<Avatar>,
+        pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) last_message: RefCell<Option<Message>>,
         pub(super) order: Cell<i64>,
         pub(super) is_pinned: Cell<bool>,
@@ -137,12 +136,12 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpecObject::new(
+                    glib::ParamSpecBoxed::new(
                         "avatar",
                         "Avatar",
                         "The avatar of this chat",
                         Avatar::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "last-message",
@@ -246,7 +245,7 @@ mod imp {
                 "title" => {
                     obj.set_title(value.get::<Option<String>>().unwrap().unwrap_or_default())
                 }
-                "avatar" => self.avatar.set(value.get().unwrap()).unwrap(),
+                "avatar" => obj.set_avatar(value.get().unwrap()),
                 "last-message" => obj.set_last_message(value.get().unwrap()),
                 "order" => obj.set_order(value.get().unwrap()),
                 "is-pinned" => obj.set_is_pinned(value.get().unwrap()),
@@ -278,11 +277,6 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
-
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.setup_expressions();
-        }
     }
 }
 
@@ -293,10 +287,8 @@ glib::wrapper! {
 impl Chat {
     pub(crate) fn new(chat: TelegramChat, session: Session) -> Self {
         let type_ = ChatType::from_td_object(&chat.r#type, &session);
-        let avatar = Avatar::new(&session);
+        let avatar = chat.photo.map(Avatar::from);
         let draft_message = chat.draft_message.map(BoxedDraftMessage);
-
-        avatar.update_from_chat_photo(chat.photo);
 
         glib::Object::new(&[
             ("id", &chat.id),
@@ -315,25 +307,6 @@ impl Chat {
         .expect("Failed to create Chat")
     }
 
-    fn setup_expressions(&self) {
-        let is_me_expression = Self::this_expression("session").chain_property::<Session>("me");
-
-        let icon_name_expression = is_me_expression.chain_closure::<Option<String>>(closure!(
-            |self_: Self, me: Option<User>| {
-                if me.map(|me| me.id() == self_.id()).unwrap_or_default() {
-                    Some("user-bookmarks-symbolic")
-                } else {
-                    None
-                }
-            }
-        ));
-
-        let avatar = self.avatar();
-
-        icon_name_expression.bind(avatar, "icon-name", Some(self));
-        Self::this_expression("title").bind(avatar, "display-name", Some(self));
-    }
-
     pub(crate) fn handle_update(&self, update: Update) {
         match update {
             Update::NewMessage(_)
@@ -346,7 +319,7 @@ impl Chat {
                 self.set_title(update.title);
             }
             Update::ChatPhoto(update) => {
-                self.avatar().update_from_chat_photo(update.photo);
+                self.set_avatar(update.photo.map(Into::into));
             }
             Update::ChatLastMessage(update) => {
                 match update.last_message {
@@ -426,8 +399,23 @@ impl Chat {
         self.notify("title");
     }
 
-    pub(crate) fn avatar(&self) -> &Avatar {
-        self.imp().avatar.get().unwrap()
+    pub(crate) fn avatar(&self) -> Option<Avatar> {
+        self.imp().avatar.borrow().to_owned()
+    }
+
+    pub(crate) fn set_avatar(&self, avatar: Option<Avatar>) {
+        if self.avatar() == avatar {
+            return;
+        }
+        self.imp().avatar.replace(avatar);
+        self.notify("avatar");
+    }
+
+    pub(crate) fn connect_avatar_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_notify_local(Some("avatar"), f)
     }
 
     pub(crate) fn last_message(&self) -> Option<Message> {

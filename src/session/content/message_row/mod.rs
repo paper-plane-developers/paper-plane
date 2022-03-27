@@ -218,40 +218,55 @@ pub(crate) trait MessageRowExt: IsA<MessageRow> {
             if let Some(message) = message.downcast_ref::<Message>() {
                 imp.is_outgoing.set(message.is_outgoing());
 
-                let avatar_item = if message.chat().is_own_chat() {
-                    if message.is_outgoing() {
-                        None
-                    } else {
-                        Some(match message.forward_info().unwrap().origin() {
-                            MessageForwardOrigin::User(user) => user.avatar().clone(),
-                            MessageForwardOrigin::Chat { chat, .. }
-                            | MessageForwardOrigin::Channel { chat, .. } => chat.avatar().clone(),
-                            MessageForwardOrigin::HiddenUser { sender_name }
-                            | MessageForwardOrigin::MessageImport { sender_name } => {
-                                message.chat().session().sender_name_avatar(sender_name)
-                            }
-                        })
-                    }
-                } else if !message.is_outgoing()
-                    && (matches!(message.chat().type_(), ChatType::BasicGroup(_))
-                        || matches!(message.chat().type_(), ChatType::Supergroup(supergroup) if !supergroup.is_channel()))
-                {
-                    Some(match message.sender() {
-                        MessageSender::User(user) => user.avatar().clone(),
-                        MessageSender::Chat(chat) => chat.avatar().clone(),
-                    })
+                let show_avatar = if message.is_outgoing() {
+                    false
+                } else if message.chat().is_own_chat() {
+                    message.forward_info().is_some()
                 } else {
-                    None
+                    match message.chat().type_() {
+                        ChatType::BasicGroup(_) => true,
+                        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
+                        _ => false,
+                    }
                 };
 
-                if let Some(avatar_item) = avatar_item {
-                    if imp.avatar.borrow().is_none() {
-                        let avatar = Avatar::new();
-                        avatar.set_size(AVATAR_SIZE);
-                        avatar.set_item(Some(avatar_item));
-                        avatar.set_parent(self.upcast_ref());
-                        imp.avatar.replace(Some(avatar));
-                    } else if let Some(avatar) = imp.avatar.borrow().as_ref() {
+                if show_avatar {
+                    let avatar = {
+                        let mut avatar_borrow = imp.avatar.borrow_mut();
+                        if let Some(avatar) = avatar_borrow.clone() {
+                            avatar
+                        } else {
+                            let avatar = Avatar::new();
+                            avatar.set_size(AVATAR_SIZE);
+                            avatar.set_parent(self.upcast_ref());
+                            *avatar_borrow = Some(avatar.clone());
+                            avatar
+                        }
+                    };
+
+                    if message.chat().is_own_chat() {
+                        match message.forward_info().unwrap().origin() {
+                            MessageForwardOrigin::User(user) => {
+                                avatar.set_custom_text(None);
+                                avatar.set_item(Some(user.clone().upcast()));
+                            }
+                            MessageForwardOrigin::Chat { chat, .. }
+                            | MessageForwardOrigin::Channel { chat, .. } => {
+                                avatar.set_custom_text(None);
+                                avatar.set_item(Some(chat.clone().upcast()));
+                            }
+                            MessageForwardOrigin::HiddenUser { sender_name }
+                            | MessageForwardOrigin::MessageImport { sender_name } => {
+                                avatar.set_item(None);
+                                avatar.set_custom_text(Some(sender_name));
+                            }
+                        }
+                    } else {
+                        let avatar_item = match message.sender() {
+                            MessageSender::User(user) => user.clone().upcast(),
+                            MessageSender::Chat(chat) => chat.clone().upcast(),
+                        };
+                        avatar.set_custom_text(None);
                         avatar.set_item(Some(avatar_item));
                     }
                 } else {
