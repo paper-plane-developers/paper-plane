@@ -5,6 +5,7 @@ mod session_switcher;
 use self::row::Row;
 use self::session_switcher::SessionSwitcher;
 
+use gettextrs::gettext;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -186,11 +187,10 @@ impl Sidebar {
                 .client_id();
 
             // Search chats
-            let query_clone = query.clone();
             do_async(
                 glib::PRIORITY_DEFAULT_IDLE,
-                functions::search_chats(query_clone, 100, client_id),
-                clone!(@weak self as obj => move |result| async move {
+                functions::search_chats(query.clone(), 100, client_id),
+                clone!(@weak self as obj, @strong query => move |result| async move {
                     if let Ok(enums::Chats::Chats(chats)) = result {
                         let imp = obj.imp();
 
@@ -200,15 +200,33 @@ impl Sidebar {
                                 .expect("The session needs to be set to be able to search");
                             let chat_list = session.chat_list();
 
-                            imp.already_searched_users.borrow_mut().extend(chats.chat_ids.iter()
-                                .map(|id| chat_list.get(*id))
-                                .filter_map(|chat| match chat.type_() {
-                                    ChatType::Private(user) => Some(user.id()),
-                                    _ => None
-                                }
-                            ));
+                            // This will hold the own user id if the user has searched for the own
+                            // chat.
+                            let maybe_own_user_id = if gettext("Saved Messages").to_lowercase()
+                                .contains(&query.to_lowercase())
+                            {
+                                Some(session.me().id())
+                            } else {
+                                None
+                            };
 
-                            imp.searched_chats.borrow_mut().extend(chats.chat_ids);
+                            imp.already_searched_users.borrow_mut().extend(
+                                chats.chat_ids.iter()
+                                    .map(|id| chat_list.get(*id))
+                                    .filter_map(|chat| match chat.type_() {
+                                        ChatType::Private(user) => Some(user.id()),
+                                        _ => None
+                                    })
+                                    .chain(maybe_own_user_id.into_iter())
+                            );
+
+                            imp.searched_chats.borrow_mut().extend(
+                                chats.chat_ids
+                                    .into_iter()
+                                    // The own user id is the same as the own chat id, so we can
+                                    // chain this here.
+                                    .chain(maybe_own_user_id.map(|id| id as i64).into_iter())
+                            );
                             filter.changed(gtk::FilterChange::Different);
                         }
                     }

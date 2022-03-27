@@ -9,7 +9,7 @@ use tdlib::types::{DraftMessage, MessageCall};
 
 use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
-    ChatActionList, Message, MessageSender,
+    ChatActionList, Message, MessageForwardInfo, MessageForwardOrigin, MessageSender,
 };
 use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
@@ -153,7 +153,8 @@ impl Row {
 
                 // Title label bindings
                 let title_binding =
-                    Chat::this_expression("title").bind(&*imp.title_label, "label", Some(chat));
+                    chat.display_name_expression()
+                        .bind(&*imp.title_label, "label", Some(chat));
                 bindings.push(title_binding);
 
                 // Timestamp label bindings
@@ -365,21 +366,14 @@ impl Row {
 }
 
 fn stringify_message(message: Message) -> String {
-    let mut show_sender = match message.chat().type_() {
-        ChatType::BasicGroup(_) => true,
-        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
-        ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
-    };
-
-    let text_content = match message.content().0 {
-        MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
+    match message.content().0 {
+        MessageContent::MessageText(data) => {
+            stringify_message_with_sender_prefix(message, dim_and_escape(&data.text.text))
+        }
         MessageContent::MessageBasicGroupChatCreate(_) => {
-            show_sender = false;
             gettext!("{} created the group", sender_name(message.sender(), true))
         }
         MessageContent::MessageChatAddMembers(data) => {
-            show_sender = false;
-
             if message.sender().as_user().map(User::id).as_ref() == data.member_user_ids.get(0) {
                 if message.is_outgoing() {
                     gettext("You joined the group")
@@ -429,7 +423,6 @@ fn stringify_message(message: Message) -> String {
             }
         }
         MessageContent::MessageChatJoinByLink => {
-            show_sender = false;
             if message.is_outgoing() {
                 gettext("You joined the group via invite link")
             } else {
@@ -447,8 +440,7 @@ fn stringify_message(message: Message) -> String {
             }
         }
         MessageContent::MessageChatDeleteMember(data) => {
-            show_sender = false;
-
+            let sender_name = sender_name(message.sender(), true);
             if message
                 .sender()
                 .as_user()
@@ -458,12 +450,12 @@ fn stringify_message(message: Message) -> String {
                 if message.is_outgoing() {
                     gettext("You left the group")
                 } else {
-                    gettext!("{} left the group", sender_name(message.sender(), true))
+                    gettext!("{} left the group", sender_name)
                 }
             } else {
                 gettext!(
                     "{} removed {}",
-                    sender_name(message.sender(), true),
+                    sender_name,
                     stringify_user(
                         &message.chat().session().user_list().get(data.user_id),
                         true
@@ -471,21 +463,36 @@ fn stringify_message(message: Message) -> String {
                 )
             }
         }
-        MessageContent::MessageSticker(data) => {
-            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
-        }
-        MessageContent::MessagePhoto(data) => stringify_message_photo(&data.caption.text),
-        MessageContent::MessageAudio(data) => {
-            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text)
-        }
-        MessageContent::MessageAnimation(data) => stringify_message_animation(&data.caption.text),
-        MessageContent::MessageVideo(data) => stringify_message_video(&data.caption.text),
-        MessageContent::MessageDocument(data) => {
-            stringify_message_document(&data.document.file_name, &data.caption.text)
-        }
-        MessageContent::MessageVoiceNote(data) => stringify_message_voice_note(&data.caption.text),
+        MessageContent::MessageSticker(data) => stringify_message_with_sender_prefix(
+            message,
+            format!("{} {}", data.sticker.emoji, gettext("Sticker")),
+        ),
+        MessageContent::MessagePhoto(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_photo(&data.caption.text),
+        ),
+        MessageContent::MessageAudio(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text),
+        ),
+        MessageContent::MessageAnimation(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_animation(&data.caption.text),
+        ),
+        MessageContent::MessageVideo(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_video(&data.caption.text),
+        ),
+        MessageContent::MessageDocument(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_document(&data.document.file_name, &data.caption.text),
+        ),
+        MessageContent::MessageVoiceNote(data) => stringify_message_with_sender_prefix(
+            message,
+            stringify_message_voice_note(&data.caption.text),
+        ),
         MessageContent::MessageCall(data) => {
-            match data.discard_reason {
+            let content = match data.discard_reason {
                 CallDiscardReason::Declined => {
                     if message.is_outgoing() {
                         // Telegram Desktop/Android labels declined outgoing calls just as
@@ -517,46 +524,38 @@ fn stringify_message(message: Message) -> String {
                         gettext("Missed call")
                     }
                 }
-            }
+            };
+            stringify_message_with_sender_prefix(message, content)
         }
-        MessageContent::MessageChatDeletePhoto => {
-            show_sender = false;
-
-            match message.chat().type_() {
-                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
-                    gettext("Channel photo removed")
-                }
-                _ => {
-                    if message.is_outgoing() {
-                        gettext("You removed the group photo")
-                    } else {
-                        gettext!(
-                            "{} removed the group photo",
-                            sender_name(message.sender(), true)
-                        )
-                    }
+        MessageContent::MessageChatDeletePhoto => match message.chat().type_() {
+            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                gettext("Channel photo removed")
+            }
+            _ => {
+                if message.is_outgoing() {
+                    gettext("You removed the group photo")
+                } else {
+                    gettext!(
+                        "{} removed the group photo",
+                        sender_name(message.sender(), true),
+                    )
                 }
             }
-        }
-        MessageContent::MessageChatChangePhoto(_) => {
-            show_sender = false;
-            match message.chat().type_() {
-                ChatType::Supergroup(data) if data.is_channel() => gettext("Channel photo changed"),
-                _ => {
-                    if message.is_outgoing() {
-                        gettext("You changed group photo")
-                    } else {
-                        gettext!(
-                            "{} changed group photo",
-                            sender_name(message.sender(), true)
-                        )
-                    }
+        },
+        MessageContent::MessageChatChangePhoto(_) => match message.chat().type_() {
+            ChatType::Supergroup(data) if data.is_channel() => gettext("Channel photo changed"),
+            _ => {
+                if message.is_outgoing() {
+                    gettext("You changed group photo")
+                } else {
+                    gettext!(
+                        "{} changed group photo",
+                        sender_name(message.sender(), true)
+                    )
                 }
             }
-        }
+        },
         MessageContent::MessagePinMessage(data) => {
-            show_sender = false;
-
             if message.is_outgoing() {
                 gettext!(
                     "You pinned {}",
@@ -574,41 +573,65 @@ fn stringify_message(message: Message) -> String {
                 )
             }
         }
-        MessageContent::MessageChatChangeTitle(data) => {
-            show_sender = false;
-            match message.chat().type_() {
-                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
-                    gettext!("Channel name was changed to «{}»", data.title)
-                }
-                _ => {
-                    if message.is_outgoing() {
-                        gettext("You changed group name to «{}»")
-                    } else {
-                        gettext!(
-                            "{} changed group name to «{}»",
-                            sender_name(message.sender(), true),
-                            data.title
-                        )
-                    }
+        MessageContent::MessageChatChangeTitle(data) => match message.chat().type_() {
+            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                gettext!("Channel name was changed to «{}»", data.title)
+            }
+            _ => {
+                if message.is_outgoing() {
+                    gettext("You changed group name to «{}»")
+                } else {
+                    gettext!(
+                        "{} changed group name to «{}»",
+                        sender_name(message.sender(), true),
+                        data.title
+                    )
                 }
             }
-        }
+        },
         MessageContent::MessageContactRegistered => {
             gettext!("{} joined Telegram", sender_name(message.sender(), true))
         }
         _ => gettext("Unsupported message"),
-    };
+    }
+}
 
-    if show_sender {
-        let sender_name = if message.is_outgoing() {
-            gettext("You")
+// This function eventually prefixes the specified message content with a sender.
+fn stringify_message_with_sender_prefix(message: Message, content: String) -> String {
+    if message.chat().is_own_chat() {
+        if message.is_outgoing() {
+            content
         } else {
-            escape(&sender_name(message.sender(), false))
-        };
-
-        format!("{}: {}", sender_name, text_content)
+            message
+                .forward_info()
+                .map(MessageForwardInfo::origin)
+                .map(|forward_origin| match forward_origin {
+                    MessageForwardOrigin::User(user) => stringify_user(user, false),
+                    MessageForwardOrigin::Chat { chat, .. }
+                    | MessageForwardOrigin::Channel { chat, .. } => chat.title(),
+                    MessageForwardOrigin::HiddenUser { sender_name }
+                    | MessageForwardOrigin::MessageImport { sender_name } => sender_name.clone(),
+                })
+                .map(|sender_name| format!("{}: {}", escape(&sender_name), content))
+                .unwrap_or(content)
+        }
     } else {
-        text_content
+        let show_sender = match message.chat().type_() {
+            ChatType::BasicGroup(_) => true,
+            ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
+            ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
+        };
+        if show_sender {
+            let sender_name = if message.is_outgoing() {
+                gettext("You")
+            } else {
+                escape(&sender_name(message.sender(), false))
+            };
+
+            format!("{}: {}", sender_name, content)
+        } else {
+            content
+        }
     }
 }
 

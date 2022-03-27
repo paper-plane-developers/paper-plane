@@ -3,6 +3,7 @@ mod action_list;
 mod history;
 mod item;
 mod message;
+mod message_forward_info;
 mod sponsored_message;
 
 pub(crate) use self::action::ChatAction;
@@ -10,8 +11,11 @@ pub(crate) use self::action_list::ChatActionList;
 use self::history::History;
 pub(crate) use self::item::{Item, ItemType};
 pub(crate) use self::message::{Message, MessageSender};
+pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
+use gettextrs::gettext;
+use glib::closure;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -277,9 +281,7 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            let avatar = obj.avatar();
-            super::Chat::this_expression("title").bind(avatar, "display-name", Some(obj));
+            obj.setup_expressions();
         }
     }
 }
@@ -311,6 +313,25 @@ impl Chat {
             ("session", &session),
         ])
         .expect("Failed to create Chat")
+    }
+
+    fn setup_expressions(&self) {
+        let is_me_expression = Self::this_expression("session").chain_property::<Session>("me");
+
+        let icon_name_expression = is_me_expression.chain_closure::<Option<String>>(closure!(
+            |self_: Self, me: Option<User>| {
+                if me.map(|me| me.id() == self_.id()).unwrap_or_default() {
+                    Some("user-bookmarks-symbolic")
+                } else {
+                    None
+                }
+            }
+        ));
+
+        let avatar = self.avatar();
+
+        icon_name_expression.bind(avatar, "icon-name", Some(self));
+        Self::this_expression("title").bind(avatar, "display-name", Some(self));
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
@@ -522,5 +543,17 @@ impl Chat {
 
     pub(crate) fn session(&self) -> Session {
         self.imp().session.upgrade().unwrap()
+    }
+
+    pub(crate) fn is_own_chat(&self) -> bool {
+        self.type_().user() == Some(&self.session().me())
+    }
+
+    pub(crate) fn display_name_expression(&self) -> gtk::Expression {
+        if self.is_own_chat() {
+            gtk::ConstantExpression::new(&gettext("Saved Messages")).upcast()
+        } else {
+            Self::this_expression("title").upcast()
+        }
     }
 }

@@ -3,6 +3,8 @@ use glib::closure;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
@@ -74,18 +76,29 @@ impl MessageText {
 
             if let Some(message) = message.downcast_ref::<Message>() {
                 // Show sender label, if needed
-                let show_sender = {
+                let show_sender = if message.chat().is_own_chat() {
                     if message.is_outgoing() {
-                        matches!(message.sender(), MessageSender::Chat(_))
+                        None
                     } else {
-                        matches!(
-                            message.chat().type_(),
-                            ChatType::BasicGroup(_) | ChatType::Supergroup(_)
-                        )
+                        Some(message.forward_info().unwrap().origin().id())
                     }
+                } else if message.is_outgoing() {
+                    if matches!(message.sender(), MessageSender::Chat(_)) {
+                        Some(Some(message.sender().id()))
+                    } else {
+                        None
+                    }
+                } else if matches!(
+                    message.chat().type_(),
+                    ChatType::BasicGroup(_) | ChatType::Supergroup(_)
+                ) {
+                    Some(Some(message.sender().id()))
+                } else {
+                    None
                 };
-                if show_sender {
-                    let sender_name_expression = message.sender_name_expression();
+
+                if let Some(maybe_id) = show_sender {
+                    let sender_name_expression = message.sender_display_name_expression();
                     let sender_binding = sender_name_expression.bind(
                         &*imp.sender_label,
                         "label",
@@ -94,22 +107,25 @@ impl MessageText {
                     bindings.push(sender_binding);
 
                     // Color sender label
-                    if let MessageSender::User(user) = message.sender() {
-                        let classes = vec![
-                            "sender-text-red",
-                            "sender-text-orange",
-                            "sender-text-violet",
-                            "sender-text-green",
-                            "sender-text-cyan",
-                            "sender-text-blue",
-                            "sender-text-pink",
-                        ];
+                    let classes = vec![
+                        "sender-text-red",
+                        "sender-text-orange",
+                        "sender-text-violet",
+                        "sender-text-green",
+                        "sender-text-cyan",
+                        "sender-text-blue",
+                        "sender-text-pink",
+                    ];
 
-                        let color_class = classes[user.id() as usize % classes.len()];
-                        imp.sender_label.add_css_class(color_class);
+                    let color_class =
+                        classes[maybe_id.map(|id| id as usize).unwrap_or_else(|| {
+                            let mut s = DefaultHasher::new();
+                            imp.sender_label.label().hash(&mut s);
+                            s.finish() as usize
+                        }) % classes.len()];
+                    imp.sender_label.add_css_class(color_class);
 
-                        *sender_color_class = Some(color_class.into());
-                    }
+                    *sender_color_class = Some(color_class.into());
 
                     imp.sender_label.set_visible(true);
                 } else {

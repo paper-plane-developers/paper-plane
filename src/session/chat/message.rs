@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::types::Message as TdMessage;
 
-use crate::session::chat::BoxedMessageContent;
+use crate::session::chat::{BoxedMessageContent, MessageForwardInfo, MessageForwardOrigin};
 use crate::session::{Chat, Session, User};
 
 #[derive(Clone, Debug, glib::Boxed)]
@@ -34,6 +34,13 @@ impl MessageSender {
             _ => None,
         }
     }
+
+    pub(crate) fn id(&self) -> i64 {
+        match self {
+            Self::User(user) => user.id(),
+            Self::Chat(chat) => chat.id(),
+        }
+    }
 }
 
 mod imp {
@@ -50,6 +57,7 @@ mod imp {
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
         pub(super) chat: WeakRef<Chat>,
+        pub(super) forward_info: OnceCell<Option<MessageForwardInfo>>,
     }
 
     #[glib::object_subclass]
@@ -110,6 +118,13 @@ mod imp {
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
+                    glib::ParamSpecObject::new(
+                        "forward-info",
+                        "Forward Info",
+                        "The forward info of this message",
+                        MessageForwardInfo::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -129,6 +144,7 @@ mod imp {
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => obj.set_content(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
+                "forward-info" => self.forward_info.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
@@ -140,6 +156,7 @@ mod imp {
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
                 "chat" => obj.chat().to_value(),
+                "forward-info" => obj.forward_info().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -164,6 +181,12 @@ impl Message {
             ("date", &message.date),
             ("content", &content),
             ("chat", chat),
+            (
+                "forward-info",
+                &message
+                    .forward_info
+                    .map(|forward_info| MessageForwardInfo::from_td_object(forward_info, chat)),
+            ),
         ])
         .expect("Failed to create Message")
     }
@@ -214,6 +237,10 @@ impl Message {
         self.imp().chat.upgrade().unwrap()
     }
 
+    pub(crate) fn forward_info(&self) -> Option<&MessageForwardInfo> {
+        self.imp().forward_info.get().unwrap().as_ref()
+    }
+
     pub(crate) fn sender_name_expression(&self) -> gtk::Expression {
         match self.sender() {
             MessageSender::User(user) => {
@@ -223,6 +250,32 @@ impl Message {
             MessageSender::Chat(chat) => gtk::ConstantExpression::new(chat)
                 .chain_property::<Chat>("title")
                 .upcast(),
+        }
+    }
+
+    pub(crate) fn sender_display_name_expression(&self) -> gtk::Expression {
+        if self.chat().is_own_chat() {
+            self.forward_info()
+                .map(MessageForwardInfo::origin)
+                .map(|forward_origin| match forward_origin {
+                    MessageForwardOrigin::User(user) => {
+                        let user_expression = gtk::ObjectExpression::new(user);
+                        User::full_name_expression(&user_expression)
+                    }
+                    MessageForwardOrigin::Chat { chat, .. }
+                    | MessageForwardOrigin::Channel { chat, .. } => {
+                        gtk::ConstantExpression::new(chat)
+                            .chain_property::<Chat>("title")
+                            .upcast()
+                    }
+                    MessageForwardOrigin::HiddenUser { sender_name }
+                    | MessageForwardOrigin::MessageImport { sender_name } => {
+                        gtk::ConstantExpression::new(&sender_name).upcast()
+                    }
+                })
+                .unwrap_or_else(|| self.sender_display_name_expression())
+        } else {
+            self.sender_name_expression()
         }
     }
 }
