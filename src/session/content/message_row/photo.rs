@@ -1,7 +1,7 @@
 use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib, CompositeTemplate};
+use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -142,9 +142,7 @@ impl MessagePhoto {
     fn load_photo_from_path(&self, path: &str) {
         // TODO: Consider changing this to use an async api when
         // https://github.com/gtk-rs/gtk4-rs/pull/777 is merged
-        let file = gio::File::for_path(path);
-        self.imp()
-            .media
-            .set_paintable(Some(gdk::Texture::from_file(&file).unwrap().upcast()));
+        let texture = gdk::Texture::from_filename(path).unwrap();
+        self.imp().media.set_paintable(Some(texture.upcast()));
     }
 }

@@ -9,7 +9,7 @@ adw = { version = "0.1", package = "libadwaita" }
 anyhow = "1.0"
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.4", package = "gtk4" }
+gtk = { version = "0.4", package = "gtk4", features = ["v4_6"] }
 indexmap = "1.8"
 locale_config = "0.3"
 log = "0.4"

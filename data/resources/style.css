@@ -31,11 +31,11 @@
 .unread-count {
   background-color: @accent_bg_color;
   color: @accent_fg_color;
-  font-weight: bold;
-  min-width: 0.7em;
   border-radius: 9999px;
-  font-size: 0.95em;
-  padding: 2px 5px 1px;
+  padding: 2px 6px;
+  font-size: 0.9em;
+  font-weight: bold;
+  font-feature-settings: "tnum";
 }
 
 .selected-avatar avatar {
@@ -71,6 +71,7 @@
 
 .chat-list row .timestamp {
   font-size: 0.8em;
+  font-feature-settings: "tnum";
 }
 
 .chat-list row .message {
@@ -88,12 +89,7 @@
 }
 
 .chat-list row .unread-count {
-  color: @accent_fg_color;
   font-size: 0.8em;
-  font-weight: bold;
-  min-width: 0.7em;
-  border-radius: 9999px;
-  padding: 2px 5px 0;
 }
 
 .chat-list row .unread-count-unmuted {

@@ -1,7 +1,7 @@
 use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib};
+use gtk::{gdk, glib};
 use tdlib::types::File;
 
 use crate::session::{Avatar as AvatarItem, Chat, User};
@@ -170,8 +170,7 @@ impl Avatar {
         if let Some(avatar_item) = avatar_item {
             let file = avatar_item.0;
             if file.local.is_downloading_completed {
-                let gfile = gio::File::for_path(&file.local.path);
-                let texture = gdk::Texture::from_file(&gfile).unwrap();
+                let texture = gdk::Texture::from_filename(&file.local.path).unwrap();
                 self.imp().avatar.set_custom_image(Some(&texture));
             } else {
                 let (sender, receiver) =
@@ -181,8 +180,7 @@ impl Avatar {
                     None,
                     clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                         if file.local.is_downloading_completed {
-                            let gfile = gio::File::for_path(&file.local.path);
-                            let texture = gdk::Texture::from_file(&gfile).unwrap();
+                            let texture = gdk::Texture::from_filename(&file.local.path).unwrap();
                             obj.imp().avatar.set_custom_image(Some(&texture));
                         }
                         glib::Continue(true)
