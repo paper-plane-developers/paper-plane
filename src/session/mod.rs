@@ -74,7 +74,6 @@ mod imp {
         pub(super) channel_chats_notification_settings:
             RefCell<Option<BoxedScopeNotificationSettings>>,
         pub(super) downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
-        pub(super) sender_name_avatars: RefCell<HashMap<String, Avatar>>,
         #[template_child]
         pub(super) leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
@@ -360,21 +359,6 @@ impl Session {
 
                 let client_id = self.client_id();
                 RUNTIME.spawn(functions::download_file(file_id, 5, 0, 0, false, client_id));
-            }
-        }
-    }
-
-    pub(crate) fn sender_name_avatar(&self, sender_name: &str) -> Avatar {
-        let mut sender_name_avatars = self.imp().sender_name_avatars.borrow_mut();
-
-        match sender_name_avatars.get(sender_name).cloned() {
-            Some(avatar) => avatar,
-            None => {
-                let avatar = crate::session::Avatar::new(self);
-                avatar.set_display_name(Some(sender_name.to_owned()));
-
-                sender_name_avatars.insert(sender_name.to_owned(), avatar.clone());
-                avatar
             }
         }
     }

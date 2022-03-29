@@ -204,17 +204,15 @@ impl Avatar {
             binding.unwatch();
         }
 
+        self.imp().avatar.set_item(item.clone());
+
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                imp.avatar.set_item(Some(chat.avatar().to_owned()));
-
                 match chat.type_().user() {
                     Some(user) => self.setup_is_online_binding(user),
                     None => self.set_is_online(false),
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
-                imp.avatar.set_item(Some(user.avatar().to_owned()));
-
                 self.setup_is_online_binding(user);
             } else {
                 unreachable!("Unexpected item type: {:?}", item);

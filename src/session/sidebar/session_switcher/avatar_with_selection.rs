@@ -4,7 +4,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::session::components::Avatar;
-use crate::session::Avatar as AvatarItem;
 
 mod imp {
     use super::*;
@@ -45,7 +44,7 @@ mod imp {
                         "item",
                         "Item",
                         "The Avatar item displayed by this widget",
-                        AvatarItem::static_type(),
+                        glib::Object::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt::new(
