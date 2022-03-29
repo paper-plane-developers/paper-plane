@@ -71,6 +71,7 @@
 
 .chat-list row .timestamp {
   font-size: 0.8em;
+  font-feature-settings: "tnum";
 }
 
 .chat-list row .message {
