@@ -187,26 +187,22 @@
   font-size: 0.95em;
 }
 
-.chat-action-bar > entry {
+.message-entry > entry {
   padding: 0;
 }
 
-.chat-action-bar > entry > scrollbar  {
+.message-entry > entry > scrollbar  {
   box-shadow: none;
   background: none;
 }
 
-.chat-action-bar > entry > scrollbar slider {
+.message-entry > entry > scrollbar slider {
   min-height: 0;
 }
 
-.chat-action-bar > entry > textview {
+.message-entry > entry > textview {
   background: none;
   color: inherit;
-}
-
-.chat-action-bar > entry > textview > text {
-  background: none;
 }
 
 .qr-code:disabled {

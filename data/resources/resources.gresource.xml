@@ -7,6 +7,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/add-account-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/avatar-with-selection.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/components-message-entry.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-action-bar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>

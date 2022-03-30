@@ -7,6 +7,7 @@ use tdlib::enums::{ChatAction, InputMessageContent};
 use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
+use crate::session::components::{BoxedFormattedText, MessageEntry};
 use crate::session::Chat;
 use crate::utils::spawn;
 
@@ -21,9 +22,7 @@ mod imp {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
         #[template_child]
-        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
-        #[template_child]
-        pub(super) message_entry: TemplateChild<gtk::TextView>,
+        pub(super) message_entry: TemplateChild<MessageEntry>,
         #[template_child]
         pub(super) send_message_button: TemplateChild<gtk::Button>,
     }
@@ -93,17 +92,18 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            let message_buffer = self.message_entry.buffer();
-            message_buffer.connect_text_notify(clone!(@weak obj => move |_| {
-                // Enable the send-text-message action only when the message entry contains text
-                let should_enable = !obj.message_entry_text().is_empty();
-                obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
+            self.message_entry.connect_formatted_text_notify(
+                clone!(@weak obj => move |message_entry, _| {
+                    // Enable the send-text-message action only when the message entry contains text
+                    let should_enable = message_entry.formatted_text().is_some();
+                    obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
-                // Send typing action
-                spawn(clone!(@weak obj => async move {
-                    obj.send_chat_action(ChatAction::Typing).await;
-                }));
-            }));
+                    // Send typing action
+                    spawn(clone!(@weak obj => async move {
+                        obj.send_chat_action(ChatAction::Typing).await;
+                    }));
+                }),
+            );
 
             // The message entry is always empty at this point, so disable the
             // send-text-message action
@@ -130,7 +130,7 @@ mod imp {
         }
 
         fn dispose(&self, _obj: &Self::Type) {
-            self.scrolled_window.unparent();
+            self.message_entry.unparent();
             self.send_message_button.unparent();
         }
     }
@@ -154,23 +154,10 @@ impl ChatActionBar {
         glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
-    fn message_entry_text(&self) -> String {
-        let buffer = self.imp().message_entry.buffer();
-        buffer
-            .text(&buffer.start_iter(), &buffer.end_iter(), true)
-            .trim()
-            .to_string()
-    }
-
     fn compose_text_message(&self) -> Option<InputMessageContent> {
-        let text = self.message_entry_text();
-        if !text.is_empty() {
-            let formatted_text = types::FormattedText {
-                text,
-                ..Default::default()
-            };
+        if let Some(formatted_text) = self.imp().message_entry.formatted_text() {
             let content = types::InputMessageText {
-                text: formatted_text,
+                text: formatted_text.0,
                 disable_web_page_preview: false,
                 clear_draft: true,
             };
@@ -194,7 +181,7 @@ impl ChatActionBar {
                 }
 
                 // Reset message entry
-                self.imp().message_entry.buffer().set_text("");
+                self.imp().message_entry.set_formatted_text(None);
             }
         }
     }
@@ -221,24 +208,21 @@ impl ChatActionBar {
     }
 
     fn load_draft_message(&self, message: Option<BoxedDraftMessage>) {
-        let message_text = message
-            .as_ref()
-            .map(|message| {
-                if let InputMessageContent::InputMessageText(ref content) =
+        let formatted_text = if let Some(message) = message {
+            if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
+                Some(BoxedFormattedText(content.text))
+            } else {
+                log::warn!(
+                    "Unexpected draft message type: {:?}",
                     message.0.input_message_text
-                {
-                    content.text.text.as_ref()
-                } else {
-                    log::warn!(
-                        "Unexpected draft message type: {:?}",
-                        message.0.input_message_text
-                    );
-                    ""
-                }
-            })
-            .unwrap_or_default();
+                );
+                None
+            }
+        } else {
+            None
+        };
 
-        self.imp().message_entry.buffer().set_text(&*message_text);
+        self.imp().message_entry.set_formatted_text(formatted_text);
     }
 
     async fn send_chat_action(&self, action: ChatAction) {
