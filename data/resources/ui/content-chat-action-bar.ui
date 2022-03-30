@@ -8,6 +8,16 @@
       <class name="toolbar"/>
     </style>
     <child>
+      <object class="GtkButton" id="select_file_button">
+        <property name="valign">end</property>
+        <property name="action-name">chat-action-bar.select-file</property>
+        <property name="icon-name">mail-attachment-symbolic</property>
+        <style>
+          <class name="circular"/>
+        </style>
+      </object>
+    </child>
+    <child>
       <object class="MessageEntry" id="message_entry">
         <property name="hexpand">True</property>
       </object>

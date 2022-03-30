@@ -1,13 +1,17 @@
+use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions};
+use ashpd::{zbus, WindowIdentifier};
+use gettextrs::gettext;
 use glib::clone;
 use glib::signal::Inhibit;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::{ChatAction, InputMessageContent};
 use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::components::{BoxedFormattedText, MessageEntry};
+use crate::session::content::SendPhotoDialog;
 use crate::session::Chat;
 use crate::utils::spawn;
 
@@ -36,6 +40,11 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
 
+            klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
+                spawn(clone!(@weak widget => async move {
+                    widget.select_file().await;
+                }));
+            });
             klass.install_action(
                 "chat-action-bar.send-text-message",
                 None,
@@ -165,6 +174,31 @@ impl ChatActionBar {
             Some(InputMessageContent::InputMessageText(content))
         } else {
             None
+        }
+    }
+
+    async fn select_file(&self) {
+        let connection = zbus::Connection::session().await.unwrap();
+        let proxy = FileChooserProxy::new(&connection).await.unwrap();
+        let native = self.native().unwrap();
+        let identifier = WindowIdentifier::from_native(&native).await;
+        let filter = FileFilter::new(&gettext("Image"))
+            .mimetype("image/jpeg")
+            .mimetype("image/png");
+        let options = OpenFileOptions::default().modal(true).add_filter(filter);
+
+        if let Ok(files) = proxy
+            .open_file(&identifier, &gettext("Select File"), options)
+            .await
+        {
+            let parent_window = self.root().unwrap().downcast().ok();
+            let chat = self.chat().unwrap();
+            let file = gio::File::for_uri(&files.uris()[0]);
+
+            if let Some(path) = file.path() {
+                let path = path.to_str().unwrap().to_string();
+                SendPhotoDialog::new(&parent_window, chat, path).present();
+            }
         }
     }
 
