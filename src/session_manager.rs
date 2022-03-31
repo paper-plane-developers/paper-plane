@@ -745,6 +745,16 @@ impl SessionManager {
         }));
     }
 
+    pub(crate) fn handle_paste_action(&self) {
+        if let Some(client_id) = self.active_logged_in_client_id() {
+            let clients = self.imp().clients.borrow();
+            let client = clients.get(&client_id).unwrap();
+            if let ClientState::LoggedIn = client.state {
+                client.session.handle_paste_action();
+            }
+        }
+    }
+
     pub(crate) fn begin_chats_search(&self) {
         if let Some(client_id) = self.active_logged_in_client_id() {
             let clients = self.imp().clients.borrow();

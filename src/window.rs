@@ -45,12 +45,21 @@ mod imp {
             Self::bind_template(klass);
 
             klass.add_binding_action(
+                gdk::Key::v,
+                gdk::ModifierType::CONTROL_MASK,
+                "win.paste",
+                None,
+            );
+            klass.install_action("win.paste", None, move |widget, _, _| {
+                widget.imp().session_manager.handle_paste_action();
+            });
+
+            klass.add_binding_action(
                 gdk::Key::F,
                 gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::SHIFT_MASK,
                 "sidebar.begin-chats-search",
                 None,
             );
-
             klass.install_action("sidebar.begin-chats-search", None, |widget, _, _| {
                 widget.imp().session_manager.begin_chats_search();
             });

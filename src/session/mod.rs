@@ -77,6 +77,8 @@ mod imp {
         pub(super) leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
         pub(super) sidebar: TemplateChild<Sidebar>,
+        #[template_child]
+        pub(super) content: TemplateChild<Content>,
     }
 
     #[glib::object_subclass]
@@ -86,7 +88,6 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            Content::static_type();
             Self::bind_template(klass);
 
             klass.install_action("content.go-back", None, move |widget, _, _| {
@@ -367,6 +368,10 @@ impl Session {
                 });
             }
         }
+    }
+
+    pub(crate) fn handle_paste_action(&self) {
+        self.imp().content.handle_paste_action();
     }
 
     pub(crate) fn begin_chats_search(&self) {

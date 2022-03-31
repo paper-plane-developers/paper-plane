@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions};
 use ashpd::{zbus, WindowIdentifier};
 use gettextrs::gettext;
@@ -13,7 +14,9 @@ use crate::session::chat::BoxedDraftMessage;
 use crate::session::components::{BoxedFormattedText, MessageEntry};
 use crate::session::content::SendPhotoDialog;
 use crate::session::Chat;
-use crate::utils::spawn;
+use crate::utils::{spawn, temp_dir};
+
+const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
 
 mod imp {
     use super::*;
@@ -114,6 +117,11 @@ mod imp {
                 }),
             );
 
+            self.message_entry
+                .connect_paste_clipboard(clone!(@weak obj => move |_| {
+                    obj.handle_paste_action();
+                }));
+
             // The message entry is always empty at this point, so disable the
             // send-text-message action
             obj.action_set_enabled("chat-action-bar.send-text-message", false);
@@ -182,9 +190,12 @@ impl ChatActionBar {
         let proxy = FileChooserProxy::new(&connection).await.unwrap();
         let native = self.native().unwrap();
         let identifier = WindowIdentifier::from_native(&native).await;
-        let filter = FileFilter::new(&gettext("Image"))
-            .mimetype("image/jpeg")
-            .mimetype("image/png");
+        let mut filter = FileFilter::new(&gettext("Image"));
+
+        for mime in PHOTO_MIME_TYPES {
+            filter = filter.mimetype(mime);
+        }
+
         let options = OpenFileOptions::default().modal(true).add_filter(filter);
 
         if let Ok(files) = proxy
@@ -287,6 +298,42 @@ impl ChatActionBar {
         }
     }
 
+    pub(crate) fn handle_paste_action(&self) {
+        if let Some(chat) = self.chat() {
+            spawn(clone!(@weak self as obj => async move {
+                if let Err(e) = obj.handle_image_clipboard(chat).await {
+                    log::warn!("Error on pasting an image: {:?}", e);
+                }
+            }));
+        }
+    }
+
+    async fn handle_image_clipboard(&self, chat: Chat) -> Result<(), anyhow::Error> {
+        if let Ok((stream, mime)) = self
+            .clipboard()
+            .read_future(PHOTO_MIME_TYPES, glib::PRIORITY_DEFAULT)
+            .await
+        {
+            let extension = match mime.as_str() {
+                "image/png" => "png",
+                "image/jpg" => "jpg",
+                _ => unreachable!(),
+            };
+
+            let temp_dir =
+                temp_dir().ok_or_else(|| anyhow!("The temporary directory doesn't exist"))?;
+            let path = temp_dir.join("clipboard").with_extension(extension);
+
+            save_stream_to_file(stream, &path).await?;
+
+            let parent_window = self.root().unwrap().downcast().ok();
+            let path = path.to_str().unwrap().to_string();
+            SendPhotoDialog::new(&parent_window, chat, path).present();
+        }
+
+        Ok(())
+    }
+
     pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }
@@ -311,4 +358,29 @@ impl ChatActionBar {
         imp.chat.replace(chat);
         self.notify("chat");
     }
+}
+
+async fn save_stream_to_file(
+    stream: gio::InputStream,
+    path: impl AsRef<std::path::Path>,
+) -> Result<(), glib::Error> {
+    let file = gio::File::for_path(path);
+    let file_stream = file
+        .replace_future(
+            None,
+            false,
+            gio::FileCreateFlags::REPLACE_DESTINATION,
+            glib::PRIORITY_DEFAULT,
+        )
+        .await?;
+
+    file_stream
+        .splice_future(
+            &stream,
+            gio::OutputStreamSpliceFlags::CLOSE_SOURCE | gio::OutputStreamSpliceFlags::CLOSE_TARGET,
+            glib::PRIORITY_DEFAULT,
+        )
+        .await?;
+
+    Ok(())
 }

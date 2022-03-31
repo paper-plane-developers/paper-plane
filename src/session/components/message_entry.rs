@@ -10,6 +10,7 @@ pub(crate) struct BoxedFormattedText(pub(crate) FormattedText);
 
 mod imp {
     use super::*;
+    use glib::subclass::Signal;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
@@ -39,6 +40,13 @@ mod imp {
     }
 
     impl ObjectImpl for MessageEntry {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder("paste-clipboard", &[], <()>::static_type().into()).build()]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecBoxed::new(
@@ -79,6 +87,11 @@ mod imp {
                 .buffer()
                 .connect_changed(clone!(@weak obj => move |_| {
                     obj.text_buffer_changed();
+                }));
+
+            self.text_view
+                .connect_paste_clipboard(clone!(@weak obj => move |_| {
+                    obj.emit_by_name::<()>("paste-clipboard", &[]);
                 }));
         }
 
@@ -140,6 +153,18 @@ impl MessageEntry {
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("formatted-text"), f)
+    }
+
+    pub(crate) fn connect_paste_clipboard<F: Fn(&Self) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("paste-clipboard", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
     }
 }
 

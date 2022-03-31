@@ -1535,6 +1535,7 @@ dependencies = [
  "qrcode-generator",
  "regex",
  "tdlib",
+ "temp-dir",
  "webp",
 ]
 

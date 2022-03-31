@@ -129,6 +129,10 @@ impl Content {
         glib::Object::new(&[]).expect("Failed to create Content")
     }
 
+    pub(crate) fn handle_paste_action(&self) {
+        self.imp().chat_history.handle_paste_action();
+    }
+
     pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }

@@ -23,8 +23,10 @@ use gtk::{gio, glib};
 use once_cell::sync::OnceCell;
 use std::path::PathBuf;
 use std::str::FromStr;
+use temp_dir::TempDir;
 
 pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
+pub(crate) static TEMP_DIR: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() {
     // Prepare i18n
@@ -68,6 +70,18 @@ fn main() {
             -1
         }
     });
+
+    // Create temp directory.
+    // This value must live during the entire execution of the app.
+    let temp_dir = TempDir::with_prefix("telegrand");
+    match &temp_dir {
+        Ok(temp_dir) => {
+            TEMP_DIR.set(temp_dir.path().to_path_buf()).unwrap();
+        }
+        Err(e) => {
+            log::warn!("Error creating temp directory: {:?}", e);
+        }
+    }
 
     app.run();
 }
