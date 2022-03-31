@@ -308,20 +308,4 @@ impl User {
     pub(crate) fn session(&self) -> Session {
         self.imp().session.upgrade().unwrap()
     }
-
-    pub(crate) fn full_name_expression(user_expression: &gtk::Expression) -> gtk::Expression {
-        let first_name_expression =
-            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "first-name");
-        let last_name_expression =
-            gtk::PropertyExpression::new(User::static_type(), Some(user_expression), "last-name");
-        gtk::ClosureExpression::with_callback(
-            &[first_name_expression, last_name_expression],
-            |args| {
-                let first_name = args[1].get::<String>().unwrap();
-                let last_name = args[2].get::<String>().unwrap();
-                format!("{} {}", first_name, last_name).trim().to_owned()
-            },
-        )
-        .upcast()
-    }
 }

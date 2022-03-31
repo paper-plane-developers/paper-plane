@@ -4,6 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::types::Message as TdMessage;
 
+use crate::expressions;
 use crate::session::chat::{BoxedMessageContent, MessageForwardInfo, MessageForwardOrigin};
 use crate::session::{Chat, Session, User};
 
@@ -245,7 +246,7 @@ impl Message {
         match self.sender() {
             MessageSender::User(user) => {
                 let user_expression = gtk::ConstantExpression::new(user);
-                User::full_name_expression(&user_expression)
+                expressions::user_full_name(&user_expression)
             }
             MessageSender::Chat(chat) => gtk::ConstantExpression::new(chat)
                 .chain_property::<Chat>("title")
@@ -260,7 +261,7 @@ impl Message {
                 .map(|forward_origin| match forward_origin {
                     MessageForwardOrigin::User(user) => {
                         let user_expression = gtk::ObjectExpression::new(user);
-                        User::full_name_expression(&user_expression)
+                        expressions::user_full_name(&user_expression)
                     }
                     MessageForwardOrigin::Chat { chat, .. }
                     | MessageForwardOrigin::Channel { chat, .. } => {

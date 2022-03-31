@@ -5,6 +5,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
+use crate::expressions;
 use crate::session::{Session, User};
 
 mod imp {
@@ -127,7 +128,7 @@ impl SessionEntryRow {
             SessionEntryRow::this_expression("session").chain_property::<Session>("me");
 
         // Bind the name
-        User::full_name_expression(&me_expression).bind(
+        expressions::user_full_name(&me_expression).bind(
             &*imp.display_name_label,
             "label",
             Some(self),

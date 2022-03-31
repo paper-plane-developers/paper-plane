@@ -7,6 +7,7 @@ use std::borrow::Cow;
 use tdlib::enums::{CallDiscardReason, InputMessageContent, MessageContent};
 use tdlib::types::{DraftMessage, MessageCall};
 
+use crate::expressions;
 use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
     ChatActionList, Message, MessageForwardInfo, MessageForwardOrigin, MessageSender,
@@ -349,7 +350,7 @@ impl Row {
 
                 // Title label binding
                 let user_expression = gtk::ConstantExpression::new(user);
-                let title_binding = User::full_name_expression(&user_expression).bind(
+                let title_binding = expressions::user_full_name(&user_expression).bind(
                     &*imp.title_label,
                     "label",
                     glib::Object::NONE,
