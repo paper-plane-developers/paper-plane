@@ -142,6 +142,7 @@ impl Row {
                 imp.timestamp_label.set_visible(true);
                 imp.bottom_box.set_visible(true);
 
+                let chat_expression = gtk::ConstantExpression::new(chat);
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
                 let actions_expression = Chat::this_expression("actions");
@@ -153,9 +154,11 @@ impl Row {
                 let session_expression = Chat::this_expression("session");
 
                 // Title label bindings
-                let title_binding =
-                    chat.display_name_expression()
-                        .bind(&*imp.title_label, "label", Some(chat));
+                let title_binding = expressions::chat_display_name(&chat_expression).bind(
+                    &*imp.title_label,
+                    "label",
+                    Some(chat),
+                );
                 bindings.push(title_binding);
 
                 // Timestamp label bindings

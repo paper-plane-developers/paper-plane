@@ -14,7 +14,6 @@ pub(crate) use self::message::{Message, MessageSender};
 pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 
-use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -535,13 +534,5 @@ impl Chat {
 
     pub(crate) fn is_own_chat(&self) -> bool {
         self.type_().user() == Some(&self.session().me())
-    }
-
-    pub(crate) fn display_name_expression(&self) -> gtk::Expression {
-        if self.is_own_chat() {
-            gtk::ConstantExpression::new(&gettext("Saved Messages")).upcast()
-        } else {
-            Self::this_expression("title").upcast()
-        }
     }
 }

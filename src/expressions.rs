@@ -1,4 +1,22 @@
-use crate::session::User;
+use gettextrs::gettext;
+
+use crate::session::{Chat, User};
+
+/// Creates an expression that produces the display name of a chat. This will either produce the
+/// title of the chat or the translated "Saved Messages" string in the case of the own chat.
+pub(crate) fn chat_display_name(chat_expression: &gtk::Expression) -> gtk::Expression {
+    let title_expression = chat_expression.chain_property::<Chat>("title");
+    gtk::ClosureExpression::with_callback(&[chat_expression, &title_expression], |args| {
+        let chat = args[1].get::<Chat>().unwrap();
+        let title = args[2].get::<String>().unwrap();
+        if chat.is_own_chat() {
+            gettext("Saved Messages")
+        } else {
+            title
+        }
+    })
+    .upcast()
+}
 
 /// Creates an expression that produces the full name of an user, binding both the
 /// first-name and last-name property together.

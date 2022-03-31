@@ -6,7 +6,7 @@ use gtk::{gio, glib, CompositeTemplate};
 use crate::session::chat::SponsoredMessage;
 use crate::session::content::{ChatActionBar, ItemRow, UserDialog};
 use crate::session::{Chat, ChatType, Session};
-use crate::spawn;
+use crate::{expressions, spawn};
 
 mod imp {
     use super::*;
@@ -179,10 +179,14 @@ impl ChatHistory {
                 _ => self.action_set_enabled("chat-history.view-info", false),
             }
 
+            let chat_expression = gtk::ConstantExpression::new(chat);
+
             // Title label bindings
-            let title_binding =
-                chat.display_name_expression()
-                    .bind(&*imp.window_title, "title", Some(chat));
+            let title_binding = expressions::chat_display_name(&chat_expression).bind(
+                &*imp.window_title,
+                "title",
+                Some(chat),
+            );
             imp.binding.replace(Some(title_binding));
 
             // Request sponsored message, if needed
