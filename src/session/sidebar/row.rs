@@ -96,6 +96,11 @@ mod imp {
             }
         }
 
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+            obj.setup_expressions();
+        }
+
         fn dispose(&self, _obj: &Self::Type) {
             self.avatar.unparent();
             self.main_box.unparent();
@@ -121,6 +126,28 @@ impl Row {
         glib::Object::new(&[]).expect("Failed to create Row")
     }
 
+    fn setup_expressions(&self) {
+        let imp = self.imp();
+        let item_expression = Self::this_expression("item");
+
+        // Chat title
+        expressions::chat_display_name(&item_expression).bind(
+            &*imp.title_label,
+            "label",
+            Some(self),
+        );
+
+        // Chat unread count
+        item_expression.chain_property::<Chat>("unread-count").bind(
+            &*imp.unread_count_label,
+            "label",
+            Some(self),
+        );
+
+        // User name
+        expressions::user_full_name(&item_expression).bind(&*imp.title_label, "label", Some(self));
+    }
+
     pub(crate) fn item(&self) -> Option<glib::Object> {
         self.imp().item.borrow().to_owned()
     }
@@ -142,7 +169,6 @@ impl Row {
                 imp.timestamp_label.set_visible(true);
                 imp.bottom_box.set_visible(true);
 
-                let chat_expression = gtk::ConstantExpression::new(chat);
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
                 let actions_expression = Chat::this_expression("actions");
@@ -152,14 +178,6 @@ impl Row {
                 let notification_settings_expression =
                     Chat::this_expression("notification-settings");
                 let session_expression = Chat::this_expression("session");
-
-                // Title label bindings
-                let title_binding = expressions::chat_display_name(&chat_expression).bind(
-                    &*imp.title_label,
-                    "label",
-                    Some(chat),
-                );
-                bindings.push(title_binding);
 
                 // Timestamp label bindings
                 let timestamp_binding = gtk::ClosureExpression::new::<i32, _, _>(
@@ -269,11 +287,6 @@ impl Row {
                     .bind(&*imp.unread_mention_label, "visible", Some(chat));
                 bindings.push(unread_mention_binding);
 
-                // Unread count binding
-                let unread_binding =
-                    unread_count_expression.bind(&*imp.unread_count_label, "label", Some(chat));
-                bindings.push(unread_binding);
-
                 // Unread count visibility binding
                 let unread_binding = gtk::ClosureExpression::new::<bool, _, _>(
                     &[
@@ -347,18 +360,9 @@ impl Row {
                 )
                 .bind(&*imp.pin_icon, "visible", Some(chat));
                 bindings.push(pin_binding);
-            } else if let Some(user) = item.downcast_ref::<User>() {
+            } else if item.downcast_ref::<User>().is_some() {
                 imp.timestamp_label.set_visible(false);
                 imp.bottom_box.set_visible(false);
-
-                // Title label binding
-                let user_expression = gtk::ConstantExpression::new(user);
-                let title_binding = expressions::user_full_name(&user_expression).bind(
-                    &*imp.title_label,
-                    "label",
-                    glib::Object::NONE,
-                );
-                bindings.push(title_binding);
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
             }
