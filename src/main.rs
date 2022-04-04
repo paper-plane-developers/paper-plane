@@ -2,6 +2,7 @@ mod application;
 #[rustfmt::skip]
 #[allow(clippy::all)]
 mod config;
+mod expressions;
 mod login;
 mod preferences_window;
 mod session;

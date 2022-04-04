@@ -3,6 +3,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
+use crate::expressions;
 use crate::session::User;
 
 mod imp {
@@ -98,7 +99,7 @@ impl UserDialog {
         let user_expression = UserDialog::this_expression("user");
 
         // Bind the name
-        User::full_name_expression(&user_expression).bind(&*imp.name_label, "label", Some(self));
+        expressions::user_full_name(&user_expression).bind(&*imp.name_label, "label", Some(self));
 
         // Bind the phone number
         let phone_number_expression = user_expression.chain_property::<User>("phone-number");

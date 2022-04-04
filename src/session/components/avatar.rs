@@ -5,7 +5,7 @@ use gtk::{gdk, glib};
 use tdlib::types::File;
 
 use crate::session::{Avatar as AvatarItem, Chat, User};
-use crate::Session;
+use crate::{expressions, Session};
 
 mod imp {
     use super::*;
@@ -142,7 +142,7 @@ impl Avatar {
         .bind(&*imp.avatar, "text", Some(self));
 
         // User title expression
-        User::full_name_expression(&item_expression).bind(&*imp.avatar, "text", Some(self));
+        expressions::user_full_name(&item_expression).bind(&*imp.avatar, "text", Some(self));
 
         // Icon expression
         let icon_name_expression =
