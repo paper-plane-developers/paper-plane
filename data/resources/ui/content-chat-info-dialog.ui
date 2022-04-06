@@ -47,23 +47,11 @@
               </object>
             </child>
             <child>
-              <object class="GtkListBox">
+              <object class="GtkListBox" id="info_list">
                 <property name="selection-mode">none</property>
                 <style>
                   <class name="boxed-list"/>
                 </style>
-                <child>
-                  <object class="AdwActionRow" id="mobile_row">
-                    <property name="subtitle" translatable="yes">Mobile</property>
-                    <property name="icon-name">phone-oldschool-symbolic</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwActionRow" id="username_row">
-                    <property name="subtitle" translatable="yes">Username</property>
-                    <property name="icon-name">user-info-symbolic</property>
-                  </object>
-                </child>
               </object>
             </child>
           </object>

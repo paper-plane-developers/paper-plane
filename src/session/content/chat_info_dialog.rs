@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use glib::closure;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -18,9 +19,7 @@ mod imp {
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) mobile_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
-        pub(super) username_row: TemplateChild<adw::ActionRow>,
+        pub(super) info_list: TemplateChild<gtk::ListBox>,
     }
 
     #[glib::object_subclass]
@@ -74,7 +73,7 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            obj.setup_expressions();
+            obj.setup_dialog();
         }
     }
 
@@ -94,7 +93,7 @@ impl ChatInfoDialog {
             .expect("Failed to create ChatInfoDialog")
     }
 
-    fn setup_expressions(&self) {
+    fn setup_dialog(&self) {
         let imp = self.imp();
         let chat_expression = Self::this_expression("chat");
 
@@ -107,37 +106,54 @@ impl ChatInfoDialog {
 
         match self.chat().unwrap().type_() {
             ChatType::Private(user) => {
-                let user_expression = gtk::ConstantExpression::new(user);
-
-                // Bind the phone number
-                let phone_number_expression =
-                    user_expression.chain_property::<User>("phone-number");
-                phone_number_expression
-                    .chain_closure::<String>(closure!(|_: ChatInfoDialog, phone_number: String| {
-                        format!("+{}", phone_number)
-                    }))
-                    .bind(&*imp.mobile_row, "title", Some(self));
-                phone_number_expression
-                    .chain_closure::<bool>(closure!(|_: ChatInfoDialog, phone_number: String| {
-                        !phone_number.is_empty()
-                    }))
-                    .bind(&*imp.mobile_row, "visible", Some(self));
-
-                // Bind the username
-                let username_expression = user_expression.chain_property::<User>("username");
-                username_expression
-                    .chain_closure::<String>(closure!(|_: ChatInfoDialog, username: String| {
-                        format!("@{}", username)
-                    }))
-                    .bind(&*imp.username_row, "title", Some(self));
-                username_expression
-                    .chain_closure::<bool>(closure!(|_: ChatInfoDialog, username: String| {
-                        !username.is_empty()
-                    }))
-                    .bind(&*imp.username_row, "visible", Some(self));
+                self.setup_user_info(user);
             }
-            _ => {}
+            _ => {
+                imp.info_list.set_visible(false);
+            }
         }
+    }
+
+    fn setup_user_info(&self, user: &User) {
+        let imp = self.imp();
+
+        // Phone number
+        let mobile_row = adw::ActionRow::builder()
+            .subtitle(&gettext("Mobile"))
+            .icon_name("phone-oldschool-symbolic")
+            .build();
+        imp.info_list.append(&mobile_row);
+
+        let phone_number_expression = User::this_expression("phone-number");
+        phone_number_expression
+            .chain_closure::<String>(closure!(|_: User, phone_number: String| {
+                format!("+{}", phone_number)
+            }))
+            .bind(&mobile_row, "title", Some(user));
+        phone_number_expression
+            .chain_closure::<bool>(closure!(|_: User, phone_number: String| {
+                !phone_number.is_empty()
+            }))
+            .bind(&mobile_row, "visible", Some(user));
+
+        // Username
+        let username_row = adw::ActionRow::builder()
+            .subtitle(&gettext("Username"))
+            .icon_name("user-info-symbolic")
+            .build();
+        imp.info_list.append(&username_row);
+
+        let username_expression = User::this_expression("username");
+        username_expression
+            .chain_closure::<String>(closure!(|_: User, username: String| {
+                format!("@{}", username)
+            }))
+            .bind(&username_row, "title", Some(user));
+        username_expression
+            .chain_closure::<bool>(closure!(|_: User, username: String| {
+                !username.is_empty()
+            }))
+            .bind(&username_row, "visible", Some(user));
     }
 
     pub(crate) fn chat(&self) -> Option<&Chat> {
