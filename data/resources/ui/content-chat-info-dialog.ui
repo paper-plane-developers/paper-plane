@@ -30,7 +30,7 @@
                       <object class="ComponentsAvatar">
                         <property name="size">96</property>
                         <binding name="item">
-                          <lookup name="user">ContentChatInfoDialog</lookup>
+                          <lookup name="chat">ContentChatInfoDialog</lookup>
                         </binding>
                       </object>
                     </child>

@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
 use crate::expressions;
-use crate::session::User;
+use crate::session::{Chat, ChatType, User};
 
 mod imp {
     use super::*;
@@ -14,7 +14,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-dialog.ui")]
     pub(crate) struct ChatInfoDialog {
-        pub(super) user: OnceCell<User>,
+        pub(super) chat: OnceCell<Chat>,
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -42,10 +42,10 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
-                    "user",
-                    "User",
-                    "The user displayed by this dialog",
-                    User::static_type(),
+                    "chat",
+                    "Chat",
+                    "The chat displayed by this dialog",
+                    Chat::static_type(),
                     glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                 )]
             });
@@ -60,14 +60,14 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "user" => self.user.set(value.get().unwrap()).unwrap(),
+                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "user" => obj.user().to_value(),
+                "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -89,46 +89,58 @@ glib::wrapper! {
 }
 
 impl ChatInfoDialog {
-    pub(crate) fn new(parent_window: &Option<gtk::Window>, user: &User) -> Self {
-        glib::Object::new(&[("transient-for", parent_window), ("user", user)])
+    pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: &Chat) -> Self {
+        glib::Object::new(&[("transient-for", parent_window), ("chat", chat)])
             .expect("Failed to create ChatInfoDialog")
     }
 
     fn setup_expressions(&self) {
         let imp = self.imp();
-        let user_expression = Self::this_expression("user");
+        let chat_expression = Self::this_expression("chat");
 
         // Bind the name
-        expressions::user_full_name(&user_expression).bind(&*imp.name_label, "label", Some(self));
+        expressions::chat_display_name(&chat_expression).bind(
+            &*imp.name_label,
+            "label",
+            Some(self),
+        );
 
-        // Bind the phone number
-        let phone_number_expression = user_expression.chain_property::<User>("phone-number");
-        phone_number_expression
-            .chain_closure::<String>(closure!(|_: ChatInfoDialog, phone_number: String| {
-                format!("+{}", phone_number)
-            }))
-            .bind(&*imp.mobile_row, "title", Some(self));
-        phone_number_expression
-            .chain_closure::<bool>(closure!(|_: ChatInfoDialog, phone_number: String| {
-                !phone_number.is_empty()
-            }))
-            .bind(&*imp.mobile_row, "visible", Some(self));
+        match self.chat().unwrap().type_() {
+            ChatType::Private(user) => {
+                let user_expression = gtk::ConstantExpression::new(user);
 
-        // Bind the username
-        let username_expression = user_expression.chain_property::<User>("username");
-        username_expression
-            .chain_closure::<String>(closure!(|_: ChatInfoDialog, username: String| {
-                format!("@{}", username)
-            }))
-            .bind(&*imp.username_row, "title", Some(self));
-        username_expression
-            .chain_closure::<bool>(closure!(|_: ChatInfoDialog, username: String| {
-                !username.is_empty()
-            }))
-            .bind(&*imp.username_row, "visible", Some(self));
+                // Bind the phone number
+                let phone_number_expression =
+                    user_expression.chain_property::<User>("phone-number");
+                phone_number_expression
+                    .chain_closure::<String>(closure!(|_: ChatInfoDialog, phone_number: String| {
+                        format!("+{}", phone_number)
+                    }))
+                    .bind(&*imp.mobile_row, "title", Some(self));
+                phone_number_expression
+                    .chain_closure::<bool>(closure!(|_: ChatInfoDialog, phone_number: String| {
+                        !phone_number.is_empty()
+                    }))
+                    .bind(&*imp.mobile_row, "visible", Some(self));
+
+                // Bind the username
+                let username_expression = user_expression.chain_property::<User>("username");
+                username_expression
+                    .chain_closure::<String>(closure!(|_: ChatInfoDialog, username: String| {
+                        format!("@{}", username)
+                    }))
+                    .bind(&*imp.username_row, "title", Some(self));
+                username_expression
+                    .chain_closure::<bool>(closure!(|_: ChatInfoDialog, username: String| {
+                        !username.is_empty()
+                    }))
+                    .bind(&*imp.username_row, "visible", Some(self));
+            }
+            _ => {}
+        }
     }
 
-    pub(crate) fn user(&self) -> Option<&User> {
-        self.imp().user.get()
+    pub(crate) fn chat(&self) -> Option<&Chat> {
+        self.imp().chat.get()
     }
 }

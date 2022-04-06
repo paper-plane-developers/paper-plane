@@ -149,9 +149,7 @@ impl ChatHistory {
 
     fn open_info_dialog(&self) {
         if let Some(chat) = self.chat() {
-            if let ChatType::Private(user) = chat.type_() {
-                ChatInfoDialog::new(&self.parent_window(), user).present();
-            }
+            ChatInfoDialog::new(&self.parent_window(), &chat).present();
         }
     }
 
