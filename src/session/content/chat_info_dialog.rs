@@ -12,8 +12,8 @@ mod imp {
     use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-user-dialog.ui")]
-    pub(crate) struct UserDialog {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-dialog.ui")]
+    pub(crate) struct ChatInfoDialog {
         pub(super) user: OnceCell<User>,
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
@@ -24,9 +24,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for UserDialog {
-        const NAME: &'static str = "ContentUserDialog";
-        type Type = super::UserDialog;
+    impl ObjectSubclass for ChatInfoDialog {
+        const NAME: &'static str = "ContentChatInfoDialog";
+        type Type = super::ChatInfoDialog;
         type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
@@ -38,7 +38,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for UserDialog {
+    impl ObjectImpl for ChatInfoDialog {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
@@ -78,25 +78,25 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for UserDialog {}
-    impl WindowImpl for UserDialog {}
-    impl AdwWindowImpl for UserDialog {}
+    impl WidgetImpl for ChatInfoDialog {}
+    impl WindowImpl for ChatInfoDialog {}
+    impl AdwWindowImpl for ChatInfoDialog {}
 }
 
 glib::wrapper! {
-    pub(crate) struct UserDialog(ObjectSubclass<imp::UserDialog>)
+    pub(crate) struct ChatInfoDialog(ObjectSubclass<imp::ChatInfoDialog>)
         @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
-impl UserDialog {
+impl ChatInfoDialog {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, user: &User) -> Self {
         glib::Object::new(&[("transient-for", parent_window), ("user", user)])
-            .expect("Failed to create UserDialog")
+            .expect("Failed to create ChatInfoDialog")
     }
 
     fn setup_expressions(&self) {
         let imp = self.imp();
-        let user_expression = UserDialog::this_expression("user");
+        let user_expression = Self::this_expression("user");
 
         // Bind the name
         expressions::user_full_name(&user_expression).bind(&*imp.name_label, "label", Some(self));
@@ -104,12 +104,12 @@ impl UserDialog {
         // Bind the phone number
         let phone_number_expression = user_expression.chain_property::<User>("phone-number");
         phone_number_expression
-            .chain_closure::<String>(closure!(|_: UserDialog, phone_number: String| {
+            .chain_closure::<String>(closure!(|_: ChatInfoDialog, phone_number: String| {
                 format!("+{}", phone_number)
             }))
             .bind(&*imp.mobile_row, "title", Some(self));
         phone_number_expression
-            .chain_closure::<bool>(closure!(|_: UserDialog, phone_number: String| {
+            .chain_closure::<bool>(closure!(|_: ChatInfoDialog, phone_number: String| {
                 !phone_number.is_empty()
             }))
             .bind(&*imp.mobile_row, "visible", Some(self));
@@ -117,12 +117,12 @@ impl UserDialog {
         // Bind the username
         let username_expression = user_expression.chain_property::<User>("username");
         username_expression
-            .chain_closure::<String>(closure!(|_: UserDialog, username: String| {
+            .chain_closure::<String>(closure!(|_: ChatInfoDialog, username: String| {
                 format!("@{}", username)
             }))
             .bind(&*imp.username_row, "title", Some(self));
         username_expression
-            .chain_closure::<bool>(closure!(|_: UserDialog, username: String| {
+            .chain_closure::<bool>(closure!(|_: ChatInfoDialog, username: String| {
                 !username.is_empty()
             }))
             .bind(&*imp.username_row, "visible", Some(self));
