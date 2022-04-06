@@ -212,3 +212,7 @@
 .qr-code:disabled {
   filter: opacity(0.5);
 }
+
+.chat-info-dialog {
+  margin: 24px 12px;
+}
