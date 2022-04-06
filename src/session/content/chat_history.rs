@@ -178,11 +178,6 @@ impl ChatHistory {
         let imp = self.imp();
 
         if let Some(ref chat) = chat {
-            match chat.type_() {
-                ChatType::Private(_) => self.action_set_enabled("chat-history.view-info", true),
-                _ => self.action_set_enabled("chat-history.view-info", false),
-            }
-
             // Request sponsored message, if needed
             let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
