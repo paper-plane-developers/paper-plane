@@ -30,18 +30,17 @@
 //! In order to remember the order in which the user selected the sessions, the `SessionManager`
 //! uses a gsettings key value pair.
 
-use futures::{TryFutureExt, TryStreamExt};
+use futures::TryFutureExt;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use std::borrow::Borrow;
+use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tdlib::enums::{self, AuthorizationState, Update};
 use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
-use tokio::fs;
-use tokio_stream::wrappers::ReadDirStream;
 
 use crate::session::{Session, User};
 use crate::utils::{data_dir, do_async, log_out, send_tdlib_parameters};
@@ -147,39 +146,31 @@ mod imp {
             // ####################################################################################
             // # Load the sessions from the data directory.                                       #
             // ####################################################################################
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                analyze_data_dir(),
-                clone!(@weak obj => move |datadir_state| async move {
-                    match datadir_state {
-                        // TODO: Should we show a dialog in this case instead of just bailing out
-                        // silently?
-                        Err(e) => panic!("Could not initialize data directory: {}", e),
-                        Ok(datadir_state) => match datadir_state {
-                            DatadirState::Empty => {
-                                obj.add_new_session(
-                                    APPLICATION_OPTS.get().unwrap().test_dc,
-                                );
-                            }
-                            DatadirState::HasSessions {
-                                recently_used_sessions,
-                                database_infos
-                            } => {
-                                let imp = obj.imp();
-
-                                imp.recently_used_sessions.replace(recently_used_sessions);
-
-                                imp.initial_sessions_to_handle
-                                    .set(database_infos.len() as u32);
-
-                                database_infos.into_iter().for_each(|database_info| {
-                                    obj.add_existing_session(database_info);
-                                });
-                            }
-                        }
+            match analyze_data_dir() {
+                // TODO: Should we show a dialog in this case instead of just bailing out
+                // silently?
+                Err(e) => panic!("Could not initialize data directory: {}", e),
+                Ok(datadir_state) => match datadir_state {
+                    DatadirState::Empty => {
+                        obj.add_new_session(APPLICATION_OPTS.get().unwrap().test_dc);
                     }
-                }),
-            );
+                    DatadirState::HasSessions {
+                        recently_used_sessions,
+                        database_infos,
+                    } => {
+                        let imp = obj.imp();
+
+                        imp.recently_used_sessions.replace(recently_used_sessions);
+
+                        imp.initial_sessions_to_handle
+                            .set(database_infos.len() as u32);
+
+                        database_infos.into_iter().for_each(|database_info| {
+                            obj.add_existing_session(database_info);
+                        });
+                    }
+                },
+            }
         }
 
         fn dispose(&self, _obj: &Self::Type) {
@@ -529,13 +520,9 @@ impl SessionManager {
             let client = imp.clients.borrow_mut().remove(&client_id).unwrap();
             if let ClientState::LoggingOut = client.state {
                 let database_dir_base_name = client.database_dir_base_name().to_owned();
-                RUNTIME.spawn(async move {
-                    if let Err(e) =
-                        fs::remove_dir_all(data_dir().join(database_dir_base_name)).await
-                    {
-                        log::error!("Error on on removing database directory: {}", e);
-                    }
-                });
+                if let Err(e) = fs::remove_dir_all(data_dir().join(database_dir_base_name)) {
+                    log::error!("Error on on removing database directory: {}", e);
+                }
             }
             return;
         }
@@ -769,40 +756,29 @@ pub(crate) enum DatadirState {
 ///
 /// If the data directory exists, information about the sessions is gathered. This is reading the
 /// recently used sessions file and checking the individual session's database directory.
-async fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
+fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
     if !data_dir().exists() {
         // Create the Telegrand data directory if it does not exist and return.
-        return fs::create_dir_all(&data_dir())
-            .map_err(anyhow::Error::from)
-            .map_ok(|_| DatadirState::Empty)
-            .await;
+        fs::create_dir_all(&data_dir())?;
+        return Ok(DatadirState::Empty);
     }
 
-    let read_dir = fs::read_dir(&data_dir())
-        .map_err(anyhow::Error::from)
-        .await?;
-
     // All directories with the result of reading the session info file.
-    let database_infos = ReadDirStream::new(read_dir)
-        .map_err(anyhow::Error::from)
+    let database_infos = fs::read_dir(&data_dir())?
+        // Remove entries with error
+        .filter_map(|res| res.ok())
         // Only consider directories.
-        .try_filter_map(|entry| async move {
-            Ok(match entry.metadata().await {
-                Ok(metadata) if metadata.is_dir() => Some(entry),
-                _ => None,
-            })
-        })
+        .filter(|entry| entry.path().is_dir())
         // Only consider directories with a "*.binlog" file
-        .try_filter_map(|entry| async move {
-            Ok(match fs::metadata(entry.path().join("td.binlog")).await {
-                Ok(metadata) if metadata.is_file() => Some((entry, false)),
-                _ => match fs::metadata(entry.path().join("td_test.binlog")).await {
-                    Ok(metadata) if metadata.is_file() => Some((entry, true)),
-                    _ => None,
-                },
-            })
+        .filter_map(|entry| {
+            if entry.path().join("td.binlog").is_file() {
+                return Some((entry, false));
+            } else if entry.path().join("td_test.binlog").is_file() {
+                return Some((entry, true));
+            }
+            None
         })
-        .map_ok(|(entry, use_test_dc)| DatabaseInfo {
+        .map(|(entry, use_test_dc)| DatabaseInfo {
             directory_base_name: entry
                 .path()
                 .file_name()
@@ -812,8 +788,7 @@ async fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
                 .to_owned(),
             use_test_dc,
         })
-        .try_collect::<Vec<_>>()
-        .await?;
+        .collect::<Vec<_>>();
 
     if database_infos.is_empty() {
         Ok(DatadirState::Empty)
