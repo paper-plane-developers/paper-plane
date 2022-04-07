@@ -106,7 +106,9 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             klass.install_action("login.previous", None, move |widget, _, _| {
-                widget.previous()
+                spawn!(clone!(@weak widget => async move {
+                    widget.previous().await;
+                }));
             });
             klass.install_action("login.next", None, move |widget, _, _| {
                 spawn!(clone!(@weak widget => async move {
@@ -554,7 +556,7 @@ impl Login {
         }
     }
 
-    fn previous(&self) {
+    async fn previous(&self) {
         let imp = self.imp();
 
         match imp.content.visible_child_name().unwrap().as_str() {
@@ -562,10 +564,10 @@ impl Login {
                 self.freeze_with_previous_spinner();
 
                 // Logout the client when login is aborted.
-                log_out(imp.client_id.get());
+                log_out(imp.client_id.get()).await;
                 imp.session_manager.get().unwrap().switch_to_sessions(None);
             }
-            "qr-code-page" => self.leave_qr_code_page(),
+            "qr-code-page" => self.leave_qr_code_page().await,
             "password-forgot-page" => self.navigate_to_page::<gtk::Editable, _, _>(
                 "password-page",
                 [],
@@ -599,7 +601,7 @@ impl Login {
         let visible_page = imp.content.visible_child_name().unwrap();
 
         match visible_page.as_str() {
-            "phone-number-page" => self.send_phone_number(),
+            "phone-number-page" => self.send_phone_number().await,
             "code-page" => self.send_code().await,
             "registration-page" => {
                 if imp.show_tos_popup.get() {
@@ -641,7 +643,7 @@ impl Login {
         );
     }
 
-    fn leave_qr_code_page(&self) {
+    async fn leave_qr_code_page(&self) {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
         let imp = self.imp();
@@ -654,7 +656,7 @@ impl Login {
             .0
             .use_test_dc;
 
-        log_out(imp.client_id.get());
+        log_out(imp.client_id.get()).await;
         imp.session_manager
             .get()
             .unwrap()
@@ -742,7 +744,7 @@ impl Login {
         }
     }
 
-    fn send_phone_number(&self) {
+    async fn send_phone_number(&self) {
         let imp = self.imp();
 
         reset_error_label(&imp.welcome_page_error_label);
@@ -772,32 +774,29 @@ impl Login {
                 // We just figured out that we already have an open session for that account.
                 // Therefore we logout the client, with which we wanted to log in and delete its
                 // just created database directory.
-                log_out(imp.client_id.get());
+                log_out(imp.client_id.get()).await;
                 imp.session_manager
                     .get()
                     .unwrap()
                     .switch_to_sessions(Some(pos));
             }
             None => {
-                spawn!(clone!(@weak self as obj => async move {
-                    let result = functions::set_authentication_phone_number(
-                        phone_number.into(),
-                        Some(types::PhoneNumberAuthenticationSettings {
-                            allow_flash_call: true,
-                            allow_missed_call: true,
-                            ..Default::default()
-                        }),
-                        client_id,
-                    )
-                    .await;
-                    let imp = obj.imp();
+                let result = functions::set_authentication_phone_number(
+                    phone_number.into(),
+                    Some(types::PhoneNumberAuthenticationSettings {
+                        allow_flash_call: true,
+                        allow_missed_call: true,
+                        ..Default::default()
+                    }),
+                    client_id,
+                )
+                .await;
 
-                    obj.handle_user_result(
-                        result,
-                        &imp.welcome_page_error_label,
-                        &*imp.phone_number_entry,
-                    );
-                }));
+                self.handle_user_result(
+                    result,
+                    &imp.welcome_page_error_label,
+                    &*imp.phone_number_entry,
+                );
             }
         }
     }

@@ -38,8 +38,8 @@ use tdlib::functions;
 use tdlib::types::{File, ScopeNotificationSettings};
 
 use crate::session_manager::DatabaseInfo;
+use crate::spawn;
 use crate::utils::log_out;
-use crate::RUNTIME;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedDatabaseInfo")]
@@ -97,7 +97,9 @@ mod imp {
                     .navigate(adw::NavigationDirection::Back);
             });
             klass.install_action("session.log-out", None, move |widget, _, _| {
-                log_out(widget.client_id());
+                spawn!(clone!(@weak widget => async move {
+                    log_out(widget.client_id()).await;
+                }));
             });
         }
 
@@ -358,7 +360,12 @@ impl Session {
                 entry.insert(vec![sender]);
 
                 let client_id = self.client_id();
-                RUNTIME.spawn(functions::download_file(file_id, 5, 0, 0, false, client_id));
+                spawn!(async move {
+                    let result = functions::download_file(file_id, 5, 0, 0, false, client_id).await;
+                    if let Err(e) = result {
+                        log::warn!("Error downloading a file: {:?}", e);
+                    }
+                });
             }
         }
     }

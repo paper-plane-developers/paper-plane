@@ -2,13 +2,15 @@ use gettextrs::gettext;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
 use regex::Regex;
+use gtk::glib;
+use std::future::Future;
 use std::path::PathBuf;
 use tdlib::enums::TextEntityType;
 use tdlib::types::{self, FormattedText};
 use tdlib::{enums, functions};
 
 use crate::session_manager::DatabaseInfo;
-use crate::{config, APPLICATION_OPTS, RUNTIME};
+use crate::{config, APPLICATION_OPTS};
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
@@ -183,12 +185,10 @@ pub(crate) async fn send_tdlib_parameters(
     functions::set_tdlib_parameters(parameters, client_id).await
 }
 
-pub(crate) fn log_out(client_id: i32) {
-    RUNTIME.spawn(async move {
-        if let Err(e) = functions::log_out(client_id).await {
-            log::error!("Could not logout client with id={}: {:?}", client_id, e);
-        }
-    });
+pub(crate) async fn log_out(client_id: i32) {
+    if let Err(e) = functions::log_out(client_id).await {
+        log::error!("Could not logout client with id={}: {:?}", client_id, e);
+    }
 }
 
 /// Spawn a future on the default `MainContext`
@@ -204,4 +204,10 @@ macro_rules! spawn {
         let ctx = glib::MainContext::default();
         ctx.spawn_local_with_priority($priority, $future);
     };
+}
+
+/// Run a future on the default `MainContext` and block until finished
+pub(crate) fn block_on<F: Future>(fut: F) -> F::Output {
+    let ctx = glib::MainContext::default();
+    ctx.block_on(fut)
 }

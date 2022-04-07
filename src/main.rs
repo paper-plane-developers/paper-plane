@@ -20,12 +20,9 @@ use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::{gettext, LocaleCategory};
 use gtk::prelude::{ApplicationExt, ApplicationExtManual, IsA};
 use gtk::{gio, glib};
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::OnceCell;
 use std::path::PathBuf;
 use std::str::FromStr;
-
-pub(crate) static RUNTIME: Lazy<tokio::runtime::Runtime> =
-    Lazy::new(|| tokio::runtime::Runtime::new().unwrap());
 
 pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
 

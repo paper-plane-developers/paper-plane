@@ -11,7 +11,7 @@ use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
 use crate::session_manager::{ClientState, SessionManager};
 use crate::utils::MESSAGE_TRUNCATED_LENGTH;
-use crate::Application;
+use crate::{spawn, Application};
 
 mod imp {
     use super::*;
@@ -79,10 +79,12 @@ mod imp {
             // Set the online state of the active client based on
             // whether the window is active or not
             obj.connect_is_active_notify(|window| {
-                window
-                    .imp()
-                    .session_manager
-                    .set_active_client_online(window.is_active());
+                spawn!(clone!(@weak window => async move {
+                    window
+                        .imp()
+                        .session_manager
+                        .set_active_client_online(window.is_active()).await;
+                }));
             });
         }
     }

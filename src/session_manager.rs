@@ -43,8 +43,8 @@ use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
 
 use crate::session::{Session, User};
-use crate::utils::{data_dir, log_out, send_tdlib_parameters};
-use crate::{spawn, APPLICATION_OPTS, RUNTIME};
+use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters};
+use crate::{spawn, APPLICATION_OPTS};
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
@@ -317,9 +317,12 @@ impl SessionManager {
 
     /// Sets the online status for the active logged in client. This will be called from the
     /// application `Window` when its active state has changed.
-    pub(crate) fn set_active_client_online(&self, value: bool) {
+    pub(crate) async fn set_active_client_online(&self, value: bool) {
         if let Some(client_id) = self.active_logged_in_client_id() {
-            RUNTIME.spawn(set_online(client_id, value));
+            let result = set_online(client_id, value).await;
+            if let Err(e) = result {
+                log::warn!("Error setting a client online state: {:?}", e);
+            }
         }
     }
 
@@ -335,11 +338,18 @@ impl SessionManager {
                 _ => None,
             })
             .for_each(|client_id| {
-                RUNTIME.spawn(set_online(
-                    client_id,
-                    // Session switching is only possible when the window is active.
-                    client_id == active_client_id,
-                ));
+                spawn!(async move {
+                    let result = set_online(
+                        client_id,
+                        // Session switching is only possible when the window is active.
+                        client_id == active_client_id,
+                    )
+                    .await;
+
+                    if let Err(e) = result {
+                        log::warn!("Error setting a client online state: {:?}", e);
+                    }
+                });
             });
     }
 
@@ -360,16 +370,19 @@ impl SessionManager {
             },
         );
 
-        send_log_level(client_id);
+        spawn!(async move {
+            send_log_level(client_id).await;
+        });
     }
 
     /// This function is used to add a new session for a so far unknown account. This means it will
     /// go through the login process.
     pub(crate) fn add_new_session(&self, use_test_dc: bool) {
         let client_id = tdlib::create_client();
-
         self.init_new_session(client_id, use_test_dc);
-        send_log_level(client_id);
+        spawn!(async move {
+            send_log_level(client_id).await;
+        });
     }
 
     /// This function initializes everything that's needed for adding a new session for the given
@@ -484,7 +497,7 @@ impl SessionManager {
         );
 
         // Block on that future, else the window closes before they are finished!!!
-        RUNTIME.block_on(async {
+        block_on(async {
             close_sessions_future.await.into_iter().for_each(|result| {
                 if let Err(e) = result {
                     log::warn!("Error on closing client: {:?}", e);
@@ -609,7 +622,9 @@ impl SessionManager {
                             imp.login
                                 .set_authorization_state(update.authorization_state);
                         } else {
-                            log_out(client_id);
+                            spawn!(async move {
+                                log_out(client_id).await;
+                            });
                         }
                     }
                 }
@@ -671,6 +686,24 @@ impl SessionManager {
         }
     }
 
+    async fn enable_notifications(&self, client_id: i32) {
+        let result = functions::set_option(
+            "notification_group_count_max".to_string(),
+            Some(enums::OptionValue::Integer(types::OptionValueInteger {
+                value: 5,
+            })),
+            client_id,
+        )
+        .await;
+
+        if let Err(e) = result {
+            log::warn!(
+                "Error setting the notification_group_count_max option: {:?}",
+                e
+            );
+        }
+    }
+
     fn add_logged_in_session_(&self, client_id: i32, session: &Session, me: &User, visible: bool) {
         let imp = self.imp();
 
@@ -707,13 +740,9 @@ impl SessionManager {
         }
 
         // Enable notifications for this client
-        RUNTIME.spawn(functions::set_option(
-            "notification_group_count_max".to_string(),
-            Some(enums::OptionValue::Integer(types::OptionValueInteger {
-                value: 5,
-            })),
-            client_id,
-        ));
+        spawn!(clone!(@weak self as obj => async move {
+            obj.enable_notifications(client_id).await;
+        }));
     }
 
     pub(crate) fn begin_chats_search(&self) {
@@ -851,8 +880,8 @@ async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Err
 }
 
 /// Helper function for setting the tdlib log level.
-fn send_log_level(client_id: i32) {
-    RUNTIME.spawn(functions::set_log_verbosity_level(
+async fn send_log_level(client_id: i32) {
+    let result = functions::set_log_verbosity_level(
         if log::log_enabled!(log::Level::Trace) {
             5
         } else if log::log_enabled!(log::Level::Debug) {
@@ -865,7 +894,11 @@ fn send_log_level(client_id: i32) {
             0
         },
         client_id,
-    ));
+    )
+    .await;
+    if let Err(e) = result {
+        log::warn!("Error setting the tdlib log level: {:?}", e);
+    }
 }
 
 /// Helper function for removing an element from a [`Vec`] based on an equality comparison.

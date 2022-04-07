@@ -8,7 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::Chat;
-use crate::{spawn, RUNTIME};
+use crate::spawn;
 
 mod imp {
     use super::*;
@@ -41,7 +41,9 @@ mod imp {
                 "chat-action-bar.send-text-message",
                 None,
                 move |widget, _, _| {
-                    widget.send_text_message();
+                    spawn!(clone!(@weak widget => async move {
+                        widget.send_text_message().await;
+                    }));
                 },
             );
         }
@@ -179,16 +181,17 @@ impl ChatActionBar {
         }
     }
 
-    fn send_text_message(&self) {
+    async fn send_text_message(&self) {
         if let Some(chat) = self.chat() {
             if let Some(message) = self.compose_text_message() {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
 
                 // Send the message
-                RUNTIME.spawn(functions::send_message(
-                    chat_id, 0, 0, None, message, client_id,
-                ));
+                let result = functions::send_message(chat_id, 0, 0, None, message, client_id).await;
+                if let Err(e) = result {
+                    log::warn!("Error sending a message: {:?}", e);
+                }
 
                 // Reset message entry
                 self.imp().message_entry.buffer().set_text("");
@@ -196,7 +199,7 @@ impl ChatActionBar {
         }
     }
 
-    fn save_message_as_draft(&self) {
+    async fn save_message_as_draft(&self) {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
@@ -209,12 +212,11 @@ impl ChatActionBar {
                 });
 
             // Save draft message
-            RUNTIME.spawn(functions::set_chat_draft_message(
-                chat_id,
-                0,
-                draft_message,
-                client_id,
-            ));
+            let result =
+                functions::set_chat_draft_message(chat_id, 0, draft_message, client_id).await;
+            if let Err(e) = result {
+                log::warn!("Error setting a draft message: {:?}", e);
+            }
         }
     }
 
@@ -276,7 +278,9 @@ impl ChatActionBar {
             return;
         }
 
-        self.save_message_as_draft();
+        spawn!(clone!(@weak self as obj => async move {
+            obj.save_message_as_draft().await;
+        }));
 
         let imp = self.imp();
 
