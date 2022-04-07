@@ -142,7 +142,9 @@ impl ChatHistory {
     fn load_older_messages(&self, adj: &gtk::Adjustment) {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(chat) = self.chat() {
-                chat.history().load_older_messages();
+                spawn!(clone!(@weak chat => async move {
+                    chat.history().load_older_messages().await;
+                }));
             }
         }
     }

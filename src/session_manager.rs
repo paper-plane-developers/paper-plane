@@ -43,8 +43,8 @@ use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
 
 use crate::session::{Session, User};
-use crate::utils::{data_dir, do_async, log_out, send_tdlib_parameters};
-use crate::{APPLICATION_OPTS, RUNTIME};
+use crate::utils::{data_dir, log_out, send_tdlib_parameters};
+use crate::{spawn, APPLICATION_OPTS, RUNTIME};
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
@@ -551,27 +551,22 @@ impl SessionManager {
                 match &update.authorization_state {
                     AuthorizationState::WaitTdlibParameters => {
                         let database_info = client.session.database_info().0.clone();
-                        do_async(
-                            glib::PRIORITY_DEFAULT_IDLE,
-                            async move { send_tdlib_parameters(client_id, &database_info).await },
-                            |result| async {
-                                if let Err(e) = result {
-                                    panic!("Error on sending tdlib parameters: {:?}", e);
-                                }
-                            },
-                        );
+                        spawn!(async move {
+                            let result = send_tdlib_parameters(client_id, &database_info).await;
+                            if let Err(e) = result {
+                                panic!("Error on sending tdlib parameters: {:?}", e);
+                            }
+                        });
                     }
                     AuthorizationState::WaitEncryptionKey(_) => {
-                        let encryption_key = "".to_string();
-                        do_async(
-                            glib::PRIORITY_DEFAULT_IDLE,
-                            functions::check_database_encryption_key(encryption_key, client_id),
-                            |result| async {
-                                if let Err(e) = result {
-                                    panic!("Error on sending encryption key: {:?}", e);
-                                }
-                            },
-                        );
+                        spawn!(async move {
+                            let result =
+                                functions::check_database_encryption_key(String::new(), client_id)
+                                    .await;
+                            if let Err(e) = result {
+                                panic!("Error on sending encryption key: {:?}", e);
+                            }
+                        });
                     }
                     AuthorizationState::Ready => {
                         let is_last_used = imp
@@ -583,7 +578,10 @@ impl SessionManager {
                             .map(|last| client.database_dir_base_name() == last)
                             .unwrap_or_default();
 
-                        self.add_logged_in_session(client_id, client.session, is_last_used);
+                        spawn!(clone!(@weak self as obj => async move {
+                            obj.add_logged_in_session(client_id, client.session, is_last_used)
+                                .await;
+                        }));
                     }
                     _ => {
                         let database_info = client.session.database_info().0.clone();
@@ -641,32 +639,36 @@ impl SessionManager {
 
     /// Within this function a new `Session` is created based on the passed client id. This session
     /// is then added to the session stack.
-    pub(crate) fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::get_me(client_id),
-            clone!(@weak self as obj => move |result| async move {
-                let enums::User::User(me) = result.unwrap();
+    pub(crate) async fn add_logged_in_session(
+        &self,
+        client_id: i32,
+        session: Session,
+        visible: bool,
+    ) {
+        let enums::User::User(me) = functions::get_me(client_id).await.unwrap();
 
-                match session.user_list().try_get(me.id) {
-                    None => {
-                        log::warn!("Own user has not yet arrived. Waiting…");
-                        let wait_me_handler = session.user_list().connect_items_changed(
-                            clone!(@weak obj, @weak session => move |list, _, _, added| {
-                                if added > 0 {
-                                    if let Some(me) = list.try_get(me.id) {
-                                        log::warn!("Own user arrived.");
-                                        obj.add_logged_in_session_(client_id, &session, &me, visible)
-                                    }
-                                }
-                            }),
-                        );
-                        obj.imp().wait_me_handlers.borrow_mut().insert(client_id, wait_me_handler);
-                    },
-                    Some(me) => obj.add_logged_in_session_(client_id, &session, &me, visible),
-                }
-            }),
-        );
+        match session.user_list().try_get(me.id) {
+            None => {
+                log::warn!("Own user has not yet arrived. Waiting…");
+                let wait_me_handler = session.user_list().connect_items_changed(
+                    clone!(@weak self as obj, @weak session => move |list, _, _, added| {
+                        if added > 0 {
+                            if let Some(me) = list.try_get(me.id) {
+                                log::warn!("Own user arrived.");
+                                obj.add_logged_in_session_(client_id, &session, &me, visible);
+                            }
+                        }
+                    }),
+                );
+                self.imp()
+                    .wait_me_handlers
+                    .borrow_mut()
+                    .insert(client_id, wait_me_handler);
+            }
+            Some(me) => {
+                self.add_logged_in_session_(client_id, &session, &me, visible);
+            }
+        }
     }
 
     fn add_logged_in_session_(&self, client_id: i32, session: &Session, me: &User, visible: bool) {

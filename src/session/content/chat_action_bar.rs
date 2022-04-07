@@ -8,8 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::Chat;
-use crate::utils::do_async;
-use crate::RUNTIME;
+use crate::{spawn, RUNTIME};
 
 mod imp {
     use super::*;
@@ -99,7 +98,9 @@ mod imp {
                 obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                 // Send typing action
-                obj.send_chat_action(ChatAction::Typing);
+                spawn!(clone!(@weak obj => async move {
+                    obj.send_chat_action(ChatAction::Typing).await;
+                }));
             }));
 
             // The message entry is always empty at this point, so disable the
@@ -238,7 +239,7 @@ impl ChatActionBar {
         self.imp().message_entry.buffer().set_text(&*message_text);
     }
 
-    fn send_chat_action(&self, action: ChatAction) {
+    async fn send_chat_action(&self, action: ChatAction) {
         let imp = self.imp();
         if imp.chat_action_in_cooldown.get() {
             return;
@@ -252,21 +253,17 @@ impl ChatActionBar {
             imp.chat_action_in_cooldown.set(true);
 
             // Send typing action
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                functions::send_chat_action(chat_id, 0, Some(action), client_id),
-                clone!(@weak self as obj => move |result| async move {
-                    // If the request is successful, then start the actual cooldown of 5 seconds.
-                    // Otherwise just cancel it right away.
-                    if result.is_ok() {
-                        glib::timeout_add_seconds_local_once(5, clone!(@weak obj =>move || {
-                            obj.imp().chat_action_in_cooldown.set(false);
-                        }));
-                    } else {
+            let result = functions::send_chat_action(chat_id, 0, Some(action), client_id).await;
+            if result.is_ok() {
+                glib::timeout_add_seconds_local_once(
+                    5,
+                    clone!(@weak self as obj =>move || {
                         obj.imp().chat_action_in_cooldown.set(false);
-                    }
-                }),
-            );
+                    }),
+                );
+            } else {
+                imp.chat_action_in_cooldown.set(false);
+            }
         }
     }
 

@@ -7,8 +7,7 @@ use tdlib::functions;
 use tdlib::types::Chat as TelegramChat;
 
 use crate::session::Chat;
-use crate::utils::do_async;
-use crate::Session;
+use crate::{spawn, Session};
 
 mod imp {
     use super::*;
@@ -123,20 +122,18 @@ impl ChatList {
     }
 
     pub(crate) fn fetch(&self, client_id: i32) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::load_chats(None, 20, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    // Error 404 means that all chats have been loaded
-                    if err.code != 404 {
-                        log::error!("Received an error for LoadChats: {}", err.code);
-                    }
-                } else {
-                    obj.fetch(client_id);
+        spawn!(clone!(@weak self as obj => async move {
+            let result = functions::load_chats(None, 20, client_id).await;
+
+            if let Err(err) = result {
+                // Error 404 means that all chats have been loaded
+                if err.code != 404 {
+                    log::error!("Received an error for LoadChats: {}", err.code);
                 }
-            }),
-        );
+            } else {
+                obj.fetch(client_id);
+            }
+        }));
     }
 
     pub(crate) fn handle_update(&self, update: Update) {

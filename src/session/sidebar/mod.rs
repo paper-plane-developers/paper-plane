@@ -13,8 +13,7 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::{enums, functions};
 
 use crate::session::{Chat, ChatType, User};
-use crate::utils::do_async;
-use crate::Session;
+use crate::{spawn, Session};
 
 pub(crate) use self::avatar::Avatar;
 
@@ -134,7 +133,9 @@ mod imp {
             self.search_entry
                 .connect_search_changed(clone!(@weak obj => move |entry| {
                     let query = entry.text().to_string();
-                    obj.search(query);
+                    spawn!(clone!(@weak obj => async move {
+                        obj.search(query).await;
+                    }));
                 }));
         }
 
@@ -170,7 +171,7 @@ impl Sidebar {
         imp.search_entry.grab_focus();
     }
 
-    fn search(&self, query: String) {
+    async fn search(&self, query: String) {
         let imp = self.imp();
         imp.searched_chats.borrow_mut().clear();
         imp.searched_users.borrow_mut().clear();
@@ -187,67 +188,57 @@ impl Sidebar {
                 .client_id();
 
             // Search chats
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                functions::search_chats(query.clone(), 100, client_id),
-                clone!(@weak self as obj, @strong query => move |result| async move {
-                    if let Ok(enums::Chats::Chats(chats)) = result {
-                        let imp = obj.imp();
+            let result = functions::search_chats(query.clone(), 100, client_id).await;
+            if let Ok(enums::Chats::Chats(chats)) = result {
+                if let Some(filter) = imp.filter.borrow().as_ref() {
+                    let session = self
+                        .session()
+                        .expect("The session needs to be set to be able to search");
+                    let chat_list = session.chat_list();
 
-                        if let Some(filter) = imp.filter.borrow().as_ref() {
-                            let session = obj
-                                .session()
-                                .expect("The session needs to be set to be able to search");
-                            let chat_list = session.chat_list();
+                    // This will hold the own user id if the user has searched for the own
+                    // chat.
+                    let maybe_own_user_id = if gettext("Saved Messages")
+                        .to_lowercase()
+                        .contains(&query.to_lowercase())
+                    {
+                        Some(session.me().id())
+                    } else {
+                        None
+                    };
 
-                            // This will hold the own user id if the user has searched for the own
-                            // chat.
-                            let maybe_own_user_id = if gettext("Saved Messages").to_lowercase()
-                                .contains(&query.to_lowercase())
-                            {
-                                Some(session.me().id())
-                            } else {
-                                None
-                            };
+                    imp.already_searched_users.borrow_mut().extend(
+                        chats
+                            .chat_ids
+                            .iter()
+                            .map(|id| chat_list.get(*id))
+                            .filter_map(|chat| match chat.type_() {
+                                ChatType::Private(user) => Some(user.id()),
+                                _ => None,
+                            })
+                            .chain(maybe_own_user_id.into_iter()),
+                    );
 
-                            imp.already_searched_users.borrow_mut().extend(
-                                chats.chat_ids.iter()
-                                    .map(|id| chat_list.get(*id))
-                                    .filter_map(|chat| match chat.type_() {
-                                        ChatType::Private(user) => Some(user.id()),
-                                        _ => None
-                                    })
-                                    .chain(maybe_own_user_id.into_iter())
-                            );
-
-                            imp.searched_chats.borrow_mut().extend(
-                                chats.chat_ids
-                                    .into_iter()
-                                    // The own user id is the same as the own chat id, so we can
-                                    // chain this here.
-                                    .chain(maybe_own_user_id.map(|id| id as i64).into_iter())
-                            );
-                            filter.changed(gtk::FilterChange::Different);
-                        }
-                    }
-                }),
-            );
+                    imp.searched_chats.borrow_mut().extend(
+                        chats
+                            .chat_ids
+                            .into_iter()
+                            // The own user id is the same as the own chat id, so we can
+                            // chain this here.
+                            .chain(maybe_own_user_id.map(|id| id as i64).into_iter()),
+                    );
+                    filter.changed(gtk::FilterChange::Different);
+                }
+            }
 
             // Search contacts
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                functions::search_contacts(query, 100, client_id),
-                clone!(@weak self as obj => move |result| async move {
-                    if let Ok(enums::Users::Users(users)) = result {
-                        let imp = obj.imp();
-
-                        if let Some(filter) = imp.filter.borrow().as_ref() {
-                            imp.searched_users.borrow_mut().extend(users.user_ids);
-                            filter.changed(gtk::FilterChange::Different);
-                        }
-                    }
-                }),
-            );
+            let result = functions::search_contacts(query, 100, client_id).await;
+            if let Ok(enums::Users::Users(users)) = result {
+                if let Some(filter) = imp.filter.borrow().as_ref() {
+                    imp.searched_users.borrow_mut().extend(users.user_ids);
+                    filter.changed(gtk::FilterChange::Different);
+                }
+            }
         }
     }
 
@@ -352,16 +343,15 @@ impl Sidebar {
                             // Create a chat with the user and then select the created chat
                             let user_id = user.id();
                             let client_id = session.client_id();
-                            do_async(
-                                glib::PRIORITY_DEFAULT_IDLE,
-                                functions::create_private_chat(user_id, false, client_id),
-                                clone!(@weak obj, @weak session => move |result| async move {
-                                    if let Ok(enums::Chat::Chat(chat)) = result {
-                                        let chat = session.chat_list().get(chat.id);
-                                        obj.set_selected_chat(Some(chat));
-                                    }
-                                }),
-                            );
+
+                            spawn!(clone!(@weak obj, @weak session => async move {
+                                let result =
+                                    functions::create_private_chat(user_id, false, client_id).await;
+                                if let Ok(enums::Chat::Chat(chat)) = result {
+                                    let chat = session.chat_list().get(chat.id);
+                                    obj.set_selected_chat(Some(chat));
+                                }
+                            }));
                         } else {
                             unreachable!("Unexpected item type: {:?}", item);
                         }
