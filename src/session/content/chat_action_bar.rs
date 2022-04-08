@@ -8,7 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::Chat;
-use crate::spawn;
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -41,7 +41,7 @@ mod imp {
                 "chat-action-bar.send-text-message",
                 None,
                 move |widget, _, _| {
-                    spawn!(clone!(@weak widget => async move {
+                    spawn(clone!(@weak widget => async move {
                         widget.send_text_message().await;
                     }));
                 },
@@ -100,7 +100,7 @@ mod imp {
                 obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                 // Send typing action
-                spawn!(clone!(@weak obj => async move {
+                spawn(clone!(@weak obj => async move {
                     obj.send_chat_action(ChatAction::Typing).await;
                 }));
             }));
@@ -278,7 +278,7 @@ impl ChatActionBar {
             return;
         }
 
-        spawn!(clone!(@weak self as obj => async move {
+        spawn(clone!(@weak self as obj => async move {
             obj.save_message_as_draft().await;
         }));
 

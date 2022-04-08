@@ -7,7 +7,8 @@ use tdlib::functions;
 use tdlib::types::Chat as TelegramChat;
 
 use crate::session::Chat;
-use crate::{spawn, Session};
+use crate::utils::spawn;
+use crate::Session;
 
 mod imp {
     use super::*;
@@ -122,7 +123,7 @@ impl ChatList {
     }
 
     pub(crate) fn fetch(&self, client_id: i32) {
-        spawn!(clone!(@weak self as obj => async move {
+        spawn(clone!(@weak self as obj => async move {
             let result = functions::load_chats(None, 20, client_id).await;
 
             if let Err(err) = result {

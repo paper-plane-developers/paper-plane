@@ -43,8 +43,8 @@ use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
 
 use crate::session::{Session, User};
-use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters};
-use crate::{spawn, APPLICATION_OPTS};
+use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters, spawn};
+use crate::APPLICATION_OPTS;
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
@@ -338,7 +338,7 @@ impl SessionManager {
                 _ => None,
             })
             .for_each(|client_id| {
-                spawn!(async move {
+                spawn(async move {
                     let result = set_online(
                         client_id,
                         // Session switching is only possible when the window is active.
@@ -370,7 +370,7 @@ impl SessionManager {
             },
         );
 
-        spawn!(async move {
+        spawn(async move {
             send_log_level(client_id).await;
         });
     }
@@ -380,7 +380,7 @@ impl SessionManager {
     pub(crate) fn add_new_session(&self, use_test_dc: bool) {
         let client_id = tdlib::create_client();
         self.init_new_session(client_id, use_test_dc);
-        spawn!(async move {
+        spawn(async move {
             send_log_level(client_id).await;
         });
     }
@@ -564,7 +564,7 @@ impl SessionManager {
                 match &update.authorization_state {
                     AuthorizationState::WaitTdlibParameters => {
                         let database_info = client.session.database_info().0.clone();
-                        spawn!(async move {
+                        spawn(async move {
                             let result = send_tdlib_parameters(client_id, &database_info).await;
                             if let Err(e) = result {
                                 panic!("Error on sending tdlib parameters: {:?}", e);
@@ -572,7 +572,7 @@ impl SessionManager {
                         });
                     }
                     AuthorizationState::WaitEncryptionKey(_) => {
-                        spawn!(async move {
+                        spawn(async move {
                             let result =
                                 functions::check_database_encryption_key(String::new(), client_id)
                                     .await;
@@ -591,7 +591,7 @@ impl SessionManager {
                             .map(|last| client.database_dir_base_name() == last)
                             .unwrap_or_default();
 
-                        spawn!(clone!(@weak self as obj => async move {
+                        spawn(clone!(@weak self as obj => async move {
                             obj.add_logged_in_session(client_id, client.session, is_last_used)
                                 .await;
                         }));
@@ -622,7 +622,7 @@ impl SessionManager {
                             imp.login
                                 .set_authorization_state(update.authorization_state);
                         } else {
-                            spawn!(async move {
+                            spawn(async move {
                                 log_out(client_id).await;
                             });
                         }
@@ -740,7 +740,7 @@ impl SessionManager {
         }
 
         // Enable notifications for this client
-        spawn!(clone!(@weak self as obj => async move {
+        spawn(clone!(@weak self as obj => async move {
             obj.enable_notifications(client_id).await;
         }));
     }

@@ -8,8 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::Session;
 use crate::session_manager::SessionManager;
-use crate::spawn;
-use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters};
+use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters, spawn};
 
 mod imp {
     use super::*;
@@ -106,17 +105,17 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             klass.install_action("login.previous", None, move |widget, _, _| {
-                spawn!(clone!(@weak widget => async move {
+                spawn(clone!(@weak widget => async move {
                     widget.previous().await;
                 }));
             });
             klass.install_action("login.next", None, move |widget, _, _| {
-                spawn!(clone!(@weak widget => async move {
+                spawn(clone!(@weak widget => async move {
                     widget.next().await;
                 }));
             });
             klass.install_action("login.use-qr-code", None, move |widget, _, _| {
-                spawn!(clone!(@weak widget => async move {
+                spawn(clone!(@weak widget => async move {
                     widget.request_qr_code().await;
                 }));
             });
@@ -153,7 +152,7 @@ mod imp {
                 widget.show_tos_dialog(false)
             });
             klass.install_action("login.resend-auth-code", None, move |widget, _, _| {
-                spawn!(clone!(@weak widget => async move {
+                spawn(clone!(@weak widget => async move {
                     widget.resend_auth_code().await;
                 }));
             });
@@ -239,7 +238,7 @@ impl Login {
                     .0
                     .clone();
 
-                spawn!(clone!(@weak self as obj => async move {
+                spawn(clone!(@weak self as obj => async move {
                     let result = send_tdlib_parameters(client_id, &database_info).await;
 
                     if let Err(err) = result {
@@ -248,7 +247,7 @@ impl Login {
                 }));
             }
             AuthorizationState::WaitEncryptionKey(_) => {
-                spawn!(clone!(@weak self as obj => async move {
+                spawn(clone!(@weak self as obj => async move {
                     obj.send_encryption_key().await;
                 }));
             }
@@ -398,7 +397,7 @@ impl Login {
                 // Clear the qr code image save some potential memory.
                 imp.qr_code_image.set_paintable(gdk::Paintable::NONE);
 
-                spawn!(clone!(@weak self as obj => async move {
+                spawn(clone!(@weak self as obj => async move {
                     let imp = obj.imp();
                     imp.session_manager.get().unwrap().add_logged_in_session(
                         imp.client_id.get(),
@@ -689,7 +688,7 @@ impl Login {
             } else if matches!(response, gtk::ResponseType::Yes) {
                 // User has accepted the ToS, so we can proceed in the login
                 // flow.
-                spawn!(clone!(@weak obj => async move {
+                spawn(clone!(@weak obj => async move {
                     obj.send_registration().await;
                 }));
             }
@@ -878,7 +877,7 @@ impl Login {
 
             let client_id = imp.client_id.get();
 
-            spawn!(clone!(@weak self as obj => async move {
+            spawn(clone!(@weak self as obj => async move {
                 let result = functions::request_authentication_password_recovery(client_id).await;
                 let imp = obj.imp();
 
@@ -940,7 +939,7 @@ impl Login {
                 obj.freeze();
                 let client_id = obj.imp().client_id.get();
 
-                spawn!(clone!(@weak obj => async move {
+                spawn(clone!(@weak obj => async move {
                     let result = functions::delete_account(
                         String::from("cloud password lost and not recoverable"),
                         client_id,

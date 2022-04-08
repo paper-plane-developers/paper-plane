@@ -13,7 +13,8 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::{enums, functions};
 
 use crate::session::{Chat, ChatType, User};
-use crate::{spawn, Session};
+use crate::utils::spawn;
+use crate::Session;
 
 pub(crate) use self::avatar::Avatar;
 
@@ -133,7 +134,7 @@ mod imp {
             self.search_entry
                 .connect_search_changed(clone!(@weak obj => move |entry| {
                     let query = entry.text().to_string();
-                    spawn!(clone!(@weak obj => async move {
+                    spawn(clone!(@weak obj => async move {
                         obj.search(query).await;
                     }));
                 }));
@@ -344,7 +345,7 @@ impl Sidebar {
                             let user_id = user.id();
                             let client_id = session.client_id();
 
-                            spawn!(clone!(@weak obj, @weak session => async move {
+                            spawn(clone!(@weak obj, @weak session => async move {
                                 let result =
                                     functions::create_private_chat(user_id, false, client_id).await;
                                 if let Ok(enums::Chat::Chat(chat)) = result {

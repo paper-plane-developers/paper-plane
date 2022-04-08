@@ -1,8 +1,8 @@
 use gettextrs::gettext;
+use gtk::glib;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use gtk::glib;
 use std::future::Future;
 use std::path::PathBuf;
 use tdlib::enums::TextEntityType;
@@ -192,18 +192,9 @@ pub(crate) async fn log_out(client_id: i32) {
 }
 
 /// Spawn a future on the default `MainContext`
-///
-/// This was taken from `gtk-macros` and `fractal`
-#[macro_export]
-macro_rules! spawn {
-    ($future:expr) => {
-        let ctx = glib::MainContext::default();
-        ctx.spawn_local($future);
-    };
-    ($priority:expr, $future:expr) => {
-        let ctx = glib::MainContext::default();
-        ctx.spawn_local_with_priority($priority, $future);
-    };
+pub(crate) fn spawn<F: Future<Output = ()> + 'static>(fut: F) {
+    let ctx = glib::MainContext::default();
+    ctx.spawn_local(fut);
 }
 
 /// Run a future on the default `MainContext` and block until finished
