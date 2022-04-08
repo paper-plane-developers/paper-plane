@@ -8,7 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::Session;
 use crate::session_manager::SessionManager;
-use crate::utils::{do_async, log_out, parse_formatted_text, send_tdlib_parameters};
+use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters, spawn};
 
 mod imp {
     use super::*;
@@ -105,11 +105,19 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             klass.install_action("login.previous", None, move |widget, _, _| {
-                widget.previous()
+                spawn(clone!(@weak widget => async move {
+                    widget.previous().await;
+                }));
             });
-            klass.install_action("login.next", None, move |widget, _, _| widget.next());
+            klass.install_action("login.next", None, move |widget, _, _| {
+                spawn(clone!(@weak widget => async move {
+                    widget.next().await;
+                }));
+            });
             klass.install_action("login.use-qr-code", None, move |widget, _, _| {
-                widget.request_qr_code();
+                spawn(clone!(@weak widget => async move {
+                    widget.request_qr_code().await;
+                }));
             });
             klass.install_action(
                 "login.go-to-forgot-password-page",
@@ -144,7 +152,9 @@ mod imp {
                 widget.show_tos_dialog(false)
             });
             klass.install_action("login.resend-auth-code", None, move |widget, _, _| {
-                widget.resend_auth_code()
+                spawn(clone!(@weak widget => async move {
+                    widget.resend_auth_code().await;
+                }));
             });
         }
 
@@ -227,21 +237,19 @@ impl Login {
                     .database_info()
                     .0
                     .clone();
-                do_async(
-                    glib::PRIORITY_DEFAULT_IDLE,
-                    async move { send_tdlib_parameters(client_id, &database_info).await },
-                    clone!(@weak self as obj => move |result| async move {
-                        if let Err(err) = result {
-                            show_error_label(
-                                &obj.imp().welcome_page_error_label,
-                                &err.message
-                            );
-                        }
-                    }),
-                );
+
+                spawn(clone!(@weak self as obj => async move {
+                    let result = send_tdlib_parameters(client_id, &database_info).await;
+
+                    if let Err(err) = result {
+                        show_error_label(&obj.imp().welcome_page_error_label, &err.message);
+                    }
+                }));
             }
             AuthorizationState::WaitEncryptionKey(_) => {
-                self.send_encryption_key();
+                spawn(clone!(@weak self as obj => async move {
+                    obj.send_encryption_key().await;
+                }));
             }
             AuthorizationState::WaitPhoneNumber => {
                 // The page 'phone-number-page' is the first page and thus the visible page by
@@ -389,11 +397,14 @@ impl Login {
                 // Clear the qr code image save some potential memory.
                 imp.qr_code_image.set_paintable(gdk::Paintable::NONE);
 
-                imp.session_manager.get().unwrap().add_logged_in_session(
-                    imp.client_id.get(),
-                    imp.session.take().unwrap(),
-                    true,
-                );
+                spawn(clone!(@weak self as obj => async move {
+                    let imp = obj.imp();
+                    imp.session_manager.get().unwrap().add_logged_in_session(
+                        imp.client_id.get(),
+                        imp.session.take().unwrap(),
+                        true,
+                    ).await;
+                }));
 
                 // Make everything invisible.
                 imp.outer_box.set_visible(false);
@@ -544,7 +555,7 @@ impl Login {
         }
     }
 
-    fn previous(&self) {
+    async fn previous(&self) {
         let imp = self.imp();
 
         match imp.content.visible_child_name().unwrap().as_str() {
@@ -552,10 +563,10 @@ impl Login {
                 self.freeze_with_previous_spinner();
 
                 // Logout the client when login is aborted.
-                log_out(imp.client_id.get());
+                log_out(imp.client_id.get()).await;
                 imp.session_manager.get().unwrap().switch_to_sessions(None);
             }
-            "qr-code-page" => self.leave_qr_code_page(),
+            "qr-code-page" => self.leave_qr_code_page().await,
             "password-forgot-page" => self.navigate_to_page::<gtk::Editable, _, _>(
                 "password-page",
                 [],
@@ -582,31 +593,31 @@ impl Login {
         }
     }
 
-    fn next(&self) {
+    async fn next(&self) {
         self.freeze_with_next_spinner();
 
         let imp = self.imp();
         let visible_page = imp.content.visible_child_name().unwrap();
 
         match visible_page.as_str() {
-            "phone-number-page" => self.send_phone_number(),
-            "code-page" => self.send_code(),
+            "phone-number-page" => self.send_phone_number().await,
+            "code-page" => self.send_code().await,
             "registration-page" => {
                 if imp.show_tos_popup.get() {
                     // Force the ToS dialog for the user before he can proceed
                     self.show_tos_dialog(true);
                 } else {
                     // Just proceed if the user either doesn't need to accept the ToS
-                    self.send_registration()
+                    self.send_registration().await
                 }
             }
-            "password-page" => self.send_password(),
-            "password-recovery-page" => self.send_password_recovery_code(),
+            "password-page" => self.send_password().await,
+            "password-recovery-page" => self.send_password_recovery_code().await,
             other => unreachable!("no page named '{}'", other),
         }
     }
 
-    fn request_qr_code(&self) {
+    async fn request_qr_code(&self) {
         self.freeze();
 
         let imp = self.imp();
@@ -622,21 +633,16 @@ impl Login {
             .map(|user| user.id())
             .collect();
         let client_id = imp.client_id.get();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::request_qr_code_authentication(other_user_ids, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                let imp = obj.imp();
-                obj.handle_user_result(
-                    result,
-                    &imp.welcome_page_error_label,
-                    &*imp.phone_number_entry
-                );
-            }),
+        let result = functions::request_qr_code_authentication(other_user_ids, client_id).await;
+
+        self.handle_user_result(
+            result,
+            &imp.welcome_page_error_label,
+            &*imp.phone_number_entry,
         );
     }
 
-    fn leave_qr_code_page(&self) {
+    async fn leave_qr_code_page(&self) {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
         let imp = self.imp();
@@ -649,7 +655,7 @@ impl Login {
             .0
             .use_test_dc;
 
-        log_out(imp.client_id.get());
+        log_out(imp.client_id.get()).await;
         imp.session_manager
             .get()
             .unwrap()
@@ -682,7 +688,9 @@ impl Login {
             } else if matches!(response, gtk::ResponseType::Yes) {
                 // User has accepted the ToS, so we can proceed in the login
                 // flow.
-                obj.send_registration();
+                spawn(clone!(@weak obj => async move {
+                    obj.send_registration().await;
+                }));
             }
             dialog.close();
         }));
@@ -725,24 +733,17 @@ impl Login {
         imp.content.set_sensitive(true);
     }
 
-    fn send_encryption_key(&self) {
-        let client_id = self.imp().client_id.get();
-        let encryption_key = "".to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::check_database_encryption_key(encryption_key, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    show_error_label(
-                        &obj.imp().welcome_page_error_label,
-                        &err.message
-                    )
-                }
-            }),
-        );
+    async fn send_encryption_key(&self) {
+        let imp = self.imp();
+        let client_id = imp.client_id.get();
+        let result = functions::check_database_encryption_key(String::new(), client_id).await;
+
+        if let Err(err) = result {
+            show_error_label(&imp.welcome_page_error_label, &err.message)
+        }
     }
 
-    fn send_phone_number(&self) {
+    async fn send_phone_number(&self) {
         let imp = self.imp();
 
         reset_error_label(&imp.welcome_page_error_label);
@@ -772,60 +773,51 @@ impl Login {
                 // We just figured out that we already have an open session for that account.
                 // Therefore we logout the client, with which we wanted to log in and delete its
                 // just created database directory.
-                log_out(imp.client_id.get());
+                log_out(imp.client_id.get()).await;
                 imp.session_manager
                     .get()
                     .unwrap()
                     .switch_to_sessions(Some(pos));
             }
             None => {
-                do_async(
-                    glib::PRIORITY_DEFAULT_IDLE,
-                    functions::set_authentication_phone_number(
-                        phone_number.into(),
-                        Some(types::PhoneNumberAuthenticationSettings {
-                            allow_flash_call: true,
-                            allow_missed_call: true,
-                            ..Default::default()
-                        }),
-                        client_id,
-                    ),
-                    clone!(@weak self as obj => move |result| async move {
-                        let imp = obj.imp();
-                        obj.handle_user_result(
-                            result,
-                            &imp.welcome_page_error_label,
-                            &*imp.phone_number_entry
-                        );
+                let result = functions::set_authentication_phone_number(
+                    phone_number.into(),
+                    Some(types::PhoneNumberAuthenticationSettings {
+                        allow_flash_call: true,
+                        allow_missed_call: true,
+                        ..Default::default()
                     }),
+                    client_id,
+                )
+                .await;
+
+                self.handle_user_result(
+                    result,
+                    &imp.welcome_page_error_label,
+                    &*imp.phone_number_entry,
                 );
             }
         }
     }
 
-    fn send_code(&self) {
+    async fn send_code(&self) {
         let imp = self.imp();
 
         reset_error_label(&imp.code_error_label);
 
         let client_id = imp.client_id.get();
         let code = imp.code_entry.text().to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::check_authentication_code(code, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    let imp = obj.imp();
-                    obj.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
-                } else {
-                    // We entered the correct code, so stop resend countdown.
-                    obj.stop_code_next_type_countdown()
-                }
-            }),
-        );
+        let result = functions::check_authentication_code(code, client_id).await;
+
+        if let Err(err) = result {
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+        } else {
+            // We entered the correct code, so stop resend countdown.
+            self.stop_code_next_type_countdown()
+        }
     }
 
-    fn send_registration(&self) {
+    async fn send_registration(&self) {
         let imp = self.imp();
 
         reset_error_label(&imp.registration_error_label);
@@ -833,63 +825,45 @@ impl Login {
         let client_id = imp.client_id.get();
         let first_name = imp.registration_first_name_entry.text().to_string();
         let last_name = imp.registration_last_name_entry.text().to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::register_user(first_name, last_name, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                let imp = obj.imp();
-                obj.handle_user_result(
-                    result,
-                    &imp.registration_error_label,
-                    &*imp.registration_first_name_entry
-                );
-            }),
+        let result = functions::register_user(first_name, last_name, client_id).await;
+
+        self.handle_user_result(
+            result,
+            &imp.registration_error_label,
+            &*imp.registration_first_name_entry,
         );
     }
 
-    fn resend_auth_code(&self) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::resend_authentication_code(self.imp().client_id.get()),
-            clone!(@weak self as obj => move |result| async move {
-                if let Err(err) = result {
-                    if err.code == 8 {
-                        // Sometimes the user may get a FLOOD_WAIT when he/she wants to resend the
-                        // authorization code. But then tdlib blocks the resend function for the
-                        // user, but does not inform us about it by sending an
-                        // 'AuthorizationState::WaitCode'. Consequently, the user interface would
-                        // still indicate that we are allowed to resend the code. However, we
-                        // always get code 8 when we try, indicating that resending does not work.
-                        // In this case, we automatically disable the resend feature.
-                        obj.update_code_resend_state(None, 0);
-                    }
-                    let imp = obj.imp();
-                    obj.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+    async fn resend_auth_code(&self) {
+        let imp = self.imp();
+        let client_id = imp.client_id.get();
+        let result = functions::resend_authentication_code(client_id).await;
 
-                }
-            }),
-        );
+        if let Err(err) = result {
+            if err.code == 8 {
+                // Sometimes the user may get a FLOOD_WAIT when he/she wants to resend the
+                // authorization code. But then tdlib blocks the resend function for the
+                // user, but does not inform us about it by sending an
+                // 'AuthorizationState::WaitCode'. Consequently, the user interface would
+                // still indicate that we are allowed to resend the code. However, we
+                // always get code 8 when we try, indicating that resending does not work.
+                // In this case, we automatically disable the resend feature.
+                self.update_code_resend_state(None, 0);
+            }
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+        }
     }
 
-    fn send_password(&self) {
+    async fn send_password(&self) {
         let imp = self.imp();
 
         reset_error_label(&imp.password_error_label);
 
         let client_id = imp.client_id.get();
         let password = imp.password_entry.text().to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::check_authentication_password(password, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                let imp = obj.imp();
-                obj.handle_user_result(
-                    result,
-                    &imp.password_error_label,
-                    &*imp.password_entry
-                );
-            }),
-        );
+        let result = functions::check_authentication_password(password, client_id).await;
+
+        self.handle_user_result(result, &imp.password_error_label, &*imp.password_entry);
     }
 
     fn recover_password(&self) {
@@ -902,35 +876,31 @@ impl Login {
                 .set_visible_child_name("spinner");
 
             let client_id = imp.client_id.get();
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                functions::request_authentication_password_recovery(client_id),
-                clone!(@weak self as obj => move |result| async move {
-                    let imp = obj.imp();
 
-                    // Remove the spinner from the button.
-                    imp
-                        .password_send_code_stack
-                        .set_visible_child_name("image");
+            spawn(clone!(@weak self as obj => async move {
+                let result = functions::request_authentication_password_recovery(client_id).await;
+                let imp = obj.imp();
 
-                    if result.is_ok() {
-                        // Save that we do not need to resend the mail when we enter the recovery
-                        // page the next time.
-                        imp.password_recovery_expired.set(false);
-                        obj.navigate_to_page(
-                            "password-recovery-page",
-                            [&*imp.password_recovery_code_entry],
-                            Some(&imp.password_recovery_error_label),
-                            Some(&*imp.password_recovery_code_entry),
-                        );
-                    } else {
-                        obj.update_actions_for_visible_page();
-                        // TODO: We also need to handle potiential errors here and inform the user.
-                    }
+                // Remove the spinner from the button.
+                imp.password_send_code_stack.set_visible_child_name("image");
 
-                    obj.unfreeze();
-                }),
-            );
+                if result.is_ok() {
+                    // Save that we do not need to resend the mail when we enter the recovery
+                    // page the next time.
+                    imp.password_recovery_expired.set(false);
+                    obj.navigate_to_page(
+                        "password-recovery-page",
+                        [&*imp.password_recovery_code_entry],
+                        Some(&imp.password_recovery_error_label),
+                        Some(&*imp.password_recovery_code_entry),
+                    );
+                } else {
+                    obj.update_actions_for_visible_page();
+                    // TODO: We also need to handle potiential errors here and inform the user.
+                }
+
+                obj.unfreeze();
+            }));
         } else {
             // The code has been send already via mail.
             self.navigate_to_page(
@@ -968,64 +938,61 @@ impl Login {
             if matches!(response_id, gtk::ResponseType::Accept) {
                 obj.freeze();
                 let client_id = obj.imp().client_id.get();
-                do_async(
-                    glib::PRIORITY_DEFAULT_IDLE,
-                    functions::delete_account(String::from("cloud password lost and not recoverable"), client_id),
-                    clone!(@weak obj => move |result| async move {
-                        // Just unfreeze in case of an error, else stay frozen until we are
-                        // redirected to the welcome page.
-                        if result.is_err() {
-                            obj.update_actions_for_visible_page();
-                            obj.unfreeze();
-                            // TODO: We also need to handle potiential errors here and inform the
-                            // user.
-                        }
-                    }),
-                );
+
+                spawn(clone!(@weak obj => async move {
+                    let result = functions::delete_account(
+                        String::from("cloud password lost and not recoverable"),
+                        client_id,
+                    )
+                    .await;
+
+                    // Just unfreeze in case of an error, else stay frozen until we are
+                    // redirected to the welcome page.
+                    if result.is_err() {
+                        obj.update_actions_for_visible_page();
+                        obj.unfreeze();
+                        // TODO: We also need to handle potiential errors here and inform the
+                        // user.
+                    }
+                }));
             } else {
-                obj.imp()
-                    .password_entry
-                    .grab_focus();
+                obj.imp().password_entry.grab_focus();
             }
         }));
     }
 
-    fn send_password_recovery_code(&self) {
+    async fn send_password_recovery_code(&self) {
         let imp = self.imp();
         let client_id = imp.client_id.get();
         let recovery_code = imp.password_recovery_code_entry.text().to_string();
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::recover_authentication_password(
-                recovery_code,
-                String::new(),
-                String::new(),
-                client_id,
-            ),
-            clone!(@weak self as obj => move |result| async move {
-                let imp = obj.imp();
+        let result = functions::recover_authentication_password(
+            recovery_code,
+            String::new(),
+            String::new(),
+            client_id,
+        )
+        .await;
 
-                if let Err(err) = result {
-                    if err.message == "PASSWORD_RECOVERY_EXPIRED" {
-                        // The same procedure is used as for the official client (as far as I
-                        // understood from the code). Alternatively, we could send the user a new
-                        // code, indicate that and stay on the recovery page.
-                        imp.password_recovery_expired.set(true);
-                        obj.navigate_to_page::<gtk::Editable, _, _>(
-                            "password-page", [],
-                            None,
-                            Some(&*imp.password_entry)
-                        );
-                    } else {
-                        obj.handle_user_error(
-                            &err,
-                            &imp.password_recovery_error_label,
-                            &*imp.password_recovery_code_entry
-                        );
-                    }
-                }
-            }),
-        );
+        if let Err(err) = result {
+            if err.message == "PASSWORD_RECOVERY_EXPIRED" {
+                // The same procedure is used as for the official client (as far as I
+                // understood from the code). Alternatively, we could send the user a new
+                // code, indicate that and stay on the recovery page.
+                imp.password_recovery_expired.set(true);
+                self.navigate_to_page::<gtk::Editable, _, _>(
+                    "password-page",
+                    [],
+                    None,
+                    Some(&*imp.password_entry),
+                );
+            } else {
+                self.handle_user_error(
+                    &err,
+                    &imp.password_recovery_error_label,
+                    &*imp.password_recovery_code_entry,
+                );
+            }
+        }
     }
 
     fn show_no_email_access_dialog(&self) {

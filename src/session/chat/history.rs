@@ -1,4 +1,3 @@
-use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
@@ -10,7 +9,6 @@ use tdlib::types::Message as TelegramMessage;
 
 use crate::session::chat::{Item, ItemType, Message};
 use crate::session::Chat;
-use crate::utils::do_async;
 
 mod imp {
     use super::*;
@@ -110,7 +108,7 @@ impl History {
         glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
     }
 
-    pub(crate) fn load_older_messages(&self) {
+    pub(crate) async fn load_older_messages(&self) {
         if self.loading() {
             return;
         }
@@ -129,18 +127,15 @@ impl History {
 
         self.set_loading(true);
 
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::get_chat_history(chat_id, oldest_message_id, 0, 20, false, client_id),
-            clone!(@weak self as obj => move |result| async move {
-                if let Ok(enums::Messages::Messages(result)) = result {
-                    let messages = result.messages.into_iter().flatten().collect();
-                    obj.prepend(messages);
-                }
+        let result =
+            functions::get_chat_history(chat_id, oldest_message_id, 0, 20, false, client_id).await;
 
-                obj.set_loading(false);
-            }),
-        );
+        if let Ok(enums::Messages::Messages(result)) = result {
+            let messages = result.messages.into_iter().flatten().collect();
+            self.prepend(messages);
+        }
+
+        self.set_loading(false);
     }
 
     pub(crate) fn message_by_id(&self, id: i64) -> Option<Message> {

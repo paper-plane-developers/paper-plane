@@ -8,8 +8,7 @@ use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
 use crate::session::Chat;
-use crate::utils::do_async;
-use crate::RUNTIME;
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -42,7 +41,9 @@ mod imp {
                 "chat-action-bar.send-text-message",
                 None,
                 move |widget, _, _| {
-                    widget.send_text_message();
+                    spawn(clone!(@weak widget => async move {
+                        widget.send_text_message().await;
+                    }));
                 },
             );
         }
@@ -99,7 +100,9 @@ mod imp {
                 obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                 // Send typing action
-                obj.send_chat_action(ChatAction::Typing);
+                spawn(clone!(@weak obj => async move {
+                    obj.send_chat_action(ChatAction::Typing).await;
+                }));
             }));
 
             // The message entry is always empty at this point, so disable the
@@ -178,16 +181,17 @@ impl ChatActionBar {
         }
     }
 
-    fn send_text_message(&self) {
+    async fn send_text_message(&self) {
         if let Some(chat) = self.chat() {
             if let Some(message) = self.compose_text_message() {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
 
                 // Send the message
-                RUNTIME.spawn(functions::send_message(
-                    chat_id, 0, 0, None, message, client_id,
-                ));
+                let result = functions::send_message(chat_id, 0, 0, None, message, client_id).await;
+                if let Err(e) = result {
+                    log::warn!("Error sending a message: {:?}", e);
+                }
 
                 // Reset message entry
                 self.imp().message_entry.buffer().set_text("");
@@ -195,7 +199,7 @@ impl ChatActionBar {
         }
     }
 
-    fn save_message_as_draft(&self) {
+    async fn save_message_as_draft(&self) {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
@@ -208,12 +212,11 @@ impl ChatActionBar {
                 });
 
             // Save draft message
-            RUNTIME.spawn(functions::set_chat_draft_message(
-                chat_id,
-                0,
-                draft_message,
-                client_id,
-            ));
+            let result =
+                functions::set_chat_draft_message(chat_id, 0, draft_message, client_id).await;
+            if let Err(e) = result {
+                log::warn!("Error setting a draft message: {:?}", e);
+            }
         }
     }
 
@@ -238,7 +241,7 @@ impl ChatActionBar {
         self.imp().message_entry.buffer().set_text(&*message_text);
     }
 
-    fn send_chat_action(&self, action: ChatAction) {
+    async fn send_chat_action(&self, action: ChatAction) {
         let imp = self.imp();
         if imp.chat_action_in_cooldown.get() {
             return;
@@ -252,21 +255,17 @@ impl ChatActionBar {
             imp.chat_action_in_cooldown.set(true);
 
             // Send typing action
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                functions::send_chat_action(chat_id, 0, Some(action), client_id),
-                clone!(@weak self as obj => move |result| async move {
-                    // If the request is successful, then start the actual cooldown of 5 seconds.
-                    // Otherwise just cancel it right away.
-                    if result.is_ok() {
-                        glib::timeout_add_seconds_local_once(5, clone!(@weak obj =>move || {
-                            obj.imp().chat_action_in_cooldown.set(false);
-                        }));
-                    } else {
+            let result = functions::send_chat_action(chat_id, 0, Some(action), client_id).await;
+            if result.is_ok() {
+                glib::timeout_add_seconds_local_once(
+                    5,
+                    clone!(@weak self as obj =>move || {
                         obj.imp().chat_action_in_cooldown.set(false);
-                    }
-                }),
-            );
+                    }),
+                );
+            } else {
+                imp.chat_action_in_cooldown.set(false);
+            }
         }
     }
 
@@ -279,7 +278,9 @@ impl ChatActionBar {
             return;
         }
 
-        self.save_message_as_draft();
+        spawn(clone!(@weak self as obj => async move {
+            obj.save_message_as_draft().await;
+        }));
 
         let imp = self.imp();
 

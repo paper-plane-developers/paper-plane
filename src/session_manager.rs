@@ -30,22 +30,21 @@
 //! In order to remember the order in which the user selected the sessions, the `SessionManager`
 //! uses a gsettings key value pair.
 
-use futures::{TryFutureExt, TryStreamExt};
+use futures::TryFutureExt;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use std::borrow::Borrow;
+use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tdlib::enums::{self, AuthorizationState, Update};
 use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
-use tokio::fs;
-use tokio_stream::wrappers::ReadDirStream;
 
 use crate::session::{Session, User};
-use crate::utils::{data_dir, do_async, log_out, send_tdlib_parameters};
-use crate::{APPLICATION_OPTS, RUNTIME};
+use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters, spawn};
+use crate::APPLICATION_OPTS;
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
@@ -147,39 +146,31 @@ mod imp {
             // ####################################################################################
             // # Load the sessions from the data directory.                                       #
             // ####################################################################################
-            do_async(
-                glib::PRIORITY_DEFAULT_IDLE,
-                analyze_data_dir(),
-                clone!(@weak obj => move |datadir_state| async move {
-                    match datadir_state {
-                        // TODO: Should we show a dialog in this case instead of just bailing out
-                        // silently?
-                        Err(e) => panic!("Could not initialize data directory: {}", e),
-                        Ok(datadir_state) => match datadir_state {
-                            DatadirState::Empty => {
-                                obj.add_new_session(
-                                    APPLICATION_OPTS.get().unwrap().test_dc,
-                                );
-                            }
-                            DatadirState::HasSessions {
-                                recently_used_sessions,
-                                database_infos
-                            } => {
-                                let imp = obj.imp();
-
-                                imp.recently_used_sessions.replace(recently_used_sessions);
-
-                                imp.initial_sessions_to_handle
-                                    .set(database_infos.len() as u32);
-
-                                database_infos.into_iter().for_each(|database_info| {
-                                    obj.add_existing_session(database_info);
-                                });
-                            }
-                        }
+            match analyze_data_dir() {
+                // TODO: Should we show a dialog in this case instead of just bailing out
+                // silently?
+                Err(e) => panic!("Could not initialize data directory: {}", e),
+                Ok(datadir_state) => match datadir_state {
+                    DatadirState::Empty => {
+                        obj.add_new_session(APPLICATION_OPTS.get().unwrap().test_dc);
                     }
-                }),
-            );
+                    DatadirState::HasSessions {
+                        recently_used_sessions,
+                        database_infos,
+                    } => {
+                        let imp = obj.imp();
+
+                        imp.recently_used_sessions.replace(recently_used_sessions);
+
+                        imp.initial_sessions_to_handle
+                            .set(database_infos.len() as u32);
+
+                        database_infos.into_iter().for_each(|database_info| {
+                            obj.add_existing_session(database_info);
+                        });
+                    }
+                },
+            }
         }
 
         fn dispose(&self, _obj: &Self::Type) {
@@ -326,9 +317,12 @@ impl SessionManager {
 
     /// Sets the online status for the active logged in client. This will be called from the
     /// application `Window` when its active state has changed.
-    pub(crate) fn set_active_client_online(&self, value: bool) {
+    pub(crate) async fn set_active_client_online(&self, value: bool) {
         if let Some(client_id) = self.active_logged_in_client_id() {
-            RUNTIME.spawn(set_online(client_id, value));
+            let result = set_online(client_id, value).await;
+            if let Err(e) = result {
+                log::warn!("Error setting a client online state: {:?}", e);
+            }
         }
     }
 
@@ -344,11 +338,18 @@ impl SessionManager {
                 _ => None,
             })
             .for_each(|client_id| {
-                RUNTIME.spawn(set_online(
-                    client_id,
-                    // Session switching is only possible when the window is active.
-                    client_id == active_client_id,
-                ));
+                spawn(async move {
+                    let result = set_online(
+                        client_id,
+                        // Session switching is only possible when the window is active.
+                        client_id == active_client_id,
+                    )
+                    .await;
+
+                    if let Err(e) = result {
+                        log::warn!("Error setting a client online state: {:?}", e);
+                    }
+                });
             });
     }
 
@@ -369,16 +370,19 @@ impl SessionManager {
             },
         );
 
-        send_log_level(client_id);
+        spawn(async move {
+            send_log_level(client_id).await;
+        });
     }
 
     /// This function is used to add a new session for a so far unknown account. This means it will
     /// go through the login process.
     pub(crate) fn add_new_session(&self, use_test_dc: bool) {
         let client_id = tdlib::create_client();
-
         self.init_new_session(client_id, use_test_dc);
-        send_log_level(client_id);
+        spawn(async move {
+            send_log_level(client_id).await;
+        });
     }
 
     /// This function initializes everything that's needed for adding a new session for the given
@@ -493,7 +497,7 @@ impl SessionManager {
         );
 
         // Block on that future, else the window closes before they are finished!!!
-        RUNTIME.block_on(async {
+        block_on(async {
             close_sessions_future.await.into_iter().for_each(|result| {
                 if let Err(e) = result {
                     log::warn!("Error on closing client: {:?}", e);
@@ -529,13 +533,9 @@ impl SessionManager {
             let client = imp.clients.borrow_mut().remove(&client_id).unwrap();
             if let ClientState::LoggingOut = client.state {
                 let database_dir_base_name = client.database_dir_base_name().to_owned();
-                RUNTIME.spawn(async move {
-                    if let Err(e) =
-                        fs::remove_dir_all(data_dir().join(database_dir_base_name)).await
-                    {
-                        log::error!("Error on on removing database directory: {}", e);
-                    }
-                });
+                if let Err(e) = fs::remove_dir_all(data_dir().join(database_dir_base_name)) {
+                    log::error!("Error on on removing database directory: {}", e);
+                }
             }
             return;
         }
@@ -564,27 +564,22 @@ impl SessionManager {
                 match &update.authorization_state {
                     AuthorizationState::WaitTdlibParameters => {
                         let database_info = client.session.database_info().0.clone();
-                        do_async(
-                            glib::PRIORITY_DEFAULT_IDLE,
-                            async move { send_tdlib_parameters(client_id, &database_info).await },
-                            |result| async {
-                                if let Err(e) = result {
-                                    panic!("Error on sending tdlib parameters: {:?}", e);
-                                }
-                            },
-                        );
+                        spawn(async move {
+                            let result = send_tdlib_parameters(client_id, &database_info).await;
+                            if let Err(e) = result {
+                                panic!("Error on sending tdlib parameters: {:?}", e);
+                            }
+                        });
                     }
                     AuthorizationState::WaitEncryptionKey(_) => {
-                        let encryption_key = "".to_string();
-                        do_async(
-                            glib::PRIORITY_DEFAULT_IDLE,
-                            functions::check_database_encryption_key(encryption_key, client_id),
-                            |result| async {
-                                if let Err(e) = result {
-                                    panic!("Error on sending encryption key: {:?}", e);
-                                }
-                            },
-                        );
+                        spawn(async move {
+                            let result =
+                                functions::check_database_encryption_key(String::new(), client_id)
+                                    .await;
+                            if let Err(e) = result {
+                                panic!("Error on sending encryption key: {:?}", e);
+                            }
+                        });
                     }
                     AuthorizationState::Ready => {
                         let is_last_used = imp
@@ -596,7 +591,10 @@ impl SessionManager {
                             .map(|last| client.database_dir_base_name() == last)
                             .unwrap_or_default();
 
-                        self.add_logged_in_session(client_id, client.session, is_last_used);
+                        spawn(clone!(@weak self as obj => async move {
+                            obj.add_logged_in_session(client_id, client.session, is_last_used)
+                                .await;
+                        }));
                     }
                     _ => {
                         let database_info = client.session.database_info().0.clone();
@@ -624,7 +622,9 @@ impl SessionManager {
                             imp.login
                                 .set_authorization_state(update.authorization_state);
                         } else {
-                            log_out(client_id);
+                            spawn(async move {
+                                log_out(client_id).await;
+                            });
                         }
                     }
                 }
@@ -654,32 +654,54 @@ impl SessionManager {
 
     /// Within this function a new `Session` is created based on the passed client id. This session
     /// is then added to the session stack.
-    pub(crate) fn add_logged_in_session(&self, client_id: i32, session: Session, visible: bool) {
-        do_async(
-            glib::PRIORITY_DEFAULT_IDLE,
-            functions::get_me(client_id),
-            clone!(@weak self as obj => move |result| async move {
-                let enums::User::User(me) = result.unwrap();
+    pub(crate) async fn add_logged_in_session(
+        &self,
+        client_id: i32,
+        session: Session,
+        visible: bool,
+    ) {
+        let enums::User::User(me) = functions::get_me(client_id).await.unwrap();
 
-                match session.user_list().try_get(me.id) {
-                    None => {
-                        log::warn!("Own user has not yet arrived. Waiting…");
-                        let wait_me_handler = session.user_list().connect_items_changed(
-                            clone!(@weak obj, @weak session => move |list, _, _, added| {
-                                if added > 0 {
-                                    if let Some(me) = list.try_get(me.id) {
-                                        log::warn!("Own user arrived.");
-                                        obj.add_logged_in_session_(client_id, &session, &me, visible)
-                                    }
-                                }
-                            }),
-                        );
-                        obj.imp().wait_me_handlers.borrow_mut().insert(client_id, wait_me_handler);
-                    },
-                    Some(me) => obj.add_logged_in_session_(client_id, &session, &me, visible),
-                }
-            }),
-        );
+        match session.user_list().try_get(me.id) {
+            None => {
+                log::warn!("Own user has not yet arrived. Waiting…");
+                let wait_me_handler = session.user_list().connect_items_changed(
+                    clone!(@weak self as obj, @weak session => move |list, _, _, added| {
+                        if added > 0 {
+                            if let Some(me) = list.try_get(me.id) {
+                                log::warn!("Own user arrived.");
+                                obj.add_logged_in_session_(client_id, &session, &me, visible);
+                            }
+                        }
+                    }),
+                );
+                self.imp()
+                    .wait_me_handlers
+                    .borrow_mut()
+                    .insert(client_id, wait_me_handler);
+            }
+            Some(me) => {
+                self.add_logged_in_session_(client_id, &session, &me, visible);
+            }
+        }
+    }
+
+    async fn enable_notifications(&self, client_id: i32) {
+        let result = functions::set_option(
+            "notification_group_count_max".to_string(),
+            Some(enums::OptionValue::Integer(types::OptionValueInteger {
+                value: 5,
+            })),
+            client_id,
+        )
+        .await;
+
+        if let Err(e) = result {
+            log::warn!(
+                "Error setting the notification_group_count_max option: {:?}",
+                e
+            );
+        }
     }
 
     fn add_logged_in_session_(&self, client_id: i32, session: &Session, me: &User, visible: bool) {
@@ -718,13 +740,9 @@ impl SessionManager {
         }
 
         // Enable notifications for this client
-        RUNTIME.spawn(functions::set_option(
-            "notification_group_count_max".to_string(),
-            Some(enums::OptionValue::Integer(types::OptionValueInteger {
-                value: 5,
-            })),
-            client_id,
-        ));
+        spawn(clone!(@weak self as obj => async move {
+            obj.enable_notifications(client_id).await;
+        }));
     }
 
     pub(crate) fn begin_chats_search(&self) {
@@ -769,40 +787,29 @@ pub(crate) enum DatadirState {
 ///
 /// If the data directory exists, information about the sessions is gathered. This is reading the
 /// recently used sessions file and checking the individual session's database directory.
-async fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
+fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
     if !data_dir().exists() {
         // Create the Telegrand data directory if it does not exist and return.
-        return fs::create_dir_all(&data_dir())
-            .map_err(anyhow::Error::from)
-            .map_ok(|_| DatadirState::Empty)
-            .await;
+        fs::create_dir_all(&data_dir())?;
+        return Ok(DatadirState::Empty);
     }
 
-    let read_dir = fs::read_dir(&data_dir())
-        .map_err(anyhow::Error::from)
-        .await?;
-
     // All directories with the result of reading the session info file.
-    let database_infos = ReadDirStream::new(read_dir)
-        .map_err(anyhow::Error::from)
+    let database_infos = fs::read_dir(&data_dir())?
+        // Remove entries with error
+        .filter_map(|res| res.ok())
         // Only consider directories.
-        .try_filter_map(|entry| async move {
-            Ok(match entry.metadata().await {
-                Ok(metadata) if metadata.is_dir() => Some(entry),
-                _ => None,
-            })
-        })
+        .filter(|entry| entry.path().is_dir())
         // Only consider directories with a "*.binlog" file
-        .try_filter_map(|entry| async move {
-            Ok(match fs::metadata(entry.path().join("td.binlog")).await {
-                Ok(metadata) if metadata.is_file() => Some((entry, false)),
-                _ => match fs::metadata(entry.path().join("td_test.binlog")).await {
-                    Ok(metadata) if metadata.is_file() => Some((entry, true)),
-                    _ => None,
-                },
-            })
+        .filter_map(|entry| {
+            if entry.path().join("td.binlog").is_file() {
+                return Some((entry, false));
+            } else if entry.path().join("td_test.binlog").is_file() {
+                return Some((entry, true));
+            }
+            None
         })
-        .map_ok(|(entry, use_test_dc)| DatabaseInfo {
+        .map(|(entry, use_test_dc)| DatabaseInfo {
             directory_base_name: entry
                 .path()
                 .file_name()
@@ -812,8 +819,7 @@ async fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
                 .to_owned(),
             use_test_dc,
         })
-        .try_collect::<Vec<_>>()
-        .await?;
+        .collect::<Vec<_>>();
 
     if database_infos.is_empty() {
         Ok(DatadirState::Empty)
@@ -874,8 +880,8 @@ async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Err
 }
 
 /// Helper function for setting the tdlib log level.
-fn send_log_level(client_id: i32) {
-    RUNTIME.spawn(functions::set_log_verbosity_level(
+async fn send_log_level(client_id: i32) {
+    let result = functions::set_log_verbosity_level(
         if log::log_enabled!(log::Level::Trace) {
             5
         } else if log::log_enabled!(log::Level::Debug) {
@@ -888,7 +894,11 @@ fn send_log_level(client_id: i32) {
             0
         },
         client_id,
-    ));
+    )
+    .await;
+    if let Err(e) = result {
+        log::warn!("Error setting the tdlib log level: {:?}", e);
+    }
 }
 
 /// Helper function for removing an element from a [`Vec`] based on an equality comparison.

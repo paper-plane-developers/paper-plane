@@ -3,10 +3,11 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 
+use crate::expressions;
 use crate::session::chat::SponsoredMessage;
 use crate::session::content::{ChatActionBar, ChatInfoDialog, ItemRow};
 use crate::session::{Chat, ChatType, Session};
-use crate::{expressions, spawn};
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -142,7 +143,9 @@ impl ChatHistory {
     fn load_older_messages(&self, adj: &gtk::Adjustment) {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(chat) = self.chat() {
-                chat.history().load_older_messages();
+                spawn(clone!(@weak chat => async move {
+                    chat.history().load_older_messages().await;
+                }));
             }
         }
     }
@@ -158,7 +161,7 @@ impl ChatHistory {
     }
 
     fn request_sponsored_message(&self, session: &Session, chat_id: i64, list: &gio::ListStore) {
-        spawn!(clone!(@weak session, @weak list => async move {
+        spawn(clone!(@weak session, @weak list => async move {
             match SponsoredMessage::request(chat_id, &session).await {
                 Ok(sponsored_message) => list.append(&sponsored_message),
                 Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),

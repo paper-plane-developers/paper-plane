@@ -18,6 +18,4 @@ pretty_env_logger = "0.4"
 qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.5"
 tdlib = { version = "0.1", default-features = false }
-tokio = { version = "1", features = ["rt-multi-thread"] }
-tokio-stream = { version = "0.1", features = ["fs"] }
 webp = "0.2"

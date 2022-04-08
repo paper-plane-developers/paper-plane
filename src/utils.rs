@@ -10,7 +10,7 @@ use tdlib::types::{self, FormattedText};
 use tdlib::{enums, functions};
 
 use crate::session_manager::DatabaseInfo;
-use crate::{config, APPLICATION_OPTS, RUNTIME};
+use crate::{config, APPLICATION_OPTS};
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
@@ -185,45 +185,20 @@ pub(crate) async fn send_tdlib_parameters(
     functions::set_tdlib_parameters(parameters, client_id).await
 }
 
-pub(crate) fn log_out(client_id: i32) {
-    RUNTIME.spawn(async move {
-        if let Err(e) = functions::log_out(client_id).await {
-            log::error!("Could not logout client with id={}: {:?}", client_id, e);
-        }
-    });
-}
-
-// Function from https://gitlab.gnome.org/GNOME/fractal/-/blob/fractal-next/src/utils.rs
-pub(crate) fn do_async<
-    R: Send + 'static,
-    F1: Future<Output = R> + Send + 'static,
-    F2: Future<Output = ()> + 'static,
-    FN: FnOnce(R) -> F2 + 'static,
->(
-    priority: glib::source::Priority,
-    tokio_fut: F1,
-    glib_closure: FN,
-) {
-    let (sender, receiver) = tokio::sync::oneshot::channel();
-
-    glib::MainContext::default().spawn_local_with_priority(priority, async move {
-        glib_closure(receiver.await.unwrap()).await
-    });
-
-    RUNTIME.spawn(async move { sender.send(tokio_fut.await) });
+pub(crate) async fn log_out(client_id: i32) {
+    if let Err(e) = functions::log_out(client_id).await {
+        log::error!("Could not logout client with id={}: {:?}", client_id, e);
+    }
 }
 
 /// Spawn a future on the default `MainContext`
-///
-/// This was taken from `gtk-macros` and `fractal`
-#[macro_export]
-macro_rules! spawn {
-    ($future:expr) => {
-        let ctx = glib::MainContext::default();
-        ctx.spawn_local($future);
-    };
-    ($priority:expr, $future:expr) => {
-        let ctx = glib::MainContext::default();
-        ctx.spawn_local_with_priority($priority, $future);
-    };
+pub(crate) fn spawn<F: Future<Output = ()> + 'static>(fut: F) {
+    let ctx = glib::MainContext::default();
+    ctx.spawn_local(fut);
+}
+
+/// Run a future on the default `MainContext` and block until finished
+pub(crate) fn block_on<F: Future>(fut: F) -> F::Output {
+    let ctx = glib::MainContext::default();
+    ctx.block_on(fut)
 }

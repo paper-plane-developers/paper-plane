@@ -1,28 +1,22 @@
 use gettextrs::gettext;
-use gtk::glib::{clone, SyncSender};
+use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
-use std::sync::atomic::Ordering;
-use std::sync::Arc;
-use tdlib::enums::{
-    self, AuthorizationState, MessageContent, MessageSender as TelegramMessageSender, Update,
-};
+use std::thread;
+use tdlib::enums::{self, MessageContent, MessageSender as TelegramMessageSender, Update};
 use tdlib::types::{self, Message as TelegramMessage};
-use tokio::task;
 
 use crate::config::{APP_ID, PROFILE};
 use crate::session::{Chat, ChatType};
 use crate::session_manager::{ClientState, SessionManager};
-use crate::utils::MESSAGE_TRUNCATED_LENGTH;
-use crate::{Application, RUNTIME};
+use crate::utils::{spawn, MESSAGE_TRUNCATED_LENGTH};
+use crate::Application;
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::AdwApplicationWindowImpl;
     use gtk::gdk;
-    use std::cell::RefCell;
-    use std::sync::atomic::AtomicBool;
 
     use crate::session_manager::SessionManager;
 
@@ -30,9 +24,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
     pub(crate) struct Window {
         pub(super) settings: gio::Settings,
-        pub(super) receiver_handle: RefCell<Option<task::JoinHandle<()>>>,
-        pub(super) receiver_should_stop: Arc<AtomicBool>,
-
         #[template_child]
         pub(super) session_manager: TemplateChild<SessionManager>,
     }
@@ -46,8 +37,6 @@ mod imp {
         fn new() -> Self {
             Self {
                 settings: gio::Settings::new(APP_ID),
-                receiver_handle: RefCell::default(),
-                receiver_should_stop: Arc::default(),
                 session_manager: TemplateChild::default(),
             }
         }
@@ -84,15 +73,18 @@ mod imp {
             // Load latest window state
             obj.load_window_size();
 
-            obj.start_receiver();
+            // Start the thread that will receive tdlib's updates
+            obj.start_tdlib_thread();
 
             // Set the online state of the active client based on
             // whether the window is active or not
             obj.connect_is_active_notify(|window| {
-                window
-                    .imp()
-                    .session_manager
-                    .set_active_client_online(window.is_active());
+                spawn(clone!(@weak window => async move {
+                    window
+                        .imp()
+                        .session_manager
+                        .set_active_client_online(window.is_active()).await;
+                }));
             });
         }
     }
@@ -101,10 +93,9 @@ mod imp {
     impl WindowImpl for Window {
         // Save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> gtk::Inhibit {
-            self.receiver_should_stop.store(true, Ordering::Release);
-
+            // Close all clients. This must be blocking, otherwise the app might
+            // close before the clients are properly closed, which is bad.
             self.session_manager.close_clients();
-            obj.wait_receiver();
 
             if let Err(err) = obj.save_window_size() {
                 log::warn!("Failed to save window state, {}", &err);
@@ -133,65 +124,26 @@ impl Window {
         &*self.imp().session_manager
     }
 
-    fn start_receiver(&self) {
-        let imp = self.imp();
-        let receiver_should_stop = imp.receiver_should_stop.clone();
-        let sender = Arc::new(self.create_update_sender());
-        let handle = RUNTIME.spawn(async move {
-            loop {
-                let receiver_should_stop = receiver_should_stop.clone();
-                let sender = sender.clone();
-                let stop = task::spawn_blocking(move || {
-                    if let Some((update, client_id)) = tdlib::receive() {
-                        if receiver_should_stop.load(Ordering::Acquire) {
-                            if let Update::AuthorizationState(ref update) = update {
-                                if let AuthorizationState::Closed = update.authorization_state {
-                                    return true;
-                                }
-                            }
-                        }
-
-                        sender.send((update, client_id)).unwrap();
-                    }
-
-                    false
-                })
-                .await
-                .unwrap();
-
-                if stop {
-                    break;
-                }
+    fn start_tdlib_thread(&self) {
+        let sender = self.create_update_channel();
+        thread::spawn(move || loop {
+            if let Some((update, client_id)) = tdlib::receive() {
+                sender.send((update, client_id)).unwrap();
             }
         });
-
-        imp.receiver_handle.replace(Some(handle));
     }
 
-    fn wait_receiver(&self) {
-        RUNTIME.block_on(async {
-            self.imp()
-                .receiver_handle
-                .borrow_mut()
-                .as_mut()
-                .unwrap()
-                .await
-                .unwrap();
-        });
-    }
-
-    fn create_update_sender(&self) -> SyncSender<(Update, i32)> {
-        let (sender, receiver) =
-            glib::MainContext::sync_channel::<(Update, i32)>(Default::default(), 100);
+    fn create_update_channel(&self) -> glib::Sender<(Update, i32)> {
+        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
         receiver.attach(
             None,
-            clone!(@weak self as obj => @default-return glib::Continue(false), move |(update, client_id)| {
-                obj.handle_update(update, client_id);
-
-                glib::Continue(true)
-            }),
+            clone!(@weak self as obj => @default-return glib::Continue(false),
+                move |(update, client_id)| {
+                    obj.handle_update(update, client_id);
+                    glib::Continue(true)
+                }
+            ),
         );
-
         sender
     }
 
