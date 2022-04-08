@@ -32,9 +32,7 @@ mod imp {
             debug!("GtkApplication<Application>::activate");
 
             if let Some(window) = self.window.get() {
-                let window = window.upgrade().unwrap();
-                window.show();
-                window.present();
+                window.upgrade().unwrap().present();
                 return;
             }
 
@@ -177,6 +175,6 @@ impl Application {
             ])
             .build();
 
-        dialog.show();
+        dialog.present();
     }
 }
