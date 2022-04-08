@@ -15,13 +15,13 @@ config = configure_file(
 # Copy the config.rs output to the source directory.
 run_command(
   'cp',
-  meson.build_root() / 'src' / 'config.rs',
-  meson.source_root() / 'src' / 'config.rs',
+  meson.project_build_root() / 'src' / 'config.rs',
+  meson.project_source_root() / 'src' / 'config.rs',
   check: true
 )
 
-cargo_options = [ '--manifest-path', meson.source_root() / 'Cargo.toml' ]
-cargo_options += [ '--target-dir', meson.build_root() / 'src' ]
+cargo_options = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
+cargo_options += [ '--target-dir', meson.project_build_root() / 'src' ]
 
 if get_option('profile') == 'default'
   cargo_options += [ '--release' ]
@@ -32,7 +32,7 @@ else
   message('Building in debug mode')
 endif
 
-cargo_env = [ 'CARGO_HOME=' + meson.build_root() / 'cargo-home' ]
+cargo_env = [ 'CARGO_HOME=' + meson.project_build_root() / 'cargo-home' ]
 
 cargo_build = custom_target(
   'cargo-build',

@@ -37,9 +37,6 @@ fn main() {
 
     glib::set_application_name("Telegrand");
 
-    gtk::init().expect("Unable to start GTK4");
-    adw::init();
-
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
