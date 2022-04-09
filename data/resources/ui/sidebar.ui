@@ -80,7 +80,16 @@
         <property name="vexpand">True</property>
         <property name="hscrollbar-policy">never</property>
         <child>
-          <object class="GtkListView" id="list_view">
+          <object class="GtkListView">
+            <property name="single-click-activate">True</property>
+            <signal name="activate" handler="list_activate" swapped="true"/>
+            <property name="model">
+              <object class="SidebarSelection" id="selection">
+                <binding name="hide-selection">
+                  <lookup name="compact">Sidebar</lookup>
+                </binding>
+              </object>
+            </property>
             <property name="factory">
               <object class="GtkBuilderListItemFactory">
                 <property name="bytes"><![CDATA[

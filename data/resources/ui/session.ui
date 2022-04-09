@@ -7,7 +7,7 @@
         <child>
           <object class="Sidebar" id="sidebar">
             <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
-            <property name="selected-chat" bind-source="Session" bind-property="selected-chat" bind-flags="sync-create | bidirectional"/>
+            <property name="selected-chat" bind-source="content" bind-property="chat" bind-flags="sync-create | bidirectional"/>
             <property name="session">Session</property>
           </object>
         </child>
@@ -22,7 +22,6 @@
         <child>
           <object class="Content" id="content">
             <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
-            <property name="chat" bind-source="Session" bind-property="selected-chat" bind-flags="sync-create | bidirectional"/>
           </object>
         </child>
       </object>
