@@ -116,10 +116,9 @@ impl MessageEntry {
     fn text_buffer_changed(&self) {
         let imp = self.imp();
         let buffer = imp.text_view.buffer();
-        let text = buffer
-            .text(&buffer.start_iter(), &buffer.end_iter(), false)
-            .trim()
-            .to_string();
+        let text: String = buffer
+            .text(&buffer.start_iter(), &buffer.end_iter(), true)
+            .into();
 
         if text.is_empty() {
             imp.formatted_text.replace(None);

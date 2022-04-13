@@ -106,8 +106,12 @@ mod imp {
 
             self.message_entry.connect_formatted_text_notify(
                 clone!(@weak obj => move |message_entry, _| {
-                    // Enable the send-text-message action only when the message entry contains text
-                    let should_enable = message_entry.formatted_text().is_some();
+                    // Enable the send-text-message action only when the message entry contains
+                    // at least one non-whitespace character
+                    let should_enable = message_entry
+                        .formatted_text()
+                        .map(|f| f.0.text.contains(|c: char| !c.is_whitespace()))
+                        .unwrap_or_default();
                     obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                     // Send typing action
