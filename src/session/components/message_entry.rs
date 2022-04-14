@@ -19,7 +19,9 @@ mod imp {
     pub(crate) struct MessageEntry {
         pub(super) formatted_text: RefCell<Option<BoxedFormattedText>>,
         #[template_child]
-        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
+        pub(super) overlay: TemplateChild<gtk::Overlay>,
+        #[template_child]
+        pub(super) placeholder: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) text_view: TemplateChild<gtk::TextView>,
     }
@@ -49,13 +51,22 @@ mod imp {
 
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecBoxed::new(
-                    "formatted-text",
-                    "Formatted text",
-                    "The formatted text of the entry",
-                    BoxedFormattedText::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![
+                    glib::ParamSpecBoxed::new(
+                        "formatted-text",
+                        "Formatted text",
+                        "The formatted text of the entry",
+                        BoxedFormattedText::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpecString::new(
+                        "placeholder-text",
+                        "Placeholder text",
+                        "The placeholder text of this entry",
+                        None,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                ]
             });
             PROPERTIES.as_ref()
         }
@@ -69,6 +80,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "formatted-text" => obj.set_formatted_text(value.get().unwrap()),
+                "placeholder-text" => obj.set_placeholder_text(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -76,12 +88,16 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "formatted-text" => obj.formatted_text().to_value(),
+                "placeholder-text" => obj.placeholder_text().to_value(),
                 _ => unimplemented!(),
             }
         }
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            self.placeholder
+                .connect_label_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
 
             self.text_view
                 .buffer()
@@ -96,7 +112,7 @@ mod imp {
         }
 
         fn dispose(&self, _obj: &Self::Type) {
-            self.scrolled_window.unparent();
+            self.overlay.unparent();
         }
     }
 
@@ -122,6 +138,7 @@ impl MessageEntry {
 
         if text.is_empty() {
             imp.formatted_text.replace(None);
+            imp.placeholder.set_visible(true);
         } else {
             let formatted_text = FormattedText {
                 text,
@@ -129,6 +146,8 @@ impl MessageEntry {
             };
             imp.formatted_text
                 .replace(Some(BoxedFormattedText(formatted_text)));
+
+            imp.placeholder.set_visible(false);
         }
 
         self.notify("formatted-text");
@@ -152,6 +171,14 @@ impl MessageEntry {
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("formatted-text"), f)
+    }
+
+    pub(crate) fn placeholder_text(&self) -> glib::GString {
+        self.imp().placeholder.text()
+    }
+
+    pub(crate) fn set_placeholder_text(&self, placeholder_text: &str) {
+        self.imp().placeholder.set_text(placeholder_text);
     }
 
     pub(crate) fn connect_paste_clipboard<F: Fn(&Self) + 'static>(
