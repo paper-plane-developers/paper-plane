@@ -23,6 +23,8 @@ mod imp {
         #[template_child]
         pub(super) placeholder: TemplateChild<gtk::Label>,
         #[template_child]
+        pub(super) emoji_button: TemplateChild<gtk::Image>,
+        #[template_child]
         pub(super) text_view: TemplateChild<gtk::TextView>,
     }
 
@@ -44,7 +46,15 @@ mod imp {
     impl ObjectImpl for MessageEntry {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("paste-clipboard", &[], <()>::static_type().into()).build()]
+                vec![
+                    Signal::builder("paste-clipboard", &[], <()>::static_type().into()).build(),
+                    Signal::builder(
+                        "emoji-button-press",
+                        &[gtk::Image::static_type().into()],
+                        <()>::static_type().into(),
+                    )
+                    .build(),
+                ]
             });
             SIGNALS.as_ref()
         }
@@ -98,6 +108,12 @@ mod imp {
 
             self.placeholder
                 .connect_label_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
+
+            let press = gtk::GestureClick::new();
+            press.connect_pressed(clone!(@weak obj => move |_, _, _, _| {
+                obj.emit_by_name::<()>("emoji-button-press", &[&*obj.imp().emoji_button]);
+            }));
+            self.emoji_button.add_controller(&press);
 
             self.text_view
                 .buffer()
@@ -153,6 +169,16 @@ impl MessageEntry {
         self.notify("formatted-text");
     }
 
+    /// Insert text inside the message entry at the cursor position,
+    /// deleting eventual selected text
+    pub(crate) fn insert_at_cursor(&self, text: &str) {
+        let buffer = self.imp().text_view.buffer();
+        buffer.begin_user_action();
+        buffer.delete_selection(true, true);
+        buffer.insert_at_cursor(text);
+        buffer.end_user_action();
+    }
+
     pub(crate) fn formatted_text(&self) -> Option<BoxedFormattedText> {
         self.imp().formatted_text.borrow().clone()
     }
@@ -188,6 +214,19 @@ impl MessageEntry {
         self.connect_local("paste-clipboard", true, move |values| {
             let obj = values[0].get::<Self>().unwrap();
             f(&obj);
+
+            None
+        })
+    }
+
+    pub(crate) fn connect_emoji_button_press<F: Fn(&Self, gtk::Image) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("emoji-button-press", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            let button = values[1].get::<gtk::Image>().unwrap();
+            f(&obj, button);
 
             None
         })

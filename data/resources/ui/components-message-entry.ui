@@ -20,21 +20,34 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkBox">
             <property name="css-name">entry</property>
-            <property name="max-content-height">200</property>
-            <property name="hscrollbar-policy">never</property>
-            <property name="propagate-natural-height">True</property>
-            <property name="child">
-              <object class="GtkTextView" id="text_view">
-                <property name="top-margin">6</property>
-                <property name="bottom-margin">6</property>
-                <property name="left-margin">9</property>
-                <property name="right-margin">9</property>
-                <property name="wrap-mode">word-char</property>
-                <property name="valign">center</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="max-content-height">200</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="propagate-natural-height">True</property>
+                <property name="hexpand">True</property>
+                <property name="child">
+                  <object class="GtkTextView" id="text_view">
+                    <property name="top-margin">6</property>
+                    <property name="bottom-margin">6</property>
+                    <property name="left-margin">9</property>
+                    <property name="right-margin">9</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="valign">center</property>
+                  </object>
+                </property>
               </object>
-            </property>
+            </child>
+            <child>
+              <object class="GtkImage" id="emoji_button">
+                <property name="icon-name">face-smile-symbolic</property>
+                <property name="margin-end">9</property>
+                <property name="margin-bottom">9</property>
+                <property name="valign">end</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

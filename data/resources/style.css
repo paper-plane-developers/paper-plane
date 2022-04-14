@@ -196,16 +196,16 @@
   padding: 0;
 }
 
-.message-entry > overlay > entry > scrollbar  {
+.message-entry > overlay > entry > scrolledwindow > scrollbar  {
   box-shadow: none;
   background: none;
 }
 
-.message-entry > overlay > entry > scrollbar slider {
+.message-entry > overlay > entry > scrolledwindow > scrollbar slider {
   min-height: 0;
 }
 
-.message-entry > overlay > entry > textview {
+.message-entry > overlay > entry > scrolledwindow > textview {
   background: none;
   color: inherit;
 }

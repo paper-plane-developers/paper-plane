@@ -14,12 +14,14 @@ use crate::utils::spawn;
 mod imp {
     use super::*;
     use once_cell::unsync::OnceCell;
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-send-photo-dialog.ui")]
     pub(crate) struct SendPhotoDialog {
         pub(super) chat: OnceCell<Chat>,
         pub(super) path: OnceCell<String>,
+        pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         #[template_child]
         pub(super) header_bar: TemplateChild<gtk::HeaderBar>,
         #[template_child]
@@ -53,7 +55,23 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for SendPhotoDialog {}
+    impl ObjectImpl for SendPhotoDialog {
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            self.caption_entry
+                .connect_emoji_button_press(clone!(@weak obj => move |_, button| {
+                    obj.show_emoji_chooser(&button);
+                }));
+        }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            if let Some(emoji_chooser) = self.emoji_chooser.take() {
+                emoji_chooser.unparent();
+            }
+        }
+    }
+
     impl WidgetImpl for SendPhotoDialog {}
     impl WindowImpl for SendPhotoDialog {}
 }
@@ -81,6 +99,20 @@ impl SendPhotoDialog {
         imp.path.set(path).unwrap();
 
         send_photo_dialog
+    }
+
+    fn show_emoji_chooser(&self, parent: &impl IsA<gtk::Widget>) {
+        let imp = self.imp();
+        let mut emoji_chooser = imp.emoji_chooser.borrow_mut();
+        if emoji_chooser.is_none() {
+            let chooser = gtk::EmojiChooser::new();
+            chooser.set_parent(parent);
+            chooser.connect_emoji_picked(clone!(@weak self as obj => move |_, emoji| {
+                obj.imp().caption_entry.insert_at_cursor(emoji);
+            }));
+            *emoji_chooser = Some(chooser);
+        }
+        emoji_chooser.as_ref().unwrap().popup();
     }
 
     async fn send_message(&self) {
