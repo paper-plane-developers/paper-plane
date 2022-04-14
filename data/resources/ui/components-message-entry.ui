@@ -15,11 +15,12 @@
         <property name="propagate-natural-height">True</property>
         <property name="child">
           <object class="GtkTextView" id="text_view">
-            <property name="top-margin">8</property>
-            <property name="bottom-margin">8</property>
+            <property name="top-margin">6</property>
+            <property name="bottom-margin">6</property>
             <property name="left-margin">9</property>
             <property name="right-margin">9</property>
             <property name="wrap-mode">word-char</property>
+            <property name="valign">center</property>
           </object>
         </property>
       </object>
