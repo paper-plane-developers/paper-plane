@@ -4,6 +4,7 @@ mod chat_info_dialog;
 mod event_row;
 mod item_row;
 mod message_row;
+mod send_photo_dialog;
 
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
@@ -11,6 +12,7 @@ use self::chat_info_dialog::ChatInfoDialog;
 use self::event_row::EventRow;
 use self::item_row::ItemRow;
 use self::message_row::{MessageRow, MessageRowExt};
+use self::send_photo_dialog::SendPhotoDialog;
 
 use gtk::glib;
 use gtk::prelude::*;
@@ -125,6 +127,10 @@ impl Default for Content {
 impl Content {
     pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Content")
+    }
+
+    pub(crate) fn handle_paste_action(&self) {
+        self.imp().chat_history.handle_paste_action();
     }
 
     pub(crate) fn chat(&self) -> Option<Chat> {

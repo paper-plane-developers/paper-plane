@@ -6,24 +6,20 @@
     </property>
     <style>
       <class name="toolbar"/>
-      <class name="chat-action-bar"/>
     </style>
     <child>
-      <object class="GtkScrolledWindow" id="scrolled_window">
-        <property name="css-name">entry</property>
+      <object class="GtkButton" id="select_file_button">
+        <property name="valign">end</property>
+        <property name="action-name">chat-action-bar.select-file</property>
+        <property name="icon-name">mail-attachment-symbolic</property>
+        <style>
+          <class name="circular"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="MessageEntry" id="message_entry">
         <property name="hexpand">True</property>
-        <property name="max-content-height">200</property>
-        <property name="hscrollbar-policy">never</property>
-        <property name="propagate-natural-height">True</property>
-        <property name="child">
-          <object class="GtkTextView" id="message_entry">
-            <property name="top-margin">8</property>
-            <property name="bottom-margin">8</property>
-            <property name="left-margin">9</property>
-            <property name="right-margin">9</property>
-            <property name="wrap-mode">word-char</property>
-          </object>
-        </property>
       </object>
     </child>
     <child>

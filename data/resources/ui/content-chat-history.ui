@@ -71,7 +71,7 @@
         <child>
           <object class="AdwClamp">
             <property name="child">
-              <object class="ContentChatActionBar">
+              <object class="ContentChatActionBar" id="chat_action_bar">
                 <binding name="chat">
                   <lookup name="chat">ContentChatHistory</lookup>
                 </binding>

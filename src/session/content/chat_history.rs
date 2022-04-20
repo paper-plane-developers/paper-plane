@@ -24,6 +24,8 @@ mod imp {
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
         pub(super) list_view: TemplateChild<gtk::ListView>,
+        #[template_child]
+        pub(super) chat_action_bar: TemplateChild<ChatActionBar>,
     }
 
     #[glib::object_subclass]
@@ -34,7 +36,6 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             ItemRow::static_type();
-            ChatActionBar::static_type();
             Self::bind_template(klass);
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
@@ -167,6 +168,10 @@ impl ChatHistory {
                 Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),
             }
         }));
+    }
+
+    pub(crate) fn handle_paste_action(&self) {
+        self.imp().chat_action_bar.handle_paste_action();
     }
 
     pub(crate) fn chat(&self) -> Option<Chat> {

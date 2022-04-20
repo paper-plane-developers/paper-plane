@@ -10,7 +10,7 @@ use tdlib::types::{self, FormattedText};
 use tdlib::{enums, functions};
 
 use crate::session_manager::DatabaseInfo;
-use crate::{config, APPLICATION_OPTS};
+use crate::{config, APPLICATION_OPTS, TEMP_DIR};
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
@@ -150,6 +150,11 @@ pub(crate) fn human_friendly_duration(mut seconds: i32) -> String {
 /// Returns the Telegrand data directory (e.g. /home/bob/.local/share/telegrand).
 pub(crate) fn data_dir() -> &'static PathBuf {
     &APPLICATION_OPTS.get().unwrap().data_dir
+}
+
+/// Returns the Telegrand temp directory (e.g. /tmp/telegrand2-0).
+pub(crate) fn temp_dir() -> Option<&'static PathBuf> {
+    TEMP_DIR.get()
 }
 
 pub(crate) async fn send_tdlib_parameters(

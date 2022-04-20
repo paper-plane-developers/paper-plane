@@ -1,14 +1,22 @@
+use anyhow::anyhow;
+use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions};
+use ashpd::{zbus, WindowIdentifier};
+use gettextrs::gettext;
 use glib::clone;
 use glib::signal::Inhibit;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::{ChatAction, InputMessageContent};
 use tdlib::{functions, types};
 
 use crate::session::chat::BoxedDraftMessage;
+use crate::session::components::{BoxedFormattedText, MessageEntry};
+use crate::session::content::SendPhotoDialog;
 use crate::session::Chat;
-use crate::utils::spawn;
+use crate::utils::{spawn, temp_dir};
+
+const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
 
 mod imp {
     use super::*;
@@ -21,9 +29,7 @@ mod imp {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
         #[template_child]
-        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
-        #[template_child]
-        pub(super) message_entry: TemplateChild<gtk::TextView>,
+        pub(super) message_entry: TemplateChild<MessageEntry>,
         #[template_child]
         pub(super) send_message_button: TemplateChild<gtk::Button>,
     }
@@ -37,6 +43,11 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
 
+            klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
+                spawn(clone!(@weak widget => async move {
+                    widget.select_file().await;
+                }));
+            });
             klass.install_action(
                 "chat-action-bar.send-text-message",
                 None,
@@ -93,17 +104,23 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            let message_buffer = self.message_entry.buffer();
-            message_buffer.connect_text_notify(clone!(@weak obj => move |_| {
-                // Enable the send-text-message action only when the message entry contains text
-                let should_enable = !obj.message_entry_text().is_empty();
-                obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
+            self.message_entry.connect_formatted_text_notify(
+                clone!(@weak obj => move |message_entry, _| {
+                    // Enable the send-text-message action only when the message entry contains text
+                    let should_enable = message_entry.formatted_text().is_some();
+                    obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
-                // Send typing action
-                spawn(clone!(@weak obj => async move {
-                    obj.send_chat_action(ChatAction::Typing).await;
+                    // Send typing action
+                    spawn(clone!(@weak obj => async move {
+                        obj.send_chat_action(ChatAction::Typing).await;
+                    }));
+                }),
+            );
+
+            self.message_entry
+                .connect_paste_clipboard(clone!(@weak obj => move |_| {
+                    obj.handle_paste_action();
                 }));
-            }));
 
             // The message entry is always empty at this point, so disable the
             // send-text-message action
@@ -130,7 +147,7 @@ mod imp {
         }
 
         fn dispose(&self, _obj: &Self::Type) {
-            self.scrolled_window.unparent();
+            self.message_entry.unparent();
             self.send_message_button.unparent();
         }
     }
@@ -154,23 +171,10 @@ impl ChatActionBar {
         glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
-    fn message_entry_text(&self) -> String {
-        let buffer = self.imp().message_entry.buffer();
-        buffer
-            .text(&buffer.start_iter(), &buffer.end_iter(), true)
-            .trim()
-            .to_string()
-    }
-
     fn compose_text_message(&self) -> Option<InputMessageContent> {
-        let text = self.message_entry_text();
-        if !text.is_empty() {
-            let formatted_text = types::FormattedText {
-                text,
-                ..Default::default()
-            };
+        if let Some(formatted_text) = self.imp().message_entry.formatted_text() {
             let content = types::InputMessageText {
-                text: formatted_text,
+                text: formatted_text.0,
                 disable_web_page_preview: false,
                 clear_draft: true,
             };
@@ -178,6 +182,34 @@ impl ChatActionBar {
             Some(InputMessageContent::InputMessageText(content))
         } else {
             None
+        }
+    }
+
+    async fn select_file(&self) {
+        let connection = zbus::Connection::session().await.unwrap();
+        let proxy = FileChooserProxy::new(&connection).await.unwrap();
+        let native = self.native().unwrap();
+        let identifier = WindowIdentifier::from_native(&native).await;
+        let mut filter = FileFilter::new(&gettext("Image"));
+
+        for mime in PHOTO_MIME_TYPES {
+            filter = filter.mimetype(mime);
+        }
+
+        let options = OpenFileOptions::default().modal(true).add_filter(filter);
+
+        if let Ok(files) = proxy
+            .open_file(&identifier, &gettext("Select File"), options)
+            .await
+        {
+            let parent_window = self.root().unwrap().downcast().ok();
+            let chat = self.chat().unwrap();
+            let file = gio::File::for_uri(&files.uris()[0]);
+
+            if let Some(path) = file.path() {
+                let path = path.to_str().unwrap().to_string();
+                SendPhotoDialog::new(&parent_window, chat, path).present();
+            }
         }
     }
 
@@ -194,7 +226,7 @@ impl ChatActionBar {
                 }
 
                 // Reset message entry
-                self.imp().message_entry.buffer().set_text("");
+                self.imp().message_entry.set_formatted_text(None);
             }
         }
     }
@@ -221,24 +253,21 @@ impl ChatActionBar {
     }
 
     fn load_draft_message(&self, message: Option<BoxedDraftMessage>) {
-        let message_text = message
-            .as_ref()
-            .map(|message| {
-                if let InputMessageContent::InputMessageText(ref content) =
+        let formatted_text = if let Some(message) = message {
+            if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
+                Some(BoxedFormattedText(content.text))
+            } else {
+                log::warn!(
+                    "Unexpected draft message type: {:?}",
                     message.0.input_message_text
-                {
-                    content.text.text.as_ref()
-                } else {
-                    log::warn!(
-                        "Unexpected draft message type: {:?}",
-                        message.0.input_message_text
-                    );
-                    ""
-                }
-            })
-            .unwrap_or_default();
+                );
+                None
+            }
+        } else {
+            None
+        };
 
-        self.imp().message_entry.buffer().set_text(&*message_text);
+        self.imp().message_entry.set_formatted_text(formatted_text);
     }
 
     async fn send_chat_action(&self, action: ChatAction) {
@@ -269,6 +298,42 @@ impl ChatActionBar {
         }
     }
 
+    pub(crate) fn handle_paste_action(&self) {
+        if let Some(chat) = self.chat() {
+            spawn(clone!(@weak self as obj => async move {
+                if let Err(e) = obj.handle_image_clipboard(chat).await {
+                    log::warn!("Error on pasting an image: {:?}", e);
+                }
+            }));
+        }
+    }
+
+    async fn handle_image_clipboard(&self, chat: Chat) -> Result<(), anyhow::Error> {
+        if let Ok((stream, mime)) = self
+            .clipboard()
+            .read_future(PHOTO_MIME_TYPES, glib::PRIORITY_DEFAULT)
+            .await
+        {
+            let extension = match mime.as_str() {
+                "image/png" => "png",
+                "image/jpg" => "jpg",
+                _ => unreachable!(),
+            };
+
+            let temp_dir =
+                temp_dir().ok_or_else(|| anyhow!("The temporary directory doesn't exist"))?;
+            let path = temp_dir.join("clipboard").with_extension(extension);
+
+            save_stream_to_file(stream, &path).await?;
+
+            let parent_window = self.root().unwrap().downcast().ok();
+            let path = path.to_str().unwrap().to_string();
+            SendPhotoDialog::new(&parent_window, chat, path).present();
+        }
+
+        Ok(())
+    }
+
     pub(crate) fn chat(&self) -> Option<Chat> {
         self.imp().chat.borrow().clone()
     }
@@ -293,4 +358,29 @@ impl ChatActionBar {
         imp.chat.replace(chat);
         self.notify("chat");
     }
+}
+
+async fn save_stream_to_file(
+    stream: gio::InputStream,
+    path: impl AsRef<std::path::Path>,
+) -> Result<(), glib::Error> {
+    let file = gio::File::for_path(path);
+    let file_stream = file
+        .replace_future(
+            None,
+            false,
+            gio::FileCreateFlags::REPLACE_DESTINATION,
+            glib::PRIORITY_DEFAULT,
+        )
+        .await?;
+
+    file_stream
+        .splice_future(
+            &stream,
+            gio::OutputStreamSpliceFlags::CLOSE_SOURCE | gio::OutputStreamSpliceFlags::CLOSE_TARGET,
+            glib::PRIORITY_DEFAULT,
+        )
+        .await?;
+
+    Ok(())
 }
