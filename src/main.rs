@@ -2,8 +2,11 @@ mod application;
 #[rustfmt::skip]
 #[allow(clippy::all)]
 mod config;
+mod country_info;
+mod country_list;
 mod expressions;
 mod login;
+mod phone_number_input;
 mod preferences_window;
 mod session;
 mod session_manager;

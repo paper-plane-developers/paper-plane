@@ -94,28 +94,7 @@
                             <property name="orientation">vertical</property>
                             <property name="spacing">12</property>
                             <child>
-                              <object class="GtkListBox">
-                                <child>
-                                  <object class="GtkListBoxRow">
-                                    <property name="focusable">False</property>
-                                    <property name="selectable">False</property>
-                                    <property name="activatable">False</property>
-                                    <property name="child">
-                                      <object class="GtkEntry" id="phone_number_entry">
-                                        <property name="activates-default">True</property>
-                                        <property name="placeholder-text" translatable="yes">Phone Number</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">6</property>
-                                        <property name="margin-start">6</property>
-                                        <property name="margin-end">6</property>
-                                      </object>
-                                    </property>
-                                  </object>
-                                </child>
-                                <style>
-                                  <class name="boxed-list"/>
-                                </style>
-                              </object>
+                              <object class="PhoneNumberInput" id="phone_number_input"/>
                             </child>
                             <child>
                               <object class="GtkListBox">

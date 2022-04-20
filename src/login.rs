@@ -3,9 +3,10 @@ use gtk::gdk;
 use gtk::glib::{self, clone};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{AuthenticationCodeType, AuthorizationState};
+use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
 
+use crate::country_list::CountryList;
 use crate::session::Session;
 use crate::session_manager::SessionManager;
 use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters, spawn};
@@ -18,12 +19,15 @@ mod imp {
     use once_cell::sync::OnceCell;
     use std::cell::{Cell, RefCell};
 
+    use crate::phone_number_input::PhoneNumberInput;
+
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
     pub(crate) struct Login {
         pub(super) session_manager: OnceCell<SessionManager>,
         pub(super) client_id: Cell<i32>,
         pub(super) session: RefCell<Option<Session>>,
+        pub(super) countries_retrieved: Cell<bool>,
         pub(super) tos_text: RefCell<String>,
         pub(super) show_tos_popup: Cell<bool>,
         pub(super) has_recovery_email_address: Cell<bool>,
@@ -47,7 +51,7 @@ mod imp {
         #[template_child]
         pub(super) content: TemplateChild<adw::Leaflet>,
         #[template_child]
-        pub(super) phone_number_entry: TemplateChild<gtk::Entry>,
+        pub(super) phone_number_input: TemplateChild<PhoneNumberInput>,
         #[template_child]
         pub(super) phone_number_use_qr_code_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -216,7 +220,8 @@ impl Login {
 
         imp.session.replace(Some(session));
 
-        imp.phone_number_entry.set_text("");
+        imp.countries_retrieved.set(false);
+        imp.phone_number_input.set_number("");
         imp.registration_first_name_entry.set_text("");
         imp.registration_last_name_entry.set_text("");
         imp.code_entry.set_text("");
@@ -252,6 +257,27 @@ impl Login {
                 }));
             }
             AuthorizationState::WaitPhoneNumber => {
+                if !imp.countries_retrieved.get() {
+                    imp.countries_retrieved.set(true);
+
+                    let use_test_dc = self.use_test_dc();
+                    spawn(clone!(@weak self as obj => async move {
+                        let imp = obj.imp();
+                        match functions::get_countries(imp.client_id.get()).await {
+                            Ok(enums::Countries::Countries(countries)) => {
+                                imp.phone_number_input.set_model(
+                                    Some(&CountryList::from_td_object(countries, use_test_dc))
+                                );
+                                imp.phone_number_input.select_number_without_calling_code();
+                            }
+                            Err(_) => {
+                                imp.phone_number_input.set_model(None);
+                                // TODO: Show a toast notification.
+                            }
+                        }
+                    }));
+                }
+
                 // The page 'phone-number-page' is the first page and thus the visible page by
                 // default. This means that no transition will happen when we receive
                 // 'WaitPhoneNumber'. In this case, we have to update the actions manually.
@@ -265,9 +291,9 @@ impl Login {
 
                 self.navigate_to_page(
                     "phone-number-page",
-                    [&*imp.phone_number_entry],
+                    [&*imp.phone_number_input],
                     Some(&imp.welcome_page_error_label),
-                    Some(&*imp.phone_number_entry),
+                    Some(&*imp.phone_number_input),
                 );
             }
             AuthorizationState::WaitCode(data) => {
@@ -587,7 +613,7 @@ impl Login {
                     "phone-number-page",
                     [],
                     None,
-                    Some(&*imp.phone_number_entry),
+                    Some(&*imp.phone_number_input),
                 )
             }
         }
@@ -633,12 +659,13 @@ impl Login {
             .map(|user| user.id())
             .collect();
         let client_id = imp.client_id.get();
+
         let result = functions::request_qr_code_authentication(other_user_ids, client_id).await;
 
         self.handle_user_result(
             result,
             &imp.welcome_page_error_label,
-            &*imp.phone_number_entry,
+            &*imp.phone_number_input,
         );
     }
 
@@ -646,20 +673,12 @@ impl Login {
         // We actually need to logout to stop tdlib sending us new links.
         // https://github.com/tdlib/td/issues/1645
         let imp = self.imp();
-        let use_test_dc = imp
-            .session
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .database_info()
-            .0
-            .use_test_dc;
 
         log_out(imp.client_id.get()).await;
         imp.session_manager
             .get()
             .unwrap()
-            .add_new_session(use_test_dc);
+            .add_new_session(self.use_test_dc());
     }
 
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
@@ -749,7 +768,7 @@ impl Login {
         reset_error_label(&imp.welcome_page_error_label);
 
         let client_id = imp.client_id.get();
-        let phone_number = imp.phone_number_entry.text();
+        let phone_number = imp.phone_number_input.number();
 
         // Check if we are already have an account logged in with that phone_number.
         let phone_number_digits = phone_number
@@ -759,16 +778,7 @@ impl Login {
 
         let session_manager = imp.session_manager.get().unwrap();
 
-        match session_manager.session_index_for(
-            imp.session
-                .borrow()
-                .as_ref()
-                .unwrap()
-                .database_info()
-                .0
-                .use_test_dc,
-            &phone_number_digits,
-        ) {
+        match session_manager.session_index_for(self.use_test_dc(), &phone_number_digits) {
             Some(pos) => {
                 // We just figured out that we already have an open session for that account.
                 // Therefore we logout the client, with which we wanted to log in and delete its
@@ -794,8 +804,9 @@ impl Login {
                 self.handle_user_result(
                     result,
                     &imp.welcome_page_error_label,
-                    &*imp.phone_number_entry,
+                    &*imp.phone_number_input,
                 );
+                imp.phone_number_input.select_number_without_calling_code()
             }
         }
     }
@@ -1024,6 +1035,17 @@ impl Login {
                     .grab_focus();
             }
         }));
+    }
+
+    fn use_test_dc(&self) -> bool {
+        self.imp()
+            .session
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .database_info()
+            .0
+            .use_test_dc
     }
 
     fn handle_user_result<T, W: IsA<gtk::Widget>>(

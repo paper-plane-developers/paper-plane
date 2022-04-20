@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="PhoneNumberInput" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBinLayout"/>
+    </property>
+    <child>
+      <object class="GtkListBox" id="list_box">
+        <child>
+          <object class="AdwComboRow" id="combo_row">
+            <property name="selectable">False</property>
+            <property name="title" translatable="yes">Country</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkListBoxRow">
+            <property name="focusable">False</property>
+            <property name="selectable">False</property>
+            <property name="activatable">False</property>
+            <property name="child">
+              <object class="GtkEntry" id="entry">
+                <property name="activates-default">True</property>
+                <property name="input-purpose">phone</property>
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="placeholder-text" translatable="yes">Phone Number</property>
+                <style>
+                  <class name="numeric"/>
+                </style>
+              </object>
+            </property>
+          </object>
+        </child>
+        <style>
+          <class name="boxed-list"/>
+        </style>
+      </object>
+    </child>
+  </template>
+</interface>
