@@ -217,6 +217,16 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::ChatIsBlocked(ref update_) => {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update)
+                }
+            }
+            Update::ChatPermissions(ref update_) => {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update)
+                }
+            }
             _ => {}
         }
     }

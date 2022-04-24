@@ -18,7 +18,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{self, ChatMemberStatus, ChatType as TdChatType, MessageContent, Update};
-use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
+use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, ChatPermissions, DraftMessage};
 
 use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
 use crate::Session;
@@ -26,6 +26,10 @@ use crate::Session;
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedChatMemberStatus")]
 pub(crate) struct BoxedChatMemberStatus(pub(crate) ChatMemberStatus);
+
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedChatPermissions")]
+pub(crate) struct BoxedChatPermissions(pub(crate) ChatPermissions);
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
@@ -90,6 +94,7 @@ mod imp {
     pub(crate) struct Chat {
         pub(super) id: Cell<i64>,
         pub(super) type_: OnceCell<ChatType>,
+        pub(super) is_blocked: Cell<bool>,
         pub(super) title: RefCell<String>,
         pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) last_message: RefCell<Option<Message>>,
@@ -102,6 +107,7 @@ mod imp {
         pub(super) history: OnceCell<History>,
         pub(super) actions: OnceCell<ChatActionList>,
         pub(super) session: WeakRef<Session>,
+        pub(super) permissions: RefCell<Option<BoxedChatPermissions>>,
     }
 
     #[glib::object_subclass]
@@ -129,6 +135,15 @@ mod imp {
                         "The type of this chat",
                         ChatType::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpecBoolean::new(
+                        "is-blocked",
+                        "Is blocked",
+                        "Whether this chat is blocked for the user",
+                        false,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecString::new(
                         "title",
@@ -230,6 +245,15 @@ mod imp {
                         Session::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
+                    glib::ParamSpecBoxed::new(
+                        "permissions",
+                        "Permissions",
+                        "The permissions of this chat",
+                        BoxedChatPermissions::static_type(),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -245,6 +269,7 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "type" => self.type_.set(value.get().unwrap()).unwrap(),
+                "is-blocked" => obj.set_is_blocked(value.get().unwrap()),
                 "title" => {
                     obj.set_title(value.get::<Option<String>>().unwrap().unwrap_or_default())
                 }
@@ -256,6 +281,7 @@ mod imp {
                 "unread-count" => obj.set_unread_count(value.get().unwrap()),
                 "draft-message" => obj.set_draft_message(value.get().unwrap()),
                 "notification-settings" => obj.set_notification_settings(value.get().unwrap()),
+                "permissions" => obj.set_permissions(value.get().unwrap()),
                 "session" => self.session.set(Some(&value.get().unwrap())),
                 _ => unimplemented!(),
             }
@@ -265,6 +291,7 @@ mod imp {
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "type" => obj.type_().to_value(),
+                "is-blocked" => obj.is_blocked().to_value(),
                 "title" => obj.title().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-message" => obj.last_message().to_value(),
@@ -276,6 +303,7 @@ mod imp {
                 "notification-settings" => obj.notification_settings().to_value(),
                 "history" => obj.history().to_value(),
                 "actions" => obj.actions().to_value(),
+                "permissions" => obj.permissions().to_value(),
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
@@ -296,6 +324,7 @@ impl Chat {
         glib::Object::new(&[
             ("id", &chat.id),
             ("type", &type_),
+            ("is-blocked", &chat.is_blocked),
             ("title", &chat.title),
             ("avatar", &avatar),
             ("draft-message", &draft_message),
@@ -305,6 +334,7 @@ impl Chat {
                 "notification-settings",
                 &BoxedChatNotificationSettings(chat.notification_settings),
             ),
+            ("permissions", &BoxedChatPermissions(chat.permissions)),
             ("session", &session),
         ])
         .expect("Failed to create Chat")
@@ -378,6 +408,10 @@ impl Chat {
                 // for updating their state in the future.
                 self.notify("actions");
             }
+            Update::ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
+            Update::ChatPermissions(update) => {
+                self.set_permissions(BoxedChatPermissions(update.permissions))
+            }
             _ => {}
         }
     }
@@ -388,6 +422,18 @@ impl Chat {
 
     pub(crate) fn type_(&self) -> &ChatType {
         self.imp().type_.get().unwrap()
+    }
+
+    pub(crate) fn is_blocked(&self) -> bool {
+        self.imp().is_blocked.get()
+    }
+
+    pub(crate) fn set_is_blocked(&self, is_blocked: bool) {
+        if self.is_blocked() == is_blocked {
+            return;
+        }
+        self.imp().is_blocked.replace(is_blocked);
+        self.notify("is-blocked");
     }
 
     pub(crate) fn title(&self) -> String {
@@ -538,5 +584,17 @@ impl Chat {
 
     pub(crate) fn is_own_chat(&self) -> bool {
         self.type_().user() == Some(&self.session().me())
+    }
+
+    pub(crate) fn permissions(&self) -> BoxedChatPermissions {
+        self.imp().permissions.borrow().to_owned().unwrap()
+    }
+
+    pub(crate) fn set_permissions(&self, permissions: BoxedChatPermissions) {
+        if self.imp().permissions.borrow().as_ref() == Some(&permissions) {
+            return;
+        }
+        self.imp().permissions.replace(Some(permissions));
+        self.notify("permissions");
     }
 }

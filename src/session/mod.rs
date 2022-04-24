@@ -14,7 +14,7 @@ mod user;
 mod user_list;
 
 use self::avatar::Avatar;
-use self::basic_group::BasicGroup;
+pub(crate) use self::basic_group::BasicGroup;
 use self::basic_group_list::BasicGroupList;
 pub(crate) use self::chat::{Chat, ChatType};
 use self::chat_list::ChatList;
@@ -22,7 +22,7 @@ use self::content::Content;
 use self::secret_chat::SecretChat;
 use self::secret_chat_list::SecretChatList;
 use self::sidebar::Sidebar;
-use self::supergroup::Supergroup;
+pub(crate) use self::supergroup::Supergroup;
 use self::supergroup_list::SupergroupList;
 pub(crate) use self::user::User;
 use self::user_list::UserList;
@@ -314,7 +314,9 @@ impl Session {
             | Update::ChatReadInbox(_)
             | Update::ChatDraftMessage(_)
             | Update::DeleteMessages(_)
-            | Update::ChatAction(_) => {
+            | Update::ChatAction(_)
+            | Update::ChatIsBlocked(_)
+            | Update::ChatPermissions(_) => {
                 self.chat_list().handle_update(update);
             }
             Update::UnreadMessageCount(ref update_) => {
