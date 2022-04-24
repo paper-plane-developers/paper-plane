@@ -16,7 +16,7 @@ mod user_list;
 use self::avatar::Avatar;
 pub(crate) use self::basic_group::BasicGroup;
 use self::basic_group_list::BasicGroupList;
-pub(crate) use self::chat::{Chat, ChatType};
+pub(crate) use self::chat::{BoxedChatMemberStatus, BoxedChatPermissions, Chat, ChatType};
 use self::chat_list::ChatList;
 use self::content::Content;
 use self::secret_chat::SecretChat;

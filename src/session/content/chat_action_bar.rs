@@ -9,6 +9,7 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{ChatAction, ChatMemberStatus, InputMessageContent, UserType};
 use tdlib::{functions, types};
 
+use crate::expressions;
 use crate::session::chat::{BoxedChatMemberStatus, BoxedChatPermissions, BoxedDraftMessage};
 use crate::session::components::{BoxedFormattedText, MessageEntry};
 use crate::session::content::SendPhotoDialog;
@@ -36,6 +37,8 @@ mod imp {
         pub(super) send_message_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub(super) select_file_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub(super) restriction_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -445,6 +448,49 @@ impl ChatActionBar {
             bindings.push(message_bar_visibility_binding);
             bindings.push(send_button_visibility_binding);
             bindings.push(select_file_visibility_binding);
+
+            // Handle whether or not restriction label should be shown
+            let restriction_label_visibility_binding = permissions_expression
+                .chain_closure::<bool>(closure!(|chat: Chat, permissions: BoxedChatPermissions| {
+                    if permissions.0.can_send_messages {
+                        match chat.type_() {
+                            ChatType::Supergroup(data) => Some(data.status().0),
+                            ChatType::BasicGroup(data) => Some(data.status().0),
+                            _ => None,
+                        }
+                        .map(|status| match status {
+                            ChatMemberStatus::Restricted(status) => {
+                                !status.permissions.can_send_messages
+                            }
+                            _ => false,
+                        })
+                        .unwrap_or(false)
+                    } else {
+                        match chat.type_() {
+                            ChatType::Supergroup(data) if !data.is_channel() => !matches!(
+                                data.status().0,
+                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
+                            ),
+                            ChatType::BasicGroup(data) => !matches!(
+                                data.status().0,
+                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
+                            ),
+                            _ => false,
+                        }
+                    }
+                }))
+                .upcast()
+                .bind(&*imp.restriction_label, "visible", Some(chat));
+
+            bindings.push(restriction_label_visibility_binding);
+
+            // Handle restriction_label caption
+            let restriction_label_binding = expressions::restriction_expression(chat).bind(
+                &*imp.restriction_label,
+                "label",
+                Some(chat),
+            );
+            bindings.push(restriction_label_binding)
         }
 
         imp.chat.replace(chat);
