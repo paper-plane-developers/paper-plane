@@ -2,17 +2,18 @@ use anyhow::anyhow;
 use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions};
 use ashpd::{zbus, WindowIdentifier};
 use gettextrs::gettext;
-use glib::clone;
+use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
-use tdlib::enums::{ChatAction, InputMessageContent};
+use tdlib::enums::{ChatAction, ChatMemberStatus, InputMessageContent, UserType};
 use tdlib::{functions, types};
 
-use crate::session::chat::BoxedDraftMessage;
+use crate::session::chat::{BoxedChatMemberStatus, BoxedChatPermissions, BoxedDraftMessage};
 use crate::session::components::{BoxedFormattedText, MessageEntry};
 use crate::session::content::SendPhotoDialog;
-use crate::session::Chat;
+use crate::session::user::BoxedUserType;
+use crate::session::{BasicGroup, Chat, ChatType, Supergroup, User};
 use crate::utils::{spawn, temp_dir};
 
 const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
@@ -28,10 +29,13 @@ mod imp {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
+        pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
         pub(super) message_entry: TemplateChild<MessageEntry>,
         #[template_child]
         pub(super) send_message_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub(super) select_file_button: TemplateChild<gtk::Button>,
     }
 
     #[glib::object_subclass]
@@ -363,11 +367,84 @@ impl ChatActionBar {
         }));
 
         let imp = self.imp();
+        let mut bindings = imp.bindings.borrow_mut();
+        while let Some(binding) = bindings.pop() {
+            binding.unwatch();
+        }
 
         if let Some(ref chat) = chat {
             self.load_draft_message(chat.draft_message());
 
             imp.chat_action_in_cooldown.set(false);
+
+            let permissions_expression = Chat::this_expression("permissions");
+            let is_blocked_expression = Chat::this_expression("is-blocked");
+
+            // Handle whether or not message bar should be shown
+            let message_bar_visibility_expression = match chat.type_() {
+                ChatType::Private(data) => {
+                    let user_type_expression =
+                        gtk::ConstantExpression::new(data).chain_property::<User>("type");
+                    message_bar_visibility_in_private_chats(
+                        is_blocked_expression,
+                        user_type_expression,
+                    )
+                }
+                ChatType::Secret(data) => {
+                    let user_type_expression =
+                        gtk::ConstantExpression::new(data.user()).chain_property::<User>("type");
+                    message_bar_visibility_in_private_chats(
+                        is_blocked_expression,
+                        user_type_expression,
+                    )
+                }
+                ChatType::Supergroup(data) => {
+                    let user_status_expression =
+                        gtk::ConstantExpression::new(data).chain_property::<Supergroup>("status");
+                    if data.is_channel() {
+                        gtk::ClosureExpression::with_callback(&[user_status_expression], |args| {
+                            let status = args[1].get::<BoxedChatMemberStatus>().unwrap().0;
+                            matches!(
+                                status,
+                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
+                            )
+                        })
+                        .upcast()
+                    } else {
+                        message_bar_visibility_in_groups(
+                            permissions_expression.clone(),
+                            user_status_expression,
+                        )
+                    }
+                }
+                ChatType::BasicGroup(data) => {
+                    let user_status_expression =
+                        gtk::ConstantExpression::new(data).chain_property::<BasicGroup>("status");
+                    message_bar_visibility_in_groups(
+                        permissions_expression.clone(),
+                        user_status_expression,
+                    )
+                }
+            };
+
+            let message_bar_visibility_binding =
+                message_bar_visibility_expression.bind(&*imp.message_entry, "visible", Some(chat));
+            let send_button_visibility_binding = message_bar_visibility_expression.bind(
+                &*imp.send_message_button,
+                "visible",
+                Some(chat),
+            );
+            // TODO: So in order to implement it correctly we need to duplicate message_bar_visibility_expression
+            // to only change 3 LOC, so there must be a more efficient way of solving that issue
+            // But for now I'm just leaving it like that, it's still better than nothing
+            let select_file_visibility_binding = message_bar_visibility_expression.bind(
+                &*imp.select_file_button,
+                "visible",
+                Some(chat),
+            );
+            bindings.push(message_bar_visibility_binding);
+            bindings.push(send_button_visibility_binding);
+            bindings.push(select_file_visibility_binding);
         }
 
         imp.chat.replace(chat);
@@ -398,4 +475,45 @@ async fn save_stream_to_file(
         .await?;
 
     Ok(())
+}
+
+fn message_bar_visibility_in_private_chats(
+    is_blocked_expression: gtk::PropertyExpression,
+    user_type_expression: gtk::PropertyExpression,
+) -> gtk::Expression {
+    gtk::ClosureExpression::new::<bool, _, _>(
+        &[is_blocked_expression, user_type_expression],
+        closure!(|_: Chat, is_blocked: bool, user_type: BoxedUserType| {
+            // Hide message bar if account is deleted
+            if let UserType::Deleted = user_type.0 {
+                false
+            } else {
+                !is_blocked
+            }
+        }),
+    )
+    .upcast()
+}
+
+fn message_bar_visibility_in_groups(
+    permissions_expression: gtk::PropertyExpression,
+    user_status_expression: gtk::PropertyExpression,
+) -> gtk::Expression {
+    gtk::ClosureExpression::new::<bool, _, _>(
+        &[permissions_expression, user_status_expression],
+        closure!(
+            |_: Chat, permissions: BoxedChatPermissions, status: BoxedChatMemberStatus| {
+                match status.0 {
+                    ChatMemberStatus::Restricted(data) if !data.permissions.can_send_messages => {
+                        false
+                    }
+                    ChatMemberStatus::Left | ChatMemberStatus::Banned(_) => false,
+                    // Owner and admins are always allowed to send messages
+                    ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_) => true,
+                    _ => permissions.0.can_send_messages,
+                }
+            }
+        ),
+    )
+    .upcast()
 }
