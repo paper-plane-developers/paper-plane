@@ -17,11 +17,15 @@ pub(crate) use self::sponsored_message::SponsoredMessage;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{self, ChatType as TdChatType, MessageContent, Update};
+use tdlib::enums::{self, ChatMemberStatus, ChatType as TdChatType, MessageContent, Update};
 use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, DraftMessage};
 
 use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
 use crate::Session;
+
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedChatMemberStatus")]
+pub(crate) struct BoxedChatMemberStatus(pub(crate) ChatMemberStatus);
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]

@@ -4,15 +4,18 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::Update;
 use tdlib::types::BasicGroup as TdBasicGroup;
 
+use crate::session::chat::BoxedChatMemberStatus;
+
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct BasicGroup {
         pub(super) id: Cell<i64>,
         pub(super) member_count: Cell<i32>,
+        pub(super) status: RefCell<Option<BoxedChatMemberStatus>>,
     }
 
     #[glib::object_subclass]
@@ -45,6 +48,15 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecBoxed::new(
+                        "status",
+                        "Status",
+                        "Own user status in this basic group",
+                        BoxedChatMemberStatus::static_type(),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -60,6 +72,7 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "member-count" => obj.set_member_count(value.get().unwrap()),
+                "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -68,6 +81,7 @@ mod imp {
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "member-count" => obj.member_count().to_value(),
+                "status" => obj.status().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -83,6 +97,7 @@ impl BasicGroup {
         glib::Object::new(&[
             ("id", &basic_group.id),
             ("member-count", &basic_group.member_count),
+            ("status", &BoxedChatMemberStatus(basic_group.status.clone())),
         ])
         .expect("Failed to create BasicGroup")
     }
@@ -90,6 +105,7 @@ impl BasicGroup {
     pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::BasicGroup(data) = update {
             self.set_member_count(data.basic_group.member_count);
+            self.set_status(BoxedChatMemberStatus(data.basic_group.status.clone()));
         }
     }
 
@@ -108,5 +124,17 @@ impl BasicGroup {
 
         self.imp().member_count.set(member_count);
         self.notify("member-count");
+    }
+
+    pub(crate) fn status(&self) -> BoxedChatMemberStatus {
+        self.imp().status.borrow().to_owned().unwrap()
+    }
+
+    pub(crate) fn set_status(&self, status: BoxedChatMemberStatus) {
+        if self.imp().status.borrow().as_ref() == Some(&status) {
+            return;
+        }
+        self.imp().status.replace(Some(status));
+        self.notify("status");
     }
 }
