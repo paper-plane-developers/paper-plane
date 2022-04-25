@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-03-09 18:56+0000\n"
+"PO-Revision-Date: 2022-04-05 23:06+0000\n"
 "Last-Translator: abidin toumi <abidin24@disroot.org>\n"
 "Language-Team: Arabic <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ar/>\n"
@@ -87,7 +87,7 @@ msgstr "شروط الاستخدام"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
-msgstr ""
+msgstr "إ_ضافة خادم"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -99,7 +99,7 @@ msgstr "اختر محادثة لتبدأ التراسل."
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "اعرض المعلومات"
 
 #: data/resources/ui/content-user-dialog.ui:54
 msgid "Mobile"
@@ -107,7 +107,7 @@ msgstr ""
 
 #: data/resources/ui/content-user-dialog.ui:60
 msgid "Username"
-msgstr ""
+msgstr "اسم المستخدم"
 
 #: data/resources/ui/login.ui:47
 msgid "_Previous"
@@ -127,11 +127,11 @@ msgstr "رقم الهاتف"
 
 #: data/resources/ui/login.ui:146
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_لج باستخدام رمز الاستجابة السريعة"
 
 #: data/resources/ui/login.ui:205
 msgid "Scan Code"
-msgstr ""
+msgstr "امسح الرمز"
 
 #: data/resources/ui/login.ui:206
 msgid "Scan this code with another Telegram app logged into your account."
