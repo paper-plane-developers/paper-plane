@@ -302,6 +302,9 @@
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">12</property>
                                 <child>
+                                  <object class="ComponentsAvatarSelector" id="registration_avatar_selector"/>
+                                </child>
+                                <child>
                                   <object class="GtkListBox">
                                     <child>
                                       <object class="GtkListBoxRow">

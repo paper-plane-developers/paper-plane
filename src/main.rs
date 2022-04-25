@@ -10,6 +10,7 @@ mod phone_number_input;
 mod preferences_window;
 mod session;
 mod session_manager;
+mod take_picture_dialog;
 mod utils;
 mod window;
 
@@ -41,6 +42,9 @@ fn main() {
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
+
+    gst::init().expect("Unable to init gstreamer");
+    gst4gtk::plugin_register_static().expect("Failed to register gstgtk4 plugin");
 
     let app = setup_cli(Application::new());
 

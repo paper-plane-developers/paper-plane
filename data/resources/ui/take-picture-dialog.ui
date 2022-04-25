@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="TakePictureDialog" parent="AdwWindow">
+    <property name="default-width">400</property>
+    <property name="default-height">500</property>
+    <property name="modal">True</property>
+    <property name="content">
+      <object class="GtkOverlay">
+        <child type="overlay">
+          <object class="GtkHeaderBar">
+            <property name="valign">start</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="visible">False</property>
+              </object>
+            </property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child>
+        <!-- <child type="overlay">
+          <object class="GtkHeaderBar">
+            <property name="valign">start</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="visible">False</property>
+              </object>
+            </property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child> -->
+        <child>
+          <object class="GtkPicture" id="picture">
+
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>

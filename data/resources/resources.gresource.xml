@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/github/melix99/telegrand/">
+    <file>faces/bicycle.jpg</file>
+    <file>faces/book.jpg</file>
+    <file>faces/calculator.jpg</file>
+    <file>faces/cat.jpg</file>
+    <file>faces/coffee2.jpg</file>
+    <file>faces/flower2.jpg</file>
+    <file>faces/gamepad.jpg</file>
+    <file>faces/guitar2.jpg</file>
+    <file>faces/headphones.jpg</file>
+    <file>faces/hummingbird.jpg</file>
+    <file>faces/mountain.jpg</file>
+    <file>faces/plane.jpg</file>
+    <file>faces/surfer.jpg</file>
+    <file>faces/tomatoes.jpg</file>
+    <file>faces/tree.jpg</file>
+
     <file preprocess="xml-stripblanks">icons/scalable/actions/phone-oldschool-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/send-symbolic.svg</file>
 
     <file compressed="true" preprocess="xml-stripblanks">ui/add-account-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/avatar-with-selection.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar-selector.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-message-entry.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-action-bar.ui</file>
@@ -29,6 +46,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar-session-switcher.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/sidebar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/take-picture-dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
 
     <file compressed="true">style.css</file>

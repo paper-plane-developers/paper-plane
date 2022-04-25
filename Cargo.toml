@@ -7,10 +7,12 @@ edition = "2021"
 [dependencies]
 adw = { version = "0.1", package = "libadwaita" }
 anyhow = "1.0"
-ashpd = { version = "0.3", features = ["feature_gtk4"] }
+ashpd = { version = "0.3", features = ["feature_gtk4", "feature_pipewire"] }
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.4", package = "gtk4", features = ["v4_6"] }
+gst = { version = "0.18", package="gstreamer" }
+gst4gtk = { package = "gst-plugin-gtk4", version = "0.1"}
 indexmap = "1.8"
 locale_config = "0.3"
 log = "0.4"

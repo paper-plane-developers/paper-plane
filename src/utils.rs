@@ -170,7 +170,7 @@ pub(crate) async fn send_tdlib_parameters(
         }
     };
     let parameters = types::TdlibParameters {
-        use_test_dc: database_info.use_test_dc,
+        use_test_dc: true,
         database_directory: data_dir()
             .join(&database_info.directory_base_name)
             .to_str()

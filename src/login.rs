@@ -19,7 +19,7 @@ mod imp {
     use once_cell::sync::OnceCell;
     use std::cell::{Cell, RefCell};
 
-    use crate::phone_number_input::PhoneNumberInput;
+    use crate::{phone_number_input::PhoneNumberInput, session::AvatarSelector};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
@@ -71,6 +71,8 @@ mod imp {
         #[template_child]
         pub(super) code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub(super) registration_avatar_selector: TemplateChild<AvatarSelector>,
+        #[template_child]
         pub(super) registration_first_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub(super) registration_last_name_entry: TemplateChild<gtk::Entry>,
@@ -107,6 +109,8 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            AvatarSelector::static_type();
+
             Self::bind_template(klass);
             klass.install_action("login.previous", None, move |widget, _, _| {
                 spawn(clone!(@weak widget => async move {
@@ -185,6 +189,15 @@ mod imp {
                 gtk::Inhibit(true)
             });
 
+            self.registration_first_name_entry
+                .connect_text_notify(clone!(@weak obj => move |_| {
+                    obj.on_registration_name_changed();
+                }));
+            self.registration_last_name_entry
+                .connect_text_notify(clone!(@weak obj => move |_| {
+                    obj.on_registration_name_changed();
+                }));
+
             // Disable all actions by default.
             obj.disable_actions();
         }
@@ -224,6 +237,7 @@ impl Login {
         imp.phone_number_input.set_number("");
         imp.registration_first_name_entry.set_text("");
         imp.registration_last_name_entry.set_text("");
+        imp.registration_avatar_selector.reset();
         imp.code_entry.set_text("");
         imp.password_entry.set_text("");
     }
@@ -843,6 +857,16 @@ impl Login {
             &imp.registration_error_label,
             &*imp.registration_first_name_entry,
         );
+    }
+
+    fn on_registration_name_changed(&self) {
+        let imp = self.imp();
+
+        imp.registration_avatar_selector.set_user_name(format!(
+            "{} {}",
+            imp.registration_first_name_entry.text(),
+            imp.registration_last_name_entry.text()
+        ));
     }
 
     async fn resend_auth_code(&self) {

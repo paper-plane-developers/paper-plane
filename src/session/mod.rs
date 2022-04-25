@@ -18,6 +18,7 @@ use self::basic_group::BasicGroup;
 use self::basic_group_list::BasicGroupList;
 pub(crate) use self::chat::{Chat, ChatType};
 use self::chat_list::ChatList;
+pub(crate) use self::components::{AvatarSelector, CameraPaintable};
 use self::content::Content;
 use self::secret_chat::SecretChat;
 use self::secret_chat_list::SecretChatList;

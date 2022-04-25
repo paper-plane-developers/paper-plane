@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="choose_file_button"/>
+      <widget name="take_picture_button"/>
+      <widget name="reset_button"/>
+    </widgets>
+  </object>
+
+  <template class="ComponentsAvatarSelector" parent="AdwBin">
+    <property name="hexpand">False</property>
+    <property name="halign">center</property>
+
+    <property name="child">
+      <object class="GtkMenuButton">
+        <property name="popover">
+          <object class="GtkPopover" id="popover">
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="margin-bottom">9</property>
+                <property name="margin-end">9</property>
+                <property name="margin-start">9</property>
+                <property name="margin-top">9</property>
+                <property name="spacing">18</property>
+                <child>
+                  <object class="GtkFlowBox" id="flow_box">
+                    <property name="selection-mode">none</property>
+                    <property name="homogeneous">True</property>
+                    <property name="max-children-per-line">5</property>
+                    <property name="column-spacing">10</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">center</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkButton" id="choose_file_button">
+                        <property name="label">Choose a file…</property>
+                        <property name="action-name">avatar.choose-file</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="take_picture_button">
+                        <property name="label">Take a picture…</property>
+                        <property name="action-name">avatar.take-picture</property>
+                        <property name="visible" bind-source="take_picture_button" bind-property="sensitive" bind-flags="sync-create"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="reset_button">
+                        <property name="label">Reset</property>
+                        <property name="action-name">avatar.reset</property>
+                        <style>
+                          <class name="destructive-action"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+        <property name="child">
+          <object class="AdwAvatar" id="avatar">
+            <property name="icon-name">camera-photo-symbolic</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="show-initials">True</property>
+            <property name="size">80</property>
+          </object>
+        </property>
+        <style>
+          <class name="circular"/>
+        </style>
+      </object>
+    </property>
+
+  </template>
+</interface>

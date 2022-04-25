@@ -602,7 +602,7 @@ impl SessionManager {
                         // Our assumption that the database's session we found at application start
                         // would not need to authorize was wrong. So we handle it correctly.
                         if APPLICATION_OPTS.get().unwrap().test_dc == database_info.use_test_dc
-                            && imp.initial_sessions_to_handle.get() == 1
+                            && imp.initial_sessions_to_handle.get() == 1 || true
                         {
                             // Handle it over to `login.rs`.
 
@@ -622,6 +622,7 @@ impl SessionManager {
                             imp.login
                                 .set_authorization_state(update.authorization_state);
                         } else {
+                            println!("FUCK");
                             spawn(async move {
                                 log_out(client_id).await;
                             });
