@@ -28,6 +28,7 @@ mod imp {
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
+        pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         #[template_child]
         pub(super) message_entry: TemplateChild<MessageEntry>,
         #[template_child]
@@ -106,8 +107,12 @@ mod imp {
 
             self.message_entry.connect_formatted_text_notify(
                 clone!(@weak obj => move |message_entry, _| {
-                    // Enable the send-text-message action only when the message entry contains text
-                    let should_enable = message_entry.formatted_text().is_some();
+                    // Enable the send-text-message action only when the message entry contains
+                    // at least one non-whitespace character
+                    let should_enable = message_entry
+                        .formatted_text()
+                        .map(|f| f.0.text.contains(|c: char| !c.is_whitespace()))
+                        .unwrap_or_default();
                     obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
 
                     // Send typing action
@@ -120,6 +125,11 @@ mod imp {
             self.message_entry
                 .connect_paste_clipboard(clone!(@weak obj => move |_| {
                     obj.handle_paste_action();
+                }));
+
+            self.message_entry
+                .connect_emoji_button_press(clone!(@weak obj => move |_, button| {
+                    obj.show_emoji_chooser(&button);
                 }));
 
             // The message entry is always empty at this point, so disable the
@@ -149,6 +159,9 @@ mod imp {
         fn dispose(&self, _obj: &Self::Type) {
             self.message_entry.unparent();
             self.send_message_button.unparent();
+            if let Some(emoji_chooser) = self.emoji_chooser.take() {
+                emoji_chooser.unparent();
+            }
         }
     }
 
@@ -183,6 +196,23 @@ impl ChatActionBar {
         } else {
             None
         }
+    }
+
+    fn show_emoji_chooser(&self, parent: &impl IsA<gtk::Widget>) {
+        let imp = self.imp();
+        let mut emoji_chooser = imp.emoji_chooser.borrow_mut();
+        if emoji_chooser.is_none() {
+            let chooser = gtk::EmojiChooser::new();
+            chooser.set_parent(parent);
+            chooser.connect_emoji_picked(clone!(@weak self as obj => move |_, emoji| {
+                obj.imp().message_entry.insert_at_cursor(emoji);
+            }));
+            chooser.connect_hide(clone!(@weak self as obj => move |_| {
+                obj.imp().message_entry.grab_focus();
+            }));
+            *emoji_chooser = Some(chooser);
+        }
+        emoji_chooser.as_ref().unwrap().popup();
     }
 
     async fn select_file(&self) {
