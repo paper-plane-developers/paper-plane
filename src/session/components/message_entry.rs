@@ -11,6 +11,7 @@ pub(crate) struct BoxedFormattedText(pub(crate) FormattedText);
 mod imp {
     use super::*;
     use glib::subclass::Signal;
+    use gtk::gdk;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
@@ -47,6 +48,7 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
+                    Signal::builder("activate", &[], <()>::static_type().into()).build(),
                     Signal::builder("paste-clipboard", &[], <()>::static_type().into()).build(),
                     Signal::builder(
                         "emoji-button-press",
@@ -108,6 +110,26 @@ mod imp {
 
             self.placeholder
                 .connect_label_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
+
+            // Handle the enter key to emit the "activate" signal if neither the "ctrl" nor the
+            // "shift" modifier are pressed at the same time.
+            let key_events = gtk::EventControllerKey::new();
+            self.text_view.add_controller(&key_events);
+            key_events.connect_key_pressed(
+                clone!(@weak obj => @default-return gtk::Inhibit(false), move |_, key, _, modifier| {
+                    gtk::Inhibit(
+                        if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
+                            && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
+                            && (key == gdk::Key::Return || key == gdk::Key::KP_Enter)
+                        {
+                            obj.emit_by_name::<()>("activate", &[]);
+                            true
+                        } else {
+                            false
+                        },
+                    )
+                }),
+            );
 
             let press = gtk::GestureClick::new();
             press.connect_pressed(clone!(@weak obj => move |_, _, _, _| {
@@ -209,6 +231,15 @@ impl MessageEntry {
 
     pub(crate) fn set_placeholder_text(&self, placeholder_text: &str) {
         self.imp().placeholder.set_text(placeholder_text);
+    }
+
+    pub(crate) fn connect_activate<F: Fn(&Self) + 'static>(&self, f: F) -> glib::SignalHandlerId {
+        self.connect_local("activate", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
     }
 
     pub(crate) fn connect_paste_clipboard<F: Fn(&Self) + 'static>(
