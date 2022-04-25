@@ -132,7 +132,11 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageEntry {}
+    impl WidgetImpl for MessageEntry {
+        fn grab_focus(&self, _widget: &Self::Type) -> bool {
+            self.text_view.grab_focus()
+        }
+    }
 }
 
 glib::wrapper! {

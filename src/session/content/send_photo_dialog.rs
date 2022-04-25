@@ -110,6 +110,9 @@ impl SendPhotoDialog {
             chooser.connect_emoji_picked(clone!(@weak self as obj => move |_, emoji| {
                 obj.imp().caption_entry.insert_at_cursor(emoji);
             }));
+            chooser.connect_hide(clone!(@weak self as obj => move |_| {
+                obj.imp().caption_entry.grab_focus();
+            }));
             *emoji_chooser = Some(chooser);
         }
         emoji_chooser.as_ref().unwrap().popup();
