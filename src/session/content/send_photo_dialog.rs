@@ -60,6 +60,11 @@ mod imp {
             self.parent_constructed(obj);
 
             self.caption_entry
+                .connect_activate(clone!(@weak obj => move |_| {
+                    obj.activate_action("send-photo-dialog.send-message", None).unwrap()
+                }));
+
+            self.caption_entry
                 .connect_emoji_button_press(clone!(@weak obj => move |_, button| {
                     obj.show_emoji_chooser(&button);
                 }));

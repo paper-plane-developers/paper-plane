@@ -3,10 +3,9 @@ use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions
 use ashpd::{zbus, WindowIdentifier};
 use gettextrs::gettext;
 use glib::clone;
-use glib::signal::Inhibit;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib, CompositeTemplate};
+use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{ChatAction, InputMessageContent};
 use tdlib::{functions, types};
 
@@ -136,24 +135,10 @@ mod imp {
             // send-text-message action
             obj.action_set_enabled("chat-action-bar.send-text-message", false);
 
-            // Handle the enter key to send the message and also the combination of if with the
-            // right modifier keys to add new lines to the entry
-            let key_events = gtk::EventControllerKey::new();
-            self.message_entry.add_controller(&key_events);
-            key_events.connect_key_pressed(
-                clone!(@weak obj => @default-return Inhibit(false), move |_, key, _, modifier| {
-                    if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
-                        && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
-                        && (key == gdk::Key::Return
-                            || key == gdk::Key::KP_Enter)
-                    {
-                        obj.activate_action("chat-action-bar.send-text-message", None).unwrap();
-                        Inhibit(true)
-                    } else {
-                        Inhibit(false)
-                    }
-                }),
-            );
+            self.message_entry
+                .connect_activate(clone!(@weak obj => move |_| {
+                    obj.activate_action("chat-action-bar.send-text-message", None).unwrap()
+                }));
         }
 
         fn dispose(&self, _obj: &Self::Type) {
