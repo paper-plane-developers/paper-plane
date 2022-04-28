@@ -11,6 +11,7 @@ ashpd = { version = "0.3", features = ["feature_gtk4"] }
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.4", package = "gtk4", features = ["v4_6"] }
+image = { version = "0.24", default-features = false, features = ["webp"] }
 indexmap = "1.8"
 locale_config = "0.3"
 log = "0.4"
@@ -20,4 +21,3 @@ qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.5"
 tdlib = { version = "0.1", default-features = false }
 temp-dir = "0.1"
-webp = "0.2"

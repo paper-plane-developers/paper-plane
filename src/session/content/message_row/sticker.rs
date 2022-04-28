@@ -2,12 +2,16 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib, CompositeTemplate};
+use image::io::Reader as ImageReader;
+use image::ImageFormat;
+use std::io::Cursor;
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
 use crate::session::chat::Message;
 use crate::session::content::message_row::StickerPaintable;
 use crate::session::content::{MessageRow, MessageRowExt};
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -90,16 +94,14 @@ impl MessageSticker {
     fn load_sticker(&self, path: &str) {
         let paintable = &self.imp().paintable;
         let file = gio::File::for_path(path);
-        let future = clone!(@weak paintable => async move {
+        spawn(clone!(@weak paintable => async move {
             match file.load_bytes_future().await {
                 Ok((bytes, _)) => {
-                    let image = webp::Decoder::new(&bytes)
+                    let flat_samples = ImageReader::with_format(Cursor::new(bytes), ImageFormat::WebP)
                         .decode()
                         .unwrap()
-                        .to_image()
-                        .into_rgba8();
-
-                    let flat_samples = image.into_flat_samples();
+                        .into_rgba8()
+                        .into_flat_samples();
 
                     let (stride, width, height) = flat_samples.extents();
                     let gtk_stride = stride * width;
@@ -118,8 +120,6 @@ impl MessageSticker {
                     log::warn!("Failed to load a sticker: {}", e);
                 }
             }
-        });
-
-        glib::MainContext::default().spawn_local(future);
+        }));
     }
 }
