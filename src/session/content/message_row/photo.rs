@@ -70,31 +70,29 @@ impl MessagePhoto {
             }
         }
 
-        if let Some(message) = self.message() {
-            let message = message.downcast_ref::<Message>().unwrap();
+        let message = self.message().downcast::<Message>().unwrap();
 
-            // Setup caption expression
-            let caption_binding = Message::this_expression("content")
-                .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
-                    if let MessageContent::MessagePhoto(data) = content.0 {
-                        parse_formatted_text(data.caption)
-                    } else {
-                        unreachable!();
-                    }
-                }))
-                .bind(&*imp.media, "caption", Some(message));
-            imp.binding.replace(Some(caption_binding));
+        // Setup caption expression
+        let caption_binding = Message::this_expression("content")
+            .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
+                if let MessageContent::MessagePhoto(data) = content.0 {
+                    parse_formatted_text(data.caption)
+                } else {
+                    unreachable!();
+                }
+            }))
+            .bind(&*imp.media, "caption", Some(&message));
+        imp.binding.replace(Some(caption_binding));
 
-            // Load photo
-            let handler_id =
-                message.connect_content_notify(clone!(@weak self as obj => move |message, _| {
-                    obj.update_photo(message);
-                }));
-            imp.handler_id.replace(Some(handler_id));
-            self.update_photo(message);
-        }
+        // Load photo
+        let handler_id =
+            message.connect_content_notify(clone!(@weak self as obj => move |message, _| {
+                obj.update_photo(message);
+            }));
+        imp.handler_id.replace(Some(handler_id));
+        self.update_photo(&message);
 
-        imp.old_message.set(self.message().as_ref());
+        imp.old_message.set(Some(self.message().as_ref()));
     }
 
     fn update_photo(&self, message: &Message) {

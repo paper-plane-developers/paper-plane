@@ -57,36 +57,34 @@ glib::wrapper! {
 
 impl MessageSticker {
     fn update_widget(&self) {
-        if let Some(message) = self.message() {
-            let message = message.downcast_ref::<Message>().unwrap();
+        let message = self.message().downcast::<Message>().unwrap();
 
-            if let MessageContent::MessageSticker(data) = message.content().0 {
-                self.imp()
-                    .paintable
-                    .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
+        if let MessageContent::MessageSticker(data) = message.content().0 {
+            self.imp()
+                .paintable
+                .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
-                if data.sticker.sticker.local.is_downloading_completed {
-                    self.load_sticker(&data.sticker.sticker.local.path);
-                } else {
-                    let (sender, receiver) =
-                        glib::MainContext::sync_channel::<File>(Default::default(), 5);
+            if data.sticker.sticker.local.is_downloading_completed {
+                self.load_sticker(&data.sticker.sticker.local.path);
+            } else {
+                let (sender, receiver) =
+                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
-                    receiver.attach(
-                        None,
-                        clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                            if file.local.is_downloading_completed {
-                                obj.load_sticker(&file.local.path);
-                            }
+                receiver.attach(
+                    None,
+                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
+                        if file.local.is_downloading_completed {
+                            obj.load_sticker(&file.local.path);
+                        }
 
-                            glib::Continue(true)
-                        }),
-                    );
+                        glib::Continue(true)
+                    }),
+                );
 
-                    message
-                        .chat()
-                        .session()
-                        .download_file(data.sticker.sticker.id, sender);
-                }
+                message
+                    .chat()
+                    .session()
+                    .download_file(data.sticker.sticker.id, sender);
             }
         }
     }

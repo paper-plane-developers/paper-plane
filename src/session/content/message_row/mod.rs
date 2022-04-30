@@ -204,82 +204,81 @@ glib::wrapper! {
 pub(crate) trait MessageRowExt: IsA<MessageRow> {
     fn new(message: &glib::Object) -> Self;
 
-    fn message(&self) -> Option<glib::Object> {
-        self.upcast_ref().imp().message.borrow().to_owned()
+    fn message(&self) -> glib::Object {
+        self.upcast_ref().imp().message.borrow().clone().unwrap()
     }
 
-    fn set_message(&self, message: Option<glib::Object>) {
-        if self.message() == message {
+    fn set_message(&self, message: glib::Object) {
+        let imp = self.upcast_ref().imp();
+
+        if imp.message.borrow().as_ref() == Some(&message) {
             return;
         }
 
-        let imp = self.upcast_ref().imp();
-        if let Some(ref message) = message {
-            if let Some(message) = message.downcast_ref::<Message>() {
-                imp.is_outgoing.set(message.is_outgoing());
+        if let Some(message) = message.downcast_ref::<Message>() {
+            imp.is_outgoing.set(message.is_outgoing());
 
-                let show_avatar = if message.is_outgoing() {
-                    false
-                } else if message.chat().is_own_chat() {
-                    message.forward_info().is_some()
-                } else {
-                    match message.chat().type_() {
-                        ChatType::BasicGroup(_) => true,
-                        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
-                        _ => false,
+            let show_avatar = if message.is_outgoing() {
+                false
+            } else if message.chat().is_own_chat() {
+                message.forward_info().is_some()
+            } else {
+                match message.chat().type_() {
+                    ChatType::BasicGroup(_) => true,
+                    ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
+                    _ => false,
+                }
+            };
+
+            if show_avatar {
+                let avatar = {
+                    let mut avatar_borrow = imp.avatar.borrow_mut();
+                    if let Some(avatar) = avatar_borrow.clone() {
+                        avatar
+                    } else {
+                        let avatar = Avatar::new();
+                        avatar.set_size(AVATAR_SIZE);
+                        avatar.set_parent(self.upcast_ref());
+                        *avatar_borrow = Some(avatar.clone());
+                        avatar
                     }
                 };
 
-                if show_avatar {
-                    let avatar = {
-                        let mut avatar_borrow = imp.avatar.borrow_mut();
-                        if let Some(avatar) = avatar_borrow.clone() {
-                            avatar
-                        } else {
-                            let avatar = Avatar::new();
-                            avatar.set_size(AVATAR_SIZE);
-                            avatar.set_parent(self.upcast_ref());
-                            *avatar_borrow = Some(avatar.clone());
-                            avatar
+                if message.chat().is_own_chat() {
+                    match message.forward_info().unwrap().origin() {
+                        MessageForwardOrigin::User(user) => {
+                            avatar.set_custom_text(None);
+                            avatar.set_item(Some(user.clone().upcast()));
                         }
-                    };
-
-                    if message.chat().is_own_chat() {
-                        match message.forward_info().unwrap().origin() {
-                            MessageForwardOrigin::User(user) => {
-                                avatar.set_custom_text(None);
-                                avatar.set_item(Some(user.clone().upcast()));
-                            }
-                            MessageForwardOrigin::Chat { chat, .. }
-                            | MessageForwardOrigin::Channel { chat, .. } => {
-                                avatar.set_custom_text(None);
-                                avatar.set_item(Some(chat.clone().upcast()));
-                            }
-                            MessageForwardOrigin::HiddenUser { sender_name }
-                            | MessageForwardOrigin::MessageImport { sender_name } => {
-                                avatar.set_item(None);
-                                avatar.set_custom_text(Some(sender_name));
-                            }
+                        MessageForwardOrigin::Chat { chat, .. }
+                        | MessageForwardOrigin::Channel { chat, .. } => {
+                            avatar.set_custom_text(None);
+                            avatar.set_item(Some(chat.clone().upcast()));
                         }
-                    } else {
-                        let avatar_item = match message.sender() {
-                            MessageSender::User(user) => user.clone().upcast(),
-                            MessageSender::Chat(chat) => chat.clone().upcast(),
-                        };
-                        avatar.set_custom_text(None);
-                        avatar.set_item(Some(avatar_item));
+                        MessageForwardOrigin::HiddenUser { sender_name }
+                        | MessageForwardOrigin::MessageImport { sender_name } => {
+                            avatar.set_item(None);
+                            avatar.set_custom_text(Some(sender_name));
+                        }
                     }
                 } else {
-                    if let Some(avatar) = imp.avatar.borrow().as_ref() {
-                        avatar.unparent();
-                    }
-                    imp.avatar.replace(None);
+                    let avatar_item = match message.sender() {
+                        MessageSender::User(user) => user.clone().upcast(),
+                        MessageSender::Chat(chat) => chat.clone().upcast(),
+                    };
+                    avatar.set_custom_text(None);
+                    avatar.set_item(Some(avatar_item));
                 }
-            } else if message.downcast_ref::<SponsoredMessage>().is_some() {
-                imp.is_outgoing.set(false);
             } else {
-                unreachable!("Unexpected message type: {:?}", message);
+                if let Some(avatar) = imp.avatar.borrow().as_ref() {
+                    avatar.unparent();
+                }
+                imp.avatar.replace(None);
             }
+        } else if message.downcast_ref::<SponsoredMessage>().is_some() {
+            imp.is_outgoing.set(false);
+        } else {
+            unreachable!("Unexpected message type: {:?}", message);
         }
 
         if let Some(content) = imp.content.borrow().as_ref() {
@@ -294,7 +293,7 @@ pub(crate) trait MessageRowExt: IsA<MessageRow> {
             }
         }
 
-        imp.message.replace(message);
+        imp.message.replace(Some(message));
         self.notify("message");
     }
 
