@@ -2,14 +2,14 @@ mod media;
 mod media_picture;
 mod photo;
 mod sticker;
-mod sticker_paintable;
+mod sticker_picture;
 mod text;
 
 use self::media::Media;
 use self::media_picture::MediaPicture;
 pub(crate) use self::photo::MessagePhoto;
 pub(crate) use self::sticker::MessageSticker;
-use self::sticker_paintable::StickerPaintable;
+use self::sticker_picture::StickerPicture;
 pub(crate) use self::text::MessageText;
 
 use gtk::prelude::*;

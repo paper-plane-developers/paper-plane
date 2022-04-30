@@ -9,7 +9,7 @@ use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
 use crate::session::chat::Message;
-use crate::session::content::message_row::StickerPaintable;
+use crate::session::content::message_row::StickerPicture;
 use crate::session::content::{MessageRow, MessageRowExt};
 use crate::utils::spawn;
 
@@ -19,9 +19,8 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-sticker.ui")]
     pub(crate) struct MessageSticker {
-        pub(super) paintable: StickerPaintable,
         #[template_child]
-        pub(super) picture: TemplateChild<gtk::Picture>,
+        pub(super) picture: TemplateChild<StickerPicture>,
     }
 
     #[glib::object_subclass]
@@ -42,7 +41,6 @@ mod imp {
     impl ObjectImpl for MessageSticker {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            self.picture.set_paintable(Some(&self.paintable));
             obj.connect_message_notify(|obj, _| obj.update_widget());
         }
     }
@@ -59,9 +57,11 @@ impl MessageSticker {
     fn update_widget(&self) {
         let message = self.message().downcast::<Message>().unwrap();
 
+        self.imp().picture.set_texture(None);
+
         if let MessageContent::MessageSticker(data) = message.content().0 {
             self.imp()
-                .paintable
+                .picture
                 .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
             if data.sticker.sticker.local.is_downloading_completed {
@@ -90,9 +90,9 @@ impl MessageSticker {
     }
 
     fn load_sticker(&self, path: &str) {
-        let paintable = &self.imp().paintable;
+        let picture = &*self.imp().picture;
         let file = gio::File::for_path(path);
-        spawn(clone!(@weak paintable => async move {
+        spawn(clone!(@weak picture => async move {
             match file.load_bytes_future().await {
                 Ok((bytes, _)) => {
                     let flat_samples = ImageReader::with_format(Cursor::new(bytes), ImageFormat::WebP)
@@ -112,7 +112,7 @@ impl MessageSticker {
                         &bytes,
                         gtk_stride,
                     );
-                    paintable.set_texture(Some(texture.upcast()));
+                    picture.set_texture(Some(texture.upcast()));
                 }
                 Err(e) => {
                     log::warn!("Failed to load a sticker: {}", e);
