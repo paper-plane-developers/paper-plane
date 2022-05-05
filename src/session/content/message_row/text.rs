@@ -59,109 +59,101 @@ glib::wrapper! {
 
 impl MessageText {
     fn update_widget(&self) {
-        if let Some(message) = self.message() {
-            let imp = self.imp();
-            let mut bindings = imp.bindings.borrow_mut();
+        let imp = self.imp();
+        let mut bindings = imp.bindings.borrow_mut();
 
-            while let Some(binding) = bindings.pop() {
-                binding.unwatch();
-            }
+        while let Some(binding) = bindings.pop() {
+            binding.unwatch();
+        }
 
-            // Remove the previous color css class
-            let mut sender_color_class = imp.sender_color_class.borrow_mut();
-            if let Some(class) = sender_color_class.as_ref() {
-                imp.sender_label.remove_css_class(class);
-                *sender_color_class = None;
-            }
+        // Remove the previous color css class
+        let mut sender_color_class = imp.sender_color_class.borrow_mut();
+        if let Some(class) = sender_color_class.as_ref() {
+            imp.sender_label.remove_css_class(class);
+            *sender_color_class = None;
+        }
 
-            if let Some(message) = message.downcast_ref::<Message>() {
-                // Show sender label, if needed
-                let show_sender = if message.chat().is_own_chat() {
-                    if message.is_outgoing() {
-                        None
-                    } else {
-                        Some(message.forward_info().unwrap().origin().id())
-                    }
-                } else if message.is_outgoing() {
-                    if matches!(message.sender(), MessageSender::Chat(_)) {
-                        Some(Some(message.sender().id()))
-                    } else {
-                        None
-                    }
-                } else if matches!(
-                    message.chat().type_(),
-                    ChatType::BasicGroup(_) | ChatType::Supergroup(_)
-                ) {
+        if let Some(message) = self.message().downcast_ref::<Message>() {
+            // Show sender label, if needed
+            let show_sender = if message.chat().is_own_chat() {
+                if message.is_outgoing() {
+                    None
+                } else {
+                    Some(message.forward_info().unwrap().origin().id())
+                }
+            } else if message.is_outgoing() {
+                if matches!(message.sender(), MessageSender::Chat(_)) {
                     Some(Some(message.sender().id()))
                 } else {
                     None
-                };
-
-                if let Some(maybe_id) = show_sender {
-                    let sender_name_expression = message.sender_display_name_expression();
-                    let sender_binding = sender_name_expression.bind(
-                        &*imp.sender_label,
-                        "label",
-                        glib::Object::NONE,
-                    );
-                    bindings.push(sender_binding);
-
-                    // Color sender label
-                    let classes = vec![
-                        "sender-text-red",
-                        "sender-text-orange",
-                        "sender-text-violet",
-                        "sender-text-green",
-                        "sender-text-cyan",
-                        "sender-text-blue",
-                        "sender-text-pink",
-                    ];
-
-                    let color_class =
-                        classes[maybe_id.map(|id| id as usize).unwrap_or_else(|| {
-                            let mut s = DefaultHasher::new();
-                            imp.sender_label.label().hash(&mut s);
-                            s.finish() as usize
-                        }) % classes.len()];
-                    imp.sender_label.add_css_class(color_class);
-
-                    *sender_color_class = Some(color_class.into());
-
-                    imp.sender_label.set_visible(true);
-                } else {
-                    imp.sender_label.set_visible(false);
                 }
+            } else if matches!(
+                message.chat().type_(),
+                ChatType::BasicGroup(_) | ChatType::Supergroup(_)
+            ) {
+                Some(Some(message.sender().id()))
+            } else {
+                None
+            };
 
-                // Set content label expression
-                let text_binding = Message::this_expression("content")
-                    .chain_closure::<String>(closure!(
-                        |_: Message, content: BoxedMessageContent| {
-                            format_message_content_text(content.0)
-                        }
-                    ))
-                    .bind(&*imp.content_label, "label", Some(message));
-                bindings.push(text_binding);
-            } else if let Some(sponsored_message) = message.downcast_ref::<SponsoredMessage>() {
-                imp.sender_label.set_visible(true);
-
-                let sender_binding = Chat::this_expression("title").bind(
-                    &*imp.sender_label,
-                    "label",
-                    Some(&sponsored_message.sponsor_chat()),
-                );
+            if let Some(maybe_id) = show_sender {
+                let sender_name_expression = message.sender_display_name_expression();
+                let sender_binding =
+                    sender_name_expression.bind(&*imp.sender_label, "label", glib::Object::NONE);
                 bindings.push(sender_binding);
 
-                let text_binding = SponsoredMessage::this_expression("content")
-                    .chain_closure::<String>(closure!(
-                        |_: SponsoredMessage, content: BoxedMessageContent| {
-                            format_message_content_text(content.0)
-                        }
-                    ))
-                    .bind(&*imp.content_label, "label", Some(sponsored_message));
-                bindings.push(text_binding);
+                // Color sender label
+                let classes = vec![
+                    "sender-text-red",
+                    "sender-text-orange",
+                    "sender-text-violet",
+                    "sender-text-green",
+                    "sender-text-cyan",
+                    "sender-text-blue",
+                    "sender-text-pink",
+                ];
+
+                let color_class = classes[maybe_id.map(|id| id as usize).unwrap_or_else(|| {
+                    let mut s = DefaultHasher::new();
+                    imp.sender_label.label().hash(&mut s);
+                    s.finish() as usize
+                }) % classes.len()];
+                imp.sender_label.add_css_class(color_class);
+
+                *sender_color_class = Some(color_class.into());
+
+                imp.sender_label.set_visible(true);
             } else {
-                unreachable!("Unexpected message type: {:?}", message);
+                imp.sender_label.set_visible(false);
             }
+
+            // Set content label expression
+            let text_binding = Message::this_expression("content")
+                .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
+                    format_message_content_text(content.0)
+                }))
+                .bind(&*imp.content_label, "label", Some(message));
+            bindings.push(text_binding);
+        } else if let Some(sponsored_message) = self.message().downcast_ref::<SponsoredMessage>() {
+            imp.sender_label.set_visible(true);
+
+            let sender_binding = Chat::this_expression("title").bind(
+                &*imp.sender_label,
+                "label",
+                Some(&sponsored_message.sponsor_chat()),
+            );
+            bindings.push(sender_binding);
+
+            let text_binding = SponsoredMessage::this_expression("content")
+                .chain_closure::<String>(closure!(
+                    |_: SponsoredMessage, content: BoxedMessageContent| {
+                        format_message_content_text(content.0)
+                    }
+                ))
+                .bind(&*imp.content_label, "label", Some(sponsored_message));
+            bindings.push(text_binding);
+        } else {
+            unreachable!("Unexpected message type: {:?}", self.message());
         }
     }
 }

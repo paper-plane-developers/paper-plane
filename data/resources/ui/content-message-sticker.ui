@@ -2,7 +2,7 @@
 <interface>
   <template class="ContentMessageSticker" parent="ContentMessageRow">
     <property name="content">
-      <object class="GtkPicture" id="picture"/>
+      <object class="ContentStickerPicture" id="picture"/>
     </property>
   </template>
 </interface>

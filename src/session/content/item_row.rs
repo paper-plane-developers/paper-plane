@@ -350,7 +350,7 @@ impl ItemRow {
         message: glib::Object,
     ) {
         match self.child().and_then(|w| w.downcast::<M>().ok()) {
-            Some(child) => child.set_message(Some(message)),
+            Some(child) => child.set_message(message),
             None => {
                 let child = M::new(&message);
                 self.set_child(Some(&child));

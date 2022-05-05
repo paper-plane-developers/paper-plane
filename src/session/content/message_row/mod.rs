@@ -2,19 +2,19 @@ mod media;
 mod media_picture;
 mod photo;
 mod sticker;
-mod sticker_paintable;
+mod sticker_picture;
 mod text;
 
 use self::media::Media;
 use self::media_picture::MediaPicture;
 pub(crate) use self::photo::MessagePhoto;
 pub(crate) use self::sticker::MessageSticker;
-use self::sticker_paintable::StickerPaintable;
+use self::sticker_picture::StickerPicture;
 pub(crate) use self::text::MessageText;
 
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib};
 
 use crate::session::chat::{Message, MessageForwardOrigin, MessageSender, SponsoredMessage};
 use crate::session::components::Avatar;
@@ -100,100 +100,7 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageRow {
-        fn measure(
-            &self,
-            _widget: &Self::Type,
-            orientation: gtk::Orientation,
-            for_size: i32,
-        ) -> (i32, i32, i32, i32) {
-            let (mut minimum, mut natural, mut minimum_baseline, mut natural_baseline) =
-                (0, 0, -1, -1);
-            let mut remaining_for_size = for_size;
-
-            if let Some(avatar) = self.avatar.borrow().as_ref() {
-                let (avatar_minimum, avatar_natural, _, _) = avatar.measure(orientation, for_size);
-                minimum = avatar_minimum;
-                natural = avatar_natural;
-
-                if let gtk::Orientation::Horizontal = orientation {
-                    minimum += SPACING;
-                    natural += SPACING;
-                } else if remaining_for_size != -1 {
-                    let (_, avatar_natural_opposite, _, _) =
-                        avatar.measure(gtk::Orientation::Horizontal, avatar_natural);
-                    remaining_for_size -= avatar_natural_opposite + SPACING;
-                }
-            }
-
-            if let Some(content) = self.content.borrow().as_ref() {
-                let (
-                    content_minimum,
-                    content_natural,
-                    content_minimum_baseline,
-                    content_natural_baseline,
-                ) = {
-                    let (minimum, mut natural, minimum_baseline, natural_baseline) =
-                        content.measure(orientation, remaining_for_size);
-                    let (_, default_natural, _, _) = content.measure(orientation, -1);
-
-                    // Always prefer default natural size
-                    if natural > default_natural && default_natural >= minimum {
-                        natural = default_natural
-                    }
-
-                    (minimum, natural, minimum_baseline, natural_baseline)
-                };
-
-                minimum_baseline = content_minimum_baseline;
-                natural_baseline = content_natural_baseline;
-
-                if let gtk::Orientation::Horizontal = orientation {
-                    minimum += content_minimum;
-                    natural += content_natural;
-                } else {
-                    minimum = minimum.max(content_minimum);
-                    natural = natural.max(content_natural);
-                }
-            }
-
-            (minimum, natural, minimum_baseline, natural_baseline)
-        }
-
-        fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
-            let mut remaining_width = width;
-
-            if let Some(avatar) = self.avatar.borrow().as_ref() {
-                let (_, natural_size) = avatar.preferred_size();
-                let allocation = gdk::Rectangle::new(
-                    0,
-                    height - natural_size.height(),
-                    natural_size.width(),
-                    natural_size.height(),
-                );
-                avatar.size_allocate(&allocation, -1);
-
-                remaining_width -= natural_size.width() + SPACING;
-            }
-
-            if let Some(content) = self.content.borrow().as_ref() {
-                let (_, natural_size) = content.preferred_size();
-                let actual_width = remaining_width.min(natural_size.width());
-                let x = if self.is_outgoing.get() {
-                    width - actual_width
-                } else {
-                    width - remaining_width
-                };
-
-                let allocation = gdk::Rectangle::new(x, 0, actual_width, height);
-                content.size_allocate(&allocation, baseline);
-            }
-        }
-
-        fn request_mode(&self, _widget: &Self::Type) -> gtk::SizeRequestMode {
-            gtk::SizeRequestMode::HeightForWidth
-        }
-    }
+    impl WidgetImpl for MessageRow {}
 }
 
 glib::wrapper! {
@@ -204,97 +111,102 @@ glib::wrapper! {
 pub(crate) trait MessageRowExt: IsA<MessageRow> {
     fn new(message: &glib::Object) -> Self;
 
-    fn message(&self) -> Option<glib::Object> {
-        self.upcast_ref().imp().message.borrow().to_owned()
+    fn message(&self) -> glib::Object {
+        self.upcast_ref().imp().message.borrow().clone().unwrap()
     }
 
-    fn set_message(&self, message: Option<glib::Object>) {
-        if self.message() == message {
+    fn set_message(&self, message: glib::Object) {
+        let imp = self.upcast_ref().imp();
+
+        if imp.message.borrow().as_ref() == Some(&message) {
             return;
         }
 
-        let imp = self.upcast_ref().imp();
-        if let Some(ref message) = message {
-            if let Some(message) = message.downcast_ref::<Message>() {
-                imp.is_outgoing.set(message.is_outgoing());
+        if let Some(message) = message.downcast_ref::<Message>() {
+            imp.is_outgoing.set(message.is_outgoing());
 
-                let show_avatar = if message.is_outgoing() {
-                    false
-                } else if message.chat().is_own_chat() {
-                    message.forward_info().is_some()
-                } else {
-                    match message.chat().type_() {
-                        ChatType::BasicGroup(_) => true,
-                        ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
-                        _ => false,
+            let show_avatar = if message.is_outgoing() {
+                false
+            } else if message.chat().is_own_chat() {
+                message.forward_info().is_some()
+            } else {
+                match message.chat().type_() {
+                    ChatType::BasicGroup(_) => true,
+                    ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
+                    _ => false,
+                }
+            };
+
+            if show_avatar {
+                let avatar = {
+                    let mut avatar_borrow = imp.avatar.borrow_mut();
+                    if let Some(avatar) = avatar_borrow.clone() {
+                        avatar
+                    } else {
+                        let avatar = Avatar::new();
+                        avatar.set_size(AVATAR_SIZE);
+                        avatar.set_valign(gtk::Align::End);
+
+                        // Insert at the beginning
+                        avatar.insert_after(self.upcast_ref(), gtk::Widget::NONE);
+
+                        *avatar_borrow = Some(avatar.clone());
+                        avatar
                     }
                 };
 
-                if show_avatar {
-                    let avatar = {
-                        let mut avatar_borrow = imp.avatar.borrow_mut();
-                        if let Some(avatar) = avatar_borrow.clone() {
-                            avatar
-                        } else {
-                            let avatar = Avatar::new();
-                            avatar.set_size(AVATAR_SIZE);
-                            avatar.set_parent(self.upcast_ref());
-                            *avatar_borrow = Some(avatar.clone());
-                            avatar
+                if message.chat().is_own_chat() {
+                    match message.forward_info().unwrap().origin() {
+                        MessageForwardOrigin::User(user) => {
+                            avatar.set_custom_text(None);
+                            avatar.set_item(Some(user.clone().upcast()));
                         }
-                    };
-
-                    if message.chat().is_own_chat() {
-                        match message.forward_info().unwrap().origin() {
-                            MessageForwardOrigin::User(user) => {
-                                avatar.set_custom_text(None);
-                                avatar.set_item(Some(user.clone().upcast()));
-                            }
-                            MessageForwardOrigin::Chat { chat, .. }
-                            | MessageForwardOrigin::Channel { chat, .. } => {
-                                avatar.set_custom_text(None);
-                                avatar.set_item(Some(chat.clone().upcast()));
-                            }
-                            MessageForwardOrigin::HiddenUser { sender_name }
-                            | MessageForwardOrigin::MessageImport { sender_name } => {
-                                avatar.set_item(None);
-                                avatar.set_custom_text(Some(sender_name));
-                            }
+                        MessageForwardOrigin::Chat { chat, .. }
+                        | MessageForwardOrigin::Channel { chat, .. } => {
+                            avatar.set_custom_text(None);
+                            avatar.set_item(Some(chat.clone().upcast()));
                         }
-                    } else {
-                        let avatar_item = match message.sender() {
-                            MessageSender::User(user) => user.clone().upcast(),
-                            MessageSender::Chat(chat) => chat.clone().upcast(),
-                        };
-                        avatar.set_custom_text(None);
-                        avatar.set_item(Some(avatar_item));
+                        MessageForwardOrigin::HiddenUser { sender_name }
+                        | MessageForwardOrigin::MessageImport { sender_name } => {
+                            avatar.set_item(None);
+                            avatar.set_custom_text(Some(sender_name));
+                        }
                     }
                 } else {
-                    if let Some(avatar) = imp.avatar.borrow().as_ref() {
-                        avatar.unparent();
-                    }
-                    imp.avatar.replace(None);
+                    let avatar_item = match message.sender() {
+                        MessageSender::User(user) => user.clone().upcast(),
+                        MessageSender::Chat(chat) => chat.clone().upcast(),
+                    };
+                    avatar.set_custom_text(None);
+                    avatar.set_item(Some(avatar_item));
                 }
-            } else if message.downcast_ref::<SponsoredMessage>().is_some() {
-                imp.is_outgoing.set(false);
             } else {
-                unreachable!("Unexpected message type: {:?}", message);
+                if let Some(avatar) = imp.avatar.borrow().as_ref() {
+                    avatar.unparent();
+                }
+                imp.avatar.replace(None);
             }
+        } else if message.downcast_ref::<SponsoredMessage>().is_some() {
+            imp.is_outgoing.set(false);
+        } else {
+            unreachable!("Unexpected message type: {:?}", message);
         }
 
         if let Some(content) = imp.content.borrow().as_ref() {
             if imp.is_outgoing.get() {
+                content.set_halign(gtk::Align::End);
                 content.set_margin_start(AVATAR_SIZE + SPACING);
                 content.set_margin_end(0);
                 content.add_css_class("outgoing");
             } else {
+                content.set_halign(gtk::Align::Start);
                 content.set_margin_start(0);
                 content.set_margin_end(AVATAR_SIZE + SPACING);
                 content.remove_css_class("outgoing");
             }
         }
 
-        imp.message.replace(message);
+        imp.message.replace(Some(message));
         self.notify("message");
     }
 
@@ -321,7 +233,11 @@ pub(crate) trait MessageRowExt: IsA<MessageRow> {
         }
 
         if let Some(ref content) = content {
-            content.set_parent(self.upcast_ref());
+            content.set_hexpand(true);
+            content.set_valign(gtk::Align::Start);
+
+            // Insert at the end
+            content.insert_before(self.upcast_ref(), gtk::Widget::NONE);
         }
 
         imp.content.replace(content);
@@ -331,7 +247,9 @@ pub(crate) trait MessageRowExt: IsA<MessageRow> {
 
 impl<T: glib::object::IsClass + IsA<glib::Object> + IsA<MessageRow>> MessageRowExt for T {
     fn new(message: &glib::Object) -> Self {
-        glib::Object::new(&[("message", message)]).expect("Failed to create MessageRow")
+        let layout_manager = gtk::BoxLayout::builder().spacing(SPACING).build();
+        glib::Object::new(&[("layout-manager", &layout_manager), ("message", message)])
+            .expect("Failed to create MessageRow")
     }
 }
 
