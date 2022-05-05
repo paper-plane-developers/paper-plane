@@ -34,5 +34,14 @@
         </style>
       </object>
     </child>
+    <child>
+      <object class="GtkLabel" id="restriction_label">
+        <property name="height-request">48</property>
+        <property name="hexpand">True</property>
+        <property name="wrap">True</property>
+        <property name="wrap-mode">word-char</property>
+        <property name="justify">center</property>
+      </object>
+    </child>
   </template>
 </interface>

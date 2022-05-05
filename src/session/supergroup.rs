@@ -4,16 +4,19 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::Update;
 use tdlib::types::Supergroup as TdSupergroup;
 
+use crate::session::chat::BoxedChatMemberStatus;
+
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct Supergroup {
         pub(super) id: Cell<i64>,
         pub(super) member_count: Cell<i32>,
         pub(super) is_channel: Cell<bool>,
+        pub(super) status: RefCell<Option<BoxedChatMemberStatus>>,
     }
 
     #[glib::object_subclass]
@@ -53,6 +56,15 @@ mod imp {
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
+                    glib::ParamSpecBoxed::new(
+                        "status",
+                        "Status",
+                        "Own user status in this supergroup",
+                        BoxedChatMemberStatus::static_type(),
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -69,6 +81,7 @@ mod imp {
                 "id" => self.id.set(value.get().unwrap()),
                 "member-count" => obj.set_member_count(value.get().unwrap()),
                 "is-channel" => self.is_channel.set(value.get().unwrap()),
+                "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -78,6 +91,7 @@ mod imp {
                 "id" => obj.id().to_value(),
                 "member-count" => obj.member_count().to_value(),
                 "is-channel" => obj.is_channel().to_value(),
+                "status" => obj.status().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -94,6 +108,7 @@ impl Supergroup {
             ("id", &supergroup.id),
             ("member-count", &supergroup.member_count),
             ("is-channel", &supergroup.is_channel),
+            ("status", &BoxedChatMemberStatus(supergroup.status.clone())),
         ])
         .expect("Failed to create Supergroup")
     }
@@ -101,6 +116,7 @@ impl Supergroup {
     pub(crate) fn handle_update(&self, update: &Update) {
         if let Update::Supergroup(data) = update {
             self.set_member_count(data.supergroup.member_count);
+            self.set_status(BoxedChatMemberStatus(data.supergroup.status.clone()))
         }
     }
 
@@ -122,5 +138,17 @@ impl Supergroup {
 
     pub(crate) fn is_channel(&self) -> bool {
         self.imp().is_channel.get()
+    }
+
+    pub(crate) fn status(&self) -> BoxedChatMemberStatus {
+        self.imp().status.borrow().to_owned().unwrap()
+    }
+
+    pub(crate) fn set_status(&self, status: BoxedChatMemberStatus) {
+        if self.imp().status.borrow().as_ref() == Some(&status) {
+            return;
+        }
+        self.imp().status.replace(Some(status));
+        self.notify("status");
     }
 }
