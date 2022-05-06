@@ -10,15 +10,17 @@ use tdlib::types::File;
 
 use crate::session::chat::Message;
 use crate::session::content::message_row::StickerPicture;
-use crate::session::content::{MessageRow, MessageRowExt};
 use crate::utils::spawn;
 
 mod imp {
     use super::*;
+    use once_cell::sync::Lazy;
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-sticker.ui")]
     pub(crate) struct MessageSticker {
+        pub(super) message: RefCell<Option<Message>>,
         #[template_child]
         pub(super) picture: TemplateChild<StickerPicture>,
     }
@@ -27,7 +29,7 @@ mod imp {
     impl ObjectSubclass for MessageSticker {
         const NAME: &'static str = "ContentMessageSticker";
         type Type = super::MessageSticker;
-        type ParentType = MessageRow;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -39,9 +41,41 @@ mod imp {
     }
 
     impl ObjectImpl for MessageSticker {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.connect_message_notify(|obj, _| obj.update_widget());
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpecObject::new(
+                    "message",
+                    "Message",
+                    "The message represented by this row",
+                    Message::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                )]
+            });
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "message" => obj.set_message(value.get().unwrap()),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "message" => obj.message().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.picture.unparent();
         }
     }
 
@@ -50,14 +84,26 @@ mod imp {
 
 glib::wrapper! {
     pub(crate) struct MessageSticker(ObjectSubclass<imp::MessageSticker>)
-        @extends gtk::Widget, MessageRow;
+        @extends gtk::Widget;
 }
 
 impl MessageSticker {
-    fn update_widget(&self) {
-        let message = self.message().downcast::<Message>().unwrap();
+    pub(crate) fn new(message: &Message) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessageSticker")
+    }
 
-        self.imp().picture.set_texture(None);
+    pub(crate) fn message(&self) -> Message {
+        self.imp().message.borrow().clone().unwrap()
+    }
+
+    pub(crate) fn set_message(&self, message: Message) {
+        let imp = self.imp();
+
+        if imp.message.borrow().as_ref() == Some(&message) {
+            return;
+        }
+
+        imp.picture.set_texture(None);
 
         if let MessageContent::MessageSticker(data) = message.content().0 {
             self.imp()
@@ -87,6 +133,9 @@ impl MessageSticker {
                     .download_file(data.sticker.sticker.id, sender);
             }
         }
+
+        imp.message.replace(Some(message));
+        self.notify("message");
     }
 
     fn load_sticker(&self, path: &str) {

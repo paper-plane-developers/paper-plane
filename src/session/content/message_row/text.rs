@@ -8,12 +8,12 @@ use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
-use crate::session::content::{MessageRow, MessageRowExt};
 use crate::session::{Chat, ChatType};
 use crate::utils::parse_formatted_text;
 
 mod imp {
     use super::*;
+    use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -21,6 +21,7 @@ mod imp {
     pub(crate) struct MessageText {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
+        pub(super) message: RefCell<Option<glib::Object>>,
         #[template_child]
         pub(super) sender_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -31,7 +32,7 @@ mod imp {
     impl ObjectSubclass for MessageText {
         const NAME: &'static str = "ContentMessageText";
         type Type = super::MessageText;
-        type ParentType = MessageRow;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -43,9 +44,42 @@ mod imp {
     }
 
     impl ObjectImpl for MessageText {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.connect_message_notify(|obj, _| obj.update_widget());
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpecObject::new(
+                    "message",
+                    "Message",
+                    "The message represented by this row",
+                    glib::Object::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                )]
+            });
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "message" => obj.set_message(value.get().unwrap()),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "message" => obj.message().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn dispose(&self, _obj: &Self::Type) {
+            self.sender_label.unparent();
+            self.content_label.unparent();
         }
     }
 
@@ -54,12 +88,25 @@ mod imp {
 
 glib::wrapper! {
     pub(crate) struct MessageText(ObjectSubclass<imp::MessageText>)
-        @extends gtk::Widget, MessageRow;
+        @extends gtk::Widget;
 }
 
 impl MessageText {
-    fn update_widget(&self) {
+    pub(crate) fn new(message: &glib::Object) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessageText")
+    }
+
+    pub(crate) fn message(&self) -> glib::Object {
+        self.imp().message.borrow().clone().unwrap()
+    }
+
+    pub(crate) fn set_message(&self, message: glib::Object) {
         let imp = self.imp();
+
+        if imp.message.borrow().as_ref() == Some(&message) {
+            return;
+        }
+
         let mut bindings = imp.bindings.borrow_mut();
 
         while let Some(binding) = bindings.pop() {
@@ -73,7 +120,7 @@ impl MessageText {
             *sender_color_class = None;
         }
 
-        if let Some(message) = self.message().downcast_ref::<Message>() {
+        if let Some(message) = message.downcast_ref::<Message>() {
             // Show sender label, if needed
             let show_sender = if message.chat().is_own_chat() {
                 if message.is_outgoing() {
@@ -134,7 +181,7 @@ impl MessageText {
                 }))
                 .bind(&*imp.content_label, "label", Some(message));
             bindings.push(text_binding);
-        } else if let Some(sponsored_message) = self.message().downcast_ref::<SponsoredMessage>() {
+        } else if let Some(sponsored_message) = message.downcast_ref::<SponsoredMessage>() {
             imp.sender_label.set_visible(true);
 
             let sender_binding = Chat::this_expression("title").bind(
@@ -153,8 +200,11 @@ impl MessageText {
                 .bind(&*imp.content_label, "label", Some(sponsored_message));
             bindings.push(text_binding);
         } else {
-            unreachable!("Unexpected message type: {:?}", self.message());
+            unreachable!("Unexpected message type: {:?}", message);
         }
+
+        imp.message.replace(Some(message));
+        self.notify("message");
     }
 }
 

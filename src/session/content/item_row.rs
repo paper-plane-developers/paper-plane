@@ -8,8 +8,7 @@ use std::borrow::Cow;
 use tdlib::enums::{MessageContent, StickerType, UserType};
 
 use crate::session::chat::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage};
-use crate::session::content::message_row::{MessagePhoto, MessageSticker, MessageText};
-use crate::session::content::{EventRow, MessageRow, MessageRowExt};
+use crate::session::content::{EventRow, MessageRow};
 use crate::session::User;
 use crate::utils::MESSAGE_TRUNCATED_LENGTH;
 
@@ -103,13 +102,13 @@ impl ItemRow {
 
                         match content {
                             MessageContent::MessagePhoto(_) => {
-                                self.set_child_row::<MessagePhoto>(message.to_owned().upcast())
+                                self.update_or_create_message_row(message.to_owned().upcast())
                             }
                             MessageContent::MessageSticker(data)
                                 if matches!(data.sticker.r#type, StickerType::Static)
                                     || matches!(data.sticker.r#type, StickerType::Mask(_)) =>
                             {
-                                self.set_child_row::<MessageSticker>(message.to_owned().upcast())
+                                self.update_or_create_message_row(message.to_owned().upcast())
                             }
                             MessageContent::MessageChatChangeTitle(data) => {
                                 self.get_or_create_event_row().set_label(&format!(
@@ -312,7 +311,7 @@ impl ItemRow {
                                     }
                                 ));
                             }
-                            _ => self.set_child_row::<MessageText>(message.to_owned().upcast()),
+                            _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
                     }
                     ItemType::DayDivider(date) => {
@@ -335,7 +334,7 @@ impl ItemRow {
                     log::warn!("Unexpected sponsored message of type: {:?}", content);
                 }
 
-                self.set_child_row::<MessageText>(sponsored_message.to_owned().upcast());
+                self.update_or_create_message_row(sponsored_message.to_owned().upcast());
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
             }
@@ -345,14 +344,11 @@ impl ItemRow {
         self.notify("item");
     }
 
-    fn set_child_row<M: IsA<gtk::Widget> + IsA<MessageRow> + MessageRowExt>(
-        &self,
-        message: glib::Object,
-    ) {
-        match self.child().and_then(|w| w.downcast::<M>().ok()) {
+    fn update_or_create_message_row(&self, message: glib::Object) {
+        match self.child().and_then(|w| w.downcast::<MessageRow>().ok()) {
             Some(child) => child.set_message(message),
             None => {
-                let child = M::new(&message);
+                let child = MessageRow::new(&message);
                 self.set_child(Some(&child));
             }
         }
