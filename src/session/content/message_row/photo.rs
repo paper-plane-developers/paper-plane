@@ -6,7 +6,7 @@ use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
-use crate::session::content::message_row::Media;
+use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl};
 use crate::utils::parse_formatted_text;
 use crate::Session;
 
@@ -29,7 +29,7 @@ mod imp {
     impl ObjectSubclass for MessagePhoto {
         const NAME: &'static str = "ContentMessagePhoto";
         type Type = super::MessagePhoto;
-        type ParentType = gtk::Widget;
+        type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -73,18 +73,15 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
-
-        fn dispose(&self, _obj: &Self::Type) {
-            self.media.unparent();
-        }
     }
 
     impl WidgetImpl for MessagePhoto {}
+    impl MessageBaseImpl for MessagePhoto {}
 }
 
 glib::wrapper! {
     pub(crate) struct MessagePhoto(ObjectSubclass<imp::MessagePhoto>)
-        @extends gtk::Widget;
+        @extends gtk::Widget, MessageBase;
 }
 
 impl MessagePhoto {

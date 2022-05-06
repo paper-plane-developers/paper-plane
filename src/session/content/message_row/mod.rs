@@ -1,3 +1,4 @@
+mod base;
 mod media;
 mod media_picture;
 mod photo;
@@ -5,6 +6,7 @@ mod sticker;
 mod sticker_picture;
 mod text;
 
+use self::base::{MessageBase, MessageBaseImpl};
 use self::media::Media;
 use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
@@ -12,6 +14,8 @@ use self::sticker::MessageSticker;
 use self::sticker_picture::StickerPicture;
 use self::text::MessageText;
 
+use gettextrs::gettext;
+use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -20,6 +24,7 @@ use tdlib::enums::MessageContent;
 use crate::session::chat::{Message, MessageForwardOrigin, MessageSender};
 use crate::session::components::Avatar;
 use crate::session::ChatType;
+use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
 const SPACING: i32 = 6;
@@ -42,6 +47,15 @@ mod imp {
         const NAME: &'static str = "ContentMessageRow";
         type Type = super::MessageRow;
         type ParentType = gtk::Widget;
+
+        fn class_init(klass: &mut Self::Class) {
+            klass.install_action("message-row.revoke-delete", None, move |widget, _, _| {
+                widget.show_delete_dialog(true)
+            });
+            klass.install_action("message-row.delete", None, move |widget, _, _| {
+                widget.show_delete_dialog(false)
+            });
+        }
     }
 
     impl ObjectImpl for MessageRow {
@@ -102,6 +116,35 @@ impl MessageRow {
         let layout_manager = gtk::BoxLayout::builder().spacing(SPACING).build();
         glib::Object::new(&[("layout-manager", &layout_manager), ("message", message)])
             .expect("Failed to create MessageRow")
+    }
+
+    fn show_delete_dialog(&self, revoke: bool) {
+        let window: Option<gtk::Window> = self.root().and_then(|root| root.downcast().ok());
+        let message = if revoke {
+            gettext("Do you want to delete this message for everyone?")
+        } else {
+            gettext("Do you want to delete this message?")
+        };
+        let dialog = gtk::MessageDialog::new(
+            window.as_ref(),
+            gtk::DialogFlags::MODAL,
+            gtk::MessageType::Warning,
+            gtk::ButtonsType::YesNo,
+            &message,
+        );
+
+        dialog.run_async(clone!(@weak self as obj => move |dialog, response| {
+            if matches!(response, gtk::ResponseType::Yes) {
+                if let Ok(message) = obj.message().downcast::<Message>() {
+                    spawn(async move {
+                        if let Err(e) = message.delete(revoke).await {
+                            log::warn!("Error deleting a message (revoke = {}): {:?}", revoke, e);
+                        }
+                    });
+                }
+            }
+            dialog.close();
+        }));
     }
 
     pub(crate) fn message(&self) -> glib::Object {
@@ -179,10 +222,24 @@ impl MessageRow {
             }
         }
 
+        self.update_actions(&message);
         self.update_content(message.clone());
 
         imp.message.replace(Some(message));
         self.notify("message");
+    }
+
+    fn update_actions(&self, message: &glib::Object) {
+        if let Some(message) = message.downcast_ref::<Message>() {
+            self.action_set_enabled("message-row.delete", message.can_be_deleted_only_for_self());
+            self.action_set_enabled(
+                "message-row.revoke-delete",
+                message.can_be_deleted_for_all_users(),
+            );
+        } else {
+            self.action_set_enabled("message-row.delete", false);
+            self.action_set_enabled("message-row.revoke-delete", false);
+        }
     }
 
     fn update_content(&self, message: glib::Object) {

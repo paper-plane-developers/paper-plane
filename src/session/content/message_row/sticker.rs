@@ -9,7 +9,7 @@ use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
 use crate::session::chat::Message;
-use crate::session::content::message_row::StickerPicture;
+use crate::session::content::message_row::{MessageBase, MessageBaseImpl, StickerPicture};
 use crate::utils::spawn;
 
 mod imp {
@@ -29,7 +29,7 @@ mod imp {
     impl ObjectSubclass for MessageSticker {
         const NAME: &'static str = "ContentMessageSticker";
         type Type = super::MessageSticker;
-        type ParentType = gtk::Widget;
+        type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -73,18 +73,15 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
-
-        fn dispose(&self, _obj: &Self::Type) {
-            self.picture.unparent();
-        }
     }
 
     impl WidgetImpl for MessageSticker {}
+    impl MessageBaseImpl for MessageSticker {}
 }
 
 glib::wrapper! {
     pub(crate) struct MessageSticker(ObjectSubclass<imp::MessageSticker>)
-        @extends gtk::Widget;
+        @extends gtk::Widget, MessageBase;
 }
 
 impl MessageSticker {

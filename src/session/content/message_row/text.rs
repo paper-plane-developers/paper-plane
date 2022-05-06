@@ -8,6 +8,7 @@ use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 
 use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
+use crate::session::content::message_row::{MessageBase, MessageBaseImpl};
 use crate::session::{Chat, ChatType};
 use crate::utils::parse_formatted_text;
 
@@ -32,7 +33,7 @@ mod imp {
     impl ObjectSubclass for MessageText {
         const NAME: &'static str = "ContentMessageText";
         type Type = super::MessageText;
-        type ParentType = gtk::Widget;
+        type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -76,19 +77,15 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
-
-        fn dispose(&self, _obj: &Self::Type) {
-            self.sender_label.unparent();
-            self.content_label.unparent();
-        }
     }
 
     impl WidgetImpl for MessageText {}
+    impl MessageBaseImpl for MessageText {}
 }
 
 glib::wrapper! {
     pub(crate) struct MessageText(ObjectSubclass<imp::MessageText>)
-        @extends gtk::Widget;
+        @extends gtk::Widget, MessageBase;
 }
 
 impl MessageText {

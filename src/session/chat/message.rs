@@ -2,7 +2,8 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageSender as TdMessageSender, Update};
-use tdlib::types::Message as TdMessage;
+use tdlib::functions;
+use tdlib::types::{Error as TdError, Message as TdMessage};
 
 use crate::expressions;
 use crate::session::chat::{BoxedMessageContent, MessageForwardInfo, MessageForwardOrigin};
@@ -55,6 +56,8 @@ mod imp {
         pub(super) id: Cell<i64>,
         pub(super) sender: OnceCell<MessageSender>,
         pub(super) is_outgoing: Cell<bool>,
+        pub(super) can_be_deleted_only_for_self: Cell<bool>,
+        pub(super) can_be_deleted_for_all_users: Cell<bool>,
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
         pub(super) chat: WeakRef<Chat>,
@@ -91,6 +94,20 @@ mod imp {
                         "is-outgoing",
                         "Is Outgoing",
                         "Whether this message is outgoing or not",
+                        false,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpecBoolean::new(
+                        "can-be-deleted-only-for-self",
+                        "Can be deleted only for self",
+                        "Whether this message can be deleted only for the current user or not",
+                        false,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpecBoolean::new(
+                        "can-be-deleted-for-all-users",
+                        "Can be deleted for all users",
+                        "Whether this message can be deleted for all users or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
@@ -142,6 +159,12 @@ mod imp {
                 "id" => self.id.set(value.get().unwrap()),
                 "sender" => self.sender.set(value.get().unwrap()).unwrap(),
                 "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
+                "can-be-deleted-only-for-self" => {
+                    self.can_be_deleted_only_for_self.set(value.get().unwrap())
+                }
+                "can-be-deleted-for-all-users" => {
+                    self.can_be_deleted_for_all_users.set(value.get().unwrap())
+                }
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => obj.set_content(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
@@ -154,6 +177,8 @@ mod imp {
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
+                "can-be-deleted-only-for-self" => obj.can_be_deleted_only_for_self().to_value(),
+                "can-be-deleted-for-all-users" => obj.can_be_deleted_for_all_users().to_value(),
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
                 "chat" => obj.chat().to_value(),
@@ -179,6 +204,14 @@ impl Message {
                 &MessageSender::from_td_object(&message.sender_id, &chat.session()),
             ),
             ("is-outgoing", &message.is_outgoing),
+            (
+                "can-be-deleted-only-for-self",
+                &message.can_be_deleted_only_for_self,
+            ),
+            (
+                "can-be-deleted-for-all-users",
+                &message.can_be_deleted_for_all_users,
+            ),
             ("date", &message.date),
             ("content", &content),
             ("chat", chat),
@@ -199,6 +232,17 @@ impl Message {
         }
     }
 
+    pub(crate) async fn delete(&self, revoke: bool) -> Result<(), TdError> {
+        functions::delete_messages(
+            self.chat().id(),
+            vec![self.id()],
+            revoke,
+            self.chat().session().client_id(),
+        )
+        .await
+        .map(|_| ())
+    }
+
     pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
     }
@@ -209,6 +253,14 @@ impl Message {
 
     pub(crate) fn is_outgoing(&self) -> bool {
         self.imp().is_outgoing.get()
+    }
+
+    pub(crate) fn can_be_deleted_only_for_self(&self) -> bool {
+        self.imp().can_be_deleted_only_for_self.get()
+    }
+
+    pub(crate) fn can_be_deleted_for_all_users(&self) -> bool {
+        self.imp().can_be_deleted_for_all_users.get()
     }
 
     pub(crate) fn date(&self) -> i32 {
