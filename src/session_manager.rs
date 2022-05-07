@@ -372,6 +372,12 @@ impl SessionManager {
 
         spawn(async move {
             send_log_level(client_id).await;
+
+            // TODO: Hopefully we'll support animated emoji at some point
+            let result = disable_animated_emoji(client_id, true).await;
+            if let Err(e) = result {
+                log::warn!("Error disabling animated emoji: {:?}", e);
+            }
         });
     }
 
@@ -382,6 +388,12 @@ impl SessionManager {
         self.init_new_session(client_id, use_test_dc);
         spawn(async move {
             send_log_level(client_id).await;
+
+            // TODO: Hopefully we'll support animated emoji at some point
+            let result = disable_animated_emoji(client_id, true).await;
+            if let Err(e) = result {
+                log::warn!("Error disabling animated emoji: {:?}", e);
+            }
         });
     }
 
@@ -881,6 +893,18 @@ fn generate_database_dir_base_name() -> String {
 async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
     functions::set_option(
         "online".to_string(),
+        Some(enums::OptionValue::Boolean(types::OptionValueBoolean {
+            value,
+        })),
+        client_id,
+    )
+    .await
+}
+
+/// Helper function to enable/disable animated emoji for a client.
+async fn disable_animated_emoji(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
+    functions::set_option(
+        "disable_animated_emoji".to_string(),
         Some(enums::OptionValue::Boolean(types::OptionValueBoolean {
             value,
         })),
