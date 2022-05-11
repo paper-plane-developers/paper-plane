@@ -6,14 +6,13 @@ use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
 use crate::session::chat::{BoxedMessageContent, Message};
-use crate::session::content::message_row::Media;
-use crate::session::content::{MessageRow, MessageRowExt};
+use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl};
 use crate::utils::parse_formatted_text;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
+    use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -21,7 +20,7 @@ mod imp {
     pub(crate) struct MessagePhoto {
         pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
-        pub(super) old_message: WeakRef<glib::Object>,
+        pub(super) message: RefCell<Option<Message>>,
         #[template_child]
         pub(super) media: TemplateChild<Media>,
     }
@@ -30,7 +29,7 @@ mod imp {
     impl ObjectSubclass for MessagePhoto {
         const NAME: &'static str = "ContentMessagePhoto";
         type Type = super::MessagePhoto;
-        type ParentType = MessageRow;
+        type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -42,35 +41,73 @@ mod imp {
     }
 
     impl ObjectImpl for MessagePhoto {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.connect_message_notify(|obj, _| obj.update_widget());
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpecObject::new(
+                    "message",
+                    "Message",
+                    "The message represented by this row",
+                    Message::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                )]
+            });
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "message" => obj.set_message(value.get().unwrap()),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "message" => obj.message().to_value(),
+                _ => unimplemented!(),
+            }
         }
     }
 
     impl WidgetImpl for MessagePhoto {}
+    impl MessageBaseImpl for MessagePhoto {}
 }
 
 glib::wrapper! {
     pub(crate) struct MessagePhoto(ObjectSubclass<imp::MessagePhoto>)
-        @extends gtk::Widget, MessageRow;
+        @extends gtk::Widget, MessageBase;
 }
 
 impl MessagePhoto {
-    fn update_widget(&self) {
+    pub(crate) fn new(message: &Message) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessagePhoto")
+    }
+
+    pub(crate) fn message(&self) -> Message {
+        self.imp().message.borrow().clone().unwrap()
+    }
+
+    pub(crate) fn set_message(&self, message: Message) {
         let imp = self.imp();
+
+        if imp.message.borrow().as_ref() == Some(&message) {
+            return;
+        }
 
         if let Some(binding) = imp.binding.take() {
             binding.unwatch();
         }
 
-        if let Some(old_message) = imp.old_message.upgrade() {
-            if let Some(id) = imp.handler_id.take() {
-                old_message.disconnect(id);
-            }
+        if let Some(old_message) = imp.message.take() {
+            let handler_id = imp.handler_id.take().unwrap();
+            old_message.disconnect(handler_id);
         }
-
-        let message = self.message().downcast::<Message>().unwrap();
 
         // Setup caption expression
         let caption_binding = Message::this_expression("content")
@@ -92,7 +129,8 @@ impl MessagePhoto {
         imp.handler_id.replace(Some(handler_id));
         self.update_photo(&message);
 
-        imp.old_message.set(Some(self.message().as_ref()));
+        imp.message.replace(Some(message));
+        self.notify("message");
     }
 
     fn update_photo(&self, message: &Message) {

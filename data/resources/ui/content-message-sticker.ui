@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageSticker" parent="ContentMessageRow">
-    <property name="content">
-      <object class="ContentStickerPicture" id="picture"/>
+  <template class="ContentMessageSticker" parent="ContentMessageBase">
+    <property name="layout-manager">
+      <object class="GtkBinLayout"/>
     </property>
+    <child>
+      <object class="ContentStickerPicture" id="picture"/>
+    </child>
   </template>
 </interface>

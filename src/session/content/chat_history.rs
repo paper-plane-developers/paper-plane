@@ -13,6 +13,7 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -20,6 +21,7 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
+        pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -168,6 +170,14 @@ impl ChatHistory {
                 Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),
             }
         }));
+    }
+
+    pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
+        self.imp().message_menu.get_or_init(|| {
+            gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/message-menu.ui")
+                .object::<gtk::PopoverMenu>("menu")
+                .unwrap()
+        })
     }
 
     pub(crate) fn handle_paste_action(&self) {

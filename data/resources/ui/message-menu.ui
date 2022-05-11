@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="model">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Delete for _everyone</attribute>
+        <attribute name="action">message-row.revoke-delete</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Delete for me</attribute>
+        <attribute name="action">message-row.delete</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+    </section>
+  </menu>
+  <object class="GtkPopoverMenu" id="menu">
+    <property name="menu-model">model</property>
+  </object>
+</interface>

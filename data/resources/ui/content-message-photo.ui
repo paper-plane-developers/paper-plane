@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessagePhoto" parent="ContentMessageRow">
-    <property name="content">
-      <object class="ContentMessageMedia" id="media"/>
+  <template class="ContentMessagePhoto" parent="ContentMessageBase">
+    <property name="layout-manager">
+      <object class="GtkBinLayout"/>
     </property>
+    <child>
+      <object class="ContentMessageMedia" id="media"/>
+    </child>
   </template>
 </interface>
