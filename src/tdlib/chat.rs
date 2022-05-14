@@ -69,6 +69,7 @@ mod imp {
         pub(super) is_pinned: Cell<bool>,
         pub(super) unread_mention_count: Cell<i32>,
         pub(super) unread_count: Cell<i32>,
+        pub(super) last_read_inbox_message_id: Cell<i64>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub(super) history: OnceCell<ChatHistory>,
@@ -173,6 +174,17 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecInt64::new(
+                        "last-read-inbox-message-id",
+                        "Last Read Inbox Message Id",
+                        "The identifier of the last read incoming message",
+                        std::i64::MIN,
+                        std::i64::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpecBoxed::new(
                         "draft-message",
                         "Draft Message",
@@ -246,6 +258,9 @@ mod imp {
                 "is-pinned" => obj.set_is_pinned(value.get().unwrap()),
                 "unread-mention-count" => obj.set_unread_mention_count(value.get().unwrap()),
                 "unread-count" => obj.set_unread_count(value.get().unwrap()),
+                "last-read-inbox-message-id" => {
+                    obj.set_last_read_inbox_message_id(value.get().unwrap())
+                }
                 "draft-message" => obj.set_draft_message(value.get().unwrap()),
                 "notification-settings" => obj.set_notification_settings(value.get().unwrap()),
                 "permissions" => obj.set_permissions(value.get().unwrap()),
@@ -266,6 +281,7 @@ mod imp {
                 "is-pinned" => obj.is_pinned().to_value(),
                 "unread-mention-count" => obj.unread_mention_count().to_value(),
                 "unread-count" => obj.unread_count().to_value(),
+                "last-read-inbox-message-id" => obj.last_read_inbox_message_id().to_value(),
                 "draft-message" => obj.draft_message().to_value(),
                 "notification-settings" => obj.notification_settings().to_value(),
                 "history" => obj.history().to_value(),
@@ -300,6 +316,10 @@ impl Chat {
             (
                 "notification-settings",
                 &BoxedChatNotificationSettings(chat.notification_settings),
+            ),
+            (
+                "last-read-inbox-message-id",
+                &chat.last_read_inbox_message_id,
             ),
             ("permissions", &BoxedChatPermissions(chat.permissions)),
             ("session", &session),
@@ -499,6 +519,20 @@ impl Chat {
         }
         self.imp().unread_count.set(unread_count);
         self.notify("unread-count");
+    }
+
+    pub(crate) fn last_read_inbox_message_id(&self) -> i64 {
+        self.imp().last_read_inbox_message_id.get()
+    }
+
+    pub(crate) fn set_last_read_inbox_message_id(&self, last_read_inbox_message_id: i64) {
+        if self.last_read_inbox_message_id() == last_read_inbox_message_id {
+            return;
+        }
+        self.imp()
+            .last_read_inbox_message_id
+            .set(last_read_inbox_message_id);
+        self.notify("last-read-inbox-message-id");
     }
 
     pub(crate) fn draft_message(&self) -> Option<BoxedDraftMessage> {
