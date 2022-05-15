@@ -173,6 +173,8 @@ mod imp {
         }
 
         fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
             self.search_entry
                 .connect_search_changed(clone!(@weak obj => move |entry| {
                     let query = entry.text().to_string();
