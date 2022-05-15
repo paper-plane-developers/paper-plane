@@ -7,7 +7,7 @@ use tdlib::enums::{self, Update};
 use tdlib::functions;
 use tdlib::types::Message as TelegramMessage;
 
-use crate::tdlib::{Chat, Item, ItemType, Message};
+use crate::tdlib::{Chat, ChatHistoryItem, ChatHistoryItemType, Message};
 
 mod imp {
     use super::*;
@@ -20,7 +20,7 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) chat: WeakRef<Chat>,
         pub(super) loading: Cell<bool>,
-        pub(super) list: RefCell<VecDeque<Item>>,
+        pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
         pub(super) message_map: RefCell<HashMap<i64, Message>>,
     }
 
@@ -80,7 +80,7 @@ mod imp {
 
     impl ListModelImpl for ChatHistory {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
-            Item::static_type()
+            ChatHistoryItem::static_type()
         }
 
         fn n_items(&self, _list_model: &Self::Type) -> u32 {
@@ -184,7 +184,7 @@ impl ChatHistory {
             } else {
                 None
             };
-            let mut dividers: Vec<(usize, Item)> = vec![];
+            let mut dividers: Vec<(usize, ChatHistoryItem)> = vec![];
 
             for (index, current) in list.range(position..position + added).enumerate().rev() {
                 if let Some(current_timestamp) = current.message_timestamp() {
@@ -193,7 +193,7 @@ impl ChatHistory {
                         let divider_pos = position + index + 1;
                         dividers.push((
                             divider_pos,
-                            Item::for_day_divider(current_timestamp.clone()),
+                            ChatHistoryItem::for_day_divider(current_timestamp.clone()),
                         ));
                         previous_timestamp = Some(current_timestamp);
                     }
@@ -217,7 +217,9 @@ impl ChatHistory {
                 let position = position as usize;
                 let item_before_removed = list.get(position);
 
-                if let Some(ItemType::DayDivider(_)) = item_before_removed.map(|i| i.type_()) {
+                if let Some(ChatHistoryItemType::DayDivider(_)) =
+                    item_before_removed.map(|i| i.type_())
+                {
                     let item_after_removed = if position > 0 {
                         list.get(position - 1)
                     } else {
@@ -225,7 +227,7 @@ impl ChatHistory {
                     };
 
                     match item_after_removed.map(|item| item.type_()) {
-                        None | Some(ItemType::DayDivider(_)) => {
+                        None | Some(ChatHistoryItemType::DayDivider(_)) => {
                             list.remove(position + removed);
 
                             removed += 1;
@@ -248,7 +250,9 @@ impl ChatHistory {
                 let last_added_timestamp = list.get(position).unwrap().message_timestamp().unwrap();
                 let next_item = list.get(position - 1);
 
-                if let Some(ItemType::DayDivider(date)) = next_item.map(|item| item.type_()) {
+                if let Some(ChatHistoryItemType::DayDivider(date)) =
+                    next_item.map(|item| item.type_())
+                {
                     if date.ymd() == last_added_timestamp.ymd() {
                         list.remove(position - 1);
 
@@ -275,7 +279,9 @@ impl ChatHistory {
 
             entry.insert(message.clone());
 
-            imp.list.borrow_mut().push_front(Item::for_message(message));
+            imp.list
+                .borrow_mut()
+                .push_front(ChatHistoryItem::for_message(message));
 
             // We always need to drop all references before handing over control. Else, we could end
             // up with a borrowing error somewhere else.
@@ -298,7 +304,9 @@ impl ChatHistory {
                 .borrow_mut()
                 .insert(message.id(), message.clone());
 
-            imp.list.borrow_mut().push_back(Item::for_message(message));
+            imp.list
+                .borrow_mut()
+                .push_back(ChatHistoryItem::for_message(message));
         }
 
         let index = imp.list.borrow().len() - added;
@@ -319,8 +327,8 @@ impl ChatHistory {
                 // can exploit this by applying a binary search.
                 let index = list
                     .binary_search_by(|m| match m.type_() {
-                        ItemType::Message(message) => message_id.cmp(&message.id()),
-                        ItemType::DayDivider(date_time) => {
+                        ChatHistoryItemType::Message(message) => message_id.cmp(&message.id()),
+                        ChatHistoryItemType::DayDivider(date_time) => {
                             let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
                                 .unwrap()
                                 .cmp(date_time);

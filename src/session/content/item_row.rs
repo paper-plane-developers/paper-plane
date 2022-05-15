@@ -8,7 +8,9 @@ use std::borrow::Cow;
 use tdlib::enums::{MessageContent, UserType};
 
 use crate::session::content::{EventRow, MessageRow};
-use crate::tdlib::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage, User};
+use crate::tdlib::{
+    ChatHistoryItem, ChatHistoryItemType, ChatType, Message, MessageSender, SponsoredMessage, User,
+};
 use crate::utils::MESSAGE_TRUNCATED_LENGTH;
 
 mod imp {
@@ -18,7 +20,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub(crate) struct ItemRow {
-        /// An `Item` or `SponsoredMessage`
+        /// An `ChatHistoryItem` or `SponsoredMessage`
         pub(super) item: RefCell<Option<glib::Object>>,
     }
 
@@ -94,9 +96,9 @@ impl ItemRow {
         }
 
         if let Some(ref item) = item {
-            if let Some(item) = item.downcast_ref::<Item>() {
+            if let Some(item) = item.downcast_ref::<ChatHistoryItem>() {
                 match item.type_() {
-                    ItemType::Message(message) => {
+                    ChatHistoryItemType::Message(message) => {
                         let content = message.content().0;
 
                         match content {
@@ -304,7 +306,7 @@ impl ItemRow {
                             _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
                     }
-                    ItemType::DayDivider(date) => {
+                    ChatHistoryItemType::DayDivider(date) => {
                         let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
                             // Translators: This is a date format in the day divider without the year
                             gettext("%B %e")
