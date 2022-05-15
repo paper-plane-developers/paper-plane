@@ -4,40 +4,40 @@ use gtk::{gio, glib};
 use indexmap::map::Entry;
 use tdlib::enums::Update;
 
-use crate::session::SecretChat;
+use crate::tdlib::User;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
     use indexmap::IndexMap;
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub(crate) struct SecretChatList {
-        pub(super) list: RefCell<IndexMap<i32, SecretChat>>,
-        pub(super) session: WeakRef<Session>,
+    pub(crate) struct UserList {
+        pub(super) list: RefCell<IndexMap<i64, User>>,
+        pub(super) session: OnceCell<Session>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SecretChatList {
-        const NAME: &'static str = "SecretChatList";
-        type Type = super::SecretChatList;
+    impl ObjectSubclass for UserList {
+        const NAME: &'static str = "UserList";
+        type Type = super::UserList;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for SecretChatList {
+    impl ObjectImpl for UserList {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
                     "session",
                     "Session",
-                    "The session relative to this list",
+                    "The session",
                     Session::static_type(),
                     glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                 )]
             });
+
             PROPERTIES.as_ref()
         }
 
@@ -49,7 +49,8 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "session" => self.session.set(Some(&value.get().unwrap())),
+                "session" => self.session.set(value.get().unwrap()).unwrap(),
+
                 _ => unimplemented!(),
             }
         }
@@ -62,9 +63,9 @@ mod imp {
         }
     }
 
-    impl ListModelImpl for SecretChatList {
+    impl ListModelImpl for UserList {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
-            SecretChat::static_type()
+            User::static_type()
         }
 
         fn n_items(&self, _list_model: &Self::Type) -> u32 {
@@ -75,56 +76,62 @@ mod imp {
             self.list
                 .borrow()
                 .get_index(position as usize)
-                .map(|(_, i)| i.upcast_ref())
+                .map(|(_, u)| u.upcast_ref())
                 .cloned()
         }
     }
 }
 
 glib::wrapper! {
-    pub(crate) struct SecretChatList(ObjectSubclass<imp::SecretChatList>)
+    pub(crate) struct UserList(ObjectSubclass<imp::UserList>)
         @implements gio::ListModel;
 }
 
-impl SecretChatList {
+impl UserList {
     pub(crate) fn new(session: &Session) -> Self {
-        glib::Object::new(&[("session", session)]).expect("Failed to create SecretChatList")
+        glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
     }
 
-    /// Return the `SecretChat` of the specified `id`. Panics if the secret chat is not present.
+    /// Return the `User` of the specified `id`. Panics if the user is not present.
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
-    /// relative `SecretChat` exists in the list.
-    pub(crate) fn get(&self, id: i32) -> SecretChat {
-        self.imp()
-            .list
-            .borrow()
-            .get(&id)
-            .expect("Failed to get expected SecretChat")
-            .to_owned()
+    /// relative `User` exists in the list.
+    pub(crate) fn get(&self, id: i64) -> User {
+        self.try_get(id).expect("Failed to get expected User")
     }
 
-    pub(crate) fn handle_update(&self, update: &Update) {
-        if let Update::SecretChat(data) = update {
-            let mut list = self.imp().list.borrow_mut();
+    pub(crate) fn try_get(&self, id: i64) -> Option<User> {
+        self.imp().list.borrow().get(&id).cloned()
+    }
 
-            match list.entry(data.secret_chat.id) {
-                Entry::Occupied(entry) => entry.get().handle_update(update),
-                Entry::Vacant(entry) => {
-                    let user = self.session().user_list().get(data.secret_chat.user_id);
-                    let secret_chat = SecretChat::from_td_object(&data.secret_chat, &user);
-                    entry.insert(secret_chat);
+    pub(crate) fn handle_update(&self, update: Update) {
+        match update {
+            Update::User(data) => {
+                let mut list = self.imp().list.borrow_mut();
 
-                    let position = (list.len() - 1) as u32;
-                    drop(list);
+                match list.entry(data.user.id) {
+                    Entry::Occupied(entry) => entry.get().handle_update(Update::User(data)),
+                    Entry::Vacant(entry) => {
+                        let user = User::from_td_object(data.user, self.session());
+                        entry.insert(user);
 
-                    self.items_changed(position, 0, 1);
+                        drop(list);
+                        self.item_added();
+                    }
                 }
             }
+            Update::UserStatus(ref data) => self.get(data.user_id).handle_update(update),
+            _ => {}
         }
     }
 
-    pub(crate) fn session(&self) -> Session {
-        self.imp().session.upgrade().unwrap()
+    fn item_added(&self) {
+        let list = self.imp().list.borrow();
+        let position = list.len() - 1;
+        self.items_changed(position as u32, 0, 1);
+    }
+
+    pub(crate) fn session(&self) -> &Session {
+        self.imp().session.get().unwrap()
     }
 }

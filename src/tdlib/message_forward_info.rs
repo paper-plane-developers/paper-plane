@@ -4,8 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::MessageForwardOrigin as TelegramMessageForwardOrigin;
 use tdlib::types::MessageForwardInfo as TelegramForwardInfo;
 
-use crate::session::chat::Chat;
-use crate::session::User;
+use crate::tdlib::{Chat, User};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageForwardOrigin")]

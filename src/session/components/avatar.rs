@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gdk, glib};
 use tdlib::types::File;
 
-use crate::session::{Avatar as AvatarItem, Chat, User};
+use crate::tdlib::{Avatar as AvatarItem, Chat, User};
 use crate::{expressions, Session};
 
 mod imp {

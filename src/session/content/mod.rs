@@ -18,7 +18,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
-use crate::session::Chat;
+use crate::tdlib::Chat;
 
 mod imp {
     use super::*;

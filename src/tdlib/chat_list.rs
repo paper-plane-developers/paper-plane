@@ -6,7 +6,7 @@ use tdlib::enums::Update;
 use tdlib::functions;
 use tdlib::types::Chat as TelegramChat;
 
-use crate::session::Chat;
+use crate::tdlib::Chat;
 use crate::utils::spawn;
 use crate::Session;
 

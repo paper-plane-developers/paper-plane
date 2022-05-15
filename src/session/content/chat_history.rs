@@ -3,11 +3,10 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 
-use crate::expressions;
-use crate::session::chat::SponsoredMessage;
 use crate::session::content::{ChatActionBar, ChatInfoDialog, ItemRow};
-use crate::session::{Chat, ChatType, Session};
+use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
+use crate::{expressions, Session};
 
 mod imp {
     use super::*;

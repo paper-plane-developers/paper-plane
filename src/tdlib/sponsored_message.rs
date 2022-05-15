@@ -4,8 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::types::Error as TdError;
 use tdlib::{enums, functions};
 
-use crate::session::chat::BoxedMessageContent;
-use crate::session::Chat;
+use crate::tdlib::{BoxedMessageContent, Chat};
 use crate::Session;
 
 mod imp {

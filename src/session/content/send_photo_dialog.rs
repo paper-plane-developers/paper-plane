@@ -8,7 +8,7 @@ use tdlib::types::{InputFileLocal, InputMessagePhoto};
 
 use crate::expressions;
 use crate::session::components::MessageEntry;
-use crate::session::Chat;
+use crate::tdlib::Chat;
 use crate::utils::spawn;
 
 mod imp {

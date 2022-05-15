@@ -5,9 +5,8 @@ use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::functions;
 use tdlib::types::{Error as TdError, Message as TdMessage};
 
-use crate::expressions;
-use crate::session::chat::{BoxedMessageContent, MessageForwardInfo, MessageForwardOrigin};
-use crate::session::{Chat, Session, User};
+use crate::tdlib::{BoxedMessageContent, Chat, MessageForwardInfo, MessageForwardOrigin, User};
+use crate::{expressions, Session};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageSender")]

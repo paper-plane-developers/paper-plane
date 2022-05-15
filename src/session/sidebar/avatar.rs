@@ -6,8 +6,8 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, gsk, CompositeTemplate};
 use tdlib::enums::{UserStatus, UserType};
 
-use crate::session::user::BoxedUserStatus;
-use crate::session::{Chat, Session, User};
+use crate::tdlib::{BoxedUserStatus, Chat, User};
+use crate::Session;
 
 mod imp {
     use super::*;

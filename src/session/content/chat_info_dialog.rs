@@ -5,7 +5,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
 use crate::expressions;
-use crate::session::{Chat, ChatType, User};
+use crate::tdlib::{Chat, ChatType, User};
 
 mod imp {
     use super::*;

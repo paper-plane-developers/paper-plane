@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{Update, UserStatus, UserType};
 use tdlib::types::User as TdUser;
 
-use crate::session::Avatar;
+use crate::tdlib::Avatar;
 use crate::Session;
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]

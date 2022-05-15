@@ -7,9 +7,8 @@ use gtk::subclass::prelude::*;
 use std::borrow::Cow;
 use tdlib::enums::{MessageContent, UserType};
 
-use crate::session::chat::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage};
 use crate::session::content::{EventRow, MessageRow};
-use crate::session::User;
+use crate::tdlib::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage, User};
 use crate::utils::MESSAGE_TRUNCATED_LENGTH;
 
 mod imp {

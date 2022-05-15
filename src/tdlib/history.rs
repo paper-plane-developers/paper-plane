@@ -7,8 +7,7 @@ use tdlib::enums::{self, Update};
 use tdlib::functions;
 use tdlib::types::Message as TelegramMessage;
 
-use crate::session::chat::{Item, ItemType, Message};
-use crate::session::Chat;
+use crate::tdlib::{Chat, Item, ItemType, Message};
 
 mod imp {
     use super::*;

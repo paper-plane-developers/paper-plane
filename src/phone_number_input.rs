@@ -6,8 +6,7 @@ use gtk::{glib, pango};
 use locale_config::Locale;
 use std::borrow::Cow;
 
-use crate::country_info::CountryInfo;
-use crate::country_list::CountryList;
+use crate::tdlib::{CountryInfo, CountryList};
 
 mod imp {
     use super::*;

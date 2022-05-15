@@ -6,9 +6,9 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
 
-use crate::country_list::CountryList;
 use crate::session::Session;
 use crate::session_manager::SessionManager;
+use crate::tdlib::CountryList;
 use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters, spawn};
 
 mod imp {

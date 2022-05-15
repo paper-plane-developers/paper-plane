@@ -3,7 +3,7 @@ use gtk::glib::DateTime;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
-use crate::session::chat::Message;
+use crate::tdlib::Message;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ItemType")]

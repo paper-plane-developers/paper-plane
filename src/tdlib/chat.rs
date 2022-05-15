@@ -1,26 +1,12 @@
-mod action;
-mod action_list;
-mod history;
-mod item;
-mod message;
-mod message_forward_info;
-mod sponsored_message;
-
-pub(crate) use self::action::ChatAction;
-pub(crate) use self::action_list::ChatActionList;
-use self::history::History;
-pub(crate) use self::item::{Item, ItemType};
-pub(crate) use self::message::{Message, MessageSender};
-pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
-pub(crate) use self::sponsored_message::SponsoredMessage;
-
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{self, ChatMemberStatus, ChatType as TdChatType, MessageContent, Update};
 use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, ChatPermissions, DraftMessage};
 
-use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
+use crate::tdlib::{
+    Avatar, BasicGroup, ChatActionList, History, Message, SecretChat, Supergroup, User,
+};
 use crate::Session;
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]

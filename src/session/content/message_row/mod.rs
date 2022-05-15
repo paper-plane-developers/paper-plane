@@ -21,9 +21,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageContent, StickerType};
 
-use crate::session::chat::{Message, MessageForwardOrigin, MessageSender};
 use crate::session::components::Avatar;
-use crate::session::ChatType;
+use crate::tdlib::{ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;

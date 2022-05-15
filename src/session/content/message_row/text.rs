@@ -7,9 +7,8 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 
-use crate::session::chat::{BoxedMessageContent, Message, MessageSender, SponsoredMessage};
 use crate::session::content::message_row::{MessageBase, MessageBaseImpl};
-use crate::session::{Chat, ChatType};
+use crate::tdlib::{BoxedMessageContent, Chat, ChatType, Message, MessageSender, SponsoredMessage};
 use crate::utils::parse_formatted_text;
 
 mod imp {

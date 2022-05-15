@@ -3,7 +3,7 @@ use tdlib::types::{ChatPhotoInfo as TdChatPhotoInfo, File, ProfilePhoto as TdPro
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "Avatar", nullable)]
-pub(crate) struct Avatar(pub(super) File);
+pub(crate) struct Avatar(pub(crate) File);
 
 impl From<TdChatPhotoInfo> for Avatar {
     fn from(td_chat_photo_info: TdChatPhotoInfo) -> Self {
