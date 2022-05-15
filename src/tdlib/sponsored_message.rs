@@ -23,7 +23,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for SponsoredMessage {
-        const NAME: &'static str = "ChatSponsoredMessage";
+        const NAME: &'static str = "SponsoredMessage";
         type Type = super::SponsoredMessage;
     }
 
@@ -102,7 +102,7 @@ impl SponsoredMessage {
             ("content", &content),
             ("sponsor-chat", &sponsor_chat),
         ])
-        .expect("Failed to create ChatSponsoredMessage"))
+        .expect("Failed to create SponsoredMessage"))
     }
 
     pub(crate) fn message_id(&self) -> i64 {

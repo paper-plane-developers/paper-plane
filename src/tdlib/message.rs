@@ -65,7 +65,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for Message {
-        const NAME: &'static str = "ChatMessage";
+        const NAME: &'static str = "Message";
         type Type = super::Message;
     }
 
