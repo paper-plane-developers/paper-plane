@@ -19,7 +19,7 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::MessageContent;
+use tdlib::enums::{MessageContent, StickerType};
 
 use crate::session::chat::{Message, MessageForwardOrigin, MessageSender};
 use crate::session::components::Avatar;
@@ -250,7 +250,12 @@ impl MessageRow {
                 MessageContent::MessagePhoto(_) => {
                     self.update_or_create_photo_content(message_.clone());
                 }
-                MessageContent::MessageSticker(_) => {
+                MessageContent::MessageSticker(data)
+                    if matches!(
+                        data.sticker.r#type,
+                        StickerType::Static | StickerType::Mask(_)
+                    ) =>
+                {
                     self.update_or_create_sticker_content(message_.clone());
                 }
                 _ => {
