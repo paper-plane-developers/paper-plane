@@ -1,8 +1,10 @@
 mod avatar;
 mod row;
+mod selection;
 mod session_switcher;
 
 use self::row::Row;
+use self::selection::Selection;
 use self::session_switcher::SessionSwitcher;
 
 use gettextrs::gettext;
@@ -20,6 +22,7 @@ pub(crate) use self::avatar::Avatar;
 
 mod imp {
     use super::*;
+    use glib::subclass::Signal;
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
@@ -32,7 +35,6 @@ mod imp {
         pub(super) selected_chat: RefCell<Option<Chat>>,
         pub(super) session: RefCell<Option<Session>>,
         pub(super) filter: RefCell<Option<gtk::CustomFilter>>,
-        pub(super) selection: RefCell<Option<gtk::SingleSelection>>,
         pub(super) searched_chats: RefCell<Vec<i64>>,
         pub(super) searched_users: RefCell<Vec<i64>>,
         pub(super) already_searched_users: RefCell<Vec<i64>>,
@@ -47,7 +49,7 @@ mod imp {
         #[template_child]
         pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
-        pub(super) list_view: TemplateChild<gtk::ListView>,
+        pub(super) selection: TemplateChild<Selection>,
     }
 
     #[glib::object_subclass]
@@ -60,6 +62,7 @@ mod imp {
             ComponentsAvatar::static_type();
             Row::static_type();
             Self::bind_template(klass);
+            Self::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -67,7 +70,46 @@ mod imp {
         }
     }
 
+    #[gtk::template_callbacks]
+    impl Sidebar {
+        #[template_callback]
+        async fn list_activate(&self, pos: u32) {
+            let instance = self.instance();
+            self.selection.set_selected_position(pos);
+
+            instance.emit_by_name::<()>("list-activated", &[]);
+
+            if let Some(item) = self.selection.selected_item() {
+                if let Some(chat) = item.downcast_ref::<Chat>() {
+                    instance.set_selected_chat(Some(chat.clone()));
+                } else if let Some(user) = item.downcast_ref::<User>() {
+                    // Create a chat with the user and then select the created chat
+                    let user_id = user.id();
+                    let session = user.session();
+                    let client_id = session.client_id();
+                    let result = functions::create_private_chat(user_id, false, client_id).await;
+
+                    if let Ok(enums::Chat::Chat(chat)) = result {
+                        let chat = session.chat_list().get(chat.id);
+                        instance.set_selected_chat(Some(chat));
+                    }
+                }
+
+                return;
+            }
+
+            instance.set_selected_chat(None);
+        }
+    }
+
     impl ObjectImpl for Sidebar {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder("list-activated", &[], <()>::static_type().into()).build()]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -131,6 +173,8 @@ mod imp {
         }
 
         fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
             self.search_entry
                 .connect_search_changed(clone!(@weak obj => move |entry| {
                     let query = entry.text().to_string();
@@ -252,17 +296,9 @@ impl Sidebar {
             return;
         }
 
-        // TODO: change the selection in the sidebar if it's
-        // different from the current selection
-
         let imp = self.imp();
-        if selected_chat.is_none() {
-            imp.selection
-                .borrow()
-                .as_ref()
-                .unwrap()
-                .set_selected(gtk::INVALID_LIST_POSITION);
-        }
+        imp.selection
+            .set_selected_item(selected_chat.clone().map(Chat::upcast));
 
         imp.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
@@ -332,39 +368,9 @@ impl Sidebar {
 
             let filter_model = gtk::FilterListModel::new(Some(&model), Some(&filter));
             let sort_model = gtk::SortListModel::new(Some(&filter_model), Some(&sorter));
-            let selection = gtk::SingleSelection::new(Some(&sort_model));
-            selection.set_autoselect(false);
 
-            selection.connect_selected_item_notify(
-                clone!(@weak self as obj, @weak session => move |selection| {
-                    if let Some(item) = selection.selected_item() {
-                        if let Some(chat) = item.downcast_ref::<Chat>() {
-                            obj.set_selected_chat(Some(chat.to_owned()));
-                        } else if let Some(user) = item.downcast_ref::<User>() {
-                            // Create a chat with the user and then select the created chat
-                            let user_id = user.id();
-                            let client_id = session.client_id();
-
-                            spawn(clone!(@weak obj, @weak session => async move {
-                                let result =
-                                    functions::create_private_chat(user_id, false, client_id).await;
-                                if let Ok(enums::Chat::Chat(chat)) = result {
-                                    let chat = session.chat_list().get(chat.id);
-                                    obj.set_selected_chat(Some(chat));
-                                }
-                            }));
-                        } else {
-                            unreachable!("Unexpected item type: {:?}", item);
-                        }
-                    } else {
-                        obj.set_selected_chat(None);
-                    }
-                }),
-            );
-
-            imp.list_view.set_model(Some(&selection));
+            imp.selection.set_model(Some(sort_model.upcast()));
             imp.filter.replace(Some(filter));
-            imp.selection.replace(Some(selection));
         }
 
         imp.session.replace(session);
@@ -379,5 +385,17 @@ impl Sidebar {
         self.imp()
             .session_switcher
             .set_sessions(sessions, this_session);
+    }
+
+    pub(crate) fn connect_list_activated<F: Fn(&Self) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("list-activated", true, move |values| {
+            let obj = values[0].get::<Self>().unwrap();
+            f(&obj);
+
+            None
+        })
     }
 }

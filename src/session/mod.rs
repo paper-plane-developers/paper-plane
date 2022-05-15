@@ -65,7 +65,6 @@ mod imp {
         pub(super) basic_group_list: OnceCell<BasicGroupList>,
         pub(super) supergroup_list: OnceCell<SupergroupList>,
         pub(super) secret_chat_list: OnceCell<SecretChatList>,
-        pub(super) selected_chat: RefCell<Option<Chat>>,
         pub(super) private_chats_notification_settings:
             RefCell<Option<BoxedScopeNotificationSettings>>,
         pub(super) group_chats_notification_settings:
@@ -170,13 +169,6 @@ mod imp {
                         SecretChatList::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
-                    glib::ParamSpecObject::new(
-                        "selected-chat",
-                        "Selected Chat",
-                        "The selected chat in this sidebar",
-                        Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
                     glib::ParamSpecBoxed::new(
                         "private-chats-notification-settings",
                         "Private Chats Notification Settings",
@@ -220,10 +212,6 @@ mod imp {
                     let database_info = value.get().unwrap();
                     self.database_info.set(database_info).unwrap();
                 }
-                "selected-chat" => {
-                    let selected_chat = value.get().unwrap();
-                    obj.set_selected_chat(selected_chat);
-                }
                 "private-chats-notification-settings" => {
                     let scope_notification_settings = value.get().unwrap();
                     obj.set_private_chats_notification_settings(scope_notification_settings);
@@ -250,7 +238,6 @@ mod imp {
                 "basic-group-list" => obj.basic_group_list().to_value(),
                 "supergroup-list" => obj.supergroup_list().to_value(),
                 "secret-chat-list" => obj.secret_chat_list().to_value(),
-                "selected-chat" => obj.selected_chat().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
                 }
@@ -266,17 +253,10 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            self.leaflet.connect_child_transition_running_notify(
-                clone!(@weak obj => move |leaflet| {
-                    if !leaflet.is_child_transition_running()
-                        && leaflet.visible_child().unwrap() == *obj.imp().sidebar {
-
-                        // We deselect the chat when the transition to the sidebar is finished.
-                        obj.set_selected_chat(None);
-                    }
-                }),
-            );
+            self.sidebar
+                .connect_list_activated(clone!(@weak obj => move |_| {
+                    obj.imp().leaflet.navigate(adw::NavigationDirection::Forward);
+                }));
         }
     }
 
@@ -443,24 +423,6 @@ impl Session {
         self.imp()
             .secret_chat_list
             .get_or_init(|| SecretChatList::new(self))
-    }
-
-    fn selected_chat(&self) -> Option<Chat> {
-        self.imp().selected_chat.borrow().clone()
-    }
-
-    fn set_selected_chat(&self, selected_chat: Option<Chat>) {
-        if self.selected_chat() == selected_chat {
-            return;
-        }
-
-        let imp = self.imp();
-        if selected_chat.is_some() {
-            imp.leaflet.navigate(adw::NavigationDirection::Forward);
-        }
-
-        imp.selected_chat.replace(selected_chat);
-        self.notify("selected-chat");
     }
 
     fn private_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {
