@@ -5,7 +5,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::borrow::Cow;
-use tdlib::enums::{MessageContent, StickerType, UserType};
+use tdlib::enums::{MessageContent, UserType};
 
 use crate::session::chat::{ChatType, Item, ItemType, Message, MessageSender, SponsoredMessage};
 use crate::session::content::{EventRow, MessageRow};
@@ -101,15 +101,6 @@ impl ItemRow {
                         let content = message.content().0;
 
                         match content {
-                            MessageContent::MessagePhoto(_) => {
-                                self.update_or_create_message_row(message.to_owned().upcast())
-                            }
-                            MessageContent::MessageSticker(data)
-                                if matches!(data.sticker.r#type, StickerType::Static)
-                                    || matches!(data.sticker.r#type, StickerType::Mask(_)) =>
-                            {
-                                self.update_or_create_message_row(message.to_owned().upcast())
-                            }
                             MessageContent::MessageChatChangeTitle(data) => {
                                 self.get_or_create_event_row().set_label(&format!(
                                     "<b>{}</b>",
