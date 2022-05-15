@@ -1,9 +1,9 @@
-mod action;
 mod action_list;
 mod avatar;
 mod basic_group;
 mod basic_group_list;
 mod chat;
+mod chat_action;
 mod chat_history;
 mod chat_list;
 mod country_info;
@@ -19,12 +19,12 @@ mod supergroup_list;
 mod user;
 mod user_list;
 
-pub(crate) use self::action::ChatAction;
 pub(crate) use self::action_list::ChatActionList;
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::basic_group::BasicGroup;
 pub(crate) use self::basic_group_list::BasicGroupList;
 pub(crate) use self::chat::{Chat, ChatType};
+pub(crate) use self::chat_action::ChatAction;
 use self::chat_history::ChatHistory;
 pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::country_info::CountryInfo;
