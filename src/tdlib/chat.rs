@@ -6,7 +6,7 @@ use tdlib::types::Chat as TelegramChat;
 
 use crate::tdlib::{
     Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
-    ChatActionList, History, Message, SecretChat, Supergroup, User,
+    ChatActionList, ChatHistory, Message, SecretChat, Supergroup, User,
 };
 use crate::Session;
 
@@ -71,7 +71,7 @@ mod imp {
         pub(super) unread_count: Cell<i32>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
-        pub(super) history: OnceCell<History>,
+        pub(super) history: OnceCell<ChatHistory>,
         pub(super) actions: OnceCell<ChatActionList>,
         pub(super) session: WeakRef<Session>,
         pub(super) permissions: RefCell<Option<BoxedChatPermissions>>,
@@ -195,7 +195,7 @@ mod imp {
                         "history",
                         "History",
                         "The message history of this chat",
-                        History::static_type(),
+                        ChatHistory::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
@@ -535,8 +535,8 @@ impl Chat {
         self.notify("notification-settings");
     }
 
-    pub(crate) fn history(&self) -> &History {
-        self.imp().history.get_or_init(|| History::new(self))
+    pub(crate) fn history(&self) -> &ChatHistory {
+        self.imp().history.get_or_init(|| ChatHistory::new(self))
     }
 
     pub(crate) fn actions(&self) -> &ChatActionList {

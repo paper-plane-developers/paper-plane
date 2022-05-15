@@ -17,7 +17,7 @@ mod imp {
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
-    pub(crate) struct History {
+    pub(crate) struct ChatHistory {
         pub(super) chat: WeakRef<Chat>,
         pub(super) loading: Cell<bool>,
         pub(super) list: RefCell<VecDeque<Item>>,
@@ -25,13 +25,13 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for History {
+    impl ObjectSubclass for ChatHistory {
         const NAME: &'static str = "ChatHistory";
-        type Type = super::History;
+        type Type = super::ChatHistory;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for History {
+    impl ObjectImpl for ChatHistory {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -78,7 +78,7 @@ mod imp {
         }
     }
 
-    impl ListModelImpl for History {
+    impl ListModelImpl for ChatHistory {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
             Item::static_type()
         }
@@ -98,13 +98,13 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct History(ObjectSubclass<imp::History>)
+    pub(crate) struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
         @implements gio::ListModel;
 }
 
-impl History {
+impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
+        glib::Object::new(&[("chat", chat)]).expect("Failed to create ChatHistory")
     }
 
     pub(crate) async fn load_older_messages(&self) {
