@@ -8,11 +8,10 @@ use tdlib::enums::{CallDiscardReason, ChatList, InputMessageContent, MessageCont
 use tdlib::functions;
 use tdlib::types::{DraftMessage, MessageCall};
 
-use crate::session::BoxedScopeNotificationSettings;
 use crate::tdlib::{
-    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, Chat, ChatAction,
-    ChatActionList, ChatType, Message, MessageForwardInfo, MessageForwardOrigin, MessageSender,
-    User,
+    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
+    BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatType, Message,
+    MessageForwardInfo, MessageForwardOrigin, MessageSender, User,
 };
 use crate::utils::{
     dim_and_escape, escape, human_friendly_duration, spawn, MESSAGE_TRUNCATED_LENGTH,

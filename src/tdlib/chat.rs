@@ -1,21 +1,14 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{self, ChatMemberStatus, ChatType as TdChatType, MessageContent, Update};
-use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, ChatPermissions, DraftMessage};
+use tdlib::enums::{self, ChatType as TdChatType, Update};
+use tdlib::types::Chat as TelegramChat;
 
 use crate::tdlib::{
-    Avatar, BasicGroup, ChatActionList, History, Message, SecretChat, Supergroup, User,
+    Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
+    ChatActionList, History, Message, SecretChat, Supergroup, User,
 };
 use crate::Session;
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatMemberStatus")]
-pub(crate) struct BoxedChatMemberStatus(pub(crate) ChatMemberStatus);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatPermissions")]
-pub(crate) struct BoxedChatPermissions(pub(crate) ChatPermissions);
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
@@ -56,18 +49,6 @@ impl ChatType {
         })
     }
 }
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedDraftMessage", nullable)]
-pub(crate) struct BoxedDraftMessage(pub(crate) DraftMessage);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatNotificationSettings")]
-pub(crate) struct BoxedChatNotificationSettings(pub(crate) ChatNotificationSettings);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedMessageContent")]
-pub(crate) struct BoxedMessageContent(pub(crate) MessageContent);
 
 mod imp {
     use super::*;

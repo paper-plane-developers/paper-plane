@@ -13,19 +13,18 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
 use tdlib::enums::{NotificationSettingsScope, Update};
 use tdlib::functions;
-use tdlib::types::{File, ScopeNotificationSettings};
+use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
-use crate::tdlib::{BasicGroupList, ChatList, SecretChatList, SupergroupList, User, UserList};
+use crate::tdlib::{
+    BasicGroupList, BoxedScopeNotificationSettings, ChatList, SecretChatList, SupergroupList, User,
+    UserList,
+};
 use crate::utils::{log_out, spawn};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedDatabaseInfo")]
 pub(crate) struct BoxedDatabaseInfo(pub(crate) DatabaseInfo);
-
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]
-pub(crate) struct BoxedScopeNotificationSettings(pub(crate) ScopeNotificationSettings);
 
 mod imp {
     use super::*;

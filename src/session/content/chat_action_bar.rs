@@ -10,11 +10,11 @@ use tdlib::enums::{ChatAction, ChatMemberStatus, InputMessageContent, UserType};
 use tdlib::{functions, types};
 
 use crate::expressions;
-use crate::session::components::{BoxedFormattedText, MessageEntry};
+use crate::session::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
 use crate::tdlib::{
-    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedDraftMessage, BoxedUserType,
-    Chat, ChatType, Supergroup, User,
+    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedDraftMessage, BoxedFormattedText,
+    BoxedUserType, Chat, ChatType, Supergroup, User,
 };
 use crate::utils::{spawn, temp_dir};
 

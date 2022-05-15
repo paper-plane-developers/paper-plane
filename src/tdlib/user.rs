@@ -1,19 +1,11 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{Update, UserStatus, UserType};
+use tdlib::enums::Update;
 use tdlib::types::User as TdUser;
 
-use crate::tdlib::Avatar;
+use crate::tdlib::{Avatar, BoxedUserStatus, BoxedUserType};
 use crate::Session;
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedUserType")]
-pub(crate) struct BoxedUserType(pub(crate) UserType);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedUserStatus")]
-pub(crate) struct BoxedUserStatus(pub(crate) UserStatus);
 
 mod imp {
     use super::*;
