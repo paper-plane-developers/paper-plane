@@ -119,6 +119,15 @@ impl Application {
         }));
         self.add_action(&action_about);
 
+        // Select chat
+        let action_select_chat =
+            gio::SimpleAction::new("select-chat", Some(glib::VariantTy::new("(ix)").unwrap()));
+        action_select_chat.connect_activate(clone!(@weak self as app => move |_, data| {
+            let (client_id, chat_id) = data.unwrap().get().unwrap();
+            app.main_window().select_chat(client_id, chat_id);
+        }));
+        self.add_action(&action_select_chat);
+
         // New login on production server
         let action_new_login_production_server =
             gio::SimpleAction::new("new-login-production-server", None);

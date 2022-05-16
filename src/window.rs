@@ -129,6 +129,10 @@ impl Window {
         glib::Object::new(&[("application", app)]).expect("Failed to create Window")
     }
 
+    pub(crate) fn select_chat(&self, client_id: i32, chat_id: i64) {
+        self.session_manager().select_chat(client_id, chat_id);
+    }
+
     pub(crate) fn session_manager(&self) -> &SessionManager {
         &*self.imp().session_manager
     }
@@ -212,6 +216,10 @@ impl Window {
                 };
 
                 if let Some(notification) = notification {
+                    notification.set_default_action_and_target_value(
+                        "app.select-chat",
+                        Some(&(client_id, chat_id).to_variant()),
+                    );
                     app.send_notification(Some(&notification_id.to_string()), &notification);
                 }
             }

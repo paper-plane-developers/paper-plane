@@ -352,6 +352,13 @@ impl Session {
         }
     }
 
+    pub(crate) fn select_chat(&self, chat_id: i64) {
+        let imp = self.imp();
+        let chat = self.chat_list().get(chat_id);
+        imp.sidebar.set_selected_chat(Some(chat));
+        imp.leaflet.navigate(adw::NavigationDirection::Forward);
+    }
+
     pub(crate) fn handle_paste_action(&self) {
         self.imp().content.handle_paste_action();
     }
