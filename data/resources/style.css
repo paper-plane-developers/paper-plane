@@ -73,6 +73,14 @@
   font-size: 0.95em;
 }
 
+.chat-list row .last-message-status-sent {
+  color: @accent_bg_color;
+}
+
+.chat-list row .last-message-status-failed {
+  color: @destructive_color;
+}
+
 .chat-list row .timestamp {
   font-size: 0.8em;
   font-feature-settings: "tnum";
