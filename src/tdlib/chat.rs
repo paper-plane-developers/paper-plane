@@ -64,6 +64,7 @@ mod imp {
         pub(super) is_blocked: Cell<bool>,
         pub(super) title: RefCell<String>,
         pub(super) avatar: RefCell<Option<Avatar>>,
+        pub(super) last_read_outbox_message_id: Cell<i64>,
         pub(super) last_message: RefCell<Option<Message>>,
         pub(super) order: Cell<i64>,
         pub(super) is_pinned: Cell<bool>,
@@ -120,6 +121,15 @@ mod imp {
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
+                    glib::ParamSpecInt64::new(
+                        "last-read-outbox-message-id",
+                        "Last Read Outbox Message Id",
+                        "The last read outbox message id of this chat",
+                        std::i64::MIN,
+                        std::i64::MAX,
+                        0,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoxed::new(
                         "avatar",
@@ -241,6 +251,9 @@ mod imp {
                     obj.set_title(value.get::<Option<String>>().unwrap().unwrap_or_default())
                 }
                 "avatar" => obj.set_avatar(value.get().unwrap()),
+                "last-read-outbox-message-id" => {
+                    obj.set_last_read_outbox_message_id(value.get().unwrap());
+                }
                 "last-message" => obj.set_last_message(value.get().unwrap()),
                 "order" => obj.set_order(value.get().unwrap()),
                 "is-pinned" => obj.set_is_pinned(value.get().unwrap()),
@@ -260,6 +273,7 @@ mod imp {
                 "type" => obj.type_().to_value(),
                 "is-blocked" => obj.is_blocked().to_value(),
                 "title" => obj.title().to_value(),
+                "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
@@ -293,6 +307,10 @@ impl Chat {
             ("type", &type_),
             ("is-blocked", &chat.is_blocked),
             ("title", &chat.title),
+            (
+                "last-read-outbox-message-id",
+                &chat.last_read_outbox_message_id,
+            ),
             ("avatar", &avatar),
             ("draft-message", &draft_message),
             ("unread-mention-count", &chat.unread_mention_count),
@@ -432,6 +450,20 @@ impl Chat {
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_notify_local(Some("avatar"), f)
+    }
+
+    pub(crate) fn last_read_outbox_message_id(&self) -> i64 {
+        self.imp().last_read_outbox_message_id.get()
+    }
+
+    fn set_last_read_outbox_message_id(&self, last_read_outbox_message_id: i64) {
+        if self.last_read_outbox_message_id() == last_read_outbox_message_id {
+            return;
+        }
+        self.imp()
+            .last_read_outbox_message_id
+            .set(last_read_outbox_message_id);
+        self.notify("last-read-outbox-message-id");
     }
 
     pub(crate) fn last_message(&self) -> Option<Message> {
