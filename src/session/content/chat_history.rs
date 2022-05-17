@@ -15,18 +15,38 @@ mod imp {
     use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
+        pub(super) is_auto_scrolling: Cell<bool>,
+        pub(super) sticky: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
+        #[template_child]
+        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub(super) list_view: TemplateChild<gtk::ListView>,
         #[template_child]
         pub(super) chat_action_bar: TemplateChild<ChatActionBar>,
+    }
+
+    impl Default for ChatHistory {
+        fn default() -> Self {
+            Self {
+                compact: Default::default(),
+                chat: Default::default(),
+                message_menu: Default::default(),
+                is_auto_scrolling: Default::default(),
+                sticky: Cell::new(false),
+                window_title: Default::default(),
+                scrolled_window: Default::default(),
+                list_view: Default::default(),
+                chat_action_bar: Default::default(),
+            }
+        }
     }
 
     #[glib::object_subclass]
@@ -41,6 +61,9 @@ mod imp {
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
                 widget.open_info_dialog();
+            });
+            klass.install_action("chat-history.scroll-down", None, move |widget, _, _| {
+                widget.scroll_down();
             });
         }
 
@@ -67,6 +90,13 @@ mod imp {
                         Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecBoolean::new(
+                        "sticky",
+                        "Sticky",
+                        "Whether the chat history should stick to the newest message",
+                        true,
+                        glib::ParamFlags::READABLE,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -88,6 +118,7 @@ mod imp {
                     let chat = value.get().unwrap();
                     obj.set_chat(chat);
                 }
+                "sticky" => obj.set_sticky(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -96,6 +127,7 @@ mod imp {
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
+                "sticky" => obj.sticky().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -106,7 +138,23 @@ mod imp {
 
             let adj = self.list_view.vadjustment().unwrap();
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
-                obj.load_older_messages(adj);
+                let imp = obj.imp();
+
+                if imp.is_auto_scrolling.get() {
+                    if adj.value() + adj.page_size() >= adj.upper() {
+                        imp.is_auto_scrolling.set(false);
+                        obj.set_sticky(true);
+                    }
+                } else {
+                    obj.set_sticky(adj.value() + adj.page_size() >= adj.upper());
+                    obj.load_older_messages(adj);
+                }
+            }));
+
+            adj.connect_upper_notify(clone!(@weak obj => move |_| {
+                if obj.sticky() || obj.imp().is_auto_scrolling.get() {
+                    obj.scroll_down();
+                }
             }));
         }
     }
@@ -224,5 +272,27 @@ impl ChatHistory {
 
         let adj = imp.list_view.vadjustment().unwrap();
         self.load_older_messages(&adj);
+    }
+
+    pub(crate) fn sticky(&self) -> bool {
+        self.imp().sticky.get()
+    }
+
+    fn set_sticky(&self, sticky: bool) {
+        if self.sticky() == sticky {
+            return;
+        }
+
+        self.imp().sticky.set(sticky);
+        self.notify("sticky");
+    }
+
+    fn scroll_down(&self) {
+        let imp = self.imp();
+
+        imp.is_auto_scrolling.set(true);
+
+        imp.scrolled_window
+            .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
     }
 }
