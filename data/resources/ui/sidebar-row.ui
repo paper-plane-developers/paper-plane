@@ -7,14 +7,14 @@
       </object>
     </property>
     <child>
-      <object class="SidebarAvatar" id="avatar">
+      <object class="SidebarAvatar">
         <binding name="item">
           <lookup name="item">SidebarRow</lookup>
         </binding>
       </object>
     </child>
     <child>
-      <object class="GtkBox" id="main_box">
+      <object class="GtkBox">
         <property name="homogeneous">True</property>
         <property name="orientation">vertical</property>
         <child>

@@ -12,7 +12,6 @@ use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
     ChatActionList, Message, MessageForwardInfo, MessageForwardOrigin, MessageSender,
 };
-use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
 use crate::utils::{dim_and_escape, escape, human_friendly_duration, MESSAGE_TRUNCATED_LENGTH};
 
@@ -21,16 +20,14 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
+    use crate::session::sidebar::Avatar;
+
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub(crate) struct Row {
         /// A `Chat` or `User`
         pub(super) item: RefCell<Option<glib::Object>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        #[template_child]
-        pub(super) avatar: TemplateChild<Avatar>,
-        #[template_child]
-        pub(super) main_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
@@ -55,6 +52,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            Avatar::static_type();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -101,9 +99,12 @@ mod imp {
             obj.setup_expressions();
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
-            self.avatar.unparent();
-            self.main_box.unparent();
+        fn dispose(&self, obj: &Self::Type) {
+            let mut child = obj.first_child();
+            while let Some(child_) = child {
+                child = child_.next_sibling();
+                child_.unparent();
+            }
         }
     }
 
