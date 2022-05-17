@@ -98,8 +98,6 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SidebarRow">
-        <property name="margin-top">6</property>
-        <property name="margin-bottom">6</property>
         <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>
