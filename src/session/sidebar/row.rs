@@ -1,10 +1,11 @@
 use gettextrs::gettext;
-use glib::closure;
+use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::borrow::Cow;
-use tdlib::enums::{CallDiscardReason, InputMessageContent, MessageContent};
+use tdlib::enums::{CallDiscardReason, ChatList, InputMessageContent, MessageContent};
+use tdlib::functions;
 use tdlib::types::{DraftMessage, MessageCall};
 
 use crate::expressions;
@@ -12,14 +13,17 @@ use crate::session::chat::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent, ChatAction,
     ChatActionList, Message, MessageForwardInfo, MessageForwardOrigin, MessageSender,
 };
-use crate::session::sidebar::Avatar;
 use crate::session::{BoxedScopeNotificationSettings, Chat, ChatType, Session, User};
-use crate::utils::{dim_and_escape, escape, human_friendly_duration, MESSAGE_TRUNCATED_LENGTH};
+use crate::utils::{
+    dim_and_escape, escape, human_friendly_duration, spawn, MESSAGE_TRUNCATED_LENGTH,
+};
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
+
+    use crate::session::sidebar::{Avatar, Sidebar};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
@@ -27,10 +31,7 @@ mod imp {
         /// A `Chat` or `User`
         pub(super) item: RefCell<Option<glib::Object>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        #[template_child]
-        pub(super) avatar: TemplateChild<Avatar>,
-        #[template_child]
-        pub(super) main_box: TemplateChild<gtk::Box>,
+        pub(super) chat_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         #[template_child]
         pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
@@ -55,10 +56,38 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            Self::bind_template_callbacks(klass);
+
+            klass.install_action("sidebar-row.pin", None, move |widget, _, _| {
+                widget.toggle_chat_is_pinned()
+            });
+            klass.install_action("sidebar-row.unpin", None, move |widget, _, _| {
+                widget.toggle_chat_is_pinned()
+            });
+
+            Avatar::static_type();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
+        }
+    }
+
+    #[gtk::template_callbacks]
+    impl Row {
+        #[template_callback]
+        fn on_pressed(&self) {
+            self.show_menu();
+        }
+
+        fn show_menu(&self) {
+            let obj = self.instance();
+            let sidebar = obj.ancestor(Sidebar::static_type()).unwrap();
+            let menu = sidebar.downcast_ref::<Sidebar>().unwrap().row_menu();
+
+            menu.unparent();
+            menu.set_parent(&obj);
+            menu.popup();
         }
     }
 
@@ -101,9 +130,12 @@ mod imp {
             obj.setup_expressions();
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
-            self.avatar.unparent();
-            self.main_box.unparent();
+        fn dispose(&self, obj: &Self::Type) {
+            let mut child = obj.first_child();
+            while let Some(child_) = child {
+                child = child_.next_sibling();
+                child_.unparent();
+            }
         }
     }
 
@@ -124,6 +156,23 @@ impl Default for Row {
 impl Row {
     pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Row")
+    }
+
+    fn toggle_chat_is_pinned(&self) {
+        if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
+            spawn(async move {
+                if let Err(e) = functions::toggle_chat_is_pinned(
+                    ChatList::Main,
+                    chat.id(),
+                    !chat.is_pinned(),
+                    chat.session().client_id(),
+                )
+                .await
+                {
+                    log::warn!("Error on toggling chat's pinned state: {e:?}");
+                }
+            });
+        }
     }
 
     fn setup_expressions(&self) {
@@ -162,6 +211,14 @@ impl Row {
 
         while let Some(binding) = bindings.pop() {
             binding.unwatch();
+        }
+
+        if let Some(handler_id) = imp.chat_notify_handler_id.take() {
+            self.item()
+                .unwrap()
+                .downcast::<Chat>()
+                .unwrap()
+                .disconnect(handler_id);
         }
 
         if let Some(ref item) = item {
@@ -368,8 +425,32 @@ impl Row {
             }
         }
 
+        self.update_actions_for_item(item.as_ref());
         imp.item.replace(item);
         self.notify("item");
+    }
+
+    fn update_actions_for_item(&self, item: Option<&glib::Object>) {
+        match item.and_then(|chat| chat.downcast_ref::<Chat>()) {
+            Some(chat) => {
+                self.update_actions_for_chat(chat);
+                let handler_id = chat.connect_notify_local(
+                    Some("is-pinned"),
+                    clone!(@weak self as obj => move |chat, _| obj.update_actions_for_chat(chat)),
+                );
+                self.imp().chat_notify_handler_id.replace(Some(handler_id));
+            }
+            None => self.update_pin_actions(false, false),
+        }
+    }
+
+    fn update_actions_for_chat(&self, chat: &Chat) {
+        self.update_pin_actions(!chat.is_pinned(), chat.is_pinned());
+    }
+
+    fn update_pin_actions(&self, pin: bool, unpin: bool) {
+        self.action_set_enabled("sidebar-row.pin", pin);
+        self.action_set_enabled("sidebar-row.unpin", unpin);
     }
 }
 

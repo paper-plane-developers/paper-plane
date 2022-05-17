@@ -24,6 +24,7 @@ mod imp {
     use super::*;
     use glib::subclass::Signal;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     use crate::session::components::Avatar as ComponentsAvatar;
@@ -38,6 +39,7 @@ mod imp {
         pub(super) searched_chats: RefCell<Vec<i64>>,
         pub(super) searched_users: RefCell<Vec<i64>>,
         pub(super) already_searched_users: RefCell<Vec<i64>>,
+        pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
         pub(super) header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
@@ -208,6 +210,14 @@ impl Default for Sidebar {
 impl Sidebar {
     pub(crate) fn new() -> Self {
         glib::Object::new(&[]).expect("Failed to create Sidebar")
+    }
+
+    pub(crate) fn row_menu(&self) -> &gtk::PopoverMenu {
+        self.imp().row_menu.get_or_init(|| {
+            gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/sidebar-row-menu.ui")
+                .object::<gtk::PopoverMenu>("menu")
+                .unwrap()
+        })
     }
 
     pub(crate) fn begin_chats_search(&self) {
