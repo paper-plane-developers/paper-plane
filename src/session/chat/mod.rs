@@ -362,7 +362,7 @@ impl Chat {
                             None => {
                                 let last_message_id = last_message.id;
 
-                                self.history().append(last_message);
+                                self.history().push_front(last_message);
                                 self.history().message_by_id(last_message_id).unwrap()
                             }
                         };

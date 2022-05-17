@@ -38,6 +38,7 @@
                 <property name="vscroll-policy">natural</property>
                 <property name="child">
                   <object class="GtkListView" id="list_view">
+                    <property name="reversed">True</property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
