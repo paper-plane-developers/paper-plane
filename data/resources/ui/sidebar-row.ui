@@ -7,6 +7,18 @@
       </object>
     </property>
     <child>
+      <object class="GtkGestureClick">
+        <property name="button">3</property>
+        <signal name="released" handler="on_pressed" swapped="true"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkGestureLongPress">
+        <property name="touch-only">True</property>
+        <signal name="pressed" handler="on_pressed" swapped="true"/>
+      </object>
+    </child>
+    <child>
       <object class="SidebarAvatar">
         <binding name="item">
           <lookup name="item">SidebarRow</lookup>
