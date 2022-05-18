@@ -167,7 +167,9 @@ impl ChatHistory {
         spawn(clone!(@weak session, @weak list => async move {
             match SponsoredMessage::request(chat_id, &session).await {
                 Ok(sponsored_message) => list.append(&sponsored_message),
-                Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),
+                Err(e) => if e.code != 404 {
+                    log::warn!("Failed to request a SponsoredMessage: {:?}", e);
+                },
             }
         }));
     }
@@ -200,13 +202,14 @@ impl ChatHistory {
             let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
                 let list = gio::ListStore::new(gio::ListModel::static_type());
-                list.append(chat.history());
 
                 // We need to create a list here so that we can append the sponsored message
                 // to the chat history in the GtkListView using a GtkFlattenListModel
                 let sponsored_message_list = gio::ListStore::new(SponsoredMessage::static_type());
                 list.append(&sponsored_message_list);
                 self.request_sponsored_message(&chat.session(), chat.id(), &sponsored_message_list);
+
+                list.append(chat.history());
 
                 gtk::FlattenListModel::new(Some(&list)).upcast()
             } else {
