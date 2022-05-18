@@ -4,9 +4,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::types::FormattedText;
 
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedFormattedText", nullable)]
-pub(crate) struct BoxedFormattedText(pub(crate) FormattedText);
+use crate::tdlib::BoxedFormattedText;
 
 mod imp {
     use super::*;

@@ -3,11 +3,11 @@ use gtk::glib::DateTime;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
-use crate::session::chat::Message;
+use crate::tdlib::Message;
 
 #[derive(Clone, Debug, glib::Boxed)]
-#[boxed_type(name = "ItemType")]
-pub(crate) enum ItemType {
+#[boxed_type(name = "ChatHistoryItemType")]
+pub(crate) enum ChatHistoryItemType {
     Message(Message),
     DayDivider(DateTime),
 }
@@ -17,24 +17,24 @@ mod imp {
     use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default)]
-    pub(crate) struct Item {
-        pub(super) type_: OnceCell<ItemType>,
+    pub(crate) struct ChatHistoryItem {
+        pub(super) type_: OnceCell<ChatHistoryItemType>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for Item {
-        const NAME: &'static str = "Item";
-        type Type = super::Item;
+    impl ObjectSubclass for ChatHistoryItem {
+        const NAME: &'static str = "ChatHistoryItem";
+        type Type = super::ChatHistoryItem;
     }
 
-    impl ObjectImpl for Item {
+    impl ObjectImpl for ChatHistoryItem {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecBoxed::new(
                     "type",
                     "Type",
                     "The type of this item",
-                    ItemType::static_type(),
+                    ChatHistoryItemType::static_type(),
                     glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
                 )]
             });
@@ -51,7 +51,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "type" => {
-                    let type_ = value.get::<ItemType>().unwrap();
+                    let type_ = value.get::<ChatHistoryItemType>().unwrap();
                     self.type_.set(type_).unwrap();
                 }
                 _ => unimplemented!(),
@@ -61,26 +61,26 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct Item(ObjectSubclass<imp::Item>);
+    pub(crate) struct ChatHistoryItem(ObjectSubclass<imp::ChatHistoryItem>);
 }
 
-impl Item {
+impl ChatHistoryItem {
     pub(crate) fn for_message(message: Message) -> Self {
-        let type_ = ItemType::Message(message);
-        glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
+        let type_ = ChatHistoryItemType::Message(message);
+        glib::Object::new(&[("type", &type_)]).expect("Failed to create ChatHistoryItem")
     }
 
     pub(crate) fn for_day_divider(day: DateTime) -> Self {
-        let type_ = ItemType::DayDivider(day);
-        glib::Object::new(&[("type", &type_)]).expect("Failed to create Item")
+        let type_ = ChatHistoryItemType::DayDivider(day);
+        glib::Object::new(&[("type", &type_)]).expect("Failed to create ChatHistoryItem")
     }
 
-    pub(crate) fn type_(&self) -> &ItemType {
+    pub(crate) fn type_(&self) -> &ChatHistoryItemType {
         self.imp().type_.get().unwrap()
     }
 
     pub(crate) fn message(&self) -> Option<&Message> {
-        if let ItemType::Message(message) = self.type_() {
+        if let ChatHistoryItemType::Message(message) = self.type_() {
             Some(message)
         } else {
             None
@@ -88,7 +88,7 @@ impl Item {
     }
 
     pub(crate) fn message_timestamp(&self) -> Option<DateTime> {
-        if let ItemType::Message(message) = self.type_() {
+        if let ChatHistoryItemType::Message(message) = self.type_() {
             Some(
                 glib::DateTime::from_unix_utc(message.date().into())
                     .and_then(|t| t.to_local())

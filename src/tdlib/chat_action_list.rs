@@ -4,7 +4,7 @@ use gtk::{gio, glib};
 use std::mem;
 use tdlib::{enums, types};
 
-use crate::session::chat::{Chat, ChatAction};
+use crate::tdlib::{Chat, ChatAction};
 
 mod imp {
     use super::*;

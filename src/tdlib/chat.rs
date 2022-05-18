@@ -1,35 +1,14 @@
-mod action;
-mod action_list;
-mod history;
-mod item;
-mod message;
-mod message_forward_info;
-mod sponsored_message;
-
-pub(crate) use self::action::ChatAction;
-pub(crate) use self::action_list::ChatActionList;
-use self::history::History;
-pub(crate) use self::item::{Item, ItemType};
-pub(crate) use self::message::{Message, MessageSender};
-pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
-pub(crate) use self::sponsored_message::SponsoredMessage;
-
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{self, ChatMemberStatus, ChatType as TdChatType, MessageContent, Update};
-use tdlib::types::{Chat as TelegramChat, ChatNotificationSettings, ChatPermissions, DraftMessage};
+use tdlib::enums::{self, ChatType as TdChatType, Update};
+use tdlib::types::Chat as TelegramChat;
 
-use crate::session::{Avatar, BasicGroup, SecretChat, Supergroup, User};
+use crate::tdlib::{
+    Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
+    ChatActionList, ChatHistory, Message, SecretChat, Supergroup, User,
+};
 use crate::Session;
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatMemberStatus")]
-pub(crate) struct BoxedChatMemberStatus(pub(crate) ChatMemberStatus);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatPermissions")]
-pub(crate) struct BoxedChatPermissions(pub(crate) ChatPermissions);
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
@@ -71,18 +50,6 @@ impl ChatType {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedDraftMessage", nullable)]
-pub(crate) struct BoxedDraftMessage(pub(crate) DraftMessage);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedChatNotificationSettings")]
-pub(crate) struct BoxedChatNotificationSettings(pub(crate) ChatNotificationSettings);
-
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedMessageContent")]
-pub(crate) struct BoxedMessageContent(pub(crate) MessageContent);
-
 mod imp {
     use super::*;
     use glib::WeakRef;
@@ -104,7 +71,7 @@ mod imp {
         pub(super) unread_count: Cell<i32>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
-        pub(super) history: OnceCell<History>,
+        pub(super) history: OnceCell<ChatHistory>,
         pub(super) actions: OnceCell<ChatActionList>,
         pub(super) session: WeakRef<Session>,
         pub(super) permissions: RefCell<Option<BoxedChatPermissions>>,
@@ -228,7 +195,7 @@ mod imp {
                         "history",
                         "History",
                         "The message history of this chat",
-                        History::static_type(),
+                        ChatHistory::static_type(),
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
@@ -568,8 +535,8 @@ impl Chat {
         self.notify("notification-settings");
     }
 
-    pub(crate) fn history(&self) -> &History {
-        self.imp().history.get_or_init(|| History::new(self))
+    pub(crate) fn history(&self) -> &ChatHistory {
+        self.imp().history.get_or_init(|| ChatHistory::new(self))
     }
 
     pub(crate) fn actions(&self) -> &ChatActionList {

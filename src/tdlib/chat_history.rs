@@ -7,8 +7,7 @@ use tdlib::enums::{self, Update};
 use tdlib::functions;
 use tdlib::types::Message as TelegramMessage;
 
-use crate::session::chat::{Item, ItemType, Message};
-use crate::session::Chat;
+use crate::tdlib::{Chat, ChatHistoryItem, ChatHistoryItemType, Message};
 
 mod imp {
     use super::*;
@@ -18,21 +17,21 @@ mod imp {
     use std::collections::{HashMap, VecDeque};
 
     #[derive(Debug, Default)]
-    pub(crate) struct History {
+    pub(crate) struct ChatHistory {
         pub(super) chat: WeakRef<Chat>,
         pub(super) loading: Cell<bool>,
-        pub(super) list: RefCell<VecDeque<Item>>,
+        pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
         pub(super) message_map: RefCell<HashMap<i64, Message>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for History {
+    impl ObjectSubclass for ChatHistory {
         const NAME: &'static str = "ChatHistory";
-        type Type = super::History;
+        type Type = super::ChatHistory;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for History {
+    impl ObjectImpl for ChatHistory {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -79,9 +78,9 @@ mod imp {
         }
     }
 
-    impl ListModelImpl for History {
+    impl ListModelImpl for ChatHistory {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
-            Item::static_type()
+            ChatHistoryItem::static_type()
         }
 
         fn n_items(&self, _list_model: &Self::Type) -> u32 {
@@ -99,13 +98,13 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct History(ObjectSubclass<imp::History>)
+    pub(crate) struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
         @implements gio::ListModel;
 }
 
-impl History {
+impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        glib::Object::new(&[("chat", chat)]).expect("Failed to create History")
+        glib::Object::new(&[("chat", chat)]).expect("Failed to create ChatHistory")
     }
 
     pub(crate) async fn load_older_messages(&self) {
@@ -185,7 +184,7 @@ impl History {
             } else {
                 None
             };
-            let mut dividers: Vec<(usize, Item)> = vec![];
+            let mut dividers: Vec<(usize, ChatHistoryItem)> = vec![];
 
             for (index, current) in list.range(position..position + added).enumerate().rev() {
                 if let Some(current_timestamp) = current.message_timestamp() {
@@ -194,7 +193,7 @@ impl History {
                         let divider_pos = position + index + 1;
                         dividers.push((
                             divider_pos,
-                            Item::for_day_divider(current_timestamp.clone()),
+                            ChatHistoryItem::for_day_divider(current_timestamp.clone()),
                         ));
                         previous_timestamp = Some(current_timestamp);
                     }
@@ -218,7 +217,9 @@ impl History {
                 let position = position as usize;
                 let item_before_removed = list.get(position);
 
-                if let Some(ItemType::DayDivider(_)) = item_before_removed.map(|i| i.type_()) {
+                if let Some(ChatHistoryItemType::DayDivider(_)) =
+                    item_before_removed.map(|i| i.type_())
+                {
                     let item_after_removed = if position > 0 {
                         list.get(position - 1)
                     } else {
@@ -226,7 +227,7 @@ impl History {
                     };
 
                     match item_after_removed.map(|item| item.type_()) {
-                        None | Some(ItemType::DayDivider(_)) => {
+                        None | Some(ChatHistoryItemType::DayDivider(_)) => {
                             list.remove(position + removed);
 
                             removed += 1;
@@ -249,7 +250,9 @@ impl History {
                 let last_added_timestamp = list.get(position).unwrap().message_timestamp().unwrap();
                 let next_item = list.get(position - 1);
 
-                if let Some(ItemType::DayDivider(date)) = next_item.map(|item| item.type_()) {
+                if let Some(ChatHistoryItemType::DayDivider(date)) =
+                    next_item.map(|item| item.type_())
+                {
                     if date.ymd() == last_added_timestamp.ymd() {
                         list.remove(position - 1);
 
@@ -276,7 +279,9 @@ impl History {
 
             entry.insert(message.clone());
 
-            imp.list.borrow_mut().push_front(Item::for_message(message));
+            imp.list
+                .borrow_mut()
+                .push_front(ChatHistoryItem::for_message(message));
 
             // We always need to drop all references before handing over control. Else, we could end
             // up with a borrowing error somewhere else.
@@ -299,7 +304,9 @@ impl History {
                 .borrow_mut()
                 .insert(message.id(), message.clone());
 
-            imp.list.borrow_mut().push_back(Item::for_message(message));
+            imp.list
+                .borrow_mut()
+                .push_back(ChatHistoryItem::for_message(message));
         }
 
         let index = imp.list.borrow().len() - added;
@@ -320,8 +327,8 @@ impl History {
                 // can exploit this by applying a binary search.
                 let index = list
                     .binary_search_by(|m| match m.type_() {
-                        ItemType::Message(message) => message_id.cmp(&message.id()),
-                        ItemType::DayDivider(date_time) => {
+                        ChatHistoryItemType::Message(message) => message_id.cmp(&message.id()),
+                        ChatHistoryItemType::DayDivider(date_time) => {
                             let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
                                 .unwrap()
                                 .cmp(date_time);

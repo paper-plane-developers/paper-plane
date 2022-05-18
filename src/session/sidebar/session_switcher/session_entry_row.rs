@@ -5,8 +5,8 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
-use crate::expressions;
-use crate::session::{Session, User};
+use crate::tdlib::User;
+use crate::{expressions, Session};
 
 mod imp {
     use super::*;

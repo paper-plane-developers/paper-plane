@@ -8,8 +8,8 @@ use std::io::Cursor;
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::chat::Message;
 use crate::session::content::message_row::{MessageBase, MessageBaseImpl, StickerPicture};
+use crate::tdlib::Message;
 use crate::utils::spawn;
 
 mod imp {

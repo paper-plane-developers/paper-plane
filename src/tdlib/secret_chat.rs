@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{SecretChatState as TdSecretChatState, Update};
 use tdlib::types::SecretChat as TdSecretChat;
 
-use crate::session::User;
+use crate::tdlib::User;
 
 #[derive(Debug, Clone, Copy, PartialEq, glib::Enum)]
 #[enum_type(name = "SecretChatState")]

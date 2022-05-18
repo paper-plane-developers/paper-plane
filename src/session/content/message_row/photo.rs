@@ -5,8 +5,8 @@ use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::chat::{BoxedMessageContent, Message};
 use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl};
+use crate::tdlib::{BoxedMessageContent, Message};
 use crate::utils::parse_formatted_text;
 use crate::Session;
 

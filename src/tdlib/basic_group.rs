@@ -2,9 +2,9 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::Update;
-use tdlib::types::Supergroup as TdSupergroup;
+use tdlib::types::BasicGroup as TdBasicGroup;
 
-use crate::session::chat::BoxedChatMemberStatus;
+use crate::tdlib::BoxedChatMemberStatus;
 
 mod imp {
     use super::*;
@@ -12,27 +12,26 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
-    pub(crate) struct Supergroup {
+    pub(crate) struct BasicGroup {
         pub(super) id: Cell<i64>,
         pub(super) member_count: Cell<i32>,
-        pub(super) is_channel: Cell<bool>,
         pub(super) status: RefCell<Option<BoxedChatMemberStatus>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for Supergroup {
-        const NAME: &'static str = "Supergroup";
-        type Type = super::Supergroup;
+    impl ObjectSubclass for BasicGroup {
+        const NAME: &'static str = "BasicGroup";
+        type Type = super::BasicGroup;
     }
 
-    impl ObjectImpl for Supergroup {
+    impl ObjectImpl for BasicGroup {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpecInt64::new(
                         "id",
                         "Id",
-                        "The id of this supergroup",
+                        "The id of this basic group",
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
@@ -41,7 +40,7 @@ mod imp {
                     glib::ParamSpecInt::new(
                         "member-count",
                         "Member Count",
-                        "The number of members of this supergroup",
+                        "The number of members of this basic group",
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
@@ -49,17 +48,10 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
-                    glib::ParamSpecBoolean::new(
-                        "is-channel",
-                        "Is Channel",
-                        "Whether the supergroup is a channel or not",
-                        false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
                     glib::ParamSpecBoxed::new(
                         "status",
                         "Status",
-                        "Own user status in this supergroup",
+                        "Own user status in this basic group",
                         BoxedChatMemberStatus::static_type(),
                         glib::ParamFlags::READWRITE
                             | glib::ParamFlags::CONSTRUCT
@@ -80,7 +72,6 @@ mod imp {
             match pspec.name() {
                 "id" => self.id.set(value.get().unwrap()),
                 "member-count" => obj.set_member_count(value.get().unwrap()),
-                "is-channel" => self.is_channel.set(value.get().unwrap()),
                 "status" => obj.set_status(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -90,7 +81,6 @@ mod imp {
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "member-count" => obj.member_count().to_value(),
-                "is-channel" => obj.is_channel().to_value(),
                 "status" => obj.status().to_value(),
                 _ => unimplemented!(),
             }
@@ -99,24 +89,23 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct Supergroup(ObjectSubclass<imp::Supergroup>);
+    pub(crate) struct BasicGroup(ObjectSubclass<imp::BasicGroup>);
 }
 
-impl Supergroup {
-    pub(crate) fn from_td_object(supergroup: &TdSupergroup) -> Self {
+impl BasicGroup {
+    pub(crate) fn from_td_object(basic_group: &TdBasicGroup) -> Self {
         glib::Object::new(&[
-            ("id", &supergroup.id),
-            ("member-count", &supergroup.member_count),
-            ("is-channel", &supergroup.is_channel),
-            ("status", &BoxedChatMemberStatus(supergroup.status.clone())),
+            ("id", &basic_group.id),
+            ("member-count", &basic_group.member_count),
+            ("status", &BoxedChatMemberStatus(basic_group.status.clone())),
         ])
-        .expect("Failed to create Supergroup")
+        .expect("Failed to create BasicGroup")
     }
 
     pub(crate) fn handle_update(&self, update: &Update) {
-        if let Update::Supergroup(data) = update {
-            self.set_member_count(data.supergroup.member_count);
-            self.set_status(BoxedChatMemberStatus(data.supergroup.status.clone()))
+        if let Update::BasicGroup(data) = update {
+            self.set_member_count(data.basic_group.member_count);
+            self.set_status(BoxedChatMemberStatus(data.basic_group.status.clone()));
         }
     }
 
@@ -132,12 +121,9 @@ impl Supergroup {
         if self.member_count() == member_count {
             return;
         }
+
         self.imp().member_count.set(member_count);
         self.notify("member-count");
-    }
-
-    pub(crate) fn is_channel(&self) -> bool {
-        self.imp().is_channel.get()
     }
 
     pub(crate) fn status(&self) -> BoxedChatMemberStatus {

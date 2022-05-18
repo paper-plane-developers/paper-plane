@@ -8,8 +8,8 @@ use tdlib::enums::{self, MessageContent, MessageSender as TelegramMessageSender,
 use tdlib::types::{self, Message as TelegramMessage};
 
 use crate::config::{APP_ID, PROFILE};
-use crate::session::{Chat, ChatType};
 use crate::session_manager::{ClientState, SessionManager};
+use crate::tdlib::{Chat, ChatType};
 use crate::utils::{spawn, MESSAGE_TRUNCATED_LENGTH};
 use crate::Application;
 

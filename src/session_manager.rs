@@ -42,9 +42,9 @@ use tdlib::enums::{self, AuthorizationState, Update};
 use tdlib::functions;
 use tdlib::types::{self, UpdateAuthorizationState};
 
-use crate::session::{Session, User};
+use crate::tdlib::User;
 use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters, spawn};
-use crate::APPLICATION_OPTS;
+use crate::{Session, APPLICATION_OPTS};
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]

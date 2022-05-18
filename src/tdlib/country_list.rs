@@ -5,7 +5,7 @@ use indexmap::IndexMap;
 use std::iter::FromIterator;
 use tdlib::types;
 
-use crate::country_info::CountryInfo;
+use crate::tdlib::CountryInfo;
 
 mod imp {
     use super::*;

@@ -14,7 +14,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use tdlib::{enums, functions};
 
-use crate::session::{Chat, ChatType, User};
+use crate::tdlib::{Chat, ChatType, User};
 use crate::utils::spawn;
 use crate::Session;
 

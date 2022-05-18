@@ -1,31 +1,9 @@
-mod avatar;
-mod basic_group;
-mod basic_group_list;
-mod chat;
-mod chat_list;
 mod components;
 mod content;
-mod secret_chat;
-mod secret_chat_list;
 mod sidebar;
-mod supergroup;
-mod supergroup_list;
-mod user;
-mod user_list;
 
-use self::avatar::Avatar;
-pub(crate) use self::basic_group::BasicGroup;
-use self::basic_group_list::BasicGroupList;
-pub(crate) use self::chat::{BoxedChatMemberStatus, BoxedChatPermissions, Chat, ChatType};
-use self::chat_list::ChatList;
 use self::content::Content;
-use self::secret_chat::SecretChat;
-use self::secret_chat_list::SecretChatList;
 use self::sidebar::Sidebar;
-pub(crate) use self::supergroup::Supergroup;
-use self::supergroup_list::SupergroupList;
-pub(crate) use self::user::User;
-use self::user_list::UserList;
 
 use glib::{clone, SyncSender};
 use gtk::glib::WeakRef;
@@ -35,18 +13,18 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
 use tdlib::enums::{NotificationSettingsScope, Update};
 use tdlib::functions;
-use tdlib::types::{File, ScopeNotificationSettings};
+use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
+use crate::tdlib::{
+    BasicGroupList, BoxedScopeNotificationSettings, ChatList, SecretChatList, SupergroupList, User,
+    UserList,
+};
 use crate::utils::{log_out, spawn};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedDatabaseInfo")]
 pub(crate) struct BoxedDatabaseInfo(pub(crate) DatabaseInfo);
-
-#[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
-#[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]
-pub(crate) struct BoxedScopeNotificationSettings(pub(crate) ScopeNotificationSettings);
 
 mod imp {
     use super::*;

@@ -3,7 +3,7 @@ use gtk::glib;
 use gtk::glib::closure;
 use gtk::prelude::GObjectPropertyExpressionExt;
 
-use crate::session::{
+use crate::tdlib::{
     BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, Chat, ChatType, Supergroup, User,
 };
 use tdlib::enums::ChatMemberStatus;

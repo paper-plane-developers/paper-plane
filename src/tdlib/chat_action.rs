@@ -2,7 +2,7 @@ use gtk::glib;
 use gtk::subclass::prelude::*;
 use tdlib::enums;
 
-use crate::session::chat::{Chat, MessageSender};
+use crate::tdlib::{Chat, MessageSender};
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedChatActionType")]

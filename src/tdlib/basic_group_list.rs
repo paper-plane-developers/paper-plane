@@ -4,7 +4,7 @@ use gtk::{gio, glib};
 use indexmap::map::Entry;
 use tdlib::enums::Update;
 
-use crate::session::Supergroup;
+use crate::tdlib::BasicGroup;
 
 mod imp {
     use super::*;
@@ -12,21 +12,21 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub(crate) struct SupergroupList {
-        pub(super) list: RefCell<IndexMap<i64, Supergroup>>,
+    pub(crate) struct BasicGroupList {
+        pub(super) list: RefCell<IndexMap<i64, BasicGroup>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SupergroupList {
-        const NAME: &'static str = "SupergroupList";
-        type Type = super::SupergroupList;
+    impl ObjectSubclass for BasicGroupList {
+        const NAME: &'static str = "BasicGroupList";
+        type Type = super::BasicGroupList;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for SupergroupList {}
-    impl ListModelImpl for SupergroupList {
+    impl ObjectImpl for BasicGroupList {}
+    impl ListModelImpl for BasicGroupList {
         fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
-            Supergroup::static_type()
+            BasicGroup::static_type()
         }
 
         fn n_items(&self, _list_model: &Self::Type) -> u32 {
@@ -44,43 +44,43 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct SupergroupList(ObjectSubclass<imp::SupergroupList>)
+    pub(crate) struct BasicGroupList(ObjectSubclass<imp::BasicGroupList>)
         @implements gio::ListModel;
 }
 
-impl Default for SupergroupList {
+impl Default for BasicGroupList {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl SupergroupList {
+impl BasicGroupList {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create SupergroupList")
+        glib::Object::new(&[]).expect("Failed to create BasicGroupList")
     }
 
-    /// Return the `Supergroup` of the specified `id`. Panics if the supergroup is not present.
+    /// Return the `BasicGroup` of the specified `id`. Panics if the basic group is not present.
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an `id` returned by TDLib, it should be expected that the
-    /// relative `Supergroup` exists in the list.
-    pub(crate) fn get(&self, id: i64) -> Supergroup {
+    /// relative `BasicGroup` exists in the list.
+    pub(crate) fn get(&self, id: i64) -> BasicGroup {
         self.imp()
             .list
             .borrow()
             .get(&id)
-            .expect("Failed to get expected Supergroup")
+            .expect("Failed to get expected BasicGroup")
             .to_owned()
     }
 
     pub(crate) fn handle_update(&self, update: &Update) {
-        if let Update::Supergroup(data) = update {
+        if let Update::BasicGroup(data) = update {
             let mut list = self.imp().list.borrow_mut();
 
-            match list.entry(data.supergroup.id) {
+            match list.entry(data.basic_group.id) {
                 Entry::Occupied(entry) => entry.get().handle_update(update),
                 Entry::Vacant(entry) => {
-                    let supergroup = Supergroup::from_td_object(&data.supergroup);
-                    entry.insert(supergroup);
+                    let basic_group = BasicGroup::from_td_object(&data.basic_group);
+                    entry.insert(basic_group);
 
                     let position = (list.len() - 1) as u32;
                     drop(list);
