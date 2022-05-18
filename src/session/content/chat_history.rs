@@ -167,7 +167,9 @@ impl ChatHistory {
         spawn(clone!(@weak session, @weak list => async move {
             match SponsoredMessage::request(chat_id, &session).await {
                 Ok(sponsored_message) => list.append(&sponsored_message),
-                Err(e) => log::warn!("Failed to request a SponsoredMessage: {:?}", e),
+                Err(e) => if e.code != 404 {
+                    log::warn!("Failed to request a SponsoredMessage: {:?}", e);
+                },
             }
         }));
     }
