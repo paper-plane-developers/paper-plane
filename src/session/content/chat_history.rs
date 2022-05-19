@@ -2,9 +2,10 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
+use tdlib::functions;
 
 use crate::session::content::{ChatActionBar, ChatInfoDialog, ItemRow};
-use crate::tdlib::{Chat, ChatType, SponsoredMessage};
+use crate::tdlib::{Chat, ChatHistoryItem, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
 
@@ -21,6 +22,13 @@ mod imp {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
+        /// This stores the previous vadjustment value of the scrolled window. This is needed to
+        /// mark messages as viewed since the scrolled window lags behind the current vadjustment
+        /// value due to the scroll animation. In this way, we can calculate the difference of both
+        /// vadjustment values and take that into account when we decide which messages are
+        /// considered as being viewed.
+        pub(super) prev_vadjument_value: Cell<f64>,
+        pub(super) sponsored_message_needs_view: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -107,6 +115,10 @@ mod imp {
             let adj = self.list_view.vadjustment().unwrap();
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
                 obj.load_older_messages(adj);
+                obj.update_viewed_messages(
+                    &obj.chat().unwrap(),
+                    adj.value() - obj.imp().prev_vadjument_value.replace(adj.value())
+                );
             }));
         }
     }
@@ -163,14 +175,19 @@ impl ChatHistory {
     }
 
     fn request_sponsored_message(&self, session: &Session, chat_id: i64, list: &gio::ListStore) {
-        spawn(clone!(@weak session, @weak list => async move {
-            match SponsoredMessage::request(chat_id, &session).await {
-                Ok(sponsored_message) => list.append(&sponsored_message),
-                Err(e) => if e.code != 404 {
-                    log::warn!("Failed to request a SponsoredMessage: {:?}", e);
-                },
-            }
-        }));
+        spawn(
+            clone!(@weak self as obj, @weak session, @weak list => async move {
+                match SponsoredMessage::request(chat_id, &session).await {
+                    Ok(sponsored_message) => {
+                        list.append(&sponsored_message);
+                        obj.imp().sponsored_message_needs_view.set(true);
+                    }
+                    Err(e) => if e.code != 404 {
+                        log::warn!("Failed to request a SponsoredMessage: {:?}", e);
+                    },
+                }
+            }),
+        );
     }
 
     pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
@@ -195,6 +212,12 @@ impl ChatHistory {
         }
 
         let imp = self.imp();
+
+        // This will mark all messages being read as soon as a new chat is opened (assuming we
+        // always open the chat at the end). In the future we should figure out how to scroll the
+        // history to the last read message.
+        imp.prev_vadjument_value.set(f32::MIN as f64);
+        imp.sponsored_message_needs_view.set(false);
 
         if let Some(ref chat) = chat {
             // Request sponsored message, if needed
@@ -224,5 +247,147 @@ impl ChatHistory {
 
         let adj = imp.list_view.vadjustment().unwrap();
         self.load_older_messages(&adj);
+    }
+
+    fn update_viewed_messages(&self, chat: &Chat, vadjustment_delta: f64) {
+        if vadjustment_delta <= 0.0 {
+            // We don't really need to check for messages being viewed if the user has scrolled up.
+            return;
+        }
+
+        let imp = self.imp();
+
+        let chat_id = chat.id();
+        let client_id = chat.session().client_id();
+
+        if chat.unread_count() > 0 {
+            // Set the bottommost regular message as viewed if necessary.
+            view_message(
+                self.find_bottommost_message_to_view(chat, vadjustment_delta),
+                chat_id,
+                client_id,
+            );
+        }
+
+        if imp.sponsored_message_needs_view.get() {
+            let sponsored_message_id =
+                visible_sponsored_message_id(&*imp.list_view, vadjustment_delta);
+            imp.sponsored_message_needs_view
+                .set(sponsored_message_id.is_none());
+
+            // Set the sponsored message as viewed if necessary.
+            view_message(sponsored_message_id, chat_id, client_id);
+        }
+    }
+
+    /// Finds the id of the bottommost regular message that needs to be marked as being viewed.
+    /// Returns `None` if currently no new message needs to be marked as being viewed.
+    fn find_bottommost_message_to_view(&self, chat: &Chat, vadjustment_delta: f64) -> Option<i64> {
+        struct Iter(Option<gtk::Widget>);
+        impl Iterator for Iter {
+            type Item = gtk::Widget;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                let r = self.0.take();
+                self.0 = r.as_ref().and_then(|widget| widget.next_sibling());
+                r
+            }
+        }
+
+        let list_view = &*self.imp().list_view;
+        Iter(list_view.first_child())
+            .find_map(|widget| {
+                let maybe_message_viewed_info = check_message_viewed(
+                    &widget.first_child().unwrap().downcast::<ItemRow>().unwrap(),
+                    list_view,
+                    vadjustment_delta,
+                );
+
+                maybe_message_viewed_info.and_then(|message_viewed_info| {
+                    if message_viewed_info.message_id <= chat.last_read_inbox_message_id() {
+                        Some(None)
+                    } else if message_viewed_info.considered_as_viewed {
+                        Some(Some(message_viewed_info.message_id))
+                    } else {
+                        None
+                    }
+                })
+            })
+            .flatten()
+    }
+}
+
+/// Struct to indicate whether a message is considered as being viewed.
+struct MessageViewedInfo {
+    /// The id of the message that may be visible.
+    message_id: i64,
+    /// Whether the message can be marked as viewed.
+    considered_as_viewed: bool,
+}
+
+/// Returns a `MessageViewedInfo` for the specified `ItemRow`. Returns `None` if the item row
+/// doesn't contain a message.
+/// A message is considered as being viewed if parts of it are either visible inside the specified
+/// list view or if the user needs to scroll up in order to see it.
+fn check_message_viewed(
+    item_row: &ItemRow,
+    list_view: &gtk::ListView,
+    vadjustment_delta: f64,
+) -> Option<MessageViewedInfo> {
+    item_row
+        .item()
+        .unwrap()
+        .downcast_ref::<ChatHistoryItem>()
+        .and_then(ChatHistoryItem::message)
+        .map(|message| {
+            let (_, dest_y_top) = item_row
+                .translate_coordinates(list_view, 0.0, -vadjustment_delta)
+                .unwrap();
+
+            MessageViewedInfo {
+                message_id: message.id(),
+                considered_as_viewed: dest_y_top < list_view.height() as f64,
+            }
+        })
+}
+
+/// Returns the message id of the sponsored message if it visible inside the specified list view.
+/// Returns `None` if there is either no sponsored message or it is not visible.
+/// A sponsored message (S) is considered visible inside the list view (L) if `S ∩ L = S` applies.
+fn visible_sponsored_message_id(list_view: &gtk::ListView, vadjustment_delta: f64) -> Option<i64> {
+    list_view
+        .first_child()
+        .unwrap()
+        .first_child()
+        .and_then(|child| {
+            let item_row = child.downcast::<ItemRow>().unwrap();
+
+            item_row
+                .item()
+                .unwrap()
+                .downcast_ref::<SponsoredMessage>()
+                .and_then(|sponsored_message| {
+                    let (_, dest_y_top) = item_row
+                        .translate_coordinates(list_view, 0.0, -vadjustment_delta)
+                        .unwrap();
+
+                    if dest_y_top + (item_row.height() as f64) < list_view.height() as f64
+                        && dest_y_top > 0.0
+                    {
+                        Some(sponsored_message.message_id())
+                    } else {
+                        None
+                    }
+                })
+        })
+}
+
+fn view_message(maybe_message_id: Option<i64>, chat_id: i64, client_id: i32) {
+    if let Some(message_id) = maybe_message_id {
+        spawn(async move {
+            functions::view_messages(chat_id, 0, vec![message_id], true, client_id)
+                .await
+                .unwrap();
+        });
     }
 }
