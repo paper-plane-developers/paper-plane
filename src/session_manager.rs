@@ -241,7 +241,7 @@ impl SessionManager {
     ) -> Option<u32> {
         let sessions = self.sessions();
 
-        (0..sessions.n_items()).find_map(|pos| {
+        (0..sessions.n_items()).find(|&pos| {
             let session = sessions
                 .item(pos)
                 .unwrap()
@@ -251,13 +251,8 @@ impl SessionManager {
                 .downcast::<Session>()
                 .unwrap();
 
-            if on_test_dc == session.database_info().0.use_test_dc
+            on_test_dc == session.database_info().0.use_test_dc
                 && session.me().phone_number().replace(' ', "") == phone_number_digits
-            {
-                Some(pos)
-            } else {
-                None
-            }
         })
     }
 
@@ -456,7 +451,7 @@ impl SessionManager {
                     .borrow()
                     .last()
                     .and_then(|database_dir_base_name| {
-                        (0..self.sessions().n_items()).find_map(|pos| {
+                        (0..self.sessions().n_items()).find(|&pos| {
                             let session = self
                                 .sessions()
                                 .item(pos)
@@ -467,13 +462,7 @@ impl SessionManager {
                                 .downcast::<Session>()
                                 .unwrap();
 
-                            if &session.database_info().0.directory_base_name
-                                == database_dir_base_name
-                            {
-                                Some(pos)
-                            } else {
-                                None
-                            }
+                            &session.database_info().0.directory_base_name == database_dir_base_name
                         })
                     })
                     .unwrap_or_default();
