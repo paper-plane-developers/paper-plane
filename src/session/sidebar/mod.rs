@@ -297,11 +297,11 @@ impl Sidebar {
         }
     }
 
-    fn selected_chat(&self) -> Option<Chat> {
+    pub(crate) fn selected_chat(&self) -> Option<Chat> {
         self.imp().selected_chat.borrow().clone()
     }
 
-    fn set_selected_chat(&self, selected_chat: Option<Chat>) {
+    pub(crate) fn set_selected_chat(&self, selected_chat: Option<Chat>) {
         if self.selected_chat() == selected_chat {
             return;
         }
