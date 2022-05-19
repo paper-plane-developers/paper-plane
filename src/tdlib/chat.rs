@@ -385,6 +385,7 @@ impl Chat {
             }
             Update::ChatReadInbox(update) => {
                 self.set_unread_count(update.unread_count);
+                self.set_last_read_inbox_message_id(update.last_read_inbox_message_id);
             }
             Update::ChatDraftMessage(update) => {
                 self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
