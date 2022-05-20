@@ -368,6 +368,14 @@ impl Chat {
             }
             Update::ChatDraftMessage(update) => {
                 self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
+
+                for position in update.positions {
+                    if let enums::ChatList::Main = position.list {
+                        self.set_order(position.order);
+                        self.set_is_pinned(position.is_pinned);
+                        break;
+                    }
+                }
             }
             Update::ChatAction(update) => {
                 self.actions().handle_update(update);
