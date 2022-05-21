@@ -297,7 +297,7 @@ impl Message {
         match self.sender() {
             MessageSender::User(user) => {
                 let user_expression = gtk::ConstantExpression::new(user);
-                expressions::user_full_name(&user_expression)
+                expressions::user_display_name(&user_expression)
             }
             MessageSender::Chat(chat) => gtk::ConstantExpression::new(chat)
                 .chain_property::<Chat>("title")
@@ -312,7 +312,7 @@ impl Message {
                 .map(|forward_origin| match forward_origin {
                     MessageForwardOrigin::User(user) => {
                         let user_expression = gtk::ObjectExpression::new(user);
-                        expressions::user_full_name(&user_expression)
+                        expressions::user_display_name(&user_expression)
                     }
                     MessageForwardOrigin::Chat { chat, .. }
                     | MessageForwardOrigin::Channel { chat, .. } => {
