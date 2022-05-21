@@ -127,9 +127,9 @@ impl Avatar {
         let imp = self.imp();
 
         // Chat title expression
-        let title_expression = item_expression.chain_property::<Chat>("title");
+        let title_expression = expressions::chat_display_name(&item_expression);
         gtk::ClosureExpression::new::<String, _, _>(
-            &[item_expression.clone(), title_expression],
+            &[item_expression.clone().upcast(), title_expression],
             closure!(|_: Self, item: Option<glib::Object>, title: String| {
                 item.as_ref()
                     .and_then(|i| i.downcast_ref::<Chat>())
@@ -139,10 +139,11 @@ impl Avatar {
                     .unwrap_or(title)
             }),
         )
+        .upcast()
         .bind(&*imp.avatar, "text", Some(self));
 
         // User title expression
-        expressions::user_full_name(&item_expression).bind(&*imp.avatar, "text", Some(self));
+        expressions::user_display_name(&item_expression).bind(&*imp.avatar, "text", Some(self));
 
         // Icon expression
         let icon_name_expression =

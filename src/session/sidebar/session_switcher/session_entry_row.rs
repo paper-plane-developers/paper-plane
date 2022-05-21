@@ -128,7 +128,7 @@ impl SessionEntryRow {
             SessionEntryRow::this_expression("session").chain_property::<Session>("me");
 
         // Bind the name
-        expressions::user_full_name(&me_expression).bind(
+        expressions::user_display_name(&me_expression).bind(
             &*imp.display_name_label,
             "label",
             Some(self),

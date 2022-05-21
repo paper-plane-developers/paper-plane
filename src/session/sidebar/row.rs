@@ -4,7 +4,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::borrow::Cow;
-use tdlib::enums::{CallDiscardReason, ChatList, InputMessageContent, MessageContent};
+use tdlib::enums::{CallDiscardReason, ChatList, InputMessageContent, MessageContent, UserType};
 use tdlib::functions;
 use tdlib::types::{DraftMessage, MessageCall};
 
@@ -194,7 +194,11 @@ impl Row {
         );
 
         // User name
-        expressions::user_full_name(&item_expression).bind(&*imp.title_label, "label", Some(self));
+        expressions::user_display_name(&item_expression).bind(
+            &*imp.title_label,
+            "label",
+            Some(self),
+        );
     }
 
     pub(crate) fn item(&self) -> Option<glib::Object> {
@@ -1142,11 +1146,17 @@ fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
 
 fn stringify_user(user: &User, use_full_name: bool) -> String {
     if use_full_name {
-        format!("{} {}", user.first_name(), user.last_name())
-            .trim()
-            .into()
-    } else {
+        if user.type_().0 != UserType::Deleted {
+            format!("{} {}", user.first_name(), user.last_name())
+                .trim()
+                .into()
+        } else {
+            gettext("Deleted Account")
+        }
+    } else if user.type_().0 != UserType::Deleted {
         user.first_name()
+    } else {
+        gettext("Deleted")
     }
 }
 

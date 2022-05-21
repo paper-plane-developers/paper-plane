@@ -4,35 +4,60 @@ use gtk::glib::closure;
 use gtk::prelude::GObjectPropertyExpressionExt;
 
 use crate::tdlib::{
-    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, Chat, ChatType, Supergroup, User,
+    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedUserType, Chat, ChatType,
+    Supergroup, User,
 };
-use tdlib::enums::ChatMemberStatus;
+use tdlib::enums::{ChatMemberStatus, UserType};
 
 /// Creates an expression that produces the display name of a chat. This will either produce the
 /// title of the chat or the translated "Saved Messages" string in the case of the own chat.
 pub(crate) fn chat_display_name(chat_expression: &gtk::Expression) -> gtk::Expression {
     let title_expression = chat_expression.chain_property::<Chat>("title");
-    gtk::ClosureExpression::with_callback(&[chat_expression, &title_expression], |args| {
-        let chat = args[1].get::<Chat>().unwrap();
-        let title = args[2].get::<String>().unwrap();
-        if chat.is_own_chat() {
-            gettext("Saved Messages")
-        } else {
-            title
-        }
-    })
+    let is_deleted_expression = is_deleted_expression(chat_expression);
+    gtk::ClosureExpression::with_callback(
+        &[chat_expression, &title_expression, &is_deleted_expression],
+        |args| {
+            let chat = args[1].get::<Chat>().unwrap();
+            let title = args[2].get::<String>().unwrap();
+            let is_deleted = args[3].get::<bool>().unwrap();
+            if chat.is_own_chat() {
+                gettext("Saved Messages")
+            } else if is_deleted {
+                gettext("Deleted Account")
+            } else {
+                title
+            }
+        },
+    )
     .upcast()
 }
 
 /// Creates an expression that produces the full name of an user, binding both the
 /// first-name and last-name property together.
-pub(crate) fn user_full_name(user_expression: &gtk::Expression) -> gtk::Expression {
+pub(crate) fn user_display_name(user_expression: &gtk::Expression) -> gtk::Expression {
     let first_name_expression = user_expression.chain_property::<User>("first-name");
     let last_name_expression = user_expression.chain_property::<User>("last-name");
-    gtk::ClosureExpression::with_callback(&[first_name_expression, last_name_expression], |args| {
-        let first_name = args[1].get::<String>().unwrap();
-        let last_name = args[2].get::<String>().unwrap();
-        first_name + " " + &last_name
+    let type_expression = user_expression.chain_property::<User>("type");
+    gtk::ClosureExpression::with_callback(
+        &[first_name_expression, last_name_expression, type_expression],
+        |args| {
+            let first_name = args[1].get::<String>().unwrap();
+            let last_name = args[2].get::<String>().unwrap();
+            let user_type = args[3].get::<BoxedUserType>().unwrap().0;
+            if let UserType::Deleted = user_type {
+                gettext("Deleted Account")
+            } else {
+                first_name + " " + &last_name
+            }
+        },
+    )
+    .upcast()
+}
+
+pub(crate) fn is_deleted_expression(chat_expression: &gtk::Expression) -> gtk::Expression {
+    gtk::ClosureExpression::with_callback(&[chat_expression], |args| {
+        let chat = args[1].get::<Chat>().unwrap();
+        matches!(chat.type_(), ChatType::Private(user) if user.type_().0 == UserType::Deleted)
     })
     .upcast()
 }
