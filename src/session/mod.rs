@@ -11,7 +11,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
-use tdlib::enums::{NotificationSettingsScope, Update};
+use tdlib::enums::{self, NotificationSettingsScope, Update};
 use tdlib::functions;
 use tdlib::types::File;
 
@@ -320,12 +320,17 @@ impl Session {
                 entry.insert(vec![sender]);
 
                 let client_id = self.client_id();
-                spawn(async move {
+                spawn(clone!(@weak self as obj => async move {
                     let result = functions::download_file(file_id, 5, 0, 0, false, client_id).await;
-                    if let Err(e) = result {
-                        log::warn!("Error downloading a file: {:?}", e);
+                    match result {
+                        Ok(enums::File::File(file)) => {
+                            obj.handle_file_update(file);
+                        }
+                        Err(e) => {
+                            log::warn!("Error downloading a file: {:?}", e);
+                        }
                     }
-                });
+                }));
             }
         }
     }
