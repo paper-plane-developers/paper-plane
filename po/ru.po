@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2021-09-15 09:54+0300\n"
-"Last-Translator: Igor Dyatlov <dyatlov.igor@protonmail.com>\n"
+"PO-Revision-Date: 2022-05-22 20:38+0000\n"
+"Last-Translator: Daudix UFO <ddaudix@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ru/>\n"
 "Language: ru\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Weblate 4.13-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -52,21 +52,23 @@ msgstr "Поведение при развернутом окне по умол�
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Недавно использованные сеансы"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
+"Упорядоченный список недавно использованных сеансов по имени их каталога "
+"базы данных"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:9
 msgid "Color Scheme"
-msgstr ""
+msgstr "Цветовая Схема"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr ""
+msgstr "Цветовая схема, которая будет использоваться в приложении"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -78,15 +80,15 @@ msgstr "Марко Мелорио"
 
 #: data/resources/ui/add-account-row.ui:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Рабочий Сервер"
 
 #: data/resources/ui/add-account-row.ui:10
 msgid "_Test Server"
-msgstr ""
+msgstr "_Тестовый Сервер"
 
 #: data/resources/ui/add-account-row.ui:33
 msgid "_Add Account"
-msgstr ""
+msgstr "_Добавить Аккаунт"
 
 #: data/resources/ui/content.ui:23
 msgid "No Chat Selected"
@@ -98,15 +100,15 @@ msgstr "Выберите чат, чтобы начать обмен сообще
 
 #: data/resources/ui/content-chat-history.ui:94
 msgid "View Info"
-msgstr ""
+msgstr "Посмотреть информацию"
 
 #: data/resources/ui/content-user-dialog.ui:54
 msgid "Mobile"
-msgstr ""
+msgstr "Телефон"
 
 #: data/resources/ui/content-user-dialog.ui:60
 msgid "Username"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: data/resources/ui/login.ui:47
 msgid "_Previous"
@@ -126,15 +128,17 @@ msgstr "Номер телефона"
 
 #: data/resources/ui/login.ui:146
 msgid "_Log in using QR code"
-msgstr ""
+msgstr "_Войти с помощью QR-кода"
 
 #: data/resources/ui/login.ui:205
 msgid "Scan Code"
-msgstr ""
+msgstr "Сканировать код"
 
 #: data/resources/ui/login.ui:206
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
+"Отсканируйте этот код с помощью другого приложения Telegram, войдя в свой "
+"аккаунт."
 
 #: data/resources/ui/login.ui:228
 msgid "Enter the Verification Code"
@@ -146,21 +150,23 @@ msgstr "Код"
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
-msgstr ""
+msgstr "Зарегистрировать новый аккаунт"
 
 #: data/resources/ui/login.ui:306
 msgid "First Name"
-msgstr ""
+msgstr "Имя"
 
 #: data/resources/ui/login.ui:323
 msgid "Last Name"
-msgstr ""
+msgstr "Фамилия"
 
 #: data/resources/ui/login.ui:362
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
+"Регистрируясь,\n"
+"вы соглашаетесь с <a href=\"\">Условиями оказания услуг</a>."
 
 #: data/resources/ui/login.ui:378
 msgid "Enter Your Password"
@@ -172,15 +178,15 @@ msgstr "Пароль"
 
 #: data/resources/ui/login.ui:412
 msgid "Hint"
-msgstr ""
+msgstr "Подсказка"
 
 #: data/resources/ui/login.ui:435
 msgid "_Forgot password?"
-msgstr ""
+msgstr "_ Забыли пароль?"
 
 #: data/resources/ui/login.ui:498
 msgid "Use Recovery Code"
-msgstr ""
+msgstr "Используйте код восстановления"
 
 #: data/resources/ui/login.ui:511
 msgid ""
@@ -188,38 +194,41 @@ msgid ""
 "can send you a code to this email address that you can use to reset your "
 "password."
 msgstr ""
+"Когда вы устанавливали облачный пароль, вы указали адрес электронной почты "
+"для восстановления. Мы можем отправить вам код на этот адрес электронной "
+"почты, который вы можете использовать для сброса пароля."
 
 #: data/resources/ui/login.ui:530
 msgid "_Send recovery code"
-msgstr ""
+msgstr "_Отправить код восстановления"
 
 #: data/resources/ui/login.ui:592
 msgid "Account Deletion"
-msgstr ""
+msgstr "Удаление Аккаунта"
 
 #: data/resources/ui/login.ui:619
 msgid "_Delete Account"
-msgstr ""
+msgstr "_Удалить аккаунт"
 
 #: data/resources/ui/login.ui:641
 msgid "Enter the Code Sent by E-Mail"
-msgstr ""
+msgstr "Введите код, присланный по электронной почте"
 
 #: data/resources/ui/login.ui:682
 msgid "_Unable to access your email?"
-msgstr ""
+msgstr "_Невозможно получить доступ к своей электронной почте?"
 
 #: data/resources/ui/preferences-window.ui:6
 msgid "Appearance"
-msgstr ""
+msgstr "Внешний вид"
 
 #: data/resources/ui/preferences-window.ui:12
 msgid "Follow System Colors"
-msgstr ""
+msgstr "Следовать системным цветам"
 
 #: data/resources/ui/preferences-window.ui:23
 msgid "Dark Theme"
-msgstr ""
+msgstr "Темная тема"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -239,12 +248,12 @@ msgstr "Выйти из приложения"
 #: data/resources/ui/shortcuts.ui:28
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr ""
+msgstr "Список чатов"
 
 #: data/resources/ui/shortcuts.ui:31
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr ""
+msgstr "Поиск чатов"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -252,7 +261,7 @@ msgstr "_Выйти"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Preferences"
-msgstr ""
+msgstr "_Параметры"
 
 #: data/resources/ui/sidebar.ui:16
 msgid "_Keyboard Shortcuts"
@@ -267,30 +276,37 @@ msgid ""
 "One way to continue using your account is to delete your account and then "
 "recreate it"
 msgstr ""
+"Один из способов продолжить использование учетной записи - удалить свою "
+"учетную запись, а затем создать ее заново"
 
 #: src/login.rs:345
 msgid ""
 "Since you have not provided a recovery email address, the only way to "
 "continue using your account is to delete your account and then recreate it"
 msgstr ""
+"Поскольку вы не указали адрес электронной почты для восстановления, "
+"единственный способ продолжить использование вашей учетной записи - удалить "
+"ее, а затем создать заново"
 
 #: src/login.rs:353
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
+"Обратите внимание, что вы потеряете все свои чаты и сообщения, а также все "
+"медиа и файлы, которыми вы делились!"
 
 #: src/login.rs:585
 msgid "Do You Accept the Terms of Service?"
-msgstr ""
+msgstr "Принимаете ли вы условия предоставления услуг?"
 
 #: src/login.rs:589
 msgid "Terms of Service"
-msgstr ""
+msgstr "Условия предоставления услуг"
 
 #: src/login.rs:855
 msgid "Warning"
-msgstr ""
+msgstr "Предупреждение"
 
 #: src/login.rs:857
 msgid ""
@@ -299,20 +315,26 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
+"Вы потеряете все свои чаты и сообщения, а также все медиа и файлы, которыми "
+"вы делились!\n"
+"\n"
+"Вы хотите удалить свой аккаунт?"
 
 #: src/login.rs:946
 msgid "Sorry"
-msgstr ""
+msgstr "Извините"
 
 #: src/login.rs:948
 msgid ""
 "If you can't restore access to the email, your remaining options are either "
 "to remember your password or to delete and recreate your account."
 msgstr ""
+"Если вы не можете восстановить доступ к электронной почте, то вам остается "
+"либо вспомнить пароль, либо удалить и создать учетную запись заново."
 
 #: src/login.rs:955
 msgid "_Go Back"
-msgstr ""
+msgstr "_Назад"
 
 #: src/window.rs:242 src/session/sidebar/row.rs:543
 msgid "Incoming call"
@@ -321,31 +343,31 @@ msgstr "Входящий звонок"
 #: src/window.rs:304 src/session/sidebar/row.rs:428
 #: src/session/sidebar/row.rs:559
 msgid "Sticker"
-msgstr ""
+msgstr "Стикер"
 
 #: src/window.rs:308 src/session/sidebar/row.rs:609
 msgid "Photo"
-msgstr ""
+msgstr "Фото"
 
 #: src/window.rs:327 src/session/sidebar/row.rs:572
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/window.rs:336 src/session/sidebar/row.rs:621
 msgid "Video"
-msgstr ""
+msgstr "Видео"
 
 #: src/window.rs:354 src/session/sidebar/row.rs:633
 msgid "Voice message"
-msgstr ""
+msgstr "Голосовое сообщение"
 
 #: src/window.rs:363 src/session/sidebar/row.rs:480
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Фото канала удалено"
 
 #: src/window.rs:367 src/session/sidebar/row.rs:484
 msgid "You removed the group photo"
-msgstr ""
+msgstr "Вы удалили групповое фото"
 
 #: src/window.rs:377 src/session/sidebar/row.rs:497
 #: src/session/sidebar/row.rs:565
@@ -374,43 +396,43 @@ msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:226
 msgid "Draft"
-msgstr ""
+msgstr "Черновик"
 
 #: src/session/sidebar/row.rs:370
 msgid "You joined the group"
-msgstr ""
+msgstr "Вы присоединились к группе"
 
 #: src/session/sidebar/row.rs:395
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: src/session/sidebar/row.rs:412
 msgid "You left the group"
-msgstr ""
+msgstr "Вы покинули группу"
 
 #: src/session/sidebar/row.rs:448
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Отклонить исходящий видеовызов"
 
 #: src/session/sidebar/row.rs:450
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Отклонить исходящий вызов"
 
 #: src/session/sidebar/row.rs:456
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Отклонить входящий видеовызов"
 
 #: src/session/sidebar/row.rs:458
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Отклонить входящий вызов"
 
 #: src/session/sidebar/row.rs:468
 msgid "Cancelled call"
-msgstr ""
+msgstr "Отмененный вызов"
 
 #: src/session/sidebar/row.rs:470
 msgid "Missed call"
-msgstr ""
+msgstr "Пропущенный вызов"
 
 #: src/session/sidebar/row.rs:502
 msgid "You"
@@ -418,19 +440,19 @@ msgstr "Вы"
 
 #: src/session/sidebar/row.rs:527
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Исходящий видеовызов"
 
 #: src/session/sidebar/row.rs:529
 msgid "Outgoing call"
-msgstr ""
+msgstr "Исходящий вызов"
 
 #: src/session/sidebar/row.rs:541
 msgid "Incoming video call"
-msgstr ""
+msgstr "Входящий видеовызов"
 
 #: src/session/sidebar/row.rs:556
 msgid "Document"
-msgstr ""
+msgstr "Документ"
 
 #~ msgid "Use Telegram's test data center"
 #~ msgstr "Используйте тестовый дата-центр Telegram"
