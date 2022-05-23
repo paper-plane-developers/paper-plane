@@ -270,6 +270,7 @@ impl Session {
             | Update::ChatUnreadMentionCount(_)
             | Update::MessageMentionRead(_)
             | Update::ChatReadInbox(_)
+            | Update::ChatReadOutbox(_)
             | Update::ChatDraftMessage(_)
             | Update::DeleteMessages(_)
             | Update::ChatAction(_)

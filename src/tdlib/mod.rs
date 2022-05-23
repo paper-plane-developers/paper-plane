@@ -41,7 +41,7 @@ pub(crate) use self::user::User;
 pub(crate) use self::user_list::UserList;
 
 use gtk::glib;
-use tdlib::enums::{ChatMemberStatus, MessageContent, UserStatus, UserType};
+use tdlib::enums::{ChatMemberStatus, MessageContent, MessageSendingState, UserStatus, UserType};
 use tdlib::types::{
     ChatNotificationSettings, ChatPermissions, DraftMessage, FormattedText,
     ScopeNotificationSettings,
@@ -82,3 +82,7 @@ pub(crate) struct BoxedUserStatus(pub(crate) UserStatus);
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedUserType")]
 pub(crate) struct BoxedUserType(pub(crate) UserType);
+
+#[derive(Clone, Debug, glib::Boxed)]
+#[boxed_type(name = "BoxedMessageSendingState", nullable)]
+pub(crate) struct BoxedMessageSendingState(pub(crate) MessageSendingState);

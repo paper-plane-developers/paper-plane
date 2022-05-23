@@ -4,7 +4,9 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::borrow::Cow;
-use tdlib::enums::{CallDiscardReason, ChatList, InputMessageContent, MessageContent, UserType};
+use tdlib::enums::{
+    CallDiscardReason, ChatList, InputMessageContent, MessageContent, MessageSendingState, UserType,
+};
 use tdlib::functions;
 use tdlib::types::{DraftMessage, MessageCall};
 
@@ -36,6 +38,8 @@ mod imp {
         pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub(super) title_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) message_status_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub(super) timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -239,6 +243,70 @@ impl Row {
                 let notification_settings_expression =
                     Chat::this_expression("notification-settings");
                 let session_expression = Chat::this_expression("session");
+
+                // Message status bindings
+                if !chat.is_own_chat() {
+                    let message_status_visibility_binding = last_message_expression
+                        .chain_property::<Message>("is-outgoing")
+                        .bind(&*imp.message_status_icon, "visible", Some(chat));
+                    bindings.push(message_status_visibility_binding);
+
+                    let message_status_icon_binding = gtk::ClosureExpression::new::<String, _, _>(
+                        &[
+                            last_message_expression.upcast_ref(),
+                            Chat::this_expression("last-read-outbox-message-id").upcast_ref(),
+                        ],
+                        closure!(|_: Chat,
+                                  last_message: Option<Message>,
+                                  last_read_msg_id: i64| {
+                            last_message
+                                .filter(Message::is_outgoing)
+                                .map(|message| match message.sending_state() {
+                                    Some(state) => match state.0 {
+                                        MessageSendingState::Failed(_) => "message-failed-symbolic",
+                                        MessageSendingState::Pending => "message-pending-symbolic",
+                                    },
+                                    None => {
+                                        if message.id() == last_read_msg_id {
+                                            "message-read-symbolic"
+                                        } else {
+                                            "message-unread-symbolic"
+                                        }
+                                    }
+                                })
+                                .unwrap_or("")
+                        }),
+                    )
+                    .bind(&*imp.message_status_icon, "icon-name", Some(chat));
+                    bindings.push(message_status_icon_binding);
+
+                    let message_status_css_binding = last_message_expression
+                        .chain_closure::<Vec<String>>(closure!(
+                            |_: Chat, last_message: Option<Message>| {
+                                last_message
+                                    .filter(Message::is_outgoing)
+                                    .map(|message| {
+                                        vec![match message.sending_state() {
+                                            Some(state) => match state.0 {
+                                                MessageSendingState::Failed(_) => {
+                                                    "last-message-status-failed"
+                                                }
+                                                MessageSendingState::Pending => "dim-label",
+                                            },
+                                            None => "last-message-status-sent",
+                                        }
+                                        .to_string()]
+                                    })
+                                    .unwrap_or_default()
+                            }
+                        ))
+                        .bind(&*imp.message_status_icon, "css-classes", Some(chat));
+                    bindings.push(message_status_css_binding);
+                } else {
+                    imp.message_status_icon.set_visible(false);
+                    imp.message_status_icon.set_icon_name(None);
+                    imp.message_status_icon.set_css_classes(&[]);
+                }
 
                 // Timestamp label bindings
                 let timestamp_binding = gtk::ClosureExpression::new::<i32, _, _>(

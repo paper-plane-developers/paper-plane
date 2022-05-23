@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="22"
+   height="16"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="message-pending-symbolic.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="44.9375"
+     inkscape:cx="6.9095967"
+     inkscape:cy="7.9888734"
+     inkscape:window-width="2560"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <g
+     color="#000000"
+     font-weight="400"
+     font-family="sans-serif"
+     fill="#474747"
+     id="g6"
+     transform="translate(3.5,1)"
+     style="stroke-width:1">
+    <path
+       d="M 7.5,0 C 3.37,0 0,3.37 0,7.5 0,11.63 3.37,15 7.5,15 11.63,15 15,11.63 15,7.5 15,3.37 11.63,0 7.5,0 Z m 0,2 C 10.55,2 13,4.45 13,7.5 13,10.55 10.55,13 7.5,13 4.45,13 2,10.55 2,7.5 2,4.45 4.45,2 7.5,2 Z"
+       style="line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;stroke-width:1.07143;marker:none"
+       overflow="visible"
+       id="path2" />
+    <path
+       d="M 4.428,3.963 A 0.5,0.5 0 0 0 4.088,4.826 L 7.2,7.871 A 0.5,0.5 0 0 0 7.686,8 H 10.5 a 0.5,0.5 0 1 0 0,-1 H 7.738 L 4.788,4.111 A 0.5,0.5 0 0 0 4.428,3.963 Z"
+       style="line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;stroke-width:1.07143;marker:none"
+       overflow="visible"
+       id="path4" />
+  </g>
+</svg>

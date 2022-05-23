@@ -5,7 +5,10 @@ use tdlib::enums::{MessageSender as TdMessageSender, Update};
 use tdlib::functions;
 use tdlib::types::{Error as TdError, Message as TdMessage};
 
-use crate::tdlib::{BoxedMessageContent, Chat, MessageForwardInfo, MessageForwardOrigin, User};
+use crate::tdlib::{
+    BoxedMessageContent, BoxedMessageSendingState, Chat, MessageForwardInfo, MessageForwardOrigin,
+    User,
+};
 use crate::{expressions, Session};
 
 #[derive(Clone, Debug, glib::Boxed)]
@@ -57,6 +60,7 @@ mod imp {
         pub(super) is_outgoing: Cell<bool>,
         pub(super) can_be_deleted_only_for_self: Cell<bool>,
         pub(super) can_be_deleted_for_all_users: Cell<bool>,
+        pub(super) sending_state: RefCell<Option<BoxedMessageSendingState>>,
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
         pub(super) chat: WeakRef<Chat>,
@@ -109,6 +113,13 @@ mod imp {
                         "Whether this message can be deleted for all users or not",
                         false,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
+                    glib::ParamSpecBoxed::new(
+                        "sending-state",
+                        "Sending State",
+                        "The sending state of this message",
+                        BoxedMessageSendingState::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
                     ),
                     glib::ParamSpecInt::new(
                         "date",
@@ -164,6 +175,9 @@ mod imp {
                 "can-be-deleted-for-all-users" => {
                     self.can_be_deleted_for_all_users.set(value.get().unwrap())
                 }
+                "sending-state" => {
+                    self.sending_state.replace(value.get().unwrap());
+                }
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => obj.set_content(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
@@ -178,6 +192,7 @@ mod imp {
                 "is-outgoing" => obj.is_outgoing().to_value(),
                 "can-be-deleted-only-for-self" => obj.can_be_deleted_only_for_self().to_value(),
                 "can-be-deleted-for-all-users" => obj.can_be_deleted_for_all_users().to_value(),
+                "sending-state" => obj.sending_state().to_value(),
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
                 "chat" => obj.chat().to_value(),
@@ -210,6 +225,10 @@ impl Message {
             (
                 "can-be-deleted-for-all-users",
                 &message.can_be_deleted_for_all_users,
+            ),
+            (
+                "sending-state",
+                &message.sending_state.map(BoxedMessageSendingState),
             ),
             ("date", &message.date),
             ("content", &content),
@@ -260,6 +279,10 @@ impl Message {
 
     pub(crate) fn can_be_deleted_for_all_users(&self) -> bool {
         self.imp().can_be_deleted_for_all_users.get()
+    }
+
+    pub(crate) fn sending_state(&self) -> Option<BoxedMessageSendingState> {
+        self.imp().sending_state.borrow().clone()
     }
 
     pub(crate) fn date(&self) -> i32 {
