@@ -9,7 +9,7 @@
       <object class="GtkBox" id="content">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkOverlay">
+          <object class="GtkOverlay" id="overlay">
             <child type="overlay">
               <object class="GtkProgressBar" id="progress_bar">
                 <property name="halign">center</property>

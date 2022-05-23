@@ -5,7 +5,14 @@
       <object class="GtkBinLayout"/>
     </property>
     <child>
-      <object class="ContentMessageMedia" id="media"/>
+      <object class="ContentMessageMedia" id="media">
+        <property name="indicators">
+          <object class="MessageIndicators" id="indicators">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+          </object>
+        </property>
+      </object>
     </child>
   </template>
 </interface>

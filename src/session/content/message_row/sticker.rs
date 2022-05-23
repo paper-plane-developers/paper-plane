@@ -8,7 +8,9 @@ use std::io::Cursor;
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::content::message_row::{MessageBase, MessageBaseImpl, StickerPicture};
+use crate::session::content::message_row::{
+    MessageBase, MessageBaseImpl, MessageIndicators, StickerPicture,
+};
 use crate::tdlib::Message;
 use crate::utils::spawn;
 
@@ -23,6 +25,8 @@ mod imp {
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
         pub(super) picture: TemplateChild<StickerPicture>,
+        #[template_child]
+        pub(super) indicators: TemplateChild<MessageIndicators>,
     }
 
     #[glib::object_subclass]
@@ -33,6 +37,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            klass.set_css_name("messagesticker");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -99,6 +104,8 @@ impl MessageSticker {
         if imp.message.borrow().as_ref() == Some(&message) {
             return;
         }
+
+        imp.indicators.set_message(message.clone().upcast());
 
         imp.picture.set_texture(None);
 

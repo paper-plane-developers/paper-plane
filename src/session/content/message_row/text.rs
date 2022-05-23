@@ -7,7 +7,9 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{MessageBase, MessageBaseImpl};
+use crate::session::content::message_row::{
+    MessageBase, MessageBaseImpl, MessageIndicators, MessageLabel,
+};
 use crate::tdlib::{BoxedMessageContent, Chat, ChatType, Message, MessageSender, SponsoredMessage};
 use crate::utils::parse_formatted_text;
 
@@ -25,7 +27,9 @@ mod imp {
         #[template_child]
         pub(super) sender_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) content_label: TemplateChild<gtk::Label>,
+        pub(super) content_label: TemplateChild<MessageLabel>,
+        #[template_child]
+        pub(super) indicators: TemplateChild<MessageIndicators>,
     }
 
     #[glib::object_subclass]
@@ -108,6 +112,8 @@ impl MessageText {
         while let Some(binding) = bindings.pop() {
             binding.unwatch();
         }
+
+        imp.indicators.set_message(message.clone());
 
         // Remove the previous color css class
         let mut sender_color_class = imp.sender_color_class.borrow_mut();

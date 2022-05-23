@@ -154,6 +154,27 @@
   min-width: 100px;
 }
 
+messageindicators {
+  font-size: x-small;
+  font-feature-settings: "tnum";
+}
+
+messagelabel {
+  margin: 6px 12px;
+  font-size: 0.95em;
+}
+
+messagelabel > messageindicators {
+  opacity: 0.7;
+}
+
+.message-media overlay > messageindicators, messagesticker messageindicators {
+  background-color: alpha(@view_bg_color, 0.8);
+  border-radius: 9999px;
+  padding: 2px 6px;
+  margin: 6px;
+}
+
 .event-row {
   font-size: 0.8em;
   padding: 3px;
@@ -165,7 +186,7 @@
   font-weight: bold;
 }
 
-.sender-text + .message-text {
+.sender-text + messagelabel {
   margin-top: 0;
 }
 
@@ -195,11 +216,6 @@
 
 .sender-text-pink {
   color: #cd4073;
-}
-
-.message-text {
-  margin: 6px 12px;
-  font-size: 0.95em;
 }
 
 /* Placeholder */
