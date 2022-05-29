@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-05-21 20:03+0000\n"
+"PO-Revision-Date: 2022-05-30 12:18+0000\n"
 "Last-Translator: Fellow Turkish <f3ll0wm4il3r_12@protonmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/tr/>\n"
@@ -371,15 +371,13 @@ msgstr "Desteklenmeyen mesaj"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:112
-#, fuzzy
 msgid "%B %e"
-msgstr "%B %e"
+msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:115
-#, fuzzy
 msgid "%B %e, %Y"
-msgstr "%B %e, %Y"
+msgstr "%e %B %Y"
 
 #: src/session/content/message_row/text.rs:156
 msgid "This message is unsupported"
@@ -388,9 +386,8 @@ msgstr "Bu mesaj desteklenmiyor"
 #. Show the time
 #. Translators: This is a time format for the chat list without seconds
 #: src/session/sidebar/row.rs:190
-#, fuzzy
 msgid "%l:%M %p"
-msgstr "%l:%M %p"
+msgstr "%H:%M"
 
 #: src/session/sidebar/row.rs:226
 msgid "Draft"
