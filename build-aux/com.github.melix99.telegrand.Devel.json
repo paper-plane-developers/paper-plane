@@ -38,6 +38,12 @@
         {
             "name": "gtk",
             "buildsystem": "meson",
+            "config-opts": [
+                "-Dbuild-tests=false",
+                "-Ddemos=false",
+                "-Dbuild-examples=false",
+                "-Dintrospection=disabled"
+            ],
             "sources": [
                 {
                     "type": "git",
