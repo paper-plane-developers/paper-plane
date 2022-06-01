@@ -124,7 +124,6 @@
 .message-bubble {
   background-color: alpha(black, 0.07);
   border-radius: 12px;
-  padding: 6px 12px;
 }
 
 .message-bubble.outgoing {
@@ -140,15 +139,13 @@
   color: @accent_fg_color;
 }
 
-.message-media {
-  padding: 2px;
-}
-
 .message-media .media-picture {
+  margin: 2px;
   border-radius: 10px;
 }
 
 .message-media.with-caption .media-picture {
+  margin-bottom: 0;
   border-radius: 10px 10px 4px 4px;
 }
 
@@ -163,8 +160,13 @@
 }
 
 .sender-text {
+  margin: 6px 12px 0 12px;
   font-size: 0.85em;
   font-weight: bold;
+}
+
+.sender-text + .message-text {
+  margin-top: 0;
 }
 
 .sender-text-red {
@@ -196,6 +198,7 @@
 }
 
 .message-text {
+  margin: 6px 12px;
   font-size: 0.95em;
 }
 
