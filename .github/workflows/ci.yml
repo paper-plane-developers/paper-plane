@@ -92,7 +92,7 @@ jobs:
       - name: Set up QEMU
         if: ${{ matrix.arch != 'x86_64' }}
         id: qemu
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
       - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
