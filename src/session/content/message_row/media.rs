@@ -1,22 +1,22 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::{gdk, glib, pango, CompositeTemplate};
 
 use crate::session::content::message_row::MediaPicture;
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-media.ui")]
     pub(crate) struct Media {
+        pub(super) caption_label: RefCell<Option<gtk::Label>>,
         #[template_child]
         pub(super) content: TemplateChild<gtk::Box>,
         #[template_child]
         pub(super) picture: TemplateChild<MediaPicture>,
-        #[template_child]
-        pub(super) caption_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) progress_bar: TemplateChild<gtk::ProgressBar>,
     }
@@ -155,7 +155,12 @@ impl Media {
     }
 
     pub(crate) fn caption(&self) -> String {
-        self.imp().caption_label.label().into()
+        self.imp()
+            .caption_label
+            .borrow()
+            .as_ref()
+            .map(|c| c.label().into())
+            .unwrap_or_default()
     }
 
     pub(crate) fn set_caption(&self, caption: &str) {
@@ -165,14 +170,33 @@ impl Media {
 
         let imp = self.imp();
         if caption.is_empty() {
-            imp.caption_label.set_visible(false);
+            if let Some(caption_label) = imp.caption_label.take() {
+                imp.content.remove(&caption_label);
+            }
+
             self.remove_css_class("with-caption");
         } else {
-            imp.caption_label.set_visible(true);
+            let mut caption_label_ref = imp.caption_label.borrow_mut();
+            if let Some(caption_label) = caption_label_ref.as_ref() {
+                caption_label.set_label(caption);
+            } else {
+                let caption_label = gtk::Label::builder()
+                    .css_classes(vec!["message-text".into()])
+                    .label(caption)
+                    .use_markup(true)
+                    .wrap(true)
+                    .wrap_mode(pango::WrapMode::WordChar)
+                    .xalign(0.0)
+                    .build();
+
+                imp.content.append(&caption_label);
+
+                *caption_label_ref = Some(caption_label);
+            }
+
             self.add_css_class("with-caption");
         }
 
-        imp.caption_label.set_label(caption);
         self.notify("caption");
     }
 
