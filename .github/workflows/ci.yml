@@ -79,24 +79,22 @@ jobs:
       options: --privileged
     strategy:
       matrix:
-        # TODO: We used to have an aarch64 build, but it broke for some reason, so it's disabled for now.
-        #       Hopefully someone fixes it.
-        arch: [x86_64]
+        arch: [x86_64, aarch64]
       # Don't fail the whole workflow if one architecture fails
       fail-fast: false
     needs: [rustfmt, clippy]
     steps:
       - uses: actions/checkout@v2
       # Docker is required by the docker/setup-qemu-action which enables emulation
-      # - name: Install dependencies
-      #   if: ${{ matrix.arch != 'x86_64' }}
-      #   run: dnf -y install docker
-      # - name: Set up QEMU
-      #   if: ${{ matrix.arch != 'x86_64' }}
-      #   id: qemu
-      #   uses: docker/setup-qemu-action@v1
-      #   with:
-      #     platforms: arm64
+      - name: Install dependencies
+        if: ${{ matrix.arch != 'x86_64' }}
+        run: dnf -y install docker
+      - name: Set up QEMU
+        if: ${{ matrix.arch != 'x86_64' }}
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
       - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
         with:
           bundle: telegrand.flatpak
