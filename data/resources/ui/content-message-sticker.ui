@@ -5,7 +5,17 @@
       <object class="GtkBinLayout"/>
     </property>
     <child>
-      <object class="ContentStickerPicture" id="picture"/>
+      <object class="GtkOverlay">
+        <child>
+          <object class="ContentStickerPicture" id="picture"/>
+        </child>
+        <child type="overlay">
+          <object class="MessageIndicators" id="indicators">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+          </object>
+        </child>
+      </object>
     </child>
   </template>
 </interface>

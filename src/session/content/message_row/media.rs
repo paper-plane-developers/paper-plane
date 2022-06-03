@@ -2,21 +2,25 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
 
-use crate::session::content::message_row::MediaPicture;
+use crate::session::content::message_row::{MediaPicture, MessageIndicators, MessageLabel};
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-media.ui")]
     pub(crate) struct Media {
+        pub(super) caption_label: RefCell<Option<MessageLabel>>,
+        pub(super) indicators: OnceCell<MessageIndicators>,
         #[template_child]
         pub(super) content: TemplateChild<gtk::Box>,
         #[template_child]
-        pub(super) picture: TemplateChild<MediaPicture>,
+        pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
-        pub(super) caption_label: TemplateChild<gtk::Label>,
+        pub(super) picture: TemplateChild<MediaPicture>,
         #[template_child]
         pub(super) progress_bar: TemplateChild<gtk::ProgressBar>,
     }
@@ -56,6 +60,13 @@ mod imp {
                         0.0,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecObject::new(
+                        "indicators",
+                        "Indicators",
+                        "The message indicators of the widget",
+                        MessageIndicators::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -71,6 +82,14 @@ mod imp {
             match pspec.name() {
                 "caption" => obj.set_caption(value.get().unwrap()),
                 "download-progress" => obj.set_download_progress(value.get().unwrap()),
+                "indicators" => {
+                    let indicators: MessageIndicators = value.get().unwrap();
+
+                    // Add the indicators to the picture overlay by default because we don't
+                    // expect to have a caption text in the construct phase
+                    self.overlay.add_overlay(&indicators);
+                    self.indicators.set(indicators).unwrap();
+                }
                 _ => unimplemented!(),
             }
         }
@@ -79,6 +98,7 @@ mod imp {
             match pspec.name() {
                 "caption" => obj.caption().to_value(),
                 "download-progress" => obj.download_progress().to_value(),
+                "indicators" => obj.indicators().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -155,24 +175,47 @@ impl Media {
     }
 
     pub(crate) fn caption(&self) -> String {
-        self.imp().caption_label.label().into()
+        self.imp()
+            .caption_label
+            .borrow()
+            .as_ref()
+            .map(|c| c.label())
+            .unwrap_or_default()
     }
 
-    pub(crate) fn set_caption(&self, caption: &str) {
+    pub(crate) fn set_caption(&self, caption: String) {
         if self.caption() == caption {
             return;
         }
 
         let imp = self.imp();
+        let indicators = self.indicators();
+
         if caption.is_empty() {
-            imp.caption_label.set_visible(false);
+            // This will also drop the label and consequently unparent the indicators from it
+            imp.content.remove(&imp.caption_label.take().unwrap());
+
+            imp.overlay.add_overlay(indicators);
+
             self.remove_css_class("with-caption");
         } else {
-            imp.caption_label.set_visible(true);
-            self.add_css_class("with-caption");
+            let mut caption_label_ref = imp.caption_label.borrow_mut();
+
+            if let Some(caption_label) = caption_label_ref.as_ref() {
+                caption_label.set_label(caption);
+            } else {
+                // Unparent the indicators from the picture overlay
+                imp.overlay.remove_overlay(indicators);
+
+                let caption_label = MessageLabel::new(&caption, indicators);
+                imp.content.append(&caption_label);
+
+                *caption_label_ref = Some(caption_label);
+
+                self.add_css_class("with-caption");
+            }
         }
 
-        imp.caption_label.set_label(caption);
         self.notify("caption");
     }
 
@@ -190,5 +233,9 @@ impl Media {
         imp.progress_bar.set_visible(progress < 1.0);
 
         self.notify("download-progress");
+    }
+
+    pub(crate) fn indicators(&self) -> &MessageIndicators {
+        self.imp().indicators.get().unwrap()
     }
 }

@@ -5,7 +5,9 @@ use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl};
+use crate::session::content::message_row::{
+    Media, MessageBase, MessageBaseImpl, MessageIndicators,
+};
 use crate::tdlib::{BoxedMessageContent, Message};
 use crate::utils::parse_formatted_text;
 use crate::Session;
@@ -23,6 +25,8 @@ mod imp {
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
         pub(super) media: TemplateChild<Media>,
+        #[template_child]
+        pub(super) indicators: TemplateChild<MessageIndicators>,
     }
 
     #[glib::object_subclass]
@@ -108,6 +112,8 @@ impl MessagePhoto {
             let handler_id = imp.handler_id.take().unwrap();
             old_message.disconnect(handler_id);
         }
+
+        imp.indicators.set_message(message.clone().upcast());
 
         // Setup caption expression
         let caption_binding = Message::this_expression("content")

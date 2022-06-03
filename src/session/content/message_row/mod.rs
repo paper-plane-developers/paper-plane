@@ -1,4 +1,7 @@
 mod base;
+mod indicators;
+mod indicators_model;
+mod label;
 mod media;
 mod media_picture;
 mod photo;
@@ -7,6 +10,8 @@ mod sticker_picture;
 mod text;
 
 use self::base::{MessageBase, MessageBaseImpl};
+use self::indicators::MessageIndicators;
+use self::label::MessageLabel;
 use self::media::Media;
 use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
