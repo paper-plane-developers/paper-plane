@@ -77,6 +77,14 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            obj.connect_scale_factor_notify(|obj| {
+                obj.update_photo(obj.imp().message.borrow().as_ref().unwrap());
+            });
+        }
     }
 
     impl WidgetImpl for MessagePhoto {}
@@ -141,21 +149,32 @@ impl MessagePhoto {
 
     fn update_photo(&self, message: &Message) {
         if let MessageContent::MessagePhoto(data) = message.content().0 {
-            if let Some(photo_size) = data.photo.sizes.last() {
-                let imp = self.imp();
+            let imp = self.imp();
+            // Choose the right photo size based on the screen scale factor.
+            // See https://core.telegram.org/api/files#image-thumbnail-types for more
+            // information about photo sizes.
+            let photo_size = if self.scale_factor() > 2 {
+                data.photo.sizes.last().unwrap()
+            } else {
+                let type_ = if self.scale_factor() > 1 { "y" } else { "x" };
+                data.photo
+                    .sizes
+                    .iter()
+                    .find(|s| s.r#type == type_)
+                    .unwrap_or_else(|| data.photo.sizes.last().unwrap())
+            };
 
-                // Reset media widget
-                imp.media.set_paintable(None);
-                imp.media
-                    .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
+            // Reset media widget
+            imp.media.set_paintable(None);
+            imp.media
+                .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
-                if photo_size.photo.local.is_downloading_completed {
-                    imp.media.set_download_progress(1.0);
-                    self.load_photo_from_path(&photo_size.photo.local.path);
-                } else {
-                    imp.media.set_download_progress(0.0);
-                    self.download_photo(photo_size.photo.id, &message.chat().session());
-                }
+            if photo_size.photo.local.is_downloading_completed {
+                imp.media.set_download_progress(1.0);
+                self.load_photo_from_path(&photo_size.photo.local.path);
+            } else {
+                imp.media.set_download_progress(0.0);
+                self.download_photo(photo_size.photo.id, &message.chat().session());
             }
         }
     }
