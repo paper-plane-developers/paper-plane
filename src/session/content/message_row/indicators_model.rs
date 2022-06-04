@@ -1,7 +1,9 @@
 use gettextrs::gettext;
+use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use tdlib::enums::MessageSendingState;
 
 use crate::tdlib::{Message, SponsoredMessage};
 
@@ -13,6 +15,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub(crate) struct MessageIndicatorsModel {
         pub(super) message: RefCell<Option<glib::Object>>,
+        pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
     }
 
     #[glib::object_subclass]
@@ -39,6 +42,13 @@ mod imp {
                         None,
                         glib::ParamFlags::READABLE,
                     ),
+                    glib::ParamSpecString::new(
+                        "sending-state-icon-name",
+                        "Sending state icon name",
+                        "The icon name representing the model's message sending state",
+                        None,
+                        glib::ParamFlags::READABLE,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -61,6 +71,7 @@ mod imp {
             match pspec.name() {
                 "message" => obj.message().to_value(),
                 "message-info" => obj.message_info().to_value(),
+                "sending-state-icon-name" => obj.sending_state_icon_name().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -90,8 +101,38 @@ impl MessageIndicatorsModel {
         let imp = self.imp();
         let old = imp.message.replace(Some(message));
         if old != *imp.message.borrow() {
+            if let Some(handler_id) = imp.handler_id.take() {
+                old.unwrap()
+                    .downcast::<Message>()
+                    .unwrap()
+                    .chat()
+                    .disconnect(handler_id);
+            }
+
+            if let Some(message) = self
+                .message()
+                .downcast::<Message>()
+                .ok()
+                .filter(Message::is_outgoing)
+                .filter(|message| message.id() > message.chat().last_read_outbox_message_id())
+                .filter(|message| !message.chat().is_own_chat())
+            {
+                let message_id = message.id();
+                let handler_id = message.chat().connect_notify_local(
+                    Some("last-read-outbox-message-id"),
+                    clone!(@weak self as obj => move |chat, _| {
+                        obj.notify("sending-state-icon-name");
+                        if message_id <= chat.last_read_outbox_message_id() {
+                            chat.disconnect(obj.imp().handler_id.take().unwrap());
+                        }
+                    }),
+                );
+                imp.handler_id.replace(Some(handler_id));
+            }
+
             self.notify("message");
             self.notify("message-info");
+            self.notify("sending-state-icon-name");
         }
     }
 
@@ -110,5 +151,31 @@ impl MessageIndicatorsModel {
         }
 
         String::new()
+    }
+
+    pub(crate) fn sending_state_icon_name(&self) -> String {
+        self.imp()
+            .message
+            .borrow()
+            .as_ref()
+            .and_then(|message| message.downcast_ref::<Message>())
+            .filter(|message| message.is_outgoing())
+            .map(|message| match message.sending_state() {
+                Some(state) => match state.0 {
+                    MessageSendingState::Failed(_) => "message-failed-symbolic",
+                    MessageSendingState::Pending => "message-pending-symbolic",
+                },
+                None => {
+                    if message.chat().is_own_chat()
+                        || message.id() <= message.chat().last_read_outbox_message_id()
+                    {
+                        "message-read-symbolic"
+                    } else {
+                        "message-unread-left-symbolic"
+                    }
+                }
+            })
+            .unwrap_or_default()
+            .to_string()
     }
 }

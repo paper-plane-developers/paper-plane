@@ -14,7 +14,9 @@ mod imp {
     <interface>
       <template class="MessageIndicators" parent="GtkWidget">
         <property name="layout-manager">
-          <object class="GtkBinLayout"/>
+          <object class="GtkBoxLayout">
+            <property name="spacing">3</property>
+          </object>
         </property>
         <child>
           <object class="GtkLabel">
@@ -25,10 +27,23 @@ mod imp {
             </binding>
           </object>
         </child>
+        <child>
+          <object class="GtkImage" id="sending_state_icon">
+            <binding name="icon-name">
+              <lookup name="sending-state-icon-name">
+                <lookup name="model">MessageIndicators</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
       </template>
     </interface>
     "#)]
-    pub(crate) struct MessageIndicators(pub(super) MessageIndicatorsModel);
+    pub(crate) struct MessageIndicators {
+        pub(super) model: MessageIndicatorsModel,
+        #[template_child]
+        pub(super) sending_state_icon: TemplateChild<gtk::Image>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageIndicators {
@@ -93,12 +108,22 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            self.0.connect_notify_local(
+            self.model.connect_notify_local(
                 Some("message"),
                 clone!(@weak obj => move |_, _| {
                     obj.notify("message");
                 }),
             );
+
+            self.sending_state_icon
+                .connect_icon_name_notify(|sending_state_icon| {
+                    sending_state_icon.set_visible(
+                        sending_state_icon
+                            .icon_name()
+                            .map(|icon_name| !icon_name.is_empty())
+                            .unwrap_or(false),
+                    )
+                });
         }
 
         fn dispose(&self, obj: &Self::Type) {
@@ -120,14 +145,14 @@ glib::wrapper! {
 
 impl MessageIndicators {
     pub(crate) fn message(&self) -> glib::Object {
-        self.imp().0.message()
+        self.imp().model.message()
     }
 
     pub(crate) fn set_message(&self, message: glib::Object) {
-        self.imp().0.set_message(message);
+        self.imp().model.set_message(message);
     }
 
     pub(crate) fn model(&self) -> &MessageIndicatorsModel {
-        &self.imp().0
+        &self.imp().model
     }
 }
