@@ -160,7 +160,7 @@ messageindicators {
 }
 
 messagelabel {
-  margin: 6px 12px;
+  margin: 6px 9px;
   font-size: 0.95em;
 }
 
@@ -181,7 +181,7 @@ messagemedia overlay > messageindicators, messagesticker messageindicators {
 }
 
 .sender-text {
-  margin: 6px 12px 0 12px;
+  margin: 6px 9px 0 9px;
   font-size: 0.85em;
   font-weight: bold;
 }
