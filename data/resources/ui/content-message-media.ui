@@ -3,7 +3,6 @@
   <template class="ContentMessageMedia" parent="GtkWidget">
     <style>
       <class name="message-bubble"/>
-      <class name="message-media"/>
     </style>
     <child>
       <object class="GtkBox" id="content">
