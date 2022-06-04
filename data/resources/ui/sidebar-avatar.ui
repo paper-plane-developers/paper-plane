@@ -6,7 +6,7 @@
     </property>
     <child>
       <object class="ComponentsAvatar" id="avatar">
-        <property name="size">44</property>
+        <property name="size">48</property>
       </object>
     </child>
     <child>
