@@ -165,6 +165,7 @@ messagelabel > messageindicators {
 
 messagemedia overlay > messageindicators, messagesticker messageindicators {
   background-color: alpha(@view_bg_color, 0.8);
+  color: @view_fg_color;
   border-radius: 9999px;
   padding: 2px 6px;
   margin: 6px;
