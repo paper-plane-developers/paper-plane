@@ -27,8 +27,9 @@
     </child>
     <child>
       <object class="GtkBox">
-        <property name="homogeneous">True</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <property name="valign">center</property>
         <child>
           <object class="GtkBox">
             <property name="spacing">6</property>
