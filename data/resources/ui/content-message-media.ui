@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentMessageMedia" parent="GtkWidget">
-    <style>
-      <class name="message-bubble"/>
-    </style>
     <child>
       <object class="GtkBox" id="content">
         <property name="orientation">vertical</property>
