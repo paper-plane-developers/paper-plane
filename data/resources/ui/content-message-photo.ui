@@ -4,6 +4,9 @@
     <property name="layout-manager">
       <object class="GtkBinLayout"/>
     </property>
+    <style>
+      <class name="message-bubble"/>
+    </style>
     <child>
       <object class="ContentMessageMedia" id="media">
         <property name="indicators">

@@ -139,17 +139,17 @@
   color: @accent_fg_color;
 }
 
-.message-media .media-picture {
+messagemedia .media-picture {
   margin: 2px;
   border-radius: 10px;
 }
 
-.message-media.with-caption .media-picture {
+messagemedia.with-caption .media-picture {
   margin-bottom: 0;
   border-radius: 10px 10px 4px 4px;
 }
 
-.message-media progressbar>trough {
+messagemedia progressbar>trough {
   border: 1px solid alpha(black, 0.4);
   min-width: 100px;
 }
@@ -160,15 +160,14 @@ messageindicators {
 }
 
 messagelabel {
-  margin: 6px 12px;
-  font-size: 0.95em;
+  margin: 6px 9px;
 }
 
 messagelabel > messageindicators {
   opacity: 0.7;
 }
 
-.message-media overlay > messageindicators, messagesticker messageindicators {
+messagemedia overlay > messageindicators, messagesticker messageindicators {
   background-color: alpha(@view_bg_color, 0.8);
   border-radius: 9999px;
   padding: 2px 6px;
@@ -176,13 +175,13 @@ messagelabel > messageindicators {
 }
 
 .event-row {
-  font-size: 0.8em;
+  font-size: smaller;
   padding: 3px;
 }
 
 .sender-text {
-  margin: 6px 12px 0 12px;
-  font-size: 0.85em;
+  margin: 6px 9px 0 9px;
+  font-size: small;
   font-weight: bold;
 }
 
