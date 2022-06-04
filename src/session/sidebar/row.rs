@@ -270,7 +270,7 @@ impl Row {
                                         if message.id() == last_read_msg_id {
                                             "message-read-symbolic"
                                         } else {
-                                            "message-unread-symbolic"
+                                            "message-unread-right-symbolic"
                                         }
                                     }
                                 })
