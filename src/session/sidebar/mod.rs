@@ -1,4 +1,5 @@
 mod avatar;
+mod mini_thumbnail;
 mod row;
 mod selection;
 mod session_switcher;
