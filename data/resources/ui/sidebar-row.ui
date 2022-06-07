@@ -77,6 +77,11 @@
                   </object>
                 </child>
                 <child>
+                  <object class="SidebarMiniThumbnail" id="message_thumbnail">
+                    <property name="visible">False</property>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkLabel" id="bottom_label">
                     <property name="hexpand">True</property>
                     <property name="ellipsize">end</property>

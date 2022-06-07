@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{gdk, glib, CompositeTemplate};
 use std::borrow::Cow;
 use tdlib::enums::{
     CallDiscardReason, ChatList, InputMessageContent, MessageContent, MessageSendingState, UserType,
@@ -25,6 +25,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
+    use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
     use crate::session::sidebar::{Avatar, Sidebar};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -44,6 +45,8 @@ mod imp {
         pub(super) timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) message_prefix_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
         pub(super) bottom_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -136,6 +139,11 @@ mod imp {
 
             self.message_prefix_label
                 .connect_label_notify(|label| label.set_visible(!label.label().is_empty()));
+
+            self.message_thumbnail
+                .connect_notify_local(Some("paintable"), |thumbnail, _| {
+                    thumbnail.set_visible(thumbnail.paintable().is_some())
+                });
 
             obj.setup_expressions();
         }
@@ -396,9 +404,30 @@ impl Row {
                 .bind(&*imp.message_prefix_label, "label", Some(chat));
                 bindings.push(message_prefix_binding);
 
+                let thumbnail_paintable_binding =
+                    gtk::ClosureExpression::new::<Option<gdk::Texture>, _, _>(
+                        &[
+                            actions_expression.upcast_ref(),
+                            draft_message_expression.upcast_ref(),
+                            last_message_expression.upcast_ref(),
+                        ],
+                        closure!(|_: Chat,
+                                  actions: ChatActionList,
+                                  draft_message: Option<BoxedDraftMessage>,
+                                  message: Option<Message>| {
+                            if actions.n_items() > 0 || draft_message.is_some() {
+                                None
+                            } else {
+                                message.and_then(message_thumbnail_texture)
+                            }
+                        }),
+                    )
+                    .bind(&*imp.message_thumbnail, "paintable", Some(chat));
+                bindings.push(thumbnail_paintable_binding);
+
                 let content_expression =
                     last_message_expression.chain_property::<Message>("content");
-                // FIXME: the sender name should be part of this expression.
+
                 let message_binding = gtk::ClosureExpression::new::<String, _, _>(
                     &[
                         // TODO: In the future, consider making this a bit more efficient: We
@@ -599,6 +628,24 @@ fn sender_label(message: Message) -> Option<String> {
             None
         }
     }
+}
+
+fn message_thumbnail_texture(message: Message) -> Option<gdk::Texture> {
+    match message.content().0 {
+        MessageContent::MessageAnimation(data) => data.animation.minithumbnail,
+        MessageContent::MessageAudio(data) => data.audio.album_cover_minithumbnail,
+        MessageContent::MessageChatChangePhoto(data) => data.photo.minithumbnail,
+        MessageContent::MessageDocument(data) => data.document.minithumbnail,
+        MessageContent::MessagePhoto(data) => data.photo.minithumbnail,
+        MessageContent::MessageVideo(data) => data.video.minithumbnail,
+        _ => None,
+    }
+    .map(|thumbnail| {
+        gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
+            &thumbnail.data,
+        )))
+        .unwrap()
+    })
 }
 
 fn stringify_message(message: Message) -> String {

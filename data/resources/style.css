@@ -82,6 +82,10 @@
   font-feature-settings: "tnum";
 }
 
+.chat-list row minithumbnail {
+  border-radius: 3px;
+}
+
 .chat-list row .message {
   font-size: small;
 }
