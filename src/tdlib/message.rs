@@ -63,6 +63,7 @@ mod imp {
         pub(super) sending_state: RefCell<Option<BoxedMessageSendingState>>,
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
+        pub(super) is_edited: Cell<bool>,
         pub(super) chat: WeakRef<Chat>,
         pub(super) forward_info: OnceCell<Option<MessageForwardInfo>>,
     }
@@ -139,6 +140,15 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecBoolean::new(
+                        "is-edited",
+                        "Is Edited",
+                        "Whether this message has been edited",
+                        false,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpecObject::new(
                         "chat",
                         "Chat",
@@ -180,6 +190,7 @@ mod imp {
                 }
                 "date" => self.date.set(value.get().unwrap()),
                 "content" => obj.set_content(value.get().unwrap()),
+                "is-edited" => obj.set_is_edited(value.get().unwrap()),
                 "chat" => self.chat.set(Some(&value.get().unwrap())),
                 "forward-info" => self.forward_info.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
@@ -195,6 +206,7 @@ mod imp {
                 "sending-state" => obj.sending_state().to_value(),
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
+                "is-edited" => obj.is_edited().to_value(),
                 "chat" => obj.chat().to_value(),
                 "forward-info" => obj.forward_info().to_value(),
                 _ => unimplemented!(),
@@ -232,6 +244,7 @@ impl Message {
             ),
             ("date", &message.date),
             ("content", &content),
+            ("is-edited", &(message.edit_date > 0)),
             ("chat", chat),
             (
                 "forward-info",
@@ -299,6 +312,18 @@ impl Message {
         }
         self.imp().content.replace(Some(content));
         self.notify("content");
+    }
+
+    pub(crate) fn is_edited(&self) -> bool {
+        self.imp().is_edited.get()
+    }
+
+    pub(crate) fn set_is_edited(&self, is_edited: bool) {
+        if self.is_edited() == is_edited {
+            return;
+        }
+        self.imp().is_edited.set(is_edited);
+        self.notify("is-edited");
     }
 
     pub(crate) fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
