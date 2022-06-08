@@ -177,6 +177,10 @@ impl ChatActionBar {
         glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
+    pub(crate) fn focus_message_entry(&self) {
+        self.imp().message_entry.grab_focus();
+    }
+
     fn compose_text_message(&self) -> Option<InputMessageContent> {
         if let Some(formatted_text) = self.imp().message_entry.formatted_text() {
             let content = types::InputMessageText {

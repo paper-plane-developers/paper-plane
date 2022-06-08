@@ -341,6 +341,7 @@ impl Session {
         let chat = self.chat_list().get(chat_id);
         imp.sidebar.set_selected_chat(Some(chat));
         imp.leaflet.navigate(adw::NavigationDirection::Forward);
+        imp.content.focus_message_entry()
     }
 
     pub(crate) fn handle_paste_action(&self) {

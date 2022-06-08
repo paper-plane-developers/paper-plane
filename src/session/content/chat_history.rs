@@ -142,6 +142,10 @@ impl ChatHistory {
         );
     }
 
+    pub(crate) fn focus_message_entry(&self) {
+        self.imp().chat_action_bar.focus_message_entry();
+    }
+
     fn load_older_messages(&self, adj: &gtk::Adjustment) {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(chat) = self.chat() {
