@@ -15,7 +15,8 @@ mod imp {
     #[derive(Debug, Default)]
     pub(crate) struct MessageIndicatorsModel {
         pub(super) message: RefCell<Option<glib::Object>>,
-        pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) is_edited_handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) sending_state_handler_id: RefCell<Option<glib::SignalHandlerId>>,
     }
 
     #[glib::object_subclass]
@@ -101,7 +102,15 @@ impl MessageIndicatorsModel {
         let imp = self.imp();
         let old = imp.message.replace(Some(message));
         if old != *imp.message.borrow() {
-            if let Some(handler_id) = imp.handler_id.take() {
+            if let Some(handler_id) = imp.is_edited_handler_id.take() {
+                old.as_ref()
+                    .unwrap()
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .disconnect(handler_id);
+            }
+
+            if let Some(handler_id) = imp.sending_state_handler_id.take() {
                 old.unwrap()
                     .downcast::<Message>()
                     .unwrap()
@@ -109,25 +118,36 @@ impl MessageIndicatorsModel {
                     .disconnect(handler_id);
             }
 
-            if let Some(message) = self
-                .message()
-                .downcast::<Message>()
-                .ok()
-                .filter(Message::is_outgoing)
-                .filter(|message| message.id() > message.chat().last_read_outbox_message_id())
-                .filter(|message| !message.chat().is_own_chat())
-            {
-                let message_id = message.id();
-                let handler_id = message.chat().connect_notify_local(
-                    Some("last-read-outbox-message-id"),
-                    clone!(@weak self as obj => move |chat, _| {
-                        obj.notify("sending-state-icon-name");
-                        if message_id <= chat.last_read_outbox_message_id() {
-                            chat.disconnect(obj.imp().handler_id.take().unwrap());
-                        }
-                    }),
-                );
-                imp.handler_id.replace(Some(handler_id));
+            if let Ok(message) = self.message().downcast::<Message>() {
+                if !message.is_edited() {
+                    let handler_id = message.connect_notify_local(
+                        Some("is-edited"),
+                        clone!(@weak self as obj => move |message, _| {
+                            obj.notify("message-info");
+                            if message.is_edited() {
+                                message.disconnect(obj.imp().is_edited_handler_id.take().unwrap());
+                            }
+                        }),
+                    );
+                    imp.is_edited_handler_id.replace(Some(handler_id));
+                }
+
+                if message.is_outgoing()
+                    && message.id() > message.chat().last_read_outbox_message_id()
+                    && !message.chat().is_own_chat()
+                {
+                    let message_id = message.id();
+                    let handler_id = message.chat().connect_notify_local(
+                        Some("last-read-outbox-message-id"),
+                        clone!(@weak self as obj => move |chat, _| {
+                            obj.notify("sending-state-icon-name");
+                            if message_id <= chat.last_read_outbox_message_id() {
+                                chat.disconnect(obj.imp().sending_state_handler_id.take().unwrap());
+                            }
+                        }),
+                    );
+                    imp.sending_state_handler_id.replace(Some(handler_id));
+                }
             }
 
             self.notify("message");
@@ -144,7 +164,12 @@ impl MessageIndicatorsModel {
                     .unwrap();
 
                 // Translators: This is a time format for the message timestamp without seconds
-                return datetime.format(&gettext("%l:%M %p")).unwrap().into();
+                let datetime = datetime.format(&gettext("%l:%M %p")).unwrap().into();
+                return if message.is_edited() {
+                    format!("{} {}", gettext("edited"), datetime)
+                } else {
+                    datetime
+                };
             } else if message.downcast_ref::<SponsoredMessage>().is_some() {
                 return gettext("sponsored");
             }
