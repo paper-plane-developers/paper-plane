@@ -257,9 +257,13 @@ impl Message {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
-        if let Update::MessageContent(data) = update {
-            let new_content = BoxedMessageContent(data.new_content);
-            self.set_content(new_content);
+        match update {
+            Update::MessageContent(data) => {
+                let new_content = BoxedMessageContent(data.new_content);
+                self.set_content(new_content);
+            }
+            Update::MessageEdited(data) => self.set_is_edited(data.edit_date > 0),
+            _ => {}
         }
     }
 

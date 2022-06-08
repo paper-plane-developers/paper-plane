@@ -159,6 +159,11 @@ impl ChatList {
                     chat.handle_update(update);
                 }
             }
+            Update::MessageEdited(ref update_) => {
+                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
+                    chat.handle_update(update);
+                }
+            }
             Update::NewChat(update) => {
                 self.insert_chat(update.chat);
             }

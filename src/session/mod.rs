@@ -261,6 +261,7 @@ impl Session {
             Update::NewMessage(_)
             | Update::MessageSendSucceeded(_)
             | Update::MessageContent(_)
+            | Update::MessageEdited(_)
             | Update::NewChat(_)
             | Update::ChatTitle(_)
             | Update::ChatPhoto(_)

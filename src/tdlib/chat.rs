@@ -330,6 +330,7 @@ impl Chat {
             Update::NewMessage(_)
             | Update::MessageSendSucceeded(_)
             | Update::MessageContent(_)
+            | Update::MessageEdited(_)
             | Update::DeleteMessages(_) => {
                 self.history().handle_update(update);
             }
