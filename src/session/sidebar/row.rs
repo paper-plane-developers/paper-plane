@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{gdk, glib, CompositeTemplate};
 use std::borrow::Cow;
 use tdlib::enums::{
     CallDiscardReason, ChatList, InputMessageContent, MessageContent, MessageSendingState, UserType,
@@ -25,6 +25,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
+    use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
     use crate::session::sidebar::{Avatar, Sidebar};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -42,6 +43,10 @@ mod imp {
         pub(super) message_status_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub(super) timestamp_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) message_prefix_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
         pub(super) bottom_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -131,6 +136,15 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            self.message_prefix_label
+                .connect_label_notify(|label| label.set_visible(!label.label().is_empty()));
+
+            self.message_thumbnail
+                .connect_notify_local(Some("paintable"), |thumbnail, _| {
+                    thumbnail.set_visible(thumbnail.paintable().is_some())
+                });
+
             obj.setup_expressions();
         }
 
@@ -359,9 +373,61 @@ impl Row {
                 bindings.push(timestamp_binding);
 
                 // Actions, draft message and last message bindings.
+                let message_prefix_binding = gtk::ClosureExpression::new::<String, _, _>(
+                    &[
+                        actions_expression.upcast_ref(),
+                        draft_message_expression.upcast_ref(),
+                        last_message_expression.upcast_ref(),
+                    ],
+                    closure!(|_: Chat,
+                              actions: ChatActionList,
+                              draft_message: Option<BoxedDraftMessage>,
+                              message: Option<Message>| {
+                        actions
+                            .last()
+                            .map(|_| String::new())
+                            .or_else(|| {
+                                draft_message.map(|_| {
+                                    format!(
+                                        "<span foreground=\"#e01b24\">{}:</span>",
+                                        gettext("Draft"),
+                                    )
+                                })
+                            })
+                            .or_else(|| {
+                                message
+                                    .and_then(sender_label)
+                                    .map(|sender_label| format!("{sender_label}:"))
+                            })
+                    }),
+                )
+                .bind(&*imp.message_prefix_label, "label", Some(chat));
+                bindings.push(message_prefix_binding);
+
+                let thumbnail_paintable_binding =
+                    gtk::ClosureExpression::new::<Option<gdk::Texture>, _, _>(
+                        &[
+                            actions_expression.upcast_ref(),
+                            draft_message_expression.upcast_ref(),
+                            last_message_expression.upcast_ref(),
+                        ],
+                        closure!(|_: Chat,
+                                  actions: ChatActionList,
+                                  draft_message: Option<BoxedDraftMessage>,
+                                  message: Option<Message>| {
+                            if actions.n_items() > 0 || draft_message.is_some() {
+                                None
+                            } else {
+                                message.and_then(message_thumbnail_texture)
+                            }
+                        }),
+                    )
+                    .bind(&*imp.message_thumbnail, "paintable", Some(chat));
+                bindings.push(thumbnail_paintable_binding);
+
                 let content_expression =
                     last_message_expression.chain_property::<Message>("content");
-                // FIXME: the sender name should be part of this expression.
+
                 let message_binding = gtk::ClosureExpression::new::<String, _, _>(
                     &[
                         // TODO: In the future, consider making this a bit more efficient: We
@@ -386,13 +452,7 @@ impl Row {
                                 )
                             })
                             .or_else(|| {
-                                draft_message.map(|message| {
-                                    format!(
-                                        "<span foreground=\"#e01b24\">{}:</span> {}",
-                                        gettext("Draft"),
-                                        stringify_draft_message(&message.0)
-                                    )
-                                })
+                                draft_message.map(|message| stringify_draft_message(&message.0))
                             })
                             .or_else(|| {
                                 last_message
@@ -526,11 +586,71 @@ impl Row {
     }
 }
 
+fn sender_label(message: Message) -> Option<String> {
+    use MessageContent::*;
+
+    // Just use a sender label for specific messages.
+    match message.content().0 {
+        MessageText(_) | MessageSticker(_) | MessagePhoto(_) | MessageAudio(_)
+        | MessageAnimation(_) | MessageVideo(_) | MessageDocument(_) | MessageVoiceNote(_)
+        | MessageCall(_) => {}
+        _ => return None,
+    }
+
+    if message.chat().is_own_chat() {
+        if message.is_outgoing() {
+            None
+        } else {
+            message
+                .forward_info()
+                .map(MessageForwardInfo::origin)
+                .map(|forward_origin| match forward_origin {
+                    MessageForwardOrigin::User(user) => stringify_user(user, false),
+                    MessageForwardOrigin::Chat { chat, .. }
+                    | MessageForwardOrigin::Channel { chat, .. } => chat.title(),
+                    MessageForwardOrigin::HiddenUser { sender_name }
+                    | MessageForwardOrigin::MessageImport { sender_name } => sender_name.clone(),
+                })
+        }
+    } else {
+        let show_sender = match message.chat().type_() {
+            ChatType::BasicGroup(_) => true,
+            ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
+            ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
+        };
+        if show_sender {
+            Some(if message.is_outgoing() {
+                gettext("You")
+            } else {
+                escape(&sender_name(message.sender(), false))
+            })
+        } else {
+            None
+        }
+    }
+}
+
+fn message_thumbnail_texture(message: Message) -> Option<gdk::Texture> {
+    match message.content().0 {
+        MessageContent::MessageAnimation(data) => data.animation.minithumbnail,
+        MessageContent::MessageAudio(data) => data.audio.album_cover_minithumbnail,
+        MessageContent::MessageChatChangePhoto(data) => data.photo.minithumbnail,
+        MessageContent::MessageDocument(data) => data.document.minithumbnail,
+        MessageContent::MessagePhoto(data) => data.photo.minithumbnail,
+        MessageContent::MessageVideo(data) => data.video.minithumbnail,
+        _ => None,
+    }
+    .map(|thumbnail| {
+        gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
+            &thumbnail.data,
+        )))
+        .unwrap()
+    })
+}
+
 fn stringify_message(message: Message) -> String {
     match message.content().0 {
-        MessageContent::MessageText(data) => {
-            stringify_message_with_sender_prefix(message, dim_and_escape(&data.text.text))
-        }
+        MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
         MessageContent::MessageBasicGroupChatCreate(_) => {
             gettext!("{} created the group", sender_name(message.sender(), true))
         }
@@ -624,70 +744,50 @@ fn stringify_message(message: Message) -> String {
                 )
             }
         }
-        MessageContent::MessageSticker(data) => stringify_message_with_sender_prefix(
-            message,
-            format!("{} {}", data.sticker.emoji, gettext("Sticker")),
-        ),
-        MessageContent::MessagePhoto(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_photo(&data.caption.text),
-        ),
-        MessageContent::MessageAudio(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text),
-        ),
-        MessageContent::MessageAnimation(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_animation(&data.caption.text),
-        ),
-        MessageContent::MessageVideo(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_video(&data.caption.text),
-        ),
-        MessageContent::MessageDocument(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_document(&data.document.file_name, &data.caption.text),
-        ),
-        MessageContent::MessageVoiceNote(data) => stringify_message_with_sender_prefix(
-            message,
-            stringify_message_voice_note(&data.caption.text),
-        ),
-        MessageContent::MessageCall(data) => {
-            let content = match data.discard_reason {
-                CallDiscardReason::Declined => {
-                    if message.is_outgoing() {
-                        // Telegram Desktop/Android labels declined outgoing calls just as
-                        // "Outgoing call" and puts a red arrow in the message bubble. We should be
-                        // more accurate here.
-                        if data.is_video {
-                            gettext("Declined outgoing video call")
-                        } else {
-                            gettext("Declined outgoing call")
-                        }
-                    // Telegram Android labels declined incoming calls as "Incoming call". Telegram
-                    // Desktop labels it as "Declined call" and is a bit inconsistent with outgoing
-                    // calls ^.
-                    } else if data.is_video {
-                        gettext("Declined incoming video call")
-                    } else {
-                        gettext("Declined incoming call")
-                    }
-                }
-                CallDiscardReason::Disconnected
-                | CallDiscardReason::HungUp
-                | CallDiscardReason::Empty => {
-                    stringify_made_message_call(message.is_outgoing(), data)
-                }
-                CallDiscardReason::Missed => {
-                    if message.is_outgoing() {
-                        gettext("Cancelled call")
-                    } else {
-                        gettext("Missed call")
-                    }
-                }
-            };
-            stringify_message_with_sender_prefix(message, content)
+        MessageContent::MessageSticker(data) => {
+            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
+        MessageContent::MessagePhoto(data) => stringify_message_photo(&data.caption.text),
+        MessageContent::MessageAudio(data) => {
+            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text)
+        }
+        MessageContent::MessageAnimation(data) => stringify_message_animation(&data.caption.text),
+        MessageContent::MessageVideo(data) => stringify_message_video(&data.caption.text),
+        MessageContent::MessageDocument(data) => {
+            stringify_message_document(&data.document.file_name, &data.caption.text)
+        }
+        MessageContent::MessageVoiceNote(data) => stringify_message_voice_note(&data.caption.text),
+        MessageContent::MessageCall(data) => match data.discard_reason {
+            CallDiscardReason::Declined => {
+                if message.is_outgoing() {
+                    // Telegram Desktop/Android labels declined outgoing calls just as
+                    // "Outgoing call" and puts a red arrow in the message bubble. We should be
+                    // more accurate here.
+                    if data.is_video {
+                        gettext("Declined outgoing video call")
+                    } else {
+                        gettext("Declined outgoing call")
+                    }
+                // Telegram Android labels declined incoming calls as "Incoming call". Telegram
+                // Desktop labels it as "Declined call" and is a bit inconsistent with outgoing
+                // calls ^.
+                } else if data.is_video {
+                    gettext("Declined incoming video call")
+                } else {
+                    gettext("Declined incoming call")
+                }
+            }
+            CallDiscardReason::Disconnected
+            | CallDiscardReason::HungUp
+            | CallDiscardReason::Empty => stringify_made_message_call(message.is_outgoing(), data),
+            CallDiscardReason::Missed => {
+                if message.is_outgoing() {
+                    gettext("Cancelled call")
+                } else {
+                    gettext("Missed call")
+                }
+            }
+        },
         MessageContent::MessageChatDeletePhoto => match message.chat().type_() {
             ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
                 gettext("Channel photo removed")
@@ -754,45 +854,6 @@ fn stringify_message(message: Message) -> String {
             gettext!("{} joined Telegram", sender_name(message.sender(), true))
         }
         _ => gettext("Unsupported message"),
-    }
-}
-
-// This function eventually prefixes the specified message content with a sender.
-fn stringify_message_with_sender_prefix(message: Message, content: String) -> String {
-    if message.chat().is_own_chat() {
-        if message.is_outgoing() {
-            content
-        } else {
-            message
-                .forward_info()
-                .map(MessageForwardInfo::origin)
-                .map(|forward_origin| match forward_origin {
-                    MessageForwardOrigin::User(user) => stringify_user(user, false),
-                    MessageForwardOrigin::Chat { chat, .. }
-                    | MessageForwardOrigin::Channel { chat, .. } => chat.title(),
-                    MessageForwardOrigin::HiddenUser { sender_name }
-                    | MessageForwardOrigin::MessageImport { sender_name } => sender_name.clone(),
-                })
-                .map(|sender_name| format!("{}: {}", escape(&sender_name), content))
-                .unwrap_or(content)
-        }
-    } else {
-        let show_sender = match message.chat().type_() {
-            ChatType::BasicGroup(_) => true,
-            ChatType::Supergroup(supergroup) => !supergroup.is_channel(),
-            ChatType::Private(_) | ChatType::Secret(_) => message.is_outgoing(),
-        };
-        if show_sender {
-            let sender_name = if message.is_outgoing() {
-                gettext("You")
-            } else {
-                escape(&sender_name(message.sender(), false))
-            };
-
-            format!("{}: {}", sender_name, content)
-        } else {
-            content
-        }
     }
 }
 
