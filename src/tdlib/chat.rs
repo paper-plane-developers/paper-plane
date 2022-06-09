@@ -66,6 +66,7 @@ mod imp {
         pub(super) title: RefCell<String>,
         pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) last_read_outbox_message_id: Cell<i64>,
+        pub(super) is_marked_as_unread: Cell<bool>,
         pub(super) last_message: RefCell<Option<Message>>,
         pub(super) order: Cell<i64>,
         pub(super) is_pinned: Cell<bool>,
@@ -133,6 +134,13 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpecBoolean::new(
+                        "is-marked-as-unread",
+                        "is-marked-as-unread",
+                        "Whether the chat is marked as unread",
+                        false,
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
@@ -231,6 +239,7 @@ mod imp {
                 "title" => obj.title().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
+                "is-marked-as-unread" => obj.is_marked_as_unread().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
                 "is-pinned" => obj.is_pinned().to_value(),
@@ -271,6 +280,7 @@ impl Chat {
         imp.avatar.replace(avatar);
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
+        imp.is_marked_as_unread.set(td_chat.is_marked_as_unread);
         imp.last_message.replace(last_message);
 
         for position in td_chat.positions {
@@ -424,6 +434,10 @@ impl Chat {
             .last_read_outbox_message_id
             .set(last_read_outbox_message_id);
         self.notify("last-read-outbox-message-id");
+    }
+
+    pub(crate) fn is_marked_as_unread(&self) -> bool {
+        self.imp().is_marked_as_unread.get()
     }
 
     pub(crate) fn last_message(&self) -> Option<Message> {
