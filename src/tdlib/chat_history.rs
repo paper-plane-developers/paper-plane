@@ -144,33 +144,27 @@ impl ChatHistory {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
-        let imp = self.imp();
+        use Update::*;
 
         match update {
-            Update::NewMessage(update) => {
-                self.push_front(update.message);
-            }
-            Update::MessageSendSucceeded(update) => {
-                self.remove(update.old_message_id);
-            }
-            Update::MessageContent(ref update_) => {
-                if let Some(message) = imp.message_map.borrow().get(&update_.message_id) {
-                    message.handle_update(update);
-                }
-            }
-            Update::MessageEdited(ref update_) => {
-                if let Some(message) = imp.message_map.borrow().get(&update_.message_id) {
-                    message.handle_update(update);
-                }
-            }
-            Update::DeleteMessages(update) => {
+            DeleteMessages(update) => {
                 if !update.from_cache {
                     for message_id in update.message_ids {
                         self.remove(message_id);
                     }
                 }
             }
+            MessageContent(ref update_) => self.handle_message_update(update_.message_id, update),
+            MessageEdited(ref update_) => self.handle_message_update(update_.message_id, update),
+            MessageSendSucceeded(update) => self.remove(update.old_message_id),
+            NewMessage(update) => self.push_front(update.message),
             _ => {}
+        }
+    }
+
+    fn handle_message_update(&self, message_id: i64, update: Update) {
+        if let Some(message) = self.imp().message_map.borrow().get(&message_id) {
+            message.handle_update(update);
         }
     }
 
