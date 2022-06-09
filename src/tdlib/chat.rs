@@ -326,21 +326,28 @@ impl Chat {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
+        use Update::*;
+
         match update {
-            Update::NewMessage(_)
-            | Update::MessageSendSucceeded(_)
-            | Update::MessageContent(_)
-            | Update::MessageEdited(_)
-            | Update::DeleteMessages(_) => {
-                self.history().handle_update(update);
+            ChatAction(update) => {
+                self.actions().handle_update(update);
+                // TODO: Remove this at some point. Widgets should use the `items-changed` signal
+                // for updating their state in the future.
+                self.notify("actions");
             }
-            Update::ChatTitle(update) => {
-                self.set_title(update.title);
+            ChatDraftMessage(update) => {
+                self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
+
+                for position in update.positions {
+                    if let enums::ChatList::Main = position.list {
+                        self.set_order(position.order);
+                        self.set_is_pinned(position.is_pinned);
+                        break;
+                    }
+                }
             }
-            Update::ChatPhoto(update) => {
-                self.set_avatar(update.photo.map(Into::into));
-            }
-            Update::ChatLastMessage(update) => {
+            ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
+            ChatLastMessage(update) => {
                 match update.last_message {
                     Some(last_message) => {
                         let message = match self.history().message_by_id(last_message.id) {
@@ -365,49 +372,38 @@ impl Chat {
                     }
                 }
             }
-            Update::ChatNotificationSettings(update) => {
+            ChatNotificationSettings(update) => {
                 self.set_notification_settings(BoxedChatNotificationSettings(
                     update.notification_settings,
                 ));
             }
-            Update::ChatPosition(update) => {
+            ChatPermissions(update) => {
+                self.set_permissions(BoxedChatPermissions(update.permissions))
+            }
+            ChatPhoto(update) => self.set_avatar(update.photo.map(Into::into)),
+            ChatPosition(update) => {
                 if let enums::ChatList::Main = update.position.list {
                     self.set_order(update.position.order);
                     self.set_is_pinned(update.position.is_pinned);
                 }
             }
-            Update::ChatUnreadMentionCount(update) => {
-                self.set_unread_mention_count(update.unread_mention_count);
-            }
-            Update::MessageMentionRead(update) => {
-                self.set_unread_mention_count(update.unread_mention_count);
-            }
-            Update::ChatReadInbox(update) => {
-                self.set_unread_count(update.unread_count);
-            }
-            Update::ChatReadOutbox(update) => {
+            ChatReadInbox(update) => self.set_unread_count(update.unread_count),
+            ChatReadOutbox(update) => {
                 self.set_last_read_outbox_message_id(update.last_read_outbox_message_id);
             }
-            Update::ChatDraftMessage(update) => {
-                self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
-
-                for position in update.positions {
-                    if let enums::ChatList::Main = position.list {
-                        self.set_order(position.order);
-                        self.set_is_pinned(position.is_pinned);
-                        break;
-                    }
-                }
+            ChatTitle(update) => self.set_title(update.title),
+            ChatUnreadMentionCount(update) => {
+                self.set_unread_mention_count(update.unread_mention_count)
             }
-            Update::ChatAction(update) => {
-                self.actions().handle_update(update);
-                // TODO: Remove this at some point. Widgets should use the `items-changed` signal
-                // for updating their state in the future.
-                self.notify("actions");
+            DeleteMessages(_)
+            | MessageContent(_)
+            | MessageEdited(_)
+            | MessageSendSucceeded(_)
+            | NewMessage(_) => {
+                self.history().handle_update(update);
             }
-            Update::ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
-            Update::ChatPermissions(update) => {
-                self.set_permissions(BoxedChatPermissions(update.permissions))
+            MessageMentionRead(update) => {
+                self.set_unread_mention_count(update.unread_mention_count)
             }
             _ => {}
         }
