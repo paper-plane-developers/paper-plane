@@ -122,6 +122,13 @@ mod imp {
                             | glib::ParamFlags::CONSTRUCT
                             | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecBoxed::new(
+                        "avatar",
+                        "Avatar",
+                        "The avatar of this chat",
+                        Avatar::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                     glib::ParamSpecInt64::new(
                         "last-read-outbox-message-id",
                         "Last Read Outbox Message Id",
@@ -129,13 +136,6 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "avatar",
-                        "Avatar",
-                        "The avatar of this chat",
-                        Avatar::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
@@ -273,8 +273,8 @@ mod imp {
                 "type" => obj.type_().to_value(),
                 "is-blocked" => obj.is_blocked().to_value(),
                 "title" => obj.title().to_value(),
-                "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
                 "avatar" => obj.avatar().to_value(),
+                "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
                 "is-pinned" => obj.is_pinned().to_value(),
