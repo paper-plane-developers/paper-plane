@@ -252,7 +252,7 @@ impl MessageRow {
 
             match message_.content().0 {
                 MessageContent::MessagePhoto(_) => {
-                    self.update_or_create_photo_content(message_.clone());
+                    self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
                 MessageContent::MessageSticker(data)
                     if matches!(
@@ -260,16 +260,16 @@ impl MessageRow {
                         StickerType::Static | StickerType::Mask(_)
                     ) =>
                 {
-                    self.update_or_create_sticker_content(message_.clone());
+                    self.update_specific_content::<_, MessageSticker>(message_.clone());
                 }
                 _ => {
-                    self.update_or_create_text_content(message);
+                    self.update_specific_content::<_, MessageText>(message);
                 }
             }
 
             is_outgoing
         } else {
-            self.update_or_create_text_content(message);
+            self.update_specific_content::<_, MessageText>(message);
             false
         };
 
@@ -286,84 +286,6 @@ impl MessageRow {
             content.set_margin_start(0);
             content.set_margin_end(AVATAR_SIZE + SPACING);
             content.remove_css_class("outgoing");
-        }
-    }
-
-    fn update_or_create_photo_content(&self, message: Message) {
-        let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessagePhoto>())
-        {
-            Some(content) => {
-                content.set_message(message);
-            }
-            None => {
-                if let Some(old_content) = &*content_ref {
-                    old_content.unparent();
-                }
-
-                let content = MessagePhoto::new(&message);
-                content.set_hexpand(true);
-                content.set_valign(gtk::Align::Start);
-
-                // Insert at the end
-                content.insert_before(self, gtk::Widget::NONE);
-
-                *content_ref = Some(content.upcast());
-            }
-        }
-    }
-
-    fn update_or_create_sticker_content(&self, message: Message) {
-        let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessageSticker>())
-        {
-            Some(content) => {
-                content.set_message(message);
-            }
-            None => {
-                if let Some(old_content) = &*content_ref {
-                    old_content.unparent();
-                }
-
-                let content = MessageSticker::new(&message);
-                content.set_hexpand(true);
-                content.set_valign(gtk::Align::Start);
-
-                // Insert at the end
-                content.insert_before(self, gtk::Widget::NONE);
-
-                *content_ref = Some(content.upcast());
-            }
-        }
-    }
-
-    fn update_or_create_text_content(&self, message: glib::Object) {
-        let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessageText>())
-        {
-            Some(content) => {
-                content.set_message(message);
-            }
-            None => {
-                if let Some(old_content) = &*content_ref {
-                    old_content.unparent();
-                }
-
-                let content = MessageText::new(&message);
-                content.set_hexpand(true);
-                content.set_valign(gtk::Align::Start);
-
-                // Insert at the end
-                content.insert_before(self, gtk::Widget::NONE);
-
-                *content_ref = Some(content.upcast());
-            }
         }
     }
 
