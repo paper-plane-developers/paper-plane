@@ -158,6 +158,11 @@ impl ChatHistory {
                     message.handle_update(update);
                 }
             }
+            Update::MessageEdited(ref update_) => {
+                if let Some(message) = imp.message_map.borrow().get(&update_.message_id) {
+                    message.handle_update(update);
+                }
+            }
             Update::DeleteMessages(update) => {
                 if !update.from_cache {
                     for message_id in update.message_ids {
