@@ -257,35 +257,35 @@ impl Session {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
+        use Update::*;
+
         match update {
-            Update::NewMessage(_)
-            | Update::MessageSendSucceeded(_)
-            | Update::MessageContent(_)
-            | Update::MessageEdited(_)
-            | Update::NewChat(_)
-            | Update::ChatTitle(_)
-            | Update::ChatPhoto(_)
-            | Update::ChatLastMessage(_)
-            | Update::ChatNotificationSettings(_)
-            | Update::ChatPosition(_)
-            | Update::ChatUnreadMentionCount(_)
-            | Update::MessageMentionRead(_)
-            | Update::ChatReadInbox(_)
-            | Update::ChatReadOutbox(_)
-            | Update::ChatDraftMessage(_)
-            | Update::DeleteMessages(_)
-            | Update::ChatAction(_)
-            | Update::ChatIsBlocked(_)
-            | Update::ChatPermissions(_) => {
+            BasicGroup(_) => self.basic_group_list().handle_update(&update),
+            ChatAction(_)
+            | ChatDraftMessage(_)
+            | ChatIsBlocked(_)
+            | ChatLastMessage(_)
+            | ChatNotificationSettings(_)
+            | ChatPermissions(_)
+            | ChatPhoto(_)
+            | ChatPosition(_)
+            | ChatReadInbox(_)
+            | ChatReadOutbox(_)
+            | ChatTitle(_)
+            | ChatUnreadMentionCount(_)
+            | DeleteMessages(_)
+            | MessageContent(_)
+            | MessageEdited(_)
+            | MessageMentionRead(_)
+            | MessageSendSucceeded(_)
+            | NewChat(_)
+            | NewMessage(_) => {
                 self.chat_list().handle_update(update);
             }
-            Update::UnreadMessageCount(ref update_) => {
-                // TODO: Also handle archived chats
-                if let tdlib::enums::ChatList::Main = update_.chat_list {
-                    self.chat_list().handle_update(update)
-                }
+            File(update) => {
+                self.handle_file_update(update.file);
             }
-            Update::ScopeNotificationSettings(update) => {
+            ScopeNotificationSettings(update) => {
                 let settings = Some(BoxedScopeNotificationSettings(update.notification_settings));
                 match update.scope {
                     NotificationSettingsScope::PrivateChats => {
@@ -299,14 +299,16 @@ impl Session {
                     }
                 }
             }
-            Update::User(_) | Update::UserStatus(_) => {
-                self.user_list().handle_update(update);
+            SecretChat(_) => self.secret_chat_list().handle_update(&update),
+            Supergroup(_) => self.supergroup_list().handle_update(&update),
+            UnreadMessageCount(ref update_) => {
+                // TODO: Also handle archived chats
+                if let tdlib::enums::ChatList::Main = update_.chat_list {
+                    self.chat_list().handle_update(update)
+                }
             }
-            Update::BasicGroup(_) => self.basic_group_list().handle_update(&update),
-            Update::Supergroup(_) => self.supergroup_list().handle_update(&update),
-            Update::SecretChat(_) => self.secret_chat_list().handle_update(&update),
-            Update::File(update) => {
-                self.handle_file_update(update.file);
+            User(_) | UserStatus(_) => {
+                self.user_list().handle_update(update);
             }
             _ => {}
         }
