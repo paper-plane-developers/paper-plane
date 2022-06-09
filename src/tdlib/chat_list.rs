@@ -127,6 +127,7 @@ impl ChatList {
             ChatAction(ref update_) => self.handle_chat_update(update_.chat_id, update),
             ChatDraftMessage(ref update_) => self.handle_chat_update(update_.chat_id, update),
             ChatIsBlocked(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatIsMarkedAsUnread(ref update_) => self.handle_chat_update(update_.chat_id, update),
             ChatLastMessage(ref update_) => self.handle_chat_update(update_.chat_id, update),
             ChatNotificationSettings(ref update_) => {
                 self.handle_chat_update(update_.chat_id, update);

@@ -324,6 +324,7 @@ impl Chat {
                 }
             }
             ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
+            ChatIsMarkedAsUnread(update) => self.set_marked_as_unread(update.is_marked_as_unread),
             ChatLastMessage(update) => {
                 self.set_last_message(update.last_message.map(|m| Message::new(m, self)));
 
@@ -438,6 +439,14 @@ impl Chat {
 
     pub(crate) fn is_marked_as_unread(&self) -> bool {
         self.imp().is_marked_as_unread.get()
+    }
+
+    fn set_marked_as_unread(&self, is_marked_as_unread: bool) {
+        if self.is_marked_as_unread() == is_marked_as_unread {
+            return;
+        }
+        self.imp().is_marked_as_unread.set(is_marked_as_unread);
+        self.notify("is-marked-as-unread");
     }
 
     pub(crate) fn last_message(&self) -> Option<Message> {

@@ -233,6 +233,7 @@ impl Session {
             Update::ChatAction(_)
             | Update::ChatDraftMessage(_)
             | Update::ChatIsBlocked(_)
+            | Update::ChatIsMarkedAsUnread(_)
             | Update::ChatLastMessage(_)
             | Update::ChatNotificationSettings(_)
             | Update::ChatPermissions(_)
