@@ -84,6 +84,22 @@ glib::wrapper! {
         @extends gtk::Widget;
 }
 
+pub(crate) trait MessageBaseExt:
+    glib::object::IsClass + IsA<glib::Object> + IsA<gtk::Widget> + IsA<MessageBase>
+{
+    type Message: glib::IsA<glib::Object>;
+
+    fn new(message: &Self::Message) -> Self {
+        glib::Object::new(&[("message", message)]).expect("Failed to create MessageBase")
+    }
+
+    fn message(&self) -> Self::Message {
+        self.property("message")
+    }
+
+    fn set_message(&self, message: Self::Message);
+}
+
 pub(crate) trait MessageBaseImpl: WidgetImpl + ObjectImpl + 'static {}
 
 unsafe impl<T: MessageBaseImpl> IsSubclassable<T> for MessageBase {
