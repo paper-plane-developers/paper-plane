@@ -76,6 +76,12 @@ mod imp {
             klass.install_action("sidebar-row.unpin", None, move |widget, _, _| {
                 widget.toggle_chat_is_pinned()
             });
+            klass.install_action("sidebar-row.mark-as-unread", None, move |widget, _, _| {
+                widget.toggle_chat_marked_as_unread()
+            });
+            klass.install_action("sidebar-row.mark-as-read", None, move |widget, _, _| {
+                widget.toggle_chat_marked_as_unread()
+            });
 
             Avatar::static_type();
         }
@@ -184,6 +190,20 @@ impl Row {
             spawn(async move {
                 if let Err(e) = chat.toggle_is_pinned().await {
                     log::warn!("Error on toggling chat's pinned state: {e:?}");
+                }
+            });
+        }
+    }
+
+    fn toggle_chat_marked_as_unread(&self) {
+        if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
+            spawn(async move {
+                if let Err(e) = if chat.unread_count() > 0 || chat.is_marked_as_unread() {
+                    chat.mark_as_read().await
+                } else {
+                    chat.mark_as_unread().await
+                } {
+                    log::warn!("Error on toggling chat's unread state: {e:?}");
                 }
             });
         }
@@ -568,22 +588,45 @@ impl Row {
             Some(chat) => {
                 self.update_actions_for_chat(chat);
                 let handler_id = chat.connect_notify_local(
-                    Some("is-pinned"),
-                    clone!(@weak self as obj => move |chat, _| obj.update_actions_for_chat(chat)),
+                    None,
+                    clone!(@weak self as obj => move |chat, pspec| {
+                        if pspec.name() == "is-pinned"
+                            || pspec.name() == "is-marked-as-unread"
+                            || pspec.name() == "unread-count"
+                        {
+                            obj.update_actions_for_chat(chat)
+                        }
+                    }),
                 );
                 self.imp().chat_notify_handler_id.replace(Some(handler_id));
             }
-            None => self.update_pin_actions(false, false),
+            None => {
+                self.update_pin_actions(false, false);
+                self.update_mark_as_unread_actions(false, false);
+            }
         }
     }
 
     fn update_actions_for_chat(&self, chat: &Chat) {
         self.update_pin_actions(!chat.is_pinned(), chat.is_pinned());
+        if chat.unread_count() > 0 {
+            self.update_mark_as_unread_actions(false, true);
+        } else {
+            self.update_mark_as_unread_actions(
+                !chat.is_marked_as_unread(),
+                chat.is_marked_as_unread(),
+            );
+        }
     }
 
     fn update_pin_actions(&self, pin: bool, unpin: bool) {
         self.action_set_enabled("sidebar-row.pin", pin);
         self.action_set_enabled("sidebar-row.unpin", unpin);
+    }
+
+    fn update_mark_as_unread_actions(&self, unread: bool, read: bool) {
+        self.action_set_enabled("sidebar-row.mark-as-unread", unread);
+        self.action_set_enabled("sidebar-row.mark-as-read", read);
     }
 }
 

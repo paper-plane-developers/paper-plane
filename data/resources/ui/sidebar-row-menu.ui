@@ -12,6 +12,16 @@
         <attribute name="action">sidebar-row.unpin</attribute>
         <attribute name="hidden-when">action-disabled</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">_Mark as Unread</attribute>
+        <attribute name="action">sidebar-row.mark-as-unread</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Mark as _Read</attribute>
+        <attribute name="action">sidebar-row.mark-as-read</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
     </section>
   </menu>
   <object class="GtkPopoverMenu" id="menu">
