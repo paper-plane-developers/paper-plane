@@ -138,106 +138,40 @@ impl ChatList {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
-        let imp = self.imp();
+        use Update::*;
 
         match update {
-            Update::UnreadMessageCount(ref update) => {
-                self.set_unread_count(update.unread_count);
+            ChatAction(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatDraftMessage(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatIsBlocked(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatLastMessage(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatNotificationSettings(ref update_) => {
+                self.handle_chat_update(update_.chat_id, update);
             }
-            Update::NewMessage(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.message.chat_id) {
-                    chat.handle_update(update);
-                }
+            ChatPermissions(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatPhoto(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatPosition(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatReadInbox(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatReadOutbox(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatTitle(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            ChatUnreadMentionCount(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            DeleteMessages(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            MessageContent(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            MessageEdited(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            MessageMentionRead(ref update_) => self.handle_chat_update(update_.chat_id, update),
+            MessageSendSucceeded(ref update_) => {
+                self.handle_chat_update(update_.message.chat_id, update);
             }
-            Update::MessageSendSucceeded(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.message.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::MessageContent(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::MessageEdited(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::NewChat(update) => {
-                self.insert_chat(update.chat);
-            }
-            Update::ChatTitle(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatPhoto(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatLastMessage(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatNotificationSettings(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatPosition(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatUnreadMentionCount(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::MessageMentionRead(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatReadInbox(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatReadOutbox(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatDraftMessage(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::DeleteMessages(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatAction(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update);
-                }
-            }
-            Update::ChatIsBlocked(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update)
-                }
-            }
-            Update::ChatPermissions(ref update_) => {
-                if let Some(chat) = imp.list.borrow().get(&update_.chat_id) {
-                    chat.handle_update(update)
-                }
-            }
+            NewChat(update) => self.insert_chat(update.chat),
+            NewMessage(ref update_) => self.handle_chat_update(update_.message.chat_id, update),
+            UnreadMessageCount(ref update) => self.set_unread_count(update.unread_count),
             _ => {}
+        }
+    }
+
+    fn handle_chat_update(&self, chat_id: i64, update: Update) {
+        if let Some(chat) = self.imp().list.borrow().get(&chat_id) {
+            chat.handle_update(update);
         }
     }
 
