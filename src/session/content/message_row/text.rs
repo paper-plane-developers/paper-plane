@@ -13,6 +13,8 @@ use crate::session::content::message_row::{
 use crate::tdlib::{BoxedMessageContent, Chat, ChatType, Message, MessageSender, SponsoredMessage};
 use crate::utils::parse_formatted_text;
 
+use super::base::MessageBaseExt;
+
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
@@ -74,9 +76,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "message" => obj.message().to_value(),
+                "message" => self.message.borrow().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -91,16 +93,10 @@ glib::wrapper! {
         @extends gtk::Widget, MessageBase;
 }
 
-impl MessageText {
-    pub(crate) fn new(message: &glib::Object) -> Self {
-        glib::Object::new(&[("message", message)]).expect("Failed to create MessageText")
-    }
+impl MessageBaseExt for MessageText {
+    type Message = glib::Object;
 
-    pub(crate) fn message(&self) -> glib::Object {
-        self.imp().message.borrow().clone().unwrap()
-    }
-
-    pub(crate) fn set_message(&self, message: glib::Object) {
+    fn set_message(&self, message: Self::Message) {
         let imp = self.imp();
 
         if imp.message.borrow().as_ref() == Some(&message) {
