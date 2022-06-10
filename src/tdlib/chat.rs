@@ -3,6 +3,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{self, ChatType as TdChatType, Update};
 use tdlib::types::Chat as TelegramChat;
+use tdlib::{functions, types};
 
 use crate::tdlib::{
     Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
@@ -603,5 +604,15 @@ impl Chat {
         }
         self.imp().permissions.replace(Some(permissions));
         self.notify("permissions");
+    }
+
+    pub(crate) async fn toggle_is_pinned(&self) -> Result<enums::Ok, types::Error> {
+        functions::toggle_chat_is_pinned(
+            enums::ChatList::Main,
+            self.id(),
+            !self.is_pinned(),
+            self.session().client_id(),
+        )
+        .await
     }
 }
