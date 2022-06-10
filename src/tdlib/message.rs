@@ -188,6 +188,9 @@ impl Message {
                 self.set_content(new_content);
             }
             Update::MessageEdited(data) => self.set_is_edited(data.edit_date > 0),
+            Update::MessageInteractionInfo(data) => {
+                self.interaction_info().update(data.interaction_info)
+            }
             _ => {}
         }
     }

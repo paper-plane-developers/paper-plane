@@ -276,6 +276,11 @@ impl Chat {
                     message.handle_update(update);
                 }
             }
+            MessageInteractionInfo(ref data) => {
+                if let Some(message) = self.message(data.message_id) {
+                    message.handle_update(update);
+                }
+            }
             MessageSendSucceeded(data) => {
                 let mut messages = imp.messages.borrow_mut();
                 let old_message = messages.remove(&data.old_message_id);
