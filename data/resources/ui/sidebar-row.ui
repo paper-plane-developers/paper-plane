@@ -80,6 +80,7 @@
                 <child>
                   <object class="SidebarMiniThumbnail" id="message_thumbnail">
                     <property name="visible">False</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
                 <child>
