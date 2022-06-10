@@ -586,4 +586,20 @@ impl Chat {
         )
         .await
     }
+
+    pub(crate) async fn mark_as_read(&self) -> Result<enums::Ok, types::Error> {
+        if let Some(message) = self.last_message() {
+            functions::view_messages(
+                self.id(),
+                0,
+                vec![message.id()],
+                true,
+                self.session().client_id(),
+            )
+            .await?;
+        }
+
+        functions::toggle_chat_is_marked_as_unread(self.id(), false, self.session().client_id())
+            .await
+    }
 }
