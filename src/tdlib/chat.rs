@@ -128,7 +128,9 @@ mod imp {
                         "Avatar",
                         "The avatar of this chat",
                         Avatar::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt64::new(
                         "last-read-outbox-message-id",
@@ -137,14 +139,18 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecObject::new(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
                         Message::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt64::new(
                         "order",
@@ -153,14 +159,18 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-pinned",
                         "Is Pinned",
                         "The parameter to determine if this chat is pinned in the chat list",
                         false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READWRITE
+                            | glib::ParamFlags::CONSTRUCT
+                            | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecInt::new(
                         "unread-mention-count",
