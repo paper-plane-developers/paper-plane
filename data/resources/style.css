@@ -212,6 +212,10 @@ messagebubble.media messagelabel {
   margin: 6px 9px;
 }
 
+messageindicators image {
+  -gtk-icon-size: 14px;
+}
+
 messagebubble.media:not(.with-label) messageindicators,
 messagesticker messageindicators,
 .osd-indicator {

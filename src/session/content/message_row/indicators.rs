@@ -4,6 +4,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
+use crate::tdlib::{ChatType, Message};
+
 mod imp {
     use super::*;
     use glib::clone;
@@ -16,6 +18,18 @@ mod imp {
             spacing: 3;
         };
 
+        Box reply_count_box {
+            spacing: 3;
+
+            Image {
+                icon-name: "mail-reply-sender-symbolic";
+            }
+
+            Label {
+                label: bind MessageIndicators.model.reply-count;
+            }
+        }
+
         Label {
             label: bind MessageIndicators.model.message-info;
         }
@@ -27,6 +41,8 @@ mod imp {
     "#)]
     pub(crate) struct MessageIndicators {
         pub(super) model: MessageIndicatorsModel,
+        #[template_child]
+        pub(super) reply_count_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub(super) sending_state_icon: TemplateChild<gtk::Image>,
     }
@@ -89,7 +105,15 @@ mod imp {
             self.model.connect_notify_local(
                 Some("message"),
                 clone!(@weak obj => move |_, _| {
+                    obj.update_reply_count_visibility();
                     obj.notify("message");
+                }),
+            );
+
+            self.model.connect_notify_local(
+                Some("reply-count"),
+                clone!(@weak obj => move |_, _| {
+                    obj.update_reply_count_visibility();
                 }),
             );
 
@@ -128,6 +152,20 @@ impl MessageIndicators {
 
     pub(crate) fn set_message(&self, message: glib::Object) {
         self.imp().model.set_message(message);
+    }
+
+    fn update_reply_count_visibility(&self) {
+        let is_channel_message = self.message()
+            .downcast::<Message>()
+            .ok()
+            .filter(|message| {
+                matches!(message.chat().type_(), ChatType::Supergroup(data) if data.is_channel())
+            })
+            .is_some();
+
+        self.imp()
+            .reply_count_box
+            .set_visible(!is_channel_message && self.model().reply_count() > 0);
     }
 
     pub(crate) fn model(&self) -> &MessageIndicatorsModel {
