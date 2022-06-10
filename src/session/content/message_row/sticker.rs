@@ -14,6 +14,8 @@ use crate::session::content::message_row::{
 use crate::tdlib::Message;
 use crate::utils::spawn;
 
+use super::base::MessageBaseExt;
+
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
@@ -72,9 +74,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "message" => obj.message().to_value(),
+                "message" => self.message.borrow().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -89,16 +91,10 @@ glib::wrapper! {
         @extends gtk::Widget, MessageBase;
 }
 
-impl MessageSticker {
-    pub(crate) fn new(message: &Message) -> Self {
-        glib::Object::new(&[("message", message)]).expect("Failed to create MessageSticker")
-    }
+impl MessageBaseExt for MessageSticker {
+    type Message = Message;
 
-    pub(crate) fn message(&self) -> Message {
-        self.imp().message.borrow().clone().unwrap()
-    }
-
-    pub(crate) fn set_message(&self, message: Message) {
+    fn set_message(&self, message: Self::Message) {
         let imp = self.imp();
 
         if imp.message.borrow().as_ref() == Some(&message) {
@@ -141,7 +137,9 @@ impl MessageSticker {
         imp.message.replace(Some(message));
         self.notify("message");
     }
+}
 
+impl MessageSticker {
     fn load_sticker(&self, path: &str) {
         let picture = &*self.imp().picture;
         let file = gio::File::for_path(path);

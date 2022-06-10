@@ -9,7 +9,7 @@ mod sticker;
 mod sticker_picture;
 mod text;
 
-use self::base::{MessageBase, MessageBaseImpl};
+use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
 use self::indicators::MessageIndicators;
 use self::label::MessageLabel;
 use self::media::Media;
@@ -252,7 +252,7 @@ impl MessageRow {
 
             match message_.content().0 {
                 MessageContent::MessagePhoto(_) => {
-                    self.update_or_create_photo_content(message_.clone());
+                    self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
                 MessageContent::MessageSticker(data)
                     if matches!(
@@ -260,16 +260,16 @@ impl MessageRow {
                         StickerType::Static | StickerType::Mask(_)
                     ) =>
                 {
-                    self.update_or_create_sticker_content(message_.clone());
+                    self.update_specific_content::<_, MessageSticker>(message_.clone());
                 }
                 _ => {
-                    self.update_or_create_text_content(message);
+                    self.update_specific_content::<_, MessageText>(message);
                 }
             }
 
             is_outgoing
         } else {
-            self.update_or_create_text_content(message);
+            self.update_specific_content::<_, MessageText>(message);
             false
         };
 
@@ -289,12 +289,12 @@ impl MessageRow {
         }
     }
 
-    fn update_or_create_photo_content(&self, message: Message) {
+    fn update_specific_content<M, B>(&self, message: M)
+    where
+        B: MessageBaseExt<Message = M>,
+    {
         let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessagePhoto>())
-        {
+        match content_ref.as_ref().and_then(|c| c.downcast_ref::<B>()) {
             Some(content) => {
                 content.set_message(message);
             }
@@ -303,59 +303,7 @@ impl MessageRow {
                     old_content.unparent();
                 }
 
-                let content = MessagePhoto::new(&message);
-                content.set_hexpand(true);
-                content.set_valign(gtk::Align::Start);
-
-                // Insert at the end
-                content.insert_before(self, gtk::Widget::NONE);
-
-                *content_ref = Some(content.upcast());
-            }
-        }
-    }
-
-    fn update_or_create_sticker_content(&self, message: Message) {
-        let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessageSticker>())
-        {
-            Some(content) => {
-                content.set_message(message);
-            }
-            None => {
-                if let Some(old_content) = &*content_ref {
-                    old_content.unparent();
-                }
-
-                let content = MessageSticker::new(&message);
-                content.set_hexpand(true);
-                content.set_valign(gtk::Align::Start);
-
-                // Insert at the end
-                content.insert_before(self, gtk::Widget::NONE);
-
-                *content_ref = Some(content.upcast());
-            }
-        }
-    }
-
-    fn update_or_create_text_content(&self, message: glib::Object) {
-        let mut content_ref = self.imp().content.borrow_mut();
-        match content_ref
-            .as_ref()
-            .and_then(|c| c.downcast_ref::<MessageText>())
-        {
-            Some(content) => {
-                content.set_message(message);
-            }
-            None => {
-                if let Some(old_content) = &*content_ref {
-                    old_content.unparent();
-                }
-
-                let content = MessageText::new(&message);
+                let content = B::new(&message);
                 content.set_hexpand(true);
                 content.set_valign(gtk::Align::Start);
 
