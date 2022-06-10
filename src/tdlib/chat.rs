@@ -602,4 +602,9 @@ impl Chat {
         functions::toggle_chat_is_marked_as_unread(self.id(), false, self.session().client_id())
             .await
     }
+
+    pub(crate) async fn mark_as_unread(&self) -> Result<enums::Ok, types::Error> {
+        functions::toggle_chat_is_marked_as_unread(self.id(), true, self.session().client_id())
+            .await
+    }
 }
