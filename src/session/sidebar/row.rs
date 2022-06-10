@@ -5,9 +5,8 @@ use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
 use std::borrow::Cow;
 use tdlib::enums::{
-    CallDiscardReason, ChatList, InputMessageContent, MessageContent, MessageSendingState, UserType,
+    CallDiscardReason, InputMessageContent, MessageContent, MessageSendingState, UserType,
 };
-use tdlib::functions;
 use tdlib::types::{DraftMessage, MessageCall};
 
 use crate::tdlib::{
@@ -179,14 +178,7 @@ impl Row {
     fn toggle_chat_is_pinned(&self) {
         if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
             spawn(async move {
-                if let Err(e) = functions::toggle_chat_is_pinned(
-                    ChatList::Main,
-                    chat.id(),
-                    !chat.is_pinned(),
-                    chat.session().client_id(),
-                )
-                .await
-                {
+                if let Err(e) = chat.toggle_is_pinned().await {
                     log::warn!("Error on toggling chat's pinned state: {e:?}");
                 }
             });
