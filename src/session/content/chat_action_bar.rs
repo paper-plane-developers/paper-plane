@@ -1,6 +1,4 @@
 use anyhow::anyhow;
-use ashpd::desktop::file_chooser::{FileChooserProxy, FileFilter, OpenFileOptions};
-use ashpd::{zbus, WindowIdentifier};
 use gettextrs::gettext;
 use glib::{clone, closure};
 use gtk::prelude::*;
@@ -209,29 +207,27 @@ impl ChatActionBar {
     }
 
     async fn select_file(&self) {
-        let connection = zbus::Connection::session().await.unwrap();
-        let proxy = FileChooserProxy::new(&connection).await.unwrap();
-        let native = self.native().unwrap();
-        let identifier = WindowIdentifier::from_native(&native).await;
-        let mut filter = FileFilter::new(&gettext("Image"));
+        let parent_window = self.root().unwrap().downcast::<gtk::Window>().unwrap();
+        let file_chooser = gtk::FileChooserNative::new(
+            Some(&gettext("Open File")),
+            Some(&parent_window),
+            gtk::FileChooserAction::Open,
+            Some(&gettext("_Open")),
+            Some(&gettext("_Cancel")),
+        );
+        let filter = gtk::FileFilter::new();
 
+        filter.set_name(Some(&gettext("Images")));
         for mime in PHOTO_MIME_TYPES {
-            filter = filter.mimetype(mime);
+            filter.add_mime_type(mime);
         }
+        file_chooser.add_filter(&filter);
 
-        let options = OpenFileOptions::default().modal(true).add_filter(filter);
-
-        if let Ok(files) = proxy
-            .open_file(&identifier, &gettext("Select File"), options)
-            .await
-        {
-            let parent_window = self.root().unwrap().downcast().ok();
-            let chat = self.chat().unwrap();
-            let file = gio::File::for_uri(&files.uris()[0]);
-
-            if let Some(path) = file.path() {
-                let path = path.to_str().unwrap().to_string();
-                SendPhotoDialog::new(&parent_window, chat, path).present();
+        if file_chooser.run_future().await == gtk::ResponseType::Accept {
+            if let Some(file) = file_chooser.file() {
+                let path = file.path().unwrap().to_str().unwrap().to_string();
+                let chat = self.chat().unwrap();
+                SendPhotoDialog::new(&Some(parent_window), chat, path).present();
             }
         }
     }
