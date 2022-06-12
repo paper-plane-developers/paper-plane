@@ -128,6 +128,22 @@
             ]
         },
         {
+            "name": "libshumate",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dgir=false",
+                "-Dvapi=false",
+                "-Dgtk_doc=false"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libshumate/",
+                    "tag": "1.0.0.alpha.1"
+                }
+            ]
+        },
+        {
             "name": "telegrand",
             "buildsystem": "meson",
             "run-tests": true,
