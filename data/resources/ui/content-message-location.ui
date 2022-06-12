@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessageLocation" parent="ContentMessageBase">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="orientation">vertical</property>
+      </object>
+    </property>
+    <property name="overflow">hidden</property>
+    <style>
+      <class name="message-bubble"/>
+    </style>
+    <child>
+      <object class="GtkOverlay">
+        <child>
+          <object class="ContentMessageMap" id="map">
+            <property name="name">map</property>
+            <property name="overflow">hidden</property>
+          </object>
+        </child>
+        <child type="overlay">
+          <object class="MessageIndicators" id="indicators">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox" id="caption_box">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <style>
+              <class name="live-location-caption"/>
+            </style>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">3</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Live Location</property>
+                    <property name="xalign">0.0</property>
+                    <style>
+                      <class name="heading"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="last_updated_label">
+                    <property name="xalign">0.0</property>
+                    <style>
+                      <class name="caption"/>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="expire_label">
+                <property name="hexpand">True</property>
+                <property name="xalign">1.0</property>
+                <style>
+                  <class name="dim-label"/>
+                  <class name="numeric"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkProgressBar" id="progress_bar">
+            <property name="inverted">True</property>
+            <property name="valign">start</property>
+            <style>
+              <class name="osd"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
