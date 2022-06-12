@@ -14,6 +14,7 @@ dependency('glib-2.0', version: '>= 2.72')
 dependency('gio-2.0', version: '>= 2.72')
 dependency('gtk4', version: '>= 4.12')
 dependency('libadwaita-1', version: '>= 1.4')
+dependency('shumate-1.0', version: '>= 1')
 dependency('tdjson', version: '== 1.8.14')
 
 glib_compile_resources = find_program('glib-compile-resources', required: true)
