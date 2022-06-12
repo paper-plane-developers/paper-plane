@@ -271,6 +271,13 @@ fn sender_name(sender: &TelegramMessageSender, chat: &Chat) -> String {
 fn stringify_message_content(message: &TelegramMessage, chat: &Chat) -> String {
     match &message.content {
         MessageContent::MessageText(data) => data.text.text.clone(),
+        MessageContent::MessageLocation(data) => {
+            if data.live_period > 0 {
+                gettext("Live Location")
+            } else {
+                gettext("Location")
+            }
+        }
         MessageContent::MessageSticker(data) => {
             format!("{} {}", data.sticker.emoji, gettext("Sticker"))
         }
