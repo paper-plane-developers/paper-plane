@@ -2,6 +2,7 @@ mod base;
 mod indicators;
 mod indicators_model;
 mod label;
+mod map;
 mod media;
 mod media_picture;
 mod photo;
