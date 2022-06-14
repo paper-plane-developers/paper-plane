@@ -165,6 +165,10 @@ messagemap .marker {
   color: @red_3;
 }
 
+avatarmapmarker .hull {
+  color: @accent_bg_color;
+}
+
 messageindicators {
   font-size: x-small;
   font-feature-settings: "tnum";
