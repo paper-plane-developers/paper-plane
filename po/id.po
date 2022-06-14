@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2021-08-25 04:33+0000\n"
-"Last-Translator: liimee <alt3753.7@gmail.com>\n"
+"PO-Revision-Date: 2022-06-15 04:19+0000\n"
+"Last-Translator: ᅟ <rmnscnce@ya.ru>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/id/>\n"
 "Language: id\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.8.1-dev\n"
+"X-Generator: Weblate 4.13-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -51,7 +51,7 @@ msgstr "Perilaku maksimal jendela default"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr ""
+msgstr "Sesi yang akhir-akhir ini digunakan"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
 msgid ""
