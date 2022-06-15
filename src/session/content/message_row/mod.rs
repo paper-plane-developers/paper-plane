@@ -278,7 +278,7 @@ impl MessageRow {
 
         if is_outgoing {
             content.set_halign(gtk::Align::End);
-            content.set_margin_start(AVATAR_SIZE + SPACING);
+            content.set_margin_start((AVATAR_SIZE + SPACING) * 2);
             content.set_margin_end(0);
             content.add_css_class("outgoing");
         } else {
