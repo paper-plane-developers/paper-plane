@@ -26,24 +26,74 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
-            <property name="vexpand">True</property>
-            <property name="hscrollbar-policy">never</property>
-            <style>
-              <class name="view"/>
-              <class name="chat-history"/>
-            </style>
-            <property name="child">
-              <object class="AdwClampScrollable">
-                <property name="maximum-size">700</property>
-                <property name="tightening-threshold">500</property>
-                <property name="vscroll-policy">natural</property>
+          <object class="GtkOverlay">
+            <child type="overlay">
+              <object class="GtkRevealer">
+                <property name="transition-type">slide-up</property>
+                <property name="reveal-child" bind-source="ContentChatHistory" bind-property="sticky" bind-flags="sync-create|invert-boolean"/>
+                <property name="valign">end</property>
+                <property name="halign">end</property>
+                <child>
+                  <object class="GtkOverlay">
+                    <child type="overlay">
+                      <object class="GtkLabel">
+                        <property name="halign">center</property>
+                        <property name="valign">start</property>
+                        <property name="ellipsize">middle</property>
+                        <binding name="label">
+                          <lookup name="unread-count" type="Chat">
+                            <lookup name="chat">ContentChatHistory</lookup>
+                          </lookup>
+                        </binding>
+                        <binding name="visible">
+                          <lookup name="unread-count" type="Chat">
+                            <lookup name="chat">ContentChatHistory</lookup>
+                          </lookup>
+                        </binding>
+                        <style>
+                          <class name="unread-count"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="halign">center</property>
+                        <property name="valign">end</property>
+                        <property name="icon-name">go-bottom-symbolic</property>
+                        <property name="action-name">chat-history.scroll-down</property>
+                        <accessibility>
+                          <property name="label" translatable="yes">Scroll to bottom</property>
+                        </accessibility>
+                        <style>
+                          <class name="osd"/>
+                          <class name="circular"/>
+                          <class name="scroll-to-bottom-button"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="scrolled_window">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <style>
+                  <class name="view"/>
+                  <class name="chat-history"/>
+                </style>
                 <property name="child">
-                  <object class="GtkListView" id="list_view">
-                    <property name="reversed">True</property>
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
+                  <object class="AdwClampScrollable">
+                    <property name="maximum-size">700</property>
+                    <property name="tightening-threshold">500</property>
+                    <property name="vscroll-policy">natural</property>
+                    <property name="child">
+                      <object class="GtkListView" id="list_view">
+                        <property name="reversed">True</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -60,12 +110,14 @@
   </template>
 </interface>
                         ]]></property>
+                          </object>
+                        </property>
                       </object>
                     </property>
                   </object>
                 </property>
               </object>
-            </property>
+            </child>
           </object>
         </child>
         <child>
