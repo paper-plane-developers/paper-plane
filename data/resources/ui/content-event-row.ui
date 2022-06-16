@@ -5,7 +5,11 @@
       <class name="event-row"/>
     </style>
     <property name="child">
-      <object class="GtkLabel" id="label"/>
+      <object class="GtkLabel" id="label">
+        <property name="justify">center</property>
+        <property name="wrap">True</property>
+        <property name="wrap-mode">word-char</property>
+      </object>
     </property>
   </template>
 </interface>

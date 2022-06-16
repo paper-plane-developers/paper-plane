@@ -913,15 +913,11 @@ fn stringify_draft_message(message: &DraftMessage) -> String {
 }
 
 fn stringify_message_animation(caption_text: &str) -> String {
-    format!(
-        "{}{}",
-        gettext("GIF"),
-        if caption_text.is_empty() {
-            String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
-        }
-    )
+    if caption_text.is_empty() {
+        gettext("GIF")
+    } else {
+        dim_and_escape(caption_text)
+    }
 }
 
 fn stringify_message_audio(performer: &str, title: &str, caption_text: &str) -> String {
@@ -950,27 +946,19 @@ fn stringify_message_document(file_name: &str, caption_text: &str) -> String {
 }
 
 fn stringify_message_photo(caption_text: &str) -> String {
-    format!(
-        "{}{}",
-        gettext("Photo"),
-        if caption_text.is_empty() {
-            String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
-        }
-    )
+    if caption_text.is_empty() {
+        gettext("Photo")
+    } else {
+        dim_and_escape(caption_text)
+    }
 }
 
 fn stringify_message_video(caption_text: &str) -> String {
-    format!(
-        "{}{}",
-        gettext("Video"),
-        if caption_text.is_empty() {
-            String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
-        }
-    )
+    if caption_text.is_empty() {
+        gettext("Video")
+    } else {
+        dim_and_escape(caption_text)
+    }
 }
 
 fn stringify_message_voice_note(caption_text: &str) -> String {

@@ -70,6 +70,7 @@
                   <object class="GtkLabel" id="message_prefix_label">
                     <property name="single-line-mode">True</property>
                     <property name="use-markup">True</property>
+                    <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <style>
                       <class name="message"/>
@@ -79,6 +80,7 @@
                 <child>
                   <object class="SidebarMiniThumbnail" id="message_thumbnail">
                     <property name="visible">False</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
                 <child>
