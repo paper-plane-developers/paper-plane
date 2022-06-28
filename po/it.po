@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-20 15:54+0100\n"
-"PO-Revision-Date: 2022-02-01 22:52+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2022-06-29 06:16+0000\n"
+"Last-Translator: Michael Moroni <michaelmoroni@disroot.org>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -47,7 +47,7 @@ msgstr "Altezza predefinita della finestra"
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 #: data/com.github.melix99.telegrand.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Comportamento predefinito della massimizzazione della finestra"
+msgstr "Comportamento predefinito della finestra a schermo intero"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
@@ -57,7 +57,7 @@ msgstr "Sessioni recentemente usate"
 msgid ""
 "The ordered list of recently used sessions by their database directory name"
 msgstr ""
-"La lista ordinata delle sessioni recentemente usate secondo il loro nome di "
+"La lista delle sessioni recentemente usate, ordinata secondo il nome nel "
 "database"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
