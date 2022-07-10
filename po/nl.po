@@ -1,0 +1,429 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the telegrand package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: telegrand\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-20 15:54+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/com.github.melix99.telegrand.desktop.in.in:3
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
+msgid "Telegrand"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:4
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+msgid "A Telegram client optimized for the GNOME desktop"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:6
+#: data/com.github.melix99.telegrand.gschema.xml.in:7
+msgid "Default window width"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:11
+#: data/com.github.melix99.telegrand.gschema.xml.in:12
+msgid "Default window height"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:16
+#: data/com.github.melix99.telegrand.gschema.xml.in:17
+msgid "Default window maximized behaviour"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:21
+msgid "Recently used sessions"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:22
+msgid ""
+"The ordered list of recently used sessions by their database directory name"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/resources/ui/preferences-window.ui:9
+msgid "Color Scheme"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.gschema.xml.in:32
+msgid "The color scheme to be used in the app"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+msgid "Main window"
+msgstr ""
+
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
+msgid "Marco Melorio"
+msgstr ""
+
+#: data/resources/ui/add-account-row.ui:6
+msgid "_Production Server"
+msgstr ""
+
+#: data/resources/ui/add-account-row.ui:10
+msgid "_Test Server"
+msgstr ""
+
+#: data/resources/ui/add-account-row.ui:33
+msgid "_Add Account"
+msgstr ""
+
+#: data/resources/ui/content.ui:23
+msgid "No Chat Selected"
+msgstr ""
+
+#: data/resources/ui/content.ui:24
+msgid "Select a chat to start messaging."
+msgstr ""
+
+#: data/resources/ui/content-chat-history.ui:94
+msgid "View Info"
+msgstr ""
+
+#: data/resources/ui/content-user-dialog.ui:54
+msgid "Mobile"
+msgstr ""
+
+#: data/resources/ui/content-user-dialog.ui:60
+msgid "Username"
+msgstr ""
+
+#: data/resources/ui/login.ui:47
+msgid "_Previous"
+msgstr ""
+
+#: data/resources/ui/login.ui:76
+msgid "_Next"
+msgstr ""
+
+#: data/resources/ui/login.ui:105
+msgid "Welcome to Telegrand"
+msgstr ""
+
+#: data/resources/ui/login.ui:124
+msgid "Phone Number"
+msgstr ""
+
+#: data/resources/ui/login.ui:146
+msgid "_Log in using QR code"
+msgstr ""
+
+#: data/resources/ui/login.ui:205
+msgid "Scan Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:206
+msgid "Scan this code with another Telegram app logged into your account."
+msgstr ""
+
+#: data/resources/ui/login.ui:228
+msgid "Enter the Verification Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:247 data/resources/ui/login.ui:660
+msgid "Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:286
+msgid "Register New Account"
+msgstr ""
+
+#: data/resources/ui/login.ui:306
+msgid "First Name"
+msgstr ""
+
+#: data/resources/ui/login.ui:323
+msgid "Last Name"
+msgstr ""
+
+#: data/resources/ui/login.ui:362
+msgid ""
+"By signing up,\n"
+"you agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+
+#: data/resources/ui/login.ui:378
+msgid "Enter Your Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:397
+msgid "Password"
+msgstr ""
+
+#: data/resources/ui/login.ui:412
+msgid "Hint"
+msgstr ""
+
+#: data/resources/ui/login.ui:435
+msgid "_Forgot password?"
+msgstr ""
+
+#: data/resources/ui/login.ui:498
+msgid "Use Recovery Code"
+msgstr ""
+
+#: data/resources/ui/login.ui:511
+msgid ""
+"When you set your cloud password, you provided a recovery email address. We "
+"can send you a code to this email address that you can use to reset your "
+"password."
+msgstr ""
+
+#: data/resources/ui/login.ui:530
+msgid "_Send recovery code"
+msgstr ""
+
+#: data/resources/ui/login.ui:592
+msgid "Account Deletion"
+msgstr ""
+
+#: data/resources/ui/login.ui:619
+msgid "_Delete Account"
+msgstr ""
+
+#: data/resources/ui/login.ui:641
+msgid "Enter the Code Sent by E-Mail"
+msgstr ""
+
+#: data/resources/ui/login.ui:682
+msgid "_Unable to access your email?"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:6
+msgid "Appearance"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:12
+msgid "Follow System Colors"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:23
+msgid "Dark Theme"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:28
+msgctxt "shortcut window"
+msgid "Chat List"
+msgstr ""
+
+#: data/resources/ui/shortcuts.ui:31
+msgctxt "shortcut window"
+msgid "Search Chats"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:6
+msgid "_Log Out"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:12
+msgid "_Preferences"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:16
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:20
+msgid "_About Telegrand"
+msgstr ""
+
+#: src/login.rs:340
+msgid ""
+"One way to continue using your account is to delete your account and then "
+"recreate it"
+msgstr ""
+
+#: src/login.rs:345
+msgid ""
+"Since you have not provided a recovery email address, the only way to "
+"continue using your account is to delete your account and then recreate it"
+msgstr ""
+
+#: src/login.rs:353
+msgid ""
+"Please note, you will lose all your chats and messages, along with any media "
+"and files you shared!"
+msgstr ""
+
+#: src/login.rs:585
+msgid "Do You Accept the Terms of Service?"
+msgstr ""
+
+#: src/login.rs:589
+msgid "Terms of Service"
+msgstr ""
+
+#: src/login.rs:855
+msgid "Warning"
+msgstr ""
+
+#: src/login.rs:857
+msgid ""
+"You will lose all your chats and messages, along with any media and files "
+"you shared!\n"
+"\n"
+"Do you want to delete your account?"
+msgstr ""
+
+#: src/login.rs:946
+msgid "Sorry"
+msgstr ""
+
+#: src/login.rs:948
+msgid ""
+"If you can't restore access to the email, your remaining options are either "
+"to remember your password or to delete and recreate your account."
+msgstr ""
+
+#: src/login.rs:955
+msgid "_Go Back"
+msgstr ""
+
+#: src/window.rs:242 src/session/sidebar/row.rs:543
+msgid "Incoming call"
+msgstr ""
+
+#: src/window.rs:304 src/session/sidebar/row.rs:428
+#: src/session/sidebar/row.rs:559
+msgid "Sticker"
+msgstr ""
+
+#: src/window.rs:308 src/session/sidebar/row.rs:609
+msgid "Photo"
+msgstr ""
+
+#: src/window.rs:327 src/session/sidebar/row.rs:572
+msgid "GIF"
+msgstr ""
+
+#: src/window.rs:336 src/session/sidebar/row.rs:621
+msgid "Video"
+msgstr ""
+
+#: src/window.rs:354 src/session/sidebar/row.rs:633
+msgid "Voice message"
+msgstr ""
+
+#: src/window.rs:363 src/session/sidebar/row.rs:480
+msgid "Channel photo removed"
+msgstr ""
+
+#: src/window.rs:367 src/session/sidebar/row.rs:484
+msgid "You removed the group photo"
+msgstr ""
+
+#: src/window.rs:377 src/session/sidebar/row.rs:497
+#: src/session/sidebar/row.rs:565
+msgid "Unsupported message"
+msgstr ""
+
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/item_row.rs:112
+msgid "%B %e"
+msgstr ""
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/item_row.rs:115
+msgid "%B %e, %Y"
+msgstr ""
+
+#: src/session/content/message_row/text.rs:156
+msgid "This message is unsupported"
+msgstr ""
+
+#. Show the time
+#. Translators: This is a time format for the chat list without seconds
+#: src/session/sidebar/row.rs:190
+msgid "%l:%M %p"
+msgstr ""
+
+#: src/session/sidebar/row.rs:226
+msgid "Draft"
+msgstr ""
+
+#: src/session/sidebar/row.rs:370
+msgid "You joined the group"
+msgstr ""
+
+#: src/session/sidebar/row.rs:395
+msgid ", "
+msgstr ""
+
+#: src/session/sidebar/row.rs:412
+msgid "You left the group"
+msgstr ""
+
+#: src/session/sidebar/row.rs:448
+msgid "Declined outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:450
+msgid "Declined outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:456
+msgid "Declined incoming video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:458
+msgid "Declined incoming call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:468
+msgid "Cancelled call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:470
+msgid "Missed call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:502
+msgid "You"
+msgstr ""
+
+#: src/session/sidebar/row.rs:527
+msgid "Outgoing video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:529
+msgid "Outgoing call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:541
+msgid "Incoming video call"
+msgstr ""
+
+#: src/session/sidebar/row.rs:556
+msgid "Document"
+msgstr ""
