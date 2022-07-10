@@ -773,7 +773,7 @@ impl Login {
         // Check if we are already have an account logged in with that phone_number.
         let phone_number_digits = phone_number
             .chars()
-            .filter(|c| c.is_digit(10))
+            .filter(|c| c.is_ascii_digit())
             .collect::<String>();
 
         let session_manager = imp.session_manager.get().unwrap();
