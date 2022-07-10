@@ -14,7 +14,6 @@
         "--share=network",
         "--share=ipc",
         "--device=dri",
-        "--talk-name=org.a11y.Bus",
         "--env=G_MESSAGES_DEBUG=none",
         "--env=RUST_BACKTRACE=1"
     ],
