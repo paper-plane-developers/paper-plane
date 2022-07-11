@@ -1,3 +1,7 @@
+// TODO: This has been added because of the gettext macros. Remove this
+// when the macros are either fixed or removed (check #94).
+#![allow(clippy::format_push_string)]
+
 mod application;
 #[rustfmt::skip]
 #[allow(clippy::all)]

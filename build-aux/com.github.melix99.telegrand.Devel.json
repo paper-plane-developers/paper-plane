@@ -14,7 +14,6 @@
         "--share=network",
         "--share=ipc",
         "--device=dri",
-        "--talk-name=org.a11y.Bus",
         "--env=G_MESSAGES_DEBUG=none",
         "--env=RUST_BACKTRACE=1"
     ],
@@ -48,17 +47,20 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.6.4"
+                    "tag": "4.6.6"
                 },
                 {
-                    "type" : "patch",
-                    "path" : "gtk-reversed-list.patch"
+                    "type": "patch",
+                    "path": "gtk-reversed-list.patch"
                 }
             ]
         },
         {
             "name": "tdlib-prebuilt",
-            "only-arches": [ "x86_64", "aarch64" ],
+            "only-arches": [
+                "x86_64",
+                "aarch64"
+            ],
             "buildsystem": "simple",
             "build-commands": [
                 "install -d /app/lib/pkgconfig",
@@ -68,14 +70,18 @@
             ],
             "sources": [
                 {
-                    "only-arches": [ "x86_64" ],
+                    "only-arches": [
+                        "x86_64"
+                    ],
                     "type": "archive",
                     "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.2-1/tdjson-x86_64.zip",
                     "sha256": "2efddcf0a7d94321b08b449ab9ff7e5b1faabe7ee9f666ddc4d8a4f21cadbec4",
                     "strip-components": 0
                 },
                 {
-                    "only-arches": [ "aarch64" ],
+                    "only-arches": [
+                        "aarch64"
+                    ],
                     "type": "archive",
                     "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.2-1/tdjson-aarch64.zip",
                     "sha256": "401ceae0a9b838d5b6e273ba9d84d64cf8b20842fbefc51d4856b3f34cc010d7",
@@ -85,7 +91,10 @@
         },
         {
             "name": "tdlib",
-            "skip-arches": [ "x86_64", "aarch64" ],
+            "skip-arches": [
+                "x86_64",
+                "aarch64"
+            ],
             "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [
