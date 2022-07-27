@@ -22,34 +22,38 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
-            <style>
-              <class name="main-page"/>
-            </style>
-            <child>
-              <object class="ComponentsAvatar">
-                <property name="size">128</property>
-                <binding name="item">
-                  <lookup name="chat">ContentChatInfoWindow</lookup>
-                </binding>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="name_label">
+          <object class="AdwClamp">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <style>
-                  <class name="title-1"/>
+                  <class name="main-page"/>
                 </style>
+                <child>
+                  <object class="ComponentsAvatar">
+                    <property name="size">128</property>
+                    <binding name="item">
+                      <lookup name="chat">ContentChatInfoWindow</lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="name_label">
+                    <style>
+                      <class name="title-1"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkListBox" id="info_list">
+                    <property name="selection-mode">none</property>
+                    <style>
+                      <class name="boxed-list"/>
+                    </style>
+                  </object>
+                </child>
               </object>
-            </child>
-            <child>
-              <object class="GtkListBox" id="info_list">
-                <property name="selection-mode">none</property>
-                <style>
-                  <class name="boxed-list"/>
-                </style>
-              </object>
-            </child>
+            </property>
           </object>
         </child>
       </object>
