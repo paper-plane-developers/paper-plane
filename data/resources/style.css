@@ -250,6 +250,11 @@ messagemedia overlay > messageindicators, messagesticker messageindicators {
   filter: opacity(0.5);
 }
 
-.chat-info-window {
-  margin: 24px 12px;
+window.chat-info .main-page {
+  margin: 12px;
+  border-spacing: 24px;
+}
+
+window.chat-info .main-page > box {
+  border-spacing: 24px;
 }

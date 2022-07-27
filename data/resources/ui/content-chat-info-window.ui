@@ -4,11 +4,14 @@
     <property name="default-width">400</property>
     <property name="default-height">500</property>
     <property name="modal">True</property>
+    <style>
+      <class name="chat-info"/>
+    </style>
     <property name="content">
-      <object class="GtkOverlay">
-        <child type="overlay">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
           <object class="GtkHeaderBar">
-            <property name="valign">start</property>
             <property name="title-widget">
               <object class="AdwWindowTitle">
                 <property name="visible">False</property>
@@ -22,13 +25,11 @@
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
-            <property name="spacing">24</property>
             <style>
-              <class name="chat-info-window"/>
+              <class name="main-page"/>
             </style>
             <child>
               <object class="GtkBox">
-                <property name="spacing">24</property>
                 <child>
                   <object class="ComponentsAvatar">
                     <property name="size">96</property>
