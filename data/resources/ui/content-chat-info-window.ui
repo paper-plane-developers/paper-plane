@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentChatInfoWindow" parent="AdwWindow">
-    <property name="default-width">400</property>
-    <property name="default-height">500</property>
+    <property name="default-width">360</property>
     <property name="modal">True</property>
     <style>
       <class name="chat-info"/>
