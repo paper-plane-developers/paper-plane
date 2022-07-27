@@ -39,6 +39,8 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="name_label">
+                    <property name="wrap">True</property>
+                    <property name="justify">center</property>
                     <style>
                       <class name="title-1"/>
                     </style>
