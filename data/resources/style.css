@@ -252,9 +252,9 @@ messagemedia overlay > messageindicators, messagesticker messageindicators {
 
 window.chat-info .main-page {
   margin: 12px;
-  border-spacing: 24px;
+  border-spacing: 12px;
 }
 
-window.chat-info .main-page > box {
-  border-spacing: 24px;
+window.chat-info .main-page > list {
+  margin-top: 12px;
 }

@@ -29,22 +29,18 @@
               <class name="main-page"/>
             </style>
             <child>
-              <object class="GtkBox">
-                <child>
-                  <object class="ComponentsAvatar">
-                    <property name="size">96</property>
-                    <binding name="item">
-                      <lookup name="chat">ContentChatInfoWindow</lookup>
-                    </binding>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="name_label">
-                    <style>
-                      <class name="title-2"/>
-                    </style>
-                  </object>
-                </child>
+              <object class="ComponentsAvatar">
+                <property name="size">128</property>
+                <binding name="item">
+                  <lookup name="chat">ContentChatInfoWindow</lookup>
+                </binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="name_label">
+                <style>
+                  <class name="title-1"/>
+                </style>
               </object>
             </child>
             <child>
