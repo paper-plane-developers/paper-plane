@@ -13,8 +13,8 @@ mod imp {
     use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-dialog.ui")]
-    pub(crate) struct ChatInfoDialog {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-window.ui")]
+    pub(crate) struct ChatInfoWindow {
         pub(super) chat: OnceCell<Chat>,
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
@@ -23,9 +23,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatInfoDialog {
-        const NAME: &'static str = "ContentChatInfoDialog";
-        type Type = super::ChatInfoDialog;
+    impl ObjectSubclass for ChatInfoWindow {
+        const NAME: &'static str = "ContentChatInfoWindow";
+        type Type = super::ChatInfoWindow;
         type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
@@ -37,7 +37,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ChatInfoDialog {
+    impl ObjectImpl for ChatInfoWindow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
@@ -77,20 +77,20 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ChatInfoDialog {}
-    impl WindowImpl for ChatInfoDialog {}
-    impl AdwWindowImpl for ChatInfoDialog {}
+    impl WidgetImpl for ChatInfoWindow {}
+    impl WindowImpl for ChatInfoWindow {}
+    impl AdwWindowImpl for ChatInfoWindow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct ChatInfoDialog(ObjectSubclass<imp::ChatInfoDialog>)
+    pub(crate) struct ChatInfoWindow(ObjectSubclass<imp::ChatInfoWindow>)
         @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
-impl ChatInfoDialog {
+impl ChatInfoWindow {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: &Chat) -> Self {
         glib::Object::new(&[("transient-for", parent_window), ("chat", chat)])
-            .expect("Failed to create ChatInfoDialog")
+            .expect("Failed to create ChatInfoWindow")
     }
 
     fn setup_dialog(&self) {

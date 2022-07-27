@@ -3,7 +3,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 
-use crate::session::content::{ChatActionBar, ChatInfoDialog, ItemRow};
+use crate::session::content::{ChatActionBar, ChatInfoWindow, ItemRow};
 use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
@@ -202,7 +202,7 @@ impl ChatHistory {
 
     fn open_info_dialog(&self) {
         if let Some(chat) = self.chat() {
-            ChatInfoDialog::new(&self.parent_window(), &chat).present();
+            ChatInfoWindow::new(&self.parent_window(), &chat).present();
         }
     }
 

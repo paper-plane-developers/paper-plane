@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentChatInfoDialog" parent="AdwWindow">
+  <template class="ContentChatInfoWindow" parent="AdwWindow">
     <property name="default-width">400</property>
     <property name="default-height">500</property>
     <property name="modal">True</property>
@@ -24,7 +24,7 @@
             <property name="orientation">vertical</property>
             <property name="spacing">24</property>
             <style>
-              <class name="chat-info-dialog"/>
+              <class name="chat-info-window"/>
             </style>
             <child>
               <object class="GtkBox">
@@ -33,7 +33,7 @@
                   <object class="ComponentsAvatar">
                     <property name="size">96</property>
                     <binding name="item">
-                      <lookup name="chat">ContentChatInfoDialog</lookup>
+                      <lookup name="chat">ContentChatInfoWindow</lookup>
                     </binding>
                   </object>
                 </child>

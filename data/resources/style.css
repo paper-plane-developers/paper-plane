@@ -250,6 +250,6 @@ messagemedia overlay > messageindicators, messagesticker messageindicators {
   filter: opacity(0.5);
 }
 
-.chat-info-dialog {
+.chat-info-window {
   margin: 24px 12px;
 }
