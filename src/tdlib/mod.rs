@@ -1,6 +1,5 @@
 mod avatar;
 mod basic_group;
-mod basic_group_list;
 mod chat;
 mod chat_action;
 mod chat_action_list;
@@ -20,7 +19,6 @@ mod user_list;
 
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::basic_group::BasicGroup;
-pub(crate) use self::basic_group_list::BasicGroupList;
 pub(crate) use self::chat::{Chat, ChatType};
 pub(crate) use self::chat_action::ChatAction;
 pub(crate) use self::chat_action_list::ChatActionList;

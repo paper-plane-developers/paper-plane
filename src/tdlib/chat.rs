@@ -28,7 +28,7 @@ impl ChatType {
                 Self::Private(user)
             }
             TdChatType::BasicGroup(data) => {
-                let basic_group = session.basic_group_list().get(data.basic_group_id);
+                let basic_group = session.basic_group(data.basic_group_id);
                 Self::BasicGroup(basic_group)
             }
             TdChatType::Supergroup(data) => {

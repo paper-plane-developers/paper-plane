@@ -17,7 +17,7 @@ use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
-    BasicGroupList, BoxedScopeNotificationSettings, ChatList, SecretChatList, Supergroup, User,
+    BasicGroup, BoxedScopeNotificationSettings, ChatList, SecretChatList, Supergroup, User,
     UserList,
 };
 use crate::utils::{log_out, spawn};
@@ -40,7 +40,7 @@ mod imp {
         pub(super) me: WeakRef<User>,
         pub(super) chat_list: OnceCell<ChatList>,
         pub(super) user_list: OnceCell<UserList>,
-        pub(super) basic_group_list: OnceCell<BasicGroupList>,
+        pub(super) basic_groups: RefCell<HashMap<i64, BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, Supergroup>>,
         pub(super) secret_chat_list: OnceCell<SecretChatList>,
         pub(super) private_chats_notification_settings:
@@ -127,13 +127,6 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
-                        "basic-group-list",
-                        "Basic Group List",
-                        "The list of basic groups of this session",
-                        BasicGroupList::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
                         "secret-chat-list",
                         "Secret Chat List",
                         "The list of secret chats of this session",
@@ -206,7 +199,6 @@ mod imp {
                 "me" => self.me.upgrade().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
-                "basic-group-list" => obj.basic_group_list().to_value(),
                 "secret-chat-list" => obj.secret_chat_list().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
@@ -250,7 +242,15 @@ impl Session {
 
     pub(crate) fn handle_update(&self, update: Update) {
         match update {
-            Update::BasicGroup(_) => self.basic_group_list().handle_update(&update),
+            Update::BasicGroup(ref data) => {
+                let mut basic_groups = self.imp().basic_groups.borrow_mut();
+                match basic_groups.entry(data.basic_group.id) {
+                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Vacant(entry) => {
+                        entry.insert(BasicGroup::from_td_object(&data.basic_group));
+                    }
+                }
+            }
             Update::ChatAction(_)
             | Update::ChatDraftMessage(_)
             | Update::ChatIsBlocked(_)
@@ -310,6 +310,20 @@ impl Session {
             }
             _ => {}
         }
+    }
+
+    /// Returns the `BasicGroup` of the specified id. Panics if the basic group is not present.
+    ///
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an id returned by TDLib, it should be expected that the
+    /// relative `BasicGroup` exists in the list.
+    pub(crate) fn basic_group(&self, basic_group_id: i64) -> BasicGroup {
+        self.imp()
+            .basic_groups
+            .borrow()
+            .get(&basic_group_id)
+            .expect("Failed to get expected BasicGroup")
+            .clone()
     }
 
     /// Returns the `Supergroup` of the specified id. Panics if the supergroup is not present.
@@ -415,10 +429,6 @@ impl Session {
 
     pub(crate) fn user_list(&self) -> &UserList {
         self.imp().user_list.get_or_init(|| UserList::new(self))
-    }
-
-    pub(crate) fn basic_group_list(&self) -> &BasicGroupList {
-        self.imp().basic_group_list.get_or_init(BasicGroupList::new)
     }
 
     pub(crate) fn secret_chat_list(&self) -> &SecretChatList {
