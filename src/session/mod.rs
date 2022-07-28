@@ -17,7 +17,7 @@ use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
-    BasicGroupList, BoxedScopeNotificationSettings, ChatList, SecretChatList, SupergroupList, User,
+    BasicGroupList, BoxedScopeNotificationSettings, ChatList, SecretChatList, Supergroup, User,
     UserList,
 };
 use crate::utils::{log_out, spawn};
@@ -41,7 +41,7 @@ mod imp {
         pub(super) chat_list: OnceCell<ChatList>,
         pub(super) user_list: OnceCell<UserList>,
         pub(super) basic_group_list: OnceCell<BasicGroupList>,
-        pub(super) supergroup_list: OnceCell<SupergroupList>,
+        pub(super) supergroups: RefCell<HashMap<i64, Supergroup>>,
         pub(super) secret_chat_list: OnceCell<SecretChatList>,
         pub(super) private_chats_notification_settings:
             RefCell<Option<BoxedScopeNotificationSettings>>,
@@ -134,13 +134,6 @@ mod imp {
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
-                        "supergroup-list",
-                        "Supergroup List",
-                        "The list of supergroups of this session",
-                        SupergroupList::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
                         "secret-chat-list",
                         "Secret Chat List",
                         "The list of secret chats of this session",
@@ -214,7 +207,6 @@ mod imp {
                 "chat-list" => obj.chat_list().to_value(),
                 "user-list" => obj.user_list().to_value(),
                 "basic-group-list" => obj.basic_group_list().to_value(),
-                "supergroup-list" => obj.supergroup_list().to_value(),
                 "secret-chat-list" => obj.secret_chat_list().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
@@ -257,35 +249,33 @@ impl Session {
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
-        use Update::*;
-
         match update {
-            BasicGroup(_) => self.basic_group_list().handle_update(&update),
-            ChatAction(_)
-            | ChatDraftMessage(_)
-            | ChatIsBlocked(_)
-            | ChatLastMessage(_)
-            | ChatNotificationSettings(_)
-            | ChatPermissions(_)
-            | ChatPhoto(_)
-            | ChatPosition(_)
-            | ChatReadInbox(_)
-            | ChatReadOutbox(_)
-            | ChatTitle(_)
-            | ChatUnreadMentionCount(_)
-            | DeleteMessages(_)
-            | MessageContent(_)
-            | MessageEdited(_)
-            | MessageMentionRead(_)
-            | MessageSendSucceeded(_)
-            | NewChat(_)
-            | NewMessage(_) => {
+            Update::BasicGroup(_) => self.basic_group_list().handle_update(&update),
+            Update::ChatAction(_)
+            | Update::ChatDraftMessage(_)
+            | Update::ChatIsBlocked(_)
+            | Update::ChatLastMessage(_)
+            | Update::ChatNotificationSettings(_)
+            | Update::ChatPermissions(_)
+            | Update::ChatPhoto(_)
+            | Update::ChatPosition(_)
+            | Update::ChatReadInbox(_)
+            | Update::ChatReadOutbox(_)
+            | Update::ChatTitle(_)
+            | Update::ChatUnreadMentionCount(_)
+            | Update::DeleteMessages(_)
+            | Update::MessageContent(_)
+            | Update::MessageEdited(_)
+            | Update::MessageMentionRead(_)
+            | Update::MessageSendSucceeded(_)
+            | Update::NewChat(_)
+            | Update::NewMessage(_) => {
                 self.chat_list().handle_update(update);
             }
-            File(update) => {
+            Update::File(update) => {
                 self.handle_file_update(update.file);
             }
-            ScopeNotificationSettings(update) => {
+            Update::ScopeNotificationSettings(update) => {
                 let settings = Some(BoxedScopeNotificationSettings(update.notification_settings));
                 match update.scope {
                     NotificationSettingsScope::PrivateChats => {
@@ -299,19 +289,41 @@ impl Session {
                     }
                 }
             }
-            SecretChat(_) => self.secret_chat_list().handle_update(&update),
-            Supergroup(_) => self.supergroup_list().handle_update(&update),
-            UnreadMessageCount(ref update_) => {
+            Update::SecretChat(_) => self.secret_chat_list().handle_update(&update),
+            Update::Supergroup(ref data) => {
+                let mut supergroups = self.imp().supergroups.borrow_mut();
+                match supergroups.entry(data.supergroup.id) {
+                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Vacant(entry) => {
+                        entry.insert(Supergroup::from_td_object(&data.supergroup));
+                    }
+                }
+            }
+            Update::UnreadMessageCount(ref update_) => {
                 // TODO: Also handle archived chats
                 if let tdlib::enums::ChatList::Main = update_.chat_list {
                     self.chat_list().handle_update(update)
                 }
             }
-            User(_) | UserStatus(_) => {
+            Update::User(_) | Update::UserStatus(_) => {
                 self.user_list().handle_update(update);
             }
             _ => {}
         }
+    }
+
+    /// Returns the `Supergroup` of the specified id. Panics if the supergroup is not present.
+    ///
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an id returned by TDLib, it should be expected that the
+    /// relative `Supergroup` exists in the list.
+    pub(crate) fn supergroup(&self, supergroup_id: i64) -> Supergroup {
+        self.imp()
+            .supergroups
+            .borrow()
+            .get(&supergroup_id)
+            .expect("Failed to get expected Supergroup")
+            .clone()
     }
 
     pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
@@ -407,10 +419,6 @@ impl Session {
 
     pub(crate) fn basic_group_list(&self) -> &BasicGroupList {
         self.imp().basic_group_list.get_or_init(BasicGroupList::new)
-    }
-
-    pub(crate) fn supergroup_list(&self) -> &SupergroupList {
-        self.imp().supergroup_list.get_or_init(SupergroupList::new)
     }
 
     pub(crate) fn secret_chat_list(&self) -> &SecretChatList {

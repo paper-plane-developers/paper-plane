@@ -32,7 +32,7 @@ impl ChatType {
                 Self::BasicGroup(basic_group)
             }
             TdChatType::Supergroup(data) => {
-                let supergroup = session.supergroup_list().get(data.supergroup_id);
+                let supergroup = session.supergroup(data.supergroup_id);
                 Self::Supergroup(supergroup)
             }
             TdChatType::Secret(data) => {

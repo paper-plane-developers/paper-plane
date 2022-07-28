@@ -15,7 +15,6 @@ mod secret_chat;
 mod secret_chat_list;
 mod sponsored_message;
 mod supergroup;
-mod supergroup_list;
 mod user;
 mod user_list;
 
@@ -36,7 +35,6 @@ use self::secret_chat::SecretChat;
 pub(crate) use self::secret_chat_list::SecretChatList;
 pub(crate) use self::sponsored_message::SponsoredMessage;
 pub(crate) use self::supergroup::Supergroup;
-pub(crate) use self::supergroup_list::SupergroupList;
 pub(crate) use self::user::User;
 pub(crate) use self::user_list::UserList;
 
