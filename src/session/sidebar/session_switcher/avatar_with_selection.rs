@@ -1,7 +1,6 @@
 use adw::subclass::prelude::*;
 use gtk::glib;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 
 use crate::session::components::Avatar;
 
