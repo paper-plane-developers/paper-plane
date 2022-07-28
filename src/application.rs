@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -168,22 +169,31 @@ impl Application {
     }
 
     fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialog::builder()
-            .program_name("Telegrand")
-            .logo_icon_name(APP_ID)
-            .license_type(gtk::License::Gpl30)
-            .website("https://github.com/melix99/telegrand/")
-            .version(VERSION)
+        let about = adw::AboutWindow::builder()
             .transient_for(&self.main_window())
-            .modal(true)
-            .authors(vec!["Marco Melorio".into(), "Marcus Behrendt".into()])
+            .application_name("Telegrand")
+            .application_icon(APP_ID)
+            .version(VERSION)
+            .website("https://github.com/melix99/telegrand")
+            .issue_url("https://github.com/melix99/telegrand/issues")
+            .support_url("https://t.me/telegrandchat")
+            .developer_name(&gettext("Telegrand developers"))
+            .copyright("© 2021–2022 Marco Melorio")
+            .license_type(gtk::License::Gpl30)
+            .developers(vec![
+                "Marco Melorio https://github.com/melix99".into(),
+                "Marcus Behrendt https://github.com/marhkb".into(),
+                "Carlod https://github.com/just-carlod".into(),
+            ])
+            .designers(vec!["Marco Melorio https://github.com/melix99".into()])
             .artists(vec![
-                "Marco Melorio".into(),
-                "Mateus Santos".into(),
-                "noëlle".into(),
+                "Mateus Santos https://github.com/swyknox".into(),
+                "noëlle https://github.com/jannuary".into(),
             ])
             .build();
 
-        dialog.present();
+        about.add_acknowledgement_section(Some(&gettext("Sponsors")), &["Alisson Lauffer"]);
+
+        about.present();
     }
 }
