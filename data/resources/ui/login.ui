@@ -363,21 +363,8 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                             <child>
                               <object class="GtkListBox">
                                 <child>
-                                  <object class="GtkListBoxRow">
-                                    <property name="focusable">False</property>
-                                    <property name="selectable">False</property>
-                                    <property name="activatable">False</property>
-                                    <property name="child">
-                                      <object class="GtkPasswordEntry" id="password_entry">
-                                        <property name="activates-default">True</property>
-                                        <property name="placeholder-text" translatable="yes">Password</property>
-                                        <property name="show-peek-icon">True</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">6</property>
-                                        <property name="margin-start">6</property>
-                                        <property name="margin-end">6</property>
-                                      </object>
-                                    </property>
+                                  <object class="AdwPasswordEntryRow" id="password_entry_row">
+                                    <property name="title" translatable="yes">Password</property>
                                   </object>
                                 </child>
                                 <child>

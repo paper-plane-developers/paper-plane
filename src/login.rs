@@ -79,7 +79,7 @@ mod imp {
         #[template_child]
         pub(super) tos_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) password_entry: TemplateChild<gtk::PasswordEntry>,
+        pub(super) password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
         pub(super) password_hint_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
@@ -225,7 +225,7 @@ impl Login {
         imp.registration_first_name_entry_row.set_text("");
         imp.registration_last_name_entry_row.set_text("");
         imp.code_entry_row.set_text("");
-        imp.password_entry.set_text("");
+        imp.password_entry_row.set_text("");
     }
 
     pub(crate) fn set_authorization_state(&self, state: AuthorizationState) {
@@ -369,11 +369,6 @@ impl Login {
                     return;
                 }
 
-                // When we enter the password page, the password to be entered should be masked by
-                // default, so the peek icon is turned off and on again.
-                imp.password_entry.set_show_peek_icon(false);
-                imp.password_entry.set_show_peek_icon(true);
-
                 imp.password_hint_action_row
                     .set_visible(!data.password_hint.is_empty());
                 imp.password_hint_label.set_text(&data.password_hint);
@@ -412,9 +407,9 @@ impl Login {
 
                 self.navigate_to_page(
                     "password-page",
-                    [&*imp.password_entry],
+                    [&*imp.password_entry_row],
                     Some(&imp.password_error_label),
-                    Some(&*imp.password_entry),
+                    Some(&*imp.password_entry_row),
                 );
             }
             AuthorizationState::Ready => {
@@ -597,7 +592,7 @@ impl Login {
                 "password-page",
                 [],
                 None,
-                Some(&*imp.password_entry),
+                Some(&*imp.password_entry_row),
             ),
             "password-recovery-page" => self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
                 "password-forgot-page",
@@ -871,10 +866,10 @@ impl Login {
         reset_error_label(&imp.password_error_label);
 
         let client_id = imp.client_id.get();
-        let password = imp.password_entry.text().to_string();
+        let password = imp.password_entry_row.text().to_string();
         let result = functions::check_authentication_password(password, client_id).await;
 
-        self.handle_user_result(result, &imp.password_error_label, &*imp.password_entry);
+        self.handle_user_result(result, &imp.password_error_label, &*imp.password_entry_row);
     }
 
     fn recover_password(&self) {
@@ -967,7 +962,7 @@ impl Login {
                     }
                 }));
             } else {
-                obj.imp().password_entry.grab_focus();
+                obj.imp().password_entry_row.grab_focus();
             }
         }));
     }
@@ -994,7 +989,7 @@ impl Login {
                     "password-page",
                     [],
                     None,
-                    Some(&*imp.password_entry),
+                    Some(&*imp.password_entry_row),
                 );
             } else {
                 self.handle_user_error(
