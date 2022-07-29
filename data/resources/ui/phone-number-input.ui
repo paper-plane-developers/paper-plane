@@ -13,24 +13,12 @@
           </object>
         </child>
         <child>
-          <object class="GtkListBoxRow">
-            <property name="focusable">False</property>
-            <property name="selectable">False</property>
-            <property name="activatable">False</property>
-            <property name="child">
-              <object class="GtkEntry" id="entry">
-                <property name="activates-default">True</property>
-                <property name="input-purpose">phone</property>
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="placeholder-text" translatable="yes">Phone Number</property>
-                <style>
-                  <class name="numeric"/>
-                </style>
-              </object>
-            </property>
+          <object class="AdwEntryRow" id="entry_row">
+            <property name="title" translatable="yes">Phone Number</property>
+            <property name="input-purpose">phone</property>
+            <style>
+              <class name="numeric"/>
+            </style>
           </object>
         </child>
         <style>

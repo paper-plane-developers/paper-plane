@@ -1,8 +1,8 @@
 use adw::prelude::ComboRowExt;
+use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, pango};
 use locale_config::Locale;
 use std::borrow::Cow;
 
@@ -33,7 +33,7 @@ mod imp {
         #[template_child]
         pub(super) combo_row: TemplateChild<adw::ComboRow>,
         #[template_child]
-        pub(super) entry: TemplateChild<gtk::Entry>,
+        pub(super) entry_row: TemplateChild<adw::EntryRow>,
     }
 
     #[glib::object_subclass]
@@ -158,17 +158,15 @@ mod imp {
                     )
                 };
 
-                imp.entry.block_signal(entry_handler);
+                imp.entry_row.block_signal(entry_handler);
                 obj.set_number(&number);
-                imp.entry.unblock_signal(entry_handler);
+                imp.entry_row.unblock_signal(entry_handler);
 
                 imp.calling_code_bounds.set((pos_start, pos_end));
-
-                obj.highlight_calling_code();
             }))));
 
             // Format the phone number and reset the cursor.
-            entry_handler.replace(Some(self.entry.connect_changed(clone!(
+            entry_handler.replace(Some(self.entry_row.connect_changed(clone!(
                 @weak obj,
                 @strong combo_row_handler,
                 => move |_|
@@ -216,8 +214,6 @@ mod imp {
                     imp.combo_row.unblock_signal(combo_row_handler);
 
                     imp.calling_code_bounds.set((text_pos_start as usize, text_pos_end as usize));
-
-                    obj.highlight_calling_code();
                 }
             }))));
 
@@ -229,7 +225,7 @@ mod imp {
                 // We need to set the cursor position at the end on the next idle.
                 glib::idle_add_local(clone!(
                     @weak obj => @default-return glib::Continue(false), move || {
-                        obj.imp().entry.set_position(i32::MAX);
+                        obj.imp().entry_row.set_position(i32::MAX);
                         glib::Continue(false)
                     }
                 ));
@@ -243,13 +239,13 @@ mod imp {
 
     impl WidgetImpl for PhoneNumberInput {
         fn grab_focus(&self, _: &Self::Type) -> bool {
-            self.entry.grab_focus()
+            self.entry_row.grab_focus()
         }
     }
 
     impl EditableImpl for PhoneNumberInput {
         fn delegate(&self, _: &Self::Type) -> Option<gtk::Editable> {
-            self.entry.delegate()
+            self.entry_row.delegate()
         }
     }
 }
@@ -279,14 +275,14 @@ impl PhoneNumberInput {
     }
 
     pub(crate) fn number(&self) -> glib::GString {
-        self.imp().entry.text()
+        self.imp().entry_row.text()
     }
 
     pub(crate) fn set_number(&self, number: &str) {
         if self.number() == number {
             return;
         }
-        self.imp().entry.set_text(number);
+        self.imp().entry_row.set_text(number);
         self.notify("number");
     }
 
@@ -301,7 +297,7 @@ impl PhoneNumberInput {
     /// Performs a text selection of the whole number but leaves out the calling code.
     pub(crate) fn select_number_without_calling_code(&self) {
         let imp = self.imp();
-        imp.entry
+        imp.entry_row
             .select_region(imp.calling_code_bounds.get().1 as i32, -1);
     }
 
@@ -350,27 +346,5 @@ impl PhoneNumberInput {
 
             imp.combo_row.set_selected(position);
         }
-    }
-
-    /// Highlights the calling code from the rest of the number.
-    fn highlight_calling_code(&self) {
-        let imp = self.imp();
-
-        let attr_list = pango::AttrList::new();
-
-        let (pos_start, pos_end) = imp.calling_code_bounds.get();
-        if pos_start < pos_end {
-            let mut attr = pango::AttrInt::new_weight(pango::Weight::Bold);
-            attr.set_start_index(pos_start as u32);
-            attr.set_end_index(pos_end as u32);
-            attr_list.insert(attr);
-
-            let mut attr = pango::AttrInt::new_foreground_alpha(u16::MAX / 2);
-            attr.set_start_index(pos_start as u32);
-            attr.set_end_index(pos_end as u32);
-            attr_list.insert(attr);
-        }
-
-        imp.entry.set_attributes(&attr_list);
     }
 }
