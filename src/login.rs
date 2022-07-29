@@ -95,7 +95,7 @@ mod imp {
         #[template_child]
         pub(super) password_recovery_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub(super) password_recovery_code_entry: TemplateChild<gtk::Entry>,
+        pub(super) password_recovery_code_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) password_recovery_error_label: TemplateChild<gtk::Label>,
     }
@@ -896,9 +896,9 @@ impl Login {
                     imp.password_recovery_expired.set(false);
                     obj.navigate_to_page(
                         "password-recovery-page",
-                        [&*imp.password_recovery_code_entry],
+                        [&*imp.password_recovery_code_entry_row],
                         Some(&imp.password_recovery_error_label),
-                        Some(&*imp.password_recovery_code_entry),
+                        Some(&*imp.password_recovery_code_entry_row),
                     );
                 } else {
                     obj.update_actions_for_visible_page();
@@ -911,9 +911,9 @@ impl Login {
             // The code has been send already via mail.
             self.navigate_to_page(
                 "password-recovery-page",
-                [&*imp.password_recovery_code_entry],
+                [&*imp.password_recovery_code_entry_row],
                 Some(&imp.password_recovery_error_label),
-                Some(&*imp.password_recovery_code_entry),
+                Some(&*imp.password_recovery_code_entry_row),
             );
         }
     }
@@ -970,7 +970,7 @@ impl Login {
     async fn send_password_recovery_code(&self) {
         let imp = self.imp();
         let client_id = imp.client_id.get();
-        let recovery_code = imp.password_recovery_code_entry.text().to_string();
+        let recovery_code = imp.password_recovery_code_entry_row.text().to_string();
         let result = functions::recover_authentication_password(
             recovery_code,
             String::new(),
@@ -995,7 +995,7 @@ impl Login {
                 self.handle_user_error(
                     &err,
                     &imp.password_recovery_error_label,
-                    &*imp.password_recovery_code_entry,
+                    &*imp.password_recovery_code_entry_row,
                 );
             }
         }
@@ -1026,7 +1026,7 @@ impl Login {
                 );
             } else {
                 obj.imp()
-                    .password_recovery_code_entry
+                    .password_recovery_code_entry_row
                     .grab_focus();
             }
         }));

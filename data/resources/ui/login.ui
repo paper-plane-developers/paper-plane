@@ -613,20 +613,12 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                             <child>
                               <object class="GtkListBox">
                                 <child>
-                                  <object class="GtkListBoxRow">
-                                    <property name="focusable">False</property>
-                                    <property name="selectable">False</property>
-                                    <property name="activatable">False</property>
-                                    <property name="child">
-                                      <object class="GtkEntry" id="password_recovery_code_entry">
-                                        <property name="activates-default">True</property>
-                                        <property name="placeholder-text" translatable="yes">Code</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">6</property>
-                                        <property name="margin-start">6</property>
-                                        <property name="margin-end">6</property>
-                                      </object>
-                                    </property>
+                                  <object class="AdwEntryRow" id="password_recovery_code_entry_row">
+                                    <property name="title" translatable="yes">Code</property>
+                                    <property name="input-purpose">digits</property>
+                                    <style>
+                                      <class name="numeric"/>
+                                    </style>
                                   </object>
                                 </child>
                                 <style>
