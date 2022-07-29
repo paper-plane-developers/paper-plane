@@ -13,7 +13,7 @@ base_id = 'com.github.melix99.telegrand'
 dependency('glib-2.0', version: '>= 2.66')
 dependency('gio-2.0', version: '>= 2.66')
 dependency('gtk4', version: '>= 4.6.0')
-dependency('libadwaita-1', version: '>= 1.0.0')
+dependency('libadwaita-1', version: '>= 1.2')
 dependency('tdjson', version: '== 1.8.2')
 
 glib_compile_resources = find_program('glib-compile-resources', required: true)
