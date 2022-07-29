@@ -36,7 +36,7 @@ impl ChatType {
                 Self::Supergroup(supergroup)
             }
             TdChatType::Secret(data) => {
-                let secret_chat = session.secret_chat_list().get(data.secret_chat_id);
+                let secret_chat = session.secret_chat(data.secret_chat_id);
                 Self::Secret(secret_chat)
             }
         }
