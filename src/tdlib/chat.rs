@@ -259,6 +259,7 @@ impl Chat {
 
         let type_ = ChatType::from_td_object(&td_chat.r#type, session);
         let avatar = td_chat.photo.map(Avatar::from);
+        let last_message = td_chat.last_message.map(|m| Message::new(m, &chat));
         let draft_message = td_chat.draft_message.map(BoxedDraftMessage);
         let notification_settings = BoxedChatNotificationSettings(td_chat.notification_settings);
         let permissions = BoxedChatPermissions(td_chat.permissions);
@@ -270,25 +271,7 @@ impl Chat {
         imp.avatar.replace(avatar);
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
-
-        match td_chat.last_message {
-            Some(last_message) => {
-                let message = match chat.history().message_by_id(last_message.id) {
-                    Some(message) => message,
-                    None => {
-                        let last_message_id = last_message.id;
-
-                        chat.history().push_front(last_message);
-                        chat.history().message_by_id(last_message_id).unwrap()
-                    }
-                };
-
-                imp.last_message.replace(Some(message));
-            }
-            None => {
-                imp.last_message.replace(None);
-            }
-        }
+        imp.last_message.replace(last_message);
 
         for position in td_chat.positions {
             if let enums::ChatList::Main = position.list {
@@ -332,22 +315,7 @@ impl Chat {
             }
             ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
             ChatLastMessage(update) => {
-                match update.last_message {
-                    Some(last_message) => {
-                        let message = match self.history().message_by_id(last_message.id) {
-                            Some(message) => message,
-                            None => {
-                                let last_message_id = last_message.id;
-
-                                self.history().push_front(last_message);
-                                self.history().message_by_id(last_message_id).unwrap()
-                            }
-                        };
-
-                        self.set_last_message(Some(message));
-                    }
-                    None => self.set_last_message(None),
-                }
+                self.set_last_message(update.last_message.map(|m| Message::new(m, self)));
 
                 for position in update.positions {
                     if let enums::ChatList::Main = position.list {

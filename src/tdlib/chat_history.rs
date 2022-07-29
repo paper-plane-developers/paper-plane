@@ -257,7 +257,7 @@ impl ChatHistory {
             .items_changed(position, removed, added);
     }
 
-    pub(crate) fn push_front(&self, message: TelegramMessage) {
+    fn push_front(&self, message: TelegramMessage) {
         let imp = self.imp();
 
         let mut message_map = imp.message_map.borrow_mut();
