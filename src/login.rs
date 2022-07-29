@@ -61,7 +61,7 @@ mod imp {
         #[template_child]
         pub(super) code_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub(super) code_entry: TemplateChild<gtk::Entry>,
+        pub(super) code_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) code_resend_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -224,7 +224,7 @@ impl Login {
         imp.phone_number_input.set_number("");
         imp.registration_first_name_entry.set_text("");
         imp.registration_last_name_entry.set_text("");
-        imp.code_entry.set_text("");
+        imp.code_entry_row.set_text("");
         imp.password_entry.set_text("");
     }
 
@@ -306,9 +306,9 @@ impl Login {
 
                 self.navigate_to_page(
                     "code-page",
-                    [&*imp.code_entry],
+                    [&*imp.code_entry_row],
                     Some(&imp.code_error_label),
-                    Some(&*imp.code_entry),
+                    Some(&*imp.code_entry_row),
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(data) => {
@@ -817,11 +817,11 @@ impl Login {
         reset_error_label(&imp.code_error_label);
 
         let client_id = imp.client_id.get();
-        let code = imp.code_entry.text().to_string();
+        let code = imp.code_entry_row.text().to_string();
         let result = functions::check_authentication_code(code, client_id).await;
 
         if let Err(err) = result {
-            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry_row);
         } else {
             // We entered the correct code, so stop resend countdown.
             self.stop_code_next_type_countdown()
@@ -861,7 +861,7 @@ impl Login {
                 // In this case, we automatically disable the resend feature.
                 self.update_code_resend_state(None, 0);
             }
-            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry_row);
         }
     }
 
