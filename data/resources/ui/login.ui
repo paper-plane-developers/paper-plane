@@ -296,37 +296,13 @@
                                 <child>
                                   <object class="GtkListBox">
                                     <child>
-                                      <object class="GtkListBoxRow">
-                                        <property name="focusable">False</property>
-                                        <property name="selectable">False</property>
-                                        <property name="activatable">False</property>
-                                        <property name="child">
-                                          <object class="GtkEntry" id="registration_first_name_entry">
-                                            <property name="activates-default">True</property>
-                                            <property name="placeholder-text" translatable="yes">First Name</property>
-                                            <property name="margin-top">6</property>
-                                            <property name="margin-bottom">6</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
-                                          </object>
-                                        </property>
+                                      <object class="AdwEntryRow" id="registration_first_name_entry_row">
+                                        <property name="title" translatable="yes">First Name</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkListBoxRow">
-                                        <property name="focusable">False</property>
-                                        <property name="selectable">False</property>
-                                        <property name="activatable">False</property>
-                                        <property name="child">
-                                          <object class="GtkEntry" id="registration_last_name_entry">
-                                            <property name="activates-default">True</property>
-                                            <property name="placeholder-text" translatable="yes">Last Name</property>
-                                            <property name="margin-top">6</property>
-                                            <property name="margin-bottom">6</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
-                                          </object>
-                                        </property>
+                                      <object class="AdwEntryRow" id="registration_last_name_entry_row">
+                                        <property name="title" translatable="yes">Last Name</property>
                                       </object>
                                     </child>
                                     <style>

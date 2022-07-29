@@ -71,9 +71,9 @@ mod imp {
         #[template_child]
         pub(super) code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) registration_first_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_first_name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub(super) registration_last_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_last_name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) registration_error_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -222,8 +222,8 @@ impl Login {
 
         imp.countries_retrieved.set(false);
         imp.phone_number_input.set_number("");
-        imp.registration_first_name_entry.set_text("");
-        imp.registration_last_name_entry.set_text("");
+        imp.registration_first_name_entry_row.set_text("");
+        imp.registration_last_name_entry_row.set_text("");
         imp.code_entry_row.set_text("");
         imp.password_entry.set_text("");
     }
@@ -354,11 +354,11 @@ impl Login {
                 self.navigate_to_page(
                     "registration-page",
                     [
-                        &*imp.registration_first_name_entry,
-                        &*imp.registration_last_name_entry,
+                        &*imp.registration_first_name_entry_row,
+                        &*imp.registration_last_name_entry_row,
                     ],
                     Some(&imp.registration_error_label),
-                    Some(&*imp.registration_first_name_entry),
+                    Some(&*imp.registration_first_name_entry_row),
                 );
             }
             AuthorizationState::WaitPassword(data) => {
@@ -834,14 +834,14 @@ impl Login {
         reset_error_label(&imp.registration_error_label);
 
         let client_id = imp.client_id.get();
-        let first_name = imp.registration_first_name_entry.text().to_string();
-        let last_name = imp.registration_last_name_entry.text().to_string();
+        let first_name = imp.registration_first_name_entry_row.text().to_string();
+        let last_name = imp.registration_last_name_entry_row.text().to_string();
         let result = functions::register_user(first_name, last_name, client_id).await;
 
         self.handle_user_result(
             result,
             &imp.registration_error_label,
-            &*imp.registration_first_name_entry,
+            &*imp.registration_first_name_entry_row,
         );
     }
 
