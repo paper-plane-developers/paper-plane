@@ -1,6 +1,6 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{gdk, glib, CompositeTemplate};
 
 mod imp {
     use super::*;
@@ -20,7 +20,7 @@ mod imp {
         <child>
           <object class="GtkGestureLongPress">
             <property name="touch-only">True</property>
-            <signal name="pressed" handler="on_pressed" swapped="true"/>
+            <signal name="pressed" handler="on_long_pressed" swapped="true"/>
           </object>
         </child>
       </template>
@@ -48,11 +48,16 @@ mod imp {
     #[gtk::template_callbacks]
     impl MessageBase {
         #[template_callback]
-        fn on_pressed(&self) {
-            self.show_message_menu();
+        fn on_pressed(&self, _n_press: i32, x: f64, y: f64) {
+            self.show_message_menu(x as i32, y as i32);
         }
 
-        fn show_message_menu(&self) {
+        #[template_callback]
+        fn on_long_pressed(&self, x: f64, y: f64) {
+            self.show_message_menu(x as i32, y as i32);
+        }
+
+        fn show_message_menu(&self, x: i32, y: i32) {
             let obj = self.instance();
             let chat_history = obj.ancestor(ChatHistory::static_type()).unwrap();
             let menu = chat_history
@@ -60,6 +65,7 @@ mod imp {
                 .unwrap()
                 .message_menu();
 
+            menu.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
             menu.unparent();
             menu.set_parent(&obj);
             menu.popup();
