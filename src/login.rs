@@ -226,6 +226,12 @@ impl Login {
         imp.registration_last_name_entry.set_text("");
         imp.code_entry.set_text("");
         imp.password_entry.set_text("");
+
+        self.root()
+            .unwrap()
+            .downcast_ref::<gtk::Window>()
+            .unwrap()
+            .set_default_widget(Some(&*imp.next_button));
     }
 
     pub(crate) fn set_authorization_state(&self, state: AuthorizationState) {
@@ -431,6 +437,12 @@ impl Login {
                         true,
                     ).await;
                 }));
+
+                self.root()
+                    .unwrap()
+                    .downcast_ref::<gtk::Window>()
+                    .unwrap()
+                    .set_default_widget(None::<&gtk::Widget>);
 
                 // Make everything invisible.
                 imp.outer_box.set_visible(false);
