@@ -1,6 +1,5 @@
 mod avatar;
 mod basic_group;
-mod basic_group_list;
 mod chat;
 mod chat_action;
 mod chat_action_list;
@@ -12,16 +11,13 @@ mod country_list;
 mod message;
 mod message_forward_info;
 mod secret_chat;
-mod secret_chat_list;
 mod sponsored_message;
 mod supergroup;
-mod supergroup_list;
 mod user;
 mod user_list;
 
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::basic_group::BasicGroup;
-pub(crate) use self::basic_group_list::BasicGroupList;
 pub(crate) use self::chat::{Chat, ChatType};
 pub(crate) use self::chat_action::ChatAction;
 pub(crate) use self::chat_action_list::ChatActionList;
@@ -32,11 +28,9 @@ pub(crate) use self::country_info::CountryInfo;
 pub(crate) use self::country_list::CountryList;
 pub(crate) use self::message::{Message, MessageSender};
 pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
-use self::secret_chat::SecretChat;
-pub(crate) use self::secret_chat_list::SecretChatList;
+pub(crate) use self::secret_chat::SecretChat;
 pub(crate) use self::sponsored_message::SponsoredMessage;
 pub(crate) use self::supergroup::Supergroup;
-pub(crate) use self::supergroup_list::SupergroupList;
 pub(crate) use self::user::User;
 pub(crate) use self::user_list::UserList;
 

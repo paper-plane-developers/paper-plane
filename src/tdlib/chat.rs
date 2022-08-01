@@ -28,15 +28,15 @@ impl ChatType {
                 Self::Private(user)
             }
             TdChatType::BasicGroup(data) => {
-                let basic_group = session.basic_group_list().get(data.basic_group_id);
+                let basic_group = session.basic_group(data.basic_group_id);
                 Self::BasicGroup(basic_group)
             }
             TdChatType::Supergroup(data) => {
-                let supergroup = session.supergroup_list().get(data.supergroup_id);
+                let supergroup = session.supergroup(data.supergroup_id);
                 Self::Supergroup(supergroup)
             }
             TdChatType::Secret(data) => {
-                let secret_chat = session.secret_chat_list().get(data.secret_chat_id);
+                let secret_chat = session.secret_chat(data.secret_chat_id);
                 Self::Secret(secret_chat)
             }
         }
