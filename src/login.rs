@@ -1000,34 +1000,25 @@ impl Login {
     }
 
     fn show_no_email_access_dialog(&self) {
-        let dialog = gtk::MessageDialog::builder()
-            .text(&gettext("Sorry"))
-            .secondary_text(&gettext(
+        let dialog = adw::MessageDialog::builder()
+            .heading(&gettext("Sorry"))
+            .body(&gettext(
                 "If you can't restore access to the e-mail, your remaining options are either to remember your password or to delete and then recreate your account.",
             ))
-            .buttons(gtk::ButtonsType::Close)
-            .modal(true)
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
-        dialog.add_button(&gettext("_Go Back"), gtk::ResponseType::Other(0));
+        dialog.add_responses(&[("ok", &gettext("_Ok"))]);
+        dialog.set_default_response(Some("ok"));
 
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
-            dialog.close();
-
-            if let gtk::ResponseType::Other(_) = response_id {
-                obj.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
-                    "password-forgot-page",
-                    [],
-                    None,
-                    None,
-                );
-            } else {
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, _| {
                 obj.imp()
                     .password_recovery_code_entry_row
                     .grab_focus();
-            }
-        }));
+            }),
+        );
     }
 
     fn use_test_dc(&self) -> bool {

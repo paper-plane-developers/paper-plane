@@ -599,67 +599,56 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
               <object class="AdwLeafletPage">
                 <property name="name">password-recovery-page</property>
                 <property name="child">
-                  <object class="AdwStatusPage" id="password_recovery_status_page">
-                    <property name="icon-name">mail-unread-symbolic</property>
-                    <property name="title" translatable="yes">Enter the code e-mailed to you</property>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="AdwClamp">
-                        <property name="maximum-size">300</property>
-                        <property name="tightening-threshold">200</property>
-                        <property name="child">
-                          <object class="GtkBox">
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">12</property>
-                            <child>
-                              <object class="GtkListBox">
+                      <object class="AdwStatusPage" id="password_recovery_status_page">
+                        <property name="icon-name">mail-unread-symbolic</property>
+                        <property name="title" translatable="yes">Enter the code e-mailed to you</property>
+                        <property name="vexpand">True</property>
+                        <child>
+                          <object class="AdwClamp">
+                            <property name="maximum-size">300</property>
+                            <property name="tightening-threshold">200</property>
+                            <property name="child">
+                              <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">12</property>
                                 <child>
-                                  <object class="AdwEntryRow" id="password_recovery_code_entry_row">
-                                    <property name="title" translatable="yes">Code</property>
-                                    <property name="input-purpose">digits</property>
-                                    <style>
-                                      <class name="numeric"/>
-                                    </style>
-                                  </object>
-                                </child>
-                                <style>
-                                  <class name="boxed-list"/>
-                                </style>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkListBox">
-                                <child>
-                                  <object class="AdwActionRow">
-                                    <property name="selectable">False</property>
-                                    <property name="activatable">True</property>
-                                    <property name="action-name">login.show-no-email-access-dialog</property>
-                                    <property name="use-underline">True</property>
-                                    <property name="title" translatable="yes">_Unable to access your e-mail?</property>
+                                  <object class="GtkListBox">
                                     <child>
-                                      <object class="GtkImage">
-                                        <property name="icon_name">go-next-symbolic</property>
+                                      <object class="AdwEntryRow" id="password_recovery_code_entry_row">
+                                        <property name="title" translatable="yes">Code</property>
+                                        <property name="input-purpose">digits</property>
                                         <style>
-                                          <class name="dim-label"/>
+                                          <class name="numeric"/>
                                         </style>
                                       </object>
                                     </child>
+                                    <style>
+                                      <class name="boxed-list"/>
+                                    </style>
                                   </object>
                                 </child>
-                                <style>
-                                  <class name="boxed-list"/>
-                                </style>
+                                <child>
+                                  <object class="GtkLabel" id="password_recovery_error_label">
+                                    <property name="visible">False</property>
+                                    <style>
+                                      <class name="error"/>
+                                    </style>
+                                  </object>
+                                </child>
                               </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="password_recovery_error_label">
-                                <property name="visible">False</property>
-                                <style>
-                                  <class name="error"/>
-                                </style>
-                              </object>
-                            </child>
+                            </property>
                           </object>
-                        </property>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLinkButton">
+                        <property name="action-name">login.show-no-email-access-dialog</property>
+                        <property name="label" translatable="yes">Unable to access your e-mail?</property>
+                        <property name="margin-bottom">18</property>
                       </object>
                     </child>
                   </object>
