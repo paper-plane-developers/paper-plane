@@ -61,7 +61,7 @@ mod imp {
         #[template_child]
         pub(super) code_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub(super) code_entry: TemplateChild<gtk::Entry>,
+        pub(super) code_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) code_resend_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -71,15 +71,15 @@ mod imp {
         #[template_child]
         pub(super) code_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) registration_first_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_first_name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub(super) registration_last_name_entry: TemplateChild<gtk::Entry>,
+        pub(super) registration_last_name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) registration_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) tos_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) password_entry: TemplateChild<gtk::PasswordEntry>,
+        pub(super) password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
         pub(super) password_hint_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
@@ -95,7 +95,7 @@ mod imp {
         #[template_child]
         pub(super) password_recovery_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub(super) password_recovery_code_entry: TemplateChild<gtk::Entry>,
+        pub(super) password_recovery_code_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) password_recovery_error_label: TemplateChild<gtk::Label>,
     }
@@ -222,10 +222,10 @@ impl Login {
 
         imp.countries_retrieved.set(false);
         imp.phone_number_input.set_number("");
-        imp.registration_first_name_entry.set_text("");
-        imp.registration_last_name_entry.set_text("");
-        imp.code_entry.set_text("");
-        imp.password_entry.set_text("");
+        imp.registration_first_name_entry_row.set_text("");
+        imp.registration_last_name_entry_row.set_text("");
+        imp.code_entry_row.set_text("");
+        imp.password_entry_row.set_text("");
     }
 
     pub(crate) fn set_authorization_state(&self, state: AuthorizationState) {
@@ -306,9 +306,9 @@ impl Login {
 
                 self.navigate_to_page(
                     "code-page",
-                    [&*imp.code_entry],
+                    [&*imp.code_entry_row],
                     Some(&imp.code_error_label),
-                    Some(&*imp.code_entry),
+                    Some(&*imp.code_entry_row),
                 );
             }
             AuthorizationState::WaitOtherDeviceConfirmation(data) => {
@@ -354,11 +354,11 @@ impl Login {
                 self.navigate_to_page(
                     "registration-page",
                     [
-                        &*imp.registration_first_name_entry,
-                        &*imp.registration_last_name_entry,
+                        &*imp.registration_first_name_entry_row,
+                        &*imp.registration_last_name_entry_row,
                     ],
                     Some(&imp.registration_error_label),
-                    Some(&*imp.registration_first_name_entry),
+                    Some(&*imp.registration_first_name_entry_row),
                 );
             }
             AuthorizationState::WaitPassword(data) => {
@@ -368,11 +368,6 @@ impl Login {
                 if imp.content.visible_child_name().unwrap() == "password-forgot-page" {
                     return;
                 }
-
-                // When we enter the password page, the password to be entered should be masked by
-                // default, so the peek icon is turned off and on again.
-                imp.password_entry.set_show_peek_icon(false);
-                imp.password_entry.set_show_peek_icon(true);
 
                 imp.password_hint_action_row
                     .set_visible(!data.password_hint.is_empty());
@@ -412,9 +407,9 @@ impl Login {
 
                 self.navigate_to_page(
                     "password-page",
-                    [&*imp.password_entry],
+                    [&*imp.password_entry_row],
                     Some(&imp.password_error_label),
-                    Some(&*imp.password_entry),
+                    Some(&*imp.password_entry_row),
                 );
             }
             AuthorizationState::Ready => {
@@ -597,7 +592,7 @@ impl Login {
                 "password-page",
                 [],
                 None,
-                Some(&*imp.password_entry),
+                Some(&*imp.password_entry_row),
             ),
             "password-recovery-page" => self.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
                 "password-forgot-page",
@@ -817,11 +812,11 @@ impl Login {
         reset_error_label(&imp.code_error_label);
 
         let client_id = imp.client_id.get();
-        let code = imp.code_entry.text().to_string();
+        let code = imp.code_entry_row.text().to_string();
         let result = functions::check_authentication_code(code, client_id).await;
 
         if let Err(err) = result {
-            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry_row);
         } else {
             // We entered the correct code, so stop resend countdown.
             self.stop_code_next_type_countdown()
@@ -834,14 +829,14 @@ impl Login {
         reset_error_label(&imp.registration_error_label);
 
         let client_id = imp.client_id.get();
-        let first_name = imp.registration_first_name_entry.text().to_string();
-        let last_name = imp.registration_last_name_entry.text().to_string();
+        let first_name = imp.registration_first_name_entry_row.text().to_string();
+        let last_name = imp.registration_last_name_entry_row.text().to_string();
         let result = functions::register_user(first_name, last_name, client_id).await;
 
         self.handle_user_result(
             result,
             &imp.registration_error_label,
-            &*imp.registration_first_name_entry,
+            &*imp.registration_first_name_entry_row,
         );
     }
 
@@ -861,7 +856,7 @@ impl Login {
                 // In this case, we automatically disable the resend feature.
                 self.update_code_resend_state(None, 0);
             }
-            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry);
+            self.handle_user_error(&err, &imp.code_error_label, &*imp.code_entry_row);
         }
     }
 
@@ -871,10 +866,10 @@ impl Login {
         reset_error_label(&imp.password_error_label);
 
         let client_id = imp.client_id.get();
-        let password = imp.password_entry.text().to_string();
+        let password = imp.password_entry_row.text().to_string();
         let result = functions::check_authentication_password(password, client_id).await;
 
-        self.handle_user_result(result, &imp.password_error_label, &*imp.password_entry);
+        self.handle_user_result(result, &imp.password_error_label, &*imp.password_entry_row);
     }
 
     fn recover_password(&self) {
@@ -901,9 +896,9 @@ impl Login {
                     imp.password_recovery_expired.set(false);
                     obj.navigate_to_page(
                         "password-recovery-page",
-                        [&*imp.password_recovery_code_entry],
+                        [&*imp.password_recovery_code_entry_row],
                         Some(&imp.password_recovery_error_label),
-                        Some(&*imp.password_recovery_code_entry),
+                        Some(&*imp.password_recovery_code_entry_row),
                     );
                 } else {
                     obj.update_actions_for_visible_page();
@@ -916,9 +911,9 @@ impl Login {
             // The code has been send already via mail.
             self.navigate_to_page(
                 "password-recovery-page",
-                [&*imp.password_recovery_code_entry],
+                [&*imp.password_recovery_code_entry_row],
                 Some(&imp.password_recovery_error_label),
-                Some(&*imp.password_recovery_code_entry),
+                Some(&*imp.password_recovery_code_entry_row),
             );
         }
     }
@@ -967,7 +962,7 @@ impl Login {
                     }
                 }));
             } else {
-                obj.imp().password_entry.grab_focus();
+                obj.imp().password_entry_row.grab_focus();
             }
         }));
     }
@@ -975,7 +970,7 @@ impl Login {
     async fn send_password_recovery_code(&self) {
         let imp = self.imp();
         let client_id = imp.client_id.get();
-        let recovery_code = imp.password_recovery_code_entry.text().to_string();
+        let recovery_code = imp.password_recovery_code_entry_row.text().to_string();
         let result = functions::recover_authentication_password(
             recovery_code,
             String::new(),
@@ -994,13 +989,13 @@ impl Login {
                     "password-page",
                     [],
                     None,
-                    Some(&*imp.password_entry),
+                    Some(&*imp.password_entry_row),
                 );
             } else {
                 self.handle_user_error(
                     &err,
                     &imp.password_recovery_error_label,
-                    &*imp.password_recovery_code_entry,
+                    &*imp.password_recovery_code_entry_row,
                 );
             }
         }
@@ -1031,7 +1026,7 @@ impl Login {
                 );
             } else {
                 obj.imp()
-                    .password_recovery_code_entry
+                    .password_recovery_code_entry_row
                     .grab_focus();
             }
         }));
