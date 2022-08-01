@@ -920,52 +920,49 @@ impl Login {
     }
 
     fn show_delete_account_dialog(&self) {
-        let dialog = gtk::MessageDialog::builder()
-            .text(&gettext("Warning"))
-            .secondary_text(&gettext(
+        let dialog = adw::MessageDialog::builder()
+            .heading(&gettext("Warning"))
+            .body(&gettext(
                 "You will lose all your chats and messages, along with any media and files you shared!\n\nDo you want to delete your account?",
             ))
-            .buttons(gtk::ButtonsType::Cancel)
-            .modal(true)
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
-        dialog.add_action_widget(
-            &gtk::Button::builder()
-                .use_underline(true)
-                .label("_Delete Account")
-                .css_classes(vec!["destructive-action".to_string()])
-                .build(),
-            gtk::ResponseType::Accept,
+        dialog.add_responses(&[
+            ("cancel", &gettext("_Cancel")),
+            ("delete", &gettext("_Delete Account")),
+        ]);
+        dialog.set_default_response(Some("cancel"));
+        dialog.set_response_appearance("delete", adw::ResponseAppearance::Destructive);
+
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, response| {
+                if response == "delete" {
+                    obj.freeze();
+                    let client_id = obj.imp().client_id.get();
+
+                    spawn(clone!(@weak obj => async move {
+                        let result = functions::delete_account(
+                            String::from("cloud password lost and not recoverable"),
+                            client_id,
+                        )
+                        .await;
+
+                        // Just unfreeze in case of an error, else stay frozen until we are
+                        // redirected to the welcome page.
+                        if result.is_err() {
+                            obj.update_actions_for_visible_page();
+                            obj.unfreeze();
+                            // TODO: We also need to handle potential errors here and inform the
+                            // user.
+                        }
+                    }));
+                } else {
+                    obj.imp().password_entry_row.grab_focus();
+                }
+            }),
         );
-
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
-            dialog.close();
-
-            if matches!(response_id, gtk::ResponseType::Accept) {
-                obj.freeze();
-                let client_id = obj.imp().client_id.get();
-
-                spawn(clone!(@weak obj => async move {
-                    let result = functions::delete_account(
-                        String::from("cloud password lost and not recoverable"),
-                        client_id,
-                    )
-                    .await;
-
-                    // Just unfreeze in case of an error, else stay frozen until we are
-                    // redirected to the welcome page.
-                    if result.is_err() {
-                        obj.update_actions_for_visible_page();
-                        obj.unfreeze();
-                        // TODO: We also need to handle potiential errors here and inform the
-                        // user.
-                    }
-                }));
-            } else {
-                obj.imp().password_entry_row.grab_focus();
-            }
-        }));
     }
 
     async fn send_password_recovery_code(&self) {
