@@ -1,7 +1,7 @@
+use adw::prelude::*;
 use gettextrs::gettext;
 use gtk::gdk;
 use gtk::glib::{self, clone};
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
@@ -677,37 +677,38 @@ impl Login {
     }
 
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
-        let builder = gtk::MessageDialog::builder()
-            .use_markup(true)
-            .secondary_text(&*self.imp().tos_text.borrow())
-            .modal(true)
-            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap());
+        let dialog = adw::MessageDialog::builder()
+            .body_use_markup(true)
+            .body(&*self.imp().tos_text.borrow())
+            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
+            .build();
 
-        let dialog = if user_needs_to_accept {
-            builder
-                .buttons(gtk::ButtonsType::YesNo)
-                .text(&gettext("Do you accept the Terms of Service?"))
+        if user_needs_to_accept {
+            dialog.set_heading(Some(&gettext("Do you accept the Terms of Service?")));
+            dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
+            dialog.set_default_response(Some("no"));
         } else {
-            builder
-                .buttons(gtk::ButtonsType::Ok)
-                .text(&gettext("Terms of Service"))
+            dialog.set_heading(Some(&gettext("Terms of Service")));
+            dialog.add_response("ok", &gettext("_OK"));
+            dialog.set_default_response(Some("ok"));
         }
-        .build();
 
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response| {
-            if matches!(response, gtk::ResponseType::No) {
-                // If the user declines the ToS, don't proceed and just stay in
-                // the view but unfreeze it again.
-                obj.unfreeze();
-            } else if matches!(response, gtk::ResponseType::Yes) {
-                // User has accepted the ToS, so we can proceed in the login
-                // flow.
-                spawn(clone!(@weak obj => async move {
-                    obj.send_registration().await;
-                }));
-            }
-            dialog.close();
-        }));
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, response| {
+                if response == "no" {
+                    // If the user declines the ToS, don't proceed and just stay in
+                    // the view but unfreeze it again.
+                    obj.unfreeze();
+                } else if response == "yes" {
+                    // User has accepted the ToS, so we can proceed in the login
+                    // flow.
+                    spawn(clone!(@weak obj => async move {
+                        obj.send_registration().await;
+                    }));
+                }
+            }),
+        );
     }
 
     fn disable_actions(&self) {
