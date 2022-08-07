@@ -32,55 +32,55 @@
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
-    <child>
-      <object class="AdwHeaderBar">
-        <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
-        <child type="start">
-          <object class="GtkMenuButton">
-            <property name="popover">
-              <object class="SessionSwitcher" id="session_switcher"/>
-            </property>
-            <style>
-              <class name="image-button"/>
-            </style>
-            <property name="child">
-              <object class="ComponentsAvatar">
-                <property name="size">24</property>
-                <binding name="item">
-                  <lookup name="me" type="Session">
-                    <lookup name="session">Sidebar</lookup>
-                  </lookup>
-                </binding>
+            <child>
+              <object class="AdwHeaderBar">
+                <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+                <child type="start">
+                  <object class="GtkMenuButton">
+                    <property name="popover">
+                      <object class="SessionSwitcher" id="session_switcher"/>
+                    </property>
+                    <style>
+                      <class name="image-button"/>
+                    </style>
+                    <property name="child">
+                      <object class="ComponentsAvatar">
+                        <property name="size">24</property>
+                        <binding name="item">
+                          <lookup name="me" type="Session">
+                            <lookup name="session">Sidebar</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton">
+                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="menu-model">primary_menu</property>
+                  </object>
+                </child>
               </object>
-            </property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkMenuButton">
-            <property name="icon-name">open-menu-symbolic</property>
-            <property name="menu-model">primary_menu</property>
-          </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkScrolledWindow">
-        <property name="vexpand">True</property>
-        <property name="hscrollbar-policy">never</property>
-        <child>
-          <object class="GtkListView">
-            <property name="single-click-activate">True</property>
-            <signal name="activate" handler="list_activate" swapped="true"/>
-            <property name="model">
-              <object class="SidebarSelection" id="selection">
-                <binding name="hide-selection">
-                  <lookup name="compact">Sidebar</lookup>
-                </binding>
-              </object>
-            </property>
-            <property name="factory">
-              <object class="GtkBuilderListItemFactory">
-                <property name="bytes"><![CDATA[
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <child>
+                  <object class="GtkListView">
+                    <property name="single-click-activate">True</property>
+                    <signal name="activate" handler="list_activate" swapped="true"/>
+                    <property name="model">
+                      <object class="SidebarSelection" id="selection">
+                        <binding name="hide-selection">
+                          <lookup name="compact">Sidebar</lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -93,17 +93,17 @@
     </property>
   </template>
 </interface>
-                ]]></property>
+                        ]]></property>
+                      </object>
+                    </property>
+                    <style>
+                      <class name="navigation-sidebar"/>
+                      <class name="chat-list"/>
+                    </style>
+                  </object>
+                </child>
               </object>
-            </property>
-            <style>
-              <class name="navigation-sidebar"/>
-              <class name="chat-list"/>
-            </style>
-          </object>
-        </child>
-      </object>
-    </child>
+            </child>
           </object>
         </child>
       </object>
