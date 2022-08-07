@@ -1,10 +1,12 @@
 mod avatar;
 mod mini_thumbnail;
 mod row;
+mod search;
 mod selection;
 mod session_switcher;
 
 use self::row::Row;
+use self::search::Search;
 use self::selection::Selection;
 use self::session_switcher::SessionSwitcher;
 
@@ -37,9 +39,13 @@ mod imp {
         #[template_child]
         pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        pub(super) main_box: TemplateChild<gtk::Box>,
+        #[template_child]
         pub(super) session_switcher: TemplateChild<SessionSwitcher>,
         #[template_child]
         pub(super) selection: TemplateChild<Selection>,
+        #[template_child]
+        pub(super) search: TemplateChild<Search>,
     }
 
     #[glib::object_subclass]
@@ -53,6 +59,10 @@ mod imp {
             Row::static_type();
             Self::bind_template(klass);
             Self::bind_template_callbacks(klass);
+
+            klass.install_action("sidebar.start-search", None, move |widget, _, _| {
+                widget.begin_chats_search();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -74,6 +84,11 @@ mod imp {
             instance.set_selected_chat(chat);
 
             instance.emit_by_name::<()>("list-activated", &[]);
+        }
+
+        #[template_callback]
+        fn close_search(&self) {
+            self.stack.set_visible_child(&*self.main_box);
         }
     }
 
@@ -179,7 +194,11 @@ impl Sidebar {
         })
     }
 
-    pub(crate) fn begin_chats_search(&self) {}
+    pub(crate) fn begin_chats_search(&self) {
+        let imp = self.imp();
+        imp.search.grab_focus();
+        imp.stack.set_visible_child(&*imp.search);
+    }
 
     pub(crate) fn selected_chat(&self) -> Option<Chat> {
         self.imp().selected_chat.borrow().clone()

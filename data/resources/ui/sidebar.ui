@@ -29,8 +29,10 @@
     </property>
     <child>
       <object class="GtkStack" id="stack">
+        <property name="transition-duration">100</property>
+        <property name="transition-type">crossfade</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="main_box">
             <property name="orientation">vertical</property>
             <child>
               <object class="AdwHeaderBar">
@@ -59,6 +61,12 @@
                   <object class="GtkMenuButton">
                     <property name="icon-name">open-menu-symbolic</property>
                     <property name="menu-model">primary_menu</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkButton">
+                    <property name="action-name">sidebar.start-search</property>
+                    <property name="icon-name">system-search-symbolic</property>
                   </object>
                 </child>
               </object>
@@ -104,6 +112,13 @@
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="SidebarSearch" id="search">
+            <property name="compact" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+            <property name="session" bind-source="Sidebar" bind-property="session" bind-flags="sync-create"/>
+            <signal name="close" handler="close_search" swapped="true"/>
           </object>
         </child>
       </object>
