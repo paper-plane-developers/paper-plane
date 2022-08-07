@@ -177,7 +177,7 @@ impl ChatHistory {
             let added = added as usize;
 
             let mut list = imp.list.borrow_mut();
-            let mut previous_timestamp = if position < list.len() - 1 {
+            let mut previous_timestamp = if position + 1 < list.len() {
                 list.get(position + 1)
                     .and_then(|item| item.message_timestamp())
             } else {
