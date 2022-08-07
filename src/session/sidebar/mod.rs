@@ -35,11 +35,9 @@ mod imp {
         pub(super) session: RefCell<Option<Session>>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
-        pub(super) header_bar: TemplateChild<adw::HeaderBar>,
+        pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub(super) session_switcher: TemplateChild<SessionSwitcher>,
-        #[template_child]
-        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub(super) selection: TemplateChild<Selection>,
     }
@@ -150,8 +148,7 @@ mod imp {
         }
 
         fn dispose(&self, _obj: &Self::Type) {
-            self.header_bar.unparent();
-            self.scrolled_window.unparent();
+            self.stack.unparent();
         }
     }
 
