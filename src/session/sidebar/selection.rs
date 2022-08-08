@@ -234,7 +234,10 @@ impl Selection {
         let old_position = imp.item_position.get();
         imp.item_position.set(position);
 
-        if !self.hide_selection() {
+        if !self.hide_selection()
+            && (old_position != gtk::INVALID_LIST_POSITION
+                || position != gtk::INVALID_LIST_POSITION)
+        {
             if old_position == gtk::INVALID_LIST_POSITION {
                 self.selection_changed(position, 1);
             } else if position == gtk::INVALID_LIST_POSITION {
