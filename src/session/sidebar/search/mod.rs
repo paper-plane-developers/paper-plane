@@ -255,6 +255,7 @@ impl Search {
     #[template_callback]
     async fn list_activate(&self, position: u32) {
         let item = self.imp().selection.item(position).unwrap();
+        let session = self.session().unwrap();
         let sidebar = self
             .ancestor(Sidebar::static_type())
             .unwrap()
@@ -263,9 +264,12 @@ impl Search {
 
         if let Some(chat) = item.downcast_ref::<Chat>() {
             sidebar.select_chat(chat.clone());
-        } else if let Some(user) = item.downcast_ref::<User>() {
-            let session = self.session().unwrap();
 
+            if let Err(e) = functions::add_recently_found_chat(chat.id(), session.client_id()).await
+            {
+                log::warn!("Failed to add recently found chat: {:?}", e);
+            }
+        } else if let Some(user) = item.downcast_ref::<User>() {
             // Check if a private chat with this user already exists
             if let Some(chat) = session.chat_list().try_get(user.id()) {
                 sidebar.select_chat(chat);
@@ -279,6 +283,11 @@ impl Search {
                         log::warn!("Failed to create private chat: {:?}", e);
                     }
                 }
+            }
+
+            if let Err(e) = functions::add_recently_found_chat(user.id(), session.client_id()).await
+            {
+                log::warn!("Failed to add recently found chat: {:?}", e);
             }
         } else {
             log::warn!("Unexpected item type: {:?}", item);
