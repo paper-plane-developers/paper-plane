@@ -163,12 +163,11 @@ impl ChatList {
     /// so if you use an `id` returned by TDLib, it should be expected that the
     /// relative `Chat` exists in the list.
     pub(crate) fn get(&self, id: i64) -> Chat {
-        self.imp()
-            .list
-            .borrow()
-            .get(&id)
-            .expect("Failed to get expected Chat")
-            .to_owned()
+        self.try_get(id).expect("Failed to get expected Chat")
+    }
+
+    pub(crate) fn try_get(&self, id: i64) -> Option<Chat> {
+        self.imp().list.borrow().get(&id).cloned()
     }
 
     fn insert_chat(&self, chat: TelegramChat) {

@@ -190,6 +190,7 @@ impl Sidebar {
 
     pub(crate) fn begin_chats_search(&self) {
         let imp = self.imp();
+        imp.search.reset();
         imp.search.grab_focus();
         imp.stack.set_visible_child(&*imp.search);
     }
