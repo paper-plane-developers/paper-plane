@@ -76,14 +76,8 @@ mod imp {
         fn list_activate(&self, pos: u32) {
             self.selection.set_selected_position(pos);
 
-            let instance = self.instance();
-            let chat = self
-                .selection
-                .selected_item()
-                .map(|i| i.downcast().unwrap());
-            instance.set_selected_chat(chat);
-
-            instance.emit_by_name::<()>("list-activated", &[]);
+            let chat = self.selection.selected_item().unwrap().downcast().unwrap();
+            self.instance().select_chat(chat);
         }
 
         #[template_callback]
@@ -95,7 +89,7 @@ mod imp {
     impl ObjectImpl for Sidebar {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("list-activated", &[], <()>::static_type().into()).build()]
+                vec![Signal::builder("chat-selected", &[], <()>::static_type().into()).build()]
             });
             SIGNALS.as_ref()
         }
@@ -200,6 +194,11 @@ impl Sidebar {
         imp.stack.set_visible_child(&*imp.search);
     }
 
+    pub(crate) fn select_chat(&self, chat: Chat) {
+        self.set_selected_chat(Some(chat));
+        self.emit_by_name::<()>("chat-selected", &[]);
+    }
+
     pub(crate) fn selected_chat(&self) -> Option<Chat> {
         self.imp().selected_chat.borrow().clone()
     }
@@ -262,11 +261,11 @@ impl Sidebar {
             .set_sessions(sessions, this_session);
     }
 
-    pub(crate) fn connect_list_activated<F: Fn(&Self) + 'static>(
+    pub(crate) fn connect_chat_selected<F: Fn(&Self) + 'static>(
         &self,
         f: F,
     ) -> glib::SignalHandlerId {
-        self.connect_local("list-activated", true, move |values| {
+        self.connect_local("chat-selected", true, move |values| {
             let obj = values[0].get::<Self>().unwrap();
             f(&obj);
 

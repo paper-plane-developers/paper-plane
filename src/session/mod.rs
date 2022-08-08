@@ -195,7 +195,7 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
             self.sidebar
-                .connect_list_activated(clone!(@weak obj => move |_| {
+                .connect_chat_selected(clone!(@weak obj => move |_| {
                     obj.imp().leaflet.navigate(adw::NavigationDirection::Forward);
                 }));
         }
