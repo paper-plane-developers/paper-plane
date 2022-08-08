@@ -274,7 +274,7 @@ impl Search {
             if let Some(chat) = session.chat_list().try_get(user.id()) {
                 sidebar.select_chat(chat);
             } else {
-                match functions::create_private_chat(user.id(), false, session.client_id()).await {
+                match functions::create_private_chat(user.id(), true, session.client_id()).await {
                     Ok(enums::Chat::Chat(data)) => {
                         let chat = session.chat_list().get(data.id);
                         sidebar.select_chat(chat);
