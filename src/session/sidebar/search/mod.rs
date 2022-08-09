@@ -200,6 +200,8 @@ impl Search {
         let list = gio::ListStore::new(glib::Object::static_type());
         let mut found_chat_ids: Vec<i64> = vec![];
 
+        const MAX_KNOWN_CHATS: i32 = 50;
+
         imp.selection.set_model(Some(&list));
         list.connect_items_changed(clone!(@weak self as obj => move |list, _, _, _| {
             obj.imp().stack.set_visible_child_name(if list.n_items() > 0 {
@@ -263,10 +265,48 @@ impl Search {
             return;
         }
 
+        // Search known chats on server
+        match functions::search_chats_on_server(
+            query.clone(),
+            MAX_KNOWN_CHATS - found_chat_ids.len() as i32,
+            session.client_id(),
+        )
+        .await
+        {
+            Ok(enums::Chats::Chats(data)) if !data.chat_ids.is_empty() => {
+                if found_chat_ids.is_empty() {
+                    list.append(&Section::new(SectionType::Chats));
+                }
+
+                let chats: Vec<Chat> = data
+                    .chat_ids
+                    .into_iter()
+                    .filter_map(|id| {
+                        if found_chat_ids.contains(&id) {
+                            None
+                        } else {
+                            found_chat_ids.push(id);
+                            Some(session.chat_list().get(id))
+                        }
+                    })
+                    .collect();
+
+                list.extend_from_slice(&chats);
+            }
+            Err(e) => {
+                log::warn!("Error searching chats on server: {:?}", e);
+            }
+            _ => {}
+        }
+
+        if found_chat_ids.len() as i32 >= MAX_KNOWN_CHATS {
+            return;
+        }
+
         // Search contacts
         match functions::search_contacts(
             query,
-            50 - found_chat_ids.len() as i32,
+            MAX_KNOWN_CHATS - found_chat_ids.len() as i32,
             session.client_id(),
         )
         .await
