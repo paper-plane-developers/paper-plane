@@ -141,6 +141,9 @@ impl SectionRow {
             SectionType::Chats => {
                 imp.label.set_label(&gettext("Chats"));
             }
+            SectionType::Global => {
+                imp.label.set_label(&gettext("Global Search"));
+            }
             SectionType::Recent => {
                 imp.label.set_label(&gettext("Recent"));
 

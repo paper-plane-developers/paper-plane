@@ -305,7 +305,7 @@ impl Search {
 
         // Search contacts
         match functions::search_contacts(
-            query,
+            query.clone(),
             MAX_KNOWN_CHATS - found_chat_ids.len() as i32,
             session.client_id(),
         )
@@ -335,6 +335,31 @@ impl Search {
             }
             Err(e) => {
                 log::warn!("Error searching contacts: {:?}", e);
+            }
+            _ => {}
+        }
+
+        // Search public chats
+        match functions::search_public_chats(query, session.client_id()).await {
+            Ok(enums::Chats::Chats(data)) if !data.chat_ids.is_empty() => {
+                list.append(&Section::new(SectionType::Global));
+
+                let chats: Vec<Chat> = data
+                    .chat_ids
+                    .into_iter()
+                    .filter_map(|id| {
+                        if found_chat_ids.contains(&id) {
+                            None
+                        } else {
+                            Some(session.chat_list().get(id))
+                        }
+                    })
+                    .collect();
+
+                list.extend_from_slice(&chats);
+            }
+            Err(e) => {
+                log::warn!("Error searching public chats: {:?}", e);
             }
             _ => {}
         }
