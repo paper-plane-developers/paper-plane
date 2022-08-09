@@ -8,7 +8,7 @@ use crate::session::sidebar::search::SectionType;
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::Cell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
@@ -17,6 +17,8 @@ mod imp {
         <child>
           <object class="GtkLabel" id="label">
             <property name="ellipsize">end</property>
+            <property name="xalign">0</property>
+            <property name="hexpand">True</property>
             <style>
               <class name="heading"/>
             </style>
@@ -27,6 +29,7 @@ mod imp {
     "#)]
     pub(crate) struct SectionRow {
         pub(super) section_type: Cell<SectionType>,
+        pub(super) suffix: RefCell<Option<gtk::Widget>>,
         #[template_child]
         pub(super) label: TemplateChild<gtk::Label>,
     }
@@ -91,6 +94,9 @@ mod imp {
 
         fn dispose(&self, _obj: &Self::Type) {
             self.label.unparent();
+            if let Some(suffix) = self.suffix.take() {
+                suffix.unparent();
+            }
         }
     }
 
@@ -127,12 +133,24 @@ impl SectionRow {
     fn update_content(&self) {
         let imp = self.imp();
 
+        if let Some(suffix) = imp.suffix.take() {
+            suffix.unparent();
+        }
+
         match self.section_type() {
             SectionType::Chats => {
                 imp.label.set_label(&gettext("Chats"));
             }
             SectionType::Recent => {
                 imp.label.set_label(&gettext("Recent"));
+
+                let button = gtk::Button::builder()
+                    .icon_name("clear-symbolic")
+                    .action_name("sidebar-search.clear-recent-chats")
+                    .build();
+                button.add_css_class("flat");
+                button.insert_before(self, gtk::Widget::NONE);
+                imp.suffix.replace(Some(button.upcast()));
             }
         }
     }
