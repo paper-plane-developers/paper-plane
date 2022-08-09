@@ -45,11 +45,10 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SidebarSearchRow">
-        <property name="margin-top">6</property>
-        <property name="margin-bottom">6</property>
         <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>
+        <property name="list-item">GtkListItem</property>
       </object>
     </property>
   </template>
@@ -59,6 +58,7 @@
                         </property>
                         <style>
                           <class name="navigation-sidebar"/>
+                          <class name="results-list"/>
                         </style>
                       </object>
                     </child>

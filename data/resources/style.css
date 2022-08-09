@@ -104,6 +104,15 @@
   background-color: @light_5;
 }
 
+sidebarsearch listview.results-list > row {
+  /* Keep in sync with button height */
+  min-height: 34px;
+}
+
+sidebarsearch listview.results-list > row > widget > sidebarsearchitemrow {
+  margin: 6px 0;
+}
+
 sidebarsearchitemrow {
   border-spacing: 12px;
 }

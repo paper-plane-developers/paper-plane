@@ -1,8 +1,12 @@
 mod item_row;
 mod row;
+mod section;
+mod section_row;
 
 use self::item_row::ItemRow;
 use self::row::Row;
+use self::section::{Section, SectionType};
+use self::section_row::SectionRow;
 
 use gettextrs::gettext;
 use glib::clone;
@@ -49,6 +53,7 @@ mod imp {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
 
+            klass.set_css_name("sidebarsearch");
             klass.set_layout_manager_type::<gtk::BinLayout>();
             klass.install_action("sidebar-search.go-back", None, move |widget, _, _| {
                 widget.emit_by_name::<()>("close", &[]);
@@ -198,6 +203,8 @@ impl Search {
         {
             let own_user_id = session.me().id();
             if let Some(own_chat) = session.chat_list().try_get(own_user_id) {
+                list.append(&Section::new(SectionType::Chats));
+
                 found_chat_ids.push(own_user_id);
                 list.append(&own_chat);
             }
@@ -206,6 +213,12 @@ impl Search {
         // Search chats locally (or get the recently found chats if the query is empty)
         match functions::search_chats(query.clone(), 30, session.client_id()).await {
             Ok(enums::Chats::Chats(mut data)) if !data.chat_ids.is_empty() => {
+                list.append(&Section::new(if query.is_empty() {
+                    SectionType::Recent
+                } else {
+                    SectionType::Chats
+                }));
+
                 let chats: Vec<Chat> = data
                     .chat_ids
                     .iter()
@@ -242,6 +255,10 @@ impl Search {
         .await
         {
             Ok(enums::Users::Users(data)) if !data.user_ids.is_empty() => {
+                if found_chat_ids.is_empty() {
+                    list.append(&Section::new(SectionType::Chats));
+                }
+
                 let users: Vec<User> = data
                     .user_ids
                     .into_iter()
