@@ -233,12 +233,12 @@ impl Session {
 
     pub(crate) fn handle_update(&self, update: Update) {
         match update {
-            Update::BasicGroup(ref data) => {
+            Update::BasicGroup(data) => {
                 let mut basic_groups = self.imp().basic_groups.borrow_mut();
                 match basic_groups.entry(data.basic_group.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.basic_group),
                     Entry::Vacant(entry) => {
-                        entry.insert(BasicGroup::from_td_object(&data.basic_group));
+                        entry.insert(BasicGroup::from_td_object(data.basic_group));
                     }
                 }
             }

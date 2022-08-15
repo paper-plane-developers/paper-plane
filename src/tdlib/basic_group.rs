@@ -1,7 +1,6 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::Update;
 use tdlib::types::BasicGroup as TdBasicGroup;
 
 use crate::tdlib::BoxedChatMemberStatus;
@@ -35,7 +34,7 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt::new(
                         "member-count",
@@ -44,37 +43,18 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "status",
                         "Status",
                         "Own user status in this basic group",
                         BoxedChatMemberStatus::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
-                "member-count" => obj.set_member_count(value.get().unwrap()),
-                "status" => obj.set_status(value.get().unwrap()),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -93,20 +73,22 @@ glib::wrapper! {
 }
 
 impl BasicGroup {
-    pub(crate) fn from_td_object(basic_group: &TdBasicGroup) -> Self {
-        glib::Object::new(&[
-            ("id", &basic_group.id),
-            ("member-count", &basic_group.member_count),
-            ("status", &BoxedChatMemberStatus(basic_group.status.clone())),
-        ])
-        .expect("Failed to create BasicGroup")
+    pub(crate) fn from_td_object(td_basic_group: TdBasicGroup) -> Self {
+        let basic_group: BasicGroup = glib::Object::new(&[]).expect("Failed to create BasicGroup");
+        let imp = basic_group.imp();
+
+        let status = BoxedChatMemberStatus(td_basic_group.status);
+
+        imp.id.set(td_basic_group.id);
+        imp.member_count.set(td_basic_group.member_count);
+        imp.status.replace(Some(status));
+
+        basic_group
     }
 
-    pub(crate) fn handle_update(&self, update: &Update) {
-        if let Update::BasicGroup(data) = update {
-            self.set_member_count(data.basic_group.member_count);
-            self.set_status(BoxedChatMemberStatus(data.basic_group.status.clone()));
-        }
+    pub(crate) fn update(&self, td_basic_group: TdBasicGroup) {
+        self.set_member_count(td_basic_group.member_count);
+        self.set_status(BoxedChatMemberStatus(td_basic_group.status));
     }
 
     pub(crate) fn id(&self) -> i64 {
@@ -117,7 +99,7 @@ impl BasicGroup {
         self.imp().member_count.get()
     }
 
-    pub(crate) fn set_member_count(&self, member_count: i32) {
+    fn set_member_count(&self, member_count: i32) {
         if self.member_count() == member_count {
             return;
         }
@@ -130,7 +112,7 @@ impl BasicGroup {
         self.imp().status.borrow().to_owned().unwrap()
     }
 
-    pub(crate) fn set_status(&self, status: BoxedChatMemberStatus) {
+    fn set_status(&self, status: BoxedChatMemberStatus) {
         if self.imp().status.borrow().as_ref() == Some(&status) {
             return;
         }
