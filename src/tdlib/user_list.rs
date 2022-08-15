@@ -9,14 +9,15 @@ use crate::Session;
 
 mod imp {
     use super::*;
+    use glib::WeakRef;
     use indexmap::IndexMap;
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct UserList {
         pub(super) list: RefCell<IndexMap<i64, User>>,
-        pub(super) session: OnceCell<Session>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -49,8 +50,7 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "session" => self.session.set(value.get().unwrap()).unwrap(),
-
+                "session" => self.session.set(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -112,7 +112,7 @@ impl UserList {
                 match list.entry(data.user.id) {
                     Entry::Occupied(entry) => entry.get().handle_update(Update::User(data)),
                     Entry::Vacant(entry) => {
-                        let user = User::from_td_object(data.user, self.session());
+                        let user = User::from_td_object(data.user, &self.session());
                         entry.insert(user);
 
                         drop(list);
@@ -131,7 +131,7 @@ impl UserList {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub(crate) fn session(&self) -> &Session {
-        self.imp().session.get().unwrap()
+    pub(crate) fn session(&self) -> Session {
+        self.imp().session.upgrade().unwrap()
     }
 }
