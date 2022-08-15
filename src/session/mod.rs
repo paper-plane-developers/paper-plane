@@ -280,13 +280,13 @@ impl Session {
                     }
                 }
             }
-            Update::SecretChat(ref data) => {
+            Update::SecretChat(data) => {
                 let mut secret_chats = self.imp().secret_chats.borrow_mut();
                 match secret_chats.entry(data.secret_chat.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.secret_chat),
                     Entry::Vacant(entry) => {
                         let user = self.user_list().get(data.secret_chat.user_id);
-                        entry.insert(SecretChat::from_td_object(&data.secret_chat, &user));
+                        entry.insert(SecretChat::from_td_object(data.secret_chat, user));
                     }
                 }
             }
