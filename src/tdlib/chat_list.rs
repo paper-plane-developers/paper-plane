@@ -13,15 +13,16 @@ use crate::Session;
 mod imp {
     use super::*;
     use glib::subclass::Signal;
+    use glib::WeakRef;
     use indexmap::IndexMap;
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatList {
         pub(super) list: RefCell<IndexMap<i64, Chat>>,
         pub(super) unread_count: Cell<i32>,
-        pub(super) session: OnceCell<Session>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -78,7 +79,7 @@ mod imp {
                 }
                 "session" => {
                     let session = value.get().unwrap();
-                    self.session.set(session).unwrap();
+                    self.session.set(session);
                 }
                 _ => unimplemented!(),
             }
@@ -87,7 +88,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "unread-count" => obj.unread_count().to_value(),
-                "session" => self.session.get().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -224,7 +225,7 @@ impl ChatList {
     }
 
     pub(crate) fn session(&self) -> Session {
-        self.property("session")
+        self.imp().session.upgrade().unwrap()
     }
 
     pub(crate) fn connect_positions_changed<F: Fn(&Self) + 'static>(
