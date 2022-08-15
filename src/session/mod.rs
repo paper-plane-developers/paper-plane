@@ -130,21 +130,21 @@ mod imp {
                         "Private Chats Notification Settings",
                         "This session's notification settings for private chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "group-chats-notification-settings",
                         "Group Chats Notification Settings",
                         "This session's notification settings for group chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "channel-chats-notification-settings",
                         "Channel Chats Notification Settings",
                         "This session's notification settings for channel chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
@@ -154,7 +154,7 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -167,18 +167,6 @@ mod imp {
                 "database-info" => {
                     let database_info = value.get().unwrap();
                     self.database_info.set(database_info).unwrap();
-                }
-                "private-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_private_chats_notification_settings(scope_notification_settings);
-                }
-                "group-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_group_chats_notification_settings(scope_notification_settings);
-                }
-                "channel-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_channel_chats_notification_settings(scope_notification_settings);
                 }
                 _ => unimplemented!(),
             }
