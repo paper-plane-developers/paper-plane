@@ -317,7 +317,7 @@ impl PhoneNumberInput {
                     .and_then(|country_code_1| {
                         let has_same_calling_code = system_country_code
                             .map(|country_code_2| {
-                                model.same_calling_code(&*country_code_1, country_code_2)
+                                model.same_calling_code(country_code_1, country_code_2)
                             })
                             .unwrap_or_default();
 

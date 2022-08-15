@@ -647,7 +647,7 @@ fn stringify_message(message: Message) -> String {
             gettext!("{} created the group", sender_name(message.sender(), true))
         }
         MessageContent::MessageChatAddMembers(data) => {
-            if message.sender().as_user().map(User::id).as_ref() == data.member_user_ids.get(0) {
+            if message.sender().as_user().map(User::id).as_ref() == data.member_user_ids.first() {
                 if message.is_outgoing() {
                     gettext("You joined the group")
                 } else {

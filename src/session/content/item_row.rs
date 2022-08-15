@@ -404,7 +404,7 @@ fn stringify_pinned_message_content(message: Option<Message>) -> String {
 
 fn stringify_added_members(message: &Message, member_user_ids: Vec<i64>) -> String {
     let my_user_id = message.chat().session().me().id();
-    if message.sender().as_user().map(User::id).as_ref() == member_user_ids.get(0) {
+    if message.sender().as_user().map(User::id).as_ref() == member_user_ids.first() {
         if message.is_outgoing() {
             gettext("You joined the group")
         } else {
