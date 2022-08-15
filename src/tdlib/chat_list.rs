@@ -192,7 +192,7 @@ impl ChatList {
         {
             let mut list = self.imp().list.borrow_mut();
             let chat_id = chat.id;
-            let chat = Chat::new(chat, self.session());
+            let chat = Chat::new(chat, &self.session());
 
             chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
                 obj.emit_by_name::<()>("positions-changed", &[]);
