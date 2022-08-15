@@ -39,40 +39,25 @@ mod imp {
                         "Type",
                         "The type of this chat action",
                         BoxedChatActionType::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "sender",
                         "Sender",
                         "The sender of this chat action",
                         MessageSender::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "chat",
                         "Chat",
                         "The chat relative to this chat action",
                         Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "type" => self.type_.set(value.get().unwrap()).unwrap(),
-                "sender" => self.sender.set(value.get().unwrap()).unwrap(),
-                "chat" => self.chat.set(Some(&value.get().unwrap())),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -96,15 +81,17 @@ impl ChatAction {
         sender: &enums::MessageSender,
         chat: &Chat,
     ) -> Self {
-        glib::Object::new(&[
-            ("type", &BoxedChatActionType(type_)),
-            (
-                "sender",
-                &MessageSender::from_td_object(sender, &chat.session()),
-            ),
-            ("chat", chat),
-        ])
-        .expect("Failed to create ChatAction")
+        let chat_action: ChatAction = glib::Object::new(&[]).expect("Failed to create ChatAction");
+        let imp = chat_action.imp();
+
+        let type_ = BoxedChatActionType(type_);
+        let sender = MessageSender::from_td_object(sender, &chat.session());
+
+        imp.type_.set(type_).unwrap();
+        imp.sender.set(sender).unwrap();
+        imp.chat.set(Some(chat));
+
+        chat_action
     }
 
     pub(crate) fn type_(&self) -> &BoxedChatActionType {
