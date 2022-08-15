@@ -35,24 +35,11 @@ mod imp {
                     "Session",
                     "The session",
                     Session::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    glib::ParamFlags::READABLE,
                 )]
             });
 
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "session" => self.session.set(value.get().unwrap()),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -89,7 +76,9 @@ glib::wrapper! {
 
 impl UserList {
     pub(crate) fn new(session: &Session) -> Self {
-        glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
+        let user_list: UserList = glib::Object::new(&[]).expect("Failed to create UserList");
+        user_list.imp().session.set(Some(session));
+        user_list
     }
 
     /// Return the `User` of the specified `id`. Panics if the user is not present.
