@@ -270,9 +270,34 @@ impl Chat {
         imp.avatar.replace(avatar);
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
-        // TODO: Initialize last-message
-        // TODO: Initialize order
-        // TODO: Initialize is-pinned
+
+        match td_chat.last_message {
+            Some(last_message) => {
+                let message = match chat.history().message_by_id(last_message.id) {
+                    Some(message) => message,
+                    None => {
+                        let last_message_id = last_message.id;
+
+                        chat.history().push_front(last_message);
+                        chat.history().message_by_id(last_message_id).unwrap()
+                    }
+                };
+
+                imp.last_message.replace(Some(message));
+            }
+            None => {
+                imp.last_message.replace(None);
+            }
+        }
+
+        for position in td_chat.positions {
+            if let enums::ChatList::Main = position.list {
+                imp.order.set(position.order);
+                imp.is_pinned.set(position.is_pinned);
+                break;
+            }
+        }
+
         imp.unread_mention_count.set(td_chat.unread_mention_count);
         imp.unread_count.set(td_chat.unread_count);
         imp.draft_message.replace(draft_message);
