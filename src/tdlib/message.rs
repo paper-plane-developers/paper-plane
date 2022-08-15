@@ -85,42 +85,42 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "sender",
                         "Sender",
                         "The sender of this message",
                         MessageSender::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-outgoing",
                         "Is Outgoing",
                         "Whether this message is outgoing or not",
                         false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "can-be-deleted-only-for-self",
                         "Can be deleted only for self",
                         "Whether this message can be deleted only for the current user or not",
                         false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "can-be-deleted-for-all-users",
                         "Can be deleted for all users",
                         "Whether this message can be deleted for all users or not",
                         false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "sending-state",
                         "Sending State",
                         "The sending state of this message",
                         BoxedMessageSendingState::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt::new(
                         "date",
@@ -129,72 +129,39 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "content",
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-edited",
                         "Is Edited",
                         "Whether this message has been edited",
                         false,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "chat",
                         "Chat",
                         "The chat relative to this message",
                         Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "forward-info",
                         "Forward Info",
                         "The forward info of this message",
                         MessageForwardInfo::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
-                "sender" => self.sender.set(value.get().unwrap()).unwrap(),
-                "is-outgoing" => self.is_outgoing.set(value.get().unwrap()),
-                "can-be-deleted-only-for-self" => {
-                    self.can_be_deleted_only_for_self.set(value.get().unwrap())
-                }
-                "can-be-deleted-for-all-users" => {
-                    self.can_be_deleted_for_all_users.set(value.get().unwrap())
-                }
-                "sending-state" => {
-                    self.sending_state.replace(value.get().unwrap());
-                }
-                "date" => self.date.set(value.get().unwrap()),
-                "content" => obj.set_content(value.get().unwrap()),
-                "is-edited" => obj.set_is_edited(value.get().unwrap()),
-                "chat" => self.chat.set(Some(&value.get().unwrap())),
-                "forward-info" => self.forward_info.set(value.get().unwrap()).unwrap(),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -221,40 +188,33 @@ glib::wrapper! {
 }
 
 impl Message {
-    pub(crate) fn new(message: TdMessage, chat: &Chat) -> Self {
-        let content = BoxedMessageContent(message.content);
+    pub(crate) fn new(td_message: TdMessage, chat: &Chat) -> Self {
+        let message: Message = glib::Object::new(&[]).expect("Failed to create Message");
+        let imp = message.imp();
 
-        glib::Object::new(&[
-            ("id", &message.id),
-            (
-                "sender",
-                &MessageSender::from_td_object(&message.sender_id, &chat.session()),
-            ),
-            ("is-outgoing", &message.is_outgoing),
-            (
-                "can-be-deleted-only-for-self",
-                &message.can_be_deleted_only_for_self,
-            ),
-            (
-                "can-be-deleted-for-all-users",
-                &message.can_be_deleted_for_all_users,
-            ),
-            (
-                "sending-state",
-                &message.sending_state.map(BoxedMessageSendingState),
-            ),
-            ("date", &message.date),
-            ("content", &content),
-            ("is-edited", &(message.edit_date > 0)),
-            ("chat", chat),
-            (
-                "forward-info",
-                &message
-                    .forward_info
-                    .map(|forward_info| MessageForwardInfo::from_td_object(forward_info, chat)),
-            ),
-        ])
-        .expect("Failed to create Message")
+        let sender = MessageSender::from_td_object(&td_message.sender_id, &chat.session());
+        let sending_state = td_message.sending_state.map(BoxedMessageSendingState);
+        let content = BoxedMessageContent(td_message.content);
+        let is_edited = td_message.edit_date > 0;
+        let forward_info = td_message
+            .forward_info
+            .map(|forward_info| MessageForwardInfo::from_td_object(forward_info, chat));
+
+        imp.id.set(td_message.id);
+        imp.sender.set(sender).unwrap();
+        imp.is_outgoing.set(td_message.is_outgoing);
+        imp.can_be_deleted_only_for_self
+            .set(td_message.can_be_deleted_only_for_self);
+        imp.can_be_deleted_for_all_users
+            .set(td_message.can_be_deleted_for_all_users);
+        imp.sending_state.replace(sending_state);
+        imp.date.set(td_message.date);
+        imp.content.replace(Some(content));
+        imp.is_edited.set(is_edited);
+        imp.chat.set(Some(chat));
+        imp.forward_info.set(forward_info).unwrap();
+
+        message
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
@@ -311,7 +271,7 @@ impl Message {
         self.imp().content.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub(crate) fn set_content(&self, content: BoxedMessageContent) {
+    fn set_content(&self, content: BoxedMessageContent) {
         if self.imp().content.borrow().as_ref() == Some(&content) {
             return;
         }
@@ -323,7 +283,7 @@ impl Message {
         self.imp().is_edited.get()
     }
 
-    pub(crate) fn set_is_edited(&self, is_edited: bool) {
+    fn set_is_edited(&self, is_edited: bool) {
         if self.is_edited() == is_edited {
             return;
         }
