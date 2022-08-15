@@ -68,32 +68,18 @@ mod imp {
                         0,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "origin",
                         "Origin",
                         "The origin of the forwarded message",
                         MessageForwardOrigin::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "date" => self.date.set(value.get().unwrap()),
-                "origin" => self.origin.set(value.get().unwrap()).unwrap(),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -143,8 +129,14 @@ impl MessageForwardInfo {
             }
         };
 
-        glib::Object::new(&[("date", &forward_info.date), ("origin", &origin)])
-            .expect("Failed to create MessageForwardInfo")
+        let message_forward_info: MessageForwardInfo =
+            glib::Object::new(&[]).expect("Failed to create MessageForwardInfo");
+        let imp = message_forward_info.imp();
+
+        imp.date.set(forward_info.date);
+        imp.origin.set(origin).unwrap();
+
+        message_forward_info
     }
 
     pub(crate) fn date(&self) -> i32 {
