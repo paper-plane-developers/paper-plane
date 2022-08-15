@@ -290,12 +290,12 @@ impl Session {
                     }
                 }
             }
-            Update::Supergroup(ref data) => {
+            Update::Supergroup(data) => {
                 let mut supergroups = self.imp().supergroups.borrow_mut();
                 match supergroups.entry(data.supergroup.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.supergroup),
                     Entry::Vacant(entry) => {
-                        entry.insert(Supergroup::from_td_object(&data.supergroup));
+                        entry.insert(Supergroup::from_td_object(data.supergroup));
                     }
                 }
             }
