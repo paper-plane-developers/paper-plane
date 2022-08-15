@@ -38,40 +38,25 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "content",
                         "Content",
                         "The content of this message",
                         BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "sponsor-chat",
                         "Sponsor Chat",
                         "The chat relative to this sponsored message",
                         Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "message-id" => self.message_id.set(value.get().unwrap()),
-                "content" => self.content.set(value.get().unwrap()).unwrap(),
-                "sponsor-chat" => self.sponsor_chat.set(Some(&value.get().unwrap())),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -91,18 +76,23 @@ glib::wrapper! {
 
 impl SponsoredMessage {
     pub(crate) async fn request(chat_id: i64, session: &Session) -> Result<Self, TdError> {
-        let enums::SponsoredMessage::SponsoredMessage(sponsored_message) =
+        let enums::SponsoredMessage::SponsoredMessage(td_sponsored_message) =
             functions::get_chat_sponsored_message(chat_id, session.client_id()).await?;
 
-        let content = BoxedMessageContent(sponsored_message.content);
-        let sponsor_chat = session.chat_list().get(sponsored_message.sponsor_chat_id);
+        let sponsored_message: SponsoredMessage =
+            glib::Object::new(&[]).expect("Failed to create SponsoredMessage");
+        let imp = sponsored_message.imp();
 
-        Ok(glib::Object::new(&[
-            ("message-id", &sponsored_message.message_id),
-            ("content", &content),
-            ("sponsor-chat", &sponsor_chat),
-        ])
-        .expect("Failed to create SponsoredMessage"))
+        let content = BoxedMessageContent(td_sponsored_message.content);
+        let sponsor_chat = session
+            .chat_list()
+            .get(td_sponsored_message.sponsor_chat_id);
+
+        imp.message_id.set(td_sponsored_message.message_id);
+        imp.content.set(content).unwrap();
+        imp.sponsor_chat.set(Some(&sponsor_chat));
+
+        Ok(sponsored_message)
     }
 
     pub(crate) fn message_id(&self) -> i64 {
