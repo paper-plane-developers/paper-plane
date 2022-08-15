@@ -57,32 +57,12 @@ mod imp {
                         "Session",
                         "The session",
                         Session::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
 
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "unread-count" => {
-                    let unread_count = value.get().unwrap();
-                    obj.set_unread_count(unread_count);
-                }
-                "session" => {
-                    let session = value.get().unwrap();
-                    self.session.set(session);
-                }
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -120,7 +100,9 @@ glib::wrapper! {
 
 impl ChatList {
     pub(crate) fn new(session: &Session) -> Self {
-        glib::Object::new(&[("session", session)]).expect("Failed to create ChatList")
+        let chat_list: ChatList = glib::Object::new(&[]).expect("Failed to create ChatList");
+        chat_list.imp().session.set(Some(session));
+        chat_list
     }
 
     pub(crate) fn fetch(&self, client_id: i32) {
@@ -215,7 +197,7 @@ impl ChatList {
         self.imp().unread_count.get()
     }
 
-    pub(crate) fn set_unread_count(&self, unread_count: i32) {
+    fn set_unread_count(&self, unread_count: i32) {
         if self.unread_count() == unread_count {
             return;
         }
