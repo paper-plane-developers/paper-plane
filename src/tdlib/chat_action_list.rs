@@ -36,23 +36,10 @@ mod imp {
                     "Chat",
                     "The chat relative to this chat action list",
                     Chat::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    glib::ParamFlags::READABLE,
                 )]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "chat" => self.chat.set(Some(&value.get().unwrap())),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -89,7 +76,10 @@ glib::wrapper! {
 
 impl From<&Chat> for ChatActionList {
     fn from(chat: &Chat) -> Self {
-        glib::Object::new(&[("chat", chat)]).expect("Failed to create ChatActionList")
+        let chat_action_list: ChatActionList =
+            glib::Object::new(&[]).expect("Failed to create ChatActionList");
+        chat_action_list.imp().chat.set(Some(chat));
+        chat_action_list
     }
 }
 

@@ -13,15 +13,16 @@ use crate::Session;
 mod imp {
     use super::*;
     use glib::subclass::Signal;
+    use glib::WeakRef;
     use indexmap::IndexMap;
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatList {
         pub(super) list: RefCell<IndexMap<i64, Chat>>,
         pub(super) unread_count: Cell<i32>,
-        pub(super) session: OnceCell<Session>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -56,7 +57,7 @@ mod imp {
                         "Session",
                         "The session",
                         Session::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
@@ -64,30 +65,10 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "unread-count" => {
-                    let unread_count = value.get().unwrap();
-                    obj.set_unread_count(unread_count);
-                }
-                "session" => {
-                    let session = value.get().unwrap();
-                    self.session.set(session).unwrap();
-                }
-                _ => unimplemented!(),
-            }
-        }
-
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "unread-count" => obj.unread_count().to_value(),
-                "session" => self.session.get().to_value(),
+                "session" => obj.session().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -119,7 +100,9 @@ glib::wrapper! {
 
 impl ChatList {
     pub(crate) fn new(session: &Session) -> Self {
-        glib::Object::new(&[("session", session)]).expect("Failed to create ChatList")
+        let chat_list: ChatList = glib::Object::new(&[]).expect("Failed to create ChatList");
+        chat_list.imp().session.set(Some(session));
+        chat_list
     }
 
     pub(crate) fn fetch(&self, client_id: i32) {
@@ -192,7 +175,7 @@ impl ChatList {
         {
             let mut list = self.imp().list.borrow_mut();
             let chat_id = chat.id;
-            let chat = Chat::new(chat, self.session());
+            let chat = Chat::new(chat, &self.session());
 
             chat.connect_order_notify(clone!(@weak self as obj => move |_, _| {
                 obj.emit_by_name::<()>("positions-changed", &[]);
@@ -214,7 +197,7 @@ impl ChatList {
         self.imp().unread_count.get()
     }
 
-    pub(crate) fn set_unread_count(&self, unread_count: i32) {
+    fn set_unread_count(&self, unread_count: i32) {
         if self.unread_count() == unread_count {
             return;
         }
@@ -224,7 +207,7 @@ impl ChatList {
     }
 
     pub(crate) fn session(&self) -> Session {
-        self.property("session")
+        self.imp().session.upgrade().unwrap()
     }
 
     pub(crate) fn connect_positions_changed<F: Fn(&Self) + 'static>(

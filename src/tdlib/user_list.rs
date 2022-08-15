@@ -9,14 +9,15 @@ use crate::Session;
 
 mod imp {
     use super::*;
+    use glib::WeakRef;
     use indexmap::IndexMap;
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct UserList {
         pub(super) list: RefCell<IndexMap<i64, User>>,
-        pub(super) session: OnceCell<Session>,
+        pub(super) session: WeakRef<Session>,
     }
 
     #[glib::object_subclass]
@@ -34,25 +35,11 @@ mod imp {
                     "Session",
                     "The session",
                     Session::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                    glib::ParamFlags::READABLE,
                 )]
             });
 
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "session" => self.session.set(value.get().unwrap()).unwrap(),
-
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -89,7 +76,9 @@ glib::wrapper! {
 
 impl UserList {
     pub(crate) fn new(session: &Session) -> Self {
-        glib::Object::new(&[("session", session)]).expect("Failed to create UserList")
+        let user_list: UserList = glib::Object::new(&[]).expect("Failed to create UserList");
+        user_list.imp().session.set(Some(session));
+        user_list
     }
 
     /// Return the `User` of the specified `id`. Panics if the user is not present.
@@ -112,7 +101,7 @@ impl UserList {
                 match list.entry(data.user.id) {
                     Entry::Occupied(entry) => entry.get().handle_update(Update::User(data)),
                     Entry::Vacant(entry) => {
-                        let user = User::from_td_object(data.user, self.session());
+                        let user = User::from_td_object(data.user, &self.session());
                         entry.insert(user);
 
                         drop(list);
@@ -131,7 +120,7 @@ impl UserList {
         self.items_changed(position as u32, 0, 1);
     }
 
-    pub(crate) fn session(&self) -> &Session {
-        self.imp().session.get().unwrap()
+    pub(crate) fn session(&self) -> Session {
+        self.imp().session.upgrade().unwrap()
     }
 }

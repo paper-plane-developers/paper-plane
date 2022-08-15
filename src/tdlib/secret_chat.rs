@@ -1,7 +1,7 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{SecretChatState as TdSecretChatState, Update};
+use tdlib::enums::SecretChatState as TdSecretChatState;
 use tdlib::types::SecretChat as TdSecretChat;
 
 use crate::tdlib::User;
@@ -60,14 +60,14 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "user",
                         "User",
                         "The interlocutor in this chat",
                         User::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecEnum::new(
                         "state",
@@ -75,28 +75,11 @@ mod imp {
                         "The state of this secret chat",
                         SecretChatState::static_type(),
                         SecretChatState::default() as i32,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
-                "user" => self.user.set(value.get().unwrap()).unwrap(),
-                "state" => obj.set_state(value.get().unwrap()),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -115,16 +98,21 @@ glib::wrapper! {
 }
 
 impl SecretChat {
-    pub(crate) fn from_td_object(secret_chat: &TdSecretChat, user: &User) -> Self {
-        let state = SecretChatState::from_td_object(&secret_chat.state);
-        glib::Object::new(&[("id", &secret_chat.id), ("user", user), ("state", &state)])
-            .expect("Failed to create SecretChat")
+    pub(crate) fn from_td_object(td_secret_chat: TdSecretChat, user: User) -> Self {
+        let secret_chat: SecretChat = glib::Object::new(&[]).expect("Failed to create SecretChat");
+        let imp = secret_chat.imp();
+
+        let state = SecretChatState::from_td_object(&td_secret_chat.state);
+
+        imp.id.set(td_secret_chat.id);
+        imp.user.set(user).unwrap();
+        imp.state.set(state);
+
+        secret_chat
     }
 
-    pub(crate) fn handle_update(&self, update: &Update) {
-        if let Update::SecretChat(data) = update {
-            self.set_state(SecretChatState::from_td_object(&data.secret_chat.state));
-        }
+    pub(crate) fn update(&self, td_secret_chat: TdSecretChat) {
+        self.set_state(SecretChatState::from_td_object(&td_secret_chat.state));
     }
 
     pub(crate) fn id(&self) -> i32 {
@@ -139,7 +127,7 @@ impl SecretChat {
         self.imp().state.get()
     }
 
-    pub(crate) fn set_state(&self, state: SecretChatState) {
+    fn set_state(&self, state: SecretChatState) {
         if self.state() == state {
             return;
         }

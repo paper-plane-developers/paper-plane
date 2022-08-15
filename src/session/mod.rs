@@ -130,21 +130,21 @@ mod imp {
                         "Private Chats Notification Settings",
                         "This session's notification settings for private chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "group-chats-notification-settings",
                         "Group Chats Notification Settings",
                         "This session's notification settings for group chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "channel-chats-notification-settings",
                         "Channel Chats Notification Settings",
                         "This session's notification settings for channel chats",
                         BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
@@ -154,7 +154,7 @@ mod imp {
 
         fn set_property(
             &self,
-            obj: &Self::Type,
+            _obj: &Self::Type,
             _id: usize,
             value: &glib::Value,
             pspec: &glib::ParamSpec,
@@ -167,18 +167,6 @@ mod imp {
                 "database-info" => {
                     let database_info = value.get().unwrap();
                     self.database_info.set(database_info).unwrap();
-                }
-                "private-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_private_chats_notification_settings(scope_notification_settings);
-                }
-                "group-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_group_chats_notification_settings(scope_notification_settings);
-                }
-                "channel-chats-notification-settings" => {
-                    let scope_notification_settings = value.get().unwrap();
-                    obj.set_channel_chats_notification_settings(scope_notification_settings);
                 }
                 _ => unimplemented!(),
             }
@@ -233,12 +221,12 @@ impl Session {
 
     pub(crate) fn handle_update(&self, update: Update) {
         match update {
-            Update::BasicGroup(ref data) => {
+            Update::BasicGroup(data) => {
                 let mut basic_groups = self.imp().basic_groups.borrow_mut();
                 match basic_groups.entry(data.basic_group.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.basic_group),
                     Entry::Vacant(entry) => {
-                        entry.insert(BasicGroup::from_td_object(&data.basic_group));
+                        entry.insert(BasicGroup::from_td_object(data.basic_group));
                     }
                 }
             }
@@ -280,22 +268,22 @@ impl Session {
                     }
                 }
             }
-            Update::SecretChat(ref data) => {
+            Update::SecretChat(data) => {
                 let mut secret_chats = self.imp().secret_chats.borrow_mut();
                 match secret_chats.entry(data.secret_chat.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.secret_chat),
                     Entry::Vacant(entry) => {
                         let user = self.user_list().get(data.secret_chat.user_id);
-                        entry.insert(SecretChat::from_td_object(&data.secret_chat, &user));
+                        entry.insert(SecretChat::from_td_object(data.secret_chat, user));
                     }
                 }
             }
-            Update::Supergroup(ref data) => {
+            Update::Supergroup(data) => {
                 let mut supergroups = self.imp().supergroups.borrow_mut();
                 match supergroups.entry(data.supergroup.id) {
-                    Entry::Occupied(entry) => entry.get().handle_update(&update),
+                    Entry::Occupied(entry) => entry.get().update(data.supergroup),
                     Entry::Vacant(entry) => {
-                        entry.insert(Supergroup::from_td_object(&data.supergroup));
+                        entry.insert(Supergroup::from_td_object(data.supergroup));
                     }
                 }
             }

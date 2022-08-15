@@ -40,33 +40,19 @@ mod imp {
                         "Chat",
                         "The chat relative to this history",
                         Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "loading",
                         "Loading",
                         "Whether the history is loading messages or not",
                         false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
 
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "chat" => self.chat.set(Some(&value.get().unwrap())),
-                "loading" => obj.set_loading(value.get().unwrap()),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -104,7 +90,10 @@ glib::wrapper! {
 
 impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        glib::Object::new(&[("chat", chat)]).expect("Failed to create ChatHistory")
+        let chat_history: ChatHistory =
+            glib::Object::new(&[]).expect("Failed to create ChatHistory");
+        chat_history.imp().chat.set(Some(chat));
+        chat_history
     }
 
     pub(crate) async fn load_older_messages(&self) {
@@ -354,7 +343,7 @@ impl ChatHistory {
         self.imp().chat.upgrade().unwrap()
     }
 
-    pub(crate) fn set_loading(&self, loading: bool) {
+    fn set_loading(&self, loading: bool) {
         self.imp().loading.set(loading);
         self.notify("loading");
     }

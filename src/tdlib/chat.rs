@@ -96,41 +96,35 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "type",
                         "Type",
                         "The type of this chat",
                         ChatType::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-blocked",
                         "Is blocked",
                         "Whether this chat is blocked for the user",
                         false,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecString::new(
                         "title",
                         "Title",
                         "The title of this chat",
                         Some(""),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "avatar",
                         "Avatar",
                         "The avatar of this chat",
                         Avatar::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt64::new(
                         "last-read-outbox-message-id",
@@ -139,18 +133,14 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "last-message",
                         "Last Message",
                         "The last message sent on this chat",
                         Message::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt64::new(
                         "order",
@@ -159,18 +149,14 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-pinned",
                         "Is Pinned",
                         "The parameter to determine if this chat is pinned in the chat list",
                         false,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt::new(
                         "unread-mention-count",
@@ -179,9 +165,7 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt::new(
                         "unread-count",
@@ -190,27 +174,21 @@ mod imp {
                         std::i32::MIN,
                         std::i32::MAX,
                         0,
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "draft-message",
                         "Draft Message",
                         "The draft message of this chat",
                         BoxedDraftMessage::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "notification-settings",
                         "Notification Settings",
                         "The notification settings of this chat",
                         BoxedChatNotificationSettings::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "history",
@@ -231,51 +209,18 @@ mod imp {
                         "Session",
                         "The session",
                         Session::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "permissions",
                         "Permissions",
                         "The permissions of this chat",
                         BoxedChatPermissions::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
-                "type" => self.type_.set(value.get().unwrap()).unwrap(),
-                "is-blocked" => obj.set_is_blocked(value.get().unwrap()),
-                "title" => {
-                    obj.set_title(value.get::<Option<String>>().unwrap().unwrap_or_default())
-                }
-                "avatar" => obj.set_avatar(value.get().unwrap()),
-                "last-read-outbox-message-id" => {
-                    obj.set_last_read_outbox_message_id(value.get().unwrap());
-                }
-                "last-message" => obj.set_last_message(value.get().unwrap()),
-                "order" => obj.set_order(value.get().unwrap()),
-                "is-pinned" => obj.set_is_pinned(value.get().unwrap()),
-                "unread-mention-count" => obj.set_unread_mention_count(value.get().unwrap()),
-                "unread-count" => obj.set_unread_count(value.get().unwrap()),
-                "draft-message" => obj.set_draft_message(value.get().unwrap()),
-                "notification-settings" => obj.set_notification_settings(value.get().unwrap()),
-                "permissions" => obj.set_permissions(value.get().unwrap()),
-                "session" => self.session.set(Some(&value.get().unwrap())),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -308,32 +253,60 @@ glib::wrapper! {
 }
 
 impl Chat {
-    pub(crate) fn new(chat: TelegramChat, session: Session) -> Self {
-        let type_ = ChatType::from_td_object(&chat.r#type, &session);
-        let avatar = chat.photo.map(Avatar::from);
-        let draft_message = chat.draft_message.map(BoxedDraftMessage);
+    pub(crate) fn new(td_chat: TelegramChat, session: &Session) -> Self {
+        let chat: Chat = glib::Object::new(&[]).expect("Failed to create Chat");
+        let imp = chat.imp();
 
-        glib::Object::new(&[
-            ("id", &chat.id),
-            ("type", &type_),
-            ("is-blocked", &chat.is_blocked),
-            ("title", &chat.title),
-            (
-                "last-read-outbox-message-id",
-                &chat.last_read_outbox_message_id,
-            ),
-            ("avatar", &avatar),
-            ("draft-message", &draft_message),
-            ("unread-mention-count", &chat.unread_mention_count),
-            ("unread-count", &chat.unread_count),
-            (
-                "notification-settings",
-                &BoxedChatNotificationSettings(chat.notification_settings),
-            ),
-            ("permissions", &BoxedChatPermissions(chat.permissions)),
-            ("session", &session),
-        ])
-        .expect("Failed to create Chat")
+        let type_ = ChatType::from_td_object(&td_chat.r#type, session);
+        let avatar = td_chat.photo.map(Avatar::from);
+        let draft_message = td_chat.draft_message.map(BoxedDraftMessage);
+        let notification_settings = BoxedChatNotificationSettings(td_chat.notification_settings);
+        let permissions = BoxedChatPermissions(td_chat.permissions);
+
+        imp.id.set(td_chat.id);
+        imp.type_.set(type_).unwrap();
+        imp.is_blocked.set(td_chat.is_blocked);
+        imp.title.replace(td_chat.title);
+        imp.avatar.replace(avatar);
+        imp.last_read_outbox_message_id
+            .set(td_chat.last_read_outbox_message_id);
+
+        match td_chat.last_message {
+            Some(last_message) => {
+                let message = match chat.history().message_by_id(last_message.id) {
+                    Some(message) => message,
+                    None => {
+                        let last_message_id = last_message.id;
+
+                        chat.history().push_front(last_message);
+                        chat.history().message_by_id(last_message_id).unwrap()
+                    }
+                };
+
+                imp.last_message.replace(Some(message));
+            }
+            None => {
+                imp.last_message.replace(None);
+            }
+        }
+
+        for position in td_chat.positions {
+            if let enums::ChatList::Main = position.list {
+                imp.order.set(position.order);
+                imp.is_pinned.set(position.is_pinned);
+                break;
+            }
+        }
+
+        imp.unread_mention_count.set(td_chat.unread_mention_count);
+        imp.unread_count.set(td_chat.unread_count);
+        imp.draft_message.replace(draft_message);
+        imp.notification_settings
+            .replace(Some(notification_settings));
+        imp.session.set(Some(session));
+        imp.permissions.replace(Some(permissions));
+
+        chat
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
@@ -432,7 +405,7 @@ impl Chat {
         self.imp().is_blocked.get()
     }
 
-    pub(crate) fn set_is_blocked(&self, is_blocked: bool) {
+    fn set_is_blocked(&self, is_blocked: bool) {
         if self.is_blocked() == is_blocked {
             return;
         }
@@ -444,7 +417,7 @@ impl Chat {
         self.imp().title.borrow().to_owned()
     }
 
-    pub(crate) fn set_title(&self, title: String) {
+    fn set_title(&self, title: String) {
         if self.title() == title {
             return;
         }
@@ -456,7 +429,7 @@ impl Chat {
         self.imp().avatar.borrow().to_owned()
     }
 
-    pub(crate) fn set_avatar(&self, avatar: Option<Avatar>) {
+    fn set_avatar(&self, avatar: Option<Avatar>) {
         if self.avatar() == avatar {
             return;
         }
@@ -489,7 +462,7 @@ impl Chat {
         self.imp().last_message.borrow().to_owned()
     }
 
-    pub(crate) fn set_last_message(&self, last_message: Option<Message>) {
+    fn set_last_message(&self, last_message: Option<Message>) {
         if self.last_message() == last_message {
             return;
         }
@@ -501,7 +474,7 @@ impl Chat {
         self.imp().order.get()
     }
 
-    pub(crate) fn set_order(&self, order: i64) {
+    fn set_order(&self, order: i64) {
         if self.order() == order {
             return;
         }
@@ -520,7 +493,7 @@ impl Chat {
         self.imp().is_pinned.get()
     }
 
-    pub(crate) fn set_is_pinned(&self, is_pinned: bool) {
+    fn set_is_pinned(&self, is_pinned: bool) {
         if self.is_pinned() == is_pinned {
             return;
         }
@@ -532,7 +505,7 @@ impl Chat {
         self.imp().unread_mention_count.get()
     }
 
-    pub(crate) fn set_unread_mention_count(&self, unread_mention_count: i32) {
+    fn set_unread_mention_count(&self, unread_mention_count: i32) {
         if self.unread_mention_count() == unread_mention_count {
             return;
         }
@@ -544,7 +517,7 @@ impl Chat {
         self.imp().unread_count.get()
     }
 
-    pub(crate) fn set_unread_count(&self, unread_count: i32) {
+    fn set_unread_count(&self, unread_count: i32) {
         if self.unread_count() == unread_count {
             return;
         }
@@ -556,7 +529,7 @@ impl Chat {
         self.imp().draft_message.borrow().to_owned()
     }
 
-    pub(crate) fn set_draft_message(&self, draft_message: Option<BoxedDraftMessage>) {
+    fn set_draft_message(&self, draft_message: Option<BoxedDraftMessage>) {
         if self.draft_message() == draft_message {
             return;
         }
@@ -573,10 +546,7 @@ impl Chat {
             .to_owned()
     }
 
-    pub(crate) fn set_notification_settings(
-        &self,
-        notification_settings: BoxedChatNotificationSettings,
-    ) {
+    fn set_notification_settings(&self, notification_settings: BoxedChatNotificationSettings) {
         if self.imp().notification_settings.borrow().as_ref() == Some(&notification_settings) {
             return;
         }
@@ -608,7 +578,7 @@ impl Chat {
         self.imp().permissions.borrow().to_owned().unwrap()
     }
 
-    pub(crate) fn set_permissions(&self, permissions: BoxedChatPermissions) {
+    fn set_permissions(&self, permissions: BoxedChatPermissions) {
         if self.imp().permissions.borrow().as_ref() == Some(&permissions) {
             return;
         }

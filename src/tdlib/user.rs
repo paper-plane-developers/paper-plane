@@ -43,108 +43,67 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "type",
                         "Type",
                         "The type of this user",
                         BoxedUserType::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecString::new(
                         "first-name",
                         "First Name",
                         "The first name of this user",
                         Some(""),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecString::new(
                         "last-name",
                         "Last Name",
                         "The last name of this user",
                         Some(""),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecString::new(
                         "username",
                         "Username",
                         "The username of this user",
                         Some(""),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecString::new(
                         "phone-number",
                         "Phone Number",
                         "The phone number of this user",
                         Some(""),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "avatar",
                         "Avatar",
                         "The avatar of this user",
                         Avatar::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecBoxed::new(
                         "status",
                         "Status",
                         "The status of this user",
                         BoxedUserStatus::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
+                        glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
                         "session",
                         "Session",
                         "The session",
                         Session::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READABLE,
                     ),
                 ]
             });
             PROPERTIES.as_ref()
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
-            match pspec.name() {
-                "id" => self.id.set(value.get().unwrap()),
-                "type" => obj.set_type(value.get().unwrap()),
-                "first-name" => {
-                    obj.set_first_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
-                }
-                "last-name" => {
-                    obj.set_last_name(value.get::<Option<String>>().unwrap().unwrap_or_default())
-                }
-                "username" => {
-                    obj.set_username(value.get::<Option<String>>().unwrap().unwrap_or_default())
-                }
-                "phone-number" => {
-                    obj.set_phone_number(value.get::<Option<String>>().unwrap().unwrap_or_default())
-                }
-                "avatar" => obj.set_avatar(value.get().unwrap()),
-                "status" => obj.set_status(value.get().unwrap()),
-                "session" => self.session.set(Some(&value.get().unwrap())),
-                _ => unimplemented!(),
-            }
         }
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
@@ -169,21 +128,25 @@ glib::wrapper! {
 }
 
 impl User {
-    pub(crate) fn from_td_object(user: TdUser, session: &Session) -> Self {
-        let avatar = user.profile_photo.map(Avatar::from);
+    pub(crate) fn from_td_object(td_user: TdUser, session: &Session) -> Self {
+        let user: User = glib::Object::new(&[]).expect("Failed to create User");
+        let imp = user.imp();
 
-        glib::Object::new(&[
-            ("id", &user.id),
-            ("type", &BoxedUserType(user.r#type)),
-            ("first-name", &user.first_name),
-            ("last-name", &user.last_name),
-            ("username", &user.username),
-            ("phone-number", &user.phone_number),
-            ("status", &BoxedUserStatus(user.status)),
-            ("avatar", &avatar),
-            ("session", &session),
-        ])
-        .expect("Failed to create User")
+        let type_ = BoxedUserType(td_user.r#type);
+        let avatar = td_user.profile_photo.map(Avatar::from);
+        let status = BoxedUserStatus(td_user.status);
+
+        imp.id.set(td_user.id);
+        imp.type_.replace(Some(type_));
+        imp.first_name.replace(td_user.first_name);
+        imp.last_name.replace(td_user.last_name);
+        imp.username.replace(td_user.username);
+        imp.phone_number.replace(td_user.phone_number);
+        imp.avatar.replace(avatar);
+        imp.status.replace(Some(status));
+        imp.session.set(Some(session));
+
+        user
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
@@ -210,7 +173,7 @@ impl User {
         self.imp().type_.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub(crate) fn set_type(&self, type_: BoxedUserType) {
+    fn set_type(&self, type_: BoxedUserType) {
         if self.imp().type_.borrow().as_ref() == Some(&type_) {
             return;
         }
@@ -222,7 +185,7 @@ impl User {
         self.imp().first_name.borrow().to_owned()
     }
 
-    pub(crate) fn set_first_name(&self, first_name: String) {
+    fn set_first_name(&self, first_name: String) {
         if self.first_name() == first_name {
             return;
         }
@@ -234,7 +197,7 @@ impl User {
         self.imp().last_name.borrow().to_owned()
     }
 
-    pub(crate) fn set_last_name(&self, last_name: String) {
+    fn set_last_name(&self, last_name: String) {
         if self.last_name() == last_name {
             return;
         }
@@ -246,7 +209,7 @@ impl User {
         self.imp().username.borrow().to_owned()
     }
 
-    pub(crate) fn set_username(&self, username: String) {
+    fn set_username(&self, username: String) {
         if self.username() == username {
             return;
         }
@@ -258,7 +221,7 @@ impl User {
         self.imp().phone_number.borrow().to_owned()
     }
 
-    pub(crate) fn set_phone_number(&self, phone_number: String) {
+    fn set_phone_number(&self, phone_number: String) {
         if self.phone_number() == phone_number {
             return;
         }
@@ -270,7 +233,7 @@ impl User {
         self.imp().avatar.borrow().to_owned()
     }
 
-    pub(crate) fn set_avatar(&self, avatar: Option<Avatar>) {
+    fn set_avatar(&self, avatar: Option<Avatar>) {
         if self.avatar() == avatar {
             return;
         }
@@ -289,7 +252,7 @@ impl User {
         self.imp().status.borrow().as_ref().unwrap().to_owned()
     }
 
-    pub(crate) fn set_status(&self, status: BoxedUserStatus) {
+    fn set_status(&self, status: BoxedUserStatus) {
         if self.imp().status.borrow().as_ref() == Some(&status) {
             return;
         }
