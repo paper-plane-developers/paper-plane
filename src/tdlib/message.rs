@@ -92,7 +92,7 @@ mod imp {
                         "Sender",
                         "The sender of this message",
                         MessageSender::static_type(),
-                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
                     ),
                     glib::ParamSpecBoolean::new(
                         "is-outgoing",
@@ -200,6 +200,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => obj.id().to_value(),
+                "sender" => obj.sender().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
                 "can-be-deleted-only-for-self" => obj.can_be_deleted_only_for_self().to_value(),
                 "can-be-deleted-for-all-users" => obj.can_be_deleted_for_all_users().to_value(),
