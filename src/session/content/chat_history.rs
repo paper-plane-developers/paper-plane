@@ -8,6 +8,8 @@ use crate::tdlib::{Chat, ChatHistoryError, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
 
+const MIN_N_ITEMS: u32 = 20;
+
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
@@ -209,7 +211,7 @@ impl ChatHistory {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(chat) = self.chat() {
                 spawn(clone!(@weak chat => async move {
-                    if let Err(ChatHistoryError::Tdlib(e)) = chat.history().load_older_messages().await {
+                    if let Err(ChatHistoryError::Tdlib(e)) = chat.history().load_older_messages(20).await {
                         log::warn!("Couldn't load more chat messages: {:?}", e);
                     }
                 }));
@@ -272,7 +274,7 @@ impl ChatHistory {
 
         if let Some(ref chat) = chat {
             // Request sponsored message, if needed
-            let chat_history: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
+            let list_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
                 let list = gio::ListStore::new(gio::ListModel::static_type());
 
@@ -289,15 +291,23 @@ impl ChatHistory {
                 chat.history().to_owned().upcast()
             };
 
-            let selection = gtk::NoSelection::new(Some(&chat_history));
+            let chat_history = chat.history();
+            spawn(clone!(@weak chat_history => async move {
+                while chat_history.n_items() < MIN_N_ITEMS {
+                    let limit = MIN_N_ITEMS - chat_history.n_items();
+                    if let Err(e) = chat_history.load_older_messages(limit as i32).await {
+                        log::warn!("Couldn't load initial history messages: {}", e);
+                        break;
+                    }
+                }
+            }));
+
+            let selection = gtk::NoSelection::new(Some(&list_model));
             imp.list_view.set_model(Some(&selection));
         }
 
         imp.chat.replace(chat);
         self.notify("chat");
-
-        let adj = imp.list_view.vadjustment().unwrap();
-        self.load_older_messages(&adj);
     }
 
     pub(crate) fn sticky(&self) -> bool {

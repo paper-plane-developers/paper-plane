@@ -95,7 +95,7 @@ impl ChatHistory {
         chat_history
     }
 
-    pub(crate) async fn load_older_messages(&self) -> Result<(), ChatHistoryError> {
+    pub(crate) async fn load_older_messages(&self, limit: i32) -> Result<(), ChatHistoryError> {
         let imp = self.imp();
 
         if imp.is_loading.get() {
@@ -117,7 +117,8 @@ impl ChatHistory {
         imp.is_loading.set(true);
 
         let result =
-            functions::get_chat_history(chat_id, oldest_message_id, 0, 20, false, client_id).await;
+            functions::get_chat_history(chat_id, oldest_message_id, 0, limit, false, client_id)
+                .await;
 
         imp.is_loading.set(false);
 
