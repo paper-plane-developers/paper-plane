@@ -4,7 +4,7 @@ use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 
 use crate::session::content::{ChatActionBar, ChatInfoWindow, ItemRow};
-use crate::tdlib::{Chat, ChatType, SponsoredMessage};
+use crate::tdlib::{Chat, ChatHistoryError, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
 
@@ -209,7 +209,9 @@ impl ChatHistory {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(chat) = self.chat() {
                 spawn(clone!(@weak chat => async move {
-                    chat.history().load_older_messages().await;
+                    if let Err(ChatHistoryError::Tdlib(e)) = chat.history().load_older_messages().await {
+                        log::warn!("Couldn't load more chat messages: {:?}", e);
+                    }
                 }));
             }
         }
