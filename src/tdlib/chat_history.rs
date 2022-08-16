@@ -148,7 +148,10 @@ impl ChatHistory {
             }
             MessageContent(ref update_) => self.handle_message_update(update_.message_id, update),
             MessageEdited(ref update_) => self.handle_message_update(update_.message_id, update),
-            MessageSendSucceeded(update) => self.remove(update.old_message_id),
+            MessageSendSucceeded(update) => {
+                self.remove(update.old_message_id);
+                self.push_front(update.message);
+            }
             NewMessage(update) => self.push_front(update.message),
             _ => {}
         }
