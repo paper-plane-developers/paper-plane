@@ -6,8 +6,17 @@ use std::collections::hash_map::Entry;
 use tdlib::enums::{self, Update};
 use tdlib::functions;
 use tdlib::types::Message as TelegramMessage;
+use thiserror::Error;
 
 use crate::tdlib::{Chat, ChatHistoryItem, ChatHistoryItemType, Message};
+
+#[derive(Error, Debug)]
+pub(crate) enum ChatHistoryError {
+    #[error("The chat history is already loading messages")]
+    AlreadyLoading,
+    #[error("TDLib error: {0:?}")]
+    Tdlib(tdlib::types::Error),
+}
 
 mod imp {
     use super::*;
@@ -19,7 +28,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistory {
         pub(super) chat: WeakRef<Chat>,
-        pub(super) loading: Cell<bool>,
+        pub(super) is_loading: Cell<bool>,
         pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
         pub(super) message_map: RefCell<HashMap<i64, Message>>,
     }
@@ -34,22 +43,13 @@ mod imp {
     impl ObjectImpl for ChatHistory {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecObject::new(
-                        "chat",
-                        "Chat",
-                        "The chat relative to this history",
-                        Chat::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "loading",
-                        "Loading",
-                        "Whether the history is loading messages or not",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                ]
+                vec![glib::ParamSpecObject::new(
+                    "chat",
+                    "Chat",
+                    "The chat relative to this history",
+                    Chat::static_type(),
+                    glib::ParamFlags::READABLE,
+                )]
             });
 
             PROPERTIES.as_ref()
@@ -58,7 +58,6 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
-                "loading" => obj.loading().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -96,12 +95,13 @@ impl ChatHistory {
         chat_history
     }
 
-    pub(crate) async fn load_older_messages(&self) {
-        if self.loading() {
-            return;
+    pub(crate) async fn load_older_messages(&self, limit: i32) -> Result<(), ChatHistoryError> {
+        let imp = self.imp();
+
+        if imp.is_loading.get() {
+            return Err(ChatHistoryError::AlreadyLoading);
         }
 
-        let imp = self.imp();
         let chat = self.chat();
         let client_id = chat.session().client_id();
         let chat_id = chat.id();
@@ -114,17 +114,20 @@ impl ChatHistory {
             .map(|m| m.id())
             .unwrap_or_default();
 
-        self.set_loading(true);
+        imp.is_loading.set(true);
 
         let result =
-            functions::get_chat_history(chat_id, oldest_message_id, 0, 20, false, client_id).await;
+            functions::get_chat_history(chat_id, oldest_message_id, 0, limit, false, client_id)
+                .await;
 
-        if let Ok(enums::Messages::Messages(result)) = result {
-            let messages = result.messages.into_iter().flatten().collect();
-            self.append(messages);
-        }
+        imp.is_loading.set(false);
 
-        self.set_loading(false);
+        let enums::Messages::Messages(data) = result.map_err(ChatHistoryError::Tdlib)?;
+        let messages = data.messages.into_iter().flatten().collect();
+
+        self.append(messages);
+
+        Ok(())
     }
 
     pub(crate) fn message_by_id(&self, id: i64) -> Option<Message> {
@@ -145,7 +148,10 @@ impl ChatHistory {
             }
             MessageContent(ref update_) => self.handle_message_update(update_.message_id, update),
             MessageEdited(ref update_) => self.handle_message_update(update_.message_id, update),
-            MessageSendSucceeded(update) => self.remove(update.old_message_id),
+            MessageSendSucceeded(update) => {
+                self.remove(update.old_message_id);
+                self.push_front(update.message);
+            }
             NewMessage(update) => self.push_front(update.message),
             _ => {}
         }
@@ -257,7 +263,7 @@ impl ChatHistory {
             .items_changed(position, removed, added);
     }
 
-    pub(crate) fn push_front(&self, message: TelegramMessage) {
+    fn push_front(&self, message: TelegramMessage) {
         let imp = self.imp();
 
         let mut message_map = imp.message_map.borrow_mut();
@@ -341,14 +347,5 @@ impl ChatHistory {
 
     pub(crate) fn chat(&self) -> Chat {
         self.imp().chat.upgrade().unwrap()
-    }
-
-    fn set_loading(&self, loading: bool) {
-        self.imp().loading.set(loading);
-        self.notify("loading");
-    }
-
-    pub(crate) fn loading(&self) -> bool {
-        self.imp().loading.get()
     }
 }

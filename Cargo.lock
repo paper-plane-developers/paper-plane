@@ -1106,6 +1106,7 @@ dependencies = [
  "regex",
  "tdlib",
  "temp-dir",
+ "thiserror",
 ]
 
 [[package]]

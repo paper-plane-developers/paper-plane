@@ -22,6 +22,7 @@ pub(crate) use self::chat::{Chat, ChatType};
 pub(crate) use self::chat_action::ChatAction;
 pub(crate) use self::chat_action_list::ChatActionList;
 use self::chat_history::ChatHistory;
+pub(crate) use self::chat_history::ChatHistoryError;
 pub(crate) use self::chat_history_item::{ChatHistoryItem, ChatHistoryItemType};
 pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::country_info::CountryInfo;
