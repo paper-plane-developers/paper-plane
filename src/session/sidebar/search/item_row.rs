@@ -1,3 +1,4 @@
+use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
@@ -119,7 +120,11 @@ impl ItemRow {
         let imp = self.imp();
 
         if let Some(chat) = item.as_ref().and_then(|i| i.downcast_ref::<Chat>()) {
-            imp.label.set_label(&chat.title());
+            if chat.is_own_chat() {
+                imp.label.set_label(&gettext("Saved Messages"));
+            } else {
+                imp.label.set_label(&chat.title());
+            }
         } else if let Some(user) = item.as_ref().and_then(|i| i.downcast_ref::<User>()) {
             imp.label
                 .set_label(&(user.first_name() + " " + &user.last_name()));

@@ -4,6 +4,7 @@ mod row;
 use self::item_row::ItemRow;
 use self::row::Row;
 
+use gettextrs::gettext;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -190,12 +191,25 @@ impl Search {
         // before even starting the search.
         imp.stack.set_visible_child_name("results");
 
+        if !query.is_empty()
+            && gettext("Saved Messages")
+                .to_lowercase()
+                .contains(&query.to_lowercase())
+        {
+            let own_user_id = session.me().id();
+            if let Some(own_chat) = session.chat_list().try_get(own_user_id) {
+                found_chat_ids.push(own_user_id);
+                list.append(&own_chat);
+            }
+        }
+
         // Search chats locally (or get the recently found chats if the query is empty)
         match functions::search_chats(query.clone(), 30, session.client_id()).await {
             Ok(enums::Chats::Chats(mut data)) if !data.chat_ids.is_empty() => {
                 let chats: Vec<Chat> = data
                     .chat_ids
                     .iter()
+                    .filter(|id| !found_chat_ids.contains(id))
                     .map(|id| session.chat_list().get(*id))
                     .collect();
 
