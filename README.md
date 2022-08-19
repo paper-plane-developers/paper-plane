@@ -59,4 +59,6 @@ sudo ninja -C _build install
 
 ## Acknowledgment
 
-The general code architecture was heavily inspired by [fractal-next](https://gitlab.gnome.org/GNOME/fractal/-/tree/fractal-next).
+The general code architecture was heavily inspired by [Fractal](https://gitlab.gnome.org/GNOME/fractal).
+
+Also, some logic is inspired by [Telegram X](https://github.com/TGX-Android/Telegram-X), which helps to understand how to use some TDLib features correctly and to their fullest potential.

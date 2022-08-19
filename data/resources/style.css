@@ -112,6 +112,10 @@
   background-color: @light_5;
 }
 
+sidebarsearchitemrow {
+  border-spacing: 12px;
+}
+
 .chat-history listview {
   padding: 3px 0;
 }

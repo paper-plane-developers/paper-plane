@@ -25,74 +25,70 @@
   <template class="Sidebar" parent="GtkWidget">
     <property name="width-request">300</property>
     <property name="layout-manager">
-      <object class="GtkBoxLayout">
-        <property name="orientation">vertical</property>
-      </object>
+      <object class="GtkBinLayout"/>
     </property>
     <child>
-      <object class="AdwHeaderBar" id="header_bar">
-        <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
-        <child type="start">
-          <object class="GtkMenuButton">
-            <property name="popover">
-              <object class="SessionSwitcher" id="session_switcher"/>
-            </property>
-            <style>
-              <class name="image-button"/>
-            </style>
-            <property name="child">
-              <object class="ComponentsAvatar">
-                <property name="size">24</property>
-                <binding name="item">
-                  <lookup name="me" type="Session">
-                    <lookup name="session">Sidebar</lookup>
-                  </lookup>
-                </binding>
-              </object>
-            </property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkMenuButton">
-            <property name="icon-name">open-menu-symbolic</property>
-            <property name="menu-model">primary_menu</property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkToggleButton">
-            <property name="icon-name">system-search-symbolic</property>
-            <property name="active" bind-source="search_bar" bind-property="search-mode-enabled" bind-flags="bidirectional|sync-create"/>
-          </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSearchBar" id="search_bar">
-        <property name="child">
-          <object class="GtkSearchEntry" id="search_entry">
-            <property name="hexpand">True</property>
-          </object>
-        </property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkScrolledWindow" id="scrolled_window">
-        <property name="vexpand">True</property>
-        <property name="hscrollbar-policy">never</property>
+      <object class="GtkStack" id="stack">
+        <property name="transition-duration">100</property>
+        <property name="transition-type">crossfade</property>
         <child>
-          <object class="GtkListView">
-            <property name="single-click-activate">True</property>
-            <signal name="activate" handler="list_activate" swapped="true"/>
-            <property name="model">
-              <object class="SidebarSelection" id="selection">
-                <binding name="hide-selection">
-                  <lookup name="compact">Sidebar</lookup>
-                </binding>
+          <object class="GtkBox" id="main_box">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="AdwHeaderBar">
+                <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+                <child type="start">
+                  <object class="GtkMenuButton">
+                    <property name="popover">
+                      <object class="SessionSwitcher" id="session_switcher"/>
+                    </property>
+                    <style>
+                      <class name="image-button"/>
+                    </style>
+                    <property name="child">
+                      <object class="ComponentsAvatar">
+                        <property name="size">24</property>
+                        <binding name="item">
+                          <lookup name="me" type="Session">
+                            <lookup name="session">Sidebar</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton">
+                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="menu-model">primary_menu</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkButton">
+                    <property name="action-name">sidebar.start-search</property>
+                    <property name="icon-name">system-search-symbolic</property>
+                  </object>
+                </child>
               </object>
-            </property>
-            <property name="factory">
-              <object class="GtkBuilderListItemFactory">
-                <property name="bytes"><![CDATA[
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <child>
+                  <object class="GtkListView">
+                    <property name="single-click-activate">True</property>
+                    <signal name="activate" handler="list_activate" swapped="true"/>
+                    <property name="model">
+                      <object class="SidebarSelection" id="selection">
+                        <binding name="hide-selection">
+                          <lookup name="compact">Sidebar</lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -105,13 +101,24 @@
     </property>
   </template>
 </interface>
-                ]]></property>
+                        ]]></property>
+                      </object>
+                    </property>
+                    <style>
+                      <class name="navigation-sidebar"/>
+                      <class name="chat-list"/>
+                    </style>
+                  </object>
+                </child>
               </object>
-            </property>
-            <style>
-              <class name="navigation-sidebar"/>
-              <class name="chat-list"/>
-            </style>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="SidebarSearch" id="search">
+            <property name="compact" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+            <property name="session" bind-source="Sidebar" bind-property="session" bind-flags="sync-create"/>
+            <signal name="close" handler="close_search" swapped="true"/>
           </object>
         </child>
       </object>
