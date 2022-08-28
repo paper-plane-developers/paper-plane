@@ -2,7 +2,7 @@ use gettextrs::gettext;
 use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::{gdk, gio, glib, CompositeTemplate};
 use std::thread;
 use tdlib::enums::{self, Update};
 use tdlib::types;
@@ -224,7 +224,47 @@ impl Window {
                         "app.select-chat",
                         Some(&(client_id, chat_id).to_variant()),
                     );
-                    app.send_notification(Some(&notification_id.to_string()), &notification);
+
+                    if let Some(avatar) = chat.avatar() {
+                        let avatar_file = &avatar.0;
+                        if avatar_file.local.is_downloading_completed {
+                            if let Ok(texture) =
+                                gdk::Texture::from_filename(&avatar_file.local.path)
+                            {
+                                notification.set_icon(&texture);
+                            }
+                            app.send_notification(
+                                Some(&notification_id.to_string()),
+                                &notification,
+                            );
+                        } else {
+                            app.send_notification(
+                                Some(&notification_id.to_string()),
+                                &notification,
+                            );
+                            let (sender, receiver) = glib::MainContext::sync_channel::<
+                                tdlib::types::File,
+                            >(
+                                Default::default(), 5
+                            );
+                            receiver.attach(
+                                None,
+                                clone!(@weak app => @default-return glib::Continue(false), move |file| {
+                                    if file.local.is_downloading_completed {
+                                        if let Ok(texture) = gdk::Texture::from_filename(&file.local.path) {
+                                            notification.set_icon(&texture);
+                                        }
+                                        app.send_notification(Some(&notification_id.to_string()), &notification);
+                                        glib::Continue(false)
+                                    }
+                                    else {
+                                        glib::Continue(true)
+                                    }
+                                }));
+
+                            client.session.download_file(avatar_file.id, sender);
+                        }
+                    }
                 }
             }
         }
