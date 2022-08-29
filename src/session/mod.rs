@@ -367,6 +367,15 @@ impl Session {
         }
     }
 
+    pub(crate) fn cancel_download_file(&self, file_id: i32) {
+        let client_id = self.client_id();
+        spawn(async move {
+            if let Err(e) = functions::cancel_download_file(file_id, false, client_id).await {
+                log::warn!("Error canceling a file: {:?}", e);
+            }
+        });
+    }
+
     pub(crate) fn select_chat(&self, chat_id: i64) {
         let imp = self.imp();
         let chat = self.chat_list().get(chat_id);
@@ -400,7 +409,7 @@ impl Session {
                 .get_mut()
                 .retain(|sender| sender.send(file.clone()).is_ok());
 
-            if file.local.is_downloading_completed || entry.get().is_empty() {
+            if !file.local.is_downloading_active || entry.get().is_empty() {
                 entry.remove();
             }
         }
