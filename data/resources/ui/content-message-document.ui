@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ContentMessageDocument" parent="ContentMessageBase">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="orientation">vertical</property>
+      </object>
+    </property>
+    <style>
+      <class name="message-bubble" />
+    </style>
+    <child>
+      <object class="GtkLabel" id="sender_label">
+        <property name="ellipsize">end</property>
+        <property name="single-line-mode">True</property>
+        <property name="xalign">0</property>
+        <style>
+          <class name="sender-text" />
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="AdwActionRow" id="file_row">
+        <property name="title">file_name.jpg</property>
+        <property name="subtitle">100 KB JPG</property>
+        <child type="prefix">
+          <object class="GtkButton" id="file_button">
+            <property name="valign">center</property>
+            <property name="halign">center</property>
+            <style>
+              <class name="circular" />
+            </style>
+            <child>
+              <object class="AdwAvatar" id="file_status">
+                <property name="icon-name">small-x</property>
+                <property name="text">g</property>
+                <property name="size">50</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="MessageLabel" id="content_label">
+        <property name="indicators">
+          <object class="MessageIndicators" id="indicators">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>

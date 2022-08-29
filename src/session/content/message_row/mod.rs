@@ -1,4 +1,5 @@
 mod base;
+mod document;
 mod indicators;
 mod indicators_model;
 mod label;
@@ -10,6 +11,7 @@ mod sticker_picture;
 mod text;
 
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
+use self::document::MessageDocument;
 use self::indicators::MessageIndicators;
 use self::label::MessageLabel;
 use self::media::Media;
@@ -25,6 +27,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageContent, StickerType};
+// use tdlib::types::MessageDocument;
 
 use crate::session::components::Avatar;
 use crate::tdlib::{ChatType, Message, MessageForwardOrigin, MessageSender};
@@ -261,6 +264,9 @@ impl MessageRow {
                     ) =>
                 {
                     self.update_specific_content::<_, MessageSticker>(message_.clone());
+                }
+                MessageContent::MessageDocument(_) => {
+                    self.update_specific_content::<_, MessageDocument>(message);
                 }
                 _ => {
                     self.update_specific_content::<_, MessageText>(message);
