@@ -66,6 +66,7 @@ mod imp {
         pub(super) title: RefCell<String>,
         pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) last_read_outbox_message_id: Cell<i64>,
+        pub(super) is_marked_as_unread: Cell<bool>,
         pub(super) last_message: RefCell<Option<Message>>,
         pub(super) order: Cell<i64>,
         pub(super) is_pinned: Cell<bool>,
@@ -133,6 +134,13 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpecBoolean::new(
+                        "is-marked-as-unread",
+                        "is-marked-as-unread",
+                        "Whether the chat is marked as unread",
+                        false,
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecObject::new(
@@ -231,6 +239,7 @@ mod imp {
                 "title" => obj.title().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
+                "is-marked-as-unread" => obj.is_marked_as_unread().to_value(),
                 "last-message" => obj.last_message().to_value(),
                 "order" => obj.order().to_value(),
                 "is-pinned" => obj.is_pinned().to_value(),
@@ -271,6 +280,7 @@ impl Chat {
         imp.avatar.replace(avatar);
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
+        imp.is_marked_as_unread.set(td_chat.is_marked_as_unread);
         imp.last_message.replace(last_message);
 
         for position in td_chat.positions {
@@ -314,6 +324,7 @@ impl Chat {
                 }
             }
             ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
+            ChatIsMarkedAsUnread(update) => self.set_marked_as_unread(update.is_marked_as_unread),
             ChatLastMessage(update) => {
                 self.set_last_message(update.last_message.map(|m| Message::new(m, self)));
 
@@ -424,6 +435,18 @@ impl Chat {
             .last_read_outbox_message_id
             .set(last_read_outbox_message_id);
         self.notify("last-read-outbox-message-id");
+    }
+
+    pub(crate) fn is_marked_as_unread(&self) -> bool {
+        self.imp().is_marked_as_unread.get()
+    }
+
+    fn set_marked_as_unread(&self, is_marked_as_unread: bool) {
+        if self.is_marked_as_unread() == is_marked_as_unread {
+            return;
+        }
+        self.imp().is_marked_as_unread.set(is_marked_as_unread);
+        self.notify("is-marked-as-unread");
     }
 
     pub(crate) fn last_message(&self) -> Option<Message> {
@@ -562,5 +585,26 @@ impl Chat {
             self.session().client_id(),
         )
         .await
+    }
+
+    pub(crate) async fn mark_as_read(&self) -> Result<enums::Ok, types::Error> {
+        if let Some(message) = self.last_message() {
+            functions::view_messages(
+                self.id(),
+                0,
+                vec![message.id()],
+                true,
+                self.session().client_id(),
+            )
+            .await?;
+        }
+
+        functions::toggle_chat_is_marked_as_unread(self.id(), false, self.session().client_id())
+            .await
+    }
+
+    pub(crate) async fn mark_as_unread(&self) -> Result<enums::Ok, types::Error> {
+        functions::toggle_chat_is_marked_as_unread(self.id(), true, self.session().client_id())
+            .await
     }
 }

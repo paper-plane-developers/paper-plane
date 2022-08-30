@@ -98,28 +98,40 @@
               </object>
             </child>
             <child>
-              <object class="GtkImage" id="pin_icon">
-                <property name="icon-name">view-pin-symbolic</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="unread_mention_label">
-                <property name="valign">center</property>
-                <property name="justify">center</property>
-                <property name="label">@</property>
-                <style>
-                  <class name="unread-mention-count"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="unread_count_label">
-                <property name="valign">center</property>
-                <property name="ellipsize">end</property>
-                <property name="justify">center</property>
+              <object class="GtkStack" id="status_stack">
+                <child>
+                  <object class="AdwBin" id="empty_status_bin"/>
+                </child>
+                <child>
+                  <object class="GtkImage" id="pin_icon">
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="icon-name">view-pin-symbolic</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="unread_mention_label">
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="justify">center</property>
+                    <property name="label">@</property>
+                    <style>
+                      <class name="unread-mention-count"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="unread_count_label">
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="width-chars">1</property>
+                    <property name="ellipsize">end</property>
+                    <property name="justify">center</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

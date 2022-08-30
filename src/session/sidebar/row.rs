@@ -49,6 +49,10 @@ mod imp {
         #[template_child]
         pub(super) bottom_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub(super) status_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub(super) empty_status_bin: TemplateChild<adw::Bin>,
+        #[template_child]
         pub(super) pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub(super) unread_mention_label: TemplateChild<gtk::Label>,
@@ -71,6 +75,12 @@ mod imp {
             });
             klass.install_action("sidebar-row.unpin", None, move |widget, _, _| {
                 widget.toggle_chat_is_pinned()
+            });
+            klass.install_action("sidebar-row.mark-as-unread", None, move |widget, _, _| {
+                widget.toggle_chat_marked_as_unread()
+            });
+            klass.install_action("sidebar-row.mark-as-read", None, move |widget, _, _| {
+                widget.toggle_chat_marked_as_unread()
             });
 
             Avatar::static_type();
@@ -185,6 +195,20 @@ impl Row {
         }
     }
 
+    fn toggle_chat_marked_as_unread(&self) {
+        if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
+            spawn(async move {
+                if let Err(e) = if chat.unread_count() > 0 || chat.is_marked_as_unread() {
+                    chat.mark_as_read().await
+                } else {
+                    chat.mark_as_unread().await
+                } {
+                    log::warn!("Error on toggling chat's unread state: {e:?}");
+                }
+            });
+        }
+    }
+
     fn setup_expressions(&self) {
         let imp = self.imp();
         let item_expression = Self::this_expression("item");
@@ -197,11 +221,16 @@ impl Row {
         );
 
         // Chat unread count
-        item_expression.chain_property::<Chat>("unread-count").bind(
-            &*imp.unread_count_label,
-            "label",
-            Some(self),
-        );
+        item_expression
+            .chain_property::<Chat>("unread-count")
+            .chain_closure::<String>(closure!(|_: Self, unread_count: i32| {
+                if unread_count > 0 {
+                    unread_count.to_string()
+                } else {
+                    String::new()
+                }
+            }))
+            .bind(&*imp.unread_count_label, "label", Some(self));
 
         // User name
         expressions::user_display_name(&item_expression).bind(
@@ -209,6 +238,43 @@ impl Row {
             "label",
             Some(self),
         );
+
+        // Decide what to show (exclusive): pin icon, unread label, unread count or marked as unread
+        // bin.
+        gtk::ClosureExpression::new::<gtk::Widget, _, _>(
+            &[
+                item_expression.chain_property::<Chat>("is-pinned").upcast(),
+                item_expression
+                    .chain_property::<Chat>("unread-count")
+                    .upcast(),
+                item_expression
+                    .chain_property::<Chat>("unread-mention-count")
+                    .upcast(),
+                item_expression
+                    .chain_property::<Chat>("is_marked_as_unread")
+                    .upcast(),
+            ],
+            closure!(|obj: Self,
+                      is_pinned: bool,
+                      unread_count: i32,
+                      unread_mention: i32,
+                      is_marked_as_unread: bool| {
+                let imp = obj.imp();
+
+                let visible_child: &gtk::Widget = if unread_mention > 0 {
+                    imp.unread_mention_label.upcast_ref()
+                } else if unread_count > 0 || is_marked_as_unread {
+                    imp.unread_count_label.upcast_ref()
+                } else if is_pinned {
+                    imp.pin_icon.upcast_ref()
+                } else {
+                    imp.empty_status_bin.upcast_ref()
+                };
+
+                visible_child.clone()
+            }),
+        )
+        .bind(&*imp.status_stack, "visible-child", Some(self));
     }
 
     pub(crate) fn item(&self) -> Option<glib::Object> {
@@ -243,9 +309,6 @@ impl Row {
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
                 let actions_expression = Chat::this_expression("actions");
-                let unread_mention_count_expression = Chat::this_expression("unread-mention-count");
-                let unread_count_expression = Chat::this_expression("unread-count");
-                let is_pinned_expression = Chat::this_expression("is-pinned");
                 let notification_settings_expression =
                     Chat::this_expression("notification-settings");
                 let session_expression = Chat::this_expression("session");
@@ -460,27 +523,6 @@ impl Row {
                 .bind(&*imp.bottom_label, "label", Some(chat));
                 bindings.push(message_binding);
 
-                // Unread mention visibility binding
-                let unread_mention_binding = unread_mention_count_expression
-                    .chain_closure::<bool>(closure!(|_: Chat, unread_mention_count: i32| {
-                        unread_mention_count > 0
-                    }))
-                    .bind(&*imp.unread_mention_label, "visible", Some(chat));
-                bindings.push(unread_mention_binding);
-
-                // Unread count visibility binding
-                let unread_binding = gtk::ClosureExpression::new::<bool, _, _>(
-                    &[
-                        unread_count_expression.clone().upcast(),
-                        unread_mention_count_expression.upcast(),
-                    ],
-                    closure!(|_: Chat, unread_count: i32, unread_mention_count: i32| {
-                        unread_count > 0 && (unread_mention_count != 1 || unread_count > 1)
-                    }),
-                )
-                .bind(&*imp.unread_count_label, "visible", Some(chat));
-                bindings.push(unread_binding);
-
                 // Unread count css classes binding
                 let scope_notification_settings_expression = session_expression
                     .chain_property::<Session>(match chat.type_() {
@@ -528,19 +570,6 @@ impl Row {
                 )
                 .bind(&*imp.unread_count_label, "css-classes", Some(chat));
                 bindings.push(unread_binding);
-
-                // Pin icon visibility binding
-                let pin_binding = gtk::ClosureExpression::new::<bool, _, _>(
-                    &[
-                        is_pinned_expression.upcast(),
-                        unread_count_expression.upcast(),
-                    ],
-                    closure!(|_: Chat, is_pinned: bool, unread_count: i32| {
-                        is_pinned && unread_count <= 0
-                    }),
-                )
-                .bind(&*imp.pin_icon, "visible", Some(chat));
-                bindings.push(pin_binding);
             } else if item.downcast_ref::<User>().is_some() {
                 imp.timestamp_label.set_visible(false);
                 imp.bottom_box.set_visible(false);
@@ -559,22 +588,45 @@ impl Row {
             Some(chat) => {
                 self.update_actions_for_chat(chat);
                 let handler_id = chat.connect_notify_local(
-                    Some("is-pinned"),
-                    clone!(@weak self as obj => move |chat, _| obj.update_actions_for_chat(chat)),
+                    None,
+                    clone!(@weak self as obj => move |chat, pspec| {
+                        if pspec.name() == "is-pinned"
+                            || pspec.name() == "is-marked-as-unread"
+                            || pspec.name() == "unread-count"
+                        {
+                            obj.update_actions_for_chat(chat)
+                        }
+                    }),
                 );
                 self.imp().chat_notify_handler_id.replace(Some(handler_id));
             }
-            None => self.update_pin_actions(false, false),
+            None => {
+                self.update_pin_actions(false, false);
+                self.update_mark_as_unread_actions(false, false);
+            }
         }
     }
 
     fn update_actions_for_chat(&self, chat: &Chat) {
         self.update_pin_actions(!chat.is_pinned(), chat.is_pinned());
+        if chat.unread_count() > 0 {
+            self.update_mark_as_unread_actions(false, true);
+        } else {
+            self.update_mark_as_unread_actions(
+                !chat.is_marked_as_unread(),
+                chat.is_marked_as_unread(),
+            );
+        }
     }
 
     fn update_pin_actions(&self, pin: bool, unpin: bool) {
         self.action_set_enabled("sidebar-row.pin", pin);
         self.action_set_enabled("sidebar-row.unpin", unpin);
+    }
+
+    fn update_mark_as_unread_actions(&self, unread: bool, read: bool) {
+        self.action_set_enabled("sidebar-row.mark-as-unread", unread);
+        self.action_set_enabled("sidebar-row.mark-as-read", read);
     }
 }
 

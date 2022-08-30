@@ -16,6 +16,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
 use crate::tdlib::Chat;
+use crate::utils::spawn;
 use crate::Session;
 
 pub(crate) use self::avatar::Avatar;
@@ -34,6 +35,7 @@ mod imp {
     pub(crate) struct Sidebar {
         pub(super) compact: Cell<bool>,
         pub(super) selected_chat: RefCell<Option<Chat>>,
+        pub(super) marked_as_unread_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) session: RefCell<Option<Session>>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
@@ -210,6 +212,31 @@ impl Sidebar {
         }
 
         let imp = self.imp();
+
+        if let Some(handler_id) = imp.marked_as_unread_handler_id.take() {
+            self.selected_chat().unwrap().disconnect(handler_id);
+        }
+
+        if let Some(chat) = selected_chat.clone() {
+            let handler_id = chat.connect_notify_local(
+                Some("is-marked-as-unread"),
+                clone!(@weak self as obj => move |chat, _| {
+                    if chat.is_marked_as_unread() {
+                        obj.set_selected_chat(None);
+                    }
+                }),
+            );
+            imp.marked_as_unread_handler_id.replace(Some(handler_id));
+
+            if chat.is_marked_as_unread() {
+                spawn(async move {
+                    if let Err(e) = chat.mark_as_read().await {
+                        log::warn!("Error on toggling chat's unread state: {e:?}");
+                    }
+                });
+            }
+        }
+
         imp.selection
             .set_selected_item(selected_chat.clone().map(Chat::upcast));
 
