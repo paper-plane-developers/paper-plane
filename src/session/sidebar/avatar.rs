@@ -19,8 +19,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]
     pub(crate) struct Avatar {
-        /// A `Chat` or `User`
-        pub(super) item: RefCell<Option<glib::Object>>,
+        pub(super) chat: RefCell<Option<Chat>>,
         pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) is_online: Cell<bool>,
         // The first Option indicates whether we've once tried to compile the shader. The second
@@ -54,10 +53,10 @@ mod imp {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpecObject::new(
-                        "item",
-                        "Item",
-                        "The item of this avatar",
-                        glib::Object::static_type(),
+                        "chat",
+                        "Chat",
+                        "The chat of this avatar",
+                        Chat::static_type(),
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
                     glib::ParamSpecBoolean::new(
@@ -80,7 +79,7 @@ mod imp {
             pspec: &glib::ParamSpec,
         ) {
             match pspec.name() {
-                "item" => obj.set_item(value.get().unwrap()),
+                "chat" => obj.set_chat(value.get().unwrap()),
                 "is-online" => obj.set_is_online(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -88,7 +87,7 @@ mod imp {
 
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
-                "item" => obj.item().to_value(),
+                "chat" => obj.chat().to_value(),
                 "is-online" => obj.is_online().to_value(),
                 _ => unimplemented!(),
             }
@@ -189,12 +188,12 @@ impl Avatar {
         self.imp().binding.replace(Some(is_online_binding));
     }
 
-    pub(crate) fn item(&self) -> Option<glib::Object> {
-        self.imp().item.borrow().to_owned()
+    pub(crate) fn chat(&self) -> Option<Chat> {
+        self.imp().chat.borrow().to_owned()
     }
 
-    pub(crate) fn set_item(&self, item: Option<glib::Object>) {
-        if self.item() == item {
+    pub(crate) fn set_chat(&self, chat: Option<Chat>) {
+        if self.chat() == chat {
             return;
         }
 
@@ -204,23 +203,15 @@ impl Avatar {
             binding.unwatch();
         }
 
-        self.imp().avatar.set_item(item.clone());
-
-        if let Some(ref item) = item {
-            if let Some(chat) = item.downcast_ref::<Chat>() {
-                match chat.type_().user() {
-                    Some(user) => self.setup_is_online_binding(user),
-                    None => self.set_is_online(false),
-                }
-            } else if let Some(user) = item.downcast_ref::<User>() {
-                self.setup_is_online_binding(user);
-            } else {
-                unreachable!("Unexpected item type: {:?}", item);
+        if let Some(ref chat) = chat {
+            match chat.type_().user() {
+                Some(user) => self.setup_is_online_binding(user),
+                None => self.set_is_online(false),
             }
         }
 
-        imp.item.replace(item);
-        self.notify("item");
+        imp.chat.replace(chat);
+        self.notify("chat");
     }
 
     pub(crate) fn is_online(&self) -> bool {

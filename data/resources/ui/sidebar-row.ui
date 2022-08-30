@@ -20,7 +20,7 @@
     </child>
     <child>
       <object class="SidebarAvatar">
-        <binding name="item">
+        <binding name="chat">
           <lookup name="chat">SidebarRow</lookup>
         </binding>
       </object>
