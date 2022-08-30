@@ -94,7 +94,7 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SidebarRow">
-        <binding name="item">
+        <binding name="chat">
           <lookup name="item">GtkListItem</lookup>
         </binding>
       </object>

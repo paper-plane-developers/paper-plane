@@ -21,7 +21,7 @@
     <child>
       <object class="SidebarAvatar">
         <binding name="item">
-          <lookup name="item">SidebarRow</lookup>
+          <lookup name="chat">SidebarRow</lookup>
         </binding>
       </object>
     </child>
@@ -61,7 +61,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="bottom_box">
+          <object class="GtkBox">
             <property name="spacing">6</property>
             <child>
               <object class="GtkBox">
