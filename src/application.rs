@@ -192,7 +192,10 @@ impl Application {
             ])
             .build();
 
-        about.add_acknowledgement_section(Some(&gettext("Sponsors")), &["Alisson Lauffer"]);
+        about.add_acknowledgement_section(
+            Some(&gettext("Sponsors")),
+            &["Alisson Lauffer", "Jordan Maris"],
+        );
 
         about.present();
     }
