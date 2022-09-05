@@ -69,14 +69,6 @@
   padding: 6px 0;
 }
 
-.chat-list row .last-message-status-sent {
-  color: @accent_bg_color;
-}
-
-.chat-list row .last-message-status-failed {
-  color: @destructive_color;
-}
-
 .chat-list row .timestamp {
   font-size: smaller;
   font-feature-settings: "tnum";
