@@ -357,12 +357,10 @@ impl Row {
                                     .map(|message| {
                                         vec![match message.sending_state() {
                                             Some(state) => match state.0 {
-                                                MessageSendingState::Failed(_) => {
-                                                    "last-message-status-failed"
-                                                }
+                                                MessageSendingState::Failed(_) => "error",
                                                 MessageSendingState::Pending => "dim-label",
                                             },
-                                            None => "last-message-status-sent",
+                                            None => "accent",
                                         }
                                         .to_string()]
                                     })
