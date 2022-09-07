@@ -33,6 +33,9 @@
                   <object class="MessageEntry" id="caption_entry">
                     <property name="hexpand">True</property>
                     <property name="placeholder-text" translatable="yes">Caption</property>
+                    <binding name="chat">
+                      <lookup name="chat">ContentSendPhotoDialog</lookup>
+                    </binding>
                   </object>
                 </child>
                 <child>

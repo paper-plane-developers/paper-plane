@@ -175,10 +175,10 @@ impl ChatActionBar {
         glib::Object::new(&[]).expect("Failed to create ChatActionBar")
     }
 
-    fn compose_text_message(&self) -> Option<InputMessageContent> {
-        if let Some(formatted_text) = self.imp().message_entry.formatted_text() {
+    async fn compose_text_message(&self) -> Option<InputMessageContent> {
+        if let Some(formatted_text) = self.imp().message_entry.as_markdown().await {
             let content = types::InputMessageText {
-                text: formatted_text.0,
+                text: formatted_text,
                 disable_web_page_preview: false,
                 clear_draft: true,
             };
@@ -234,7 +234,7 @@ impl ChatActionBar {
 
     async fn send_text_message(&self) {
         if let Some(chat) = self.chat() {
-            if let Some(message) = self.compose_text_message() {
+            if let Some(message) = self.compose_text_message().await {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
 
@@ -254,13 +254,14 @@ impl ChatActionBar {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
-            let draft_message = self
-                .compose_text_message()
-                .map(|message| types::DraftMessage {
-                    reply_to_message_id: 0,
-                    date: glib::DateTime::now_local().unwrap().to_unix() as i32,
-                    input_message_text: message,
-                });
+            let draft_message =
+                self.compose_text_message()
+                    .await
+                    .map(|message| types::DraftMessage {
+                        reply_to_message_id: 0,
+                        date: glib::DateTime::now_local().unwrap().to_unix() as i32,
+                        input_message_text: message,
+                    });
 
             // Save draft message
             let result =

@@ -13,6 +13,7 @@ use crate::utils::spawn;
 
 mod imp {
     use super::*;
+    use once_cell::sync::Lazy;
     use once_cell::unsync::OnceCell;
     use std::cell::RefCell;
 
@@ -56,6 +57,39 @@ mod imp {
     }
 
     impl ObjectImpl for SendPhotoDialog {
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpecObject::new(
+                    "chat",
+                    "Chat",
+                    "The chat where the photo is being sent",
+                    Chat::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
+                )]
+            });
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(
+            &self,
+            _obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &glib::ParamSpec,
+        ) {
+            match pspec.name() {
+                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "chat" => self.chat.get().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
@@ -89,7 +123,7 @@ glib::wrapper! {
 impl SendPhotoDialog {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: Chat, path: String) -> Self {
         let send_photo_dialog: Self =
-            glib::Object::new(&[("transient-for", parent_window)]).unwrap();
+            glib::Object::new(&[("transient-for", parent_window), ("chat", &chat)]).unwrap();
         let imp = send_photo_dialog.imp();
 
         let chat_expression = gtk::ConstantExpression::new(&chat);
@@ -100,7 +134,6 @@ impl SendPhotoDialog {
         );
 
         imp.picture.set_filename(Some(&path));
-        imp.chat.set(chat).unwrap();
         imp.path.set(path).unwrap();
 
         send_photo_dialog
@@ -134,6 +167,7 @@ impl SendPhotoDialog {
         let paintable = imp.picture.paintable().unwrap();
         let width = paintable.intrinsic_width();
         let height = paintable.intrinsic_height();
+        let caption = imp.caption_entry.as_markdown().await;
 
         let file = InputFile::Local(InputFileLocal { path });
         let content = InputMessageContent::InputMessagePhoto(InputMessagePhoto {
@@ -142,7 +176,7 @@ impl SendPhotoDialog {
             added_sticker_file_ids: vec![],
             width,
             height,
-            caption: imp.caption_entry.formatted_text().map(|f| f.0),
+            caption,
             ttl: 0,
         });
 
