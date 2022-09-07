@@ -2,13 +2,16 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use tdlib::enums::FormattedText as EnumFormattedText;
+use tdlib::functions;
 use tdlib::types::FormattedText;
 
-use crate::tdlib::BoxedFormattedText;
+use crate::tdlib::{BoxedFormattedText, Chat};
 
 mod imp {
     use super::*;
     use glib::subclass::Signal;
+    use glib::WeakRef;
     use gtk::gdk;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
@@ -16,6 +19,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/components-message-entry.ui")]
     pub(crate) struct MessageEntry {
+        pub(super) chat: WeakRef<Chat>,
         pub(super) formatted_text: RefCell<Option<BoxedFormattedText>>,
         #[template_child]
         pub(super) overlay: TemplateChild<gtk::Overlay>,
@@ -76,6 +80,13 @@ mod imp {
                         None,
                         glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
                     ),
+                    glib::ParamSpecObject::new(
+                        "chat",
+                        "Chat",
+                        "The chat in which the messages will be sent",
+                        Chat::static_type(),
+                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                    ),
                 ]
             });
             PROPERTIES.as_ref()
@@ -91,6 +102,7 @@ mod imp {
             match pspec.name() {
                 "formatted-text" => obj.set_formatted_text(value.get().unwrap()),
                 "placeholder-text" => obj.set_placeholder_text(value.get().unwrap()),
+                "chat" => obj.set_chat(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -99,6 +111,7 @@ mod imp {
             match pspec.name() {
                 "formatted-text" => obj.formatted_text().to_value(),
                 "placeholder-text" => obj.placeholder_text().to_value(),
+                "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -214,6 +227,33 @@ impl MessageEntry {
 
         let text = formatted_text.map(|f| f.0.text).unwrap_or_default();
         self.imp().text_view.buffer().set_text(&text);
+    }
+
+    pub(crate) async fn as_markdown(&self) -> Option<FormattedText> {
+        let text = self.imp().formatted_text.borrow().clone().map(|f| f.0)?;
+        let client_id = self.chat().unwrap().session().client_id();
+
+        functions::parse_markdown(text.clone(), client_id)
+            .await
+            .map(|text| {
+                let EnumFormattedText::FormattedText(text) = text;
+                text
+            })
+            .ok()
+            .or(Some(text))
+    }
+
+    pub(crate) fn chat(&self) -> Option<Chat> {
+        self.imp().chat.upgrade()
+    }
+
+    pub(crate) fn set_chat(&self, chat: Option<Chat>) {
+        if self.chat() == chat {
+            return;
+        }
+
+        self.imp().chat.set(chat.as_ref());
+        self.notify("chat");
     }
 
     pub(crate) fn connect_formatted_text_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(

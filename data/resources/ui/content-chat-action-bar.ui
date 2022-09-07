@@ -21,6 +21,9 @@
       <object class="MessageEntry" id="message_entry">
         <property name="placeholder-text" translatable="yes">Message</property>
         <property name="hexpand">True</property>
+        <binding name="chat">
+          <lookup name="chat">ContentChatActionBar</lookup>
+        </binding>
       </object>
     </child>
     <child>
