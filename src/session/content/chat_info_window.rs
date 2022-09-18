@@ -143,11 +143,15 @@ impl ChatInfoWindow {
                 .build();
             imp.info_list.append(&row);
         }
+
+        self.update_info_list_visibility();
     }
 
     fn setup_basic_group_info(&self, basic_group: &BasicGroup) {
         let client_id = self.chat().unwrap().session().client_id();
         let basic_group_id = basic_group.id();
+
+        self.update_info_list_visibility();
 
         // Full info
         spawn(clone!(@weak self as obj => async move {
@@ -174,6 +178,8 @@ impl ChatInfoWindow {
                 .build();
             imp.info_list.append(&row);
         }
+
+        self.update_info_list_visibility();
     }
 
     fn setup_supergroup_info(&self, supergroup: &Supergroup) {
@@ -189,6 +195,8 @@ impl ChatInfoWindow {
                 .build();
             imp.info_list.append(&row);
         }
+
+        self.update_info_list_visibility();
 
         // Full info
         spawn(clone!(@weak self as obj => async move {
@@ -215,6 +223,13 @@ impl ChatInfoWindow {
                 .build();
             imp.info_list.append(&row);
         }
+
+        self.update_info_list_visibility();
+    }
+
+    fn update_info_list_visibility(&self) {
+        let info_list = &self.imp().info_list;
+        info_list.set_visible(info_list.first_child().is_some());
     }
 
     pub(crate) fn chat(&self) -> Option<&Chat> {
