@@ -1,5 +1,4 @@
 use gettextrs::gettext;
-use glib::closure;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
@@ -118,42 +117,24 @@ impl ChatInfoWindow {
         let imp = self.imp();
 
         // Phone number
-        let mobile_row = adw::ActionRow::builder()
-            .subtitle(&gettext("Mobile"))
-            .icon_name("phone-oldschool-symbolic")
-            .build();
-        imp.info_list.append(&mobile_row);
-
-        let phone_number_expression = User::this_expression("phone-number");
-        phone_number_expression
-            .chain_closure::<String>(closure!(|_: User, phone_number: String| {
-                format!("+{}", phone_number)
-            }))
-            .bind(&mobile_row, "title", Some(user));
-        phone_number_expression
-            .chain_closure::<bool>(closure!(|_: User, phone_number: String| {
-                !phone_number.is_empty()
-            }))
-            .bind(&mobile_row, "visible", Some(user));
+        if !user.phone_number().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("+{}", &user.phone_number()))
+                .subtitle(&gettext("Mobile"))
+                .icon_name("phone-oldschool-symbolic")
+                .build();
+            imp.info_list.append(&row);
+        }
 
         // Username
-        let username_row = adw::ActionRow::builder()
-            .subtitle(&gettext("Username"))
-            .icon_name("user-info-symbolic")
-            .build();
-        imp.info_list.append(&username_row);
-
-        let username_expression = User::this_expression("username");
-        username_expression
-            .chain_closure::<String>(closure!(|_: User, username: String| {
-                format!("@{}", username)
-            }))
-            .bind(&username_row, "title", Some(user));
-        username_expression
-            .chain_closure::<bool>(closure!(|_: User, username: String| {
-                !username.is_empty()
-            }))
-            .bind(&username_row, "visible", Some(user));
+        if !user.username().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("@{}", &user.username()))
+                .subtitle(&gettext("Username"))
+                .icon_name("user-info-symbolic")
+                .build();
+            imp.info_list.append(&row);
+        }
     }
 
     pub(crate) fn chat(&self) -> Option<&Chat> {
