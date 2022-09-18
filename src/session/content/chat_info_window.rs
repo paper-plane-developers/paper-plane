@@ -121,7 +121,6 @@ impl ChatInfoWindow {
             let row = adw::ActionRow::builder()
                 .title(&format!("+{}", &user.phone_number()))
                 .subtitle(&gettext("Mobile"))
-                .icon_name("phone-oldschool-symbolic")
                 .build();
             imp.info_list.append(&row);
         }
@@ -131,7 +130,6 @@ impl ChatInfoWindow {
             let row = adw::ActionRow::builder()
                 .title(&format!("@{}", &user.username()))
                 .subtitle(&gettext("Username"))
-                .icon_name("user-info-symbolic")
                 .build();
             imp.info_list.append(&row);
         }
