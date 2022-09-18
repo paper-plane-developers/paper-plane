@@ -4,10 +4,10 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::functions;
-use tdlib::types::SupergroupFullInfo;
+use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
 
 use crate::expressions;
-use crate::tdlib::{Chat, ChatType, Supergroup, User};
+use crate::tdlib::{BasicGroup, Chat, ChatType, Supergroup, User};
 use crate::utils::spawn;
 
 mod imp {
@@ -111,6 +111,9 @@ impl ChatInfoWindow {
             ChatType::Private(user) => {
                 self.setup_user_info(user);
             }
+            ChatType::BasicGroup(basic_group) => {
+                self.setup_basic_group_info(basic_group);
+            }
             ChatType::Supergroup(supergroup) => {
                 self.setup_supergroup_info(supergroup);
             }
@@ -137,6 +140,37 @@ impl ChatInfoWindow {
             let row = adw::ActionRow::builder()
                 .title(&format!("@{}", &user.username()))
                 .subtitle(&gettext("Username"))
+                .build();
+            imp.info_list.append(&row);
+        }
+    }
+
+    fn setup_basic_group_info(&self, basic_group: &BasicGroup) {
+        let client_id = self.chat().unwrap().session().client_id();
+        let basic_group_id = basic_group.id();
+
+        // Full info
+        spawn(clone!(@weak self as obj => async move {
+            let result = functions::get_basic_group_full_info(basic_group_id, client_id).await;
+            match result {
+                Ok(tdlib::enums::BasicGroupFullInfo::BasicGroupFullInfo(full_info)) => {
+                    obj.setup_basic_group_full_info(full_info);
+                }
+                Err(e) => {
+                    log::warn!("Failed to get basic group full info: {e:?}");
+                }
+            }
+        }));
+    }
+
+    fn setup_basic_group_full_info(&self, basic_group_full_info: BasicGroupFullInfo) {
+        let imp = self.imp();
+
+        // Description
+        if !basic_group_full_info.description.is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&basic_group_full_info.description)
+                .subtitle(&gettext("Description"))
                 .build();
             imp.info_list.append(&row);
         }
