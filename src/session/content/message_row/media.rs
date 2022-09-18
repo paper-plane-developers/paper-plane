@@ -208,7 +208,7 @@ impl Media {
                 // Unparent the indicators from the picture overlay
                 imp.overlay.remove_overlay(indicators);
 
-                let caption_label = MessageLabel::new(&caption, indicators);
+                let caption_label = MessageLabel::new(&caption, Some(indicators));
                 imp.content.append(&caption_label);
 
                 *caption_label_ref = Some(caption_label);

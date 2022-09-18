@@ -10,7 +10,6 @@ const INDICATORS_SPACING: i32 = 6;
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -31,7 +30,7 @@ mod imp {
     "#)]
     pub(crate) struct MessageLabel {
         pub(super) text: RefCell<String>,
-        pub(super) indicators: OnceCell<MessageIndicators>,
+        pub(super) indicators: RefCell<Option<MessageIndicators>>,
         pub(super) indicators_size: RefCell<Option<(i32, i32)>>,
         #[template_child]
         pub(super) label: TemplateChild<gtk::Label>,
@@ -85,11 +84,7 @@ mod imp {
         ) {
             match pspec.name() {
                 "label" => obj.set_label(value.get().unwrap()),
-                "indicators" => {
-                    let indicators: MessageIndicators = value.get().unwrap();
-                    indicators.set_parent(obj);
-                    self.indicators.set(indicators).unwrap();
-                }
+                "indicators" => obj.set_indicators(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -102,9 +97,11 @@ mod imp {
             }
         }
 
-        fn dispose(&self, obj: &Self::Type) {
+        fn dispose(&self, _obj: &Self::Type) {
             self.label.unparent();
-            obj.indicators().unparent();
+            if let Some(indicators) = self.indicators.take() {
+                indicators.unparent();
+            }
         }
     }
 
@@ -115,40 +112,47 @@ mod imp {
             orientation: gtk::Orientation,
             for_size: i32,
         ) -> (i32, i32, i32, i32) {
-            let indicators = widget.indicators();
-            let (_, indicators_size) = indicators.preferred_size();
-            let old = self
-                .indicators_size
-                .replace(Some((indicators_size.width(), indicators_size.height())));
+            if let Some(indicators) = self.indicators.borrow().as_ref() {
+                let (_, indicators_size) = indicators.preferred_size();
+                let old = self
+                    .indicators_size
+                    .replace(Some((indicators_size.width(), indicators_size.height())));
 
-            if let Some(old_indicators_size) = old {
-                if indicators_size.width() != old_indicators_size.0
-                    || indicators_size.height() != old_indicators_size.1
-                {
+                if let Some(old_indicators_size) = old {
+                    if indicators_size.width() != old_indicators_size.0
+                        || indicators_size.height() != old_indicators_size.1
+                    {
+                        widget.update_label_attributes(&indicators_size);
+                    }
+                } else {
                     widget.update_label_attributes(&indicators_size);
                 }
+
+                let (mut minimum, mut natural, minimum_baseline, natural_baseline) =
+                    self.label.measure(orientation, for_size);
+                let (indicators_min, indicators_nat, _, _) =
+                    indicators.measure(orientation, for_size);
+
+                minimum = minimum.max(indicators_min);
+                natural = natural.max(indicators_nat);
+
+                if orientation == gtk::Orientation::Vertical && widget.is_opposite_text_direction()
+                {
+                    minimum += indicators_min;
+                    natural += indicators_nat;
+                }
+
+                (minimum, natural, minimum_baseline, natural_baseline)
             } else {
-                widget.update_label_attributes(&indicators_size);
+                self.label.measure(orientation, for_size)
             }
-
-            let (mut minimum, mut natural, minimum_baseline, natural_baseline) =
-                self.label.measure(orientation, for_size);
-            let (indicators_min, indicators_nat, _, _) = indicators.measure(orientation, for_size);
-
-            minimum = minimum.max(indicators_min);
-            natural = natural.max(indicators_nat);
-
-            if orientation == gtk::Orientation::Vertical && widget.is_opposite_text_direction() {
-                minimum += indicators_min;
-                natural += indicators_nat;
-            }
-
-            (minimum, natural, minimum_baseline, natural_baseline)
         }
 
-        fn size_allocate(&self, widget: &Self::Type, width: i32, height: i32, baseline: i32) {
+        fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
             self.label.allocate(width, height, baseline, None);
-            widget.indicators().allocate(width, height, baseline, None);
+            if let Some(indicators) = self.indicators.borrow().as_ref() {
+                indicators.allocate(width, height, baseline, None);
+            }
         }
 
         fn request_mode(&self, _widget: &Self::Type) -> gtk::SizeRequestMode {
@@ -167,8 +171,8 @@ glib::wrapper! {
 }
 
 impl MessageLabel {
-    pub(crate) fn new(label: &str, indicators: &MessageIndicators) -> Self {
-        glib::Object::new(&[("label", &label), ("indicators", indicators)])
+    pub(crate) fn new(label: &str, indicators: Option<&MessageIndicators>) -> Self {
+        glib::Object::new(&[("label", &label), ("indicators", &indicators)])
             .expect("Failed to create MessageLabel")
     }
 
@@ -209,15 +213,19 @@ impl MessageLabel {
     fn update_label(&self) {
         let imp = self.imp();
         let text = imp.text.borrow();
-        if !self.is_opposite_text_direction() {
-            imp.label
-                .set_label(&format!("{}{}", text, OBJECT_REPLACEMENT_CHARACTER));
+        if let Some(indicators) = imp.indicators.borrow().as_ref() {
+            if !self.is_opposite_text_direction() {
+                imp.label
+                    .set_label(&format!("{}{}", text, OBJECT_REPLACEMENT_CHARACTER));
+            } else {
+                imp.label.set_label(&text);
+            }
+
+            let (_, indicators_size) = indicators.preferred_size();
+            self.update_label_attributes(&indicators_size);
         } else {
             imp.label.set_label(&text);
         }
-
-        let (_, indicators_size) = self.indicators().preferred_size();
-        self.update_label_attributes(&indicators_size);
     }
 
     pub(crate) fn label(&self) -> String {
@@ -233,7 +241,24 @@ impl MessageLabel {
         }
     }
 
-    pub(crate) fn indicators(&self) -> &MessageIndicators {
-        self.imp().indicators.get().unwrap()
+    pub(crate) fn indicators(&self) -> Option<MessageIndicators> {
+        self.imp().indicators.borrow().clone()
+    }
+
+    pub(crate) fn set_indicators(&self, indicators: Option<MessageIndicators>) {
+        let imp = self.imp();
+        let old = imp.indicators.replace(indicators);
+        if old != *imp.indicators.borrow() {
+            if let Some(old) = old {
+                old.unparent();
+            }
+
+            if let Some(indicators) = imp.indicators.borrow().as_ref() {
+                indicators.set_parent(self);
+            }
+
+            self.update_label();
+            self.notify("indicators");
+        }
     }
 }
