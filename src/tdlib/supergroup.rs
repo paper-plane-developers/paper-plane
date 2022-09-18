@@ -13,6 +13,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub(crate) struct Supergroup {
         pub(super) id: Cell<i64>,
+        pub(super) username: RefCell<String>,
         pub(super) member_count: Cell<i32>,
         pub(super) is_channel: Cell<bool>,
         pub(super) status: RefCell<Option<BoxedChatMemberStatus>>,
@@ -35,6 +36,13 @@ mod imp {
                         std::i64::MIN,
                         std::i64::MAX,
                         0,
+                        glib::ParamFlags::READABLE,
+                    ),
+                    glib::ParamSpecString::new(
+                        "username",
+                        "Username",
+                        "The username of this supergroup",
+                        None,
                         glib::ParamFlags::READABLE,
                     ),
                     glib::ParamSpecInt::new(
@@ -68,6 +76,7 @@ mod imp {
         fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "id" => obj.id().to_value(),
+                "username" => obj.username().to_value(),
                 "member-count" => obj.member_count().to_value(),
                 "is-channel" => obj.is_channel().to_value(),
                 "status" => obj.status().to_value(),
@@ -89,6 +98,7 @@ impl Supergroup {
         let status = BoxedChatMemberStatus(td_supergroup.status);
 
         imp.id.set(td_supergroup.id);
+        imp.username.replace(td_supergroup.username);
         imp.member_count.set(td_supergroup.member_count);
         imp.is_channel.set(td_supergroup.is_channel);
         imp.status.replace(Some(status));
@@ -97,12 +107,25 @@ impl Supergroup {
     }
 
     pub(crate) fn update(&self, td_supergroup: TdSupergroup) {
+        self.set_username(td_supergroup.username);
         self.set_member_count(td_supergroup.member_count);
         self.set_status(BoxedChatMemberStatus(td_supergroup.status));
     }
 
     pub(crate) fn id(&self) -> i64 {
         self.imp().id.get()
+    }
+
+    pub(crate) fn username(&self) -> String {
+        self.imp().username.borrow().clone()
+    }
+
+    fn set_username(&self, username: String) {
+        if self.username() == username {
+            return;
+        }
+        self.imp().username.replace(username);
+        self.notify("username");
     }
 
     pub(crate) fn member_count(&self) -> i32 {

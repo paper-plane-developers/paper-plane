@@ -1,10 +1,14 @@
 use gettextrs::gettext;
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use tdlib::functions;
+use tdlib::types::SupergroupFullInfo;
 
 use crate::expressions;
-use crate::tdlib::{Chat, ChatType, User};
+use crate::tdlib::{Chat, ChatType, Supergroup, User};
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -107,6 +111,9 @@ impl ChatInfoWindow {
             ChatType::Private(user) => {
                 self.setup_user_info(user);
             }
+            ChatType::Supergroup(supergroup) => {
+                self.setup_supergroup_info(supergroup);
+            }
             _ => {
                 imp.info_list.set_visible(false);
             }
@@ -130,6 +137,47 @@ impl ChatInfoWindow {
             let row = adw::ActionRow::builder()
                 .title(&format!("@{}", &user.username()))
                 .subtitle(&gettext("Username"))
+                .build();
+            imp.info_list.append(&row);
+        }
+    }
+
+    fn setup_supergroup_info(&self, supergroup: &Supergroup) {
+        let client_id = self.chat().unwrap().session().client_id();
+        let supergroup_id = supergroup.id();
+        let imp = self.imp();
+
+        // Link
+        if !supergroup.username().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("https://t.me/{}", &supergroup.username()))
+                .subtitle(&gettext("Link"))
+                .build();
+            imp.info_list.append(&row);
+        }
+
+        // Full info
+        spawn(clone!(@weak self as obj => async move {
+            let result = functions::get_supergroup_full_info(supergroup_id, client_id).await;
+            match result {
+                Ok(tdlib::enums::SupergroupFullInfo::SupergroupFullInfo(full_info)) => {
+                    obj.setup_supergroup_full_info(full_info);
+                }
+                Err(e) => {
+                    log::warn!("Failed to get supergroup full info: {e:?}");
+                }
+            }
+        }));
+    }
+
+    fn setup_supergroup_full_info(&self, supergroup_full_info: SupergroupFullInfo) {
+        let imp = self.imp();
+
+        // Description
+        if !supergroup_full_info.description.is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&supergroup_full_info.description)
+                .subtitle(&gettext("Description"))
                 .build();
             imp.info_list.append(&row);
         }
