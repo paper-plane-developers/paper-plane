@@ -49,6 +49,12 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkLabel" id="subtitle_label">
+                        <property name="wrap">True</property>
+                        <property name="justify">center</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkListBox" id="info_list">
                         <property name="selection-mode">none</property>
                         <style>

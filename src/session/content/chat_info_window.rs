@@ -1,14 +1,15 @@
 use adw::prelude::*;
 use gettextrs::gettext;
-use glib::clone;
+use glib::{clone, closure};
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::functions;
 use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
 
-use crate::expressions;
-use crate::tdlib::{BasicGroup, Chat, ChatType, Supergroup, User};
+use crate::i18n::ngettext_f;
+use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
 use crate::utils::spawn;
+use crate::{expressions, strings};
 
 mod imp {
     use super::*;
@@ -23,6 +24,8 @@ mod imp {
         pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) subtitle_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) info_list: TemplateChild<gtk::ListBox>,
     }
@@ -128,6 +131,15 @@ impl ChatInfoWindow {
     fn setup_user_info(&self, user: &User) {
         let imp = self.imp();
 
+        // Online status
+        User::this_expression("status")
+            .chain_closure::<String>(closure!(
+                |_: Option<glib::Object>, status: BoxedUserStatus| {
+                    strings::user_status(&status.0)
+                }
+            ))
+            .bind(&*imp.subtitle_label, "label", Some(user));
+
         // Phone number
         if !user.phone_number().is_empty() {
             let row = adw::ActionRow::builder()
@@ -154,6 +166,19 @@ impl ChatInfoWindow {
     fn setup_basic_group_info(&self, basic_group: &BasicGroup) {
         let client_id = self.chat().unwrap().session().client_id();
         let basic_group_id = basic_group.id();
+        let imp = self.imp();
+
+        // Members number
+        BasicGroup::this_expression("member-count")
+            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
+                ngettext_f(
+                    "{num} member",
+                    "{num} members",
+                    member_count as u32,
+                    &[("num", &member_count.to_string())],
+                )
+            }))
+            .bind(&*imp.subtitle_label, "label", Some(basic_group));
 
         self.update_info_list_visibility();
 
@@ -191,6 +216,18 @@ impl ChatInfoWindow {
         let client_id = self.chat().unwrap().session().client_id();
         let supergroup_id = supergroup.id();
         let imp = self.imp();
+
+        // Members number
+        Supergroup::this_expression("member-count")
+            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
+                ngettext_f(
+                    "{num} member",
+                    "{num} members",
+                    member_count as u32,
+                    &[("num", &member_count.to_string())],
+                )
+            }))
+            .bind(&*imp.subtitle_label, "label", Some(supergroup));
 
         // Link
         if !supergroup.username().is_empty() {

@@ -1,8 +1,9 @@
 use ellipse::Ellipse;
 use gettextrs::gettext;
-use tdlib::enums::{CallDiscardReason, UserType};
+use gtk::glib;
+use tdlib::enums::{CallDiscardReason, UserStatus, UserType};
 
-use crate::i18n::gettext_f;
+use crate::i18n::{gettext_f, ngettext_f};
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, User};
 use crate::utils::{freplace, human_friendly_duration};
 
@@ -15,6 +16,49 @@ fn user_display_name(user: &User) -> String {
         user.last_name()
     } else {
         user.first_name() + " " + &user.last_name()
+    }
+}
+
+pub(crate) fn user_status(status: &UserStatus) -> String {
+    match status {
+        UserStatus::Empty => gettext("last seen a long time ago"),
+        UserStatus::Online(_) => gettext("online"),
+        UserStatus::Offline(data) => {
+            let now = glib::DateTime::now_local().unwrap();
+            let was_online = glib::DateTime::from_unix_local(data.was_online as i64).unwrap();
+            let time_span = now.difference(&was_online);
+
+            // TODO: Add a way to update the string when time passes
+            if time_span.as_days() > 1 {
+                // Translators: This is an online status with the date
+                was_online.format(&gettext("last seen %x")).unwrap().into()
+            } else if now.day_of_week() != was_online.day_of_week() && now.hour() >= 1 {
+                // Translators: This is an online status with the time without seconds
+                was_online
+                    .format(&gettext("last seen yesterday at %l:%M %p"))
+                    .unwrap()
+                    .into()
+            } else if time_span.as_hours() > 0 {
+                ngettext_f(
+                    "last seen {num} hour ago",
+                    "last seen {num} hours ago",
+                    time_span.as_hours() as u32,
+                    &[("num", &time_span.as_hours().to_string())],
+                )
+            } else if time_span.as_minutes() > 0 {
+                ngettext_f(
+                    "last seen {num} minute ago",
+                    "last seen {num} minutes ago",
+                    time_span.as_minutes() as u32,
+                    &[("num", &time_span.as_minutes().to_string())],
+                )
+            } else {
+                gettext("last seen just now")
+            }
+        }
+        UserStatus::Recently => gettext("last seen recently"),
+        UserStatus::LastWeek => gettext("last seen within a week"),
+        UserStatus::LastMonth => gettext("last seen within a month"),
     }
 }
 
