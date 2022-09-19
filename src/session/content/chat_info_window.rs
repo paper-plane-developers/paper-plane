@@ -81,7 +81,7 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            obj.setup_dialog();
+            obj.setup_window();
         }
     }
 
@@ -101,7 +101,7 @@ impl ChatInfoWindow {
             .expect("Failed to create ChatInfoWindow")
     }
 
-    fn setup_dialog(&self) {
+    fn setup_window(&self) {
         let imp = self.imp();
         let chat_expression = Self::this_expression("chat");
 
