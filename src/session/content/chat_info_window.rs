@@ -3,6 +3,7 @@ use gettextrs::gettext;
 use glib::{clone, closure};
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use tdlib::enums::UserType;
 use tdlib::functions;
 use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
 
@@ -131,14 +132,18 @@ impl ChatInfoWindow {
     fn setup_user_info(&self, user: &User) {
         let imp = self.imp();
 
-        // Online status
-        User::this_expression("status")
-            .chain_closure::<String>(closure!(
-                |_: Option<glib::Object>, status: BoxedUserStatus| {
-                    strings::user_status(&status.0)
-                }
-            ))
-            .bind(&*imp.subtitle_label, "label", Some(user));
+        // Online status or bot label
+        if let UserType::Bot(_) = user.type_().0 {
+            imp.subtitle_label.set_label(&gettext("bot"));
+        } else {
+            User::this_expression("status")
+                .chain_closure::<String>(closure!(
+                    |_: Option<glib::Object>, status: BoxedUserStatus| {
+                        strings::user_status(&status.0)
+                    }
+                ))
+                .bind(&*imp.subtitle_label, "label", Some(user));
+        }
 
         // Phone number
         if !user.phone_number().is_empty() {
