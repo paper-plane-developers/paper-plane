@@ -1,7 +1,7 @@
+use adw::prelude::*;
 use gettextrs::gettext;
 use gtk::gdk;
 use gtk::glib::{self, clone};
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
@@ -677,37 +677,38 @@ impl Login {
     }
 
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
-        let builder = gtk::MessageDialog::builder()
-            .use_markup(true)
-            .secondary_text(&*self.imp().tos_text.borrow())
-            .modal(true)
-            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap());
+        let dialog = adw::MessageDialog::builder()
+            .body_use_markup(true)
+            .body(&*self.imp().tos_text.borrow())
+            .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
+            .build();
 
-        let dialog = if user_needs_to_accept {
-            builder
-                .buttons(gtk::ButtonsType::YesNo)
-                .text(&gettext("Do you accept the Terms of Service?"))
+        if user_needs_to_accept {
+            dialog.set_heading(Some(&gettext("Do you accept the Terms of Service?")));
+            dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
+            dialog.set_default_response(Some("no"));
         } else {
-            builder
-                .buttons(gtk::ButtonsType::Ok)
-                .text(&gettext("Terms of Service"))
+            dialog.set_heading(Some(&gettext("Terms of Service")));
+            dialog.add_response("ok", &gettext("_OK"));
+            dialog.set_default_response(Some("ok"));
         }
-        .build();
 
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response| {
-            if matches!(response, gtk::ResponseType::No) {
-                // If the user declines the ToS, don't proceed and just stay in
-                // the view but unfreeze it again.
-                obj.unfreeze();
-            } else if matches!(response, gtk::ResponseType::Yes) {
-                // User has accepted the ToS, so we can proceed in the login
-                // flow.
-                spawn(clone!(@weak obj => async move {
-                    obj.send_registration().await;
-                }));
-            }
-            dialog.close();
-        }));
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, response| {
+                if response == "no" {
+                    // If the user declines the ToS, don't proceed and just stay in
+                    // the view but unfreeze it again.
+                    obj.unfreeze();
+                } else if response == "yes" {
+                    // User has accepted the ToS, so we can proceed in the login
+                    // flow.
+                    spawn(clone!(@weak obj => async move {
+                        obj.send_registration().await;
+                    }));
+                }
+            }),
+        );
     }
 
     fn disable_actions(&self) {
@@ -919,52 +920,49 @@ impl Login {
     }
 
     fn show_delete_account_dialog(&self) {
-        let dialog = gtk::MessageDialog::builder()
-            .text(&gettext("Warning"))
-            .secondary_text(&gettext(
+        let dialog = adw::MessageDialog::builder()
+            .heading(&gettext("Warning"))
+            .body(&gettext(
                 "You will lose all your chats and messages, along with any media and files you shared!\n\nDo you want to delete your account?",
             ))
-            .buttons(gtk::ButtonsType::Cancel)
-            .modal(true)
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
-        dialog.add_action_widget(
-            &gtk::Button::builder()
-                .use_underline(true)
-                .label("_Delete Account")
-                .css_classes(vec!["destructive-action".to_string()])
-                .build(),
-            gtk::ResponseType::Accept,
+        dialog.add_responses(&[
+            ("cancel", &gettext("_Cancel")),
+            ("delete", &gettext("_Delete Account")),
+        ]);
+        dialog.set_default_response(Some("cancel"));
+        dialog.set_response_appearance("delete", adw::ResponseAppearance::Destructive);
+
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, response| {
+                if response == "delete" {
+                    obj.freeze();
+                    let client_id = obj.imp().client_id.get();
+
+                    spawn(clone!(@weak obj => async move {
+                        let result = functions::delete_account(
+                            String::from("cloud password lost and not recoverable"),
+                            client_id,
+                        )
+                        .await;
+
+                        // Just unfreeze in case of an error, else stay frozen until we are
+                        // redirected to the welcome page.
+                        if result.is_err() {
+                            obj.update_actions_for_visible_page();
+                            obj.unfreeze();
+                            // TODO: We also need to handle potential errors here and inform the
+                            // user.
+                        }
+                    }));
+                } else {
+                    obj.imp().password_entry_row.grab_focus();
+                }
+            }),
         );
-
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
-            dialog.close();
-
-            if matches!(response_id, gtk::ResponseType::Accept) {
-                obj.freeze();
-                let client_id = obj.imp().client_id.get();
-
-                spawn(clone!(@weak obj => async move {
-                    let result = functions::delete_account(
-                        String::from("cloud password lost and not recoverable"),
-                        client_id,
-                    )
-                    .await;
-
-                    // Just unfreeze in case of an error, else stay frozen until we are
-                    // redirected to the welcome page.
-                    if result.is_err() {
-                        obj.update_actions_for_visible_page();
-                        obj.unfreeze();
-                        // TODO: We also need to handle potiential errors here and inform the
-                        // user.
-                    }
-                }));
-            } else {
-                obj.imp().password_entry_row.grab_focus();
-            }
-        }));
     }
 
     async fn send_password_recovery_code(&self) {
@@ -1002,34 +1000,25 @@ impl Login {
     }
 
     fn show_no_email_access_dialog(&self) {
-        let dialog = gtk::MessageDialog::builder()
-            .text(&gettext("Sorry"))
-            .secondary_text(&gettext(
+        let dialog = adw::MessageDialog::builder()
+            .heading(&gettext("Sorry"))
+            .body(&gettext(
                 "If you can't restore access to the e-mail, your remaining options are either to remember your password or to delete and then recreate your account.",
             ))
-            .buttons(gtk::ButtonsType::Close)
-            .modal(true)
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
-        dialog.add_button(&gettext("_Go Back"), gtk::ResponseType::Other(0));
+        dialog.add_responses(&[("ok", &gettext("_Ok"))]);
+        dialog.set_default_response(Some("ok"));
 
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response_id| {
-            dialog.close();
-
-            if let gtk::ResponseType::Other(_) = response_id {
-                obj.navigate_to_page::<gtk::Editable, _, gtk::Widget>(
-                    "password-forgot-page",
-                    [],
-                    None,
-                    None,
-                );
-            } else {
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, _| {
                 obj.imp()
                     .password_recovery_code_entry_row
                     .grab_focus();
-            }
-        }));
+            }),
+        );
     }
 
     fn use_test_dc(&self) -> bool {

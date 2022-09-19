@@ -19,10 +19,10 @@ use self::sticker::MessageSticker;
 use self::sticker_picture::StickerPicture;
 use self::text::MessageText;
 
+use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::glib;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageContent, StickerType};
 
@@ -123,32 +123,38 @@ impl MessageRow {
     }
 
     fn show_delete_dialog(&self, revoke: bool) {
-        let window: Option<gtk::Window> = self.root().and_then(|root| root.downcast().ok());
+        let window: gtk::Window = self.root().and_then(|root| root.downcast().ok()).unwrap();
+
         let message = if revoke {
-            gettext("Do you want to delete this message for everyone?")
+            gettext("Do you want to delete this message for <b>everyone</b>?")
         } else {
             gettext("Do you want to delete this message?")
         };
-        let dialog = gtk::MessageDialog::new(
-            window.as_ref(),
-            gtk::DialogFlags::MODAL,
-            gtk::MessageType::Warning,
-            gtk::ButtonsType::YesNo,
-            &message,
-        );
 
-        dialog.run_async(clone!(@weak self as obj => move |dialog, response| {
-            if matches!(response, gtk::ResponseType::Yes) {
-                if let Ok(message) = obj.message().downcast::<Message>() {
-                    spawn(async move {
-                        if let Err(e) = message.delete(revoke).await {
-                            log::warn!("Error deleting a message (revoke = {}): {:?}", revoke, e);
-                        }
-                    });
+        let dialog = adw::MessageDialog::builder()
+            .heading(&gettext("Confirm Message Deletion"))
+            .body_use_markup(true)
+            .body(&message)
+            .transient_for(&window)
+            .build();
+
+        dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
+        dialog.set_default_response(Some("no"));
+        dialog.set_response_appearance("yes", adw::ResponseAppearance::Destructive);
+
+        dialog.run_async(
+            None,
+            clone!(@weak self as obj => move |_, response| {
+                if response == "yes" {
+                    if let Ok(message) = obj.message().downcast::<Message>() {
+                        spawn(async move {
+                            if let Err(e) = message.delete(revoke).await {
+                                log::warn!("Error deleting a message (revoke = {}): {:?}", revoke, e);
+                            }
+                        });
+                    }
                 }
-            }
-            dialog.close();
-        }));
+            }));
     }
 
     pub(crate) fn message(&self) -> glib::Object {
