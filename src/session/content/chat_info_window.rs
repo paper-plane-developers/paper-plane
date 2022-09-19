@@ -122,8 +122,8 @@ impl ChatInfoWindow {
             ChatType::Supergroup(supergroup) => {
                 self.setup_supergroup_info(supergroup);
             }
-            _ => {
-                imp.info_list.set_visible(false);
+            ChatType::Secret(secret) => {
+                self.setup_user_info(secret.user());
             }
         }
     }
