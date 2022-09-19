@@ -1,6 +1,6 @@
+use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::functions;
@@ -19,6 +19,8 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-window.ui")]
     pub(crate) struct ChatInfoWindow {
         pub(super) chat: OnceCell<Chat>,
+        #[template_child]
+        pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -132,6 +134,7 @@ impl ChatInfoWindow {
                 .title(&format!("+{}", &user.phone_number()))
                 .subtitle(&gettext("Mobile"))
                 .build();
+            self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
@@ -141,6 +144,7 @@ impl ChatInfoWindow {
                 .title(&format!("@{}", &user.username()))
                 .subtitle(&gettext("Username"))
                 .build();
+            self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
@@ -176,6 +180,7 @@ impl ChatInfoWindow {
                 .title(&basic_group_full_info.description)
                 .subtitle(&gettext("Description"))
                 .build();
+            self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
@@ -193,6 +198,7 @@ impl ChatInfoWindow {
                 .title(&format!("https://t.me/{}", &supergroup.username()))
                 .subtitle(&gettext("Link"))
                 .build();
+            self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
@@ -221,6 +227,7 @@ impl ChatInfoWindow {
                 .title(&supergroup_full_info.description)
                 .subtitle(&gettext("Description"))
                 .build();
+            self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
@@ -230,6 +237,16 @@ impl ChatInfoWindow {
     fn update_info_list_visibility(&self) {
         let info_list = &self.imp().info_list;
         info_list.set_visible(info_list.first_child().is_some());
+    }
+
+    fn make_row_copyable(&self, action_row: &adw::ActionRow) {
+        action_row.set_activatable(true);
+        action_row.connect_activated(clone!(@weak self as obj => move |action_row| {
+            action_row.clipboard().set_text(&action_row.title());
+
+            let toast = adw::Toast::new(&gettext("Copied to clipboard"));
+            obj.imp().toast_overlay.add_toast(&toast);
+        }));
     }
 
     pub(crate) fn chat(&self) -> Option<&Chat> {
