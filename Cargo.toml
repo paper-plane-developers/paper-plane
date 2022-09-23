@@ -18,6 +18,7 @@ once_cell = "1.13"
 pretty_env_logger = "0.4"
 qrcode-generator = { version = "4.1", default-features = false }
 regex = "1.6"
+shumate = { version = "0.1.0-alpha.4", package = "libshumate" }
 tdlib = { version = "0.1", default-features = false }
 temp-dir = "0.1"
 thiserror = "1.0"

@@ -633,9 +633,9 @@ fn sender_label(message: Message) -> Option<String> {
 
     // Just use a sender label for specific messages.
     match message.content().0 {
-        MessageText(_) | MessageSticker(_) | MessagePhoto(_) | MessageAudio(_)
-        | MessageAnimation(_) | MessageVideo(_) | MessageDocument(_) | MessageVoiceNote(_)
-        | MessageCall(_) => {}
+        MessageText(_) | MessageLocation(_) | MessageSticker(_) | MessagePhoto(_)
+        | MessageAudio(_) | MessageAnimation(_) | MessageVideo(_) | MessageDocument(_)
+        | MessageVoiceNote(_) | MessageCall(_) => {}
         _ => return None,
     }
 
@@ -693,6 +693,13 @@ fn message_thumbnail_texture(message: Message) -> Option<gdk::Texture> {
 fn stringify_message(message: Message) -> String {
     match message.content().0 {
         MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
+        MessageContent::MessageLocation(data) => {
+            if data.live_period > 0 {
+                gettext("Live Location")
+            } else {
+                gettext("Location")
+            }
+        }
         MessageContent::MessageBasicGroupChatCreate(_) => {
             gettext!("{} created the group", sender_name(message.sender(), true))
         }

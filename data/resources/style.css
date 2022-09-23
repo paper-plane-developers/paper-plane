@@ -149,12 +149,16 @@ sidebarsearchitemrow {
   color: @accent_fg_color;
 }
 
-messagemedia .media-picture {
+.message-bubble.outgoing progress {
+  background-color: @accent_fg_color;
+}
+
+messagemedia .media-picture, messagelocation messagemap {
   margin: 2px;
   border-radius: 10px;
 }
 
-messagemedia.with-caption .media-picture {
+messagemedia.with-caption .media-picture, messagelocation.with-caption messagemap {
   margin-bottom: 0;
   border-radius: 10px 10px 4px 4px;
 }
@@ -164,12 +168,26 @@ messagemedia progressbar>trough {
   min-width: 100px;
 }
 
+messagemap .license {
+  border-radius: 9999px;
+  margin: 3px 3px 0 6px;
+  padding: 1px 6px;
+}
+
+messagemap .marker {
+  color: @red_3;
+}
+
+avatarmapmarker .hull {
+  color: @accent_bg_color;
+}
+
 messageindicators {
   font-size: x-small;
   font-feature-settings: "tnum";
 }
 
-messagelabel {
+messagelabel, messagelocation .live-location-caption  {
   margin: 6px 9px;
 }
 
@@ -177,7 +195,7 @@ messagelabel > messageindicators {
   opacity: 0.7;
 }
 
-messagemedia overlay > messageindicators, messagesticker messageindicators {
+messagemedia overlay > messageindicators, messagesticker messageindicators, messagelocation overlay > messageindicators {
   background-color: alpha(@view_bg_color, 0.8);
   color: @view_fg_color;
   border-radius: 9999px;

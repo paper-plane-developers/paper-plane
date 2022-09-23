@@ -2,6 +2,8 @@ mod base;
 mod indicators;
 mod indicators_model;
 mod label;
+mod location;
+mod map;
 mod media;
 mod media_picture;
 mod photo;
@@ -12,6 +14,7 @@ mod text;
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
 use self::indicators::MessageIndicators;
 use self::label::MessageLabel;
+use self::location::MessageLocation;
 use self::media::Media;
 use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
@@ -257,6 +260,9 @@ impl MessageRow {
             let is_outgoing = message_.is_outgoing();
 
             match message_.content().0 {
+                MessageContent::MessageLocation(_) => {
+                    self.update_specific_content::<_, MessageLocation>(message_.clone());
+                }
                 MessageContent::MessagePhoto(_) => {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }

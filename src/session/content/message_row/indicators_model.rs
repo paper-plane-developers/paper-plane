@@ -3,7 +3,7 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::MessageSendingState;
+use tdlib::enums::{MessageContent, MessageSendingState};
 
 use crate::tdlib::{Message, SponsoredMessage};
 
@@ -165,7 +165,9 @@ impl MessageIndicatorsModel {
 
                 // Translators: This is a time format for the message timestamp without seconds
                 let datetime = datetime.format(&gettext("%l:%M %p")).unwrap().into();
-                return if message.is_edited() {
+                return if !matches!(message.content().0, MessageContent::MessageLocation(_))
+                    && message.is_edited()
+                {
                     format!("{} {}", gettext("edited"), datetime)
                 } else {
                     datetime

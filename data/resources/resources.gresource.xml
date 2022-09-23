@@ -4,6 +4,8 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/clear-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/phone-oldschool-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/send-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/status/avatar-map-marker-hull-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/status/map-marker-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-failed-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-pending-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-read-symbolic.svg</file>
@@ -19,6 +21,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-info-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-message-location.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-media.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-photo.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-sticker.ui</file>
