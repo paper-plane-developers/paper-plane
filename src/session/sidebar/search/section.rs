@@ -7,6 +7,7 @@ use gtk::subclass::prelude::*;
 pub(crate) enum SectionType {
     #[default]
     Chats,
+    Global,
     Recent,
 }
 
