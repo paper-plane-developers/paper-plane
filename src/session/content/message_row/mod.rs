@@ -7,7 +7,6 @@ mod label;
 mod media_picture;
 mod photo;
 mod sticker;
-mod sticker_picture;
 mod text;
 mod video;
 
@@ -19,7 +18,6 @@ use self::label::MessageLabel;
 use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
 use self::sticker::MessageSticker;
-use self::sticker_picture::StickerPicture;
 use self::text::MessageText;
 use self::video::MessageVideo;
 
@@ -320,7 +318,7 @@ impl MessageRow {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
                 MessageContent::MessageSticker(data)
-                    if data.sticker.format == StickerFormat::Webp =>
+                    if matches!(data.sticker.format, StickerFormat::Webp | StickerFormat::Tgs) =>
                 {
                     self.update_specific_content::<_, MessageSticker>(message_.clone());
                 }

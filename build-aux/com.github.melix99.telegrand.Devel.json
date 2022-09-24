@@ -37,6 +37,18 @@
     ],
     "modules": [
         {
+            "name": "rlottie",
+            "buildsystem": "meson",
+            "config-opts": ["-Dwerror=false"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/melix99/rlottie",
+                    "branch": "fix-build"
+                }
+            ]
+        },
+        {
             "name": "gtk",
             "buildsystem": "meson",
             "config-opts": [

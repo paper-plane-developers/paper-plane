@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentMessageSticker" parent="ContentMessageBase">
-    <property name="layout-manager">
-      <object class="GtkBinLayout"/>
-    </property>
     <child>
-      <object class="GtkOverlay">
+      <object class="GtkOverlay" id="overlay">
         <child>
-          <object class="ContentStickerPicture" id="picture"/>
+          <object class="AdwBin" id="bin"/>
         </child>
         <child type="overlay">
           <object class="MessageIndicators" id="indicators">
