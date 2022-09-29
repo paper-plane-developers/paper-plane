@@ -7,6 +7,7 @@ mod application;
 #[allow(clippy::all)]
 mod config;
 mod expressions;
+mod i18n;
 mod login;
 mod phone_number_input;
 mod preferences_window;

@@ -24,6 +24,19 @@ pub(crate) fn escape(text: &str) -> String {
         .replace('"', "&quot;")
 }
 
+/// Replace variables in the given string with the given dictionary.
+///
+/// The expected format to replace is `{name}`, where `name` is the first string
+/// in the dictionary entry tuple.
+// Function taken from Fractal: https://gitlab.gnome.org/GNOME/fractal/-/blob/main/src/utils.rs
+pub(crate) fn freplace(s: String, args: &[(&str, &str)]) -> String {
+    let mut s = s;
+    for (k, v) in args {
+        s = s.replace(&format!("{{{}}}", k), v);
+    }
+    s
+}
+
 pub(crate) fn dim(text: &str) -> String {
     // The alpha value should be kept in sync with Adwaita's dim-label alpha value
     format!("<span alpha=\"55%\">{}</span>", text)
