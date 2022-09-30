@@ -254,7 +254,11 @@ impl MessageRow {
 
     fn update_content(&self, message: glib::Object) {
         let is_outgoing = if let Some(message_) = message.downcast_ref::<Message>() {
-            let is_outgoing = message_.is_outgoing();
+            // Do not mark channel messages as outgoing
+            let is_outgoing = match message_.chat().type_() {
+                ChatType::Supergroup(data) if data.is_channel() => false,
+                _ => message_.is_outgoing(),
+            };
 
             match message_.content().0 {
                 MessageContent::MessagePhoto(_) => {
