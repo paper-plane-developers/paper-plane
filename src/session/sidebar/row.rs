@@ -505,7 +505,7 @@ impl Row {
                                 )
                             })
                             .or_else(|| {
-                                draft_message.map(|message| stringify_draft_message(&message.0))
+                                draft_message.map(|m| dim_and_escape(&draft_message_text(m.0)))
                             })
                             .or_else(|| {
                                 last_message
@@ -933,32 +933,13 @@ fn stringify_made_message_call(is_outgoing: bool, data: MessageCall) -> String {
     }
 }
 
-fn stringify_draft_message(message: &DraftMessage) -> String {
-    match &message.input_message_text {
-        InputMessageContent::InputMessageAnimation(data) => {
-            stringify_message_animation(data.caption.as_ref().map_or("", |c| &c.text))
+fn draft_message_text(message: DraftMessage) -> String {
+    match message.input_message_text {
+        InputMessageContent::InputMessageText(data) => data.text.text,
+        other => {
+            log::warn!("Unexpected draft message type: {other:?}");
+            String::new()
         }
-        InputMessageContent::InputMessageAudio(data) => stringify_message_audio(
-            &data.performer,
-            &data.title,
-            data.caption.as_ref().map_or("", |c| &c.text),
-        ),
-        InputMessageContent::InputMessageDocument(data) => stringify_message_document(
-            &gettext("Document"),
-            data.caption.as_ref().map_or("", |c| &c.text),
-        ),
-        InputMessageContent::InputMessagePhoto(data) => {
-            stringify_message_photo(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        InputMessageContent::InputMessageSticker(_) => gettext("Sticker"),
-        InputMessageContent::InputMessageText(data) => dim_and_escape(&data.text.text),
-        InputMessageContent::InputMessageVideo(data) => {
-            stringify_message_video(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        InputMessageContent::InputMessageVoiceNote(data) => {
-            stringify_message_voice_note(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        _ => gettext("Unsupported message"),
     }
 }
 
