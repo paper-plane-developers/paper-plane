@@ -149,6 +149,39 @@ sidebarsearchitemrow {
   color: @accent_fg_color;
 }
 
+messagedocument > label.sender-text {
+  margin-bottom: 3px;
+}
+
+messagedocument label.file-size {
+  font-size: smaller;
+}
+
+messagedocument > box {
+  padding: 9px;
+}
+
+messagedocument > box > image {
+  background: @accent_color;
+  color: @window_bg_color;
+  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 12px;
+  border-radius: 9999px;
+}
+
+messagedocument.outgoing > box > image {
+  background: @accent_fg_color;
+  color: @accent_bg_color;
+}
+
+messagedocument> box:hover > image {
+  opacity: 0.85;
+}
+
+messagedocument > box:active > image {
+  opacity: 0.7;
+}
+
 messagemedia .media-picture {
   margin: 2px;
   border-radius: 10px;
@@ -159,7 +192,7 @@ messagemedia.with-caption .media-picture {
   border-radius: 10px 10px 4px 4px;
 }
 
-messagemedia progressbar>trough {
+messagemedia progressbar > trough {
   border: 1px solid alpha(black, 0.4);
   min-width: 100px;
 }
@@ -173,7 +206,7 @@ messagelabel {
   margin: 6px 9px;
 }
 
-messagelabel > messageindicators {
+messagelabel > messageindicators, messagedocument > box messageindicators {
   opacity: 0.7;
 }
 
