@@ -387,13 +387,7 @@ impl Row {
                         draft_message.map(|m| m.0.date).unwrap_or_else(|| {
                             // ... Or, if there is no draft message use the timestamp of the
                             // last message.
-                            last_message
-                                // TODO: Sometimes just unwrapping here crashes because the
-                                // update hasn't yet arrived. For the future, I think we could
-                                // set the last message early in chat construction to remove
-                                // this workaround.
-                                .map(|m| m.date())
-                                .unwrap_or_default()
+                            last_message.map(|m| m.date()).unwrap_or_default()
                         })
                     }),
                 )
@@ -507,14 +501,7 @@ impl Row {
                             .or_else(|| {
                                 draft_message.map(|m| dim_and_escape(&draft_message_text(m.0)))
                             })
-                            .or_else(|| {
-                                last_message
-                                    // TODO: Sometimes just unwrapping here crashes because the
-                                    // update hasn't yet arrived. For the future, I think we could
-                                    // set the last message early in chat construction to remove
-                                    // this workaround.
-                                    .map(stringify_message)
-                            })
+                            .or_else(|| last_message.map(stringify_message))
                             .unwrap_or_default()
                     }),
                 )
