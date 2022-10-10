@@ -155,7 +155,7 @@ impl CountryList {
         }
     }
 
-    /// Checks wether both specified country codes share a same calling code.
+    /// Checks whether both specified country codes share a same calling code.
     pub(crate) fn same_calling_code(&self, country_code_1: &str, country_code_2: &str) -> bool {
         self.country_code_pos(country_code_1)
             .and_then(|position_1| {

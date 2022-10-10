@@ -436,7 +436,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
                         <property name="valign">center</property>
-                        <!--  Mimick the status page margins. -->
+                        <!--  Mimic the status page margins. -->
                         <property name="margin-top">36</property>
                         <property name="margin-bottom">36</property>
                         <property name="margin-start">12</property>
@@ -456,7 +456,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                         <property name="wrap">True</property>
                                         <property name="wrap-mode">word-char</property>
                                         <property name="justify">center</property>
-                                        <!--  Mimick the status page title margins. -->
+                                        <!--  Mimic the status page title margins. -->
                                         <property name="margin-bottom">12</property>
                                         <property name="label" translatable="yes">Use Recovery Code</property>
                                         <style>
@@ -469,7 +469,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                         <property name="wrap">True</property>
                                         <property name="wrap-mode">word-char</property>
                                         <property name="justify">center</property>
-                                        <!--  Mimick the status page description margins. -->
+                                        <!--  Mimic the status page description margins. -->
                                         <property name="margin-bottom">36</property>
                                         <property name="label" translatable="yes">When you set your cloud password, you provided a recovery e-mail address. A code can be sent there to reset your password.</property>
                                       </object>
@@ -531,7 +531,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                             </child>
                             <child>
                               <object class="GtkSeparator">
-                                <!--  Mimick the status page margins. -->
+                                <!--  Mimic the status page margins. -->
                                 <property name="margin-top">36</property>
                               </object>
                             </child>
@@ -550,7 +550,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                         <property name="wrap">True</property>
                                         <property name="wrap-mode">word-char</property>
                                         <property name="justify">center</property>
-                                        <!--  Mimick the status page title margins. -->
+                                        <!--  Mimic the status page title margins. -->
                                         <property name="margin-bottom">12</property>
                                         <property name="label" translatable="yes">Account Deletion</property>
                                         <style>
@@ -563,7 +563,7 @@ you agree to the &lt;a href=&quot;&quot;&gt;Terms of Service&lt;/a&gt;.</propert
                                         <property name="wrap">True</property>
                                         <property name="wrap-mode">word-char</property>
                                         <property name="justify">center</property>
-                                        <!--  Mimick the status page description margins. -->
+                                        <!--  Mimic the status page description margins. -->
                                         <property name="margin-bottom">36</property>
                                       </object>
                                     </child>

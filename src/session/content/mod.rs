@@ -63,7 +63,7 @@ mod imp {
                     glib::ParamSpecBoolean::new(
                         "compact",
                         "Compact",
-                        "Wheter a compact view is used or not",
+                        "Whether a compact view is used or not",
                         false,
                         glib::ParamFlags::READWRITE,
                     ),
