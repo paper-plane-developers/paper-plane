@@ -14,8 +14,6 @@ use crate::{config, APPLICATION_OPTS, TEMP_DIR};
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
-pub(crate) const MESSAGE_TRUNCATED_LENGTH: usize = 21;
-
 pub(crate) fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
