@@ -295,9 +295,14 @@ impl ChatHistory {
             spawn(clone!(@weak chat_history => async move {
                 while chat_history.n_items() < MIN_N_ITEMS {
                     let limit = MIN_N_ITEMS - chat_history.n_items();
-                    if let Err(e) = chat_history.load_older_messages(limit as i32).await {
-                        log::warn!("Couldn't load initial history messages: {}", e);
-                        break;
+                    match chat_history.load_older_messages(limit as i32).await {
+                        Ok(can_load_more) => if !can_load_more {
+                            break;
+                        }
+                        Err(e) => {
+                            log::warn!("Couldn't load initial history messages: {}", e);
+                            break;
+                        }
                     }
                 }
             }));
