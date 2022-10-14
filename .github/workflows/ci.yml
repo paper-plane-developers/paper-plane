@@ -6,6 +6,15 @@ on:
   pull_request:
 
 jobs:
+  typos:
+    name: Typos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: crate-ci/typos@master
+        with:
+          config: ./.github/workflows/typos.toml
+
   rustfmt:
     name: Rustfmt
     runs-on: ubuntu-latest
