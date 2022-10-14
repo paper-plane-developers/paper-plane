@@ -90,6 +90,6 @@ impl EventRow {
     }
 
     pub(crate) fn set_label(&self, label: &str) {
-        self.imp().label.set_markup(label);
+        self.imp().label.set_label(label);
     }
 }

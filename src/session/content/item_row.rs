@@ -113,10 +113,8 @@ impl ItemRow {
                             | MessageChatDeleteMember(_)
                             | MessagePinMessage(_)
                             | MessageContactRegistered => {
-                                self.get_or_create_event_row().set_label(&format!(
-                                    "<b>{}</b>",
-                                    strings::message_content(message)
-                                ));
+                                self.get_or_create_event_row()
+                                    .set_label(&strings::message_content(message));
                             }
                             _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
@@ -129,7 +127,7 @@ impl ItemRow {
                             // Translators: This is a date format in the day divider with the year
                             gettext("%B %e, %Y")
                         };
-                        let date = date.format(&format!("<b>{}</b>", fmt)).unwrap().to_string();
+                        let date = date.format(&fmt).unwrap().to_string();
 
                         let child = self.get_or_create_event_row();
                         child.set_label(&date);
