@@ -95,7 +95,10 @@ impl ChatHistory {
         chat_history
     }
 
-    pub(crate) async fn load_older_messages(&self, limit: i32) -> Result<(), ChatHistoryError> {
+    /// Loads older messages from this chat history.
+    ///
+    /// Returns `true` when more messages can be loaded.
+    pub(crate) async fn load_older_messages(&self, limit: i32) -> Result<bool, ChatHistoryError> {
         let imp = self.imp();
 
         if imp.is_loading.get() {
@@ -123,11 +126,15 @@ impl ChatHistory {
         imp.is_loading.set(false);
 
         let enums::Messages::Messages(data) = result.map_err(ChatHistoryError::Tdlib)?;
-        let messages = data.messages.into_iter().flatten().collect();
 
+        if data.messages.is_empty() {
+            return Ok(false);
+        }
+
+        let messages = data.messages.into_iter().flatten().collect();
         self.append(messages);
 
-        Ok(())
+        Ok(true)
     }
 
     pub(crate) fn message_by_id(&self, id: i64) -> Option<Message> {
