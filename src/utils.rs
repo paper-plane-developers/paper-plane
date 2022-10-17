@@ -14,14 +14,25 @@ use crate::{config, APPLICATION_OPTS, TEMP_DIR};
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 
-pub(crate) const MESSAGE_TRUNCATED_LENGTH: usize = 21;
-
 pub(crate) fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
         .replace('\'', "&apos;")
         .replace('"', "&quot;")
+}
+
+/// Replace variables in the given string with the given dictionary.
+///
+/// The expected format to replace is `{name}`, where `name` is the first string
+/// in the dictionary entry tuple.
+// Function taken from Fractal: https://gitlab.gnome.org/GNOME/fractal/-/blob/main/src/utils.rs
+pub(crate) fn freplace(s: String, args: &[(&str, &str)]) -> String {
+    let mut s = s;
+    for (k, v) in args {
+        s = s.replace(&format!("{{{}}}", k), v);
+    }
+    s
 }
 
 pub(crate) fn dim(text: &str) -> String {

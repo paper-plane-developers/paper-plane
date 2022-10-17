@@ -220,6 +220,7 @@ messagemedia overlay > messageindicators, messagesticker messageindicators {
 
 .event-row {
   font-size: smaller;
+  font-weight: bold;
   padding: 3px;
 }
 

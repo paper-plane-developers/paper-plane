@@ -3,21 +3,16 @@ use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
-use std::borrow::Cow;
-use tdlib::enums::{
-    CallDiscardReason, InputMessageContent, MessageContent, MessageSendingState, UserType,
-};
-use tdlib::types::{DraftMessage, MessageCall};
+use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState, UserType};
+use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
     BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatType, Message,
     MessageForwardInfo, MessageForwardOrigin, MessageSender, User,
 };
-use crate::utils::{
-    dim_and_escape, escape, human_friendly_duration, spawn, MESSAGE_TRUNCATED_LENGTH,
-};
-use crate::{expressions, Session};
+use crate::utils::{dim_and_escape, escape, spawn};
+use crate::{expressions, strings, Session};
 
 mod imp {
     use super::*;
@@ -387,13 +382,7 @@ impl Row {
                         draft_message.map(|m| m.0.date).unwrap_or_else(|| {
                             // ... Or, if there is no draft message use the timestamp of the
                             // last message.
-                            last_message
-                                // TODO: Sometimes just unwrapping here crashes because the
-                                // update hasn't yet arrived. For the future, I think we could
-                                // set the last message early in chat construction to remove
-                                // this workaround.
-                                .map(|m| m.date())
-                                .unwrap_or_default()
+                            last_message.map(|m| m.date()).unwrap_or_default()
                         })
                     }),
                 )
@@ -505,15 +494,12 @@ impl Row {
                                 )
                             })
                             .or_else(|| {
-                                draft_message.map(|message| stringify_draft_message(&message.0))
+                                draft_message.map(|m| dim_and_escape(&draft_message_text(m.0)))
                             })
                             .or_else(|| {
-                                last_message
-                                    // TODO: Sometimes just unwrapping here crashes because the
-                                    // update hasn't yet arrived. For the future, I think we could
-                                    // set the last message early in chat construction to remove
-                                    // this workaround.
-                                    .map(stringify_message)
+                                last_message.map(|message| {
+                                    dim_and_escape(&strings::message_content(&message))
+                                })
                             })
                             .unwrap_or_default()
                     }),
@@ -690,337 +676,14 @@ fn message_thumbnail_texture(message: Message) -> Option<gdk::Texture> {
     })
 }
 
-fn stringify_message(message: Message) -> String {
-    match message.content().0 {
-        MessageContent::MessageText(data) => dim_and_escape(&data.text.text),
-        MessageContent::MessageBasicGroupChatCreate(_) => {
-            gettext!("{} created the group", sender_name(message.sender(), true))
-        }
-        MessageContent::MessageChatAddMembers(data) => {
-            if message.sender().as_user().map(User::id).as_ref() == data.member_user_ids.first() {
-                if message.is_outgoing() {
-                    gettext("You joined the group")
-                } else {
-                    gettext!("{} joined the group", sender_name(message.sender(), true))
-                }
-            } else {
-                let session = message.chat().session();
-                let user_list = session.user_list();
-
-                let members = data
-                    .member_user_ids
-                    .into_iter()
-                    .map(|user_id| user_list.get(user_id))
-                    .map(|user| stringify_user(&user, true))
-                    .collect::<Vec<_>>();
-
-                let (last_member, first_members) = members.split_last().unwrap();
-                if message.is_outgoing() {
-                    gettext!(
-                        "You added {}",
-                        if first_members.is_empty() {
-                            Cow::Borrowed(last_member)
-                        } else {
-                            Cow::Owned(gettext!(
-                                "{} and {}",
-                                first_members.join(&gettext(", ")),
-                                last_member
-                            ))
-                        }
-                    )
-                } else {
-                    gettext!(
-                        "{} added {}",
-                        sender_name(message.sender(), true),
-                        if first_members.is_empty() {
-                            Cow::Borrowed(last_member)
-                        } else {
-                            Cow::Owned(gettext!(
-                                "{} and {}",
-                                first_members.join(&gettext(", ")),
-                                last_member
-                            ))
-                        }
-                    )
-                }
-            }
-        }
-        MessageContent::MessageChatJoinByLink => {
-            if message.is_outgoing() {
-                gettext("You joined the group via invite link")
-            } else {
-                gettext!(
-                    "{} joined the group via invite link",
-                    sender_name(message.sender(), true)
-                )
-            }
-        }
-        MessageContent::MessageChatJoinByRequest => {
-            if message.is_outgoing() {
-                gettext("You joined the group")
-            } else {
-                gettext!("{} joined the group", sender_name(message.sender(), true))
-            }
-        }
-        MessageContent::MessageChatDeleteMember(data) => {
-            let sender_name = sender_name(message.sender(), true);
-            if message
-                .sender()
-                .as_user()
-                .map(|user| user.id() == data.user_id)
-                .unwrap_or_default()
-            {
-                if message.is_outgoing() {
-                    gettext("You left the group")
-                } else {
-                    gettext!("{} left the group", sender_name)
-                }
-            } else {
-                gettext!(
-                    "{} removed {}",
-                    sender_name,
-                    stringify_user(
-                        &message.chat().session().user_list().get(data.user_id),
-                        true
-                    )
-                )
-            }
-        }
-        MessageContent::MessageSticker(data) => {
-            format!("{} {}", data.sticker.emoji, gettext("Sticker"))
-        }
-        MessageContent::MessagePhoto(data) => stringify_message_photo(&data.caption.text),
-        MessageContent::MessageAudio(data) => {
-            stringify_message_audio(&data.audio.performer, &data.audio.title, &data.caption.text)
-        }
-        MessageContent::MessageAnimation(data) => stringify_message_animation(&data.caption.text),
-        MessageContent::MessageVideo(data) => stringify_message_video(&data.caption.text),
-        MessageContent::MessageDocument(data) => {
-            stringify_message_document(&data.document.file_name, &data.caption.text)
-        }
-        MessageContent::MessageVoiceNote(data) => stringify_message_voice_note(&data.caption.text),
-        MessageContent::MessageCall(data) => match data.discard_reason {
-            CallDiscardReason::Declined => {
-                if message.is_outgoing() {
-                    // Telegram Desktop/Android labels declined outgoing calls just as
-                    // "Outgoing call" and puts a red arrow in the message bubble. We should be
-                    // more accurate here.
-                    if data.is_video {
-                        gettext("Declined outgoing video call")
-                    } else {
-                        gettext("Declined outgoing call")
-                    }
-                // Telegram Android labels declined incoming calls as "Incoming call". Telegram
-                // Desktop labels it as "Declined call" and is a bit inconsistent with outgoing
-                // calls ^.
-                } else if data.is_video {
-                    gettext("Declined incoming video call")
-                } else {
-                    gettext("Declined incoming call")
-                }
-            }
-            CallDiscardReason::Disconnected
-            | CallDiscardReason::HungUp
-            | CallDiscardReason::Empty => stringify_made_message_call(message.is_outgoing(), data),
-            CallDiscardReason::Missed => {
-                if message.is_outgoing() {
-                    gettext("Cancelled call")
-                } else {
-                    gettext("Missed call")
-                }
-            }
-        },
-        MessageContent::MessageChatDeletePhoto => match message.chat().type_() {
-            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
-                gettext("Channel photo removed")
-            }
-            _ => {
-                if message.is_outgoing() {
-                    gettext("You removed the group photo")
-                } else {
-                    gettext!(
-                        "{} removed the group photo",
-                        sender_name(message.sender(), true),
-                    )
-                }
-            }
-        },
-        MessageContent::MessageChatChangePhoto(_) => match message.chat().type_() {
-            ChatType::Supergroup(data) if data.is_channel() => gettext("Channel photo changed"),
-            _ => {
-                if message.is_outgoing() {
-                    gettext("You changed group photo")
-                } else {
-                    gettext!(
-                        "{} changed group photo",
-                        sender_name(message.sender(), true)
-                    )
-                }
-            }
-        },
-        MessageContent::MessagePinMessage(data) => {
-            if message.is_outgoing() {
-                gettext!(
-                    "You pinned {}",
-                    stringify_pinned_message_content(
-                        message.chat().history().message_by_id(data.message_id)
-                    )
-                )
-            } else {
-                gettext!(
-                    "{} pinned {}",
-                    sender_name(message.sender(), true),
-                    stringify_pinned_message_content(
-                        message.chat().history().message_by_id(data.message_id)
-                    )
-                )
-            }
-        }
-        MessageContent::MessageChatChangeTitle(data) => match message.chat().type_() {
-            ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
-                gettext!("Channel name was changed to «{}»", data.title)
-            }
-            _ => {
-                if message.is_outgoing() {
-                    gettext("You changed group name to «{}»")
-                } else {
-                    gettext!(
-                        "{} changed group name to «{}»",
-                        sender_name(message.sender(), true),
-                        data.title
-                    )
-                }
-            }
-        },
-        MessageContent::MessageContactRegistered => {
-            gettext!("{} joined Telegram", sender_name(message.sender(), true))
-        }
-        _ => gettext("Unsupported message"),
-    }
-}
-
-/// This method returns the text for all calls that have actually been made.
-/// This means that the called party has accepted the call.
-fn stringify_made_message_call(is_outgoing: bool, data: MessageCall) -> String {
-    if is_outgoing {
-        if data.duration > 0 {
-            if data.is_video {
-                gettext!(
-                    "Outgoing video call ({})",
-                    human_friendly_duration(data.duration)
-                )
-            } else {
-                gettext!("Outgoing call ({})", human_friendly_duration(data.duration))
-            }
-        } else if data.is_video {
-            gettext("Outgoing video call")
-        } else {
-            gettext("Outgoing call")
-        }
-    } else if data.duration > 0 {
-        if data.is_video {
-            gettext!(
-                "Incoming video call ({})",
-                human_friendly_duration(data.duration)
-            )
-        } else {
-            gettext!("Incoming call ({})", human_friendly_duration(data.duration))
-        }
-    } else if data.is_video {
-        gettext("Incoming video call")
-    } else {
-        gettext("Incoming call")
-    }
-}
-
-fn stringify_draft_message(message: &DraftMessage) -> String {
-    match &message.input_message_text {
-        InputMessageContent::InputMessageAnimation(data) => {
-            stringify_message_animation(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        InputMessageContent::InputMessageAudio(data) => stringify_message_audio(
-            &data.performer,
-            &data.title,
-            data.caption.as_ref().map_or("", |c| &c.text),
-        ),
-        InputMessageContent::InputMessageDocument(data) => stringify_message_document(
-            &gettext("Document"),
-            data.caption.as_ref().map_or("", |c| &c.text),
-        ),
-        InputMessageContent::InputMessagePhoto(data) => {
-            stringify_message_photo(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        InputMessageContent::InputMessageSticker(_) => gettext("Sticker"),
-        InputMessageContent::InputMessageText(data) => dim_and_escape(&data.text.text),
-        InputMessageContent::InputMessageVideo(data) => {
-            stringify_message_video(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        InputMessageContent::InputMessageVoiceNote(data) => {
-            stringify_message_voice_note(data.caption.as_ref().map_or("", |c| &c.text))
-        }
-        _ => gettext("Unsupported message"),
-    }
-}
-
-fn stringify_message_animation(caption_text: &str) -> String {
-    if caption_text.is_empty() {
-        gettext("GIF")
-    } else {
-        dim_and_escape(caption_text)
-    }
-}
-
-fn stringify_message_audio(performer: &str, title: &str, caption_text: &str) -> String {
-    format!(
-        "{} - {}{}",
-        escape(performer),
-        escape(title),
-        if caption_text.is_empty() {
+fn draft_message_text(message: DraftMessage) -> String {
+    match message.input_message_text {
+        InputMessageContent::InputMessageText(data) => data.text.text,
+        other => {
+            log::warn!("Unexpected draft message type: {other:?}");
             String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
         }
-    )
-}
-
-fn stringify_message_document(file_name: &str, caption_text: &str) -> String {
-    format!(
-        "{}{}",
-        escape(file_name),
-        if caption_text.is_empty() {
-            String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
-        }
-    )
-}
-
-fn stringify_message_photo(caption_text: &str) -> String {
-    if caption_text.is_empty() {
-        gettext("Photo")
-    } else {
-        dim_and_escape(caption_text)
     }
-}
-
-fn stringify_message_video(caption_text: &str) -> String {
-    if caption_text.is_empty() {
-        gettext("Video")
-    } else {
-        dim_and_escape(caption_text)
-    }
-}
-
-fn stringify_message_voice_note(caption_text: &str) -> String {
-    format!(
-        "{}{}",
-        gettext("Voice message"),
-        if caption_text.is_empty() {
-            String::new()
-        } else {
-            format!(", {}", dim_and_escape(caption_text))
-        }
-    )
 }
 
 fn stringify_action(action: &ChatAction) -> String {
@@ -1316,35 +979,5 @@ fn stringify_user(user: &User, use_full_name: bool) -> String {
         user.first_name()
     } else {
         gettext("Deleted")
-    }
-}
-
-fn stringify_pinned_message_content(message: Option<Message>) -> String {
-    match message {
-        Some(data) => match data.content().0 {
-            MessageContent::MessageText(data) => {
-                let msg = data.text.text;
-                if msg.chars().count() > MESSAGE_TRUNCATED_LENGTH {
-                    gettext!(
-                        "«{}…»",
-                        msg.chars()
-                            .take(MESSAGE_TRUNCATED_LENGTH - 1)
-                            .collect::<String>()
-                    )
-                } else {
-                    gettext!("«{}»", msg)
-                }
-            }
-            MessageContent::MessagePhoto(_) => gettext("a photo"),
-            MessageContent::MessageVideo(_) => gettext("a video"),
-            MessageContent::MessageSticker(data) => {
-                gettext!("a {} sticker", data.sticker.emoji)
-            }
-            MessageContent::MessageAnimation(_) => gettext("a GIF"),
-            MessageContent::MessageDocument(_) => gettext("a file"),
-            MessageContent::MessageAudio(_) => gettext("an audio file"),
-            _ => gettext("a message"),
-        },
-        None => gettext("a deleted message"),
     }
 }

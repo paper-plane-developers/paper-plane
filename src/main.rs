@@ -7,11 +7,13 @@ mod application;
 #[allow(clippy::all)]
 mod config;
 mod expressions;
+mod i18n;
 mod login;
 mod phone_number_input;
 mod preferences_window;
 mod session;
 mod session_manager;
+mod strings;
 mod tdlib;
 mod utils;
 mod window;
