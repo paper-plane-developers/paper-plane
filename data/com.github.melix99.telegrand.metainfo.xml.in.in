@@ -25,6 +25,7 @@
   </requires>
   <url type="homepage">https://github.com/melix99/telegrand</url>
   <url type="bugtracker">https://github.com/melix99/telegrand/issues</url>
+  <url type="donation">https://github.com/sponsors/melix99</url>
   <content_rating type="oars-1.0" />
   <releases>
     <release version="0.0.1" date="2019-07-11" />
