@@ -1,11 +1,16 @@
+use adw::prelude::*;
 use gettextrs::gettext;
-use glib::closure;
-use gtk::prelude::*;
+use glib::{clone, closure};
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use tdlib::enums::UserType;
+use tdlib::functions;
+use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
 
-use crate::expressions;
-use crate::tdlib::{Chat, ChatType, User};
+use crate::i18n::ngettext_f;
+use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
+use crate::utils::spawn;
+use crate::{expressions, strings};
 
 mod imp {
     use super::*;
@@ -17,7 +22,11 @@ mod imp {
     pub(crate) struct ChatInfoWindow {
         pub(super) chat: OnceCell<Chat>,
         #[template_child]
+        pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) subtitle_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) info_list: TemplateChild<gtk::ListBox>,
     }
@@ -73,7 +82,7 @@ mod imp {
 
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            obj.setup_dialog();
+            obj.setup_window();
         }
     }
 
@@ -93,7 +102,7 @@ impl ChatInfoWindow {
             .expect("Failed to create ChatInfoWindow")
     }
 
-    fn setup_dialog(&self) {
+    fn setup_window(&self) {
         let imp = self.imp();
         let chat_expression = Self::this_expression("chat");
 
@@ -108,8 +117,14 @@ impl ChatInfoWindow {
             ChatType::Private(user) => {
                 self.setup_user_info(user);
             }
-            _ => {
-                imp.info_list.set_visible(false);
+            ChatType::BasicGroup(basic_group) => {
+                self.setup_basic_group_info(basic_group);
+            }
+            ChatType::Supergroup(supergroup) => {
+                self.setup_supergroup_info(supergroup);
+            }
+            ChatType::Secret(secret) => {
+                self.setup_user_info(secret.user());
             }
         }
     }
@@ -117,43 +132,163 @@ impl ChatInfoWindow {
     fn setup_user_info(&self, user: &User) {
         let imp = self.imp();
 
-        // Phone number
-        let mobile_row = adw::ActionRow::builder()
-            .subtitle(&gettext("Mobile"))
-            .icon_name("phone-oldschool-symbolic")
-            .build();
-        imp.info_list.append(&mobile_row);
+        // Online status or bot label
+        if let UserType::Bot(_) = user.type_().0 {
+            imp.subtitle_label.set_label(&gettext("bot"));
+        } else {
+            User::this_expression("status")
+                .chain_closure::<String>(closure!(
+                    |_: Option<glib::Object>, status: BoxedUserStatus| {
+                        strings::user_status(&status.0)
+                    }
+                ))
+                .bind(&*imp.subtitle_label, "label", Some(user));
+        }
 
-        let phone_number_expression = User::this_expression("phone-number");
-        phone_number_expression
-            .chain_closure::<String>(closure!(|_: User, phone_number: String| {
-                format!("+{}", phone_number)
-            }))
-            .bind(&mobile_row, "title", Some(user));
-        phone_number_expression
-            .chain_closure::<bool>(closure!(|_: User, phone_number: String| {
-                !phone_number.is_empty()
-            }))
-            .bind(&mobile_row, "visible", Some(user));
+        // Phone number
+        if !user.phone_number().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("+{}", &user.phone_number()))
+                .subtitle(&gettext("Mobile"))
+                .build();
+            self.make_row_copyable(&row);
+            imp.info_list.append(&row);
+        }
 
         // Username
-        let username_row = adw::ActionRow::builder()
-            .subtitle(&gettext("Username"))
-            .icon_name("user-info-symbolic")
-            .build();
-        imp.info_list.append(&username_row);
+        if !user.username().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("@{}", &user.username()))
+                .subtitle(&gettext("Username"))
+                .build();
+            self.make_row_copyable(&row);
+            imp.info_list.append(&row);
+        }
 
-        let username_expression = User::this_expression("username");
-        username_expression
-            .chain_closure::<String>(closure!(|_: User, username: String| {
-                format!("@{}", username)
+        self.update_info_list_visibility();
+    }
+
+    fn setup_basic_group_info(&self, basic_group: &BasicGroup) {
+        let client_id = self.chat().unwrap().session().client_id();
+        let basic_group_id = basic_group.id();
+        let imp = self.imp();
+
+        // Members number
+        BasicGroup::this_expression("member-count")
+            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
+                ngettext_f(
+                    "{num} member",
+                    "{num} members",
+                    member_count as u32,
+                    &[("num", &member_count.to_string())],
+                )
             }))
-            .bind(&username_row, "title", Some(user));
-        username_expression
-            .chain_closure::<bool>(closure!(|_: User, username: String| {
-                !username.is_empty()
+            .bind(&*imp.subtitle_label, "label", Some(basic_group));
+
+        self.update_info_list_visibility();
+
+        // Full info
+        spawn(clone!(@weak self as obj => async move {
+            let result = functions::get_basic_group_full_info(basic_group_id, client_id).await;
+            match result {
+                Ok(tdlib::enums::BasicGroupFullInfo::BasicGroupFullInfo(full_info)) => {
+                    obj.setup_basic_group_full_info(full_info);
+                }
+                Err(e) => {
+                    log::warn!("Failed to get basic group full info: {e:?}");
+                }
+            }
+        }));
+    }
+
+    fn setup_basic_group_full_info(&self, basic_group_full_info: BasicGroupFullInfo) {
+        let imp = self.imp();
+
+        // Description
+        if !basic_group_full_info.description.is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&basic_group_full_info.description)
+                .subtitle(&gettext("Description"))
+                .build();
+            self.make_row_copyable(&row);
+            imp.info_list.append(&row);
+        }
+
+        self.update_info_list_visibility();
+    }
+
+    fn setup_supergroup_info(&self, supergroup: &Supergroup) {
+        let client_id = self.chat().unwrap().session().client_id();
+        let supergroup_id = supergroup.id();
+        let imp = self.imp();
+
+        // Members number
+        Supergroup::this_expression("member-count")
+            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
+                ngettext_f(
+                    "{num} member",
+                    "{num} members",
+                    member_count as u32,
+                    &[("num", &member_count.to_string())],
+                )
             }))
-            .bind(&username_row, "visible", Some(user));
+            .bind(&*imp.subtitle_label, "label", Some(supergroup));
+
+        // Link
+        if !supergroup.username().is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&format!("https://t.me/{}", &supergroup.username()))
+                .subtitle(&gettext("Link"))
+                .build();
+            self.make_row_copyable(&row);
+            imp.info_list.append(&row);
+        }
+
+        self.update_info_list_visibility();
+
+        // Full info
+        spawn(clone!(@weak self as obj => async move {
+            let result = functions::get_supergroup_full_info(supergroup_id, client_id).await;
+            match result {
+                Ok(tdlib::enums::SupergroupFullInfo::SupergroupFullInfo(full_info)) => {
+                    obj.setup_supergroup_full_info(full_info);
+                }
+                Err(e) => {
+                    log::warn!("Failed to get supergroup full info: {e:?}");
+                }
+            }
+        }));
+    }
+
+    fn setup_supergroup_full_info(&self, supergroup_full_info: SupergroupFullInfo) {
+        let imp = self.imp();
+
+        // Description
+        if !supergroup_full_info.description.is_empty() {
+            let row = adw::ActionRow::builder()
+                .title(&supergroup_full_info.description)
+                .subtitle(&gettext("Description"))
+                .build();
+            self.make_row_copyable(&row);
+            imp.info_list.append(&row);
+        }
+
+        self.update_info_list_visibility();
+    }
+
+    fn update_info_list_visibility(&self) {
+        let info_list = &self.imp().info_list;
+        info_list.set_visible(info_list.first_child().is_some());
+    }
+
+    fn make_row_copyable(&self, action_row: &adw::ActionRow) {
+        action_row.set_activatable(true);
+        action_row.connect_activated(clone!(@weak self as obj => move |action_row| {
+            action_row.clipboard().set_text(&action_row.title());
+
+            let toast = adw::Toast::new(&gettext("Copied to clipboard"));
+            obj.imp().toast_overlay.add_toast(&toast);
+        }));
     }
 
     pub(crate) fn chat(&self) -> Option<&Chat> {
