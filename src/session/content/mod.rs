@@ -129,6 +129,10 @@ impl Content {
         glib::Object::new(&[]).expect("Failed to create Content")
     }
 
+    pub(crate) fn focus_message_entry(&self) {
+        self.imp().chat_history.focus_message_entry()
+    }
+
     pub(crate) fn handle_paste_action(&self) {
         self.imp().chat_history.handle_paste_action();
     }

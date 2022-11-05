@@ -204,6 +204,17 @@ impl Window {
                         let notification = gio::Notification::new(&title);
                         notification.set_body(Some(&body));
 
+                        notification.add_button_with_target_value(
+                            &gettext("Mark as read"),
+                            "app.mark-message-as-viewed",
+                            Some(&(client_id, chat_id, data.message.id).to_variant()),
+                        );
+                        notification.add_button_with_target_value(
+                            &gettext("Reply"),
+                            "app.select-chat",
+                            Some(&(client_id, chat_id).to_variant()),
+                        );
+
                         Some(notification)
                     }
                     enums::NotificationType::NewCall(_) => {

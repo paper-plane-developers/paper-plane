@@ -4,8 +4,10 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use log::{debug, info};
+use tdlib::functions;
 
 use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::utils::spawn;
 use crate::{PreferencesWindow, Window};
 
 mod imp {
@@ -119,6 +121,23 @@ impl Application {
             app.show_about_dialog();
         }));
         self.add_action(&action_about);
+
+        // Mark message as viewed
+        let action_mark_message_as_viewed = gio::SimpleAction::new(
+            "mark-message-as-viewed",
+            Some(glib::VariantTy::new("(ixx)").unwrap()),
+        );
+        action_mark_message_as_viewed.connect_activate(
+            clone!(@weak self as app => move |_, data| {
+                let (client_id, chat_id, message_id) = data.unwrap().get().unwrap();
+                spawn(async move {
+                    functions::view_messages(chat_id, 0, vec![message_id], true, client_id)
+                        .await
+                        .unwrap();
+                });
+            }),
+        );
+        self.add_action(&action_mark_message_as_viewed);
 
         // Select chat
         let action_select_chat =
