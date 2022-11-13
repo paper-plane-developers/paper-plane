@@ -154,7 +154,10 @@ fn message_document(file_name: &str, caption: &str) -> String {
         file_name.into()
     } else {
         // Translators: This is a file with the caption
-        gettext_f("{file_name}, {caption}", &[("caption", caption)])
+        gettext_f(
+            "{file_name}, {caption}",
+            &[("file_name", file_name), ("caption", caption)],
+        )
     }
 }
 
