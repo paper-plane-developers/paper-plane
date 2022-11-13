@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentMessageText" parent="ContentMessageBase">
-    <property name="layout-manager">
-      <object class="GtkBoxLayout">
-        <property name="orientation">vertical</property>
-      </object>
-    </property>
-    <style>
-      <class name="message-bubble"/>
-    </style>
     <child>
-      <object class="GtkLabel" id="sender_label">
-        <property name="ellipsize">end</property>
-        <property name="single-line-mode">True</property>
-        <property name="xalign">0</property>
+      <object class="MessageBubble" id="message_bubble">
         <style>
-          <class name="sender-text"/>
+          <class name="text"/>
         </style>
-      </object>
-    </child>
-    <child>
-      <object class="MessageLabel" id="content_label">
-        <property name="indicators">
-          <object class="MessageIndicators" id="indicators">
-            <property name="halign">end</property>
-            <property name="valign">end</property>
-          </object>
-        </property>
       </object>
     </child>
   </template>

@@ -171,11 +171,6 @@ glib::wrapper! {
 }
 
 impl MessageLabel {
-    pub(crate) fn new(label: &str, indicators: Option<&MessageIndicators>) -> Self {
-        glib::Object::new(&[("label", &label), ("indicators", &indicators)])
-            .expect("Failed to create MessageLabel")
-    }
-
     fn update_label_attributes(&self, indicators_size: &gtk::Requisition) {
         let imp = self.imp();
         if let Some(start_index) = imp.label.text().find(OBJECT_REPLACEMENT_CHARACTER) {

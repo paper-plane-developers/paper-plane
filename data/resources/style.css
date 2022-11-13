@@ -131,37 +131,38 @@ sidebarsearchitemrow {
   padding: 3px;
 }
 
-.message-bubble {
-  background-color: alpha(black, 0.07);
-  border-radius: 12px;
+messagebubble {
+  background: alpha(currentColor, 0.08);
+  border-radius: 15px;
 }
 
-.message-bubble.outgoing {
-  background-color: @accent_bg_color;
+messagebubble.outgoing {
+  background: @accent_bg_color;
   color: @accent_fg_color;
 }
 
-.message-bubble.outgoing selection {
-  background-color: alpha(@accent_fg_color, 0.2);
-}
-
-.message-bubble.outgoing link {
+messagebubble.outgoing link {
   color: @accent_fg_color;
 }
 
-messagedocument > label.sender-text {
-  margin-bottom: 3px;
+messagebubble messageindicators {
+  opacity: 0.7;
 }
 
-messagedocument label.file-size {
-  font-size: smaller;
+messagebubble.text > overlay,
+messagebubble.document > overlay {
+  padding: 6px 9px;
 }
 
-messagedocument > box {
-  padding: 9px;
+messagebubble.document {
+  min-width: 220px;
 }
 
-messagedocument > box > image {
+messagebubble.document .file {
+  margin: 6px 0;
+}
+
+messagebubble.document .file > image {
   background: @accent_color;
   color: @window_bg_color;
   transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -169,27 +170,43 @@ messagedocument > box > image {
   border-radius: 9999px;
 }
 
-messagedocument.outgoing > box > image {
+messagebubble.document.outgoing .file > image {
   background: @accent_fg_color;
   color: @accent_bg_color;
 }
 
-messagedocument> box:hover > image {
+messagebubble.document .file:hover > image {
   opacity: 0.85;
 }
 
-messagedocument > box:active > image {
+messagebubble.document .file:active > image {
   opacity: 0.7;
 }
 
-messagemedia .media-picture {
-  margin: 2px;
-  border-radius: 10px;
+messagebubble.media .media-picture {
+  /* Message bubble border-radius (15px) - margin (1px)  */
+  border-radius: 14px;
+  margin: 1px;
 }
 
-messagemedia.with-caption .media-picture {
-  margin-bottom: 0;
-  border-radius: 10px 10px 4px 4px;
+messagebubble.media.with-label .media-picture {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  margin: 1px 1px 0;
+}
+
+messagebubble.media messagelabel {
+  margin: 6px 9px;
+}
+
+messagebubble.media:not(.with-label) messageindicators,
+messagesticker messageindicators {
+  background-color: alpha(@view_bg_color, 0.8);
+  color: @view_fg_color;
+  opacity: 1.0; /* Reset opacity from message bubble */
+  border-radius: 9999px;
+  padding: 2px 6px;
+  margin: 6px;
 }
 
 messagemedia progressbar > trough {
@@ -202,36 +219,10 @@ messageindicators {
   font-feature-settings: "tnum";
 }
 
-messagelabel {
-  margin: 6px 9px;
-}
-
-messagelabel > messageindicators, messagedocument > box messageindicators {
-  opacity: 0.7;
-}
-
-messagemedia overlay > messageindicators, messagesticker messageindicators {
-  background-color: alpha(@view_bg_color, 0.8);
-  color: @view_fg_color;
-  border-radius: 9999px;
-  padding: 2px 6px;
-  margin: 6px;
-}
-
 .event-row {
   font-size: smaller;
   font-weight: bold;
   padding: 3px;
-}
-
-.sender-text {
-  margin: 6px 9px 0 9px;
-  font-size: small;
-  font-weight: bold;
-}
-
-.sender-text + messagelabel {
-  margin-top: 0;
 }
 
 .sender-text-red {

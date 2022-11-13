@@ -1,4 +1,5 @@
 mod base;
+mod bubble;
 mod document;
 mod indicators;
 mod indicators_model;
@@ -11,6 +12,7 @@ mod sticker_picture;
 mod text;
 
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
+use self::bubble::MessageBubble;
 use self::document::MessageDocument;
 use self::indicators::MessageIndicators;
 use self::label::MessageLabel;
@@ -295,12 +297,10 @@ impl MessageRow {
             content.set_halign(gtk::Align::End);
             content.set_margin_start(AVATAR_SIZE + SPACING);
             content.set_margin_end(0);
-            content.add_css_class("outgoing");
         } else {
             content.set_halign(gtk::Align::Start);
             content.set_margin_start(0);
             content.set_margin_end(AVATAR_SIZE + SPACING);
-            content.remove_css_class("outgoing");
         }
     }
 

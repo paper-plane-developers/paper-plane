@@ -2,15 +2,11 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::content::message_row::{
-    MessageBase, MessageBaseImpl, MessageIndicators, MessageLabel,
-};
-use crate::tdlib::{ChatType, Message, MessageSender};
+use crate::session::content::message_row::{MessageBase, MessageBaseImpl, MessageBubble};
+use crate::tdlib::Message;
 use crate::utils::parse_formatted_text;
 use crate::Session;
 
@@ -24,15 +20,12 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-message-document.ui")]
     pub(crate) struct MessageDocument {
-        pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) status_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
-        pub(super) sender_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub(super) document_box: TemplateChild<gtk::Box>,
+        pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
         pub(super) click: TemplateChild<gtk::GestureClick>,
         #[template_child]
@@ -41,10 +34,6 @@ mod imp {
         pub(super) file_name_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) file_size_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub(super) content_label: TemplateChild<MessageLabel>,
-        #[template_child]
-        pub(super) indicators: TemplateChild<MessageIndicators>,
     }
 
     #[glib::object_subclass]
@@ -55,7 +44,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
-            klass.set_css_name("messagedocument");
+            klass.set_layout_manager_type::<gtk::BinLayout>();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -123,67 +112,7 @@ impl MessageBaseExt for MessageDocument {
             binding.unwatch();
         }
 
-        imp.indicators.set_message(message.clone().upcast());
-
-        // Remove the previous color css class
-        let mut sender_color_class = imp.sender_color_class.borrow_mut();
-        if let Some(class) = sender_color_class.as_ref() {
-            imp.sender_label.remove_css_class(class);
-            *sender_color_class = None;
-        }
-
-        // Show sender label, if needed
-        let show_sender = if message.chat().is_own_chat() {
-            if message.is_outgoing() {
-                None
-            } else {
-                Some(message.forward_info().unwrap().origin().id())
-            }
-        } else if message.is_outgoing() {
-            if matches!(message.sender(), MessageSender::Chat(_)) {
-                Some(Some(message.sender().id()))
-            } else {
-                None
-            }
-        } else if matches!(
-            message.chat().type_(),
-            ChatType::BasicGroup(_) | ChatType::Supergroup(_)
-        ) {
-            Some(Some(message.sender().id()))
-        } else {
-            None
-        };
-
-        if let Some(maybe_id) = show_sender {
-            let sender_name_expression = message.sender_display_name_expression();
-            let sender_binding =
-                sender_name_expression.bind(&*imp.sender_label, "label", glib::Object::NONE);
-            bindings.push(sender_binding);
-
-            // Color sender label
-            let classes = vec![
-                "sender-text-red",
-                "sender-text-orange",
-                "sender-text-violet",
-                "sender-text-green",
-                "sender-text-cyan",
-                "sender-text-blue",
-                "sender-text-pink",
-            ];
-
-            let color_class = classes[maybe_id.map(|id| id as usize).unwrap_or_else(|| {
-                let mut s = DefaultHasher::new();
-                imp.sender_label.label().hash(&mut s);
-                s.finish() as usize
-            }) % classes.len()];
-            imp.sender_label.add_css_class(color_class);
-
-            *sender_color_class = Some(color_class.into());
-
-            imp.sender_label.set_visible(true);
-        } else {
-            imp.sender_label.set_visible(false);
-        }
+        imp.message_bubble.update_from_message(&message, false);
 
         let handler_id =
             message.connect_content_notify(clone!(@weak self as obj => move |message, _| {
@@ -236,8 +165,7 @@ impl MessageDocument {
             let imp = self.imp();
 
             let message_text = parse_formatted_text(data.caption);
-            imp.content_label.set_visible(!message_text.is_empty());
-            imp.content_label.set_label(message_text);
+            imp.message_bubble.set_label(message_text);
 
             imp.file_name_label.set_label(&data.document.file_name);
 

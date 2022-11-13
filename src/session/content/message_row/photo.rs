@@ -5,9 +5,7 @@ use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::content::message_row::{
-    Media, MessageBase, MessageBaseImpl, MessageIndicators,
-};
+use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl, MessageBubble};
 use crate::tdlib::{BoxedMessageContent, Message};
 use crate::utils::parse_formatted_text;
 use crate::Session;
@@ -26,9 +24,9 @@ mod imp {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
-        pub(super) media: TemplateChild<Media>,
+        pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
-        pub(super) indicators: TemplateChild<MessageIndicators>,
+        pub(super) media: TemplateChild<Media>,
     }
 
     #[glib::object_subclass]
@@ -117,7 +115,7 @@ impl MessageBaseExt for MessagePhoto {
             old_message.disconnect(handler_id);
         }
 
-        imp.indicators.set_message(message.clone().upcast());
+        imp.message_bubble.update_from_message(&message, true);
 
         // Setup caption expression
         let caption_binding = Message::this_expression("content")
@@ -128,7 +126,7 @@ impl MessageBaseExt for MessagePhoto {
                     unreachable!();
                 }
             }))
-            .bind(&*imp.media, "caption", Some(&message));
+            .bind(&*imp.message_bubble, "label", Some(&message));
         imp.binding.replace(Some(caption_binding));
 
         // Load photo
