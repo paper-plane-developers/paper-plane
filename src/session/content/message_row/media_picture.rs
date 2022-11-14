@@ -1,20 +1,31 @@
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, graphene};
+use gtk::{gdk, glib, CompositeTemplate};
 
-const MIN_WIDTH: i32 = 100;
-const MIN_HEIGHT: i32 = 100;
-const MAX_HEIGHT: i32 = 400;
+const MAX_HEIGHT: i32 = 350;
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
+    use std::cell::Cell;
 
-    #[derive(Debug, Default)]
+    #[derive(Debug, Default, CompositeTemplate)]
+    #[template(string = r#"
+    <interface>
+      <template class="ContentMediaPicture" parent="GtkWidget">
+        <child>
+          <object class="GtkPicture" id="picture">
+            <property name="content-fit">cover</property>
+          </object>
+        </child>
+      </template>
+    </interface>
+    "#)]
     pub(crate) struct MediaPicture {
-        pub(super) paintable: RefCell<Option<gdk::Paintable>>,
         pub(super) aspect_ratio: Cell<f64>,
+        #[template_child]
+        pub(super) picture: TemplateChild<gtk::Picture>,
     }
 
     #[glib::object_subclass]
@@ -22,6 +33,15 @@ mod imp {
         const NAME: &'static str = "ContentMediaPicture";
         type Type = super::MediaPicture;
         type ParentType = gtk::Widget;
+
+        fn class_init(klass: &mut Self::Class) {
+            Self::bind_template(klass);
+            klass.set_css_name("mediapicture");
+        }
+
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
+            obj.init_template();
+        }
     }
 
     impl ObjectImpl for MediaPicture {
@@ -43,7 +63,7 @@ mod imp {
             let obj = self.obj();
 
             match pspec.name() {
-                "paintable" => obj.set_paintable(value.get().unwrap()),
+                "paintable" => obj.set_paintable(value.get::<Option<&gdk::Paintable>>().unwrap()),
                 "aspect-ratio" => obj.set_aspect_ratio(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -58,66 +78,56 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
+            obj.set_overflow(gtk::Overflow::Hidden);
+
+            self.picture
+                .connect_paintable_notify(clone!(@weak obj => move |_| {
+                    obj.notify("paintable");
+                }));
+        }
+
+        fn dispose(&self) {
+            self.picture.unparent();
+        }
     }
 
     impl WidgetImpl for MediaPicture {
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
+            let minimum = self.picture.measure(orientation, for_size).0;
+
             if let gtk::Orientation::Horizontal = orientation {
                 let natural = if for_size < 0 {
                     (MAX_HEIGHT as f64 * self.aspect_ratio.get()) as i32
                 } else {
-                    let for_size = for_size.min(MAX_HEIGHT);
-                    (for_size as f64 * self.aspect_ratio.get()) as i32
+                    let adjusted_for_size = for_size.min(MAX_HEIGHT);
+                    (adjusted_for_size as f64 * self.aspect_ratio.get()) as i32
                 }
-                .max(MIN_WIDTH);
+                .max(minimum);
 
-                (MIN_WIDTH, natural, -1, -1)
+                (minimum, natural, -1, -1)
             } else {
                 let natural = if for_size < 0 {
                     MAX_HEIGHT
                 } else {
                     let natural = (for_size as f64 / self.aspect_ratio.get()) as i32;
-                    natural.max(MIN_HEIGHT).min(MAX_HEIGHT)
+                    natural.max(minimum).min(MAX_HEIGHT)
                 };
 
-                (MIN_HEIGHT, natural, -1, -1)
+                (minimum, natural, -1, -1)
             }
+        }
+
+        fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
+            self.picture.allocate(width, height, baseline, None);
         }
 
         fn request_mode(&self) -> gtk::SizeRequestMode {
             gtk::SizeRequestMode::HeightForWidth
-        }
-
-        fn snapshot(&self, snapshot: &gtk::Snapshot) {
-            let obj = self.obj();
-
-            if let Some(paintable) = self.paintable.borrow().as_ref() {
-                let widget_width = obj.width() as f64;
-                let widget_height = obj.height() as f64;
-                let widget_ratio = widget_width / widget_height;
-                let paintable_ratio = self.aspect_ratio.get();
-
-                let (x, y, width, height) = if widget_ratio > paintable_ratio {
-                    let paintable_height = widget_height / paintable_ratio * widget_ratio;
-                    (
-                        0.0,
-                        (widget_height - paintable_height) / 2.0,
-                        widget_width,
-                        paintable_height,
-                    )
-                } else {
-                    let paintable_width = widget_width * paintable_ratio / widget_ratio;
-                    (
-                        (widget_width - paintable_width) / 2.0,
-                        0.0,
-                        paintable_width,
-                        widget_height,
-                    )
-                };
-
-                snapshot.translate(&graphene::Point::new(x as f32, y as f32));
-                paintable.snapshot(snapshot, width, height);
-            }
         }
     }
 }
@@ -127,30 +137,13 @@ glib::wrapper! {
         @extends gtk::Widget;
 }
 
-impl Default for MediaPicture {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl MediaPicture {
-    pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
-    }
-
     pub(crate) fn paintable(&self) -> Option<gdk::Paintable> {
-        self.imp().paintable.borrow().to_owned()
+        self.imp().picture.paintable()
     }
 
-    pub(crate) fn set_paintable(&self, paintable: Option<gdk::Paintable>) {
-        if self.paintable() == paintable {
-            return;
-        }
-
-        self.imp().paintable.replace(paintable);
-        self.queue_draw();
-
-        self.notify("paintable");
+    pub(crate) fn set_paintable(&self, paintable: Option<&impl IsA<gdk::Paintable>>) {
+        self.imp().picture.set_paintable(paintable);
     }
 
     pub(crate) fn aspect_ratio(&self) -> f64 {

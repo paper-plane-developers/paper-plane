@@ -183,13 +183,15 @@ messagebubble.document .file:active > image {
   opacity: 0.7;
 }
 
-messagebubble.media .media-picture {
+messagebubble.media mediapicture {
+  min-width: 150px;
+  min-height: 100px;
   /* Message bubble border-radius (15px) - margin (1px)  */
   border-radius: 14px;
   margin: 1px;
 }
 
-messagebubble.media.with-label .media-picture {
+messagebubble.media.with-label mediapicture {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   margin: 1px 1px 0;
@@ -207,11 +209,6 @@ messagesticker messageindicators {
   border-radius: 9999px;
   padding: 2px 6px;
   margin: 6px;
-}
-
-messagemedia progressbar > trough {
-  border: 1px solid alpha(black, 0.4);
-  min-width: 100px;
 }
 
 messageindicators {

@@ -5,7 +5,9 @@ use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
-use crate::session::content::message_row::{Media, MessageBase, MessageBaseImpl, MessageBubble};
+use crate::session::content::message_row::{
+    MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
+};
 use crate::tdlib::{BoxedMessageContent, Message};
 use crate::utils::parse_formatted_text;
 use crate::Session;
@@ -26,7 +28,7 @@ mod imp {
         #[template_child]
         pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
-        pub(super) media: TemplateChild<Media>,
+        pub(super) picture: TemplateChild<MediaPicture>,
     }
 
     #[glib::object_subclass]
@@ -152,16 +154,24 @@ impl MessagePhoto {
                     .unwrap_or_else(|| data.photo.sizes.last().unwrap())
             };
 
-            // Reset media widget
-            imp.media.set_paintable(None);
-            imp.media
+            imp.picture
                 .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
             if photo_size.photo.local.is_downloading_completed {
-                imp.media.set_download_progress(1.0);
                 self.load_photo_from_path(&photo_size.photo.local.path);
             } else {
-                imp.media.set_download_progress(0.0);
+                imp.picture.set_paintable(
+                    data.photo
+                        .minithumbnail
+                        .and_then(|m| {
+                            gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
+                                &m.data,
+                            )))
+                            .ok()
+                        })
+                        .as_ref(),
+                );
+
                 self.download_photo(photo_size.photo.id, &message.chat().session());
             }
         }
@@ -174,11 +184,7 @@ impl MessagePhoto {
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.imp().media.set_download_progress(1.0);
                     obj.load_photo_from_path(&file.local.path);
-                } else {
-                    let progress = file.local.downloaded_size as f64 / file.expected_size as f64;
-                    obj.imp().media.set_download_progress(progress);
                 }
 
                 glib::Continue(true)
@@ -192,6 +198,6 @@ impl MessagePhoto {
         // TODO: Consider changing this to use an async api when
         // https://github.com/gtk-rs/gtk4-rs/pull/777 is merged
         let texture = gdk::Texture::from_filename(path).unwrap();
-        self.imp().media.set_paintable(Some(texture.upcast()));
+        self.imp().picture.set_paintable(Some(&texture));
     }
 }
