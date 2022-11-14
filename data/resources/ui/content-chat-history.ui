@@ -85,8 +85,8 @@
                 </style>
                 <property name="child">
                   <object class="AdwClampScrollable">
-                    <property name="maximum-size">700</property>
-                    <property name="tightening-threshold">500</property>
+                    <property name="maximum-size">800</property>
+                    <property name="tightening-threshold">600</property>
                     <property name="vscroll-policy">natural</property>
                     <property name="child">
                       <object class="GtkListView" id="list_view">
@@ -125,8 +125,8 @@
         </child>
         <child>
           <object class="AdwClamp">
-            <property name="maximum-size">700</property>
-            <property name="tightening-threshold">500</property>
+            <property name="maximum-size">800</property>
+            <property name="tightening-threshold">600</property>
             <property name="child">
               <object class="ContentChatActionBar" id="chat_action_bar">
                 <binding name="chat">
