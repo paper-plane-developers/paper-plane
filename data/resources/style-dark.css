@@ -6,10 +6,6 @@
   background-color: @dark_2;
 }
 
-.message-bubble:not(.outgoing) {
-  background-color: alpha(white, 0.1);
-}
-
 .sender-text-red {
   color: #fb6169;
 }
