@@ -7,7 +7,7 @@ use tdlib::types::File;
 
 use crate::session::content::message_row::{MessageBase, MessageBaseImpl, MessageBubble};
 use crate::tdlib::Message;
-use crate::utils::parse_formatted_text;
+use crate::utils::{parse_formatted_text, spawn};
 use crate::Session;
 
 use super::base::MessageBaseExt;
@@ -27,7 +27,11 @@ mod imp {
         #[template_child]
         pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
+        pub(super) file_box: TemplateChild<gtk::Box>,
+        #[template_child]
         pub(super) click: TemplateChild<gtk::GestureClick>,
+        #[template_child]
+        pub(super) file_thumbnail_picture: TemplateChild<gtk::Picture>,
         #[template_child]
         pub(super) file_status_image: TemplateChild<gtk::Image>,
         #[template_child]
@@ -163,6 +167,7 @@ impl MessageDocument {
 
             let session = message.chat().session();
 
+            self.try_load_thumbnail(message);
             self.update_status(data.document.document, session);
         }
     }
@@ -211,6 +216,9 @@ impl MessageDocument {
             Downloaded => {
                 // Open file
                 image.set_icon_name(Some("folder-documents-symbolic"));
+                if imp.file_thumbnail_picture.file().is_some() {
+                    image.set_visible(false);
+                }
                 let gio_file = gio::File::for_path(&file.local.path);
                 click.connect_released(move |_, _, _, _| {
                     if let Err(err) = gio::AppInfo::launch_default_for_uri(
@@ -240,6 +248,30 @@ impl MessageDocument {
             }
             CanBeDownloaded | Downloaded => {
                 size_label.set_label(&glib::format_size(size));
+            }
+        }
+    }
+
+    fn try_load_thumbnail(&self, message: &Message) {
+        if let MessageContent::MessageDocument(data) = message.content().0 {
+            if let Some(thumbnail) = data.document.thumbnail {
+                if thumbnail.file.local.is_downloading_completed {
+                    self.imp()
+                        .file_thumbnail_picture
+                        .set_filename(Some(&thumbnail.file.local.path));
+                    self.imp().file_thumbnail_picture.set_visible(true);
+                    self.imp().file_box.add_css_class("with-thumbnail");
+                } else {
+                    let session = message.chat().session();
+                    spawn(clone!(@weak self as obj => async move {
+                        if let Ok(file) = session.download_file(thumbnail.file.id).await
+                        {
+                            obj.imp()
+                                .file_thumbnail_picture
+                                .set_filename(Some(&file.local.path));
+                        }
+                    }));
+                }
             }
         }
     }
