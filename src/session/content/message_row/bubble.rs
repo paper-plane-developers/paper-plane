@@ -296,7 +296,8 @@ impl MessageBubble {
         if imp.message_label.label().is_empty() && imp.message_label.indicators().is_some() {
             imp.message_label.set_indicators(None);
             imp.overlay.add_overlay(&*imp.indicators);
-        } else if imp.message_label.indicators().is_none() {
+        } else if !imp.message_label.label().is_empty() && imp.message_label.indicators().is_none()
+        {
             imp.overlay.remove_overlay(&*imp.indicators);
             imp.message_label
                 .set_indicators(Some(imp.indicators.clone()));
