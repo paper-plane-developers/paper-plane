@@ -1,3 +1,4 @@
+mod animation;
 mod base;
 mod bubble;
 mod document;
@@ -10,6 +11,7 @@ mod sticker;
 mod sticker_picture;
 mod text;
 
+use self::animation::MessageAnimation;
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
 use self::bubble::MessageBubble;
 use self::document::MessageDocument;
@@ -259,6 +261,9 @@ impl MessageRow {
             };
 
             match message_.content().0 {
+                MessageContent::MessageAnimation(_) => {
+                    self.update_specific_content::<_, MessageAnimation>(message_.clone());
+                }
                 MessageContent::MessagePhoto(_) => {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
