@@ -85,7 +85,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_css_name("messagebubble");
         }
 
@@ -98,7 +98,7 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::builder("prefix", gtk::Widget::static_type())
+                    glib::ParamSpecObject::builder::<gtk::Widget>("prefix")
                         .flags(glib::ParamFlags::WRITABLE)
                         .build(),
                     glib::ParamSpecString::builder("label")
@@ -109,13 +109,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "prefix" => obj.set_prefix(value.get().unwrap()),
                 "label" => obj.set_label(value.get().unwrap()),
@@ -123,18 +119,13 @@ mod imp {
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.overlay.unparent();
         }
     }
 
     impl WidgetImpl for MessageBubble {
-        fn measure(
-            &self,
-            _widget: &Self::Type,
-            orientation: gtk::Orientation,
-            for_size: i32,
-        ) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             // Limit the widget width
             if orientation == gtk::Orientation::Horizontal {
                 let (minimum, natural, minimum_baseline, natural_baseline) =
@@ -152,11 +143,11 @@ mod imp {
             }
         }
 
-        fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
+        fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
             self.overlay.allocate(width, height, baseline, None);
         }
 
-        fn request_mode(&self, _widget: &Self::Type) -> gtk::SizeRequestMode {
+        fn request_mode(&self) -> gtk::SizeRequestMode {
             gtk::SizeRequestMode::HeightForWidth
         }
     }

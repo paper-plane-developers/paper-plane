@@ -57,7 +57,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "member-count" => obj.member_count().to_value(),
@@ -74,7 +76,7 @@ glib::wrapper! {
 
 impl BasicGroup {
     pub(crate) fn from_td_object(td_basic_group: TdBasicGroup) -> Self {
-        let basic_group: BasicGroup = glib::Object::new(&[]).expect("Failed to create BasicGroup");
+        let basic_group: BasicGroup = glib::Object::builder().build();
         let imp = basic_group.imp();
 
         let status = BoxedChatMemberStatus(td_basic_group.status);

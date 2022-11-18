@@ -42,13 +42,7 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "type" => {
                     let type_ = value.get::<ChatHistoryItemType>().unwrap();
@@ -67,12 +61,12 @@ glib::wrapper! {
 impl ChatHistoryItem {
     pub(crate) fn for_message(message: Message) -> Self {
         let type_ = ChatHistoryItemType::Message(message);
-        glib::Object::new(&[("type", &type_)]).expect("Failed to create ChatHistoryItem")
+        glib::Object::builder().property("type", type_).build()
     }
 
     pub(crate) fn for_day_divider(day: DateTime) -> Self {
         let type_ = ChatHistoryItemType::DayDivider(day);
-        glib::Object::new(&[("type", &type_)]).expect("Failed to create ChatHistoryItem")
+        glib::Object::builder().property("type", type_).build()
     }
 
     pub(crate) fn type_(&self) -> &ChatHistoryItemType {

@@ -44,7 +44,7 @@ mod imp {
         type Interfaces = (gtk::Editable,);
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -75,13 +75,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "model" => obj.set_model(value.get().unwrap()),
                 "number" => {
@@ -91,15 +87,19 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "model" => obj.model().to_value(),
                 "number" => obj.number().to_value(),
                 _ => unimplemented!(),
             }
         }
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             // Set the system country code.
             self.system_country_code
@@ -232,19 +232,19 @@ mod imp {
             }));
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.list_box.unparent();
         }
     }
 
     impl WidgetImpl for PhoneNumberInput {
-        fn grab_focus(&self, _: &Self::Type) -> bool {
+        fn grab_focus(&self) -> bool {
             self.entry_row.grab_focus()
         }
     }
 
     impl EditableImpl for PhoneNumberInput {
-        fn delegate(&self, _: &Self::Type) -> Option<gtk::Editable> {
+        fn delegate(&self) -> Option<gtk::Editable> {
             self.entry_row.delegate()
         }
     }

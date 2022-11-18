@@ -55,7 +55,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
@@ -64,15 +66,15 @@ mod imp {
     }
 
     impl ListModelImpl for ChatHistory {
-        fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
+        fn item_type(&self) -> glib::Type {
             ChatHistoryItem::static_type()
         }
 
-        fn n_items(&self, _list_model: &Self::Type) -> u32 {
+        fn n_items(&self) -> u32 {
             self.list.borrow().len() as u32
         }
 
-        fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
+        fn item(&self, position: u32) -> Option<glib::Object> {
             self.list
                 .borrow()
                 .get(position as usize)
@@ -89,8 +91,7 @@ glib::wrapper! {
 
 impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        let chat_history: ChatHistory =
-            glib::Object::new(&[]).expect("Failed to create ChatHistory");
+        let chat_history: ChatHistory = glib::Object::builder().build();
         chat_history.imp().chat.set(Some(chat));
         chat_history
     }

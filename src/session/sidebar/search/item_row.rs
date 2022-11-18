@@ -48,7 +48,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.set_css_name("sidebarsearchitemrow");
             klass.set_layout_manager_type::<gtk::BoxLayout>();
@@ -73,27 +73,25 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.item().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.avatar.unparent();
             self.label.unparent();
         }
@@ -109,7 +107,7 @@ glib::wrapper! {
 
 impl ItemRow {
     pub(crate) fn new(item: &Option<glib::Object>) -> Self {
-        glib::Object::new(&[("item", item)]).expect("Failed to create SidebarSearchItemRow")
+        glib::Object::builder().property("item", item).build()
     }
 
     pub(crate) fn set_item(&self, item: Option<glib::Object>) {

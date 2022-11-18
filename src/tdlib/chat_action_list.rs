@@ -42,7 +42,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
@@ -51,15 +53,15 @@ mod imp {
     }
 
     impl ListModelImpl for ChatActionList {
-        fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
+        fn item_type(&self) -> glib::Type {
             ChatAction::static_type()
         }
 
-        fn n_items(&self, _list_model: &Self::Type) -> u32 {
+        fn n_items(&self) -> u32 {
             self.list.borrow().len() as u32
         }
 
-        fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
+        fn item(&self, position: u32) -> Option<glib::Object> {
             self.list
                 .borrow()
                 .get_index(position as usize)
@@ -76,8 +78,7 @@ glib::wrapper! {
 
 impl From<&Chat> for ChatActionList {
     fn from(chat: &Chat) -> Self {
-        let chat_action_list: ChatActionList =
-            glib::Object::new(&[]).expect("Failed to create ChatActionList");
+        let chat_action_list: ChatActionList = glib::Object::builder().build();
         chat_action_list.imp().chat.set(Some(chat));
         chat_action_list
     }

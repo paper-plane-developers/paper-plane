@@ -49,13 +49,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "paintable" => obj.set_paintable(value.get().unwrap()),
                 "aspect-ratio" => obj.set_aspect_ratio(value.get().unwrap()),
@@ -63,7 +59,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "paintable" => obj.paintable().to_value(),
                 "aspect-ratio" => obj.aspect_ratio().to_value(),
@@ -73,12 +71,7 @@ mod imp {
     }
 
     impl WidgetImpl for MediaPicture {
-        fn measure(
-            &self,
-            _widget: &Self::Type,
-            orientation: gtk::Orientation,
-            for_size: i32,
-        ) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             if let gtk::Orientation::Horizontal = orientation {
                 let natural = if for_size < 0 {
                     (MAX_HEIGHT as f64 * self.aspect_ratio.get()) as i32
@@ -101,14 +94,16 @@ mod imp {
             }
         }
 
-        fn request_mode(&self, _widget: &Self::Type) -> gtk::SizeRequestMode {
+        fn request_mode(&self) -> gtk::SizeRequestMode {
             gtk::SizeRequestMode::HeightForWidth
         }
 
-        fn snapshot(&self, widget: &Self::Type, snapshot: &gtk::Snapshot) {
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let obj = self.obj();
+
             if let Some(paintable) = self.paintable.borrow().as_ref() {
-                let widget_width = widget.width() as f64;
-                let widget_height = widget.height() as f64;
+                let widget_width = obj.width() as f64;
+                let widget_height = obj.height() as f64;
                 let widget_ratio = widget_width / widget_height;
                 let paintable_ratio = self.aspect_ratio.get();
 
@@ -131,7 +126,7 @@ mod imp {
                 };
 
                 snapshot.translate(&graphene::Point::new(x as f32, y as f32));
-                paintable.snapshot(snapshot.upcast_ref(), width, height);
+                paintable.snapshot(snapshot, width, height);
             }
         }
     }
@@ -150,7 +145,7 @@ impl Default for MediaPicture {
 
 impl MediaPicture {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ContentMediaPicture")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn paintable(&self) -> Option<gdk::Paintable> {

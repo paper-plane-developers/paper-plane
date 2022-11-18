@@ -54,13 +54,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "model" => obj.set_model(value.get().unwrap()),
                 "selected-item" => obj.set_selected_item(value.get().unwrap()),
@@ -69,7 +65,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "model" => obj.model().to_value(),
                 "selected-item" => obj.selected_item().to_value(),
@@ -78,22 +76,22 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
             self.item_position.set(gtk::INVALID_LIST_POSITION)
         }
 
-        fn dispose(&self, obj: &Self::Type) {
-            obj.disconnect_model_signal();
+        fn dispose(&self) {
+            self.obj().disconnect_model_signal();
         }
     }
 
     impl ListModelImpl for Selection {
-        fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
+        fn item_type(&self) -> glib::Type {
             glib::Object::static_type()
         }
 
-        fn n_items(&self, _list_model: &Self::Type) -> u32 {
+        fn n_items(&self) -> u32 {
             self.model
                 .borrow()
                 .as_ref()
@@ -101,30 +99,25 @@ mod imp {
                 .unwrap_or_default()
         }
 
-        fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
+        fn item(&self, position: u32) -> Option<glib::Object> {
             self.model.borrow().as_ref().and_then(|m| m.item(position))
         }
     }
 
     impl SelectionModelImpl for Selection {
-        fn is_selected(&self, model: &Self::Type, position: u32) -> bool {
+        fn is_selected(&self, position: u32) -> bool {
             let item_position = self.item_position.get();
-            if model.hide_selection() || item_position == gtk::INVALID_LIST_POSITION {
+            if self.obj().hide_selection() || item_position == gtk::INVALID_LIST_POSITION {
                 return false;
             }
 
             position == item_position
         }
 
-        fn selection_in_range(
-            &self,
-            model: &Self::Type,
-            _position: u32,
-            _n_items: u32,
-        ) -> gtk::Bitset {
+        fn selection_in_range(&self, _position: u32, _n_items: u32) -> gtk::Bitset {
             let result = gtk::Bitset::new_empty();
             let item_position = self.item_position.get();
-            if !model.hide_selection() && item_position != gtk::INVALID_LIST_POSITION {
+            if !self.obj().hide_selection() && item_position != gtk::INVALID_LIST_POSITION {
                 result.add(item_position);
             }
 

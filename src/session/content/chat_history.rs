@@ -59,7 +59,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             ItemRow::static_type();
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
                 widget.open_info_dialog();
@@ -104,13 +104,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => {
                     let compact = value.get().unwrap();
@@ -125,7 +121,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
@@ -134,8 +132,11 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
+
             obj.setup_expressions();
 
             let adj = self.list_view.vadjustment().unwrap();
@@ -162,13 +163,15 @@ mod imp {
     }
 
     impl WidgetImpl for ChatHistory {
-        fn direction_changed(&self, widget: &Self::Type, previous_direction: gtk::TextDirection) {
-            if widget.direction() == previous_direction {
+        fn direction_changed(&self, previous_direction: gtk::TextDirection) {
+            let obj = self.obj();
+
+            if obj.direction() == previous_direction {
                 return;
             }
 
             if let Some(menu) = self.message_menu.get() {
-                menu.set_halign(if widget.direction() == gtk::TextDirection::Rtl {
+                menu.set_halign(if obj.direction() == gtk::TextDirection::Rtl {
                     gtk::Align::End
                 } else {
                     gtk::Align::Start
@@ -193,7 +196,7 @@ impl Default for ChatHistory {
 
 impl ChatHistory {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ChatHistory")
+        glib::Object::builder().build()
     }
 
     fn setup_expressions(&self) {

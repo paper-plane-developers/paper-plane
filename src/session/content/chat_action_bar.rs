@@ -47,7 +47,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
                 spawn(clone!(@weak widget => async move {
@@ -84,31 +84,28 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
-                "chat" => {
-                    let chat = value.get().unwrap();
-                    obj.set_chat(chat);
-                }
+                "chat" => obj.set_chat(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             self.message_entry.connect_formatted_text_notify(
                 clone!(@weak obj => move |message_entry, _| {
@@ -147,7 +144,7 @@ mod imp {
                 }));
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.message_entry.unparent();
             self.send_message_button.unparent();
             if let Some(emoji_chooser) = self.emoji_chooser.take() {
@@ -172,7 +169,7 @@ impl Default for ChatActionBar {
 
 impl ChatActionBar {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ChatActionBar")
+        glib::Object::builder().build()
     }
 
     async fn compose_text_message(&self) -> Option<InputMessageContent> {
@@ -525,7 +522,7 @@ fn message_bar_visibility_in_private_chats(
     is_blocked_expression: gtk::PropertyExpression,
     user_type_expression: gtk::PropertyExpression,
 ) -> gtk::Expression {
-    gtk::ClosureExpression::new::<bool, _, _>(
+    gtk::ClosureExpression::new::<bool>(
         &[is_blocked_expression, user_type_expression],
         closure!(|_: Chat, is_blocked: bool, user_type: BoxedUserType| {
             // Hide message bar if account is deleted
@@ -543,7 +540,7 @@ fn message_bar_visibility_in_groups(
     permissions_expression: gtk::PropertyExpression,
     user_status_expression: gtk::PropertyExpression,
 ) -> gtk::Expression {
-    gtk::ClosureExpression::new::<bool, _, _>(
+    gtk::ClosureExpression::new::<bool>(
         &[permissions_expression, user_status_expression],
         closure!(
             |_: Chat, permissions: BoxedChatPermissions, status: BoxedChatMemberStatus| {

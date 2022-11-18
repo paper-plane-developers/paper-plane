@@ -50,8 +50,8 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Row::static_type();
 
-            Self::bind_template(klass);
-            Self::Type::bind_template_callbacks(klass);
+            klass.bind_template();
+            klass.bind_template_instance_callbacks();
 
             klass.set_css_name("sidebarsearch");
             klass.set_layout_manager_type::<gtk::BinLayout>();
@@ -84,9 +84,8 @@ mod imp {
 
     impl ObjectImpl for Search {
         fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("close", &[], <()>::static_type().into()).build()]
-            });
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("close").build()]);
             SIGNALS.as_ref()
         }
 
@@ -112,13 +111,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "session" => obj.set_session(value.get().unwrap()),
                 "compact" => obj.set_compact(value.get().unwrap()),
@@ -126,7 +121,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "session" => obj.session().to_value(),
                 "compact" => obj.compact().to_value(),
@@ -134,13 +131,13 @@ mod imp {
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.content.unparent();
         }
     }
 
     impl WidgetImpl for Search {
-        fn grab_focus(&self, _widget: &Self::Type) -> bool {
+        fn grab_focus(&self) -> bool {
             self.search_entry.grab_focus();
             true
         }

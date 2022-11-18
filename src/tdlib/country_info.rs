@@ -74,7 +74,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "calling-codes" => obj.calling_codes().to_value(),
                 "country-code" => obj.country_code().to_value(),
@@ -107,8 +109,7 @@ impl From<types::CountryInfo> for CountryInfo {
 
 impl CountryInfo {
     fn new(calling_codes: BTreeSet<String>, country_code: String, name: String) -> Self {
-        let country_info: CountryInfo =
-            glib::Object::new(&[]).expect("Failed to create CountryInfo");
+        let country_info: CountryInfo = glib::Object::builder().build();
         let imp = country_info.imp();
 
         let calling_codes = CallingCodes(calling_codes);

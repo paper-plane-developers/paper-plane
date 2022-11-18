@@ -41,7 +41,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -72,13 +72,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
                 "is-online" => obj.set_is_online(value.get().unwrap()),
@@ -86,7 +82,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.item().to_value(),
                 "is-online" => obj.is_online().to_value(),
@@ -94,7 +92,7 @@ mod imp {
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.avatar.unparent();
             self.online_indicator_mask.unparent();
             self.online_indicator_dot.unparent();
@@ -104,17 +102,19 @@ mod imp {
     impl WidgetImpl for Avatar {
         // Inspired by
         // https://gitlab.gnome.org/GNOME/libadwaita/-/blob/1171616701bf12a1c56bbad3f0e8821208d87029/src/adw-indicator-bin.c
-        fn snapshot(&self, widget: &Self::Type, snapshot: &gtk::Snapshot) {
-            if !widget.is_online() {
-                widget.snapshot_child(&*self.avatar, snapshot);
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let obj = self.obj();
+
+            if !obj.is_online() {
+                obj.snapshot_child(&*self.avatar, snapshot);
                 return;
             }
 
             let child_snapshot = gtk::Snapshot::new();
-            widget.snapshot_child(&*self.avatar, &child_snapshot);
+            obj.snapshot_child(&*self.avatar, &child_snapshot);
             let child_node = child_snapshot.to_node().unwrap();
 
-            widget.ensure_mask_shader();
+            obj.ensure_mask_shader();
 
             let maybe_compiled_masked_shader = self.mask_shader.borrow().clone().flatten();
 
@@ -130,15 +130,15 @@ mod imp {
 
             if maybe_compiled_masked_shader.is_some() {
                 snapshot.gl_shader_pop_texture();
-                widget.snapshot_child(&*self.online_indicator_mask, snapshot);
+                obj.snapshot_child(&*self.online_indicator_mask, snapshot);
                 snapshot.gl_shader_pop_texture();
 
                 snapshot.pop();
             } else {
-                widget.snapshot_child(&*self.online_indicator_mask, snapshot);
+                obj.snapshot_child(&*self.online_indicator_mask, snapshot);
             }
 
-            widget.snapshot_child(&*self.online_indicator_dot, snapshot);
+            obj.snapshot_child(&*self.online_indicator_dot, snapshot);
         }
     }
 }
@@ -156,7 +156,7 @@ impl Default for Avatar {
 
 impl Avatar {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create SidebarAvatar")
+        glib::Object::builder().build()
     }
 
     fn setup_is_online_binding(&self, user: &User) {

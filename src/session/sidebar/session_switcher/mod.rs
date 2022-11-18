@@ -33,7 +33,7 @@ mod imp {
         type ParentType = gtk::Popover;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_accessible_role(gtk::AccessibleRole::Dialog);
         }
 
@@ -43,8 +43,8 @@ mod imp {
     }
 
     impl ObjectImpl for SessionSwitcher {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
 
             self.entries.connect_activate(|list_view, index| {
                 if let Some(Ok(item)) = list_view
@@ -70,7 +70,7 @@ mod imp {
             });
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.entries.unparent();
         }
     }

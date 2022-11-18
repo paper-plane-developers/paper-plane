@@ -24,16 +24,16 @@ mod imp {
     impl ObjectImpl for CountryList {}
 
     impl ListModelImpl for CountryList {
-        fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
+        fn item_type(&self) -> glib::Type {
             CountryInfo::static_type()
         }
 
-        fn n_items(&self, list_model: &Self::Type) -> u32 {
-            list_model.list().len() as u32
+        fn n_items(&self) -> u32 {
+            self.obj().list().len() as u32
         }
 
-        fn item(&self, list_model: &Self::Type, position: u32) -> Option<glib::Object> {
-            list_model
+        fn item(&self, position: u32) -> Option<glib::Object> {
+            self.obj()
                 .list()
                 .get_index(position as usize)
                 .map(|(_, i)| i.upcast_ref())
@@ -49,7 +49,7 @@ glib::wrapper! {
 
 impl CountryList {
     pub(crate) fn from_td_object(mut countries: types::Countries, use_test_dc: bool) -> Self {
-        let obj: Self = glib::Object::new(&[]).expect("Failed to create CountryList");
+        let obj: Self = glib::Object::builder().build();
 
         // This has to be sorted here directly, as it seems the AdwComboBoxRow (where the Country-
         // List is used) can't be controlled through an `SingleSelection` and `SortListModel`.

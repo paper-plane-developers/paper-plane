@@ -42,7 +42,7 @@ mod imp {
         }
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.add_binding_action(
                 gdk::Key::v,
@@ -71,8 +71,10 @@ mod imp {
     }
 
     impl ObjectImpl for Window {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             // Devel profile
             if PROFILE == "Devel" {
@@ -101,17 +103,17 @@ mod imp {
     impl WidgetImpl for Window {}
     impl WindowImpl for Window {
         // Save window state on delete event
-        fn close_request(&self, obj: &Self::Type) -> gtk::Inhibit {
+        fn close_request(&self) -> gtk::Inhibit {
             // Close all clients. This must be blocking, otherwise the app might
             // close before the clients are properly closed, which is bad.
             self.session_manager.close_clients();
 
-            if let Err(err) = obj.save_window_size() {
+            if let Err(err) = self.obj().save_window_size() {
                 log::warn!("Failed to save window state, {}", &err);
             }
 
             // Pass close request on to the parent
-            self.parent_close_request(obj)
+            self.parent_close_request()
         }
     }
 
@@ -126,7 +128,7 @@ glib::wrapper! {
 
 impl Window {
     pub(crate) fn new(app: &Application) -> Self {
-        glib::Object::new(&[("application", app)]).expect("Failed to create Window")
+        glib::Object::builder().property("application", app).build()
     }
 
     pub(crate) fn select_chat(&self, client_id: i32, chat_id: i64) {

@@ -30,7 +30,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_css_name("avatar");
         }
 
@@ -73,13 +73,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
                 "custom-text" => obj.set_custom_text(value.get().unwrap()),
@@ -88,7 +84,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.item().to_value(),
                 "custom-text" => obj.custom_text().to_value(),
@@ -97,9 +95,9 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.setup_expressions();
+        fn constructed(&self) {
+            self.parent_constructed();
+            self.obj().setup_expressions();
         }
     }
 
@@ -120,7 +118,7 @@ impl Default for Avatar {
 
 impl Avatar {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create ComponentsAvatar")
+        glib::Object::builder().build()
     }
 
     fn setup_expressions(&self) {
@@ -129,7 +127,7 @@ impl Avatar {
 
         // Chat title expression
         let title_expression = expressions::chat_display_name(&item_expression);
-        gtk::ClosureExpression::new::<String, _, _>(
+        gtk::ClosureExpression::new::<String>(
             &[item_expression.clone().upcast(), title_expression],
             closure!(|_: Self, item: Option<glib::Object>, title: String| {
                 item.as_ref()

@@ -164,7 +164,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "sender" => obj.sender().to_value(),
@@ -189,7 +191,7 @@ glib::wrapper! {
 
 impl Message {
     pub(crate) fn new(td_message: TdMessage, chat: &Chat) -> Self {
-        let message: Message = glib::Object::new(&[]).expect("Failed to create Message");
+        let message: Message = glib::Object::builder().build();
         let imp = message.imp();
 
         let sender = MessageSender::from_td_object(&td_message.sender_id, &chat.session());

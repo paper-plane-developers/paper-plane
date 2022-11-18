@@ -60,7 +60,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "type" => obj.type_().to_value(),
                 "sender" => obj.sender().to_value(),
@@ -81,7 +83,7 @@ impl ChatAction {
         sender: &enums::MessageSender,
         chat: &Chat,
     ) -> Self {
-        let chat_action: ChatAction = glib::Object::new(&[]).expect("Failed to create ChatAction");
+        let chat_action: ChatAction = glib::Object::builder().build();
         let imp = chat_action.imp();
 
         let type_ = BoxedChatActionType(type_);

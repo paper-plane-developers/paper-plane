@@ -59,8 +59,8 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             ComponentsAvatar::static_type();
             Row::static_type();
-            Self::bind_template(klass);
-            Self::bind_template_callbacks(klass);
+            klass.bind_template();
+            klass.bind_template_callbacks();
 
             klass.install_action("sidebar.start-search", None, move |widget, _, _| {
                 widget.begin_chats_search();
@@ -79,7 +79,7 @@ mod imp {
             self.selection.set_selected_position(pos);
 
             let chat = self.selection.selected_item().unwrap().downcast().unwrap();
-            self.instance().select_chat(chat);
+            self.obj().select_chat(chat);
         }
 
         #[template_callback]
@@ -90,9 +90,8 @@ mod imp {
 
     impl ObjectImpl for Sidebar {
         fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("chat-selected", &[], <()>::static_type().into()).build()]
-            });
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("chat-selected").build()]);
             SIGNALS.as_ref()
         }
 
@@ -125,13 +124,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => {
                     let compact = value.get().unwrap();
@@ -149,7 +144,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
                 "selected-chat" => obj.selected_chat().to_value(),
@@ -158,7 +155,7 @@ mod imp {
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.stack.unparent();
         }
     }
@@ -179,7 +176,7 @@ impl Default for Sidebar {
 
 impl Sidebar {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Sidebar")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn row_menu(&self) -> &gtk::PopoverMenu {

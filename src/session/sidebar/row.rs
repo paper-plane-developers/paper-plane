@@ -62,8 +62,8 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
-            Self::bind_template_callbacks(klass);
+            klass.bind_template();
+            klass.bind_template_callbacks();
 
             klass.install_action("sidebar-row.pin", None, move |widget, _, _| {
                 widget.toggle_chat_is_pinned()
@@ -94,12 +94,12 @@ mod imp {
         }
 
         fn show_menu(&self) {
-            let obj = self.instance();
+            let obj = self.obj();
             let sidebar = obj.ancestor(Sidebar::static_type()).unwrap();
             let menu = sidebar.downcast_ref::<Sidebar>().unwrap().row_menu();
 
             menu.unparent();
-            menu.set_parent(&obj);
+            menu.set_parent(&*obj);
             menu.popup();
         }
     }
@@ -118,28 +118,26 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.set_item(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "item" => obj.item().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
 
             self.message_prefix_label
                 .connect_label_notify(|label| label.set_visible(!label.label().is_empty()));
@@ -149,11 +147,11 @@ mod imp {
                     thumbnail.set_visible(thumbnail.paintable().is_some())
                 });
 
-            obj.setup_expressions();
+            self.obj().setup_expressions();
         }
 
-        fn dispose(&self, obj: &Self::Type) {
-            let mut child = obj.first_child();
+        fn dispose(&self) {
+            let mut child = self.obj().first_child();
             while let Some(child_) = child {
                 child = child_.next_sibling();
                 child_.unparent();
@@ -177,7 +175,7 @@ impl Default for Row {
 
 impl Row {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Row")
+        glib::Object::builder().build()
     }
 
     fn toggle_chat_is_pinned(&self) {
@@ -236,7 +234,7 @@ impl Row {
 
         // Decide what to show (exclusive): pin icon, unread label, unread count or marked as unread
         // bin.
-        gtk::ClosureExpression::new::<gtk::Widget, _, _>(
+        gtk::ClosureExpression::new::<gtk::Widget>(
             &[
                 item_expression.chain_property::<Chat>("is-pinned").upcast(),
                 item_expression
@@ -315,7 +313,7 @@ impl Row {
                         .bind(&*imp.message_status_icon, "visible", Some(chat));
                     bindings.push(message_status_visibility_binding);
 
-                    let message_status_icon_binding = gtk::ClosureExpression::new::<String, _, _>(
+                    let message_status_icon_binding = gtk::ClosureExpression::new::<String>(
                         &[
                             last_message_expression.upcast_ref(),
                             Chat::this_expression("last-read-outbox-message-id").upcast_ref(),
@@ -371,7 +369,7 @@ impl Row {
                 }
 
                 // Timestamp label bindings
-                let timestamp_binding = gtk::ClosureExpression::new::<i32, _, _>(
+                let timestamp_binding = gtk::ClosureExpression::new::<i32>(
                     &[
                         draft_message_expression.clone().upcast(),
                         last_message_expression.clone().upcast(),
@@ -415,7 +413,7 @@ impl Row {
                 bindings.push(timestamp_binding);
 
                 // Actions, draft message and last message bindings.
-                let message_prefix_binding = gtk::ClosureExpression::new::<String, _, _>(
+                let message_prefix_binding = gtk::ClosureExpression::new::<String>(
                     &[
                         actions_expression.upcast_ref(),
                         draft_message_expression.upcast_ref(),
@@ -447,7 +445,7 @@ impl Row {
                 bindings.push(message_prefix_binding);
 
                 let thumbnail_paintable_binding =
-                    gtk::ClosureExpression::new::<Option<gdk::Texture>, _, _>(
+                    gtk::ClosureExpression::new::<Option<gdk::Texture>>(
                         &[
                             actions_expression.upcast_ref(),
                             draft_message_expression.upcast_ref(),
@@ -470,7 +468,7 @@ impl Row {
                 let content_expression =
                     last_message_expression.chain_property::<Message>("content");
 
-                let message_binding = gtk::ClosureExpression::new::<String, _, _>(
+                let message_binding = gtk::ClosureExpression::new::<String>(
                     &[
                         // TODO: In the future, consider making this a bit more efficient: We
                         // sometimes don't need to update if for example an action was removed that
@@ -522,7 +520,7 @@ impl Row {
                             }
                         }
                     });
-                let unread_binding = gtk::ClosureExpression::new::<Vec<String>, _, _>(
+                let unread_binding = gtk::ClosureExpression::new::<Vec<String>>(
                     &[
                         notification_settings_expression.upcast(),
                         scope_notification_settings_expression.upcast(),

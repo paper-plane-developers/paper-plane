@@ -107,7 +107,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.install_action("login.previous", None, move |widget, _, _| {
                 spawn(clone!(@weak widget => async move {
                     widget.previous().await;
@@ -168,8 +168,10 @@ mod imp {
     }
 
     impl ObjectImpl for Login {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             // On each page change, decide which button to hide/show and which actions to
             // (de)activate.
@@ -207,7 +209,7 @@ impl Default for Login {
 
 impl Login {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Login")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn set_session_manager(&self, session_manager: SessionManager) {

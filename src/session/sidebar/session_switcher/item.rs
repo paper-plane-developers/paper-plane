@@ -39,20 +39,16 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "inner" => obj.get().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "inner" => self.0.set(value.get().unwrap()),
                 _ => unimplemented!(),
@@ -85,7 +81,7 @@ glib::wrapper! {
 
 impl From<&ExtraItem> for ExtraItemObj {
     fn from(item: &ExtraItem) -> Self {
-        glib::Object::new(&[("inner", item)]).expect("Failed to create ExtraItem")
+        glib::Object::builder().property("inner", item).build()
     }
 }
 

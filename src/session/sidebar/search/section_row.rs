@@ -41,7 +41,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.set_layout_manager_type::<gtk::BoxLayout>();
         }
@@ -66,33 +66,31 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "section-type" => obj.set_section_type(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "section-type" => obj.section_type().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
 
-            obj.update_content();
+            self.obj().update_content();
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.label.unparent();
             if let Some(suffix) = self.suffix.take() {
                 suffix.unparent();
@@ -110,8 +108,9 @@ glib::wrapper! {
 
 impl SectionRow {
     pub(crate) fn new(section_type: SectionType) -> Self {
-        glib::Object::new(&[("section-type", &section_type)])
-            .expect("Failed to create SidebarSearchSectionRow")
+        glib::Object::builder()
+            .property("section-type", section_type)
+            .build()
     }
 
     pub(crate) fn section_type(&self) -> SectionType {
