@@ -35,29 +35,28 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "paintable" => obj.set_paintable(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "paintable" => obj.paintable().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
 
+            let obj = self.obj();
             obj.set_overflow(gtk::Overflow::Hidden);
             obj.set_height_request(16);
             obj.set_width_request(16);
@@ -65,10 +64,12 @@ mod imp {
     }
 
     impl WidgetImpl for MiniThumbnail {
-        fn snapshot(&self, widget: &Self::Type, snapshot: &gtk::Snapshot) {
-            if let Some(paintable) = widget.paintable() {
-                let widget_width = widget.width() as f64;
-                let widget_height = widget.height() as f64;
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let obj = self.obj();
+
+            if let Some(paintable) = obj.paintable() {
+                let widget_width = obj.width() as f64;
+                let widget_height = obj.height() as f64;
                 let widget_ratio = widget_width / widget_height;
                 let paintable_ratio = paintable.intrinsic_aspect_ratio();
 
@@ -91,7 +92,7 @@ mod imp {
                 };
 
                 snapshot.translate(&graphene::Point::new(x as f32, y as f32));
-                paintable.snapshot(snapshot.upcast_ref(), width, height);
+                paintable.snapshot(snapshot, width, height);
             }
         }
     }
@@ -110,7 +111,7 @@ impl Default for MiniThumbnail {
 
 impl MiniThumbnail {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create SidebarMiniThumbnail")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn paintable(&self) -> Option<gdk::Paintable> {

@@ -42,7 +42,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "session" => obj.session().to_value(),
                 _ => unimplemented!(),
@@ -51,15 +53,15 @@ mod imp {
     }
 
     impl ListModelImpl for UserList {
-        fn item_type(&self, _list_model: &Self::Type) -> glib::Type {
+        fn item_type(&self) -> glib::Type {
             User::static_type()
         }
 
-        fn n_items(&self, _list_model: &Self::Type) -> u32 {
+        fn n_items(&self) -> u32 {
             self.list.borrow().len() as u32
         }
 
-        fn item(&self, _list_model: &Self::Type, position: u32) -> Option<glib::Object> {
+        fn item(&self, position: u32) -> Option<glib::Object> {
             self.list
                 .borrow()
                 .get_index(position as usize)
@@ -76,7 +78,7 @@ glib::wrapper! {
 
 impl UserList {
     pub(crate) fn new(session: &Session) -> Self {
-        let user_list: UserList = glib::Object::new(&[]).expect("Failed to create UserList");
+        let user_list: UserList = glib::Object::builder().build();
         user_list.imp().session.set(Some(session));
         user_list
     }

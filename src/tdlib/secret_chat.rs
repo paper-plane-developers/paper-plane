@@ -82,7 +82,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "user" => obj.id().to_value(),
@@ -99,7 +101,7 @@ glib::wrapper! {
 
 impl SecretChat {
     pub(crate) fn from_td_object(td_secret_chat: TdSecretChat, user: User) -> Self {
-        let secret_chat: SecretChat = glib::Object::new(&[]).expect("Failed to create SecretChat");
+        let secret_chat: SecretChat = glib::Object::builder().build();
         let imp = secret_chat.imp();
 
         let state = SecretChatState::from_td_object(&td_secret_chat.state);

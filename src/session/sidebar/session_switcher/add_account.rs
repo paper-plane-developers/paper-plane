@@ -27,7 +27,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &InitializingObject<Self>) {
@@ -36,8 +36,10 @@ mod imp {
     }
 
     impl ObjectImpl for AddAccountRow {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             let long_press_events = gtk::GestureLongPress::builder().delay_factor(2.0).build();
             long_press_events.connect_pressed(clone!(@weak obj => move |_, _, _| {
@@ -51,7 +53,7 @@ mod imp {
             obj.add_controller(&long_press_events);
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.image.unparent();
             self.label.unparent();
             self.menu.unparent();
@@ -68,7 +70,7 @@ glib::wrapper! {
 
 impl AddAccountRow {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create AddAccountRow")
+        glib::Object::builder().build()
     }
 }
 

@@ -47,13 +47,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "texture" => obj.set_texture(value.get().unwrap()),
                 "aspect-ratio" => obj.set_aspect_ratio(value.get().unwrap()),
@@ -61,7 +57,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "texture" => obj.texture().to_value(),
                 "aspect-ratio" => obj.aspect_ratio().to_value(),
@@ -71,12 +69,7 @@ mod imp {
     }
 
     impl WidgetImpl for StickerPicture {
-        fn measure(
-            &self,
-            _widget: &Self::Type,
-            orientation: gtk::Orientation,
-            _for_size: i32,
-        ) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, _for_size: i32) -> (i32, i32, i32, i32) {
             let aspect_ratio = self.aspect_ratio.get();
             let size = if let gtk::Orientation::Horizontal = orientation {
                 if aspect_ratio >= 1.0 {
@@ -93,11 +86,13 @@ mod imp {
             (size, size, -1, -1)
         }
 
-        fn snapshot(&self, widget: &Self::Type, snapshot: &gtk::Snapshot) {
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let obj = self.obj();
+
             if let Some(texture) = self.texture.borrow().as_ref() {
-                let width = widget.width() as f64;
-                let height = widget.height() as f64;
-                texture.snapshot(snapshot.upcast_ref(), width, height);
+                let width = obj.width() as f64;
+                let height = obj.height() as f64;
+                texture.snapshot(snapshot, width, height);
             }
         }
     }
@@ -116,7 +111,7 @@ impl Default for StickerPicture {
 
 impl StickerPicture {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create StickerPicture")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn aspect_ratio(&self) -> f64 {

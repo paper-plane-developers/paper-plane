@@ -26,7 +26,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_css_name("messagemedia");
             klass.set_layout_manager_type::<gtk::BinLayout>();
         }
@@ -52,27 +52,25 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "download-progress" => obj.set_download_progress(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "download-progress" => obj.download_progress().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.overlay.unparent();
         }
     }
@@ -93,7 +91,7 @@ impl Default for Media {
 
 impl Media {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Media")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn set_aspect_ratio(&self, aspect_ratio: f64) {

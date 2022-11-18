@@ -82,7 +82,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "date" => obj.date().to_value(),
                 "origin" => obj.origin().to_value(),
@@ -129,8 +131,7 @@ impl MessageForwardInfo {
             }
         };
 
-        let message_forward_info: MessageForwardInfo =
-            glib::Object::new(&[]).expect("Failed to create MessageForwardInfo");
+        let message_forward_info: MessageForwardInfo = glib::Object::builder().build();
         let imp = message_forward_info.imp();
 
         imp.date.set(forward_info.date);

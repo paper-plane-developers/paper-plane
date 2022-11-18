@@ -48,7 +48,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             ChatHistory::static_type();
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -80,13 +80,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => {
                     let compact = value.get().unwrap();
@@ -100,7 +96,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
@@ -126,7 +124,7 @@ impl Default for Content {
 
 impl Content {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create Content")
+        glib::Object::builder().build()
     }
 
     pub(crate) fn handle_paste_action(&self) {

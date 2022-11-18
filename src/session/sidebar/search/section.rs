@@ -42,20 +42,18 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "section-type" => obj.set_section_type(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "section-type" => obj.section_type().to_value(),
                 _ => unimplemented!(),
@@ -70,8 +68,9 @@ glib::wrapper! {
 
 impl Section {
     pub(crate) fn new(section_type: SectionType) -> Self {
-        glib::Object::new(&[("section-type", &section_type)])
-            .expect("Failed to create SidebarSearchSection")
+        glib::Object::builder()
+            .property("section-type", section_type)
+            .build()
     }
 
     pub(crate) fn section_type(&self) -> SectionType {

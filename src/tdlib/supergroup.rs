@@ -73,7 +73,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "username" => obj.username().to_value(),
@@ -92,7 +94,7 @@ glib::wrapper! {
 
 impl Supergroup {
     pub(crate) fn from_td_object(td_supergroup: TdSupergroup) -> Self {
-        let supergroup: Supergroup = glib::Object::new(&[]).expect("Failed to create Supergroup");
+        let supergroup: Supergroup = glib::Object::builder().build();
         let imp = supergroup.imp();
 
         let status = BoxedChatMemberStatus(td_supergroup.status);

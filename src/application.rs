@@ -29,37 +29,41 @@ mod imp {
     impl ObjectImpl for Application {}
 
     impl ApplicationImpl for Application {
-        fn activate(&self, app: &Self::Type) {
+        fn activate(&self) {
             debug!("GtkApplication<Application>::activate");
+
+            let obj = self.obj();
 
             if let Some(window) = self.window.get() {
                 window.upgrade().unwrap().present();
                 return;
             }
 
-            let window = Window::new(app);
+            let window = Window::new(&obj);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
 
-            app.main_window().present();
+            obj.main_window().present();
         }
 
-        fn startup(&self, app: &Self::Type) {
+        fn startup(&self) {
             debug!("GtkApplication<Application>::startup");
 
             info!("Telegrand ({})", APP_ID);
             info!("Version: {} ({})", VERSION, PROFILE);
             info!("Datadir: {}", PKGDATADIR);
 
-            self.parent_startup(app);
+            self.parent_startup();
+
+            let obj = self.obj();
 
             // Set icons for shell
             gtk::Window::set_default_icon_name(APP_ID);
 
-            app.setup_gactions();
-            app.setup_accels();
-            app.load_color_scheme();
+            obj.setup_gactions();
+            obj.setup_accels();
+            obj.load_color_scheme();
         }
     }
 
@@ -81,15 +85,10 @@ impl Default for Application {
 
 impl Application {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[
-            ("application-id", &Some(APP_ID)),
-            ("flags", &gio::ApplicationFlags::empty()),
-            (
-                "resource-base-path",
-                &Some("/com/github/melix99/telegrand/"),
-            ),
-        ])
-        .expect("Application initialization failed...")
+        glib::Object::builder()
+            .property("application-id", APP_ID)
+            .property("resource-base-path", "/com/github/melix99/telegrand/")
+            .build()
     }
 
     fn main_window(&self) -> Window {

@@ -80,27 +80,25 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "message" => obj.set_message(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "message" => obj.message().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             if let Some(avatar) = self.avatar.borrow().as_ref() {
                 avatar.unparent();
             }
@@ -122,8 +120,10 @@ glib::wrapper! {
 impl MessageRow {
     pub(crate) fn new(message: &glib::Object) -> Self {
         let layout_manager = gtk::BoxLayout::builder().spacing(SPACING).build();
-        glib::Object::new(&[("layout-manager", &layout_manager), ("message", message)])
-            .expect("Failed to create MessageRow")
+        glib::Object::builder()
+            .property("layout-manager", layout_manager)
+            .property("message", message)
+            .build()
     }
 
     fn show_delete_dialog(&self, revoke: bool) {

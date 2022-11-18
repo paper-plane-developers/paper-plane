@@ -38,7 +38,7 @@ mod imp {
         type ParentType = gtk::Window;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.install_action(
                 "send-photo-dialog.send-message",
@@ -70,28 +70,24 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "chat" => self.chat.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "chat" => self.chat.get().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             self.caption_entry
                 .connect_activate(clone!(@weak obj => move |_| {
@@ -104,7 +100,7 @@ mod imp {
                 }));
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             if let Some(emoji_chooser) = self.emoji_chooser.take() {
                 emoji_chooser.unparent();
             }
@@ -122,8 +118,10 @@ glib::wrapper! {
 
 impl SendPhotoDialog {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: Chat, path: String) -> Self {
-        let send_photo_dialog: Self =
-            glib::Object::new(&[("transient-for", parent_window), ("chat", &chat)]).unwrap();
+        let send_photo_dialog: Self = glib::Object::builder()
+            .property("transient-for", parent_window)
+            .property("chat", &chat)
+            .build();
         let imp = send_photo_dialog.imp();
 
         let chat_expression = gtk::ConstantExpression::new(&chat);

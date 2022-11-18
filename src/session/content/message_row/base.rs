@@ -36,8 +36,8 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
-            Self::bind_template_callbacks(klass);
+            klass.bind_template();
+            klass.bind_template_callbacks();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -58,7 +58,7 @@ mod imp {
         }
 
         fn show_message_menu(&self, x: i32, y: i32) {
-            let obj = self.instance();
+            let obj = self.obj();
             let chat_history = obj.ancestor(ChatHistory::static_type()).unwrap();
             let menu = chat_history
                 .downcast_ref::<ChatHistory>()
@@ -67,14 +67,14 @@ mod imp {
 
             menu.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
             menu.unparent();
-            menu.set_parent(&obj);
+            menu.set_parent(&*obj);
             menu.popup();
         }
     }
 
     impl ObjectImpl for MessageBase {
-        fn dispose(&self, obj: &Self::Type) {
-            let mut child = obj.first_child();
+        fn dispose(&self) {
+            let mut child = self.obj().first_child();
             while let Some(child_) = child {
                 child = child_.next_sibling();
                 child_.unparent();
@@ -96,7 +96,7 @@ pub(crate) trait MessageBaseExt:
     type Message: glib::IsA<glib::Object>;
 
     fn new(message: &Self::Message) -> Self {
-        glib::Object::new(&[("message", message)]).expect("Failed to create MessageBase")
+        glib::Object::builder().property("message", message).build()
     }
 
     fn message(&self) -> Self::Message {

@@ -38,7 +38,7 @@ mod imp {
         type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -60,29 +60,25 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "chat" => self.chat.set(value.get().unwrap()).unwrap(),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
-            obj.setup_window();
+        fn constructed(&self) {
+            self.parent_constructed();
+            self.obj().setup_window();
         }
     }
 
@@ -98,8 +94,10 @@ glib::wrapper! {
 
 impl ChatInfoWindow {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: &Chat) -> Self {
-        glib::Object::new(&[("transient-for", parent_window), ("chat", chat)])
-            .expect("Failed to create ChatInfoWindow")
+        glib::Object::builder()
+            .property("transient-for", parent_window)
+            .property("chat", chat)
+            .build()
     }
 
     fn setup_window(&self) {

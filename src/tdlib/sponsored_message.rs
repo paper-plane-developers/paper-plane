@@ -59,7 +59,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "message-id" => obj.message_id().to_value(),
                 "content" => obj.content().to_value(),
@@ -79,8 +81,7 @@ impl SponsoredMessage {
         let enums::SponsoredMessage::SponsoredMessage(td_sponsored_message) =
             functions::get_chat_sponsored_message(chat_id, session.client_id()).await?;
 
-        let sponsored_message: SponsoredMessage =
-            glib::Object::new(&[]).expect("Failed to create SponsoredMessage");
+        let sponsored_message: SponsoredMessage = glib::Object::builder().build();
         let imp = sponsored_message.imp();
 
         let content = BoxedMessageContent(td_sponsored_message.content);

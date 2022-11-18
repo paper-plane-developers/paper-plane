@@ -25,7 +25,7 @@ mod imp {
         type ParentType = adw::PreferencesWindow;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -34,8 +34,8 @@ mod imp {
     }
 
     impl ObjectImpl for PreferencesWindow {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
 
             // If the system supports color schemes, load the 'Follow system colors'
             // switch state, otherwise make that switch insensitive
@@ -49,7 +49,7 @@ mod imp {
                 self.follow_system_colors_switch.set_sensitive(false);
             }
 
-            obj.setup_bindings();
+            self.obj().setup_bindings();
         }
     }
 
@@ -72,7 +72,7 @@ impl Default for PreferencesWindow {
 
 impl PreferencesWindow {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).expect("Failed to create PreferencesWindow")
+        glib::Object::builder().build()
     }
 
     fn setup_bindings(&self) {

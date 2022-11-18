@@ -82,7 +82,7 @@ fn restriction_label_expression<T: glib::StaticType, V: glib::ToValue>(
     );
     let permissions_expression = Chat::this_expression("permissions");
 
-    gtk::ClosureExpression::new::<String, _, _>(
+    gtk::ClosureExpression::new::<String>(
         &[member_status_expression, permissions_expression],
         closure!(|_: glib::Object, status: BoxedChatMemberStatus, chat_permissions: BoxedChatPermissions| {
             if chat_permissions.0.can_send_messages {

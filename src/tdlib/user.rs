@@ -106,7 +106,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "type" => obj.type_().to_value(),
@@ -129,7 +131,7 @@ glib::wrapper! {
 
 impl User {
     pub(crate) fn from_td_object(td_user: TdUser, session: &Session) -> Self {
-        let user: User = glib::Object::new(&[]).expect("Failed to create User");
+        let user: User = glib::Object::builder().build();
         let imp = user.imp();
 
         let type_ = BoxedUserType(td_user.r#type);

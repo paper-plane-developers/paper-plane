@@ -231,7 +231,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "id" => obj.id().to_value(),
                 "type" => obj.type_().to_value(),
@@ -263,7 +265,7 @@ glib::wrapper! {
 
 impl Chat {
     pub(crate) fn new(td_chat: TelegramChat, session: &Session) -> Self {
-        let chat: Chat = glib::Object::new(&[]).expect("Failed to create Chat");
+        let chat: Chat = glib::Object::builder().build();
         let imp = chat.imp();
 
         let type_ = ChatType::from_td_object(&td_chat.r#type, session);

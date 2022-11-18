@@ -38,7 +38,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -50,14 +50,9 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("activate", &[], <()>::static_type().into()).build(),
-                    Signal::builder("paste-clipboard", &[], <()>::static_type().into()).build(),
-                    Signal::builder(
-                        "emoji-button-press",
-                        &[gtk::Image::static_type().into()],
-                        <()>::static_type().into(),
-                    )
-                    .build(),
+                    Signal::builder("activate").build(),
+                    Signal::builder("paste-clipboard").build(),
+                    Signal::builder("emoji-button-press").build(),
                 ]
             });
             SIGNALS.as_ref()
@@ -92,13 +87,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "formatted-text" => obj.set_formatted_text(value.get().unwrap()),
                 "placeholder-text" => obj.set_placeholder_text(value.get().unwrap()),
@@ -107,7 +98,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "formatted-text" => obj.formatted_text().to_value(),
                 "placeholder-text" => obj.placeholder_text().to_value(),
@@ -116,8 +109,10 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             self.placeholder
                 .connect_label_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
@@ -160,13 +155,13 @@ mod imp {
                 }));
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.overlay.unparent();
         }
     }
 
     impl WidgetImpl for MessageEntry {
-        fn grab_focus(&self, _widget: &Self::Type) -> bool {
+        fn grab_focus(&self) -> bool {
             self.text_view.grab_focus()
         }
     }
@@ -179,7 +174,7 @@ glib::wrapper! {
 
 impl MessageEntry {
     pub(crate) fn new() -> Self {
-        glib::Object::new(&[]).unwrap()
+        glib::Object::builder().build()
     }
 
     fn text_buffer_changed(&self) {

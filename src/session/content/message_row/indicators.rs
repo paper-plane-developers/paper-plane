@@ -52,7 +52,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_css_name("messageindicators");
         }
 
@@ -84,20 +84,18 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "message" => obj.set_message(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "message" => obj.message().to_value(),
                 "model" => obj.model().to_value(),
@@ -105,8 +103,10 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
 
             self.model.connect_notify_local(
                 Some("message"),
@@ -126,8 +126,8 @@ mod imp {
                 });
         }
 
-        fn dispose(&self, obj: &Self::Type) {
-            let mut child = obj.first_child();
+        fn dispose(&self) {
+            let mut child = self.obj().first_child();
             while let Some(child_) = child {
                 child = child_.next_sibling();
                 child_.unparent();

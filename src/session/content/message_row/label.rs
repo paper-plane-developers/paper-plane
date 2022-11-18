@@ -43,7 +43,7 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
             klass.set_css_name("messagelabel");
         }
 
@@ -75,13 +75,9 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            let obj = self.obj();
+
             match pspec.name() {
                 "label" => obj.set_label(value.get().unwrap()),
                 "indicators" => obj.set_indicators(value.get().unwrap()),
@@ -89,7 +85,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "label" => obj.label().to_value(),
                 "indicators" => obj.indicators().to_value(),
@@ -97,7 +95,7 @@ mod imp {
             }
         }
 
-        fn dispose(&self, _obj: &Self::Type) {
+        fn dispose(&self) {
             self.label.unparent();
             if let Some(indicators) = self.indicators.take() {
                 indicators.unparent();
@@ -106,12 +104,9 @@ mod imp {
     }
 
     impl WidgetImpl for MessageLabel {
-        fn measure(
-            &self,
-            widget: &Self::Type,
-            orientation: gtk::Orientation,
-            for_size: i32,
-        ) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
+            let obj = self.obj();
+
             if let Some(indicators) = self.indicators.borrow().as_ref() {
                 let (_, indicators_size) = indicators.preferred_size();
                 let old = self
@@ -122,10 +117,10 @@ mod imp {
                     if indicators_size.width() != old_indicators_size.0
                         || indicators_size.height() != old_indicators_size.1
                     {
-                        widget.update_label_attributes(&indicators_size);
+                        obj.update_label_attributes(&indicators_size);
                     }
                 } else {
-                    widget.update_label_attributes(&indicators_size);
+                    obj.update_label_attributes(&indicators_size);
                 }
 
                 let (mut minimum, mut natural, minimum_baseline, natural_baseline) =
@@ -136,8 +131,7 @@ mod imp {
                 minimum = minimum.max(indicators_min);
                 natural = natural.max(indicators_nat);
 
-                if orientation == gtk::Orientation::Vertical && widget.is_opposite_text_direction()
-                {
+                if orientation == gtk::Orientation::Vertical && obj.is_opposite_text_direction() {
                     minimum += indicators_min;
                     natural += indicators_nat;
                 }
@@ -148,19 +142,19 @@ mod imp {
             }
         }
 
-        fn size_allocate(&self, _widget: &Self::Type, width: i32, height: i32, baseline: i32) {
+        fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
             self.label.allocate(width, height, baseline, None);
             if let Some(indicators) = self.indicators.borrow().as_ref() {
                 indicators.allocate(width, height, baseline, None);
             }
         }
 
-        fn request_mode(&self, _widget: &Self::Type) -> gtk::SizeRequestMode {
+        fn request_mode(&self) -> gtk::SizeRequestMode {
             self.label.request_mode()
         }
 
-        fn direction_changed(&self, widget: &Self::Type, _previous_direction: gtk::TextDirection) {
-            widget.update_label();
+        fn direction_changed(&self, _previous_direction: gtk::TextDirection) {
+            self.obj().update_label();
         }
     }
 }

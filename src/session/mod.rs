@@ -64,7 +64,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            Self::bind_template(klass);
+            klass.bind_template();
 
             klass.install_action("content.go-back", None, move |widget, _, _| {
                 widget
@@ -152,13 +152,7 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn set_property(
-            &self,
-            _obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &glib::ParamSpec,
-        ) {
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "client-id" => {
                     let client_id = value.get().unwrap();
@@ -172,7 +166,9 @@ mod imp {
             }
         }
 
-        fn property(&self, obj: &Self::Type, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            let obj = self.obj();
+
             match pspec.name() {
                 "client-id" => obj.client_id().to_value(),
                 "database-info" => obj.database_info().to_value(),
@@ -192,8 +188,10 @@ mod imp {
             }
         }
 
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let obj = self.obj();
             self.sidebar
                 .connect_chat_selected(clone!(@weak obj => move |_| {
                     obj.imp().leaflet.navigate(adw::NavigationDirection::Forward);
@@ -212,11 +210,10 @@ glib::wrapper! {
 
 impl Session {
     pub(crate) fn new(client_id: i32, database_info: DatabaseInfo) -> Self {
-        glib::Object::new(&[
-            ("client-id", &client_id),
-            ("database-info", &BoxedDatabaseInfo(database_info)),
-        ])
-        .expect("Failed to create Session")
+        glib::Object::builder()
+            .property("client-id", client_id)
+            .property("database-info", BoxedDatabaseInfo(database_info))
+            .build()
     }
 
     pub(crate) fn handle_update(&self, update: Update) {
