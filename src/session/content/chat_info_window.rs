@@ -7,10 +7,11 @@ use tdlib::enums::UserType;
 use tdlib::functions;
 use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
 
+use crate::expressions;
 use crate::i18n::ngettext_f;
-use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
+use crate::strings::UserStatusString;
+use crate::tdlib::{BasicGroup, Chat, ChatType, Supergroup, User};
 use crate::utils::spawn;
-use crate::{expressions, strings};
 
 mod imp {
     use super::*;
@@ -134,13 +135,9 @@ impl ChatInfoWindow {
         if let UserType::Bot(_) = user.type_().0 {
             imp.subtitle_label.set_label(&gettext("bot"));
         } else {
-            User::this_expression("status")
-                .chain_closure::<String>(closure!(
-                    |_: Option<glib::Object>, status: BoxedUserStatus| {
-                        strings::user_status(&status.0)
-                    }
-                ))
-                .bind(&*imp.subtitle_label, "label", Some(user));
+            gtk::ConstantExpression::new(&UserStatusString::new(user.clone()))
+                .chain_property::<UserStatusString>("string")
+                .bind(&*imp.subtitle_label, "label", glib::Object::NONE);
         }
 
         // Phone number
