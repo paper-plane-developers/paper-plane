@@ -3,9 +3,11 @@ use gettextrs::gettext;
 use glib::{clone, closure};
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
-use tdlib::enums::UserType;
+use tdlib::enums::ChatMembers::ChatMembers as TdChatMembers;
+use tdlib::enums::User::User as TdUser;
+use tdlib::enums::{ChatMemberStatus, MessageSender, UserType};
 use tdlib::functions;
-use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
+use tdlib::types::{BasicGroupFullInfo, ChatMember, ChatMembers, SupergroupFullInfo};
 
 use crate::i18n::ngettext_f;
 use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
@@ -29,6 +31,10 @@ mod imp {
         pub(super) subtitle_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) info_list: TemplateChild<gtk::ListBox>,
+        #[template_child]
+        pub(super) members_page: TemplateChild<adw::ViewStackPage>,
+        #[template_child]
+        pub(super) members_list: TemplateChild<gtk::ListBox>,
     }
 
     #[glib::object_subclass]
@@ -208,6 +214,11 @@ impl ChatInfoWindow {
             imp.info_list.append(&row);
         }
 
+        imp.members_page.set_visible(true);
+        spawn(clone!(@weak self as obj => async move {
+            obj.append_members(basic_group_full_info.members).await;
+        }));
+
         self.update_info_list_visibility();
     }
 
@@ -245,7 +256,7 @@ impl ChatInfoWindow {
             let result = functions::get_supergroup_full_info(supergroup_id, client_id).await;
             match result {
                 Ok(tdlib::enums::SupergroupFullInfo::SupergroupFullInfo(full_info)) => {
-                    obj.setup_supergroup_full_info(full_info);
+                    obj.setup_supergroup_full_info(supergroup_id, full_info);
                 }
                 Err(e) => {
                     log::warn!("Failed to get supergroup full info: {e:?}");
@@ -254,7 +265,12 @@ impl ChatInfoWindow {
         }));
     }
 
-    fn setup_supergroup_full_info(&self, supergroup_full_info: SupergroupFullInfo) {
+    fn setup_supergroup_full_info(
+        &self,
+        supergroup_id: i64,
+        supergroup_full_info: SupergroupFullInfo,
+    ) {
+        let client_id = self.chat().unwrap().session().client_id();
         let imp = self.imp();
 
         // Description
@@ -267,7 +283,109 @@ impl ChatInfoWindow {
             imp.info_list.append(&row);
         }
 
+        if supergroup_full_info.can_get_members {
+            imp.members_page.set_visible(true);
+            spawn(clone!(@weak self as obj => async move {
+                let limit = 200;
+                let mut offset = 0;
+                while let Ok(TdChatMembers(ChatMembers {members, total_count})) = functions::get_supergroup_members(
+                    supergroup_id,
+                    None,
+                    offset,
+                    limit,
+                    client_id,
+                ).await
+                {
+                    if offset > total_count {
+                        break;
+                    }
+
+                    obj.append_members(members).await;
+
+                    offset += limit;
+                }
+            }));
+        }
+
         self.update_info_list_visibility();
+    }
+
+    async fn append_members(&self, members: Vec<ChatMember>) {
+        let session = self.chat().unwrap().session();
+        let client_id = session.client_id();
+
+        let members_list = &self.imp().members_list;
+
+        for member in members {
+            if let MessageSender::User(user) = member.member_id {
+                if let Ok(TdUser(user)) = functions::get_user(user.user_id, client_id).await {
+                    let user_row = adw::ActionRow::new();
+                    user_row.set_title_lines(1);
+                    user_row.set_subtitle_lines(1);
+
+                    let user = User::from_td_object(user, &session);
+
+                    let user_expression = gtk::ObjectExpression::new(&user);
+                    let name_expression = expressions::user_display_name(&user_expression);
+                    name_expression.bind(&user_row, "title", Some(&user));
+
+                    User::this_expression("status")
+                        .chain_closure::<String>(closure!(
+                            |_: Option<glib::Object>, status: BoxedUserStatus| {
+                                strings::user_status(&status.0)
+                            }
+                        ))
+                        .bind(&user_row, "subtitle", Some(&user));
+
+                    if let UserType::Bot(_) = user.type_().0 {
+                        user_row.set_subtitle(&gettext("bot"));
+                    } else {
+                        User::this_expression("status")
+                            .chain_closure::<String>(closure!(
+                                |_: Option<glib::Object>, status: BoxedUserStatus| {
+                                    strings::user_status(&status.0)
+                                }
+                            ))
+                            .bind(&user_row, "subtitle", Some(&user));
+                    };
+
+                    let avatar = crate::session::components::Avatar::new();
+
+                    avatar.set_item(Some(user.upcast()));
+                    avatar.set_size(32);
+                    user_row.add_prefix(&avatar);
+
+                    let status = match member.status {
+                        ChatMemberStatus::Creator(owner) => {
+                            let title = if owner.custom_title.is_empty() {
+                                gettext("Owner")
+                            } else {
+                                owner.custom_title
+                            };
+                            Some(title)
+                        }
+                        ChatMemberStatus::Administrator(admin) => {
+                            let title = if admin.custom_title.is_empty() {
+                                gettext("Admin")
+                            } else {
+                                admin.custom_title
+                            };
+                            Some(title)
+                        }
+                        _ => None,
+                    };
+
+                    if let Some(text) = status {
+                        let owner_label = gtk::Label::new(Some(&text));
+                        owner_label.set_yalign(0.2);
+                        owner_label.set_css_classes(&["caption", "accent"]);
+                        user_row.add_suffix(&owner_label);
+                    }
+
+                    members_list.append(&user_row);
+                }
+            }
+        }
     }
 
     fn update_info_list_visibility(&self) {

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentChatInfoWindow" parent="AdwWindow">
-    <property name="default-width">360</property>
+    <property name="default-width">400</property>
+    <property name="default-height">600</property>
     <property name="modal">True</property>
     <style>
       <class name="chat-info"/>
@@ -12,10 +13,11 @@
           <object class="GtkBox">
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkHeaderBar">
+              <object class="AdwHeaderBar">
+                <property name="centering-policy">strict</property>
                 <property name="title-widget">
-                  <object class="AdwWindowTitle">
-                    <property name="visible">False</property>
+                  <object class="AdwViewSwitcherTitle" id="title">
+                    <property name="stack">stack</property>
                   </object>
                 </property>
                 <style>
@@ -24,46 +26,97 @@
               </object>
             </child>
             <child>
-              <object class="AdwClamp">
-                <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <style>
-                      <class name="main-page"/>
-                    </style>
-                    <child>
-                      <object class="ComponentsAvatar">
-                        <property name="size">128</property>
-                        <binding name="item">
-                          <lookup name="chat">ContentChatInfoWindow</lookup>
-                        </binding>
+              <object class="AdwViewStack" id="stack">
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="name">info</property>
+                    <property name="title" translatable="yes">Info</property>
+                    <property name="icon-name">help-about-symbolic</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="child">
+                          <object class="AdwClamp">
+                            <property name="child">
+                              <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+                                <style>
+                                  <class name="main-page"/>
+                                </style>
+                                <child>
+                                  <object class="ComponentsAvatar">
+                                    <property name="size">128</property>
+                                    <binding name="item">
+                                      <lookup name="chat">ContentChatInfoWindow</lookup>
+                                    </binding>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="name_label">
+                                    <property name="wrap">True</property>
+                                    <property name="justify">center</property>
+                                    <style>
+                                      <class name="title-1"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkInscription" id="subtitle_label">
+                                    <property name="text-overflow">ellipsize-end</property>
+                                    <property name="xalign">0.5</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkListBox" id="info_list">
+                                    <property name="selection-mode">none</property>
+                                    <style>
+                                      <class name="boxed-list"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="name_label">
-                        <property name="wrap">True</property>
-                        <property name="justify">center</property>
-                        <style>
-                          <class name="title-1"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkInscription" id="subtitle_label">
-                        <property name="text-overflow">ellipsize-middle</property>
-                        <property name="xalign">0.5</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkListBox" id="info_list">
-                        <property name="selection-mode">none</property>
-                        <style>
-                          <class name="boxed-list"/>
-                        </style>
-                      </object>
-                    </child>
+                    </property>
                   </object>
-                </property>
+                </child>
+                <child>
+                  <object class="AdwViewStackPage" id="members_page">
+                    <property name="name">members</property>
+                    <property name="title" translatable="yes">Members</property>
+                    <property name="icon-name">avatar-default-symbolic</property>
+                    <property name="visible">false</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="child">
+                          <object class="AdwClamp">
+                            <property name="maximum-size">440</property>
+                            <property name="tightening-threshold">200</property>
+                            <property name="child">
+                              <object class="GtkListBox" id="members_list">
+                                <property name="valign">center</property>
+                                <property name="selection-mode">none</property>
+                                <style>
+                                  <class name="boxed-list"/>
+                                </style>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewSwitcherBar">
+                <property name="stack">stack</property>
+                <binding name="reveal">
+                  <lookup name="title-visible">title</lookup>
+                </binding>
               </object>
             </child>
           </object>
