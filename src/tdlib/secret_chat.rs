@@ -70,7 +70,7 @@ mod imp {
 
             match pspec.name() {
                 "id" => obj.id().to_value(),
-                "user" => obj.id().to_value(),
+                "user" => obj.user().to_value(),
                 "state" => obj.state().to_value(),
                 _ => unimplemented!(),
             }
