@@ -1,7 +1,7 @@
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -254,14 +254,23 @@ impl MessageDocument {
 
     fn try_load_thumbnail(&self, message: &Message) {
         if let MessageContent::MessageDocument(data) = message.content().0 {
+            let imp = self.imp();
             if let Some(thumbnail) = data.document.thumbnail {
+                imp.file_thumbnail_picture.set_visible(true);
+                imp.file_box.add_css_class("with-thumbnail");
                 if thumbnail.file.local.is_downloading_completed {
-                    self.imp()
-                        .file_thumbnail_picture
+                    imp.file_thumbnail_picture
                         .set_filename(Some(&thumbnail.file.local.path));
-                    self.imp().file_thumbnail_picture.set_visible(true);
-                    self.imp().file_box.add_css_class("with-thumbnail");
                 } else {
+                    if let Some(minithumbnail) = data.document.minithumbnail {
+                        let minithumbnail = gdk::Texture::from_bytes(&glib::Bytes::from_owned(
+                            glib::base64_decode(&minithumbnail.data),
+                        ))
+                        .unwrap();
+                        imp.file_thumbnail_picture
+                            .set_paintable(Some(&minithumbnail));
+                    }
+
                     let session = message.chat().session();
                     spawn(clone!(@weak self as obj => async move {
                         if let Ok(file) = session.download_file(thumbnail.file.id).await
