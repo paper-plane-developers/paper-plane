@@ -73,13 +73,9 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::new(
-                    "chat",
-                    "Chat",
-                    "The chat associated with this widget",
-                    Chat::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![glib::ParamSpecObject::builder::<Chat>("chat")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }

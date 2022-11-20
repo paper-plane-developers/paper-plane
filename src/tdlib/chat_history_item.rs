@@ -30,15 +30,11 @@ mod imp {
     impl ObjectImpl for ChatHistoryItem {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecBoxed::new(
-                    "type",
-                    "Type",
-                    "The type of this item",
-                    ChatHistoryItemType::static_type(),
-                    glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
-                )]
+                vec![glib::ParamSpecBoxed::builder::<ChatHistoryItemType>("type")
+                    .write_only()
+                    .construct_only()
+                    .build()]
             });
-
             PROPERTIES.as_ref()
         }
 

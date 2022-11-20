@@ -48,27 +48,13 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecBoxed::new(
-                        "calling-codes",
-                        "Calling Codes",
-                        "List of country calling codes",
-                        CallingCodes::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "country-code",
-                        "Country Code",
-                        "A two-letter ISO 3166-1 alpha-2 country code",
-                        None,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "name",
-                        "Name",
-                        "Native name of the country",
-                        None,
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecBoxed::builder::<CallingCodes>("calling-codes")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("country-code")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("name").read_only().build(),
                 ]
             });
             PROPERTIES.as_ref()

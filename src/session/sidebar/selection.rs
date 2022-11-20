@@ -28,27 +28,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "model",
-                        "Model",
-                        "The model being wrapped",
-                        gio::ListModel::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "selected-item",
-                        "Selected item",
-                        "The selected item",
-                        glib::Object::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "hide-selection",
-                        "Hide selection",
-                        "Whether to hide the selection or not",
-                        false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
+                    glib::ParamSpecObject::builder::<gio::ListModel>("model")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecObject::builder::<glib::Object>("selected-item")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("hide-selection")
+                        .explicit_notify()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

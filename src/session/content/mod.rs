@@ -60,23 +60,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecBoolean::new(
-                        "compact",
-                        "Compact",
-                        "Whether a compact view is used or not",
-                        false,
-                        glib::ParamFlags::READWRITE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "chat",
-                        "Chat",
-                        "The chat currently shown",
-                        Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
+                    glib::ParamSpecBoolean::builder("compact").build(),
+                    glib::ParamSpecObject::builder::<Chat>("chat")
+                        .explicit_notify()
+                        .build(),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 

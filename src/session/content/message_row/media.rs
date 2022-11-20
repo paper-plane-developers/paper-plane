@@ -39,15 +39,9 @@ mod imp {
     impl ObjectImpl for Media {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecDouble::new(
-                    "download-progress",
-                    "Download Progress",
-                    "The download progress",
-                    0.0,
-                    1.0,
-                    0.0,
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![glib::ParamSpecDouble::builder("download-progress")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }

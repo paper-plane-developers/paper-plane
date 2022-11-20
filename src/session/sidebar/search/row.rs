@@ -34,20 +34,13 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "item",
-                        "Item",
-                        "The item of this row",
-                        glib::Object::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "list-item",
-                        "List Item",
-                        "The list item of this row",
-                        gtk::ListItem::static_type(),
-                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
+                    glib::ParamSpecObject::builder::<glib::Object>("item")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecObject::builder::<gtk::ListItem>("list-item")
+                        .write_only()
+                        .construct_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

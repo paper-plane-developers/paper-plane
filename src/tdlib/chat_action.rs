@@ -1,4 +1,5 @@
 use gtk::glib;
+use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums;
 
@@ -12,7 +13,6 @@ mod imp {
     use super::*;
 
     use gtk::glib::WeakRef;
-    use gtk::prelude::{StaticType, ToValue};
     use once_cell::sync::Lazy;
     use once_cell::unsync::OnceCell;
 
@@ -34,27 +34,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecBoxed::new(
-                        "type",
-                        "Type",
-                        "The type of this chat action",
-                        BoxedChatActionType::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "sender",
-                        "Sender",
-                        "The sender of this chat action",
-                        MessageSender::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "chat",
-                        "Chat",
-                        "The chat relative to this chat action",
-                        Chat::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecBoxed::builder::<BoxedChatActionType>("type")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<MessageSender>("sender")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Chat>("chat")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

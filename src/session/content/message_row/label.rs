@@ -56,20 +56,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecString::new(
-                        "label",
-                        "Label",
-                        "The label of the widget",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "indicators",
-                        "Indicators",
-                        "The message indicators of the widget",
-                        MessageIndicators::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
+                    glib::ParamSpecString::builder("label")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecObject::builder::<MessageIndicators>("indicators")
+                        .construct_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

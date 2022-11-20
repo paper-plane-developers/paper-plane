@@ -30,15 +30,10 @@ mod imp {
     impl ObjectImpl for UserList {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::new(
-                    "session",
-                    "Session",
-                    "The session",
-                    Session::static_type(),
-                    glib::ParamFlags::READABLE,
-                )]
+                vec![glib::ParamSpecObject::builder::<Session>("session")
+                    .read_only()
+                    .build()]
             });
-
             PROPERTIES.as_ref()
         }
 

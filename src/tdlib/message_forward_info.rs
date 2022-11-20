@@ -61,22 +61,10 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt::new(
-                        "date",
-                        "Date",
-                        "The date when the message was originally sent",
-                        0,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "origin",
-                        "Origin",
-                        "The origin of the forwarded message",
-                        MessageForwardOrigin::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt::builder("date").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<MessageForwardOrigin>("origin")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

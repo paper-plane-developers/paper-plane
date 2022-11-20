@@ -54,14 +54,11 @@ mod imp {
     impl ObjectImpl for SectionRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecEnum::new(
-                    "section-type",
-                    "Section Type",
-                    "The type of the section",
-                    SectionType::static_type(),
-                    SectionType::default() as i32,
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![
+                    glib::ParamSpecEnum::builder("section-type", SectionType::default())
+                        .explicit_notify()
+                        .build(),
+                ]
             });
             PROPERTIES.as_ref()
         }

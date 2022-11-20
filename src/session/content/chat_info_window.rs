@@ -49,13 +49,9 @@ mod imp {
     impl ObjectImpl for ChatInfoWindow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::new(
-                    "chat",
-                    "Chat",
-                    "The chat displayed by this dialog",
-                    Chat::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                )]
+                vec![glib::ParamSpecObject::builder::<Chat>("chat")
+                    .construct_only()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }

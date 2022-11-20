@@ -99,11 +99,9 @@ mod imp {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpecObject::builder::<gtk::Widget>("prefix")
-                        .flags(glib::ParamFlags::WRITABLE)
+                        .write_only()
                         .build(),
-                    glib::ParamSpecString::builder("label")
-                        .flags(glib::ParamFlags::WRITABLE)
-                        .build(),
+                    glib::ParamSpecString::builder("label").write_only().build(),
                 ]
             });
             PROPERTIES.as_ref()
