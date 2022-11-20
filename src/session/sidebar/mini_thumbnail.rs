@@ -24,13 +24,11 @@ mod imp {
     impl ObjectImpl for MiniThumbnail {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::new(
-                    "paintable",
-                    "Paintable",
-                    "The paintable of the media",
-                    gdk::Paintable::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![
+                    glib::ParamSpecObject::builder::<gdk::Paintable>("paintable")
+                        .explicit_notify()
+                        .build(),
+                ]
             });
             PROPERTIES.as_ref()
         }

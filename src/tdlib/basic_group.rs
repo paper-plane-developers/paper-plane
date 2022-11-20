@@ -27,31 +27,13 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt64::new(
-                        "id",
-                        "Id",
-                        "The id of this basic group",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt::new(
-                        "member-count",
-                        "Member Count",
-                        "The number of members of this basic group",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "status",
-                        "Status",
-                        "Own user status in this basic group",
-                        BoxedChatMemberStatus::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt64::builder("id").read_only().build(),
+                    glib::ParamSpecInt::builder("member-count")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedChatMemberStatus>("status")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

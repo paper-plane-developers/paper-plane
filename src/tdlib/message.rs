@@ -78,87 +78,35 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt64::new(
-                        "id",
-                        "Id",
-                        "The id of this message",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "sender",
-                        "Sender",
-                        "The sender of this message",
-                        MessageSender::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-outgoing",
-                        "Is Outgoing",
-                        "Whether this message is outgoing or not",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "can-be-deleted-only-for-self",
-                        "Can be deleted only for self",
-                        "Whether this message can be deleted only for the current user or not",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "can-be-deleted-for-all-users",
-                        "Can be deleted for all users",
-                        "Whether this message can be deleted for all users or not",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "sending-state",
-                        "Sending State",
-                        "The sending state of this message",
-                        BoxedMessageSendingState::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt::new(
-                        "date",
-                        "Date",
-                        "The point in time when this message was sent",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "content",
-                        "Content",
-                        "The content of this message",
-                        BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-edited",
-                        "Is Edited",
-                        "Whether this message has been edited",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "chat",
-                        "Chat",
-                        "The chat relative to this message",
-                        Chat::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "forward-info",
-                        "Forward Info",
-                        "The forward info of this message",
-                        MessageForwardInfo::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt64::builder("id").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<MessageSender>("sender")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("is-outgoing")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("can-be-deleted-only-for-self")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("can-be-deleted-for-all-users")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedMessageSendingState>("sending-state")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt::builder("date").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<BoxedMessageContent>("content")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("is-edited")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Chat>("chat")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<MessageForwardInfo>("forward-info")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

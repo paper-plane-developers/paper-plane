@@ -51,25 +51,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "session",
-                        "Session",
-                        "The session that this entry represents",
-                        Session::static_type(),
-                        glib::ParamFlags::READWRITE
-                            | glib::ParamFlags::CONSTRUCT_ONLY
-                            | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "hint",
-                        "Selection hint",
-                        "The hint of the session that owns the account switcher which this entry belongs to",
-                        false,
-                        glib::ParamFlags::WRITABLE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
+                    glib::ParamSpecObject::builder::<Session>("session")
+                        .construct_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("hint")
+                        .write_only()
+                        .construct_only()
+                        .build(),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 

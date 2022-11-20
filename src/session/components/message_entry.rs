@@ -61,27 +61,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecBoxed::new(
-                        "formatted-text",
-                        "Formatted text",
-                        "The formatted text of the entry",
-                        BoxedFormattedText::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecString::new(
-                        "placeholder-text",
-                        "Placeholder text",
-                        "The placeholder text of this entry",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "chat",
-                        "Chat",
-                        "The chat in which the messages will be sent",
-                        Chat::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
+                    glib::ParamSpecBoxed::builder::<BoxedFormattedText>("formatted-text")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecString::builder("placeholder-text")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Chat>("chat")
+                        .explicit_notify()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

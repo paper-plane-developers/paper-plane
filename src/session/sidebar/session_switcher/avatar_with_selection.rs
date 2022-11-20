@@ -39,32 +39,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "item",
-                        "Item",
-                        "The Avatar item displayed by this widget",
-                        glib::Object::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecInt::new(
-                        "size",
-                        "Size",
-                        "The size of the Avatar",
-                        -1,
-                        i32::MAX,
-                        -1,
-                        glib::ParamFlags::READWRITE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "selected",
-                        "Selected",
-                        "Style helper for the inner Avatar",
-                        false,
-                        glib::ParamFlags::WRITABLE,
-                    ),
+                    glib::ParamSpecObject::builder::<glib::Object>("item")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecInt::builder("size").build(),
+                    glib::ParamSpecBoolean::builder("selected")
+                        .write_only()
+                        .build(),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 

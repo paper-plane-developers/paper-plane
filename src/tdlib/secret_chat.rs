@@ -53,30 +53,13 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt::new(
-                        "id",
-                        "Id",
-                        "The id of this secret chat",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "user",
-                        "User",
-                        "The interlocutor in this chat",
-                        User::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecEnum::new(
-                        "state",
-                        "State",
-                        "The state of this secret chat",
-                        SecretChatState::static_type(),
-                        SecretChatState::default() as i32,
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt::builder("id").read_only().build(),
+                    glib::ParamSpecObject::builder::<User>("user")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecEnum::builder("state", SecretChatState::default())
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

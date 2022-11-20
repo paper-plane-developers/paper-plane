@@ -56,20 +56,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "model",
-                        "Model",
-                        "The model (CountryList) of this PhoneNumberInput",
-                        CountryList::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecString::new(
-                        "number",
-                        "Number",
-                        "The current phone number of this PhoneNumberInput",
-                        None,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
+                    glib::ParamSpecObject::builder::<CountryList>("model")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecString::builder("number")
+                        .explicit_notify()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

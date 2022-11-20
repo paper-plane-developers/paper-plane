@@ -88,67 +88,38 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt::new(
-                        "client-id",
-                        "Client Id",
-                        "The client id",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "database-info",
-                        "Database Info",
-                        "The information about the database of this session",
-                        BoxedDatabaseInfo::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "me",
-                        "Me",
-                        "The own user id of this session",
-                        User::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "chat-list",
-                        "Chat List",
-                        "A list of chats",
-                        ChatList::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "user-list",
-                        "User List",
-                        "The list of users of this session",
-                        UserList::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
+                    glib::ParamSpecInt::builder("client-id")
+                        .construct_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedDatabaseInfo>("database-info")
+                        .construct_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<User>("me")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<ChatList>("chat-list")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<UserList>("user-list")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedScopeNotificationSettings>(
                         "private-chats-notification-settings",
-                        "Private Chats Notification Settings",
-                        "This session's notification settings for private chats",
-                        BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
+                    )
+                    .read_only()
+                    .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedScopeNotificationSettings>(
                         "group-chats-notification-settings",
-                        "Group Chats Notification Settings",
-                        "This session's notification settings for group chats",
-                        BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
+                    )
+                    .read_only()
+                    .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedScopeNotificationSettings>(
                         "channel-chats-notification-settings",
-                        "Channel Chats Notification Settings",
-                        "This session's notification settings for channel chats",
-                        BoxedScopeNotificationSettings::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    )
+                    .read_only()
+                    .build(),
                 ]
             });
-
             PROPERTIES.as_ref()
         }
 

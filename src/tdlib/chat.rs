@@ -90,142 +90,56 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt64::new(
-                        "id",
-                        "Id",
-                        "The id of this chat",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "type",
-                        "Type",
-                        "The type of this chat",
-                        ChatType::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-blocked",
-                        "Is blocked",
-                        "Whether this chat is blocked for the user",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "title",
-                        "Title",
-                        "The title of this chat",
-                        Some(""),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "avatar",
-                        "Avatar",
-                        "The avatar of this chat",
-                        Avatar::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt64::new(
-                        "last-read-outbox-message-id",
-                        "Last Read Outbox Message Id",
-                        "The last read outbox message id of this chat",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-marked-as-unread",
-                        "is-marked-as-unread",
-                        "Whether the chat is marked as unread",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "last-message",
-                        "Last Message",
-                        "The last message sent on this chat",
-                        Message::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt64::new(
-                        "order",
-                        "Order",
-                        "The parameter to determine the order of this chat in the chat list",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-pinned",
-                        "Is Pinned",
-                        "The parameter to determine if this chat is pinned in the chat list",
-                        false,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt::new(
-                        "unread-mention-count",
-                        "Unread Mention Count",
-                        "The unread mention count of this chat",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecInt::new(
-                        "unread-count",
-                        "Unread Count",
-                        "The unread messages count of this chat",
-                        std::i32::MIN,
-                        std::i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "draft-message",
-                        "Draft Message",
-                        "The draft message of this chat",
-                        BoxedDraftMessage::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
+                    glib::ParamSpecInt64::builder("id").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<ChatType>("type")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("is-blocked")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("title").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<Avatar>("avatar")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt64::builder("last-read-outbox-message-id")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("is-marked-as-unread")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Message>("last-message")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt64::builder("order").read_only().build(),
+                    glib::ParamSpecBoolean::builder("is-pinned")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt::builder("unread-mention-count")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt::builder("unread-count")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedDraftMessage>("draft-message")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedChatNotificationSettings>(
                         "notification-settings",
-                        "Notification Settings",
-                        "The notification settings of this chat",
-                        BoxedChatNotificationSettings::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "history",
-                        "History",
-                        "The message history of this chat",
-                        ChatHistory::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "actions",
-                        "Actions",
-                        "The chronologically ordered actions of this chat",
-                        ChatActionList::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "permissions",
-                        "Permissions",
-                        "The permissions of this chat",
-                        BoxedChatPermissions::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    )
+                    .read_only()
+                    .build(),
+                    glib::ParamSpecObject::builder::<ChatHistory>("history")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<ChatActionList>("actions")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedChatPermissions>("permissions")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Session>("session")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

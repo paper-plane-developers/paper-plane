@@ -26,16 +26,10 @@ mod imp {
     impl ObjectImpl for ExtraItemObj {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecEnum::new(
-                    "inner",
-                    "Inner",
-                    "Inner value of ExtraItem",
-                    super::ExtraItem::static_type(),
-                    0,
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::CONSTRUCT_ONLY,
-                )]
+                vec![glib::ParamSpecEnum::builder("inner", ExtraItem::default())
+                    .construct_only()
+                    .build()]
             });
-
             PROPERTIES.as_ref()
         }
 

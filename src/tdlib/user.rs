@@ -36,71 +36,31 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt64::new(
-                        "id",
-                        "Id",
-                        "The id of this user",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "type",
-                        "Type",
-                        "The type of this user",
-                        BoxedUserType::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "first-name",
-                        "First Name",
-                        "The first name of this user",
-                        Some(""),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "last-name",
-                        "Last Name",
-                        "The last name of this user",
-                        Some(""),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "username",
-                        "Username",
-                        "The username of this user",
-                        Some(""),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "phone-number",
-                        "Phone Number",
-                        "The phone number of this user",
-                        Some(""),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "avatar",
-                        "Avatar",
-                        "The avatar of this user",
-                        Avatar::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "status",
-                        "Status",
-                        "The status of this user",
-                        BoxedUserStatus::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt64::builder("id").read_only().build(),
+                    glib::ParamSpecBoxed::builder::<BoxedUserType>("type")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("first-name")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("last-name")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("username")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("phone-number")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<Avatar>("avatar")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedUserStatus>("status")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Session>("session")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

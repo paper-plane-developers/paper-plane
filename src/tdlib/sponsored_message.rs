@@ -31,29 +31,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt64::new(
-                        "message-id",
-                        "Message Id",
-                        "The id of this message",
-                        std::i64::MIN,
-                        std::i64::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecBoxed::new(
-                        "content",
-                        "Content",
-                        "The content of this message",
-                        BoxedMessageContent::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "sponsor-chat",
-                        "Sponsor Chat",
-                        "The chat relative to this sponsored message",
-                        Chat::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt64::builder("message-id")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoxed::builder::<BoxedMessageContent>("content")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Chat>("sponsor-chat")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

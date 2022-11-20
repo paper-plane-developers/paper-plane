@@ -29,27 +29,15 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "message",
-                        "Message",
-                        "The message of the model",
-                        glib::Object::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecString::new(
-                        "message-info",
-                        "Message info",
-                        "The message info of the model",
-                        None,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecString::new(
-                        "sending-state-icon-name",
-                        "Sending state icon name",
-                        "The icon name representing the model's message sending state",
-                        None,
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecObject::builder::<glib::Object>("message")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecString::builder("message-info")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecString::builder("sending-state-icon-name")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

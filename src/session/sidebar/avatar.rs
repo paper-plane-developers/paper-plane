@@ -53,20 +53,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecObject::new(
-                        "item",
-                        "Item",
-                        "The item of this avatar",
-                        glib::Object::static_type(),
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
-                    glib::ParamSpecBoolean::new(
-                        "is-online",
-                        "Is Online",
-                        "Whether this SidebarAvatar's user is online",
-                        false,
-                        glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                    ),
+                    glib::ParamSpecObject::builder::<glib::Object>("item")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("is-online")
+                        .explicit_notify()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

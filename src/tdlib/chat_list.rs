@@ -42,22 +42,12 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecInt::new(
-                        "unread-count",
-                        "Unread-Count",
-                        "The unread count of this chat list",
-                        0,
-                        i32::MAX,
-                        0,
-                        glib::ParamFlags::READABLE,
-                    ),
-                    glib::ParamSpecObject::new(
-                        "session",
-                        "Session",
-                        "The session",
-                        Session::static_type(),
-                        glib::ParamFlags::READABLE,
-                    ),
+                    glib::ParamSpecInt::builder("unread-count")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecObject::builder::<Session>("session")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()

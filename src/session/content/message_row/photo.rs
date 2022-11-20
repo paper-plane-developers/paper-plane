@@ -47,13 +47,9 @@ mod imp {
     impl ObjectImpl for MessagePhoto {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::new(
-                    "message",
-                    "Message",
-                    "The message represented by this row",
-                    Message::static_type(),
-                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
-                )]
+                vec![glib::ParamSpecObject::builder::<Message>("message")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }
