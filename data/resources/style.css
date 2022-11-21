@@ -197,6 +197,25 @@ messagebubble.document.outgoing .file > overlay > image {
   color: @accent_bg_color;
 }
 
+messagebubble.document .file loadingindicator {
+  margin: 2px;
+  color: @window_bg_color;
+}
+
+messagebubble.document.outgoing .file loadingindicator {
+  color: @accent_bg_color;
+}
+
+messagebubble.document .file.with-thumbnail > overlay > image {
+  background: alpha(black, 0.6);
+  color: white;
+}
+
+messagebubble.document .file.with-thumbnail loadingindicator {
+  margin: 12px;
+  color: white;
+}
+
 messagebubble.document .file:hover > overlay > image {
   opacity: 0.85;
 }

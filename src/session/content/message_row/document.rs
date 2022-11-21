@@ -5,6 +5,7 @@ use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
+use crate::components::LoadingIndicator;
 use crate::session::content::message_row::{MessageBase, MessageBaseImpl, MessageBubble};
 use crate::tdlib::Message;
 use crate::utils::{parse_formatted_text, spawn};
@@ -32,6 +33,8 @@ mod imp {
         pub(super) click: TemplateChild<gtk::GestureClick>,
         #[template_child]
         pub(super) file_thumbnail_picture: TemplateChild<gtk::Picture>,
+        #[template_child]
+        pub(super) loading_indicator: TemplateChild<LoadingIndicator>,
         #[template_child]
         pub(super) file_status_image: TemplateChild<gtk::Image>,
         #[template_child]
@@ -190,12 +193,13 @@ impl MessageDocument {
         let file_id = file.id;
 
         let handler_id = match *status {
-            Downloading(_progress) | Uploading(_progress) => {
+            Downloading(progress) | Uploading(progress) => {
+                imp.loading_indicator.set_progress(progress);
                 return;
-                // Show loading indicator
             }
             CanBeDownloaded => {
                 // Download file
+                imp.loading_indicator.set_visible(false);
                 image.set_icon_name(Some("document-save-symbolic"));
                 click.connect_released(clone!(@weak self as obj, @weak session => move |click, _, _, _| {
                     // TODO: Fix bug mentioned here
@@ -204,6 +208,7 @@ impl MessageDocument {
                         obj.update_status(file, session);
                     }));
 
+                    obj.imp().loading_indicator.set_visible(true);
                     obj.imp().file_status_image.set_icon_name(Some("media-playback-stop-symbolic"));
                     let handler_id = click.connect_released(clone!(@weak session => move |_, _, _, _| {
                         session.cancel_download_file(file_id);
@@ -215,6 +220,7 @@ impl MessageDocument {
             }
             Downloaded => {
                 // Open file
+                imp.loading_indicator.set_visible(false);
                 image.set_icon_name(Some("folder-documents-symbolic"));
                 if imp.file_thumbnail_picture.file().is_some() {
                     image.set_visible(false);
