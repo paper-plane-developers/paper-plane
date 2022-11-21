@@ -1,4 +1,4 @@
-use glib::{clone, closure};
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
@@ -8,7 +8,7 @@ use tdlib::types::File;
 use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
 };
-use crate::tdlib::{BoxedMessageContent, Message};
+use crate::tdlib::Message;
 use crate::utils::parse_formatted_text;
 use crate::Session;
 
@@ -20,9 +20,37 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-photo.ui")]
-    pub(crate) struct MessagePhoto {
-        pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
+    #[template(string = r#"
+    <interface>
+      <template class="ContentMessageAnimation" parent="ContentMessageBase">
+        <child>
+          <object class="MessageBubble" id="message_bubble">
+            <style>
+              <class name="media"/>
+            </style>
+            <property name="prefix">
+              <object class="GtkOverlay">
+                <child>
+                  <object class="ContentMediaPicture" id="picture"/>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel">
+                    <property name="label">GIF</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <style>
+                      <class name="osd-indicator"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </template>
+    </interface>
+    "#)]
+    pub(crate) struct MessageAnimation {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
@@ -32,13 +60,14 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for MessagePhoto {
-        const NAME: &'static str = "ContentMessagePhoto";
-        type Type = super::MessagePhoto;
+    impl ObjectSubclass for MessageAnimation {
+        const NAME: &'static str = "ContentMessageAnimation";
+        type Type = super::MessageAnimation;
         type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
-            klass.bind_template();
+            Self::bind_template(klass);
+            klass.set_layout_manager_type::<gtk::BinLayout>();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -46,12 +75,16 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessagePhoto {
+    impl ObjectImpl for MessageAnimation {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::builder::<Message>("message")
-                    .explicit_notify()
-                    .build()]
+                vec![glib::ParamSpecObject::new(
+                    "message",
+                    "Message",
+                    "The message represented by this row",
+                    Message::static_type(),
+                    glib::ParamFlags::READWRITE | glib::ParamFlags::EXPLICIT_NOTIFY,
+                )]
             });
             PROPERTIES.as_ref()
         }
@@ -71,26 +104,18 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
-
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            self.obj().connect_scale_factor_notify(|obj| {
-                obj.update_photo(obj.imp().message.borrow().as_ref().unwrap());
-            });
-        }
     }
 
-    impl WidgetImpl for MessagePhoto {}
-    impl MessageBaseImpl for MessagePhoto {}
+    impl WidgetImpl for MessageAnimation {}
+    impl MessageBaseImpl for MessageAnimation {}
 }
 
 glib::wrapper! {
-    pub(crate) struct MessagePhoto(ObjectSubclass<imp::MessagePhoto>)
+    pub(crate) struct MessageAnimation(ObjectSubclass<imp::MessageAnimation>)
         @extends gtk::Widget, MessageBase;
 }
 
-impl MessageBaseExt for MessagePhoto {
+impl MessageBaseExt for MessageAnimation {
     type Message = Message;
 
     fn set_message(&self, message: Self::Message) {
@@ -100,10 +125,6 @@ impl MessageBaseExt for MessagePhoto {
             return;
         }
 
-        if let Some(binding) = imp.binding.take() {
-            binding.unwatch();
-        }
-
         if let Some(old_message) = imp.message.take() {
             let handler_id = imp.handler_id.take().unwrap();
             old_message.disconnect(handler_id);
@@ -111,57 +132,35 @@ impl MessageBaseExt for MessagePhoto {
 
         imp.message_bubble.update_from_message(&message, true);
 
-        // Setup caption expression
-        let caption_binding = Message::this_expression("content")
-            .chain_closure::<String>(closure!(|_: Message, content: BoxedMessageContent| {
-                if let MessageContent::MessagePhoto(data) = content.0 {
-                    parse_formatted_text(data.caption)
-                } else {
-                    unreachable!();
-                }
-            }))
-            .bind(&*imp.message_bubble, "label", Some(&message));
-        imp.binding.replace(Some(caption_binding));
-
-        // Load photo
         let handler_id =
             message.connect_content_notify(clone!(@weak self as obj => move |message, _| {
-                obj.update_photo(message);
+                obj.update_content(message.content().0, &message.chat().session());
             }));
         imp.handler_id.replace(Some(handler_id));
-        self.update_photo(&message);
+
+        self.update_content(message.content().0, &message.chat().session());
 
         imp.message.replace(Some(message));
         self.notify("message");
     }
 }
 
-impl MessagePhoto {
-    fn update_photo(&self, message: &Message) {
-        if let MessageContent::MessagePhoto(data) = message.content().0 {
-            let imp = self.imp();
-            // Choose the right photo size based on the screen scale factor.
-            // See https://core.telegram.org/api/files#image-thumbnail-types for more
-            // information about photo sizes.
-            let photo_size = if self.scale_factor() > 2 {
-                data.photo.sizes.last().unwrap()
-            } else {
-                let type_ = if self.scale_factor() > 1 { "y" } else { "x" };
-                data.photo
-                    .sizes
-                    .iter()
-                    .find(|s| s.r#type == type_)
-                    .unwrap_or_else(|| data.photo.sizes.last().unwrap())
-            };
+impl MessageAnimation {
+    fn update_content(&self, content: MessageContent, session: &Session) {
+        let imp = self.imp();
+
+        if let MessageContent::MessageAnimation(data) = content {
+            let caption = parse_formatted_text(data.caption);
+            imp.message_bubble.set_label(caption);
 
             imp.picture
-                .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
+                .set_aspect_ratio(data.animation.width as f64 / data.animation.height as f64);
 
-            if photo_size.photo.local.is_downloading_completed {
-                self.load_photo_from_path(&photo_size.photo.local.path);
+            if data.animation.animation.local.is_downloading_completed {
+                self.load_animation_from_path(&data.animation.animation.local.path);
             } else {
                 imp.picture.set_paintable(
-                    data.photo
+                    data.animation
                         .minithumbnail
                         .and_then(|m| {
                             gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
@@ -172,19 +171,19 @@ impl MessagePhoto {
                         .as_ref(),
                 );
 
-                self.download_photo(photo_size.photo.id, &message.chat().session());
+                self.download_animation(data.animation.animation.id, session);
             }
         }
     }
 
-    fn download_photo(&self, file_id: i32, session: &Session) {
+    fn download_animation(&self, file_id: i32, session: &Session) {
         let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
         receiver.attach(
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.load_photo_from_path(&file.local.path);
+                    obj.load_animation_from_path(&file.local.path);
                 }
 
                 glib::Continue(true)
@@ -194,10 +193,11 @@ impl MessagePhoto {
         session.download_file(file_id, sender);
     }
 
-    fn load_photo_from_path(&self, path: &str) {
-        // TODO: Consider changing this to use an async api when
-        // https://github.com/gtk-rs/gtk4-rs/pull/777 is merged
-        let texture = gdk::Texture::from_filename(path).unwrap();
-        self.imp().picture.set_paintable(Some(&texture));
+    fn load_animation_from_path(&self, path: &str) {
+        let media = gtk::MediaFile::for_filename(path);
+        media.set_loop(true);
+        media.play();
+
+        self.imp().picture.set_paintable(Some(&media));
     }
 }

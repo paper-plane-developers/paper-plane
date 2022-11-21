@@ -1,22 +1,22 @@
+mod animation;
 mod base;
 mod bubble;
 mod document;
 mod indicators;
 mod indicators_model;
 mod label;
-mod media;
 mod media_picture;
 mod photo;
 mod sticker;
 mod sticker_picture;
 mod text;
 
+use self::animation::MessageAnimation;
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
 use self::bubble::MessageBubble;
 use self::document::MessageDocument;
 use self::indicators::MessageIndicators;
 use self::label::MessageLabel;
-use self::media::Media;
 use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
 use self::sticker::MessageSticker;
@@ -261,6 +261,9 @@ impl MessageRow {
             };
 
             match message_.content().0 {
+                MessageContent::MessageAnimation(_) => {
+                    self.update_specific_content::<_, MessageAnimation>(message_.clone());
+                }
                 MessageContent::MessagePhoto(_) => {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }

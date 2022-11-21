@@ -10,7 +10,7 @@
           <class name="media"/>
         </style>
         <property name="prefix">
-          <object class="ContentMessageMedia" id="media"/>
+          <object class="ContentMediaPicture" id="picture"/>
         </property>
       </object>
     </child>
