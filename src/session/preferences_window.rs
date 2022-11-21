@@ -64,15 +64,11 @@ glib::wrapper! {
         @extends gtk::Widget, gtk::Window, adw::Window, adw::PreferencesWindow;
 }
 
-impl Default for PreferencesWindow {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl PreferencesWindow {
-    pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+    pub(crate) fn new(parent_window: Option<&gtk::Window>) -> Self {
+        glib::Object::builder()
+            .property("transient-for", parent_window)
+            .build()
     }
 
     fn setup_bindings(&self) {

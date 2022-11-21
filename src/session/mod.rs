@@ -1,8 +1,10 @@
 mod components;
 mod content;
+mod preferences_window;
 mod sidebar;
 
 use self::content::Content;
+use self::preferences_window::PreferencesWindow;
 use self::sidebar::Sidebar;
 
 use glib::{clone, SyncSender};
@@ -76,6 +78,11 @@ mod imp {
                 spawn(clone!(@weak widget => async move {
                     log_out(widget.client_id()).await;
                 }));
+            });
+            klass.install_action("session.show-preferences", None, move |widget, _, _| {
+                let parent_window = widget.root().and_then(|r| r.downcast().ok());
+                let preferences = PreferencesWindow::new(parent_window.as_ref());
+                preferences.present();
             });
         }
 
