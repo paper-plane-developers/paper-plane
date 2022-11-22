@@ -17,12 +17,12 @@ use super::base::MessageBaseExt;
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageAnimation" parent="ContentMessageBase">
+      <template class="ContentMessageVideo" parent="ContentMessageBase">
         <child>
           <object class="MessageBubble" id="message_bubble">
             <style>
@@ -34,8 +34,7 @@ mod imp {
                   <object class="ContentMediaPicture" id="picture"/>
                 </child>
                 <child type="overlay">
-                  <object class="GtkLabel">
-                    <property name="label">GIF</property>
+                  <object class="GtkLabel" id="indicator">
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <style>
@@ -50,19 +49,22 @@ mod imp {
       </template>
     </interface>
     "#)]
-    pub(crate) struct MessageAnimation {
+    pub(crate) struct MessageVideo {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
+        pub(super) is_animation: Cell<bool>,
         #[template_child]
         pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
         pub(super) picture: TemplateChild<MediaPicture>,
+        #[template_child]
+        pub(super) indicator: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for MessageAnimation {
-        const NAME: &'static str = "ContentMessageAnimation";
-        type Type = super::MessageAnimation;
+    impl ObjectSubclass for MessageVideo {
+        const NAME: &'static str = "ContentMessageVideo";
+        type Type = super::MessageVideo;
         type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
@@ -75,7 +77,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessageAnimation {
+    impl ObjectImpl for MessageVideo {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
@@ -106,16 +108,16 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageAnimation {}
-    impl MessageBaseImpl for MessageAnimation {}
+    impl WidgetImpl for MessageVideo {}
+    impl MessageBaseImpl for MessageVideo {}
 }
 
 glib::wrapper! {
-    pub(crate) struct MessageAnimation(ObjectSubclass<imp::MessageAnimation>)
+    pub(crate) struct MessageVideo(ObjectSubclass<imp::MessageVideo>)
         @extends gtk::Widget, MessageBase;
 }
 
-impl MessageBaseExt for MessageAnimation {
+impl MessageBaseExt for MessageVideo {
     type Message = Message;
 
     fn set_message(&self, message: Self::Message) {
@@ -145,45 +147,64 @@ impl MessageBaseExt for MessageAnimation {
     }
 }
 
-impl MessageAnimation {
+impl MessageVideo {
     fn update_content(&self, content: MessageContent, session: &Session) {
         let imp = self.imp();
 
-        if let MessageContent::MessageAnimation(data) = content {
-            let caption = parse_formatted_text(data.caption);
-            imp.message_bubble.set_label(caption);
-
-            imp.picture
-                .set_aspect_ratio(data.animation.width as f64 / data.animation.height as f64);
-
-            if data.animation.animation.local.is_downloading_completed {
-                self.load_animation_from_path(&data.animation.animation.local.path);
+        let (caption, file, aspect_ratio, minithumbnail) =
+            if let MessageContent::MessageAnimation(data) = content {
+                imp.indicator.set_label("GIF");
+                imp.is_animation.set(true);
+                (
+                    data.caption,
+                    data.animation.animation,
+                    data.animation.width as f64 / data.animation.height as f64,
+                    data.animation.minithumbnail,
+                )
+            } else if let MessageContent::MessageVideo(data) = content {
+                self.update_remaining_time(data.video.duration as i64);
+                imp.is_animation.set(false);
+                (
+                    data.caption,
+                    data.video.video,
+                    data.video.width as f64 / data.video.height as f64,
+                    data.video.minithumbnail,
+                )
             } else {
-                imp.picture.set_paintable(
-                    data.animation
-                        .minithumbnail
-                        .and_then(|m| {
-                            gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
-                                &m.data,
-                            )))
-                            .ok()
-                        })
-                        .as_ref(),
-                );
+                unreachable!();
+            };
 
-                self.download_animation(data.animation.animation.id, session);
-            }
+        let caption = parse_formatted_text(caption);
+        imp.message_bubble.set_label(caption);
+
+        imp.picture.set_aspect_ratio(aspect_ratio);
+
+        if file.local.is_downloading_completed {
+            self.load_video_from_path(&file.local.path);
+        } else {
+            imp.picture.set_paintable(
+                minithumbnail
+                    .and_then(|m| {
+                        gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
+                            &m.data,
+                        )))
+                        .ok()
+                    })
+                    .as_ref(),
+            );
+
+            self.download_video(file.id, session);
         }
     }
 
-    fn download_animation(&self, file_id: i32, session: &Session) {
+    fn download_video(&self, file_id: i32, session: &Session) {
         let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
         receiver.attach(
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.load_animation_from_path(&file.local.path);
+                    obj.load_video_from_path(&file.local.path);
                 }
 
                 glib::Continue(true)
@@ -193,11 +214,36 @@ impl MessageAnimation {
         session.download_file(file_id, sender);
     }
 
-    fn load_animation_from_path(&self, path: &str) {
+    fn load_video_from_path(&self, path: &str) {
+        let imp = self.imp();
+
         let media = gtk::MediaFile::for_filename(path);
+        media.set_muted(true);
         media.set_loop(true);
         media.play();
 
-        self.imp().picture.set_paintable(Some(&media));
+        if !imp.is_animation.get() {
+            media.connect_timestamp_notify(clone!(@weak self as obj => move |media| {
+                let time = (media.duration() - media.timestamp()) / i64::pow(10, 6);
+                obj.update_remaining_time(time);
+            }));
+        }
+
+        imp.picture.set_paintable(Some(&media));
+    }
+
+    fn update_remaining_time(&self, time: i64) {
+        let imp = self.imp();
+        let seconds = time % 60;
+        let minutes = (time % (60 * 60)) / 60;
+        let hours = time / (60 * 60);
+
+        if hours > 0 {
+            imp.indicator
+                .set_label(&format!("{}:{:02}:{:02}", hours, minutes, seconds));
+        } else {
+            imp.indicator
+                .set_label(&format!("{}:{:02}", minutes, seconds));
+        }
     }
 }
