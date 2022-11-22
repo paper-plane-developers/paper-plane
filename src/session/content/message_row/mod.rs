@@ -1,4 +1,3 @@
-mod animation;
 mod base;
 mod bubble;
 mod document;
@@ -10,8 +9,8 @@ mod photo;
 mod sticker;
 mod sticker_picture;
 mod text;
+mod video;
 
-use self::animation::MessageAnimation;
 use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
 use self::bubble::MessageBubble;
 use self::document::MessageDocument;
@@ -22,6 +21,7 @@ use self::photo::MessagePhoto;
 use self::sticker::MessageSticker;
 use self::sticker_picture::StickerPicture;
 use self::text::MessageText;
+use self::video::MessageVideo;
 
 use adw::prelude::*;
 use gettextrs::gettext;
@@ -262,7 +262,7 @@ impl MessageRow {
 
             match message_.content().0 {
                 MessageContent::MessageAnimation(_) => {
-                    self.update_specific_content::<_, MessageAnimation>(message_.clone());
+                    self.update_specific_content::<_, MessageVideo>(message_.clone());
                 }
                 MessageContent::MessagePhoto(_) => {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());

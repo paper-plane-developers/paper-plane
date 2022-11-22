@@ -22,7 +22,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageAnimation" parent="ContentMessageBase">
+      <template class="ContentMessageVideo" parent="ContentMessageBase">
         <child>
           <object class="MessageBubble" id="message_bubble">
             <style>
@@ -50,7 +50,7 @@ mod imp {
       </template>
     </interface>
     "#)]
-    pub(crate) struct MessageAnimation {
+    pub(crate) struct MessageVideo {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
@@ -60,9 +60,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for MessageAnimation {
-        const NAME: &'static str = "ContentMessageAnimation";
-        type Type = super::MessageAnimation;
+    impl ObjectSubclass for MessageVideo {
+        const NAME: &'static str = "ContentMessageVideo";
+        type Type = super::MessageVideo;
         type ParentType = MessageBase;
 
         fn class_init(klass: &mut Self::Class) {
@@ -75,7 +75,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for MessageAnimation {
+    impl ObjectImpl for MessageVideo {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::new(
@@ -106,16 +106,16 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageAnimation {}
-    impl MessageBaseImpl for MessageAnimation {}
+    impl WidgetImpl for MessageVideo {}
+    impl MessageBaseImpl for MessageVideo {}
 }
 
 glib::wrapper! {
-    pub(crate) struct MessageAnimation(ObjectSubclass<imp::MessageAnimation>)
+    pub(crate) struct MessageVideo(ObjectSubclass<imp::MessageVideo>)
         @extends gtk::Widget, MessageBase;
 }
 
-impl MessageBaseExt for MessageAnimation {
+impl MessageBaseExt for MessageVideo {
     type Message = Message;
 
     fn set_message(&self, message: Self::Message) {
@@ -145,7 +145,7 @@ impl MessageBaseExt for MessageAnimation {
     }
 }
 
-impl MessageAnimation {
+impl MessageVideo {
     fn update_content(&self, content: MessageContent, session: &Session) {
         let imp = self.imp();
 
@@ -157,7 +157,7 @@ impl MessageAnimation {
                 .set_aspect_ratio(data.animation.width as f64 / data.animation.height as f64);
 
             if data.animation.animation.local.is_downloading_completed {
-                self.load_animation_from_path(&data.animation.animation.local.path);
+                self.load_video_from_path(&data.animation.animation.local.path);
             } else {
                 imp.picture.set_paintable(
                     data.animation
@@ -171,19 +171,19 @@ impl MessageAnimation {
                         .as_ref(),
                 );
 
-                self.download_animation(data.animation.animation.id, session);
+                self.download_video(data.animation.animation.id, session);
             }
         }
     }
 
-    fn download_animation(&self, file_id: i32, session: &Session) {
+    fn download_video(&self, file_id: i32, session: &Session) {
         let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
 
         receiver.attach(
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.load_animation_from_path(&file.local.path);
+                    obj.load_video_from_path(&file.local.path);
                 }
 
                 glib::Continue(true)
@@ -193,7 +193,7 @@ impl MessageAnimation {
         session.download_file(file_id, sender);
     }
 
-    fn load_animation_from_path(&self, path: &str) {
+    fn load_video_from_path(&self, path: &str) {
         let media = gtk::MediaFile::for_filename(path);
         media.set_loop(true);
         media.play();
