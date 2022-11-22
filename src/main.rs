@@ -10,7 +10,6 @@ mod expressions;
 mod i18n;
 mod login;
 mod phone_number_input;
-mod preferences_window;
 mod session;
 mod session_manager;
 mod strings;
@@ -20,7 +19,6 @@ mod window;
 
 use self::application::Application;
 use self::login::Login;
-use self::preferences_window::PreferencesWindow;
 use self::session::Session;
 use self::window::Window;
 
