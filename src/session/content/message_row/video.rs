@@ -17,7 +17,7 @@ use super::base::MessageBaseExt;
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
-    use std::cell::RefCell;
+    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
@@ -34,8 +34,7 @@ mod imp {
                   <object class="ContentMediaPicture" id="picture"/>
                 </child>
                 <child type="overlay">
-                  <object class="GtkLabel">
-                    <property name="label">GIF</property>
+                  <object class="GtkLabel" id="indicator">
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <style>
@@ -53,10 +52,13 @@ mod imp {
     pub(crate) struct MessageVideo {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
+        pub(super) is_animation: Cell<bool>,
         #[template_child]
         pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
         pub(super) picture: TemplateChild<MediaPicture>,
+        #[template_child]
+        pub(super) indicator: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -149,30 +151,49 @@ impl MessageVideo {
     fn update_content(&self, content: MessageContent, session: &Session) {
         let imp = self.imp();
 
-        if let MessageContent::MessageAnimation(data) = content {
-            let caption = parse_formatted_text(data.caption);
-            imp.message_bubble.set_label(caption);
-
-            imp.picture
-                .set_aspect_ratio(data.animation.width as f64 / data.animation.height as f64);
-
-            if data.animation.animation.local.is_downloading_completed {
-                self.load_video_from_path(&data.animation.animation.local.path);
+        let (caption, file, aspect_ratio, minithumbnail) =
+            if let MessageContent::MessageAnimation(data) = content {
+                imp.indicator.set_label("GIF");
+                imp.is_animation.set(true);
+                (
+                    data.caption,
+                    data.animation.animation,
+                    data.animation.width as f64 / data.animation.height as f64,
+                    data.animation.minithumbnail,
+                )
+            } else if let MessageContent::MessageVideo(data) = content {
+                self.update_remaining_time(data.video.duration as i64);
+                imp.is_animation.set(false);
+                (
+                    data.caption,
+                    data.video.video,
+                    data.video.width as f64 / data.video.height as f64,
+                    data.video.minithumbnail,
+                )
             } else {
-                imp.picture.set_paintable(
-                    data.animation
-                        .minithumbnail
-                        .and_then(|m| {
-                            gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
-                                &m.data,
-                            )))
-                            .ok()
-                        })
-                        .as_ref(),
-                );
+                unreachable!();
+            };
 
-                self.download_video(data.animation.animation.id, session);
-            }
+        let caption = parse_formatted_text(caption);
+        imp.message_bubble.set_label(caption);
+
+        imp.picture.set_aspect_ratio(aspect_ratio);
+
+        if file.local.is_downloading_completed {
+            self.load_video_from_path(&file.local.path);
+        } else {
+            imp.picture.set_paintable(
+                minithumbnail
+                    .and_then(|m| {
+                        gdk::Texture::from_bytes(&glib::Bytes::from_owned(glib::base64_decode(
+                            &m.data,
+                        )))
+                        .ok()
+                    })
+                    .as_ref(),
+            );
+
+            self.download_video(file.id, session);
         }
     }
 
@@ -194,10 +215,35 @@ impl MessageVideo {
     }
 
     fn load_video_from_path(&self, path: &str) {
+        let imp = self.imp();
+
         let media = gtk::MediaFile::for_filename(path);
+        media.set_muted(true);
         media.set_loop(true);
         media.play();
 
-        self.imp().picture.set_paintable(Some(&media));
+        if !imp.is_animation.get() {
+            media.connect_timestamp_notify(clone!(@weak self as obj => move |media| {
+                let time = (media.duration() - media.timestamp()) / i64::pow(10, 6);
+                obj.update_remaining_time(time);
+            }));
+        }
+
+        imp.picture.set_paintable(Some(&media));
+    }
+
+    fn update_remaining_time(&self, time: i64) {
+        let imp = self.imp();
+        let seconds = time % 60;
+        let minutes = (time % (60 * 60)) / 60;
+        let hours = time / (60 * 60);
+
+        if hours > 0 {
+            imp.indicator
+                .set_label(&format!("{}:{:02}:{:02}", hours, minutes, seconds));
+        } else {
+            imp.indicator
+                .set_label(&format!("{}:{:02}", minutes, seconds));
+        }
     }
 }

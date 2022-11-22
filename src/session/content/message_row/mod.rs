@@ -261,7 +261,7 @@ impl MessageRow {
             };
 
             match message_.content().0 {
-                MessageContent::MessageAnimation(_) => {
+                MessageContent::MessageAnimation(_) | MessageContent::MessageVideo(_) => {
                     self.update_specific_content::<_, MessageVideo>(message_.clone());
                 }
                 MessageContent::MessagePhoto(_) => {
