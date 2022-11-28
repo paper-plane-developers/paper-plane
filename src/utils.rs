@@ -6,8 +6,8 @@ use regex::Regex;
 use std::future::Future;
 use std::path::PathBuf;
 use tdlib::enums::TextEntityType;
+use tdlib::functions;
 use tdlib::types::{self, FormattedText};
-use tdlib::{enums, functions};
 
 use crate::session_manager::DatabaseInfo;
 use crate::{config, APPLICATION_OPTS, TEMP_DIR};
@@ -171,7 +171,7 @@ pub(crate) fn temp_dir() -> Option<&'static PathBuf> {
 pub(crate) async fn send_tdlib_parameters(
     client_id: i32,
     database_info: &DatabaseInfo,
-) -> Result<enums::Ok, types::Error> {
+) -> Result<(), types::Error> {
     let system_language_code = {
         let locale = Locale::current().to_string();
         if !locale.is_empty() {
@@ -180,25 +180,33 @@ pub(crate) async fn send_tdlib_parameters(
             "en_US".to_string()
         }
     };
-    let parameters = types::TdlibParameters {
-        use_test_dc: database_info.use_test_dc,
-        database_directory: data_dir()
-            .join(&database_info.directory_base_name)
-            .to_str()
-            .expect("Data directory path is not a valid unicode string")
-            .to_owned(),
-        use_message_database: true,
-        use_secret_chats: true,
-        api_id: config::TG_API_ID,
-        api_hash: config::TG_API_HASH.to_string(),
-        system_language_code,
-        device_model: "Desktop".to_string(),
-        application_version: config::VERSION.to_string(),
-        enable_storage_optimizer: true,
-        ..types::TdlibParameters::default()
-    };
 
-    functions::set_tdlib_parameters(parameters, client_id).await
+    let database_directory = data_dir()
+        .join(&database_info.directory_base_name)
+        .to_str()
+        .expect("Data directory path is not a valid unicode string")
+        .into();
+
+    functions::set_tdlib_parameters(
+        database_info.use_test_dc,
+        database_directory,
+        String::new(),
+        String::new(),
+        true,
+        true,
+        true,
+        true,
+        config::TG_API_ID,
+        config::TG_API_HASH.into(),
+        system_language_code,
+        "Desktop".into(),
+        String::new(),
+        config::VERSION.into(),
+        true,
+        false,
+        client_id,
+    )
+    .await
 }
 
 pub(crate) async fn log_out(client_id: i32) {

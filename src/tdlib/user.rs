@@ -95,6 +95,10 @@ impl User {
         let imp = user.imp();
 
         let type_ = BoxedUserType(td_user.r#type);
+        let username = td_user
+            .usernames
+            .map(|u| u.editable_username)
+            .unwrap_or_default();
         let avatar = td_user.profile_photo.map(Avatar::from);
         let status = BoxedUserStatus(td_user.status);
 
@@ -102,7 +106,7 @@ impl User {
         imp.type_.replace(Some(type_));
         imp.first_name.replace(td_user.first_name);
         imp.last_name.replace(td_user.last_name);
-        imp.username.replace(td_user.username);
+        imp.username.replace(username);
         imp.phone_number.replace(td_user.phone_number);
         imp.avatar.replace(avatar);
         imp.status.replace(Some(status));
@@ -117,7 +121,12 @@ impl User {
                 self.set_type(BoxedUserType(data.user.r#type));
                 self.set_first_name(data.user.first_name);
                 self.set_last_name(data.user.last_name);
-                self.set_username(data.user.username);
+                self.set_username(
+                    data.user
+                        .usernames
+                        .map(|u| u.editable_username)
+                        .unwrap_or_default(),
+                );
                 self.set_phone_number(data.user.phone_number);
                 self.set_status(BoxedUserStatus(data.user.status));
                 self.set_avatar(data.user.profile_photo.map(Into::into));

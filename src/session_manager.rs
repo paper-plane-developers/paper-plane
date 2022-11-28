@@ -574,16 +574,6 @@ impl SessionManager {
                             }
                         });
                     }
-                    AuthorizationState::WaitEncryptionKey(_) => {
-                        spawn(async move {
-                            let result =
-                                functions::check_database_encryption_key(String::new(), client_id)
-                                    .await;
-                            if let Err(e) = result {
-                                panic!("Error on sending encryption key: {:?}", e);
-                            }
-                        });
-                    }
                     AuthorizationState::Ready => {
                         let is_last_used = imp
                             .recently_used_sessions
@@ -811,12 +801,12 @@ pub(crate) enum DatadirState {
 fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
     if !data_dir().exists() {
         // Create the Telegrand data directory if it does not exist and return.
-        fs::create_dir_all(&data_dir())?;
+        fs::create_dir_all(data_dir())?;
         return Ok(DatadirState::Empty);
     }
 
     // All directories with the result of reading the session info file.
-    let database_infos = fs::read_dir(&data_dir())?
+    let database_infos = fs::read_dir(data_dir())?
         // Remove entries with error
         .filter_map(|res| res.ok())
         // Only consider directories.
@@ -889,7 +879,7 @@ fn generate_database_dir_base_name() -> String {
 }
 
 /// Helper function for setting the online status of a client.
-async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
+async fn set_online(client_id: i32, value: bool) -> Result<(), types::Error> {
     functions::set_option(
         "online".to_string(),
         Some(enums::OptionValue::Boolean(types::OptionValueBoolean {
@@ -901,7 +891,7 @@ async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Err
 }
 
 /// Helper function to enable/disable animated emoji for a client.
-async fn disable_animated_emoji(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
+async fn disable_animated_emoji(client_id: i32, value: bool) -> Result<(), types::Error> {
     functions::set_option(
         "disable_animated_emoji".to_string(),
         Some(enums::OptionValue::Boolean(types::OptionValueBoolean {

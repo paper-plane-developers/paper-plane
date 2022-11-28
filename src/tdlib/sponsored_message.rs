@@ -63,23 +63,28 @@ glib::wrapper! {
 }
 
 impl SponsoredMessage {
-    pub(crate) async fn request(chat_id: i64, session: &Session) -> Result<Self, TdError> {
-        let enums::SponsoredMessage::SponsoredMessage(td_sponsored_message) =
-            functions::get_chat_sponsored_message(chat_id, session.client_id()).await?;
+    pub(crate) async fn request(chat_id: i64, session: &Session) -> Result<Option<Self>, TdError> {
+        let enums::SponsoredMessages::SponsoredMessages(td_sponsored_messages) =
+            functions::get_chat_sponsored_messages(chat_id, session.client_id()).await?;
 
-        let sponsored_message: SponsoredMessage = glib::Object::builder().build();
-        let imp = sponsored_message.imp();
+        // TODO: Support multiple sponsored messages
+        if let Some(td_sponsored_message) = td_sponsored_messages.messages.first() {
+            let sponsored_message: SponsoredMessage = glib::Object::builder().build();
+            let imp = sponsored_message.imp();
 
-        let content = BoxedMessageContent(td_sponsored_message.content);
-        let sponsor_chat = session
-            .chat_list()
-            .get(td_sponsored_message.sponsor_chat_id);
+            let content = BoxedMessageContent(td_sponsored_message.clone().content);
+            let sponsor_chat = session
+                .chat_list()
+                .get(td_sponsored_message.sponsor_chat_id);
 
-        imp.message_id.set(td_sponsored_message.message_id);
-        imp.content.set(content).unwrap();
-        imp.sponsor_chat.set(Some(&sponsor_chat));
+            imp.message_id.set(td_sponsored_message.message_id);
+            imp.content.set(content).unwrap();
+            imp.sponsor_chat.set(Some(&sponsor_chat));
 
-        Ok(sponsored_message)
+            Ok(Some(sponsored_message))
+        } else {
+            Ok(None)
+        }
     }
 
     pub(crate) fn message_id(&self) -> i64 {

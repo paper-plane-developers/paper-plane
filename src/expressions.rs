@@ -15,7 +15,7 @@ pub(crate) fn chat_display_name(chat_expression: &gtk::Expression) -> gtk::Expre
     let title_expression = chat_expression.chain_property::<Chat>("title");
     let is_deleted_expression = is_deleted_expression(chat_expression);
     gtk::ClosureExpression::with_callback(
-        &[chat_expression, &title_expression, &is_deleted_expression],
+        [chat_expression, &title_expression, &is_deleted_expression],
         |args| {
             let chat = args[1].get::<Chat>().unwrap();
             let title = args[2].get::<String>().unwrap();
@@ -55,7 +55,7 @@ pub(crate) fn user_display_name(user_expression: &gtk::Expression) -> gtk::Expre
 }
 
 pub(crate) fn is_deleted_expression(chat_expression: &gtk::Expression) -> gtk::Expression {
-    gtk::ClosureExpression::with_callback(&[chat_expression], |args| {
+    gtk::ClosureExpression::with_callback([chat_expression], |args| {
         let chat = args[1].get::<Chat>().unwrap();
         matches!(chat.type_(), ChatType::Private(user) if user.type_().0 == UserType::Deleted)
     })

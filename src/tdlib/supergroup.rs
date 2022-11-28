@@ -71,10 +71,14 @@ impl Supergroup {
         let supergroup: Supergroup = glib::Object::builder().build();
         let imp = supergroup.imp();
 
+        let username = td_supergroup
+            .usernames
+            .map(|u| u.editable_username)
+            .unwrap_or_default();
         let status = BoxedChatMemberStatus(td_supergroup.status);
 
         imp.id.set(td_supergroup.id);
-        imp.username.replace(td_supergroup.username);
+        imp.username.replace(username);
         imp.member_count.set(td_supergroup.member_count);
         imp.is_channel.set(td_supergroup.is_channel);
         imp.status.replace(Some(status));
@@ -83,7 +87,12 @@ impl Supergroup {
     }
 
     pub(crate) fn update(&self, td_supergroup: TdSupergroup) {
-        self.set_username(td_supergroup.username);
+        self.set_username(
+            td_supergroup
+                .usernames
+                .map(|u| u.editable_username)
+                .unwrap_or_default(),
+        );
         self.set_member_count(td_supergroup.member_count);
         self.set_status(BoxedChatMemberStatus(td_supergroup.status));
     }

@@ -253,11 +253,6 @@ impl Login {
                     }
                 }));
             }
-            AuthorizationState::WaitEncryptionKey(_) => {
-                spawn(clone!(@weak self as obj => async move {
-                    obj.send_encryption_key().await;
-                }));
-            }
             AuthorizationState::WaitPhoneNumber => {
                 if !imp.countries_retrieved.get() {
                     imp.countries_retrieved.set(true);
@@ -681,7 +676,7 @@ impl Login {
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let dialog = adw::MessageDialog::builder()
             .body_use_markup(true)
-            .body(&*self.imp().tos_text.borrow())
+            .body(&self.imp().tos_text.borrow())
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
@@ -748,16 +743,6 @@ impl Login {
         imp.previous_stack.set_visible_child_name("text");
         imp.next_stack.set_visible_child(&imp.next_label.get());
         imp.content.set_sensitive(true);
-    }
-
-    async fn send_encryption_key(&self) {
-        let imp = self.imp();
-        let client_id = imp.client_id.get();
-        let result = functions::check_database_encryption_key(String::new(), client_id).await;
-
-        if let Err(err) = result {
-            show_error_label(&imp.welcome_page_error_label, &err.message)
-        }
     }
 
     async fn send_phone_number(&self) {
@@ -946,7 +931,8 @@ impl Login {
 
                     spawn(clone!(@weak obj => async move {
                         let result = functions::delete_account(
-                            String::from("cloud password lost and not recoverable"),
+                            "Cloud password lost and not recoverable".into(),
+                            String::new(),
                             client_id,
                         )
                         .await;
