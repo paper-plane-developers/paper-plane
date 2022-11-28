@@ -186,7 +186,6 @@ impl Message {
             self.chat().session().client_id(),
         )
         .await
-        .map(|_| ())
     }
 
     pub(crate) fn id(&self) -> i64 {

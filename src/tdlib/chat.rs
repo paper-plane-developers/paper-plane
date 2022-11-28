@@ -493,7 +493,7 @@ impl Chat {
         self.notify("permissions");
     }
 
-    pub(crate) async fn toggle_is_pinned(&self) -> Result<enums::Ok, types::Error> {
+    pub(crate) async fn toggle_is_pinned(&self) -> Result<(), types::Error> {
         functions::toggle_chat_is_pinned(
             enums::ChatList::Main,
             self.id(),
@@ -503,7 +503,7 @@ impl Chat {
         .await
     }
 
-    pub(crate) async fn mark_as_read(&self) -> Result<enums::Ok, types::Error> {
+    pub(crate) async fn mark_as_read(&self) -> Result<(), types::Error> {
         if let Some(message) = self.last_message() {
             functions::view_messages(
                 self.id(),
@@ -519,7 +519,7 @@ impl Chat {
             .await
     }
 
-    pub(crate) async fn mark_as_unread(&self) -> Result<enums::Ok, types::Error> {
+    pub(crate) async fn mark_as_unread(&self) -> Result<(), types::Error> {
         functions::toggle_chat_is_marked_as_unread(self.id(), true, self.session().client_id())
             .await
     }

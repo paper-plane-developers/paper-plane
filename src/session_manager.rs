@@ -574,16 +574,6 @@ impl SessionManager {
                             }
                         });
                     }
-                    AuthorizationState::WaitEncryptionKey(_) => {
-                        spawn(async move {
-                            let result =
-                                functions::check_database_encryption_key(String::new(), client_id)
-                                    .await;
-                            if let Err(e) = result {
-                                panic!("Error on sending encryption key: {:?}", e);
-                            }
-                        });
-                    }
                     AuthorizationState::Ready => {
                         let is_last_used = imp
                             .recently_used_sessions
@@ -889,7 +879,7 @@ fn generate_database_dir_base_name() -> String {
 }
 
 /// Helper function for setting the online status of a client.
-async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
+async fn set_online(client_id: i32, value: bool) -> Result<(), types::Error> {
     functions::set_option(
         "online".to_string(),
         Some(enums::OptionValue::Boolean(types::OptionValueBoolean {
@@ -901,7 +891,7 @@ async fn set_online(client_id: i32, value: bool) -> Result<enums::Ok, types::Err
 }
 
 /// Helper function to enable/disable animated emoji for a client.
-async fn disable_animated_emoji(client_id: i32, value: bool) -> Result<enums::Ok, types::Error> {
+async fn disable_animated_emoji(client_id: i32, value: bool) -> Result<(), types::Error> {
     functions::set_option(
         "disable_animated_emoji".to_string(),
         Some(enums::OptionValue::Boolean(types::OptionValueBoolean {

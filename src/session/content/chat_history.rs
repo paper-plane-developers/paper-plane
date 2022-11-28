@@ -221,10 +221,16 @@ impl ChatHistory {
     fn request_sponsored_message(&self, session: &Session, chat_id: i64, list: &gio::ListStore) {
         spawn(clone!(@weak session, @weak list => async move {
             match SponsoredMessage::request(chat_id, &session).await {
-                Ok(sponsored_message) => list.append(&sponsored_message),
-                Err(e) => if e.code != 404 {
-                    log::warn!("Failed to request a SponsoredMessage: {:?}", e);
-                },
+                Ok(sponsored_message) => {
+                    if let Some(sponsored_message) = sponsored_message {
+                        list.append(&sponsored_message);
+                    }
+                }
+                Err(e) => {
+                    if e.code != 404 {
+                        log::warn!("Failed to request a SponsoredMessage: {:?}", e);
+                    }
+                }
             }
         }));
     }

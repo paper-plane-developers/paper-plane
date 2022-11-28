@@ -272,7 +272,7 @@ impl MessageRow {
                 MessageContent::MessageSticker(data)
                     if matches!(
                         data.sticker.r#type,
-                        StickerType::Static | StickerType::Mask(_)
+                        StickerType::Regular | StickerType::Mask
                     ) =>
                 {
                     self.update_specific_content::<_, MessageSticker>(message_.clone());

@@ -1,11 +1,11 @@
 {
     "app-id": "com.github.melix99.telegrand.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "42",
+    "runtime-version": "43",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable",
-        "org.freedesktop.Sdk.Extension.llvm13"
+        "org.freedesktop.Sdk.Extension.llvm14"
     ],
     "command": "telegrand",
     "finish-args": [
@@ -18,7 +18,7 @@
         "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm13/bin",
+        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm14/bin",
         "env": {
             "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": "clang",
             "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold",
@@ -49,28 +49,11 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.8.0"
+                    "tag": "4.8.2"
                 },
                 {
                     "type": "patch",
                     "path": "gtk-reversed-list.patch"
-                }
-            ]
-        },
-        {
-            "name": "libadwaita",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dintrospection=disabled",
-                "-Dvapi=false",
-                "-Dtests=false",
-                "-Dexamples=false"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
-                    "tag": "1.2.rc"
                 }
             ]
         },
@@ -93,8 +76,8 @@
                         "x86_64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.2-1/tdjson-x86_64.zip",
-                    "sha256": "2efddcf0a7d94321b08b449ab9ff7e5b1faabe7ee9f666ddc4d8a4f21cadbec4",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.8/tdjson-x86_64.zip",
+                    "sha256": "e161a30f5ddd82bf1e6d3f4fc75a9b4cd9410aa6f453de7f60cfc5b768408187",
                     "strip-components": 0
                 },
                 {
@@ -102,8 +85,8 @@
                         "aarch64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.2-1/tdjson-aarch64.zip",
-                    "sha256": "401ceae0a9b838d5b6e273ba9d84d64cf8b20842fbefc51d4856b3f34cc010d7",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.8/tdjson-aarch64.zip",
+                    "sha256": "a1c81a9b240fd0760748917e66997a7deba1752763d79303da9847c7fc7297fa",
                     "strip-components": 0
                 }
             ]
@@ -123,7 +106,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/tdlib/td.git",
-                    "commit": "3f54c301ead1bbe6529df4ecfb63c7f645dd181c"
+                    "commit": "bbe37ee594d97f3c7820dd23ebcd9c9b8dac51a0"
                 }
             ]
         },
