@@ -801,12 +801,12 @@ pub(crate) enum DatadirState {
 fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
     if !data_dir().exists() {
         // Create the Telegrand data directory if it does not exist and return.
-        fs::create_dir_all(&data_dir())?;
+        fs::create_dir_all(data_dir())?;
         return Ok(DatadirState::Empty);
     }
 
     // All directories with the result of reading the session info file.
-    let database_infos = fs::read_dir(&data_dir())?
+    let database_infos = fs::read_dir(data_dir())?
         // Remove entries with error
         .filter_map(|res| res.ok())
         // Only consider directories.

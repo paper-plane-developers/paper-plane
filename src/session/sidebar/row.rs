@@ -310,7 +310,7 @@ impl Row {
                     bindings.push(message_status_visibility_binding);
 
                     let message_status_icon_binding = gtk::ClosureExpression::new::<String>(
-                        &[
+                        [
                             last_message_expression.upcast_ref(),
                             Chat::this_expression("last-read-outbox-message-id").upcast_ref(),
                         ],
@@ -410,7 +410,7 @@ impl Row {
 
                 // Actions, draft message and last message bindings.
                 let message_prefix_binding = gtk::ClosureExpression::new::<String>(
-                    &[
+                    [
                         actions_expression.upcast_ref(),
                         draft_message_expression.upcast_ref(),
                         last_message_expression.upcast_ref(),
@@ -442,7 +442,7 @@ impl Row {
 
                 let thumbnail_paintable_binding =
                     gtk::ClosureExpression::new::<Option<gdk::Texture>>(
-                        &[
+                        [
                             actions_expression.upcast_ref(),
                             draft_message_expression.upcast_ref(),
                             last_message_expression.upcast_ref(),

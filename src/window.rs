@@ -136,7 +136,7 @@ impl Window {
     }
 
     pub(crate) fn session_manager(&self) -> &SessionManager {
-        &*self.imp().session_manager
+        &self.imp().session_manager
     }
 
     fn start_tdlib_thread(&self) {

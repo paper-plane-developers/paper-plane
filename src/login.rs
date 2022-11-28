@@ -676,7 +676,7 @@ impl Login {
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let dialog = adw::MessageDialog::builder()
             .body_use_markup(true)
-            .body(&*self.imp().tos_text.borrow())
+            .body(&self.imp().tos_text.borrow())
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
