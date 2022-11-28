@@ -28,7 +28,7 @@ use gettextrs::gettext;
 use glib::clone;
 use gtk::glib;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{MessageContent, StickerType};
+use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::session::components::Avatar;
 use crate::tdlib::{ChatType, Message, MessageForwardOrigin, MessageSender};
@@ -270,10 +270,7 @@ impl MessageRow {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
                 MessageContent::MessageSticker(data)
-                    if matches!(
-                        data.sticker.r#type,
-                        StickerType::Regular | StickerType::Mask
-                    ) =>
+                    if data.sticker.format == StickerFormat::Webp =>
                 {
                     self.update_specific_content::<_, MessageSticker>(message_.clone());
                 }
