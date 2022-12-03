@@ -36,6 +36,9 @@ pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new
 pub(crate) static TEMP_DIR: OnceCell<PathBuf> = OnceCell::new();
 
 fn main() -> glib::ExitCode {
+    gst::init().unwrap();
+    gst_gtk::plugin_register_static().expect("Failed to register gstgtk4 plugin");
+
     // Prepare i18n
     gettextrs::setlocale(LocaleCategory::LcAll, "");
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
@@ -90,7 +93,13 @@ fn main() -> glib::ExitCode {
         }
     }
 
-    app.run()
+    let res = app.run();
+
+    unsafe {
+        gst::deinit();
+    }
+
+    res
 }
 
 /// Global options for the application

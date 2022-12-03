@@ -10,6 +10,9 @@ anyhow = "1.0"
 ellipse = "0.2"
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
+gst = { version = "0.20", package = "gstreamer" }
+gst_gtk = { version = "0.10", package = "gst-plugin-gtk4", features = ["wayland", "x11glx", "x11egl"] }
+gst_video = { version = "0.20", package = "gstreamer-video" }
 gtk = { version = "0.6", package = "gtk4", features = ["gnome_43", "blueprint"] }
 image = { version = "0.24", default-features = false, features = ["jpeg", "webp"] }
 indexmap = "1.9"
