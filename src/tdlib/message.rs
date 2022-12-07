@@ -26,7 +26,7 @@ impl MessageSender {
                 MessageSender::User(user)
             }
             TdMessageSender::Chat(data) => {
-                let chat = session.chat_list().get(data.chat_id);
+                let chat = session.chat(data.chat_id);
                 MessageSender::Chat(chat)
             }
         }

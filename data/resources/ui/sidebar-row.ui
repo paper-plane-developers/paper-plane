@@ -21,7 +21,9 @@
     <child>
       <object class="SidebarAvatar">
         <binding name="item">
-          <lookup name="item">SidebarRow</lookup>
+          <lookup name="chat">
+            <lookup name="item">SidebarRow</lookup>
+          </lookup>
         </binding>
       </object>
     </child>

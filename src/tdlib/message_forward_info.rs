@@ -94,10 +94,10 @@ impl MessageForwardInfo {
             }
             TelegramMessageForwardOrigin::Chat(data) => MessageForwardOrigin::Chat {
                 // author_signature: data.author_signature,
-                chat: chat.session().chat_list().get(data.sender_chat_id),
+                chat: chat.session().chat(data.sender_chat_id),
             },
             TelegramMessageForwardOrigin::Channel(data) => {
-                let chat = chat.session().chat_list().get(data.chat_id);
+                let chat = chat.session().chat(data.chat_id);
                 // let message = {
                 //     let weak = WeakRef::new();
                 //     weak.set(chat.history().message_by_id(data.message_id).as_ref());

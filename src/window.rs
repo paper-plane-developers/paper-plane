@@ -187,7 +187,7 @@ impl Window {
             client.filter(|client| matches!(client.state, ClientState::LoggedIn))
         {
             let app = self.application().unwrap();
-            let chat = client.session.chat_list().get(chat_id);
+            let chat = client.session.chat(chat_id);
 
             for notification in notifications {
                 let notification_id = notification.id;

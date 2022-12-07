@@ -73,9 +73,7 @@ impl SponsoredMessage {
             let imp = sponsored_message.imp();
 
             let content = BoxedMessageContent(td_sponsored_message.clone().content);
-            let sponsor_chat = session
-                .chat_list()
-                .get(td_sponsored_message.sponsor_chat_id);
+            let sponsor_chat = session.chat(td_sponsored_message.sponsor_chat_id);
 
             imp.message_id.set(td_sponsored_message.message_id);
             imp.content.set(content).unwrap();

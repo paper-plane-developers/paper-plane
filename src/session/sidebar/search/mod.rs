@@ -210,7 +210,7 @@ impl Search {
                 .contains(&query.to_lowercase())
         {
             let own_user_id = session.me().id();
-            if let Some(own_chat) = session.chat_list().try_get(own_user_id) {
+            if let Some(own_chat) = session.try_chat(own_user_id) {
                 list.append(&Section::new(SectionType::Chats));
 
                 found_chat_ids.push(own_user_id);
@@ -231,7 +231,7 @@ impl Search {
                     .chat_ids
                     .iter()
                     .filter(|id| !found_chat_ids.contains(id))
-                    .map(|id| session.chat_list().get(*id))
+                    .map(|id| session.chat(*id))
                     .collect();
 
                 found_chat_ids.append(&mut data.chat_ids);
@@ -275,7 +275,7 @@ impl Search {
                             None
                         } else {
                             found_chat_ids.push(id);
-                            Some(session.chat_list().get(id))
+                            Some(session.chat(id))
                         }
                     })
                     .collect();
@@ -340,7 +340,7 @@ impl Search {
                         if found_chat_ids.contains(&id) {
                             None
                         } else {
-                            Some(session.chat_list().get(id))
+                            Some(session.chat(id))
                         }
                     })
                     .collect();
@@ -373,13 +373,12 @@ impl Search {
             }
         } else if let Some(user) = item.downcast_ref::<User>() {
             // Check if a private chat with this user already exists
-            if let Some(chat) = session.chat_list().try_get(user.id()) {
+            if let Some(chat) = session.try_chat(user.id()) {
                 sidebar.select_chat(chat);
             } else {
                 match functions::create_private_chat(user.id(), true, session.client_id()).await {
                     Ok(enums::Chat::Chat(data)) => {
-                        let chat = session.chat_list().get(data.id);
-                        sidebar.select_chat(chat);
+                        sidebar.select_chat(session.chat(data.id));
                     }
                     Err(e) => {
                         log::warn!("Failed to create private chat: {:?}", e);
