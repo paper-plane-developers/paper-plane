@@ -52,7 +52,9 @@ mod imp {
                 vec![
                     Signal::builder("activate").build(),
                     Signal::builder("paste-clipboard").build(),
-                    Signal::builder("emoji-button-press").build(),
+                    Signal::builder("emoji-button-press")
+                        .param_types([gtk::Image::static_type()])
+                        .build(),
                 ]
             });
             SIGNALS.as_ref()
