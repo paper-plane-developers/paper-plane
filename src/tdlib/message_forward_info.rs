@@ -90,7 +90,7 @@ impl MessageForwardInfo {
     pub(crate) fn from_td_object(forward_info: TelegramForwardInfo, chat: &Chat) -> Self {
         let origin = match forward_info.origin {
             TelegramMessageForwardOrigin::User(data) => {
-                MessageForwardOrigin::User(chat.session().user_list().get(data.sender_user_id))
+                MessageForwardOrigin::User(chat.session().user(data.sender_user_id))
             }
             TelegramMessageForwardOrigin::Chat(data) => MessageForwardOrigin::Chat {
                 // author_signature: data.author_signature,

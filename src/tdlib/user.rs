@@ -1,7 +1,7 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::Update;
+use tdlib::enums::UserStatus as TdUserStatus;
 use tdlib::types::User as TdUser;
 
 use crate::tdlib::{Avatar, BoxedUserStatus, BoxedUserType};
@@ -115,25 +115,23 @@ impl User {
         user
     }
 
-    pub(crate) fn handle_update(&self, update: Update) {
-        match update {
-            Update::User(data) => {
-                self.set_type(BoxedUserType(data.user.r#type));
-                self.set_first_name(data.user.first_name);
-                self.set_last_name(data.user.last_name);
-                self.set_username(
-                    data.user
-                        .usernames
-                        .map(|u| u.editable_username)
-                        .unwrap_or_default(),
-                );
-                self.set_phone_number(data.user.phone_number);
-                self.set_status(BoxedUserStatus(data.user.status));
-                self.set_avatar(data.user.profile_photo.map(Into::into));
-            }
-            Update::UserStatus(data) => self.set_status(BoxedUserStatus(data.status)),
-            _ => {}
-        }
+    pub(crate) fn update(&self, td_user: TdUser) {
+        self.set_type(BoxedUserType(td_user.r#type));
+        self.set_first_name(td_user.first_name);
+        self.set_last_name(td_user.last_name);
+        self.set_username(
+            td_user
+                .usernames
+                .map(|u| u.editable_username)
+                .unwrap_or_default(),
+        );
+        self.set_phone_number(td_user.phone_number);
+        self.set_status(BoxedUserStatus(td_user.status));
+        self.set_avatar(td_user.profile_photo.map(Into::into));
+    }
+
+    pub(crate) fn update_status(&self, status: TdUserStatus) {
+        self.set_status(BoxedUserStatus(status));
     }
 
     pub(crate) fn id(&self) -> i64 {

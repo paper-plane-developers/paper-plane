@@ -653,12 +653,7 @@ impl SessionManager {
         visible: bool,
     ) {
         let enums::User::User(me) = functions::get_me(client_id).await.unwrap();
-        self.add_logged_in_session_(
-            client_id,
-            &session,
-            &session.user_list().get(me.id),
-            visible,
-        );
+        self.add_logged_in_session_(client_id, &session, &session.user(me.id), visible);
     }
 
     async fn enable_notifications(&self, client_id: i32) {
