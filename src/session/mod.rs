@@ -19,7 +19,7 @@ use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
-    BasicGroup, BoxedScopeNotificationSettings, ChatList, SecretChat, Supergroup, User, UserList,
+    BasicGroup, BoxedScopeNotificationSettings, ChatList, SecretChat, Supergroup, User,
 };
 use crate::utils::{log_out, spawn};
 
@@ -40,7 +40,7 @@ mod imp {
         pub(super) database_info: OnceCell<BoxedDatabaseInfo>,
         pub(super) me: WeakRef<User>,
         pub(super) chat_list: OnceCell<ChatList>,
-        pub(super) user_list: OnceCell<UserList>,
+        pub(super) users: RefCell<HashMap<i64, User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, Supergroup>>,
         pub(super) secret_chats: RefCell<HashMap<i32, SecretChat>>,
@@ -107,9 +107,6 @@ mod imp {
                     glib::ParamSpecObject::builder::<ChatList>("chat-list")
                         .read_only()
                         .build(),
-                    glib::ParamSpecObject::builder::<UserList>("user-list")
-                        .read_only()
-                        .build(),
                     glib::ParamSpecBoxed::builder::<BoxedScopeNotificationSettings>(
                         "private-chats-notification-settings",
                     )
@@ -152,7 +149,6 @@ mod imp {
                 "database-info" => obj.database_info().to_value(),
                 "me" => self.me.upgrade().to_value(),
                 "chat-list" => obj.chat_list().to_value(),
-                "user-list" => obj.user_list().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
                 }
@@ -249,7 +245,7 @@ impl Session {
                 match secret_chats.entry(data.secret_chat.id) {
                     Entry::Occupied(entry) => entry.get().update(data.secret_chat),
                     Entry::Vacant(entry) => {
-                        let user = self.user_list().get(data.secret_chat.user_id);
+                        let user = self.user(data.secret_chat.user_id);
                         entry.insert(SecretChat::from_td_object(data.secret_chat, user));
                     }
                 }
@@ -269,11 +265,34 @@ impl Session {
                     self.chat_list().handle_update(update)
                 }
             }
-            Update::User(_) | Update::UserStatus(_) => {
-                self.user_list().handle_update(update);
+            Update::User(data) => {
+                let mut users = self.imp().users.borrow_mut();
+                match users.entry(data.user.id) {
+                    Entry::Occupied(entry) => entry.get().update(data.user),
+                    Entry::Vacant(entry) => {
+                        entry.insert(User::from_td_object(data.user, self));
+                    }
+                }
+            }
+            Update::UserStatus(data) => {
+                self.user(data.user_id).update_status(data.status);
             }
             _ => {}
         }
+    }
+
+    /// Returns the `User` of the specified id. Panics if the user is not present.
+    ///
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an id returned by TDLib, it should be expected that the
+    /// relative `User` exists in the list.
+    pub(crate) fn user(&self, user_id: i64) -> User {
+        self.imp()
+            .users
+            .borrow()
+            .get(&user_id)
+            .expect("Failed to get expected User")
+            .clone()
     }
 
     /// Returns the `BasicGroup` of the specified id. Panics if the basic group is not present.
@@ -412,10 +431,6 @@ impl Session {
 
     pub(crate) fn chat_list(&self) -> &ChatList {
         self.imp().chat_list.get_or_init(|| ChatList::new(self))
-    }
-
-    pub(crate) fn user_list(&self) -> &UserList {
-        self.imp().user_list.get_or_init(|| UserList::new(self))
     }
 
     fn private_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {

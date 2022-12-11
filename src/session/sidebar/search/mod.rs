@@ -315,7 +315,7 @@ impl Search {
                             None
                         } else {
                             found_chat_ids.push(id);
-                            Some(session.user_list().get(id))
+                            Some(session.user(id))
                         }
                     })
                     .collect();

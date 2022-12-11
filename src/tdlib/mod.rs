@@ -14,7 +14,6 @@ mod secret_chat;
 mod sponsored_message;
 mod supergroup;
 mod user;
-mod user_list;
 
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::basic_group::BasicGroup;
@@ -33,7 +32,6 @@ pub(crate) use self::secret_chat::SecretChat;
 pub(crate) use self::sponsored_message::SponsoredMessage;
 pub(crate) use self::supergroup::Supergroup;
 pub(crate) use self::user::User;
-pub(crate) use self::user_list::UserList;
 
 use gtk::glib;
 use tdlib::enums::{ChatMemberStatus, MessageContent, MessageSendingState, UserStatus, UserType};

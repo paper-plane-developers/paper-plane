@@ -105,14 +105,14 @@ pub(crate) fn message_content(message: &Message) -> String {
             let added_users = data
                 .member_user_ids
                 .into_iter()
-                .map(|id| chat.session().user_list().get(id))
+                .map(|id| chat.session().user(id))
                 .collect();
             message_chat_add_members(sender, &added_users)
         }
         MessageChatJoinByLink => message_chat_join_by_link(sender),
         MessageChatJoinByRequest => message_chat_join_by_request(sender),
         MessageChatDeleteMember(data) => {
-            let deleted_user = chat.session().user_list().get(data.user_id);
+            let deleted_user = chat.session().user(data.user_id);
             message_chat_delete_member(&deleted_user, sender)
         }
         MessagePinMessage(data) => message_pin_message(data.message_id, &chat, sender),

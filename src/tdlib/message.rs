@@ -22,7 +22,7 @@ impl MessageSender {
     pub(crate) fn from_td_object(sender: &TdMessageSender, session: &Session) -> Self {
         match sender {
             TdMessageSender::User(data) => {
-                let user = session.user_list().get(data.user_id);
+                let user = session.user(data.user_id);
                 MessageSender::User(user)
             }
             TdMessageSender::Chat(data) => {
