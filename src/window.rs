@@ -198,7 +198,9 @@ impl Window {
                         let body = strings::message_content(&message);
 
                         // Add the sender's name to the title if the chat is a group
-                        if let ChatType::BasicGroup(_) | ChatType::Supergroup(_) = chat.type_() {
+                        if matches!(chat.type_(), ChatType::BasicGroup(_))
+                            || matches!(chat.type_(), ChatType::Supergroup(s) if !s.is_channel())
+                        {
                             let sender_name = strings::message_sender(message.sender());
                             title.insert_str(0, &format!("{} – ", sender_name));
                         }
