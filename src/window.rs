@@ -193,19 +193,18 @@ impl Window {
                 let notification_id = notification.id;
                 let notification = match notification.r#type {
                     enums::NotificationType::NewMessage(data) => {
-                        let mut title = chat.title();
                         let message = Message::new(data.message, &chat);
-                        let body = strings::message_content(&message);
+                        let mut body = strings::message_content(&message);
 
-                        // Add the sender's name to the title if the chat is a group
+                        // Add the sender's name to the body if the chat is a group
                         if matches!(chat.type_(), ChatType::BasicGroup(_))
                             || matches!(chat.type_(), ChatType::Supergroup(s) if !s.is_channel())
                         {
                             let sender_name = strings::message_sender(message.sender());
-                            title.insert_str(0, &format!("{} – ", sender_name));
+                            body.insert_str(0, &(sender_name + ": "));
                         }
 
-                        let notification = gio::Notification::new(&title);
+                        let notification = gio::Notification::new(&chat.title());
                         notification.set_body(Some(&body));
 
                         Some(notification)
