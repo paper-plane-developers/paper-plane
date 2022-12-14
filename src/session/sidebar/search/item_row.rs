@@ -25,8 +25,9 @@ mod imp {
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="label">
-            <property name="ellipsize">end</property>
+          <object class="GtkInscription" id="label">
+            <property name="hexpand">True</property>
+            <property name="text-overflow">ellipsize-end</property>
           </object>
         </child>
       </template>
@@ -38,7 +39,7 @@ mod imp {
         #[template_child]
         pub(super) avatar: TemplateChild<Avatar>,
         #[template_child]
-        pub(super) label: TemplateChild<gtk::Label>,
+        pub(super) label: TemplateChild<gtk::Inscription>,
     }
 
     #[glib::object_subclass]
@@ -115,15 +116,15 @@ impl ItemRow {
 
         if let Some(chat) = item.as_ref().and_then(|i| i.downcast_ref::<Chat>()) {
             if chat.is_own_chat() {
-                imp.label.set_label(&gettext("Saved Messages"));
+                imp.label.set_text(Some(&gettext("Saved Messages")));
             } else {
-                imp.label.set_label(&chat.title());
+                imp.label.set_text(Some(&chat.title()));
             }
         } else if let Some(user) = item.as_ref().and_then(|i| i.downcast_ref::<User>()) {
             imp.label
-                .set_label(&(user.first_name() + " " + &user.last_name()));
+                .set_text(Some(&(user.first_name() + " " + &user.last_name())));
         } else {
-            imp.label.set_label("");
+            imp.label.set_text(Some(""));
 
             if let Some(ref item) = item {
                 log::warn!("Unexpected item type {:?}", item);
