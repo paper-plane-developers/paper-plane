@@ -10,7 +10,7 @@ anyhow = "1.0"
 ellipse = "0.2"
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.5", package = "gtk4", features = ["v4_6"] }
+gtk = { version = "0.5", package = "gtk4", features = ["v4_8"] }
 image = { version = "0.24", default-features = false, features = ["webp"] }
 indexmap = "1.9"
 locale_config = "0.3"

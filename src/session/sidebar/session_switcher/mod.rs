@@ -93,6 +93,7 @@ impl SessionSwitcher {
         // so only bind and unbind are connected.
         let factory = &gtk::SignalListItemFactory::new();
         factory.connect_bind(clone!(@weak this_session => move |_, list_item| {
+            let list_item = list_item.downcast_ref::<gtk::ListItem>().unwrap();
             list_item.set_selectable(false);
             let child = list_item
                 .item()
@@ -118,6 +119,7 @@ impl SessionSwitcher {
         }));
 
         factory.connect_unbind(|_, list_item| {
+            let list_item = list_item.downcast_ref::<gtk::ListItem>().unwrap();
             list_item.set_child(gtk::Widget::NONE);
         });
 
