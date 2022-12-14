@@ -34,11 +34,9 @@
           <object class="GtkBox">
             <property name="spacing">6</property>
             <child>
-              <object class="GtkLabel" id="title_label">
+              <object class="GtkInscription" id="title_label">
                 <property name="hexpand">True</property>
-                <property name="ellipsize">end</property>
-                <property name="single-line-mode">True</property>
-                <property name="xalign">0</property>
+                <property name="text-overflow">ellipsize-end</property>
               </object>
             </child>
             <child>
@@ -84,12 +82,9 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="bottom_label">
+                  <object class="GtkInscription" id="bottom_label">
                     <property name="hexpand">True</property>
-                    <property name="ellipsize">end</property>
-                    <property name="single-line-mode">True</property>
-                    <property name="use-markup">True</property>
-                    <property name="xalign">0</property>
+                    <property name="text-overflow">ellipsize-end</property>
                     <style>
                       <class name="message"/>
                     </style>

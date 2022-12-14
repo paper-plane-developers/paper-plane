@@ -10,10 +10,9 @@
     <child>
       <object class="GtkOverlay" id="overlay">
         <child type="overlay">
-          <object class="GtkLabel" id="placeholder">
+          <object class="GtkInscription" id="placeholder">
             <property name="can-target">False</property>
-            <property name="focusable">False</property>
-            <property name="halign">start</property>
+            <property name="text-overflow">ellipsize-end</property>
             <style>
               <class name="dim-label"/>
             </style>

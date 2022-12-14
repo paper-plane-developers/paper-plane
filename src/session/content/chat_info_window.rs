@@ -26,7 +26,7 @@ mod imp {
         #[template_child]
         pub(super) name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) subtitle_label: TemplateChild<gtk::Label>,
+        pub(super) subtitle_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) info_list: TemplateChild<gtk::ListBox>,
     }
@@ -128,7 +128,7 @@ impl ChatInfoWindow {
 
         // Online status or bot label
         if let UserType::Bot(_) = user.type_().0 {
-            imp.subtitle_label.set_label(&gettext("bot"));
+            imp.subtitle_label.set_text(Some(&gettext("bot")));
         } else {
             User::this_expression("status")
                 .chain_closure::<String>(closure!(
@@ -136,7 +136,7 @@ impl ChatInfoWindow {
                         strings::user_status(&status.0)
                     }
                 ))
-                .bind(&*imp.subtitle_label, "label", Some(user));
+                .bind(&*imp.subtitle_label, "text", Some(user));
         }
 
         // Phone number
@@ -177,7 +177,7 @@ impl ChatInfoWindow {
                     &[("num", &member_count.to_string())],
                 )
             }))
-            .bind(&*imp.subtitle_label, "label", Some(basic_group));
+            .bind(&*imp.subtitle_label, "text", Some(basic_group));
 
         self.update_info_list_visibility();
 
@@ -226,7 +226,7 @@ impl ChatInfoWindow {
                     &[("num", &member_count.to_string())],
                 )
             }))
-            .bind(&*imp.subtitle_label, "label", Some(supergroup));
+            .bind(&*imp.subtitle_label, "text", Some(supergroup));
 
         // Link
         if !supergroup.username().is_empty() {

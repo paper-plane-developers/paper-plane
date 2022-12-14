@@ -32,7 +32,7 @@ mod imp {
         #[template_child]
         pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub(super) title_label: TemplateChild<gtk::Label>,
+        pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) message_status_icon: TemplateChild<gtk::Image>,
         #[template_child]
@@ -42,7 +42,7 @@ mod imp {
         #[template_child]
         pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
-        pub(super) bottom_label: TemplateChild<gtk::Label>,
+        pub(super) bottom_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) status_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -205,7 +205,7 @@ impl Row {
         // Chat title
         expressions::chat_display_name(&item_expression).bind(
             &*imp.title_label,
-            "label",
+            "text",
             Some(self),
         );
 
@@ -224,7 +224,7 @@ impl Row {
         // User name
         expressions::user_display_name(&item_expression).bind(
             &*imp.title_label,
-            "label",
+            "text",
             Some(self),
         );
 
@@ -498,7 +498,7 @@ impl Row {
                             .unwrap_or_default()
                     }),
                 )
-                .bind(&*imp.bottom_label, "label", Some(chat));
+                .bind(&*imp.bottom_label, "markup", Some(chat));
                 bindings.push(message_binding);
 
                 // Unread count css classes binding

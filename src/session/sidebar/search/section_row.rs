@@ -15,10 +15,9 @@ mod imp {
     <interface>
       <template class="SidebarSearchSectionRow" parent="GtkWidget">
         <child>
-          <object class="GtkLabel" id="label">
-            <property name="ellipsize">end</property>
-            <property name="xalign">0</property>
+          <object class="GtkInscription" id="label">
             <property name="hexpand">True</property>
+            <property name="text-overflow">ellipsize-end</property>
             <style>
               <class name="heading"/>
             </style>
@@ -31,7 +30,7 @@ mod imp {
         pub(super) section_type: Cell<SectionType>,
         pub(super) suffix: RefCell<Option<gtk::Widget>>,
         #[template_child]
-        pub(super) label: TemplateChild<gtk::Label>,
+        pub(super) label: TemplateChild<gtk::Inscription>,
     }
 
     #[glib::object_subclass]
@@ -135,13 +134,13 @@ impl SectionRow {
 
         match self.section_type() {
             SectionType::Chats => {
-                imp.label.set_label(&gettext("Chats"));
+                imp.label.set_text(Some(&gettext("Chats")));
             }
             SectionType::Global => {
-                imp.label.set_label(&gettext("Global Search"));
+                imp.label.set_text(Some(&gettext("Global Search")));
             }
             SectionType::Recent => {
-                imp.label.set_label(&gettext("Recent"));
+                imp.label.set_text(Some(&gettext("Recent")));
 
                 let button = gtk::Button::builder()
                     .icon_name("clear-symbolic")

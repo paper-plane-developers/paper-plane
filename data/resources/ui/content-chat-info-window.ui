@@ -49,9 +49,9 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="subtitle_label">
-                        <property name="wrap">True</property>
-                        <property name="justify">center</property>
+                      <object class="GtkInscription" id="subtitle_label">
+                        <property name="text-overflow">ellipsize-middle</property>
+                        <property name="xalign">0.5</property>
                       </object>
                     </child>
                     <child>

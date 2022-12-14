@@ -24,7 +24,7 @@ mod imp {
         #[template_child]
         pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
-        pub(super) placeholder: TemplateChild<gtk::Label>,
+        pub(super) placeholder: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) emoji_button: TemplateChild<gtk::Image>,
         #[template_child]
@@ -105,7 +105,7 @@ mod imp {
             let obj = self.obj();
 
             self.placeholder
-                .connect_label_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
+                .connect_text_notify(clone!(@weak obj => move |_| obj.notify("placeholder-text")));
 
             // Handle the enter key to emit the "activate" signal if neither the "ctrl" nor the
             // "shift" modifier are pressed at the same time.
@@ -248,11 +248,11 @@ impl MessageEntry {
         self.connect_notify_local(Some("formatted-text"), f)
     }
 
-    pub(crate) fn placeholder_text(&self) -> glib::GString {
+    pub(crate) fn placeholder_text(&self) -> Option<glib::GString> {
         self.imp().placeholder.text()
     }
 
-    pub(crate) fn set_placeholder_text(&self, placeholder_text: &str) {
+    pub(crate) fn set_placeholder_text(&self, placeholder_text: Option<&str>) {
         self.imp().placeholder.set_text(placeholder_text);
     }
 
