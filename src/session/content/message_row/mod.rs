@@ -26,8 +26,8 @@ use self::video::MessageVideo;
 use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::glib;
 use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::session::components::Avatar;
@@ -42,7 +42,19 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
-    #[derive(Debug, Default)]
+    #[derive(Debug, Default, CompositeTemplate)]
+    #[template(string = r#"
+    <interface>
+      <template class="ContentMessageRow" parent="GtkWidget">
+        <child>
+          <object class="GtkGestureClick">
+            <property name="button">1</property>
+            <signal name="released" handler="on_released" swapped="true"/>
+          </object>
+        </child>
+      </template>
+    </interface>
+    "#)]
     pub(crate) struct MessageRow {
         /// A `Message` or `SponsoredMessage`
         pub(super) message: RefCell<Option<glib::Object>>,
@@ -57,6 +69,9 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
+            klass.bind_template();
+            klass.bind_template_instance_callbacks();
+
             klass.install_action("message-row.reply", None, move |widget, _, _| {
                 widget.reply()
             });
@@ -66,6 +81,10 @@ mod imp {
             klass.install_action("message-row.delete", None, move |widget, _, _| {
                 widget.show_delete_dialog(false)
             });
+        }
+
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
+            obj.init_template();
         }
     }
 
@@ -116,6 +135,7 @@ glib::wrapper! {
         @extends gtk::Widget;
 }
 
+#[gtk::template_callbacks]
 impl MessageRow {
     pub(crate) fn new(message: &glib::Object) -> Self {
         let layout_manager = gtk::BoxLayout::builder().spacing(SPACING).build();
@@ -123,6 +143,13 @@ impl MessageRow {
             .property("layout-manager", layout_manager)
             .property("message", message)
             .build()
+    }
+
+    #[template_callback]
+    fn on_released(&self, n_press: i32, _x: f64, _y: f64) {
+        if n_press == 2 && self.can_reply_to_message() {
+            self.reply();
+        }
     }
 
     fn reply(&self) {
