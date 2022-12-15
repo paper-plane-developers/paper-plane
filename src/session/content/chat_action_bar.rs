@@ -7,7 +7,6 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{ChatAction, ChatMemberStatus, InputMessageContent, UserType};
 use tdlib::{functions, types};
 
-use crate::expressions;
 use crate::session::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
 use crate::tdlib::{
@@ -15,6 +14,7 @@ use crate::tdlib::{
     BoxedUserType, Chat, ChatType, Supergroup, User,
 };
 use crate::utils::{spawn, temp_dir};
+use crate::{expressions, strings};
 
 const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
 
@@ -28,8 +28,15 @@ mod imp {
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
+        pub(super) reply_to_message_id: Cell<i64>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
+        #[template_child]
+        pub(super) top_bar_revealer: TemplateChild<gtk::Revealer>,
+        #[template_child]
+        pub(super) top_bar_sender_label: TemplateChild<gtk::Inscription>,
+        #[template_child]
+        pub(super) top_bar_message_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) message_entry: TemplateChild<MessageEntry>,
         #[template_child]
@@ -48,7 +55,15 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.set_layout_manager_type::<gtk::BoxLayout>();
 
+            klass.install_action(
+                "chat-action-bar.cancel-action",
+                None,
+                move |widget, _, _| {
+                    widget.set_reply_to_message_id(0);
+                },
+            );
             klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
                 spawn(clone!(@weak widget => async move {
                     widget.select_file().await;
@@ -73,9 +88,14 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::builder::<Chat>("chat")
-                    .explicit_notify()
-                    .build()]
+                vec![
+                    glib::ParamSpecObject::builder::<Chat>("chat")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecInt64::builder("reply-to-message-id")
+                        .explicit_notify()
+                        .build(),
+                ]
             });
             PROPERTIES.as_ref()
         }
@@ -85,6 +105,7 @@ mod imp {
 
             match pspec.name() {
                 "chat" => obj.set_chat(value.get().unwrap()),
+                "reply-to-message-id" => obj.set_reply_to_message_id(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -94,6 +115,7 @@ mod imp {
 
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
+                "reply-to-message-id" => obj.reply_to_message_id().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -102,6 +124,11 @@ mod imp {
             self.parent_constructed();
 
             let obj = self.obj();
+
+            obj.layout_manager()
+                .and_then(|l| l.downcast::<gtk::BoxLayout>().ok())
+                .unwrap()
+                .set_orientation(gtk::Orientation::Vertical);
 
             self.message_entry.connect_formatted_text_notify(
                 clone!(@weak obj => move |message_entry, _| {
@@ -168,6 +195,40 @@ impl ChatActionBar {
         glib::Object::builder().build()
     }
 
+    fn update_top_bar(&self) {
+        let imp = self.imp();
+        let reply_to_message_id = imp.reply_to_message_id.get();
+
+        if reply_to_message_id == 0 {
+            imp.top_bar_sender_label.set_text(None);
+            imp.top_bar_message_label.set_text(None);
+            imp.top_bar_revealer.set_reveal_child(false);
+        } else {
+            if let Some(message) = self
+                .chat()
+                .and_then(|c| c.history().message_by_id(reply_to_message_id))
+            {
+                // TODO: Make these labels auto update
+                imp.top_bar_sender_label
+                    .set_text(Some(&strings::message_sender(message.sender())));
+                imp.top_bar_message_label
+                    .set_text(Some(&strings::message_content(&message)));
+            } else {
+                // TODO: Actually try using TDLib to retrieve the message before showing this
+                imp.top_bar_sender_label.set_text(Some(&gettext("Unknown")));
+                imp.top_bar_message_label
+                    .set_text(Some(&gettext("Deleted Message")));
+            }
+
+            imp.top_bar_revealer.set_reveal_child(true);
+        }
+    }
+
+    fn reset(&self) {
+        self.imp().message_entry.set_formatted_text(None);
+        self.set_reply_to_message_id(0);
+    }
+
     async fn compose_text_message(&self) -> Option<InputMessageContent> {
         if let Some(formatted_text) = self.imp().message_entry.as_markdown().await {
             let content = types::InputMessageText {
@@ -230,15 +291,23 @@ impl ChatActionBar {
             if let Some(message) = self.compose_text_message().await {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
+                let reply_to_message_id = self.imp().reply_to_message_id.get();
 
                 // Send the message
-                let result = functions::send_message(chat_id, 0, 0, None, message, client_id).await;
+                let result = functions::send_message(
+                    chat_id,
+                    0,
+                    reply_to_message_id,
+                    None,
+                    message,
+                    client_id,
+                )
+                .await;
                 if let Err(e) = result {
                     log::warn!("Error sending a message: {:?}", e);
                 }
 
-                // Reset message entry
-                self.imp().message_entry.set_formatted_text(None);
+                self.reset();
             }
         }
     }
@@ -247,11 +316,12 @@ impl ChatActionBar {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
+            let reply_to_message_id = self.imp().reply_to_message_id.get();
             let draft_message =
                 self.compose_text_message()
                     .await
                     .map(|message| types::DraftMessage {
-                        reply_to_message_id: 0,
+                        reply_to_message_id,
                         date: glib::DateTime::now_local().unwrap().to_unix() as i32,
                         input_message_text: message,
                     });
@@ -265,22 +335,21 @@ impl ChatActionBar {
         }
     }
 
-    fn load_draft_message(&self, message: Option<BoxedDraftMessage>) {
-        let formatted_text = if let Some(message) = message {
-            if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
-                Some(BoxedFormattedText(content.text))
-            } else {
-                log::warn!(
-                    "Unexpected draft message type: {:?}",
-                    message.0.input_message_text
-                );
-                None
-            }
-        } else {
-            None
-        };
+    fn load_draft_message(&self, message: BoxedDraftMessage) {
+        let imp = self.imp();
 
-        self.imp().message_entry.set_formatted_text(formatted_text);
+        if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
+            imp.message_entry
+                .set_formatted_text(Some(BoxedFormattedText(content.text)));
+        } else {
+            log::warn!(
+                "Unexpected draft message type: {:?}",
+                message.0.input_message_text
+            );
+            imp.message_entry.set_formatted_text(None);
+        }
+
+        self.set_reply_to_message_id(message.0.reply_to_message_id);
     }
 
     async fn send_chat_action(&self, action: ChatAction) {
@@ -367,7 +436,11 @@ impl ChatActionBar {
         }
 
         if let Some(ref chat) = chat {
-            self.load_draft_message(chat.draft_message());
+            if let Some(draft_message) = chat.draft_message() {
+                self.load_draft_message(draft_message);
+            } else {
+                self.reset();
+            }
 
             imp.chat_action_in_cooldown.set(false);
 
@@ -486,6 +559,21 @@ impl ChatActionBar {
 
         imp.chat.replace(chat);
         self.notify("chat");
+    }
+
+    pub(crate) fn reply_to_message_id(&self) -> i64 {
+        self.imp().reply_to_message_id.get()
+    }
+
+    pub(crate) fn set_reply_to_message_id(&self, reply_to_message_id: i64) {
+        if self.reply_to_message_id() == reply_to_message_id {
+            return;
+        }
+
+        self.imp().reply_to_message_id.set(reply_to_message_id);
+        self.update_top_bar();
+
+        self.notify("reply-to-message-id");
     }
 }
 

@@ -1,49 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ContentChatActionBar" parent="GtkWidget">
-    <property name="layout-manager">
-      <object class="GtkBoxLayout"/>
-    </property>
-    <style>
-      <class name="toolbar"/>
-    </style>
     <child>
-      <object class="GtkButton" id="select_file_button">
-        <property name="valign">end</property>
-        <property name="action-name">chat-action-bar.select-file</property>
-        <property name="icon-name">mail-attachment-symbolic</property>
+      <object class="GtkRevealer" id="top_bar_revealer">
+        <property name="child">
+          <object class="GtkBox">
+            <style>
+              <class name="toolbar"/>
+            </style>
+            <child>
+              <object class="GtkImage">
+                <property name="icon-name">mail-reply-sender</property>
+                <!-- Set the same width as the other buttons -->
+                <property name="width-request">34</property>
+                <style>
+                  <class name="accent"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="width-request">2</property>
+                <!-- Make the overall taken space 3px, so that the next box
+                     is perfectly aligned with the message entry placeholder -->
+                <property name="margin-end">1</property>
+                <style>
+                  <class name="opaque-accent"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="hexpand">True</property>
+                <property name="valign">center</property>
+                <child>
+                  <object class="GtkInscription" id="top_bar_sender_label">
+                    <property name="text-overflow">ellipsize-end</property>
+                    <style>
+                      <class name="caption-heading"/>
+                      <class name="accent"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkInscription" id="top_bar_message_label">
+                    <property name="text-overflow">ellipsize-end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">chat-action-bar.cancel-action</property>
+                <property name="icon-name">big-x</property>
+                <style>
+                  <class name="circular"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
         <style>
-          <class name="circular"/>
+          <class name="toolbar"/>
         </style>
-      </object>
-    </child>
-    <child>
-      <object class="MessageEntry" id="message_entry">
-        <property name="placeholder-text" translatable="yes">Message</property>
-        <property name="hexpand">True</property>
-        <binding name="chat">
-          <lookup name="chat">ContentChatActionBar</lookup>
-        </binding>
-      </object>
-    </child>
-    <child>
-      <object class="GtkButton" id="send_message_button">
-        <property name="valign">end</property>
-        <property name="action-name">chat-action-bar.send-text-message</property>
-        <property name="icon-name">send-symbolic</property>
-        <style>
-          <class name="circular"/>
-          <class name="suggested-action"/>
-        </style>
-      </object>
-    </child>
-    <child>
-      <object class="GtkLabel" id="restriction_label">
-        <property name="height-request">48</property>
-        <property name="hexpand">True</property>
-        <property name="wrap">True</property>
-        <property name="wrap-mode">word-char</property>
-        <property name="justify">center</property>
+        <child>
+          <object class="GtkButton" id="select_file_button">
+            <property name="valign">end</property>
+            <property name="action-name">chat-action-bar.select-file</property>
+            <property name="icon-name">mail-attachment-symbolic</property>
+            <style>
+              <class name="circular"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="MessageEntry" id="message_entry">
+            <property name="placeholder-text" translatable="yes">Message</property>
+            <property name="hexpand">True</property>
+            <binding name="chat">
+              <lookup name="chat">ContentChatActionBar</lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="send_message_button">
+            <property name="valign">end</property>
+            <property name="action-name">chat-action-bar.send-text-message</property>
+            <property name="icon-name">send-symbolic</property>
+            <style>
+              <class name="circular"/>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="restriction_label">
+            <property name="height-request">48</property>
+            <property name="hexpand">True</property>
+            <property name="wrap">True</property>
+            <property name="wrap-mode">word-char</property>
+            <property name="justify">center</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>

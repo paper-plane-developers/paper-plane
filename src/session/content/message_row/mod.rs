@@ -31,7 +31,7 @@ use gtk::subclass::prelude::*;
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::session::components::Avatar;
-use crate::tdlib::{ChatType, Message, MessageForwardOrigin, MessageSender};
+use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
@@ -57,6 +57,9 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
+            klass.install_action("message-row.reply", None, move |widget, _, _| {
+                widget.reply()
+            });
             klass.install_action("message-row.revoke-delete", None, move |widget, _, _| {
                 widget.show_delete_dialog(true)
             });
@@ -120,6 +123,13 @@ impl MessageRow {
             .property("layout-manager", layout_manager)
             .property("message", message)
             .build()
+    }
+
+    fn reply(&self) {
+        if let Ok(message) = self.message().downcast::<Message>() {
+            self.activate_action("chat-history.reply", Some(&message.id().to_variant()))
+                .unwrap();
+        }
     }
 
     fn show_delete_dialog(&self, revoke: bool) {
@@ -232,15 +242,28 @@ impl MessageRow {
             }
         }
 
-        self.update_actions(&message);
         self.update_content(message.clone());
 
         imp.message.replace(Some(message));
+
+        // TODO: Update actions when needed (e.g. chat permissions change)
+        self.update_actions();
+
         self.notify("message");
     }
 
-    fn update_actions(&self, message: &glib::Object) {
-        if let Some(message) = message.downcast_ref::<Message>() {
+    fn can_reply_to_message(&self) -> bool {
+        if let Some(message) = self.message().downcast_ref::<Message>() {
+            can_send_messages_in_chat(&message.chat())
+        } else {
+            false
+        }
+    }
+
+    fn update_actions(&self) {
+        self.action_set_enabled("message-row.reply", self.can_reply_to_message());
+
+        if let Some(message) = self.message().downcast_ref::<Message>() {
             self.action_set_enabled("message-row.delete", message.can_be_deleted_only_for_self());
             self.action_set_enabled(
                 "message-row.revoke-delete",
@@ -327,4 +350,25 @@ impl MessageRow {
             }
         }
     }
+}
+
+fn can_send_messages_in_chat(chat: &Chat) -> bool {
+    use tdlib::enums::ChatMemberStatus::*;
+    let member_status = match chat.type_() {
+        ChatType::Supergroup(supergroup) => Some(supergroup.status()),
+        ChatType::BasicGroup(supergroup) => Some(supergroup.status()),
+        _ => None,
+    };
+    let can_send_message_as_member = member_status
+        .map(|s| match s.0 {
+            Creator(_) => true,
+            Administrator(_) => true,
+            Member => true,
+            Restricted(data) => data.permissions.can_send_messages,
+            Left => false,
+            Banned(_) => false,
+        })
+        .unwrap_or(true);
+
+    chat.permissions().0.can_send_messages && can_send_message_as_member
 }
