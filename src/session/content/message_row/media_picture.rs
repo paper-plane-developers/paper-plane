@@ -115,7 +115,7 @@ mod imp {
                     MAX_HEIGHT
                 } else {
                     let natural = (for_size as f64 / self.aspect_ratio.get()) as i32;
-                    natural.max(minimum).min(MAX_HEIGHT)
+                    natural.clamp(minimum, MAX_HEIGHT)
                 };
 
                 (minimum, natural, -1, -1)
