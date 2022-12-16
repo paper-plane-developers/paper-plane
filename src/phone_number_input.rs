@@ -178,7 +178,7 @@ mod imp {
                             let analysis = model.analyze_for_calling_code(
                                 number
                                     .chars()
-                                    .skip(text_pos_start as usize + 1)
+                                    .skip(text_pos_start + 1)
                                     .collect::<String>()
                                     .trim_end(),
                                 obj.preferred_country_code().as_deref(),
@@ -205,7 +205,7 @@ mod imp {
                     }
                     imp.combo_row.unblock_signal(combo_row_handler);
 
-                    imp.calling_code_bounds.set((text_pos_start as usize, text_pos_end as usize));
+                    imp.calling_code_bounds.set((text_pos_start, text_pos_end as usize));
                 }
             }))));
 
