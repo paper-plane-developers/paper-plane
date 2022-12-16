@@ -6,6 +6,13 @@
   font-size: 0.8em;
 }
 
+/* NOTE: The default `accent` class produces
+ * a semi-transparent color with separators.
+ */
+.opaque-accent {
+  background: @accent_color;
+}
+
 /* Account switcher */
 #account-switcher row {
   border-radius: 10px;

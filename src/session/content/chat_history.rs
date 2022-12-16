@@ -67,6 +67,17 @@ mod imp {
             klass.install_action("chat-history.scroll-down", None, move |widget, _, _| {
                 widget.scroll_down();
             });
+            klass.install_action(
+                "chat-history.reply",
+                Some("x"),
+                move |widget, _, variant| {
+                    let message_id = variant.and_then(|v| v.get()).unwrap();
+                    widget
+                        .imp()
+                        .chat_action_bar
+                        .set_reply_to_message_id(message_id);
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

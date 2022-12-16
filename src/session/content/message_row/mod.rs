@@ -26,12 +26,12 @@ use self::video::MessageVideo;
 use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::glib;
 use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::session::components::Avatar;
-use crate::tdlib::{ChatType, Message, MessageForwardOrigin, MessageSender};
+use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
@@ -42,7 +42,19 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
-    #[derive(Debug, Default)]
+    #[derive(Debug, Default, CompositeTemplate)]
+    #[template(string = r#"
+    <interface>
+      <template class="ContentMessageRow" parent="GtkWidget">
+        <child>
+          <object class="GtkGestureClick">
+            <property name="button">1</property>
+            <signal name="released" handler="on_released" swapped="true"/>
+          </object>
+        </child>
+      </template>
+    </interface>
+    "#)]
     pub(crate) struct MessageRow {
         /// A `Message` or `SponsoredMessage`
         pub(super) message: RefCell<Option<glib::Object>>,
@@ -57,12 +69,22 @@ mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
+            klass.bind_template();
+            klass.bind_template_instance_callbacks();
+
+            klass.install_action("message-row.reply", None, move |widget, _, _| {
+                widget.reply()
+            });
             klass.install_action("message-row.revoke-delete", None, move |widget, _, _| {
                 widget.show_delete_dialog(true)
             });
             klass.install_action("message-row.delete", None, move |widget, _, _| {
                 widget.show_delete_dialog(false)
             });
+        }
+
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
+            obj.init_template();
         }
     }
 
@@ -113,6 +135,7 @@ glib::wrapper! {
         @extends gtk::Widget;
 }
 
+#[gtk::template_callbacks]
 impl MessageRow {
     pub(crate) fn new(message: &glib::Object) -> Self {
         let layout_manager = gtk::BoxLayout::builder().spacing(SPACING).build();
@@ -120,6 +143,20 @@ impl MessageRow {
             .property("layout-manager", layout_manager)
             .property("message", message)
             .build()
+    }
+
+    #[template_callback]
+    fn on_released(&self, n_press: i32, _x: f64, _y: f64) {
+        if n_press == 2 && self.can_reply_to_message() {
+            self.reply();
+        }
+    }
+
+    fn reply(&self) {
+        if let Ok(message) = self.message().downcast::<Message>() {
+            self.activate_action("chat-history.reply", Some(&message.id().to_variant()))
+                .unwrap();
+        }
     }
 
     fn show_delete_dialog(&self, revoke: bool) {
@@ -232,15 +269,28 @@ impl MessageRow {
             }
         }
 
-        self.update_actions(&message);
         self.update_content(message.clone());
 
         imp.message.replace(Some(message));
+
+        // TODO: Update actions when needed (e.g. chat permissions change)
+        self.update_actions();
+
         self.notify("message");
     }
 
-    fn update_actions(&self, message: &glib::Object) {
-        if let Some(message) = message.downcast_ref::<Message>() {
+    fn can_reply_to_message(&self) -> bool {
+        if let Some(message) = self.message().downcast_ref::<Message>() {
+            can_send_messages_in_chat(&message.chat())
+        } else {
+            false
+        }
+    }
+
+    fn update_actions(&self) {
+        self.action_set_enabled("message-row.reply", self.can_reply_to_message());
+
+        if let Some(message) = self.message().downcast_ref::<Message>() {
             self.action_set_enabled("message-row.delete", message.can_be_deleted_only_for_self());
             self.action_set_enabled(
                 "message-row.revoke-delete",
@@ -327,4 +377,25 @@ impl MessageRow {
             }
         }
     }
+}
+
+fn can_send_messages_in_chat(chat: &Chat) -> bool {
+    use tdlib::enums::ChatMemberStatus::*;
+    let member_status = match chat.type_() {
+        ChatType::Supergroup(supergroup) => Some(supergroup.status()),
+        ChatType::BasicGroup(supergroup) => Some(supergroup.status()),
+        _ => None,
+    };
+    let can_send_message_as_member = member_status
+        .map(|s| match s.0 {
+            Creator(_) => true,
+            Administrator(_) => true,
+            Member => true,
+            Restricted(data) => data.permissions.can_send_messages,
+            Left => false,
+            Banned(_) => false,
+        })
+        .unwrap_or(true);
+
+    chat.permissions().0.can_send_messages && can_send_message_as_member
 }

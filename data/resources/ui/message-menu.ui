@@ -3,6 +3,11 @@
   <menu id="model">
     <section>
       <item>
+        <attribute name="label" translatable="yes">_Reply</attribute>
+        <attribute name="action">message-row.reply</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+      <item>
         <attribute name="label" translatable="yes">Delete for _Everyone</attribute>
         <attribute name="action">message-row.revoke-delete</attribute>
         <attribute name="hidden-when">action-disabled</attribute>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/github/melix99/telegrand/">
+    <file preprocess="xml-stripblanks">icons/scalable/actions/big-x-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/clear-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/send-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-failed-symbolic.svg</file>
