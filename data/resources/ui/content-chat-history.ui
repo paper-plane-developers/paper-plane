@@ -5,22 +5,31 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
-          <object class="AdwHeaderBar">
-            <property name="show-start-title-buttons" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
-            <child type="start">
-              <object class="GtkButton">
+          <object class="GtkOverlay">
+            <child>
+              <object class="AdwHeaderBar">
+                <property name="show-start-title-buttons" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
+                <child type="start">
+                  <object class="GtkButton">
                 <property name="visible" bind-source="ContentChatHistory" bind-property="compact" bind-flags="sync-create"/>
                 <property name="icon-name">go-previous-symbolic</property>
-                <property name="action-name">content.go-back</property>
+                    <property name="action-name">content.go-back</property>
+                  </object>
+                </child>
+                <child type="title">
+                  <object class="AdwWindowTitle" id="window_title"/>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton">
+                    <property name="icon-name">view-more-symbolic</property>
+                    <property name="menu-model">chat-menu-model</property>
+                  </object>
+                </child>
               </object>
             </child>
-            <child type="title">
-              <object class="AdwWindowTitle" id="window_title"/>
-            </child>
-            <child type="end">
-              <object class="GtkMenuButton">
-                <property name="icon-name">view-more-symbolic</property>
-                <property name="menu-model">chat-menu-model</property>
+            <child type="overlay">
+              <object class="ComponentsSnow" id="snow">
+                <property name="sensitive">False</property>
               </object>
             </child>
           </object>

@@ -35,38 +35,47 @@
           <object class="GtkBox" id="main_box">
             <property name="orientation">vertical</property>
             <child>
-              <object class="AdwHeaderBar">
-                <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
-                <child type="start">
-                  <object class="GtkMenuButton">
-                    <property name="popover">
-                      <object class="SessionSwitcher" id="session_switcher"/>
-                    </property>
-                    <style>
-                      <class name="image-button"/>
-                    </style>
-                    <property name="child">
-                      <object class="ComponentsAvatar">
-                        <property name="size">24</property>
-                        <binding name="item">
-                          <lookup name="me" type="Session">
-                            <lookup name="session">Sidebar</lookup>
-                          </lookup>
-                        </binding>
+              <object class="GtkOverlay">
+                <child>
+                  <object class="AdwHeaderBar">
+                    <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+                    <child type="start">
+                      <object class="GtkMenuButton">
+                        <property name="popover">
+                          <object class="SessionSwitcher" id="session_switcher"/>
+                        </property>
+                        <style>
+                          <class name="image-button"/>
+                        </style>
+                        <property name="child">
+                          <object class="ComponentsAvatar">
+                            <property name="size">24</property>
+                            <binding name="item">
+                              <lookup name="me" type="Session">
+                                <lookup name="session">Sidebar</lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
                       </object>
-                    </property>
+                    </child>
+                    <child type="end">
+                      <object class="GtkMenuButton">
+                        <property name="icon-name">open-menu-symbolic</property>
+                        <property name="menu-model">primary_menu</property>
+                      </object>
+                    </child>
+                    <child type="end">
+                      <object class="GtkButton">
+                        <property name="action-name">sidebar.start-search</property>
+                        <property name="icon-name">system-search-symbolic</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
-                <child type="end">
-                  <object class="GtkMenuButton">
-                    <property name="icon-name">open-menu-symbolic</property>
-                    <property name="menu-model">primary_menu</property>
-                  </object>
-                </child>
-                <child type="end">
-                  <object class="GtkButton">
-                    <property name="action-name">sidebar.start-search</property>
-                    <property name="icon-name">system-search-symbolic</property>
+                <child type="overlay">
+                  <object class="ComponentsSnow" id="snow">
+                    <property name="sensitive">False</property>
                   </object>
                 </child>
               </object>
