@@ -28,7 +28,7 @@ mod imp {
     use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
-    use crate::session::components::Avatar as ComponentsAvatar;
+    use crate::session::components::{Avatar as ComponentsAvatar, Snow as ComponentsSnow};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar.ui")]
@@ -38,6 +38,8 @@ mod imp {
         pub(super) marked_as_unread_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) session: RefCell<Option<Session>>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
+        #[template_child]
+        pub(super) snow: TemplateChild<ComponentsSnow>,
         #[template_child]
         pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]

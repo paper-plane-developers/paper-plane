@@ -9,10 +9,19 @@
           <object class="GtkBox" id="unselected_chat">
             <property name="orientation">vertical</property>
             <child>
-              <object class="AdwHeaderBar">
-                <property name="show-start-title-buttons">False</property>
-                <child type="title">
-                  <object class="AdwWindowTitle"/>
+              <object class="GtkOverlay">
+                <child>
+                  <object class="AdwHeaderBar">
+                    <property name="show-start-title-buttons">False</property>
+                    <child type="title">
+                      <object class="AdwWindowTitle"/>
+                    </child>
+                  </object>
+                </child>
+                <child type="overlay">
+                  <object class="ComponentsSnow" id="snow">
+                    <property name="sensitive">False</property>
+                  </object>
                 </child>
               </object>
             </child>
@@ -22,20 +31,20 @@
                 <property name="icon-name">user-available-symbolic</property>
                 <property name="title" translatable="yes">No Chat Selected</property>
                 <property name="description" translatable="yes">Select a chat to start messaging.</property>
+                  </object>
+                </child>
               </object>
             </child>
-          </object>
-        </child>
         <child>
           <object class="ContentChatHistory" id="chat_history">
             <binding name="compact">
               <lookup name="compact">Content</lookup>
-            </binding>
+                </binding>
             <binding name="chat">
               <lookup name="chat">Content</lookup>
-            </binding>
-          </object>
-        </child>
+                </binding>
+              </object>
+            </child>
       </object>
     </child>
   </template>
