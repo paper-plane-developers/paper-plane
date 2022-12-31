@@ -76,8 +76,8 @@
                         "x86_64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.8/tdjson-x86_64.zip",
-                    "sha256": "e161a30f5ddd82bf1e6d3f4fc75a9b4cd9410aa6f453de7f60cfc5b768408187",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.10/tdjson-x86_64.zip",
+                    "sha256": "5b46b76d090e544605970d1d7fb44609959be4992efff1d6afe2d7b6d24b6b9f",
                     "strip-components": 0
                 },
                 {
@@ -85,8 +85,8 @@
                         "aarch64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.8/tdjson-aarch64.zip",
-                    "sha256": "a1c81a9b240fd0760748917e66997a7deba1752763d79303da9847c7fc7297fa",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.10/tdjson-aarch64.zip",
+                    "sha256": "19efbcf8ed5b161427f4d04da02a50331b5f31b50d4b8e61f0af49a8f30f322e",
                     "strip-components": 0
                 }
             ]
@@ -106,7 +106,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/tdlib/td.git",
-                    "commit": "bbe37ee594d97f3c7820dd23ebcd9c9b8dac51a0"
+                    "commit": "93c42f6d7c1209937431469f80427d48907f1b8d"
                 }
             ]
         },

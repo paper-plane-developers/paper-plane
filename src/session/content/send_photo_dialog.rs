@@ -171,7 +171,8 @@ impl SendPhotoDialog {
             width,
             height,
             caption,
-            ttl: 0,
+            self_destruct_time: 0,
+            has_spoiler: false,
         });
 
         // TODO: maybe show an error dialog when this fails?
