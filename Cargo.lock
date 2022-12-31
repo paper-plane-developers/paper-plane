@@ -1225,9 +1225,9 @@ dependencies = [
 
 [[package]]
 name = "tdlib"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dccc6864af9b5f37793793365b6650f20096fb2c5952c1bff38aea5a6da065f7"
+checksum = "c8ce0412ccb236a5d1a861d9954ff9cd41d988f6cd8f5375e589fdd51df5eb43"
 dependencies = [
  "futures-channel",
  "log",

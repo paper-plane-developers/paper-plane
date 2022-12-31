@@ -1067,5 +1067,6 @@ fn stringify_auth_code_type(code_type: AuthenticationCodeType) -> String {
         AuthenticationCodeType::Call(_) => gettext("Call"),
         AuthenticationCodeType::FlashCall(_) => gettext("Flash Call"),
         AuthenticationCodeType::MissedCall(_) => gettext("Missed Call"),
+        AuthenticationCodeType::Fragment(_) => gettext("Fragment"),
     }
 }
