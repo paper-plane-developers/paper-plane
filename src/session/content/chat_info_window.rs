@@ -21,10 +21,12 @@ mod imp {
     use super::*;
     use adw::subclass::prelude::AdwWindowImpl;
     use once_cell::sync::{Lazy, OnceCell};
+    use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-window.ui")]
     pub(crate) struct ChatInfoWindow {
+        pub(super) loading: Cell<bool>,
         pub(super) chat: OnceCell<Chat>,
         #[template_child]
         pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
@@ -288,26 +290,62 @@ impl ChatInfoWindow {
 
         if supergroup_full_info.can_get_members {
             imp.members_page.set_visible(true);
-            spawn(clone!(@weak self as obj => async move {
-                let limit = 200;
-                let mut offset = 0;
-                while let Ok(TdChatMembers(ChatMembers {members, total_count})) = functions::get_supergroup_members(
+
+            let limit = 100;
+
+            spawn(clone!(@to-owned imp => async move {
+                imp.loading.set(true);
+                let result = functions::get_supergroup_members(
                     supergroup_id,
                     None,
-                    offset,
+                    0,
                     limit,
                     client_id,
-                ).await
-                {
-                    if offset > total_count {
-                        break;
-                    }
-
-                    obj.append_members(members).await;
-
-                    offset += limit;
+                    ).await;
+                if let Ok(TdChatMembers(ChatMembers {members, ..})) = result {
+                    imp.obj().append_members(members).await;
                 }
+                imp.loading.set(false);
             }));
+
+            imp.members_list
+                .vadjustment()
+                .unwrap()
+                .connect_value_changed(clone!(@to-owned imp => move |vadjustment| {
+                    if !imp.loading.get() {
+
+                        let value = vadjustment.value() + vadjustment.page_size();
+                        let upper = vadjustment.upper();
+
+                        let offset = imp.members_list.model().unwrap().n_items() as i32;
+
+                        if value / upper > 0.8 && upper - value < 2000.0 {
+
+                            imp.loading.set(true);
+
+                            spawn(clone!(@to-owned imp => async move {
+                                let result = functions::get_supergroup_members(
+                                    supergroup_id,
+                                    None,
+                                    offset,
+                                    limit,
+                                    client_id,
+                                    ).await;
+                                if let Ok(TdChatMembers(ChatMembers {members, total_count})) = result {
+                                    if offset >= total_count {
+                                        // remove callback
+                                    }
+
+                                    imp.obj().append_members(members).await;
+
+                                    imp.loading.set(false);
+                                } else {
+                                    log::error!("can't load members {result:?}");
+                                }
+                            }))
+                        }
+                    }
+                }));
         }
 
         self.update_info_list_visibility();
