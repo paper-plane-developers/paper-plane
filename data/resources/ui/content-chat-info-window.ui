@@ -17,17 +17,15 @@
                 <property name="centering-policy">strict</property>
                 <property name="title-widget">
                   <object class="AdwViewSwitcherTitle" id="title">
+                    <property name="title" translatable="yes">Info</property>
                     <property name="stack">stack</property>
                   </object>
                 </property>
-                <style>
-                  <class name="flat"/>
-                </style>
               </object>
             </child>
             <child>
               <object class="AdwViewStack" id="stack">
-                <property name="vexpand">true</property>
+                <property name="vexpand">True</property>
                 <child>
                   <object class="AdwViewStackPage">
                     <property name="name">info</property>
@@ -91,15 +89,16 @@
                     <property name="child">
                       <object class="GtkScrolledWindow">
                         <property name="child">
-                          <object class="AdwClamp">
+                          <object class="AdwClampScrollable">
                             <property name="maximum-size">440</property>
                             <property name="tightening-threshold">200</property>
                             <property name="child">
-                              <object class="GtkListBox" id="members_list">
-                                <property name="valign">center</property>
-                                <property name="selection-mode">none</property>
+                              <object class="GtkListView" id="members_list">
+                                <property name="model">
+                                  <object class="GtkNoSelection" id="selection"/>
+                                </property>
                                 <style>
-                                  <class name="boxed-list"/>
+                                  <class name="navigation-sidebar"/>
                                 </style>
                               </object>
                             </property>

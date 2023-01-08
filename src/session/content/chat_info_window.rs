@@ -5,12 +5,15 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::ChatMembers::ChatMembers as TdChatMembers;
 use tdlib::enums::User::User as TdUser;
-use tdlib::enums::{ChatMemberStatus, MessageSender, UserType};
+use tdlib::enums::{MessageSender, UserType};
 use tdlib::functions;
-use tdlib::types::{BasicGroupFullInfo, ChatMember, ChatMembers, SupergroupFullInfo};
+use tdlib::types::{
+    BasicGroupFullInfo, ChatMember as TdChatMember, ChatMembers, SupergroupFullInfo,
+};
 
 use crate::i18n::ngettext_f;
-use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
+use crate::session::components::ChatMemberRow;
+use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatMember, ChatType, Supergroup, User};
 use crate::utils::spawn;
 use crate::{expressions, strings};
 
@@ -34,7 +37,7 @@ mod imp {
         #[template_child]
         pub(super) members_page: TemplateChild<adw::ViewStackPage>,
         #[template_child]
-        pub(super) members_list: TemplateChild<gtk::ListBox>,
+        pub(super) members_list: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]
@@ -310,81 +313,63 @@ impl ChatInfoWindow {
         self.update_info_list_visibility();
     }
 
-    async fn append_members(&self, members: Vec<ChatMember>) {
-        let session = self.chat().unwrap().session();
-        let client_id = session.client_id();
+    async fn append_members(&self, members: Vec<TdChatMember>) {
+        let members: Vec<_> = {
+            let mut users: Vec<User> = vec![];
+
+            let session = self.chat().unwrap().session();
+            let client_id = session.client_id();
+
+            for member in &members {
+                let user = match member.member_id {
+                    MessageSender::User(ref user) => {
+                        let TdUser(user) =
+                            functions::get_user(user.user_id, client_id).await.unwrap();
+                        User::from_td_object(user, &session)
+                    }
+                    MessageSender::Chat(_) => unreachable!(),
+                };
+                users.push(user);
+            }
+
+            members
+                .into_iter()
+                .zip(users.into_iter())
+                .map(|(member, user)| ChatMember::new(member, user))
+                .collect()
+        };
 
         let members_list = &self.imp().members_list;
 
-        for member in members {
-            if let MessageSender::User(user) = member.member_id {
-                if let Ok(TdUser(user)) = functions::get_user(user.user_id, client_id).await {
-                    let user_row = adw::ActionRow::new();
-                    user_row.set_title_lines(1);
-                    user_row.set_subtitle_lines(1);
+        let selection_model: gtk::NoSelection = members_list.model().unwrap().downcast().unwrap();
 
-                    let user = User::from_td_object(user, &session);
+        let model: gtk::gio::ListStore = if let Some(model) = selection_model.model() {
+            model.downcast().unwrap()
+        } else {
+            let model = gtk::gio::ListStore::new(ChatMember::static_type());
+            selection_model.set_model(Some(&model));
+            model
+        };
 
-                    let user_expression = gtk::ObjectExpression::new(&user);
-                    let name_expression = expressions::user_display_name(&user_expression);
-                    name_expression.bind(&user_row, "title", Some(&user));
+        model.extend_from_slice(&members);
 
-                    User::this_expression("status")
-                        .chain_closure::<String>(closure!(
-                            |_: Option<glib::Object>, status: BoxedUserStatus| {
-                                strings::user_status(&status.0)
-                            }
-                        ))
-                        .bind(&user_row, "subtitle", Some(&user));
+        if members_list.factory().is_none() {
+            let factory = gtk::SignalListItemFactory::new();
 
-                    if let UserType::Bot(_) = user.type_().0 {
-                        user_row.set_subtitle(&gettext("bot"));
-                    } else {
-                        User::this_expression("status")
-                            .chain_closure::<String>(closure!(
-                                |_: Option<glib::Object>, status: BoxedUserStatus| {
-                                    strings::user_status(&status.0)
-                                }
-                            ))
-                            .bind(&user_row, "subtitle", Some(&user));
-                    };
+            factory.connect_setup(move |_, list_item| {
+                list_item.set_property("child", ChatMemberRow::new());
+            });
 
-                    let avatar = crate::session::components::Avatar::new();
+            factory.connect_bind(move |_, list_item| {
+                let list_item: &gtk::ListItem = list_item.downcast_ref().unwrap();
 
-                    avatar.set_item(Some(user.upcast()));
-                    avatar.set_size(32);
-                    user_row.add_prefix(&avatar);
+                let user_row: ChatMemberRow = list_item.child().unwrap().downcast().unwrap();
+                let member: ChatMember = list_item.item().unwrap().downcast().unwrap();
 
-                    let status = match member.status {
-                        ChatMemberStatus::Creator(owner) => {
-                            let title = if owner.custom_title.is_empty() {
-                                gettext("Owner")
-                            } else {
-                                owner.custom_title
-                            };
-                            Some(title)
-                        }
-                        ChatMemberStatus::Administrator(admin) => {
-                            let title = if admin.custom_title.is_empty() {
-                                gettext("Admin")
-                            } else {
-                                admin.custom_title
-                            };
-                            Some(title)
-                        }
-                        _ => None,
-                    };
+                user_row.bind_member(member);
+            });
 
-                    if let Some(text) = status {
-                        let owner_label = gtk::Label::new(Some(&text));
-                        owner_label.set_yalign(0.2);
-                        owner_label.set_css_classes(&["caption", "accent"]);
-                        user_row.add_suffix(&owner_label);
-                    }
-
-                    members_list.append(&user_row);
-                }
-            }
+            members_list.set_factory(Some(&factory));
         }
     }
 

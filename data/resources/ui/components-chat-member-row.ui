@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ComponentsChatMemberRow" parent="GtkBox">
+    <property name="spacing">12</property>
+    <child>
+      <object class="ComponentsAvatar" id="avatar">
+        <property name="size">40</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="valign">center</property>
+        <child>
+          <object class="GtkBox">
+            <property name="hexpand">True</property>
+            <child>
+              <object class="GtkLabel" id="user_name_label">
+                <style>
+                  <class name="heading"/>
+                </style>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="member_status_label">
+                <style>
+                  <class name="accent"/>
+                  <class name="caption"/>
+                </style>
+                <property name="hexpand">True</property>
+                <property name="xalign">1</property>
+                <property name="ellipsize">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkInscription" id="user_status_label">
+            <style>
+              <class name="dim-label"/>
+            </style>
+            <property name="xalign">0</property>
+            <property name="text-overflow">ellipsize-end</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
