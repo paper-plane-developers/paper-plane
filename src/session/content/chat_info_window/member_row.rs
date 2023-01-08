@@ -4,15 +4,15 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
-use super::Avatar;
+use crate::session::components::Avatar;
 use crate::{expressions, strings};
 use tdlib::enums::{UserStatus, UserType};
 
 mod imp {
     use super::*;
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/components-chat-member-row.ui")]
-    pub(crate) struct ChatMemberRow {
+    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-member-row.ui")]
+    pub(crate) struct MemberRow {
         #[template_child]
         pub(super) avatar: TemplateChild<Avatar>,
         #[template_child]
@@ -24,10 +24,10 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatMemberRow {
-        const NAME: &'static str = "ComponentsChatMemberRow";
-        type Type = super::ChatMemberRow;
-        type ParentType = gtk::Box;
+    impl ObjectSubclass for MemberRow {
+        const NAME: &'static str = "ContentChatInfoMemberRow";
+        type Type = super::MemberRow;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -39,24 +39,24 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ChatMemberRow {
+    impl ObjectImpl for MemberRow {
         fn dispose(&self) {
             self.avatar.unparent();
             self.user_status_label.parent().unwrap().unparent();
         }
     }
-    
-    impl WidgetImpl for ChatMemberRow {}
 
-    impl BoxImpl for ChatMemberRow {}
+    impl WidgetImpl for MemberRow {}
+
+    impl BoxImpl for MemberRow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct ChatMemberRow(ObjectSubclass<imp::ChatMemberRow>)
+    pub(crate) struct MemberRow(ObjectSubclass<imp::MemberRow>)
         @extends gtk::Widget;
 }
 
-impl ChatMemberRow {
+impl MemberRow {
     pub fn new() -> Self {
         glib::Object::new(&[])
     }

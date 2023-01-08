@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ComponentsChatMemberRow" parent="GtkBox">
-    <property name="spacing">12</property>
+  <template class="ContentChatInfoMemberRow" parent="GtkWidget">
+    <property name="layout-manager">
+      <object class="GtkBoxLayout">
+        <property name="spacing">12</property>
+      </object>
+    </property>
     <child>
       <object class="ComponentsAvatar" id="avatar">
         <property name="size">40</property>

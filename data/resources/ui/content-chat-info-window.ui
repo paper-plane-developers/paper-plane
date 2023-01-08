@@ -85,25 +85,15 @@
                     <property name="name">members</property>
                     <property name="title" translatable="yes">Members</property>
                     <property name="icon-name">avatar-default-symbolic</property>
-                    <property name="visible">false</property>
+                    <property name="visible">False</property>
+                    <binding name="visible">
+                      <lookup name="visible">members_list</lookup>
+                    </binding>
                     <property name="child">
-                      <object class="GtkScrolledWindow">
-                        <property name="child">
-                          <object class="AdwClampScrollable">
-                            <property name="maximum-size">440</property>
-                            <property name="tightening-threshold">200</property>
-                            <property name="child">
-                              <object class="GtkListView" id="members_list">
-                                <property name="model">
-                                  <object class="GtkNoSelection" id="selection"/>
-                                </property>
-                                <style>
-                                  <class name="navigation-sidebar"/>
-                                </style>
-                              </object>
-                            </property>
-                          </object>
-                        </property>
+                      <object class="ContentChatInfoMembers" id="members_list">
+                        <binding name="chat">
+                          <lookup name="chat">ContentChatInfoWindow</lookup>
+                        </binding>
                       </object>
                     </property>
                   </object>

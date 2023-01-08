@@ -13,11 +13,11 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/add-account-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/avatar-with-selection.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">ui/components-chat-member-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-message-entry.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-action-bar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-info-member-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-info-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-document.ui</file>
