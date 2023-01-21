@@ -6,6 +6,10 @@
   font-size: 0.8em;
 }
 
+.small-body {
+  font-size: 10pt;
+}
+
 /* NOTE: The default `accent` class produces
  * a semi-transparent color with separators.
  */
@@ -83,10 +87,6 @@
 
 .chat-list row minithumbnail {
   border-radius: 3px;
-}
-
-.chat-list row .message {
-  font-size: small;
 }
 
 .chat-list row .unread-mention-count {
