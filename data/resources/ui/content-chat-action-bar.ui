@@ -38,7 +38,8 @@
                   <object class="GtkInscription" id="top_bar_sender_label">
                     <property name="text-overflow">ellipsize-end</property>
                     <style>
-                      <class name="caption-heading"/>
+                      <class name="heading"/>
+                      <class name="small-body"/>
                       <class name="accent"/>
                     </style>
                   </object>

@@ -38,7 +38,8 @@ mod imp {
                     <property name="xalign">0</property>
                     <property name="visible">False</property>
                     <style>
-                      <class name="caption-heading"/>
+                      <class name="heading"/>
+                      <class name="small-body"/>
                     </style>
                   </object>
                 </child>

@@ -6,6 +6,10 @@
   font-size: 0.8em;
 }
 
+.small-body {
+  font-size: 10pt;
+}
+
 /* NOTE: The default `accent` class produces
  * a semi-transparent color with separators.
  */
@@ -76,17 +80,8 @@
   padding: 6px 0;
 }
 
-.chat-list row .timestamp {
-  font-size: smaller;
-  font-feature-settings: "tnum";
-}
-
 .chat-list row minithumbnail {
   border-radius: 3px;
-}
-
-.chat-list row .message {
-  font-size: small;
 }
 
 .chat-list row .unread-mention-count {
