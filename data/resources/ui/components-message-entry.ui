@@ -41,9 +41,7 @@
             </child>
             <child>
               <object class="GtkImage" id="emoji_button">
-                <property name="icon-name">face-smile-symbolic</property>
-                <property name="margin-end">9</property>
-                <property name="margin-bottom">9</property>
+                <property name="icon-name">emoji-people-symbolic</property>
                 <property name="valign">end</property>
               </object>
             </child>

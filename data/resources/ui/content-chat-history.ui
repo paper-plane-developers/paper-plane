@@ -68,7 +68,7 @@
                       <object class="GtkButton">
                         <property name="halign">center</property>
                         <property name="valign">end</property>
-                        <property name="icon-name">go-bottom-symbolic</property>
+                        <property name="icon-name">go-down-symbolic</property>
                         <property name="action-name">chat-history.scroll-down</property>
                         <accessibility>
                           <property name="label" translatable="yes">Scroll to bottom</property>

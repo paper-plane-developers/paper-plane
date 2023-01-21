@@ -41,7 +41,7 @@
                 <child>
                   <object class="GtkButton">
                     <property name="action-name">send-photo-dialog.send-message</property>
-                    <property name="icon-name">send-symbolic</property>
+                    <property name="icon-name">go-up-symbolic</property>
                     <property name="valign">end</property>
                     <style>
                       <class name="circular"/>
