@@ -50,7 +50,8 @@
                     <property name="single-line-mode">True</property>
                     <style>
                       <class name="dim-label"/>
-                      <class name="timestamp"/>
+                      <class name="numeric"/>
+                      <class name="caption"/>
                     </style>
                   </object>
                 </child>

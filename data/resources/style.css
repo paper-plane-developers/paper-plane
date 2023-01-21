@@ -80,11 +80,6 @@
   padding: 6px 0;
 }
 
-.chat-list row .timestamp {
-  font-size: smaller;
-  font-feature-settings: "tnum";
-}
-
 .chat-list row minithumbnail {
   border-radius: 3px;
 }
