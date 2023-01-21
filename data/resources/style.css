@@ -213,7 +213,7 @@ messagesticker messageindicators,
 .osd-indicator {
   background-color: alpha(black, 0.4);
   color: white;
-  opacity: 1.0; /* Reset opacity from message bubble */
+  opacity: 1; /* Reset opacity from message bubble */
   border-radius: 9999px;
   padding: 2px 6px;
   margin: 6px;
@@ -264,11 +264,16 @@ messageindicators,
   margin: 0 9px;
 }
 
-.message-entry > overlay > entry {
-  padding: 0;
+.message-entry > overlay > entry > image {
+  margin-bottom: 9px;
 }
 
-.message-entry > overlay > entry > scrolledwindow > scrollbar  {
+.message-entry > overlay > entry {
+  padding: 0 9px;
+  border-radius: 15px;
+}
+
+.message-entry > overlay > entry > scrolledwindow > scrollbar {
   box-shadow: none;
   background: none;
 }

@@ -91,7 +91,7 @@
           <object class="GtkButton" id="send_message_button">
             <property name="valign">end</property>
             <property name="action-name">chat-action-bar.send-text-message</property>
-            <property name="icon-name">send-symbolic</property>
+            <property name="icon-name">go-up-symbolic</property>
             <style>
               <class name="circular"/>
               <class name="suggested-action"/>
