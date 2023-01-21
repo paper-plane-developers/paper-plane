@@ -7,5 +7,5 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 charset = utf-8
 
-[*.{build,yml,ui,yaml}]
+[*.{build,yml,ui,yaml,css}]
 indent_size = 2
