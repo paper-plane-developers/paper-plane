@@ -1,3 +1,8 @@
+mod member_row;
+mod members_page;
+
+use self::members_page::ChatInfoMembers;
+
 use adw::prelude::*;
 use gettextrs::gettext;
 use glib::{clone, closure};
@@ -29,6 +34,8 @@ mod imp {
         pub(super) subtitle_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) info_list: TemplateChild<gtk::ListBox>,
+        #[template_child]
+        pub(super) members_list: TemplateChild<ChatInfoMembers>,
     }
 
     #[glib::object_subclass]

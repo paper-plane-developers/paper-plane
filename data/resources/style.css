@@ -298,3 +298,7 @@ window.chat-info .main-page > avatar {
 window.chat-info .main-page > list {
   margin-top: 12px;
 }
+
+chatmember {
+  padding: 6px 0px;
+}

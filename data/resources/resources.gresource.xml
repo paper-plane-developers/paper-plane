@@ -16,6 +16,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-action-bar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-history.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-info-member-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-chat-info-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-document.ui</file>
