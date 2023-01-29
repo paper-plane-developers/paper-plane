@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20 15:54+0100\n"
+"POT-Creation-Date: 2023-01-30 00:31+0100\n"
 "PO-Revision-Date: 2022-02-06 15:56+0000\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
@@ -54,13 +54,14 @@ msgid "Recently used sessions"
 msgstr "نشست‌های به تازگی استفاده شده"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
+#, fuzzy
 msgid ""
-"The ordered list of recently used sessions by their database directory name"
-msgstr ""
-"سیاههٔ ترتیبی نشست‌های به تازگی استفاده شده با نام شاخهٔ پایگاه داده‌شان"
+"A list of most recently used sessions, sorted by their database directory "
+"names"
+msgstr "سیاههٔ ترتیبی نشست‌های به تازگی استفاده شده با نام شاخهٔ پایگاه داده‌شان"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
-#: data/resources/ui/preferences-window.ui:9
+#: data/resources/ui/preferences-window.ui:8
 msgid "Color Scheme"
 msgstr "شمای رنگی"
 
@@ -72,7 +73,7 @@ msgstr "شمای رنگی برای استفاده در کاره"
 msgid "Main window"
 msgstr "پنجرهٔ اصلی"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr "مارکو ملوريو"
 
@@ -88,75 +89,80 @@ msgstr "کارساز _آزمون"
 msgid "_Add Account"
 msgstr "_افزودن حساب"
 
-#: data/resources/ui/content.ui:23
+#: data/resources/ui/content.ui:32
 msgid "No Chat Selected"
 msgstr "هیچ گپی گزیده نشده"
 
-#: data/resources/ui/content.ui:24
+#: data/resources/ui/content.ui:33
 msgid "Select a chat to start messaging."
 msgstr "برای آغاز پیام‌رسانی، گپی را برگزینید."
 
-#: data/resources/ui/content-chat-history.ui:94
+#: data/resources/ui/content-chat-action-bar.ui:84
+#, fuzzy
+msgid "Message"
+msgstr "پیام صوتی"
+
+#: data/resources/ui/content-chat-history.ui:74
+msgid "Scroll to bottom"
+msgstr ""
+
+#: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "مشاهدهٔ اطَلاعات"
 
-#: data/resources/ui/content-user-dialog.ui:54
-msgid "Mobile"
-msgstr "همراه"
+#: data/resources/ui/content-send-photo-dialog.ui:35
+msgid "Caption"
+msgstr ""
 
-#: data/resources/ui/content-user-dialog.ui:60
-msgid "Username"
-msgstr "نام کاربری"
-
-#: data/resources/ui/login.ui:47
+#: data/resources/ui/login.ui:29
 msgid "_Previous"
 msgstr "_پیشین"
 
-#: data/resources/ui/login.ui:76
+#: data/resources/ui/login.ui:58
 msgid "_Next"
 msgstr "_بعدی"
 
-#: data/resources/ui/login.ui:105
-msgid "Welcome to Telegrand"
-msgstr "به تلگراند خوش آمدید"
+#: data/resources/ui/login.ui:87
+msgid "Welcome"
+msgstr ""
 
-#: data/resources/ui/login.ui:124
-msgid "Phone Number"
-msgstr "شماره تلفن"
-
-#: data/resources/ui/login.ui:146
+#: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
 msgstr "_ورود با استفاده از رمز QR"
 
-#: data/resources/ui/login.ui:205
+#: data/resources/ui/login.ui:166
 msgid "Scan Code"
 msgstr "پویش رمز"
 
-#: data/resources/ui/login.ui:206
+#: data/resources/ui/login.ui:167
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr "این رمز را با کارهٔ تلگرام دیگری که به حسابتان وارد شده، بپویید."
 
-#: data/resources/ui/login.ui:228
+#: data/resources/ui/login.ui:189
 msgid "Enter the Verification Code"
 msgstr "کد تایید را وارد کنید"
 
-#: data/resources/ui/login.ui:247 data/resources/ui/login.ui:660
+#: data/resources/ui/login.ui:202 data/resources/ui/login.ui:621
 msgid "Code"
 msgstr "کد"
+
+#: data/resources/ui/login.ui:237
+msgid "The code cannot be sent anymore."
+msgstr ""
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
 msgstr "ثبت‌نام حساب جدید"
 
-#: data/resources/ui/login.ui:306
+#: data/resources/ui/login.ui:300
 msgid "First Name"
 msgstr "نام"
 
-#: data/resources/ui/login.ui:323
+#: data/resources/ui/login.ui:305
 msgid "Last Name"
 msgstr "نام خانوادگی"
 
-#: data/resources/ui/login.ui:362
+#: data/resources/ui/login.ui:338
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -164,66 +170,97 @@ msgstr ""
 "با ثبت نام،\n"
 "با <a href=\"\">شرایط خدمت</a> موافقت می‌کنید."
 
-#: data/resources/ui/login.ui:378
+#: data/resources/ui/login.ui:354
 msgid "Enter Your Password"
 msgstr "گذرواژه خود را وارد کنید"
 
-#: data/resources/ui/login.ui:397
+#: data/resources/ui/login.ui:367
 msgid "Password"
 msgstr "گذرواژه"
 
-#: data/resources/ui/login.ui:412
+#: data/resources/ui/login.ui:375
 msgid "Hint"
 msgstr "ایما"
 
-#: data/resources/ui/login.ui:435
+#: data/resources/ui/login.ui:398
 msgid "_Forgot password?"
 msgstr "_فراموشی گذرواژه؟"
 
-#: data/resources/ui/login.ui:498
+#: data/resources/ui/login.ui:461
 msgid "Use Recovery Code"
 msgstr "استفاده از رمز بازیابی"
 
-#: data/resources/ui/login.ui:511
+#: data/resources/ui/login.ui:474
+#, fuzzy
 msgid ""
-"When you set your cloud password, you provided a recovery email address. We "
-"can send you a code to this email address that you can use to reset your "
-"password."
+"When you set your cloud password, you provided a recovery e-mail address. A "
+"code can be sent there to reset your password."
 msgstr ""
 "هنگام تنظیم گذرواژهٔ ابریتان، نشانی رایانامهٔ بازیابی‌ای فراهم کردید. می‌توانیم "
 "رمزی برای بازنشانی گذرواژه‌تان به این رایانه بفرستیم."
 
-#: data/resources/ui/login.ui:530
+#: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
 msgstr "_فرستادن رمز بازیابی"
 
-#: data/resources/ui/login.ui:592
+#: data/resources/ui/login.ui:555
 msgid "Account Deletion"
 msgstr "حذف حساب"
 
-#: data/resources/ui/login.ui:619
+#: data/resources/ui/login.ui:582 src/login.rs:920
 msgid "_Delete Account"
 msgstr "_حذف حساب"
 
-#: data/resources/ui/login.ui:641
-msgid "Enter the Code Sent by E-Mail"
+#: data/resources/ui/login.ui:607
+#, fuzzy
+msgid "Enter the code e-mailed to you"
 msgstr "ورود رمز فرستاده شده با رایانامه"
 
-#: data/resources/ui/login.ui:682
-msgid "_Unable to access your email?"
+#: data/resources/ui/login.ui:650
+#, fuzzy
+msgid "Unable to access your e-mail?"
 msgstr "_ناتوانی در دسترسی به رایانامه؟"
 
-#: data/resources/ui/preferences-window.ui:6
-msgid "Appearance"
-msgstr "ظاهر"
+#: data/resources/ui/message-menu.ui:6
+msgid "_Reply"
+msgstr ""
 
-#: data/resources/ui/preferences-window.ui:12
+#: data/resources/ui/message-menu.ui:11
+msgid "Delete for _Everyone"
+msgstr ""
+
+#: data/resources/ui/message-menu.ui:16
+#, fuzzy
+msgid "_Delete for Me"
+msgstr "_حذف حساب"
+
+#: data/resources/ui/phone-number-input.ui:12
+msgid "Country"
+msgstr ""
+
+#: data/resources/ui/phone-number-input.ui:17
+msgid "Phone Number"
+msgstr "شماره تلفن"
+
+#: data/resources/ui/preferences-window.ui:11
 msgid "Follow System Colors"
 msgstr "پیروی از رنگ‌های سامانه"
 
-#: data/resources/ui/preferences-window.ui:23
+#: data/resources/ui/preferences-window.ui:22
 msgid "Dark Theme"
 msgstr "زمینهٔ تاریک"
+
+#: data/resources/ui/preferences-window.ui:35
+msgid "Storage"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:38
+msgid "Cache Size"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:50
+msgid "Clear Cache"
+msgstr ""
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -250,6 +287,17 @@ msgctxt "shortcut window"
 msgid "Search Chats"
 msgstr "جست‌وجوی گپ‌ها"
 
+#: data/resources/ui/shortcuts.ui:39
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Chat History"
+msgstr "سیاههٔ گپ"
+
+#: data/resources/ui/shortcuts.ui:42
+msgctxt "shortcut window"
+msgid "Send Photo from Clipboard"
+msgstr ""
+
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
 msgstr "_خروج"
@@ -266,21 +314,97 @@ msgstr "_میانبرهای صفحه‌کلید"
 msgid "_About Telegrand"
 msgstr "_درباره تلگراند"
 
-#: src/login.rs:340
+#: data/resources/ui/sidebar-row-menu.ui:6
+msgid "_Pin"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:11
+msgid "_Unpin"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:16
+msgid "_Mark as Unread"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:21
+msgid "Mark as _Read"
+msgstr ""
+
+#: data/resources/ui/sidebar-search.ui:12
+#, fuzzy
+msgid "Search"
+msgstr "جست‌وجوی گپ‌ها"
+
+#: data/resources/ui/sidebar-search.ui:75
+#, fuzzy
+msgid "No Search Results"
+msgstr "جست‌وجوی گپ‌ها"
+
+#: data/resources/ui/sidebar-search.ui:76
+msgid "Try a different search."
+msgstr ""
+
+#: src/application.rs:166
+#, fuzzy
+msgid "Telegrand developers"
+msgstr "تلگراند"
+
+#: src/application.rs:182
+msgid "Sponsors"
+msgstr ""
+
+#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
+#: src/session/sidebar/search/mod.rs:208
+#, fuzzy
+msgid "Saved Messages"
+msgstr "پیام صوتی"
+
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
+#: src/session/sidebar/row.rs:970
+#, fuzzy
+msgid "Deleted Account"
+msgstr "_حذف حساب"
+
+#: src/expressions.rs:92
+msgid "The admins of this group have restricted you from writing here"
+msgstr ""
+
+#. Translators: This is a hours: minutes time format used in restriction label
+#. Translators: This is a time format for the message timestamp without seconds
+#. Show the time
+#. Translators: This is a time format for the chat list without seconds
+#: src/expressions.rs:106
+#: src/session/content/message_row/indicators_model.rs:153
+#: src/session/sidebar/row.rs:396
+msgid "%l:%M %p"
+msgstr "%OH:%OM"
+
+#. Translators: This is a full date format used in restriction label
+#: src/expressions.rs:109
+#, fuzzy
+msgid "%B %e, %Y %l:%M %p"
+msgstr "%Oe %OB %Oy"
+
+#: src/expressions.rs:119
+msgid "Writing messages isn't allowed in this group."
+msgstr ""
+
+#: src/login.rs:380
+#, fuzzy
 msgid ""
-"One way to continue using your account is to delete your account and then "
-"recreate it"
+"One way to continue using your account is to delete and then recreate it"
 msgstr "یک راه برای ادامهٔ استفاده از حسابتان، حذف و ساخت دوباره‌اش است"
 
-#: src/login.rs:345
+#: src/login.rs:385
+#, fuzzy
 msgid ""
-"Since you have not provided a recovery email address, the only way to "
-"continue using your account is to delete your account and then recreate it"
+"Since you have not provided a recovery e-mail address, the only way to "
+"continue using your account is to delete and then recreate it"
 msgstr ""
-"از آن‌جا که نشانی رایانامهٔ بازیابی‌ای فراهم نکرده‌اید، تنها راه ادامهٔ "
-"استفاده از حسابتان، حذف حساب و ساخت دوباره‌اش است"
+"از آن‌جا که نشانی رایانامهٔ بازیابی‌ای فراهم نکرده‌اید، تنها راه ادامهٔ استفاده "
+"از حسابتان، حذف حساب و ساخت دوباره‌اش است"
 
-#: src/login.rs:353
+#: src/login.rs:393
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
@@ -288,163 +412,435 @@ msgstr ""
 "به خاطر داشته باشید که تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و "
 "پرونده‌ای که هم‌رسانده‌اید از دست خواهید داد!"
 
-#: src/login.rs:585
-msgid "Do You Accept the Terms of Service?"
+#: src/login.rs:684
+#, fuzzy
+msgid "Do you accept the Terms of Service?"
 msgstr "شرایط خدمت را می‌پذیرید؟"
 
-#: src/login.rs:589
+#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+msgid "_No"
+msgstr ""
+
+#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+msgid "_Yes"
+msgstr ""
+
+#: src/login.rs:688
 msgid "Terms of Service"
 msgstr "شرایط خدمت"
 
-#: src/login.rs:855
+#: src/login.rs:689
+msgid "_OK"
+msgstr ""
+
+#: src/login.rs:911
 msgid "Warning"
 msgstr "هشدار"
 
-#: src/login.rs:857
+#: src/login.rs:913
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
 "\n"
 "Do you want to delete your account?"
 msgstr ""
-"تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و پرونده‌ای که هم‌رسانده‌اید "
-"از دست خواهید داد!\n"
+"تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و پرونده‌ای که هم‌رسانده‌اید از "
+"دست خواهید داد!\n"
 "\n"
 "می‌خواهید حسابتان را حذف کنید؟"
 
-#: src/login.rs:946
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+msgid "_Cancel"
+msgstr ""
+
+#: src/login.rs:992
 msgid "Sorry"
 msgstr "ببخشید"
 
-#: src/login.rs:948
+#: src/login.rs:994
+#, fuzzy
 msgid ""
-"If you can't restore access to the email, your remaining options are either "
-"to remember your password or to delete and recreate your account."
+"If you can't restore access to the e-mail, your remaining options are either "
+"to remember your password or to delete and then recreate your account."
 msgstr ""
 "اگر نتوانستید دسترسی به رایانامه را بازیابید، تنها گزینه‌های پیش رویتان به "
 "خاطر آوردن گذرواژه‌تان یا حذف و ساخت دوبارهٔ حسابتان است."
 
-#: src/login.rs:955
-msgid "_Go Back"
-msgstr "_بازگشت"
+#: src/login.rs:999
+msgid "_Ok"
+msgstr ""
 
-#: src/window.rs:242 src/session/sidebar/row.rs:543
-msgid "Incoming call"
-msgstr "تماس دریافتی"
+#: src/login.rs:1065
+#, fuzzy
+msgid "Telegram"
+msgstr "تلگراند"
 
-#: src/window.rs:304 src/session/sidebar/row.rs:428
-#: src/session/sidebar/row.rs:559
-msgid "Sticker"
-msgstr "برچسب"
+#: src/login.rs:1066
+msgid "SMS"
+msgstr ""
 
-#: src/window.rs:308 src/session/sidebar/row.rs:609
-msgid "Photo"
-msgstr "عکس"
+#: src/login.rs:1067
+msgid "Call"
+msgstr ""
 
-#: src/window.rs:327 src/session/sidebar/row.rs:572
+#: src/login.rs:1068
+msgid "Flash Call"
+msgstr ""
+
+#: src/login.rs:1069
+#, fuzzy
+msgid "Missed Call"
+msgstr "تماس بی‌پاسخ"
+
+#: src/login.rs:1070
+msgid "Fragment"
+msgstr ""
+
+#: src/phone_number_input.rs:204
+msgid "You entered an invalid country code."
+msgstr ""
+
+#: src/strings.rs:24
+msgid "last seen a long time ago"
+msgstr ""
+
+#: src/strings.rs:25
+msgid "online"
+msgstr ""
+
+#. Translators: This is an online status with the date
+#: src/strings.rs:34
+#, c-format
+msgid "last seen %x"
+msgstr ""
+
+#: src/strings.rs:38
+msgid "last seen yesterday at %l:%M %p"
+msgstr ""
+
+#: src/strings.rs:56
+msgid "last seen just now"
+msgstr ""
+
+#: src/strings.rs:59
+msgid "last seen recently"
+msgstr ""
+
+#: src/strings.rs:60
+msgid "last seen within a week"
+msgstr ""
+
+#: src/strings.rs:61
+msgid "last seen within a month"
+msgstr ""
+
+#: src/strings.rs:85
+msgid "Photo has expired"
+msgstr ""
+
+#: src/strings.rs:88
+msgid "Video has expired"
+msgstr ""
+
+#: src/strings.rs:89
+#, fuzzy
+msgid "Video Message"
+msgstr "پیام صوتی"
+
+#: src/strings.rs:120
+#, fuzzy
+msgid "Unsupported Message"
+msgstr "پیام پشتیبانی نشده"
+
+#: src/strings.rs:126
 msgid "GIF"
 msgstr "جیف"
 
-#: src/window.rs:336 src/session/sidebar/row.rs:621
+#: src/strings.rs:166
+msgid "Photo"
+msgstr "عکس"
+
+#: src/strings.rs:179
 msgid "Video"
 msgstr "ویدیو"
 
-#: src/window.rs:354 src/session/sidebar/row.rs:633
-msgid "Voice message"
+#: src/strings.rs:187
+#, fuzzy
+msgid "Voice Message"
 msgstr "پیام صوتی"
 
-#: src/window.rs:363 src/session/sidebar/row.rs:480
+#: src/strings.rs:206
+msgid "Declined outgoing video call"
+msgstr "تماس تصویری خروجی رد شده"
+
+#: src/strings.rs:208
+msgid "Declined outgoing call"
+msgstr "تماس خروجی رد شده"
+
+#: src/strings.rs:214
+msgid "Declined incoming video call"
+msgstr "تماس تصویری ورودی رد شده"
+
+#: src/strings.rs:216
+msgid "Declined incoming call"
+msgstr "تماس ورودی رد شده"
+
+#: src/strings.rs:224
+#, fuzzy
+msgid "Canceled call"
+msgstr "تماس لغو شده"
+
+#: src/strings.rs:226
+msgid "Missed call"
+msgstr "تماس بی‌پاسخ"
+
+#: src/strings.rs:249
+msgid "Outgoing video call"
+msgstr "تماس تصویری خروجی"
+
+#: src/strings.rs:251
+msgid "Outgoing call"
+msgstr "تماس خروجی"
+
+#: src/strings.rs:266
+msgid "Incoming video call"
+msgstr "تماس تصویری ورودی"
+
+#: src/strings.rs:268 src/window.rs:213
+msgid "Incoming call"
+msgstr "تماس دریافتی"
+
+#: src/strings.rs:282
+#, fuzzy
+msgid "Channel created"
+msgstr "عکس کانال برداشته شد"
+
+#: src/strings.rs:311
+#, fuzzy
+msgid "Channel photo changed"
+msgstr "عکس کانال برداشته شد"
+
+#: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "عکس کانال برداشته شد"
 
-#: src/window.rs:367 src/session/sidebar/row.rs:484
-msgid "You removed the group photo"
-msgstr "عکس گروه را برداشتید"
+#: src/strings.rs:406
+msgid "{sender} pinned a GIF"
+msgstr ""
 
-#: src/window.rs:377 src/session/sidebar/row.rs:497
-#: src/session/sidebar/row.rs:565
-msgid "Unsupported message"
-msgstr "پیام پشتیبانی نشده"
+#: src/strings.rs:407
+msgid "{sender} pinned an audio file"
+msgstr ""
+
+#: src/strings.rs:408
+msgid "{sender} pinned a file"
+msgstr ""
+
+#: src/strings.rs:409
+msgid "{sender} pinned a photo"
+msgstr ""
+
+#: src/strings.rs:410
+msgid "{sender} pinned a sticker"
+msgstr ""
+
+#: src/strings.rs:411
+msgid "{sender} pinned a video"
+msgstr ""
+
+#: src/strings.rs:412
+msgid "{sender} pinned a video message"
+msgstr ""
+
+#: src/strings.rs:413
+msgid "{sender} pinned a voice message"
+msgstr ""
+
+#: src/strings.rs:414 src/strings.rs:416
+msgid "{sender} pinned a message"
+msgstr ""
+
+#: src/session/preferences_window.rs:206
+msgid "Cache cleared"
+msgstr ""
+
+#. TODO: Actually try using TDLib to retrieve the message before showing this
+#: src/session/content/chat_action_bar.rs:218
+msgid "Unknown"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:220
+msgid "Deleted Message"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:266
+msgid "Open File"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:269
+msgid "_Open"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:274
+msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:131
+msgid "bot"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:146
+msgid "Mobile"
+msgstr "همراه"
+
+#: src/session/content/chat_info_window.rs:156
+msgid "Username"
+msgstr "نام کاربری"
+
+#: src/session/content/chat_info_window.rs:205
+#: src/session/content/chat_info_window.rs:264
+msgid "Description"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:235
+msgid "Link"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:283
+msgid "Copied to clipboard"
+msgstr ""
 
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:112
+#: src/session/content/item_row.rs:119
 msgid "%B %e"
 msgstr "%Oe %OB"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:115
+#: src/session/content/item_row.rs:122
 msgid "%B %e, %Y"
 msgstr "%Oe %OB %Oy"
 
-#: src/session/content/message_row/text.rs:156
+#: src/session/content/message_row/indicators_model.rs:155
+msgid "edited"
+msgstr ""
+
+#: src/session/content/message_row/indicators_model.rs:160
+msgid "sponsored"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:166
+msgid "Do you want to delete this message for <b>everyone</b>?"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:168
+msgid "Do you want to delete this message?"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:172
+msgid "Confirm Message Deletion"
+msgstr ""
+
+#: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
 msgstr "این پیام پشتیبانی نمی‌شود"
 
-#. Show the time
-#. Translators: This is a time format for the chat list without seconds
-#: src/session/sidebar/row.rs:190
-msgid "%l:%M %p"
-msgstr "%OH:%OM"
-
-#: src/session/sidebar/row.rs:226
+#: src/session/sidebar/row.rs:429
 msgid "Draft"
 msgstr "پیش‌نویس"
 
-#: src/session/sidebar/row.rs:370
-msgid "You joined the group"
-msgstr "به گروه پیوستید"
-
-#: src/session/sidebar/row.rs:395
-msgid ", "
-msgstr "، "
-
-#: src/session/sidebar/row.rs:412
-msgid "You left the group"
-msgstr "گروه را ترک کردید"
-
-#: src/session/sidebar/row.rs:448
-msgid "Declined outgoing video call"
-msgstr "تماس تصویری خروجی رد شده"
-
-#: src/session/sidebar/row.rs:450
-msgid "Declined outgoing call"
-msgstr "تماس خروجی رد شده"
-
-#: src/session/sidebar/row.rs:456
-msgid "Declined incoming video call"
-msgstr "تماس تصویری ورودی رد شده"
-
-#: src/session/sidebar/row.rs:458
-msgid "Declined incoming call"
-msgstr "تماس ورودی رد شده"
-
-#: src/session/sidebar/row.rs:468
-msgid "Cancelled call"
-msgstr "تماس لغو شده"
-
-#: src/session/sidebar/row.rs:470
-msgid "Missed call"
-msgstr "تماس بی‌پاسخ"
-
-#: src/session/sidebar/row.rs:502
+#: src/session/sidebar/row.rs:645
 msgid "You"
 msgstr "شما"
 
-#: src/session/sidebar/row.rs:527
-msgid "Outgoing video call"
-msgstr "تماس تصویری خروجی"
+#: src/session/sidebar/row.rs:711
+msgid "choosing a contact"
+msgstr ""
 
-#: src/session/sidebar/row.rs:529
-msgid "Outgoing call"
-msgstr "تماس خروجی"
+#: src/session/sidebar/row.rs:729
+msgid "choosing a location"
+msgstr ""
 
-#: src/session/sidebar/row.rs:541
-msgid "Incoming video call"
+#: src/session/sidebar/row.rs:747
+msgid "choosing a sticker"
+msgstr ""
+
+#: src/session/sidebar/row.rs:765
+#, fuzzy
+msgid "recording a video"
 msgstr "تماس تصویری ورودی"
 
-#: src/session/sidebar/row.rs:556
-msgid "Document"
-msgstr "سند"
+#: src/session/sidebar/row.rs:783
+msgid "recording a video note"
+msgstr ""
+
+#: src/session/sidebar/row.rs:801
+msgid "recording a voice note"
+msgstr ""
+
+#: src/session/sidebar/row.rs:819
+msgid "playing a game"
+msgstr ""
+
+#: src/session/sidebar/row.rs:834
+msgid "typing"
+msgstr ""
+
+#: src/session/sidebar/row.rs:949
+msgid "watching an animation"
+msgstr ""
+
+#: src/session/sidebar/row.rs:975
+msgid "Deleted"
+msgstr ""
+
+#: src/session/sidebar/search/section_row.rs:137
+#, fuzzy
+msgid "Chats"
+msgstr "سیاههٔ گپ"
+
+#: src/session/sidebar/search/section_row.rs:140
+msgid "Global Search"
+msgstr ""
+
+#: src/session/sidebar/search/section_row.rs:143
+msgid "Recent"
+msgstr ""
+
+#: src/tdlib/country_info.rs:115
+msgid "Invalid Country Code"
+msgstr ""
+
+#: src/tdlib/country_info.rs:124
+#, fuzzy
+msgid "Test Account"
+msgstr "_حذف حساب"
+
+#~ msgid "Welcome to Telegrand"
+#~ msgstr "به تلگراند خوش آمدید"
+
+#~ msgid "Appearance"
+#~ msgstr "ظاهر"
+
+#~ msgid "_Go Back"
+#~ msgstr "_بازگشت"
+
+#~ msgid "Sticker"
+#~ msgstr "برچسب"
+
+#~ msgid "You removed the group photo"
+#~ msgstr "عکس گروه را برداشتید"
+
+#~ msgid "You joined the group"
+#~ msgstr "به گروه پیوستید"
+
+#~ msgid ", "
+#~ msgstr "، "
+
+#~ msgid "You left the group"
+#~ msgstr "گروه را ترک کردید"
+
+#~ msgid "Document"
+#~ msgstr "سند"
 
 #~ msgid "Use Telegram's test data center"
 #~ msgstr "استفاده از مرکز داده آزمایشی تلگرام"
