@@ -123,7 +123,7 @@ impl SessionEntryRow {
         let username_expression = me_expression.chain_property::<User>("username");
         username_expression
             .chain_closure::<String>(closure!(|_: SessionEntryRow, username: String| {
-                format!("@{}", username)
+                format!("@{username}")
             }))
             .bind(&*imp.username_label, "label", Some(self));
         username_expression

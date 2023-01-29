@@ -150,7 +150,7 @@ mod imp {
             match analyze_data_dir() {
                 // TODO: Should we show a dialog in this case instead of just bailing out
                 // silently?
-                Err(e) => panic!("Could not initialize data directory: {}", e),
+                Err(e) => panic!("Could not initialize data directory: {e}"),
                 Ok(datadir_state) => match datadir_state {
                     DatadirState::Empty => {
                         obj.add_new_session(APPLICATION_OPTS.get().unwrap().test_dc);
@@ -569,7 +569,7 @@ impl SessionManager {
                         spawn(async move {
                             let result = send_tdlib_parameters(client_id, &database_info).await;
                             if let Err(e) = result {
-                                panic!("Error on sending tdlib parameters: {:?}", e);
+                                panic!("Error on sending tdlib parameters: {e:?}");
                             }
                         });
                     }
@@ -843,7 +843,7 @@ fn generate_database_dir_base_name() -> String {
     // Just to be sure!
     if data_dir().join(&database_dir_base_name).exists() {
         (2..)
-            .map(|count| format!("{}_{}", database_dir_base_name, count))
+            .map(|count| format!("{database_dir_base_name}_{count}"))
             .find(|alternative_base_name| !data_dir().join(alternative_base_name).exists())
             .unwrap()
     } else {
