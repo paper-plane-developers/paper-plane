@@ -1,8 +1,7 @@
-use adw::prelude::ComboRowExt;
-use gtk::glib;
+use adw::prelude::*;
 use gtk::glib::clone;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::{glib, pango};
 use locale_config::Locale;
 use std::borrow::Cow;
 
@@ -155,6 +154,8 @@ mod imp {
                 imp.entry_row.unblock_signal(entry_handler);
 
                 imp.calling_code_bounds.set((pos_start, pos_end));
+
+                obj.highlight_calling_code();
             }))));
 
             // Format the phone number and reset the cursor.
@@ -206,6 +207,8 @@ mod imp {
                     imp.combo_row.unblock_signal(combo_row_handler);
 
                     imp.calling_code_bounds.set((text_pos_start, text_pos_end as usize));
+
+                    obj.highlight_calling_code();
                 }
             }))));
 
@@ -338,5 +341,27 @@ impl PhoneNumberInput {
 
             imp.combo_row.set_selected(position);
         }
+    }
+
+    /// Highlights the calling code from the rest of the number.
+    fn highlight_calling_code(&self) {
+        let imp = self.imp();
+
+        let attr_list = pango::AttrList::new();
+
+        let (pos_start, pos_end) = imp.calling_code_bounds.get();
+        if pos_start < pos_end {
+            let mut attr = pango::AttrInt::new_weight(pango::Weight::Bold);
+            attr.set_start_index(pos_start as u32);
+            attr.set_end_index(pos_end as u32);
+            attr_list.insert(attr);
+
+            let mut attr = pango::AttrInt::new_foreground_alpha(u16::MAX / 2);
+            attr.set_start_index(pos_start as u32);
+            attr.set_end_index(pos_end as u32);
+            attr_list.insert(attr);
+        }
+
+        imp.entry_row.set_attributes(Some(&attr_list));
     }
 }
