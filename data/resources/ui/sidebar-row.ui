@@ -85,6 +85,7 @@
                 <child>
                   <object class="GtkInscription" id="bottom_label">
                     <property name="hexpand">True</property>
+                    <property name="valign">center</property>
                     <property name="text-overflow">ellipsize-end</property>
                     <style>
                       <class name="small-body"/>
