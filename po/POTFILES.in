@@ -4,16 +4,34 @@ data/com.github.melix99.telegrand.metainfo.xml.in.in
 
 data/resources/ui/add-account-row.ui
 data/resources/ui/content.ui
+data/resources/ui/content-chat-action-bar.ui
 data/resources/ui/content-chat-history.ui
-data/resources/ui/content-user-dialog.ui
+data/resources/ui/content-send-photo-dialog.ui
 data/resources/ui/login.ui
+data/resources/ui/message-menu.ui
+data/resources/ui/phone-number-input.ui
 data/resources/ui/preferences-window.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/sidebar.ui
+data/resources/ui/sidebar-row-menu.ui
+data/resources/ui/sidebar-search.ui
 
+src/application.rs
+src/expressions.rs
 src/login.rs
+src/phone_number_input.rs
+src/strings.rs
 src/utils.rs
 src/window.rs
+src/session/preferences_window.rs
+src/session/content/chat_action_bar.rs
+src/session/content/chat_info_window.rs
 src/session/content/item_row.rs
+src/session/content/message_row/indicators_model.rs
+src/session/content/message_row/mod.rs
 src/session/content/message_row/text.rs
 src/session/sidebar/row.rs
+src/session/sidebar/search/item_row.rs
+src/session/sidebar/search/mod.rs
+src/session/sidebar/search/section_row.rs
+src/tdlib/country_info.rs

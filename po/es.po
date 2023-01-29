@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20 15:54+0100\n"
+"POT-Creation-Date: 2023-01-30 00:31+0100\n"
 "PO-Revision-Date: 2022-03-15 07:58+0000\n"
 "Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
@@ -54,14 +54,16 @@ msgid "Recently used sessions"
 msgstr "Sesiones utilizadas recientemente"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
+#, fuzzy
 msgid ""
-"The ordered list of recently used sessions by their database directory name"
+"A list of most recently used sessions, sorted by their database directory "
+"names"
 msgstr ""
 "La lista ordenada de las sesiones utilizadas recientemente por su nombre de "
 "directorio de la base de datos"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
-#: data/resources/ui/preferences-window.ui:9
+#: data/resources/ui/preferences-window.ui:8
 msgid "Color Scheme"
 msgstr "Combinación de colores"
 
@@ -73,7 +75,7 @@ msgstr "La combinación de colores que se utilizará en la aplicación"
 msgid "Main window"
 msgstr "Ventana principal"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:40
+#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
@@ -89,76 +91,81 @@ msgstr "Servidor de p_ruebas"
 msgid "_Add Account"
 msgstr "_Añadir cuenta"
 
-#: data/resources/ui/content.ui:23
+#: data/resources/ui/content.ui:32
 msgid "No Chat Selected"
 msgstr "Ningún chat seleccionado"
 
-#: data/resources/ui/content.ui:24
+#: data/resources/ui/content.ui:33
 msgid "Select a chat to start messaging."
 msgstr "Seleccione un chat para empezar a conversar."
 
-#: data/resources/ui/content-chat-history.ui:94
+#: data/resources/ui/content-chat-action-bar.ui:84
+#, fuzzy
+msgid "Message"
+msgstr "Mensaje de voz"
+
+#: data/resources/ui/content-chat-history.ui:74
+msgid "Scroll to bottom"
+msgstr ""
+
+#: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Ver información"
 
-#: data/resources/ui/content-user-dialog.ui:54
-msgid "Mobile"
-msgstr "Móvil"
+#: data/resources/ui/content-send-photo-dialog.ui:35
+msgid "Caption"
+msgstr ""
 
-#: data/resources/ui/content-user-dialog.ui:60
-msgid "Username"
-msgstr "Nombre de usuario"
-
-#: data/resources/ui/login.ui:47
+#: data/resources/ui/login.ui:29
 msgid "_Previous"
 msgstr "A_nterior"
 
-#: data/resources/ui/login.ui:76
+#: data/resources/ui/login.ui:58
 msgid "_Next"
 msgstr "_Siguiente"
 
-#: data/resources/ui/login.ui:105
-msgid "Welcome to Telegrand"
-msgstr "Le damos la bienvenida a Telegrand"
+#: data/resources/ui/login.ui:87
+msgid "Welcome"
+msgstr ""
 
-#: data/resources/ui/login.ui:124
-msgid "Phone Number"
-msgstr "Número de teléfono"
-
-#: data/resources/ui/login.ui:146
+#: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
 msgstr "_Acceder mediante código QR"
 
-#: data/resources/ui/login.ui:205
+#: data/resources/ui/login.ui:166
 msgid "Scan Code"
 msgstr "Escanear código"
 
-#: data/resources/ui/login.ui:206
+#: data/resources/ui/login.ui:167
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
 "Escanee este código con otra aplicación de Telegram conectada a su cuenta."
 
-#: data/resources/ui/login.ui:228
+#: data/resources/ui/login.ui:189
 msgid "Enter the Verification Code"
 msgstr "Introduzca el código de verificación"
 
-#: data/resources/ui/login.ui:247 data/resources/ui/login.ui:660
+#: data/resources/ui/login.ui:202 data/resources/ui/login.ui:621
 msgid "Code"
 msgstr "Código"
+
+#: data/resources/ui/login.ui:237
+msgid "The code cannot be sent anymore."
+msgstr ""
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
 msgstr "Registrar una cuenta nueva"
 
-#: data/resources/ui/login.ui:306
+#: data/resources/ui/login.ui:300
 msgid "First Name"
 msgstr "Nombre"
 
-#: data/resources/ui/login.ui:323
+#: data/resources/ui/login.ui:305
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: data/resources/ui/login.ui:362
+#: data/resources/ui/login.ui:338
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -166,68 +173,99 @@ msgstr ""
 "Al registrarse,\n"
 "acepta las <a href=\"\">condiciones del servicio</a>."
 
-#: data/resources/ui/login.ui:378
+#: data/resources/ui/login.ui:354
 msgid "Enter Your Password"
 msgstr "Introduzca su contraseña"
 
-#: data/resources/ui/login.ui:397
+#: data/resources/ui/login.ui:367
 msgid "Password"
 msgstr "Contraseña"
 
-#: data/resources/ui/login.ui:412
+#: data/resources/ui/login.ui:375
 msgid "Hint"
 msgstr "Sugerencia"
 
-#: data/resources/ui/login.ui:435
+#: data/resources/ui/login.ui:398
 msgid "_Forgot password?"
 msgstr "¿_Olvidó su contraseña?"
 
-#: data/resources/ui/login.ui:498
+#: data/resources/ui/login.ui:461
 msgid "Use Recovery Code"
 msgstr "Usar el código de recuperación"
 
-#: data/resources/ui/login.ui:511
+#: data/resources/ui/login.ui:474
+#, fuzzy
 msgid ""
-"When you set your cloud password, you provided a recovery email address. We "
-"can send you a code to this email address that you can use to reset your "
-"password."
+"When you set your cloud password, you provided a recovery e-mail address. A "
+"code can be sent there to reset your password."
 msgstr ""
 "Cuando estableció su contraseña en la nube, proporcionó una dirección de "
 "correo electrónico de recuperación. Podemos enviarle un código a esta "
 "dirección de correo electrónico que puede usar para restablecer su "
 "contraseña."
 
-#: data/resources/ui/login.ui:530
+#: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
 msgstr "_Enviar código de recuperación"
 
-#: data/resources/ui/login.ui:592
+#: data/resources/ui/login.ui:555
 msgid "Account Deletion"
 msgstr "Eliminación de la cuenta"
 
-#: data/resources/ui/login.ui:619
+#: data/resources/ui/login.ui:582 src/login.rs:920
 msgid "_Delete Account"
 msgstr "_Eliminar cuenta"
 
-#: data/resources/ui/login.ui:641
-msgid "Enter the Code Sent by E-Mail"
+#: data/resources/ui/login.ui:607
+#, fuzzy
+msgid "Enter the code e-mailed to you"
 msgstr "Introduzca el código enviado por correo electrónico"
 
-#: data/resources/ui/login.ui:682
-msgid "_Unable to access your email?"
+#: data/resources/ui/login.ui:650
+#, fuzzy
+msgid "Unable to access your e-mail?"
 msgstr "¿_No puede acceder a su correo electrónico?"
 
-#: data/resources/ui/preferences-window.ui:6
-msgid "Appearance"
-msgstr "Apariencia"
+#: data/resources/ui/message-menu.ui:6
+msgid "_Reply"
+msgstr ""
 
-#: data/resources/ui/preferences-window.ui:12
+#: data/resources/ui/message-menu.ui:11
+msgid "Delete for _Everyone"
+msgstr ""
+
+#: data/resources/ui/message-menu.ui:16
+#, fuzzy
+msgid "_Delete for Me"
+msgstr "_Eliminar cuenta"
+
+#: data/resources/ui/phone-number-input.ui:12
+msgid "Country"
+msgstr ""
+
+#: data/resources/ui/phone-number-input.ui:17
+msgid "Phone Number"
+msgstr "Número de teléfono"
+
+#: data/resources/ui/preferences-window.ui:11
 msgid "Follow System Colors"
 msgstr "Seguir los colores del sistema"
 
-#: data/resources/ui/preferences-window.ui:23
+#: data/resources/ui/preferences-window.ui:22
 msgid "Dark Theme"
 msgstr "Tema oscuro"
+
+#: data/resources/ui/preferences-window.ui:35
+msgid "Storage"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:38
+msgid "Cache Size"
+msgstr ""
+
+#: data/resources/ui/preferences-window.ui:50
+msgid "Clear Cache"
+msgstr ""
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -254,6 +292,17 @@ msgctxt "shortcut window"
 msgid "Search Chats"
 msgstr "Buscar chats"
 
+#: data/resources/ui/shortcuts.ui:39
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Chat History"
+msgstr "Lista de chats"
+
+#: data/resources/ui/shortcuts.ui:42
+msgctxt "shortcut window"
+msgid "Send Photo from Clipboard"
+msgstr ""
+
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
 msgstr "_Cerrar sesión"
@@ -270,23 +319,99 @@ msgstr "_Atajos del teclado"
 msgid "_About Telegrand"
 msgstr "_Acerca de Telegrand"
 
-#: src/login.rs:340
+#: data/resources/ui/sidebar-row-menu.ui:6
+msgid "_Pin"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:11
+msgid "_Unpin"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:16
+msgid "_Mark as Unread"
+msgstr ""
+
+#: data/resources/ui/sidebar-row-menu.ui:21
+msgid "Mark as _Read"
+msgstr ""
+
+#: data/resources/ui/sidebar-search.ui:12
+#, fuzzy
+msgid "Search"
+msgstr "Buscar chats"
+
+#: data/resources/ui/sidebar-search.ui:75
+#, fuzzy
+msgid "No Search Results"
+msgstr "Buscar chats"
+
+#: data/resources/ui/sidebar-search.ui:76
+msgid "Try a different search."
+msgstr ""
+
+#: src/application.rs:166
+#, fuzzy
+msgid "Telegrand developers"
+msgstr "Telegrand"
+
+#: src/application.rs:182
+msgid "Sponsors"
+msgstr ""
+
+#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
+#: src/session/sidebar/search/mod.rs:208
+#, fuzzy
+msgid "Saved Messages"
+msgstr "Mensaje de voz"
+
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
+#: src/session/sidebar/row.rs:970
+#, fuzzy
+msgid "Deleted Account"
+msgstr "_Eliminar cuenta"
+
+#: src/expressions.rs:92
+msgid "The admins of this group have restricted you from writing here"
+msgstr ""
+
+#. Translators: This is a hours: minutes time format used in restriction label
+#. Translators: This is a time format for the message timestamp without seconds
+#. Show the time
+#. Translators: This is a time format for the chat list without seconds
+#: src/expressions.rs:106
+#: src/session/content/message_row/indicators_model.rs:153
+#: src/session/sidebar/row.rs:396
+msgid "%l:%M %p"
+msgstr "%H:%M"
+
+#. Translators: This is a full date format used in restriction label
+#: src/expressions.rs:109
+#, fuzzy
+msgid "%B %e, %Y %l:%M %p"
+msgstr "%e de %B del %Y"
+
+#: src/expressions.rs:119
+msgid "Writing messages isn't allowed in this group."
+msgstr ""
+
+#: src/login.rs:380
+#, fuzzy
 msgid ""
-"One way to continue using your account is to delete your account and then "
-"recreate it"
+"One way to continue using your account is to delete and then recreate it"
 msgstr ""
 "Una forma de seguir utilizando su cuenta es eliminarla y volver a crearla"
 
-#: src/login.rs:345
+#: src/login.rs:385
+#, fuzzy
 msgid ""
-"Since you have not provided a recovery email address, the only way to "
-"continue using your account is to delete your account and then recreate it"
+"Since you have not provided a recovery e-mail address, the only way to "
+"continue using your account is to delete and then recreate it"
 msgstr ""
 "Dado que no ha facilitado una dirección de correo electrónico de "
 "recuperación, la única forma de seguir utilizando su cuenta es eliminarla y "
 "volver a crearla"
 
-#: src/login.rs:353
+#: src/login.rs:393
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
@@ -294,19 +419,32 @@ msgstr ""
 "Tenga en cuenta que perderá todos sus chats y mensajes, junto con los medios "
 "y archivos que haya compartido."
 
-#: src/login.rs:585
-msgid "Do You Accept the Terms of Service?"
+#: src/login.rs:684
+#, fuzzy
+msgid "Do you accept the Terms of Service?"
 msgstr "¿Acepta las condiciones del servicio?"
 
-#: src/login.rs:589
+#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+msgid "_No"
+msgstr ""
+
+#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+msgid "_Yes"
+msgstr ""
+
+#: src/login.rs:688
 msgid "Terms of Service"
 msgstr "Condiciones del servicio"
 
-#: src/login.rs:855
+#: src/login.rs:689
+msgid "_OK"
+msgstr ""
+
+#: src/login.rs:911
 msgid "Warning"
 msgstr "Atención"
 
-#: src/login.rs:857
+#: src/login.rs:913
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -318,139 +456,398 @@ msgstr ""
 "\n"
 "¿Quiere eliminar su cuenta?"
 
-#: src/login.rs:946
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+msgid "_Cancel"
+msgstr ""
+
+#: src/login.rs:992
 msgid "Sorry"
 msgstr "Lo sentimos"
 
-#: src/login.rs:948
+#: src/login.rs:994
+#, fuzzy
 msgid ""
-"If you can't restore access to the email, your remaining options are either "
-"to remember your password or to delete and recreate your account."
+"If you can't restore access to the e-mail, your remaining options are either "
+"to remember your password or to delete and then recreate your account."
 msgstr ""
 "Si no puede restablecer el acceso al correo electrónico, las opciones que le "
 "quedan son recordar su contraseña o eliminar y volver a crear su cuenta."
 
-#: src/login.rs:955
-msgid "_Go Back"
-msgstr "_Volver"
+#: src/login.rs:999
+msgid "_Ok"
+msgstr ""
 
-#: src/window.rs:242 src/session/sidebar/row.rs:543
-msgid "Incoming call"
-msgstr "Llamada entrante"
+#: src/login.rs:1065
+#, fuzzy
+msgid "Telegram"
+msgstr "Telegrand"
 
-#: src/window.rs:304 src/session/sidebar/row.rs:428
-#: src/session/sidebar/row.rs:559
-msgid "Sticker"
-msgstr "Pegatina"
+#: src/login.rs:1066
+msgid "SMS"
+msgstr ""
 
-#: src/window.rs:308 src/session/sidebar/row.rs:609
-msgid "Photo"
-msgstr "Foto"
+#: src/login.rs:1067
+msgid "Call"
+msgstr ""
 
-#: src/window.rs:327 src/session/sidebar/row.rs:572
+#: src/login.rs:1068
+msgid "Flash Call"
+msgstr ""
+
+#: src/login.rs:1069
+#, fuzzy
+msgid "Missed Call"
+msgstr "Llamada perdida"
+
+#: src/login.rs:1070
+msgid "Fragment"
+msgstr ""
+
+#: src/phone_number_input.rs:204
+msgid "You entered an invalid country code."
+msgstr ""
+
+#: src/strings.rs:24
+msgid "last seen a long time ago"
+msgstr ""
+
+#: src/strings.rs:25
+msgid "online"
+msgstr ""
+
+#. Translators: This is an online status with the date
+#: src/strings.rs:34
+#, c-format
+msgid "last seen %x"
+msgstr ""
+
+#: src/strings.rs:38
+msgid "last seen yesterday at %l:%M %p"
+msgstr ""
+
+#: src/strings.rs:56
+msgid "last seen just now"
+msgstr ""
+
+#: src/strings.rs:59
+msgid "last seen recently"
+msgstr ""
+
+#: src/strings.rs:60
+msgid "last seen within a week"
+msgstr ""
+
+#: src/strings.rs:61
+msgid "last seen within a month"
+msgstr ""
+
+#: src/strings.rs:85
+msgid "Photo has expired"
+msgstr ""
+
+#: src/strings.rs:88
+msgid "Video has expired"
+msgstr ""
+
+#: src/strings.rs:89
+#, fuzzy
+msgid "Video Message"
+msgstr "Mensaje de voz"
+
+#: src/strings.rs:120
+#, fuzzy
+msgid "Unsupported Message"
+msgstr "Mensaje no admitido"
+
+#: src/strings.rs:126
 msgid "GIF"
 msgstr "GIF"
 
-#: src/window.rs:336 src/session/sidebar/row.rs:621
+#: src/strings.rs:166
+msgid "Photo"
+msgstr "Foto"
+
+#: src/strings.rs:179
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/window.rs:354 src/session/sidebar/row.rs:633
-msgid "Voice message"
+#: src/strings.rs:187
+#, fuzzy
+msgid "Voice Message"
 msgstr "Mensaje de voz"
 
-#: src/window.rs:363 src/session/sidebar/row.rs:480
+#: src/strings.rs:206
+msgid "Declined outgoing video call"
+msgstr "Videollamada saliente rechazada"
+
+#: src/strings.rs:208
+msgid "Declined outgoing call"
+msgstr "Llamada saliente rechazada"
+
+#: src/strings.rs:214
+msgid "Declined incoming video call"
+msgstr "Videollamada entrante rechazada"
+
+#: src/strings.rs:216
+msgid "Declined incoming call"
+msgstr "Llamada entrante rechazada"
+
+#: src/strings.rs:224
+#, fuzzy
+msgid "Canceled call"
+msgstr "Llamada cancelada"
+
+#: src/strings.rs:226
+msgid "Missed call"
+msgstr "Llamada perdida"
+
+#: src/strings.rs:249
+msgid "Outgoing video call"
+msgstr "Videollamada saliente"
+
+#: src/strings.rs:251
+msgid "Outgoing call"
+msgstr "Llamada saliente"
+
+#: src/strings.rs:266
+msgid "Incoming video call"
+msgstr "Videollamada entrante"
+
+#: src/strings.rs:268 src/window.rs:213
+msgid "Incoming call"
+msgstr "Llamada entrante"
+
+#: src/strings.rs:282
+#, fuzzy
+msgid "Channel created"
+msgstr "Foto del canal eliminada"
+
+#: src/strings.rs:311
+#, fuzzy
+msgid "Channel photo changed"
+msgstr "Foto del canal eliminada"
+
+#: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Foto del canal eliminada"
 
-#: src/window.rs:367 src/session/sidebar/row.rs:484
-msgid "You removed the group photo"
-msgstr "Ha eliminado la foto de grupo"
+#: src/strings.rs:406
+msgid "{sender} pinned a GIF"
+msgstr ""
 
-#: src/window.rs:377 src/session/sidebar/row.rs:497
-#: src/session/sidebar/row.rs:565
-msgid "Unsupported message"
-msgstr "Mensaje no admitido"
+#: src/strings.rs:407
+msgid "{sender} pinned an audio file"
+msgstr ""
+
+#: src/strings.rs:408
+msgid "{sender} pinned a file"
+msgstr ""
+
+#: src/strings.rs:409
+msgid "{sender} pinned a photo"
+msgstr ""
+
+#: src/strings.rs:410
+msgid "{sender} pinned a sticker"
+msgstr ""
+
+#: src/strings.rs:411
+msgid "{sender} pinned a video"
+msgstr ""
+
+#: src/strings.rs:412
+msgid "{sender} pinned a video message"
+msgstr ""
+
+#: src/strings.rs:413
+msgid "{sender} pinned a voice message"
+msgstr ""
+
+#: src/strings.rs:414 src/strings.rs:416
+msgid "{sender} pinned a message"
+msgstr ""
+
+#: src/session/preferences_window.rs:206
+msgid "Cache cleared"
+msgstr ""
+
+#. TODO: Actually try using TDLib to retrieve the message before showing this
+#: src/session/content/chat_action_bar.rs:218
+msgid "Unknown"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:220
+msgid "Deleted Message"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:266
+msgid "Open File"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:269
+msgid "_Open"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:274
+msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:131
+msgid "bot"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:146
+msgid "Mobile"
+msgstr "Móvil"
+
+#: src/session/content/chat_info_window.rs:156
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: src/session/content/chat_info_window.rs:205
+#: src/session/content/chat_info_window.rs:264
+msgid "Description"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:235
+msgid "Link"
+msgstr ""
+
+#: src/session/content/chat_info_window.rs:283
+msgid "Copied to clipboard"
+msgstr ""
 
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:112
+#: src/session/content/item_row.rs:119
 msgid "%B %e"
 msgstr "%e de %B"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:115
+#: src/session/content/item_row.rs:122
 msgid "%B %e, %Y"
 msgstr "%e de %B del %Y"
 
-#: src/session/content/message_row/text.rs:156
+#: src/session/content/message_row/indicators_model.rs:155
+msgid "edited"
+msgstr ""
+
+#: src/session/content/message_row/indicators_model.rs:160
+msgid "sponsored"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:166
+msgid "Do you want to delete this message for <b>everyone</b>?"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:168
+msgid "Do you want to delete this message?"
+msgstr ""
+
+#: src/session/content/message_row/mod.rs:172
+msgid "Confirm Message Deletion"
+msgstr ""
+
+#: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
 msgstr "Este mensaje no está admitido"
 
-#. Show the time
-#. Translators: This is a time format for the chat list without seconds
-#: src/session/sidebar/row.rs:190
-msgid "%l:%M %p"
-msgstr "%H:%M"
-
-#: src/session/sidebar/row.rs:226
+#: src/session/sidebar/row.rs:429
 msgid "Draft"
 msgstr "Borrador"
 
-#: src/session/sidebar/row.rs:370
-msgid "You joined the group"
-msgstr "Se ha unido al grupo"
-
-#: src/session/sidebar/row.rs:395
-msgid ", "
-msgstr ", "
-
-#: src/session/sidebar/row.rs:412
-msgid "You left the group"
-msgstr "Ha abandonado el grupo"
-
-#: src/session/sidebar/row.rs:448
-msgid "Declined outgoing video call"
-msgstr "Videollamada saliente rechazada"
-
-#: src/session/sidebar/row.rs:450
-msgid "Declined outgoing call"
-msgstr "Llamada saliente rechazada"
-
-#: src/session/sidebar/row.rs:456
-msgid "Declined incoming video call"
-msgstr "Videollamada entrante rechazada"
-
-#: src/session/sidebar/row.rs:458
-msgid "Declined incoming call"
-msgstr "Llamada entrante rechazada"
-
-#: src/session/sidebar/row.rs:468
-msgid "Cancelled call"
-msgstr "Llamada cancelada"
-
-#: src/session/sidebar/row.rs:470
-msgid "Missed call"
-msgstr "Llamada perdida"
-
-#: src/session/sidebar/row.rs:502
+#: src/session/sidebar/row.rs:645
 msgid "You"
 msgstr "Usted"
 
-#: src/session/sidebar/row.rs:527
-msgid "Outgoing video call"
-msgstr "Videollamada saliente"
+#: src/session/sidebar/row.rs:711
+msgid "choosing a contact"
+msgstr ""
 
-#: src/session/sidebar/row.rs:529
-msgid "Outgoing call"
-msgstr "Llamada saliente"
+#: src/session/sidebar/row.rs:729
+msgid "choosing a location"
+msgstr ""
 
-#: src/session/sidebar/row.rs:541
-msgid "Incoming video call"
+#: src/session/sidebar/row.rs:747
+msgid "choosing a sticker"
+msgstr ""
+
+#: src/session/sidebar/row.rs:765
+#, fuzzy
+msgid "recording a video"
 msgstr "Videollamada entrante"
 
-#: src/session/sidebar/row.rs:556
-msgid "Document"
-msgstr "Documento"
+#: src/session/sidebar/row.rs:783
+msgid "recording a video note"
+msgstr ""
+
+#: src/session/sidebar/row.rs:801
+msgid "recording a voice note"
+msgstr ""
+
+#: src/session/sidebar/row.rs:819
+msgid "playing a game"
+msgstr ""
+
+#: src/session/sidebar/row.rs:834
+msgid "typing"
+msgstr ""
+
+#: src/session/sidebar/row.rs:949
+msgid "watching an animation"
+msgstr ""
+
+#: src/session/sidebar/row.rs:975
+msgid "Deleted"
+msgstr ""
+
+#: src/session/sidebar/search/section_row.rs:137
+#, fuzzy
+msgid "Chats"
+msgstr "Lista de chats"
+
+#: src/session/sidebar/search/section_row.rs:140
+msgid "Global Search"
+msgstr ""
+
+#: src/session/sidebar/search/section_row.rs:143
+msgid "Recent"
+msgstr ""
+
+#: src/tdlib/country_info.rs:115
+msgid "Invalid Country Code"
+msgstr ""
+
+#: src/tdlib/country_info.rs:124
+#, fuzzy
+msgid "Test Account"
+msgstr "_Eliminar cuenta"
+
+#~ msgid "Welcome to Telegrand"
+#~ msgstr "Le damos la bienvenida a Telegrand"
+
+#~ msgid "Appearance"
+#~ msgstr "Apariencia"
+
+#~ msgid "_Go Back"
+#~ msgstr "_Volver"
+
+#~ msgid "Sticker"
+#~ msgstr "Pegatina"
+
+#~ msgid "You removed the group photo"
+#~ msgstr "Ha eliminado la foto de grupo"
+
+#~ msgid "You joined the group"
+#~ msgstr "Se ha unido al grupo"
+
+#~ msgid ", "
+#~ msgstr ", "
+
+#~ msgid "You left the group"
+#~ msgstr "Ha abandonado el grupo"
+
+#~ msgid "Document"
+#~ msgstr "Documento"
 
 #~ msgid "Use Telegram's test data center"
 #~ msgstr "Usar el centro de datos de testeo de Telegram"
