@@ -240,10 +240,9 @@ impl MessageVideo {
 
         if hours > 0 {
             imp.indicator
-                .set_label(&format!("{}:{:02}:{:02}", hours, minutes, seconds));
+                .set_label(&format!("{hours}:{minutes:02}:{seconds:02}"));
         } else {
-            imp.indicator
-                .set_label(&format!("{}:{:02}", minutes, seconds));
+            imp.indicator.set_label(&format!("{minutes}:{seconds:02}"));
         }
     }
 }

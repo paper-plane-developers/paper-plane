@@ -197,7 +197,7 @@ impl MessageLabel {
         if let Some(indicators) = imp.indicators.borrow().as_ref() {
             if !self.is_opposite_text_direction() {
                 imp.label
-                    .set_label(&format!("{}{}", text, OBJECT_REPLACEMENT_CHARACTER));
+                    .set_label(&format!("{text}{OBJECT_REPLACEMENT_CHARACTER}"));
             } else {
                 imp.label.set_label(&text);
             }

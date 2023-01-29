@@ -30,14 +30,14 @@ pub(crate) fn escape(text: &str) -> String {
 pub(crate) fn freplace(s: String, args: &[(&str, &str)]) -> String {
     let mut s = s;
     for (k, v) in args {
-        s = s.replace(&format!("{{{}}}", k), v);
+        s = s.replace(&format!("{{{k}}}"), v);
     }
     s
 }
 
 pub(crate) fn dim(text: &str) -> String {
     // The alpha value should be kept in sync with Adwaita's dim-label alpha value
-    format!("<span alpha=\"55%\">{}</span>", text)
+    format!("<span alpha=\"55%\">{text}</span>")
 }
 
 pub(crate) fn dim_and_escape(text: &str) -> String {
@@ -46,7 +46,7 @@ pub(crate) fn dim_and_escape(text: &str) -> String {
 
 pub(crate) fn linkify(text: &str) -> String {
     if !PROTOCOL_RE.is_match(text) {
-        format!("http://{}", text)
+        format!("http://{text}")
     } else {
         text.to_string()
     }
@@ -55,14 +55,14 @@ pub(crate) fn linkify(text: &str) -> String {
 pub(crate) fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
     match entity {
         TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
-        TextEntityType::EmailAddress => format!("<a href='mailto:{0}'>{0}</a>", text),
-        TextEntityType::PhoneNumber => format!("<a href='tel:{0}'>{0}</a>", text),
-        TextEntityType::Bold => format!("<b>{}</b>", text),
-        TextEntityType::Italic => format!("<i>{}</i>", text),
-        TextEntityType::Underline => format!("<u>{}</u>", text),
-        TextEntityType::Strikethrough => format!("<s>{}</s>", text),
+        TextEntityType::EmailAddress => format!("<a href='mailto:{text}'>{text}</a>"),
+        TextEntityType::PhoneNumber => format!("<a href='tel:{text}'>{text}</a>"),
+        TextEntityType::Bold => format!("<b>{text}</b>"),
+        TextEntityType::Italic => format!("<i>{text}</i>"),
+        TextEntityType::Underline => format!("<u>{text}</u>"),
+        TextEntityType::Strikethrough => format!("<s>{text}</s>"),
         TextEntityType::Code | TextEntityType::Pre | TextEntityType::PreCode(_) => {
-            format!("<tt>{}</tt>", text)
+            format!("<tt>{text}</tt>")
         }
         TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
         _ => text,

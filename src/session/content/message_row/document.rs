@@ -241,7 +241,7 @@ impl MessageDocument {
                 let downloaded = glib::format_size((size as f64 * progress) as u64);
                 let full_size = glib::format_size(size);
 
-                size_label.set_label(&format!("{} / {}", downloaded, full_size));
+                size_label.set_label(&format!("{downloaded} / {full_size}"));
             }
             CanBeDownloaded | Downloaded => {
                 size_label.set_label(&glib::format_size(size));
