@@ -9,7 +9,7 @@ use tdlib::types::DraftMessage;
 use crate::tdlib::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
     BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatType, Message,
-    MessageForwardInfo, MessageForwardOrigin, User,
+    MessageForwardInfo, MessageForwardOrigin,
 };
 use crate::utils::{dim_and_escape, escape, spawn};
 use crate::{expressions, strings, Session};
@@ -25,12 +25,9 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub(crate) struct Row {
-        /// A `Chat` or `User`
-        pub(super) item: RefCell<Option<glib::Object>>,
+        pub(super) item: RefCell<Option<Chat>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) chat_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
-        #[template_child]
-        pub(super) bottom_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -175,7 +172,7 @@ impl Row {
     }
 
     fn toggle_chat_is_pinned(&self) {
-        if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
+        if let Some(chat) = self.item() {
             spawn(async move {
                 if let Err(e) = chat.toggle_is_pinned().await {
                     log::warn!("Error on toggling chat's pinned state: {e:?}");
@@ -185,7 +182,7 @@ impl Row {
     }
 
     fn toggle_chat_marked_as_unread(&self) {
-        if let Some(chat) = self.item().and_then(|item| item.downcast::<Chat>().ok()) {
+        if let Some(chat) = self.item() {
             spawn(async move {
                 if let Err(e) = if chat.unread_count() > 0 || chat.is_marked_as_unread() {
                     chat.mark_as_read().await
@@ -220,13 +217,6 @@ impl Row {
                 }
             }))
             .bind(&*imp.unread_count_label, "label", Some(self));
-
-        // User name
-        expressions::user_display_name(&item_expression).bind(
-            &*imp.title_label,
-            "text",
-            Some(self),
-        );
 
         // Decide what to show (exclusive): pin icon, unread label, unread count or marked as unread
         // bin.
@@ -266,11 +256,11 @@ impl Row {
         .bind(&*imp.status_stack, "visible-child", Some(self));
     }
 
-    pub(crate) fn item(&self) -> Option<glib::Object> {
+    pub(crate) fn item(&self) -> Option<Chat> {
         self.imp().item.borrow().to_owned()
     }
 
-    pub(crate) fn set_item(&self, item: Option<glib::Object>) {
+    pub(crate) fn set_item(&self, item: Option<Chat>) {
         if self.item() == item {
             return;
         }
@@ -285,16 +275,10 @@ impl Row {
         if let Some(handler_id) = imp.chat_notify_handler_id.take() {
             self.item()
                 .unwrap()
-                .downcast::<Chat>()
-                .unwrap()
                 .disconnect(handler_id);
         }
 
-        if let Some(ref item) = item {
-            if let Some(chat) = item.downcast_ref::<Chat>() {
-                imp.timestamp_label.set_visible(true);
-                imp.bottom_box.set_visible(true);
-
+        if let Some(ref chat) = item {
                 let last_message_expression = Chat::this_expression("last-message");
                 let draft_message_expression = Chat::this_expression("draft-message");
                 let actions_expression = Chat::this_expression("actions");
@@ -546,12 +530,6 @@ impl Row {
                 )
                 .bind(&*imp.unread_count_label, "css-classes", Some(chat));
                 bindings.push(unread_binding);
-            } else if item.downcast_ref::<User>().is_some() {
-                imp.timestamp_label.set_visible(false);
-                imp.bottom_box.set_visible(false);
-            } else {
-                unreachable!("Unexpected item type: {:?}", item);
-            }
         }
 
         self.update_actions_for_item(item.as_ref());
@@ -559,9 +537,8 @@ impl Row {
         self.notify("item");
     }
 
-    fn update_actions_for_item(&self, item: Option<&glib::Object>) {
-        match item.and_then(|chat| chat.downcast_ref::<Chat>()) {
-            Some(chat) => {
+    fn update_actions_for_item(&self, item: Option<&Chat>) {
+        if let Some(chat) = item {
                 self.update_actions_for_chat(chat);
                 let handler_id = chat.connect_notify_local(
                     None,
@@ -575,11 +552,9 @@ impl Row {
                     }),
                 );
                 self.imp().chat_notify_handler_id.replace(Some(handler_id));
-            }
-            None => {
+        } else {
                 self.update_pin_actions(false, false);
                 self.update_mark_as_unread_actions(false, false);
-            }
         }
     }
 
