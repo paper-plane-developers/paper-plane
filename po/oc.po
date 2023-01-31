@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 00:31+0100\n"
+"POT-Creation-Date: 2023-01-31 22:54+0100\n"
 "PO-Revision-Date: 2021-09-18 23:07+0200\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language-Team: \n"
@@ -345,7 +345,7 @@ msgid "Saved Messages"
 msgstr "Messatge pas pres en carga"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#: src/session/sidebar/row.rs:970
+#: src/session/sidebar/row.rs:968
 msgid "Deleted Account"
 msgstr ""
 
@@ -353,23 +353,24 @@ msgstr ""
 msgid "The admins of this group have restricted you from writing here"
 msgstr ""
 
-#. Translators: This is a hours: minutes time format used in restriction label
-#. Translators: This is a time format for the message timestamp without seconds
-#. Show the time
-#. Translators: This is a time format for the chat list without seconds
-#: src/expressions.rs:106
-#: src/session/content/message_row/indicators_model.rs:153
-#: src/session/sidebar/row.rs:396
+#. Translators: This is a time representation, without seconds.
+#. Here you may want to change to a 24-hours representation, based on your locale.
+#. You can use this site to learn more: https://www.strfti.me/
+#: src/expressions.rs:105
+#: src/session/content/message_row/indicators_model.rs:155
+#: src/session/sidebar/row.rs:394
 msgid "%l:%M %p"
 msgstr "%H:%M"
 
-#. Translators: This is a full date format used in restriction label
-#: src/expressions.rs:109
+#. Translators: This is a date and time representation, without seconds.
+#. Here you may want to change to a 24-hours representation and change order, based on your locale.
+#. You can use this site to learn more: https://www.strfti.me/
+#: src/expressions.rs:110
 #, fuzzy
 msgid "%B %e, %Y %l:%M %p"
 msgstr "%e %B de %Y"
 
-#: src/expressions.rs:119
+#: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
 msgstr ""
 
@@ -440,28 +441,34 @@ msgstr ""
 msgid "_Ok"
 msgstr ""
 
-#: src/login.rs:1065
+#. Translators: This is an authentication method
+#: src/login.rs:1066
 #, fuzzy
 msgid "Telegram"
 msgstr "Telegrand"
 
-#: src/login.rs:1066
+#. Translators: This is an authentication method
+#: src/login.rs:1068
 msgid "SMS"
 msgstr ""
 
-#: src/login.rs:1067
+#. Translators: This is an authentication method
+#: src/login.rs:1070
 msgid "Call"
 msgstr ""
 
-#: src/login.rs:1068
+#. Translators: This is an authentication method
+#: src/login.rs:1072
 msgid "Flash Call"
 msgstr ""
 
-#: src/login.rs:1069
+#. Translators: This is an authentication method
+#: src/login.rs:1074
 msgid "Missed Call"
 msgstr ""
 
-#: src/login.rs:1070
+#. Translators: This is an authentication method
+#: src/login.rs:1076
 msgid "Fragment"
 msgstr ""
 
@@ -483,7 +490,10 @@ msgstr ""
 msgid "last seen %x"
 msgstr ""
 
-#: src/strings.rs:38
+#. Translators: This is an online status with the last seen time, without seconds
+#. Here you may want to change to a 24-hours representation, based on your locale.
+#. You can use this site to learn more: https://www.strfti.me/
+#: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
@@ -684,11 +694,11 @@ msgstr "%B %e"
 msgid "%B %e, %Y"
 msgstr "%e %B de %Y"
 
-#: src/session/content/message_row/indicators_model.rs:155
+#: src/session/content/message_row/indicators_model.rs:157
 msgid "edited"
 msgstr ""
 
-#: src/session/content/message_row/indicators_model.rs:160
+#: src/session/content/message_row/indicators_model.rs:162
 msgid "sponsored"
 msgstr ""
 
@@ -708,51 +718,51 @@ msgstr ""
 msgid "This message is unsupported"
 msgstr "Aqueste messatge pas pres en carga"
 
-#: src/session/sidebar/row.rs:429
+#: src/session/sidebar/row.rs:427
 msgid "Draft"
 msgstr ""
 
-#: src/session/sidebar/row.rs:645
+#: src/session/sidebar/row.rs:643
 msgid "You"
 msgstr "Vos"
 
-#: src/session/sidebar/row.rs:711
+#: src/session/sidebar/row.rs:709
 msgid "choosing a contact"
 msgstr ""
 
-#: src/session/sidebar/row.rs:729
+#: src/session/sidebar/row.rs:727
 msgid "choosing a location"
 msgstr ""
 
-#: src/session/sidebar/row.rs:747
+#: src/session/sidebar/row.rs:745
 msgid "choosing a sticker"
 msgstr ""
 
-#: src/session/sidebar/row.rs:765
+#: src/session/sidebar/row.rs:763
 msgid "recording a video"
 msgstr ""
 
-#: src/session/sidebar/row.rs:783
+#: src/session/sidebar/row.rs:781
 msgid "recording a video note"
 msgstr ""
 
-#: src/session/sidebar/row.rs:801
+#: src/session/sidebar/row.rs:799
 msgid "recording a voice note"
 msgstr ""
 
-#: src/session/sidebar/row.rs:819
+#: src/session/sidebar/row.rs:817
 msgid "playing a game"
 msgstr ""
 
-#: src/session/sidebar/row.rs:834
+#: src/session/sidebar/row.rs:832
 msgid "typing"
 msgstr ""
 
-#: src/session/sidebar/row.rs:949
+#: src/session/sidebar/row.rs:947
 msgid "watching an animation"
 msgstr ""
 
-#: src/session/sidebar/row.rs:975
+#: src/session/sidebar/row.rs:973
 msgid "Deleted"
 msgstr ""
 
