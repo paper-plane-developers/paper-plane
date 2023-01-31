@@ -149,7 +149,9 @@ impl MessageIndicatorsModel {
                     .and_then(|t| t.to_local())
                     .unwrap();
 
-                // Translators: This is a time format for the message timestamp without seconds
+                // Translators: This is a time representation, without seconds.
+                // Here you may want to change to a 24-hours representation, based on your locale.
+                // You can use this site to learn more: https://www.strfti.me/
                 let datetime = datetime.format(&gettext("%l:%M %p")).unwrap().into();
                 return if message.is_edited() {
                     format!("{} {}", gettext("edited"), datetime)

@@ -102,10 +102,11 @@ fn restriction_label_expression<T: glib::StaticType, V: glib::ToValue>(
                                     .as_days()
                                     == 0
                                 {
-                                    // Translators: This is a hours: minutes time format used in restriction label
                                     gettext("%l:%M %p")
                                 } else {
-                                    // Translators: This is a full date format used in restriction label
+                                    // Translators: This is a date and time representation, without seconds.
+                                    // Here you may want to change to a 24-hours representation and change order, based on your locale.
+                                    // You can use this site to learn more: https://www.strfti.me/
                                     gettext("%B %e, %Y %l:%M %p")
                                 })
                                 .unwrap()

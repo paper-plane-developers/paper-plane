@@ -391,8 +391,6 @@ impl Row {
                     let days_difference = difference.as_days();
 
                     if hours_difference <= 16 {
-                        // Show the time
-                        // Translators: This is a time format for the chat list without seconds
                         datetime.format(&gettext("%l:%M %p")).unwrap()
                     } else if days_difference < 6 {
                         // Show the day of the week
