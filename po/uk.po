@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-30 00:31+0100\n"
 "PO-Revision-Date: 2023-02-01 14:41+0000\n"
-"Last-Translator: Fenimoure <folderkillered@gmail.com>\n"
+"Last-Translator: Dan <denqwerta@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/uk/>\n"
 "Language: uk\n"
@@ -68,7 +68,7 @@ msgstr "Схема кольорів"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "Схема кольорів для використання у додатку"
+msgstr "Схема кольорів для використання у застосунку"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -137,7 +137,7 @@ msgstr "Сканувати код"
 #: data/resources/ui/login.ui:167
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
-"Відскануйте цей код у іншому додатку Telegram, у якому ви увійшли у ваш "
+"Відскануйте цей код у іншому застосунку Telegram, у якому ви увійшли у ваш "
 "обліковий запис."
 
 #: data/resources/ui/login.ui:189
