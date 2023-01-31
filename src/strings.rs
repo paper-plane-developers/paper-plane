@@ -33,11 +33,11 @@ pub(crate) fn user_status(status: &UserStatus) -> String {
                 // Translators: This is an online status with the date
                 was_online.format(&gettext("last seen %x")).unwrap().into()
             } else if now.day_of_week() != was_online.day_of_week() && now.hour() >= 1 {
-                // Translators: This is an online status with the time without seconds
-                was_online
-                    .format(&gettext("last seen yesterday at %l:%M %p"))
-                    .unwrap()
-                    .into()
+                // Translators: This is an online status with the last seen time, without seconds
+                // Here you may want to change to a 24-hours representation, based on your locale.
+                // You can use this site to learn more: https://www.strfti.me/
+                let format = gettext("last seen yesterday at %l:%M %p");
+                was_online.format(&format).unwrap().into()
             } else if time_span.as_hours() > 0 {
                 ngettext_f(
                     "last seen {num} hour ago",
