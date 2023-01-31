@@ -116,6 +116,10 @@ pub(crate) fn message_content(message: &Message) -> String {
             message_chat_delete_member(&deleted_user, sender)
         }
         MessagePinMessage(data) => message_pin_message(data.message_id, &chat, sender),
+        MessageScreenshotTaken => gettext_f(
+            "{sender} took a screenshot!",
+            &[("sender", &message_sender(sender, true))],
+        ),
         MessageContactRegistered => message_contact_registered(sender),
         _ => gettext("Unsupported Message"),
     }

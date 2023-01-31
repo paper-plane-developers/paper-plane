@@ -106,6 +106,7 @@ impl ItemRow {
                             | MessageChatJoinByRequest
                             | MessageChatDeleteMember(_)
                             | MessagePinMessage(_)
+                            | MessageScreenshotTaken
                             | MessageContactRegistered => {
                                 self.get_or_create_event_row()
                                     .set_label(&strings::message_content(message));
