@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-30 00:31+0100\n"
-"PO-Revision-Date: 2022-07-01 18:20+0000\n"
-"Last-Translator: Artem <artem@molotov.work>\n"
+"PO-Revision-Date: 2023-01-31 20:15+0000\n"
+"Last-Translator: Fenimoure <folderkillered@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/uk/>\n"
 "Language: uk\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -100,13 +100,12 @@ msgid "Select a chat to start messaging."
 msgstr "Виберіть чат, щоб почати спілкування."
 
 #: data/resources/ui/content-chat-action-bar.ui:84
-#, fuzzy
 msgid "Message"
-msgstr "Голосове повідомлення"
+msgstr "Повідомлення"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Прогорнути донизу"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
@@ -114,7 +113,7 @@ msgstr "Подивитись інформацію"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Підпис"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -126,7 +125,7 @@ msgstr "_Наступний"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
-msgstr ""
+msgstr "Вітаємо"
 
 #: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
@@ -152,7 +151,7 @@ msgstr "Код"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Код більше не може бути надісланий."
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -195,14 +194,12 @@ msgid "Use Recovery Code"
 msgstr "Скористуватись кодом відновлення"
 
 #: data/resources/ui/login.ui:474
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
-"Коли ви встановлювали свій хмарний пароль, ви надали адресу електронної "
-"пошти для відновлення. Ми можемо відправити вам код, який ви можете "
-"використати, щоб скинути свій пароль."
+"Під час встановлення свого хмарного паролю, ви надали адресу електронної "
+"пошти для відновлення. Туди може бути надіслано код для скидання паролю."
 
 #: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
@@ -217,31 +214,28 @@ msgid "_Delete Account"
 msgstr "_Видалити обліковий запис"
 
 #: data/resources/ui/login.ui:607
-#, fuzzy
 msgid "Enter the code e-mailed to you"
 msgstr "Введіть код, відправлений на пошту"
 
 #: data/resources/ui/login.ui:650
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_Не маєте доступу до пошти?"
+msgstr "Не маєте доступу до пошти?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Відповідь"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Видалити для _Всіх"
 
 #: data/resources/ui/message-menu.ui:16
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_Видалити обліковий запис"
+msgstr "_Видалити для мене"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
-msgstr ""
+msgstr "Країна"
 
 #: data/resources/ui/phone-number-input.ui:17
 msgid "Phone Number"
@@ -257,15 +251,15 @@ msgstr "Темна Тема"
 
 #: data/resources/ui/preferences-window.ui:35
 msgid "Storage"
-msgstr ""
+msgstr "Сховище"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Розмір кешу"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Очистити кеш"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -293,15 +287,14 @@ msgid "Search Chats"
 msgstr "Шукати Чати"
 
 #: data/resources/ui/shortcuts.ui:39
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "Список чатів"
+msgstr "Історія чату"
 
 #: data/resources/ui/shortcuts.ui:42
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Надіслати фото з буферу обміну"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -321,58 +314,53 @@ msgstr "_Про Telegrand"
 
 #: data/resources/ui/sidebar-row-menu.ui:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Закріпити"
 
 #: data/resources/ui/sidebar-row-menu.ui:11
 msgid "_Unpin"
-msgstr ""
+msgstr "_Відкріпити"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "_Позначити як непрочитане"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Позначити як _прочитане"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Шукати Чати"
+msgstr "Шукати"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "Шукати Чати"
+msgstr "Немає результатів"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Спробуйте знайти щось інше."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Telegrand developers"
-msgstr "Telegrand"
+msgstr "Розробники Telegrand"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Спонсори"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
 #: src/session/sidebar/search/mod.rs:208
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Голосове повідомлення"
+msgstr "Збережене"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
 #: src/session/sidebar/row.rs:970
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_Видалити обліковий запис"
+msgstr "_Видалений акаунт"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Адміністратори цієї групи заборонили вам писати тут"
 
 #. Translators: This is a hours: minutes time format used in restriction label
 #. Translators: This is a time format for the message timestamp without seconds
@@ -392,15 +380,14 @@ msgstr "%e %B, %Y"
 
 #: src/expressions.rs:119
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "В цій групі не дозволено писати повідомлення."
 
 #: src/login.rs:380
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
-"Спосіб продовжити користуватись вашим обліковим записом — це видалити та "
-"створити його ще раз"
+"Єдиний спосіб продовжити користуватись вашим обліковим записом — це видалити "
+"та створити його ще раз"
 
 #: src/login.rs:385
 #, fuzzy
@@ -421,17 +408,16 @@ msgstr ""
 "усіма медіа та файлами, якими ви поділилися!"
 
 #: src/login.rs:684
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
-msgstr "Ви погоджуєтесь з Умовами Користування?"
+msgstr "Чи приймаєте Ви Умови Користування?"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_No"
-msgstr ""
+msgstr "_Ні"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_Yes"
-msgstr ""
+msgstr "_Так"
 
 #: src/login.rs:688
 msgid "Terms of Service"
@@ -439,7 +425,7 @@ msgstr "Умови Користування"
 
 #: src/login.rs:689
 msgid "_OK"
-msgstr ""
+msgstr "_ОК"
 
 #: src/login.rs:911
 msgid "Warning"
@@ -459,24 +445,23 @@ msgstr ""
 
 #: src/login.rs:919 src/session/content/chat_action_bar.rs:270
 msgid "_Cancel"
-msgstr ""
+msgstr "_Скасувати"
 
 #: src/login.rs:992
 msgid "Sorry"
 msgstr "Вибачте"
 
 #: src/login.rs:994
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
 msgstr ""
-"Якщо ви не можете відновити доступ до електронної пошти, вам потрібно або "
-"згадати ваш пароль, або видалити та створити ваш обліковий запис знову."
+"Якщо Ви не можете відновити доступ до електронної пошти, Вам потрібно "
+"згадати Ваш пароль або видалити та створити Ваш обліковий запис знову."
 
 #: src/login.rs:999
 msgid "_Ok"
-msgstr ""
+msgstr "_ОК"
 
 #: src/login.rs:1065
 #, fuzzy
@@ -485,18 +470,17 @@ msgstr "Telegrand"
 
 #: src/login.rs:1066
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #: src/login.rs:1067
 msgid "Call"
-msgstr ""
+msgstr "Дзвінок"
 
 #: src/login.rs:1068
 msgid "Flash Call"
 msgstr ""
 
 #: src/login.rs:1069
-#, fuzzy
 msgid "Missed Call"
 msgstr "Пропущений виклик"
 
@@ -506,15 +490,15 @@ msgstr ""
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Ви ввели недійсний код країни."
 
 #: src/strings.rs:24
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "відвідини — давно"
 
 #: src/strings.rs:25
 msgid "online"
-msgstr ""
+msgstr "в мережі"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:34
@@ -524,23 +508,23 @@ msgstr ""
 
 #: src/strings.rs:38
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "відвідини — вчора о %l:%M %p"
 
 #: src/strings.rs:56
 msgid "last seen just now"
-msgstr ""
+msgstr "відвідини — щойно"
 
 #: src/strings.rs:59
 msgid "last seen recently"
-msgstr ""
+msgstr "відвідини — нещодавно"
 
 #: src/strings.rs:60
 msgid "last seen within a week"
-msgstr ""
+msgstr "відвідини — цього тижня"
 
 #: src/strings.rs:61
 msgid "last seen within a month"
-msgstr ""
+msgstr "відвідини — цього місяця"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
@@ -551,12 +535,10 @@ msgid "Video has expired"
 msgstr ""
 
 #: src/strings.rs:89
-#, fuzzy
 msgid "Video Message"
-msgstr "Голосове повідомлення"
+msgstr "Відео повідомлення"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "Unsupported Message"
 msgstr "Непідтримуване повідомлення"
 
@@ -573,28 +555,26 @@ msgid "Video"
 msgstr "Відео"
 
 #: src/strings.rs:187
-#, fuzzy
 msgid "Voice Message"
 msgstr "Голосове повідомлення"
 
 #: src/strings.rs:206
 msgid "Declined outgoing video call"
-msgstr "Відмовлено вхідний виклик"
+msgstr "Відхилений вихідний відеовиклик"
 
 #: src/strings.rs:208
 msgid "Declined outgoing call"
-msgstr "Відмовлено вихідний виклик"
+msgstr "Відхилений вихідний виклик"
 
 #: src/strings.rs:214
 msgid "Declined incoming video call"
-msgstr "Відмовлено вхідний відеовиклик"
+msgstr "Відхилений вхідний відеовиклик"
 
 #: src/strings.rs:216
 msgid "Declined incoming call"
-msgstr "Відмовлено вихідний відеовиклик"
+msgstr "Відхилений вхідний виклик"
 
 #: src/strings.rs:224
-#, fuzzy
 msgid "Canceled call"
 msgstr "Скасований виклик"
 
@@ -619,14 +599,12 @@ msgid "Incoming call"
 msgstr "_Вхідний виклик"
 
 #: src/strings.rs:282
-#, fuzzy
 msgid "Channel created"
-msgstr "Світлину каналу видалено"
+msgstr "Канал створено"
 
 #: src/strings.rs:311
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "Світлину каналу видалено"
+msgstr "Світлину каналу змінено"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
@@ -634,43 +612,43 @@ msgstr "Світлину каналу видалено"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "GIF прикріплено {sender}"
 
 #: src/strings.rs:407
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "Аудіофайл прикріплено {sender}"
 
 #: src/strings.rs:408
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "Файл прикріплено {sender}"
 
 #: src/strings.rs:409
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "Фото прикріплено {sender}"
 
 #: src/strings.rs:410
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "Стікер прикріплено {sender}"
 
 #: src/strings.rs:411
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "Відео прикріплено {sender}"
 
 #: src/strings.rs:412
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "Відеоповідомлення прикріплено {sender}"
 
 #: src/strings.rs:413
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "Голосове повідомлення прикріплено {sender}"
 
 #: src/strings.rs:414 src/strings.rs:416
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "Повідомлення прикріплено {sender}"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
-msgstr ""
+msgstr "Кеш очищено"
 
 #. TODO: Actually try using TDLib to retrieve the message before showing this
 #: src/session/content/chat_action_bar.rs:218
@@ -679,23 +657,23 @@ msgstr ""
 
 #: src/session/content/chat_action_bar.rs:220
 msgid "Deleted Message"
-msgstr ""
+msgstr "Видалене повідомлення"
 
 #: src/session/content/chat_action_bar.rs:266
 msgid "Open File"
-msgstr ""
+msgstr "Відкрити файл"
 
 #: src/session/content/chat_action_bar.rs:269
 msgid "_Open"
-msgstr ""
+msgstr "_Відкрити"
 
 #: src/session/content/chat_action_bar.rs:274
 msgid "Images"
-msgstr ""
+msgstr "Зображення"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "бот"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
@@ -708,15 +686,15 @@ msgstr "Ім'я користувача"
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Опис"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Посилання"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Скопійовано до буферу обміну"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:119
@@ -729,24 +707,26 @@ msgid "%B %e, %Y"
 msgstr "%e %B, %Y"
 
 #: src/session/content/message_row/indicators_model.rs:155
+#, fuzzy
 msgid "edited"
-msgstr ""
+msgstr "редаговано"
 
 #: src/session/content/message_row/indicators_model.rs:160
 msgid "sponsored"
-msgstr ""
+msgstr "спонсоровано"
 
 #: src/session/content/message_row/mod.rs:166
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Ви хочете видалити це повідомлення для <b>всіх</b>?"
 
 #: src/session/content/message_row/mod.rs:168
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Чи хочете Ви видалити це повідомлення?"
 
 #: src/session/content/message_row/mod.rs:172
+#, fuzzy
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "Підтвердіть видалення повідомлення"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
@@ -761,45 +741,47 @@ msgid "You"
 msgstr "Ви"
 
 #: src/session/sidebar/row.rs:711
+#, fuzzy
 msgid "choosing a contact"
-msgstr ""
+msgstr "обирає контакт"
 
 #: src/session/sidebar/row.rs:729
+#, fuzzy
 msgid "choosing a location"
-msgstr ""
+msgstr "обирає локацію"
 
 #: src/session/sidebar/row.rs:747
 msgid "choosing a sticker"
-msgstr ""
+msgstr "обирає стікер"
 
 #: src/session/sidebar/row.rs:765
-#, fuzzy
 msgid "recording a video"
-msgstr "Вхідний відеовиклик"
+msgstr "записує відео"
 
 #: src/session/sidebar/row.rs:783
 msgid "recording a video note"
-msgstr ""
+msgstr "записує відеонотатку"
 
 #: src/session/sidebar/row.rs:801
 msgid "recording a voice note"
-msgstr ""
+msgstr "записує голосову нотатку"
 
 #: src/session/sidebar/row.rs:819
 msgid "playing a game"
-msgstr ""
+msgstr "грає гру"
 
 #: src/session/sidebar/row.rs:834
 msgid "typing"
-msgstr ""
+msgstr "пише"
 
 #: src/session/sidebar/row.rs:949
 msgid "watching an animation"
-msgstr ""
+msgstr "переглядає анімацію"
 
 #: src/session/sidebar/row.rs:975
+#, fuzzy
 msgid "Deleted"
-msgstr ""
+msgstr "Видалене"
 
 #: src/session/sidebar/search/section_row.rs:137
 #, fuzzy
@@ -808,20 +790,19 @@ msgstr "Список чатів"
 
 #: src/session/sidebar/search/section_row.rs:140
 msgid "Global Search"
-msgstr ""
+msgstr "Глобальний пошук"
 
 #: src/session/sidebar/search/section_row.rs:143
 msgid "Recent"
-msgstr ""
+msgstr "Нещодавні"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Недійсний код країни"
 
 #: src/tdlib/country_info.rs:124
-#, fuzzy
 msgid "Test Account"
-msgstr "_Видалити обліковий запис"
+msgstr "Тестувальний обліковий запис"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Ласкаво просимо до Telegrand"
