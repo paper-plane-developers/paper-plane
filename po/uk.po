@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-30 00:31+0100\n"
-"PO-Revision-Date: 2023-01-31 20:15+0000\n"
+"PO-Revision-Date: 2023-01-31 21:58+0000\n"
 "Last-Translator: Fenimoure <folderkillered@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/uk/>\n"
@@ -390,12 +390,11 @@ msgstr ""
 "та створити його ще раз"
 
 #: src/login.rs:385
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
 msgstr ""
-"Оскільки ви не надали адресу електронної пошти для відновлення, єдиний "
+"Оскільки Ви не надали адресу електронної пошти для відновлення, єдиний "
 "спосіб продовжити користуватись обліковим записом — це видалити та створити "
 "його ще раз"
 
@@ -464,9 +463,8 @@ msgid "_Ok"
 msgstr "_ОК"
 
 #: src/login.rs:1065
-#, fuzzy
 msgid "Telegram"
-msgstr "Telegrand"
+msgstr "Telegram"
 
 #: src/login.rs:1066
 msgid "SMS"
@@ -486,7 +484,7 @@ msgstr "Пропущений виклик"
 
 #: src/login.rs:1070
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
@@ -504,11 +502,11 @@ msgstr "в мережі"
 #: src/strings.rs:34
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "відвідини — %x"
 
 #: src/strings.rs:38
 msgid "last seen yesterday at %l:%M %p"
-msgstr "відвідини — вчора о %l:%M %p"
+msgstr "відвідини — вчора о %H:%M"
 
 #: src/strings.rs:56
 msgid "last seen just now"
