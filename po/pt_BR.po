@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 22:54+0100\n"
+"POT-Creation-Date: 2023-02-01 16:05+0100\n"
 "PO-Revision-Date: 2023-01-31 20:15+0000\n"
 "Last-Translator: Alisson Lauffer <alissonvitortc@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
@@ -351,7 +351,6 @@ msgid "Saved Messages"
 msgstr "Mensagens Salvas"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#: src/session/sidebar/row.rs:968
 msgid "Deleted Account"
 msgstr "Conta Excluída"
 
@@ -653,7 +652,6 @@ msgstr "{sender} fixou uma mensagem"
 msgid "Cache cleared"
 msgstr "O cache foi limpo"
 
-#. TODO: Actually try using TDLib to retrieve the message before showing this
 #: src/session/content/chat_action_bar.rs:218
 msgid "Unknown"
 msgstr "Desconhedido"
@@ -769,17 +767,13 @@ msgstr "gravando uma mensagem de voz"
 msgid "playing a game"
 msgstr "jogando um jogo"
 
-#: src/session/sidebar/row.rs:832
+#: src/session/sidebar/row.rs:835
 msgid "typing"
 msgstr "escrevendo"
 
-#: src/session/sidebar/row.rs:947
+#: src/session/sidebar/row.rs:950
 msgid "watching an animation"
 msgstr "olhando uma animação"
-
-#: src/session/sidebar/row.rs:973
-msgid "Deleted"
-msgstr "Apagado"
 
 #: src/session/sidebar/search/section_row.rs:137
 msgid "Chats"
@@ -800,6 +794,9 @@ msgstr "Código de país inválido"
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
 msgstr "Conta de teste"
+
+#~ msgid "Deleted"
+#~ msgstr "Apagado"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Bem-vindo ao Telegrand"

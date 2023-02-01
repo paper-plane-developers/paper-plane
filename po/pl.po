@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 22:54+0100\n"
+"POT-Creation-Date: 2023-02-01 16:05+0100\n"
 "PO-Revision-Date: 2023-02-01 14:41+0000\n"
 "Last-Translator: yuraiz <7516890@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
@@ -353,7 +353,6 @@ msgid "Saved Messages"
 msgstr "Zapisane wiadomości"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#: src/session/sidebar/row.rs:968
 msgid "Deleted Account"
 msgstr "Usunięte konto"
 
@@ -655,7 +654,6 @@ msgstr "Użytkownik {sender} przypiął wiadomość"
 msgid "Cache cleared"
 msgstr "Wyczyszczono pamięc podręczną"
 
-#. TODO: Actually try using TDLib to retrieve the message before showing this
 #: src/session/content/chat_action_bar.rs:218
 msgid "Unknown"
 msgstr "Nieznane"
@@ -771,17 +769,13 @@ msgstr "nagrywa wiadomość głosową"
 msgid "playing a game"
 msgstr "gra w grę"
 
-#: src/session/sidebar/row.rs:832
+#: src/session/sidebar/row.rs:835
 msgid "typing"
 msgstr "pisze"
 
-#: src/session/sidebar/row.rs:947
+#: src/session/sidebar/row.rs:950
 msgid "watching an animation"
 msgstr "ogląda animacje"
-
-#: src/session/sidebar/row.rs:973
-msgid "Deleted"
-msgstr "Usunięte"
 
 #: src/session/sidebar/search/section_row.rs:137
 msgid "Chats"
@@ -802,6 +796,9 @@ msgstr "Niepoprawny kod kraju"
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
 msgstr "Konto testowe"
+
+#~ msgid "Deleted"
+#~ msgstr "Usunięte"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Witamy w aplikacji Telegrand"
