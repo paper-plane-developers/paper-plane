@@ -2,6 +2,7 @@ use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
 use tdlib::enums::{CallDiscardReason, UserStatus, UserType};
+use tdlib::types::{MessageGame, MessageGameScore};
 
 use crate::i18n::{gettext_f, ngettext_f};
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, User};
@@ -120,6 +121,7 @@ pub(crate) fn message_content(message: &Message) -> String {
             "{sender} took a screenshot!",
             &[("sender", &message_sender(sender, true))],
         ),
+        MessageGameScore(data) => message_game_score(&data, &chat, sender),
         MessageContactRegistered => message_contact_registered(sender),
         _ => gettext("Unsupported Message"),
     }
@@ -387,6 +389,36 @@ fn message_chat_delete_member(deleted_user: &User, sender: &MessageSender) -> St
                 &[("sender", &sender_string), ("user", &deleted_user_name)],
             )
         }
+    }
+}
+
+fn message_game_score(game: &MessageGameScore, chat: &Chat, sender: &MessageSender) -> String {
+    let sender_string = message_sender(sender, true);
+    let game_title = match chat.history().message_by_id(game.game_message_id) {
+        Some(message) => match message.content().0 {
+            tdlib::enums::MessageContent::MessageGame(MessageGame { game }) => Some(game.title),
+            _ => unreachable!(),
+        },
+        None => None,
+    };
+
+    if let Some(game_title) = game_title {
+        gettext_f(
+            "{sender} scored {points} in {game}",
+            &[
+                ("sender", &sender_string),
+                ("points", &game.score.to_string()),
+                ("game", &game_title),
+            ],
+        )
+    } else {
+        gettext_f(
+            "{sender} scored {points}",
+            &[
+                ("sender", &sender_string),
+                ("points", &game.score.to_string()),
+            ],
+        )
     }
 }
 
