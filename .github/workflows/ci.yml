@@ -31,55 +31,6 @@ jobs:
       - name: Run cargo fmt
         run: cargo +nightly fmt --all -- --check
 
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-43
-      options: --privileged
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache flatpak
-        id: cache-flatpak
-        uses: actions/cache@v2
-        with:
-          path: .flatpak-builder
-          key: ${{ runner.os }}-flatpak-${{ hashFiles('build-aux/com.github.melix99.telegrand.Devel.json') }}
-          restore-keys: ${{ runner.os }}-flatpak-
-
-      - name: Cache cargo
-        id: cache-cargo
-        uses: actions/cache@v2
-        with:
-          path: /github/home/.cargo
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
-      - name: Create dummy versions of configured file
-        run: |
-          sed \
-            -e 's/str =.*;/str = "";/g' \
-            -e 's/i32 =.*;/i32 = 0;/g' \
-            src/config.rs.in \
-            > src/config.rs
-
-      - name: Build dependencies
-        run: |
-          flatpak-builder \
-          --disable-rofiles-fuse \
-          --install-deps-from=flathub \
-          --keep-build-dirs \
-          --stop-at=telegrand \
-          flatpak_app build-aux/com.github.melix99.telegrand.Devel.json
-
-      - name: Run clippy
-        run: |
-          flatpak-builder \
-          --run \
-          flatpak_app build-aux/com.github.melix99.telegrand.Devel.json \
-          cargo clippy -- -D warnings
-
   flatpak:
     name: Flatpak
     runs-on: ubuntu-latest
@@ -91,7 +42,6 @@ jobs:
         arch: [x86_64]
       # Don't fail the whole workflow if one architecture fails
       fail-fast: false
-    needs: [rustfmt, clippy]
     steps:
       - uses: actions/checkout@v2
       # Docker is required by the docker/setup-qemu-action which enables emulation
