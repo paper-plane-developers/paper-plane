@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 22:54+0100\n"
+"POT-Creation-Date: 2023-02-01 16:05+0100\n"
 "PO-Revision-Date: 2023-02-01 14:41+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
@@ -353,7 +353,6 @@ msgid "Saved Messages"
 msgstr "Opgeslagen berichten"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#: src/session/sidebar/row.rs:968
 msgid "Deleted Account"
 msgstr "Verwijderd account"
 
@@ -660,7 +659,6 @@ msgstr "{sender} heeft een bericht vastgezet"
 msgid "Cache cleared"
 msgstr "Cache geleegd"
 
-#. TODO: Actually try using TDLib to retrieve the message before showing this
 #: src/session/content/chat_action_bar.rs:218
 msgid "Unknown"
 msgstr "Onbekend"
@@ -776,17 +774,13 @@ msgstr "spraakbericht aan het opnemen"
 msgid "playing a game"
 msgstr "spel aan het spelen"
 
-#: src/session/sidebar/row.rs:832
+#: src/session/sidebar/row.rs:835
 msgid "typing"
 msgstr "aan het typen"
 
-#: src/session/sidebar/row.rs:947
+#: src/session/sidebar/row.rs:950
 msgid "watching an animation"
 msgstr "animatie aan het kijken"
-
-#: src/session/sidebar/row.rs:973
-msgid "Deleted"
-msgstr "Verwijderd"
 
 #: src/session/sidebar/search/section_row.rs:137
 msgid "Chats"
@@ -807,6 +801,9 @@ msgstr "Ongeldige landcode"
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
 msgstr "Test-account"
+
+#~ msgid "Deleted"
+#~ msgstr "Verwijderd"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Welkom bij Telegrand"

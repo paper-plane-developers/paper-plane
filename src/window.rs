@@ -200,7 +200,7 @@ impl Window {
                         if matches!(chat.type_(), ChatType::BasicGroup(_))
                             || matches!(chat.type_(), ChatType::Supergroup(s) if !s.is_channel())
                         {
-                            let sender_name = strings::message_sender(message.sender());
+                            let sender_name = strings::message_sender(message.sender(), true);
                             body.insert_str(0, &(sender_name + ": "));
                         }
 
