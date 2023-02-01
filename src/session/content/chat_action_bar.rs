@@ -210,7 +210,7 @@ impl ChatActionBar {
             {
                 // TODO: Make these labels auto update
                 imp.top_bar_sender_label
-                    .set_text(Some(&strings::message_sender(message.sender())));
+                    .set_text(Some(&strings::message_sender(message.sender(), true)));
                 imp.top_bar_message_label
                     .set_text(Some(&strings::message_content(&message)));
             } else {

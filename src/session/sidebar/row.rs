@@ -3,13 +3,13 @@ use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
-use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState, UserType};
+use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
 use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
     BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
     BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatType, Message,
-    MessageForwardInfo, MessageForwardOrigin, MessageSender, User,
+    MessageForwardInfo, MessageForwardOrigin, User,
 };
 use crate::utils::{dim_and_escape, escape, spawn};
 use crate::{expressions, strings, Session};
@@ -625,7 +625,7 @@ fn sender_label(message: Message) -> Option<String> {
                 .forward_info()
                 .map(MessageForwardInfo::origin)
                 .map(|forward_origin| match forward_origin {
-                    MessageForwardOrigin::User(user) => stringify_user(user, false),
+                    MessageForwardOrigin::User(user) => strings::user_display_name(user, false),
                     MessageForwardOrigin::Chat { chat, .. }
                     | MessageForwardOrigin::Channel { chat, .. } => chat.title(),
                     MessageForwardOrigin::HiddenUser { sender_name }
@@ -642,7 +642,7 @@ fn sender_label(message: Message) -> Option<String> {
             Some(if message.is_outgoing() {
                 gettext("You")
             } else {
-                escape(&sender_name(message.sender(), false))
+                escape(&strings::message_sender(message.sender(), false))
             })
         } else {
             None
@@ -696,12 +696,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is choosing a contact",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are choosing contacts",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are choosing contacts", len),
                 }
@@ -714,12 +714,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is choosing a location",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are choosing locations",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are choosing locations", len),
                 }
@@ -732,12 +732,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is choosing a sticker",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are choosing stickers",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are choosing stickers", len),
                 }
@@ -750,12 +750,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is recording a video",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are recording videos",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are recording videos", len),
                 }
@@ -768,12 +768,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is recording a video note",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are recording video notes",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are recording video notes", len),
                 }
@@ -786,12 +786,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is recording a voice note",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are recording voice notes",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are recording voice notes", len),
                 }
@@ -804,12 +804,12 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is playing a game",
-                        sender_name(action_group[0].sender(), false)
+                        strings::message_sender(action_group[0].sender(), false)
                     ),
                     2 => gettext!(
                         "{} and {} are playing games",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are playing games", len),
                 }
@@ -820,11 +820,14 @@ fn stringify_action(action: &ChatAction) -> String {
         Typing => {
             if show_sender {
                 match action_group.len() {
-                    1 => gettext!("{} is typing", sender_name(action_group[0].sender(), false)),
+                    1 => gettext!(
+                        "{} is typing",
+                        strings::message_sender(action_group[0].sender(), false)
+                    ),
                     2 => gettext!(
                         "{} and {} are typing",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are typing", len),
                 }
@@ -837,13 +840,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is uploading a document ({}%)",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.progress,
                     ),
                     2 => gettext!(
                         "{} and {} are uploading documents",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are uploading documents", len),
                 }
@@ -856,13 +859,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is uploading a photo ({}%)",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.progress,
                     ),
                     2 => gettext!(
                         "{} and {} are uploading photos",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are uploading photos", len),
                 }
@@ -875,13 +878,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is uploading a video ({}%)",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.progress,
                     ),
                     2 => gettext!(
                         "{} and {} are uploading videos",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are uploading videos", len),
                 }
@@ -894,13 +897,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is uploading a video note ({}%)",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.progress,
                     ),
                     2 => gettext!(
                         "{} and {} are uploading video notes",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are uploading video notes", len),
                 }
@@ -913,13 +916,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is uploading a voice note ({}%)",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.progress,
                     ),
                     2 => gettext!(
                         "{} and {} are uploading voice notes",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                     ),
                     len => gettext!("{} people are uploading voice notes", len),
                 }
@@ -932,13 +935,13 @@ fn stringify_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext!(
                         "{} is watching an animation {}",
-                        sender_name(action_group[0].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
                         action.emoji
                     ),
                     2 => gettext!(
                         "{} and {} are watching animations {}",
-                        sender_name(action_group[0].sender(), false),
-                        sender_name(action_group[1].sender(), false),
+                        strings::message_sender(action_group[0].sender(), false),
+                        strings::message_sender(action_group[1].sender(), false),
                         action.emoji
                     ),
                     len => gettext!("{} people are watching animations {}", len, action.emoji),
@@ -948,28 +951,5 @@ fn stringify_action(action: &ChatAction) -> String {
             }
         }
         Cancel => unreachable!(),
-    }
-}
-
-fn sender_name(sender: &MessageSender, use_full_name: bool) -> String {
-    match sender {
-        MessageSender::User(user) => stringify_user(user, use_full_name),
-        MessageSender::Chat(chat) => chat.title(),
-    }
-}
-
-fn stringify_user(user: &User, use_full_name: bool) -> String {
-    if use_full_name {
-        if user.type_().0 != UserType::Deleted {
-            format!("{} {}", user.first_name(), user.last_name())
-                .trim()
-                .into()
-        } else {
-            gettext("Deleted Account")
-        }
-    } else if user.type_().0 != UserType::Deleted {
-        user.first_name()
-    } else {
-        gettext("Deleted")
     }
 }

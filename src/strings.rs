@@ -7,10 +7,10 @@ use crate::i18n::{gettext_f, ngettext_f};
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, User};
 use crate::utils::{freplace, human_friendly_duration};
 
-fn user_display_name(user: &User) -> String {
+pub(crate) fn user_display_name(user: &User, use_full_name: bool) -> String {
     if let UserType::Deleted = user.type_().0 {
         gettext("Deleted Account")
-    } else if user.last_name().is_empty() {
+    } else if user.last_name().is_empty() || !use_full_name {
         user.first_name()
     } else if user.first_name().is_empty() {
         user.last_name()
@@ -62,10 +62,10 @@ pub(crate) fn user_status(status: &UserStatus) -> String {
     }
 }
 
-pub(crate) fn message_sender(sender: &MessageSender) -> String {
+pub(crate) fn message_sender(sender: &MessageSender, use_full_name: bool) -> String {
     match sender {
         MessageSender::Chat(chat) => chat.title(),
-        MessageSender::User(user) => user_display_name(user),
+        MessageSender::User(user) => user_display_name(user, use_full_name),
     }
 }
 
@@ -270,7 +270,7 @@ fn made_message_call(is_outgoing: bool, is_video: bool, duration: i32) -> String
 }
 
 fn message_basic_group_chat_create(title: &str, sender: &MessageSender) -> String {
-    let sender = message_sender(sender);
+    let sender = message_sender(sender, true);
     gettext_f(
         "{sender} created the group \"{title}\"",
         &[("sender", &sender), ("title", title)],
@@ -281,7 +281,7 @@ fn message_supergroup_chat_create(title: &str, chat: &Chat, sender: &MessageSend
     match chat.type_() {
         ChatType::Supergroup(supergroup) if supergroup.is_channel() => gettext("Channel created"),
         _ => {
-            let sender = message_sender(sender);
+            let sender = message_sender(sender, true);
             gettext_f(
                 "{sender} created the group \"{title}\"",
                 &[("sender", &sender), ("title", title)],
@@ -296,7 +296,7 @@ fn message_chat_change_title(title: &str, chat: &Chat, sender: &MessageSender) -
             gettext_f("Channel renamed to \"{title}\"", &[("title", title)])
         }
         _ => {
-            let sender = message_sender(sender);
+            let sender = message_sender(sender, true);
             gettext_f(
                 "{sender} changed the group name to \"{title}\"",
                 &[("sender", &sender), ("title", title)],
@@ -311,7 +311,7 @@ fn message_chat_change_photo(chat: &Chat, sender: &MessageSender) -> String {
             gettext("Channel photo changed")
         }
         _ => {
-            let sender = message_sender(sender);
+            let sender = message_sender(sender, true);
             gettext_f("{sender} changed the group photo", &[("sender", &sender)])
         }
     }
@@ -323,19 +323,19 @@ fn message_chat_delete_photo(chat: &Chat, sender: &MessageSender) -> String {
             gettext("Channel photo removed")
         }
         _ => {
-            let sender = message_sender(sender);
+            let sender = message_sender(sender, true);
             gettext_f("{sender} removed the group photo", &[("sender", &sender)])
         }
     }
 }
 
 fn message_chat_add_members(sender: &MessageSender, added_users: &Vec<User>) -> String {
-    let sender_string = message_sender(sender);
+    let sender_string = message_sender(sender, true);
     if sender.as_user().map(User::id) == added_users.first().map(User::id) {
         gettext_f("{sender} joined the group", &[("sender", &sender_string)])
     } else if added_users.len() == 2 {
-        let first_user = user_display_name(added_users.first().unwrap());
-        let second_user = user_display_name(added_users.last().unwrap());
+        let first_user = user_display_name(added_users.first().unwrap(), true);
+        let second_user = user_display_name(added_users.last().unwrap(), true);
         gettext_f(
             "{sender} added {first_user} and {second_user}",
             &[
@@ -347,7 +347,7 @@ fn message_chat_add_members(sender: &MessageSender, added_users: &Vec<User>) -> 
     } else {
         let users = added_users
             .iter()
-            .map(user_display_name)
+            .map(|u| user_display_name(u, true))
             .collect::<Vec<_>>()
             .join(", ");
         gettext_f(
@@ -358,7 +358,7 @@ fn message_chat_add_members(sender: &MessageSender, added_users: &Vec<User>) -> 
 }
 
 fn message_chat_join_by_link(sender: &MessageSender) -> String {
-    let sender = message_sender(sender);
+    let sender = message_sender(sender, true);
     gettext_f(
         "{sender} joined the group via invite link",
         &[("sender", &sender)],
@@ -366,18 +366,18 @@ fn message_chat_join_by_link(sender: &MessageSender) -> String {
 }
 
 fn message_chat_join_by_request(sender: &MessageSender) -> String {
-    let sender = message_sender(sender);
+    let sender = message_sender(sender, true);
     gettext_f("{sender} joined the group", &[("sender", &sender)])
 }
 
 fn message_chat_delete_member(deleted_user: &User, sender: &MessageSender) -> String {
-    let sender_string = message_sender(sender);
+    let sender_string = message_sender(sender, true);
     match sender {
         MessageSender::User(user) if user.id() == deleted_user.id() => {
             gettext_f("{sender} left the group", &[("sender", &sender_string)])
         }
         _ => {
-            let deleted_user_name = user_display_name(deleted_user);
+            let deleted_user_name = user_display_name(deleted_user, true);
             gettext_f(
                 "{sender} removed {user}",
                 &[("sender", &sender_string), ("user", &deleted_user_name)],
@@ -416,11 +416,11 @@ fn message_pin_message(message_id: i64, chat: &Chat, sender: &MessageSender) -> 
         None => gettext("{sender} pinned a message"),
     };
 
-    let sender = message_sender(sender);
+    let sender = message_sender(sender, true);
     freplace(string, &[("sender", &sender)])
 }
 
 fn message_contact_registered(sender: &MessageSender) -> String {
-    let sender = message_sender(sender);
+    let sender = message_sender(sender, true);
     gettext_f("{sender} joined Telegram", &[("sender", &sender)])
 }
