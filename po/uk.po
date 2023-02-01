@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-30 00:31+0100\n"
-"PO-Revision-Date: 2023-01-31 21:58+0000\n"
-"Last-Translator: Fenimoure <folderkillered@gmail.com>\n"
+"PO-Revision-Date: 2023-02-01 14:41+0000\n"
+"Last-Translator: Dan <denqwerta@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/uk/>\n"
 "Language: uk\n"
@@ -55,7 +55,6 @@ msgid "Recently used sessions"
 msgstr "Останні використані сесії"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
@@ -69,7 +68,7 @@ msgstr "Схема кольорів"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "Схема кольорів для використання у додатку"
+msgstr "Схема кольорів для використання у застосунку"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -138,7 +137,7 @@ msgstr "Сканувати код"
 #: data/resources/ui/login.ui:167
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
-"Відскануйте цей код у іншому додатку Telegram, у якому ви увійшли у ваш "
+"Відскануйте цей код у іншому застосунку Telegram, у якому ви увійшли у ваш "
 "обліковий запис."
 
 #: data/resources/ui/login.ui:189
@@ -375,9 +374,8 @@ msgstr "%l:%M %p"
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e %B, %Y"
+msgstr "%a, %e %B, %Y %H:%M"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
@@ -481,7 +479,7 @@ msgstr "Дзвінок"
 #. Translators: This is an authentication method
 #: src/login.rs:1072
 msgid "Flash Call"
-msgstr ""
+msgstr "Бліц Дзвінок"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1074
@@ -536,11 +534,11 @@ msgstr "відвідини — цього місяця"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
-msgstr ""
+msgstr "Фото застаріло"
 
 #: src/strings.rs:88
 msgid "Video has expired"
-msgstr ""
+msgstr "Відео застаріло"
 
 #: src/strings.rs:89
 msgid "Video Message"
@@ -661,7 +659,7 @@ msgstr "Кеш очищено"
 #. TODO: Actually try using TDLib to retrieve the message before showing this
 #: src/session/content/chat_action_bar.rs:218
 msgid "Unknown"
-msgstr ""
+msgstr "Невідомо"
 
 #: src/session/content/chat_action_bar.rs:220
 msgid "Deleted Message"
@@ -715,7 +713,6 @@ msgid "%B %e, %Y"
 msgstr "%e %B, %Y"
 
 #: src/session/content/message_row/indicators_model.rs:157
-#, fuzzy
 msgid "edited"
 msgstr "редаговано"
 
@@ -732,7 +729,6 @@ msgid "Do you want to delete this message?"
 msgstr "Чи хочете Ви видалити це повідомлення?"
 
 #: src/session/content/message_row/mod.rs:172
-#, fuzzy
 msgid "Confirm Message Deletion"
 msgstr "Підтвердіть видалення повідомлення"
 
@@ -749,12 +745,10 @@ msgid "You"
 msgstr "Ви"
 
 #: src/session/sidebar/row.rs:709
-#, fuzzy
 msgid "choosing a contact"
 msgstr "обирає контакт"
 
 #: src/session/sidebar/row.rs:727
-#, fuzzy
 msgid "choosing a location"
 msgstr "обирає локацію"
 
@@ -787,14 +781,12 @@ msgid "watching an animation"
 msgstr "переглядає анімацію"
 
 #: src/session/sidebar/row.rs:973
-#, fuzzy
 msgid "Deleted"
 msgstr "Видалене"
 
 #: src/session/sidebar/search/section_row.rs:137
-#, fuzzy
 msgid "Chats"
-msgstr "Список чатів"
+msgstr "Чати"
 
 #: src/session/sidebar/search/section_row.rs:140
 msgid "Global Search"
