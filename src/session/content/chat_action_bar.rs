@@ -204,6 +204,7 @@ impl ChatActionBar {
             imp.top_bar_message_label.set_text(None);
             imp.top_bar_revealer.set_reveal_child(false);
         } else {
+            // TODO: Use TDLib to retrieve the message if we don't have it locally
             if let Some(message) = self
                 .chat()
                 .and_then(|c| c.history().message_by_id(reply_to_message_id))
@@ -214,7 +215,6 @@ impl ChatActionBar {
                 imp.top_bar_message_label
                     .set_text(Some(&strings::message_content(&message)));
             } else {
-                // TODO: Actually try using TDLib to retrieve the message before showing this
                 imp.top_bar_sender_label.set_text(Some(&gettext("Unknown")));
                 imp.top_bar_message_label
                     .set_text(Some(&gettext("Deleted Message")));
