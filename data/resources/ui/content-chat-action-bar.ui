@@ -65,47 +65,106 @@
       </object>
     </child>
     <child>
-      <object class="GtkBox">
-        <style>
-          <class name="toolbar"/>
-        </style>
+      <object class="GtkStack" id="action_bar_stack">
         <child>
-          <object class="GtkButton" id="select_file_button">
-            <property name="valign">end</property>
-            <property name="action-name">chat-action-bar.select-file</property>
-            <property name="icon-name">mail-attachment-symbolic</property>
-            <style>
-              <class name="circular"/>
-            </style>
+          <object class="GtkStackPage">
+            <property name="name">entry</property>
+            <property name="child">
+              <object class="GtkBox">
+                <style>
+                  <class name="toolbar"/>
+                </style>
+                <child>
+                  <object class="GtkButton" id="select_file_button">
+                    <property name="valign">end</property>
+                    <property name="action-name">chat-action-bar.select-file</property>
+                    <property name="icon-name">mail-attachment-symbolic</property>
+                    <style>
+                      <class name="circular"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="MessageEntry" id="message_entry">
+                    <property name="placeholder-text" translatable="yes">Message</property>
+                    <property name="hexpand">True</property>
+                    <binding name="chat">
+                      <lookup name="chat">ContentChatActionBar</lookup>
+                    </binding>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="send_message_button">
+                    <property name="valign">end</property>
+                    <property name="action-name">chat-action-bar.send-text-message</property>
+                    <property name="icon-name">go-up-symbolic</property>
+                    <style>
+                      <class name="circular"/>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </property>
           </object>
         </child>
         <child>
-          <object class="MessageEntry" id="message_entry">
-            <property name="placeholder-text" translatable="yes">Message</property>
-            <property name="hexpand">True</property>
-            <binding name="chat">
-              <lookup name="chat">ContentChatActionBar</lookup>
-            </binding>
+          <object class="GtkStackPage">
+            <property name="name">restricted</property>
+            <property name="child">
+              <object class="GtkLabel" id="restriction_label">
+                <property name="wrap">True</property>
+                <property name="wrap-mode">word-char</property>
+                <property name="justify">center</property>
+              </object>
+            </property>
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="send_message_button">
-            <property name="valign">end</property>
-            <property name="action-name">chat-action-bar.send-text-message</property>
-            <property name="icon-name">go-up-symbolic</property>
-            <style>
-              <class name="circular"/>
-              <class name="suggested-action"/>
-            </style>
+          <object class="GtkStackPage">
+            <property name="name">unblock</property>
+            <property name="child">
+              <object class="GtkButton">
+                <property name="action-name">chat-action-bar.unblock-chat</property>
+                <property name="label">Unblock</property>
+                <style>
+                  <class name="error"/>
+                  <class name="flat"/>
+                  <class name="squared"/>
+                </style>
+              </object>
+            </property>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="restriction_label">
-            <property name="height-request">48</property>
-            <property name="hexpand">True</property>
-            <property name="wrap">True</property>
-            <property name="wrap-mode">word-char</property>
-            <property name="justify">center</property>
+          <object class="GtkStackPage">
+            <property name="name">mute</property>
+            <property name="child">
+              <object class="GtkButton" id="mute_button">
+              <property name="action-name">chat-action-bar.toggle-mute</property>
+              <style>
+                  <class name="accent"/>
+                  <class name="flat"/>
+                  <class name="squared"/>
+              </style>
+          </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">join</property>
+            <property name="child">
+              <object class="GtkButton">
+                <property name="action-name">chat-action-bar.join-chat</property>
+                <property name="label">Join</property>
+                <style>
+                  <class name="accent"/>
+                  <class name="flat"/>
+                  <class name="squared"/>
+                </style>
+              </object>
+            </property>
           </object>
         </child>
       </object>

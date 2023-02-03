@@ -154,6 +154,11 @@
         <attribute name="label" translatable="yes">View Info</attribute>
         <attribute name="action">chat-history.view-info</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Leave Chat</attribute>
+        <attribute name="action">chat-history.leave-chat</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
     </section>
   </menu>
 </interface>

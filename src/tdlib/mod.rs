@@ -28,7 +28,7 @@ pub(crate) use self::country_info::CountryInfo;
 pub(crate) use self::country_list::CountryList;
 pub(crate) use self::message::{Message, MessageSender};
 pub(crate) use self::message_forward_info::{MessageForwardInfo, MessageForwardOrigin};
-pub(crate) use self::secret_chat::SecretChat;
+pub(crate) use self::secret_chat::{SecretChat, SecretChatState};
 pub(crate) use self::sponsored_message::SponsoredMessage;
 pub(crate) use self::supergroup::Supergroup;
 pub(crate) use self::user::User;
