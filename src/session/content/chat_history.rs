@@ -1,7 +1,10 @@
+use adw::prelude::*;
+use gettextrs::gettext;
 use glib::clone;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
+use tdlib::enums::ChatMemberStatus;
+use tdlib::functions;
 
 use crate::session::content::{ChatActionBar, ChatInfoWindow, ItemRow};
 use crate::tdlib::{Chat, ChatHistoryError, ChatType, SponsoredMessage};
@@ -76,6 +79,13 @@ mod imp {
                         .imp()
                         .chat_action_bar
                         .set_reply_to_message_id(message_id);
+                },
+            );
+            klass.install_action_async(
+                "chat-history.leave-chat",
+                None,
+                |widget, _, _| async move {
+                    widget.show_leave_chat_dialog().await;
                 },
             );
         }
@@ -225,6 +235,31 @@ impl ChatHistory {
         }
     }
 
+    async fn show_leave_chat_dialog(&self) {
+        if let Some(chat) = self.chat() {
+            let dialog = adw::MessageDialog::new(
+                Some(&self.parent_window().unwrap()),
+                Some("Leave chat?"),
+                Some("Do you want to leave this chat?"),
+            );
+            dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
+            dialog.set_default_response(Some("no"));
+            dialog.set_close_response("no");
+            dialog.set_response_appearance("yes", adw::ResponseAppearance::Destructive);
+            let response = dialog.run_future().await;
+            if response == "yes" {
+                let result = functions::leave_chat(chat.id(), chat.session().client_id()).await;
+                if let Err(e) = result {
+                    log::warn!("Failed to leave chat: {:?}", e);
+                } else {
+                    // Unselect recently left chat
+                    chat.session().imp().sidebar.get().set_selected_chat(None);
+                }
+            }
+            dialog.close();
+        }
+    }
+
     fn parent_window(&self) -> Option<gtk::Window> {
         self.root()?.downcast().ok()
     }
@@ -279,6 +314,15 @@ impl ChatHistory {
         let imp = self.imp();
 
         if let Some(ref chat) = chat {
+            self.action_set_enabled(
+                "chat-history.leave-chat",
+                match chat.type_() {
+                    ChatType::BasicGroup(data) => data.status().0 != ChatMemberStatus::Left,
+                    ChatType::Supergroup(data) => data.status().0 != ChatMemberStatus::Left,
+                    _ => false,
+                },
+            );
+
             // Request sponsored message, if needed
             let list_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {

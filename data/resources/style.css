@@ -298,3 +298,7 @@ window.chat-info .main-page > avatar {
 window.chat-info .main-page > list {
   margin-top: 12px;
 }
+
+.squared {
+  border-radius: 0;
+}

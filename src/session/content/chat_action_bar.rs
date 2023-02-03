@@ -1,18 +1,17 @@
 use anyhow::anyhow;
 use gettextrs::gettext;
-use glib::{clone, closure};
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
-use tdlib::enums::{ChatAction, ChatMemberStatus, InputMessageContent, UserType};
+use tdlib::enums::{
+    ChatAction, ChatMemberStatus, InputMessageContent, MessageSender as TdMessageSender, UserType,
+};
 use tdlib::{functions, types};
 
 use crate::session::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
-use crate::tdlib::{
-    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedDraftMessage, BoxedFormattedText,
-    BoxedUserType, Chat, ChatType, Supergroup, User,
-};
+use crate::tdlib::{BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState};
 use crate::utils::{spawn, temp_dir};
 use crate::{expressions, strings};
 
@@ -45,6 +44,10 @@ mod imp {
         pub(super) select_file_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub(super) restriction_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) mute_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub(super) action_bar_stack: TemplateChild<gtk::Stack>,
     }
 
     #[glib::object_subclass]
@@ -78,6 +81,58 @@ mod imp {
                     }));
                 },
             );
+
+            klass.install_action_async(
+                "chat-action-bar.join-chat",
+                None,
+                |widget, _, _| async move {
+                    let chat = widget.chat().unwrap();
+                    let result = functions::join_chat(chat.id(), chat.session().client_id()).await;
+                    if let Err(e) = result {
+                        log::warn!("Failed to join chat: {:?}", e);
+                    } else {
+                        // Reset the selection
+                        chat.session().imp().sidebar.set_selected_chat(None);
+                        // Select chat recently joined by the user
+                        chat.session().imp().sidebar.set_selected_chat(Some(chat));
+                    }
+                },
+            );
+
+            klass.install_action_async(
+                "chat-action-bar.toggle-mute",
+                None,
+                |widget, _, _| async move {
+                    widget.toggle_mute().await;
+                    let btn = &widget.imp().mute_button;
+                    if widget.is_chat_muted() {
+                        btn.set_label(&gettext("Unmute"));
+                    } else {
+                        btn.set_label(&gettext("Mute"));
+                    }
+                },
+            );
+
+            klass.install_action_async(
+                "chat-action-bar.unblock-chat",
+                None,
+                |widget, _, _| async move {
+                    let chat = widget.chat().unwrap();
+                    if let ChatType::Private(user) = chat.type_() {
+                        let message_sender =
+                            TdMessageSender::User(types::MessageSenderUser { user_id: user.id() });
+                        let result = functions::toggle_message_sender_is_blocked(
+                            message_sender,
+                            !chat.is_blocked(),
+                            chat.session().client_id(),
+                        )
+                        .await;
+                        if let Err(e) = result {
+                            log::warn!("Failed to unblock user: {:?}", e);
+                        }
+                    }
+                },
+            )
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -312,6 +367,53 @@ impl ChatActionBar {
         }
     }
 
+    fn is_chat_muted(&self) -> bool {
+        let chat = self.chat().unwrap();
+        let notifications = chat.notification_settings().0;
+        if notifications.use_default_mute_for {
+            chat.session()
+                .channel_chats_notification_settings()
+                .unwrap()
+                .0
+                .mute_for
+                != 0
+        } else {
+            notifications.mute_for != 0
+        }
+    }
+
+    async fn toggle_mute(&self) {
+        let chat = self.chat().unwrap();
+        let mut notifications = chat.clone().notification_settings().0;
+        let default = chat
+            .clone()
+            .session()
+            .channel_chats_notification_settings()
+            .unwrap()
+            .0;
+        if default.mute_for == notifications.mute_for {
+            notifications.use_default_mute_for = false;
+            if notifications.mute_for == 0 {
+                let now = glib::DateTime::now_utc().unwrap().to_unix() as i32;
+                notifications.mute_for = std::i32::MAX - now
+            } else {
+                notifications.mute_for = 0
+            }
+        } else {
+            notifications.use_default_mute_for = true;
+        }
+
+        let result = functions::set_chat_notification_settings(
+            chat.id(),
+            notifications.clone(),
+            chat.session().client_id(),
+        )
+        .await;
+        if let Err(e) = result {
+            log::warn!("Failed to unmute/mute chat: {:?}", e);
+        }
+    }
+
     async fn save_message_as_draft(&self) {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
@@ -444,121 +546,21 @@ impl ChatActionBar {
 
             imp.chat_action_in_cooldown.set(false);
 
-            let permissions_expression = Chat::this_expression("permissions");
-            let is_blocked_expression = Chat::this_expression("is-blocked");
-
-            // Handle whether or not message bar should be shown
-            let message_bar_visibility_expression = match chat.type_() {
-                ChatType::Private(data) => {
-                    let user_type_expression =
-                        gtk::ConstantExpression::new(data).chain_property::<User>("type");
-                    message_bar_visibility_in_private_chats(
-                        is_blocked_expression,
-                        user_type_expression,
-                    )
-                }
-                ChatType::Secret(data) => {
-                    let user_type_expression =
-                        gtk::ConstantExpression::new(data.user()).chain_property::<User>("type");
-                    message_bar_visibility_in_private_chats(
-                        is_blocked_expression,
-                        user_type_expression,
-                    )
-                }
-                ChatType::Supergroup(data) => {
-                    let user_status_expression =
-                        gtk::ConstantExpression::new(data).chain_property::<Supergroup>("status");
-                    if data.is_channel() {
-                        gtk::ClosureExpression::with_callback(&[user_status_expression], |args| {
-                            let status = args[1].get::<BoxedChatMemberStatus>().unwrap().0;
-                            matches!(
-                                status,
-                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
-                            )
-                        })
-                        .upcast()
-                    } else {
-                        message_bar_visibility_in_groups(
-                            permissions_expression.clone(),
-                            user_status_expression,
-                        )
-                    }
-                }
-                ChatType::BasicGroup(data) => {
-                    let user_status_expression =
-                        gtk::ConstantExpression::new(data).chain_property::<BasicGroup>("status");
-                    message_bar_visibility_in_groups(
-                        permissions_expression.clone(),
-                        user_status_expression,
-                    )
-                }
-            };
-
-            let message_bar_visibility_binding =
-                message_bar_visibility_expression.bind(&*imp.message_entry, "visible", Some(chat));
-            let send_button_visibility_binding = message_bar_visibility_expression.bind(
-                &*imp.send_message_button,
-                "visible",
-                Some(chat),
-            );
-            // TODO: So in order to implement it correctly we need to duplicate message_bar_visibility_expression
-            // to only change 3 LOC, so there must be a more efficient way of solving that issue
-            // But for now I'm just leaving it like that, it's still better than nothing
-            let select_file_visibility_binding = message_bar_visibility_expression.bind(
-                &*imp.select_file_button,
-                "visible",
-                Some(chat),
-            );
-            bindings.push(message_bar_visibility_binding);
-            bindings.push(send_button_visibility_binding);
-            bindings.push(select_file_visibility_binding);
-
-            // Handle whether or not restriction label should be shown
-            let restriction_label_visibility_binding = permissions_expression
-                .chain_closure::<bool>(closure!(|chat: Chat, permissions: BoxedChatPermissions| {
-                    if permissions.0.can_send_messages {
-                        match chat.type_() {
-                            ChatType::Supergroup(data) => Some(data.status().0),
-                            ChatType::BasicGroup(data) => Some(data.status().0),
-                            _ => None,
-                        }
-                        .map(|status| match status {
-                            ChatMemberStatus::Restricted(status) => {
-                                !status.permissions.can_send_messages
-                            }
-                            _ => false,
-                        })
-                        .unwrap_or(false)
-                    } else {
-                        match chat.type_() {
-                            ChatType::Supergroup(data) if !data.is_channel() => !matches!(
-                                data.status().0,
-                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
-                            ),
-                            ChatType::BasicGroup(data) => !matches!(
-                                data.status().0,
-                                ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_)
-                            ),
-                            _ => false,
-                        }
-                    }
-                }))
-                .upcast()
-                .bind(&*imp.restriction_label, "visible", Some(chat));
-
-            bindings.push(restriction_label_visibility_binding);
-
             // Handle restriction_label caption
             let restriction_label_binding = expressions::restriction_expression(chat).bind(
                 &*imp.restriction_label,
                 "label",
                 Some(chat),
             );
-            bindings.push(restriction_label_binding)
+
+            bindings.push(restriction_label_binding);
         }
 
         imp.chat.replace(chat);
         self.notify("chat");
+
+        // FIXME: Update entry_stack everytime ChatMemberStatus or ChatPermissions has changed
+        self.update_stack_page();
     }
 
     pub(crate) fn reply_to_message_id(&self) -> i64 {
@@ -574,6 +576,77 @@ impl ChatActionBar {
         self.update_top_bar();
 
         self.notify("reply-to-message-id");
+    }
+
+    pub(crate) fn update_stack_page(&self) {
+        let imp = self.imp();
+        if let Some(chat) = self.chat() {
+            match chat.type_() {
+                ChatType::Private(user) => {
+                    let is_deleted = matches!(user.type_().0, UserType::Deleted);
+                    let is_blocked = chat.is_blocked();
+                    if is_deleted {
+                        // TODO: Add delete chat button
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    } else if is_blocked {
+                        imp.action_bar_stack.set_visible_child_name("unblock");
+                    } else {
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    }
+                }
+                ChatType::Secret(secret) => {
+                    let is_closed = matches!(secret.state(), SecretChatState::Closed);
+                    let is_blocked = chat.is_blocked();
+                    if is_closed {
+                        // TODO: Add delete chat button
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    } else if is_blocked {
+                        imp.action_bar_stack.set_visible_child_name("unblock");
+                    } else {
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    }
+                }
+                ChatType::Supergroup(data) if data.is_channel() => match data.status().0 {
+                    ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_) => {
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    }
+                    ChatMemberStatus::Left => {
+                        imp.action_bar_stack.set_visible_child_name("join");
+                    }
+                    _ => {
+                        imp.action_bar_stack.set_visible_child_name("mute");
+
+                        if self.is_chat_muted() {
+                            imp.mute_button.set_label(&gettext("Unmute"));
+                        } else {
+                            imp.mute_button.set_label(&gettext("Mute"));
+                        }
+                    }
+                },
+                ChatType::Supergroup(data) => match data.status().0 {
+                    ChatMemberStatus::Restricted(data) if !data.permissions.can_send_messages => {
+                        imp.action_bar_stack.set_visible_child_name("restricted");
+                    }
+                    ChatMemberStatus::Left => {
+                        imp.action_bar_stack.set_visible_child_name("join");
+                    }
+                    _ => {
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    }
+                },
+                ChatType::BasicGroup(data) => match data.status().0 {
+                    ChatMemberStatus::Restricted(_) => {
+                        imp.action_bar_stack.set_visible_child_name("restricted");
+                    }
+                    ChatMemberStatus::Left => {
+                        imp.action_bar_stack.set_visible_child_name("join");
+                    }
+                    _ => {
+                        imp.action_bar_stack.set_visible_child_name("entry");
+                    }
+                },
+            }
+        }
     }
 }
 
@@ -600,45 +673,4 @@ async fn save_stream_to_file(
         .await?;
 
     Ok(())
-}
-
-fn message_bar_visibility_in_private_chats(
-    is_blocked_expression: gtk::PropertyExpression,
-    user_type_expression: gtk::PropertyExpression,
-) -> gtk::Expression {
-    gtk::ClosureExpression::new::<bool>(
-        &[is_blocked_expression, user_type_expression],
-        closure!(|_: Chat, is_blocked: bool, user_type: BoxedUserType| {
-            // Hide message bar if account is deleted
-            if let UserType::Deleted = user_type.0 {
-                false
-            } else {
-                !is_blocked
-            }
-        }),
-    )
-    .upcast()
-}
-
-fn message_bar_visibility_in_groups(
-    permissions_expression: gtk::PropertyExpression,
-    user_status_expression: gtk::PropertyExpression,
-) -> gtk::Expression {
-    gtk::ClosureExpression::new::<bool>(
-        &[permissions_expression, user_status_expression],
-        closure!(
-            |_: Chat, permissions: BoxedChatPermissions, status: BoxedChatMemberStatus| {
-                match status.0 {
-                    ChatMemberStatus::Restricted(data) if !data.permissions.can_send_messages => {
-                        false
-                    }
-                    ChatMemberStatus::Left | ChatMemberStatus::Banned(_) => false,
-                    // Owner and admins are always allowed to send messages
-                    ChatMemberStatus::Creator(_) | ChatMemberStatus::Administrator(_) => true,
-                    _ => permissions.0.can_send_messages,
-                }
-            }
-        ),
-    )
-    .upcast()
 }
