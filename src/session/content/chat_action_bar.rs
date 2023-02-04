@@ -12,7 +12,9 @@ use tdlib::{functions, types};
 
 use crate::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
-use crate::tdlib::{BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState};
+use crate::tdlib::{
+    BasicGroup, BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState, Supergroup,
+};
 use crate::utils::{block_on, spawn, temp_dir};
 use crate::{expressions, strings};
 
@@ -29,6 +31,7 @@ enum ChatActionBarState {
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -38,6 +41,9 @@ mod imp {
         pub(super) chat_action_in_cooldown: Cell<bool>,
         pub(super) state: Cell<ChatActionBarState>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
+        pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) basic_group_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) supergroup_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
         pub(super) top_bar_revealer: TemplateChild<gtk::Revealer>,
@@ -117,12 +123,6 @@ mod imp {
                 None,
                 |widget, _, _| async move {
                     widget.toggle_mute().await;
-                    let btn = &widget.imp().mute_button;
-                    if widget.is_chat_muted() {
-                        btn.set_label(&gettext("Unmute"));
-                    } else {
-                        btn.set_label(&gettext("Mute"));
-                    }
                 },
             );
             klass.install_action_async(
@@ -221,6 +221,8 @@ mod imp {
                 .connect_activate(clone!(@weak obj => move |_| {
                     obj.activate_action("chat-action-bar.send-message", None).unwrap()
                 }));
+
+            obj.create_signal_groups();
         }
 
         fn dispose(&self) {
@@ -249,6 +251,55 @@ impl Default for ChatActionBar {
 impl ChatActionBar {
     pub(crate) fn new() -> Self {
         glib::Object::new()
+    }
+
+    fn create_signal_groups(&self) {
+        let imp = self.imp();
+
+        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        chat_signal_group.connect_local(
+            "notify::notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_stack_page();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::is-blocked",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_stack_page();
+                None
+            }),
+        );
+        imp.chat_signal_group.set(chat_signal_group).unwrap();
+
+        let basic_group_signal_group = glib::SignalGroup::new(BasicGroup::static_type());
+        basic_group_signal_group.connect_local(
+            "notify::status",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_stack_page();
+                None
+            }),
+        );
+        imp.basic_group_signal_group
+            .set(basic_group_signal_group)
+            .unwrap();
+
+        let supergroup_signal_group = glib::SignalGroup::new(Supergroup::static_type());
+        supergroup_signal_group.connect_local(
+            "notify::status",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_stack_page();
+                None
+            }),
+        );
+        imp.supergroup_signal_group
+            .set(supergroup_signal_group)
+            .unwrap();
     }
 
     fn cancel_action(&self) {
@@ -694,10 +745,11 @@ impl ChatActionBar {
         }
 
         imp.chat.replace(chat);
-        self.notify("chat");
 
-        // FIXME: Update entry_stack everytime ChatMemberStatus or ChatPermissions has changed
         self.update_stack_page();
+        self.update_signal_groups();
+
+        self.notify("chat");
     }
 
     pub(crate) fn reply_to_message_id(&self, message_id: i64) {
@@ -708,7 +760,7 @@ impl ChatActionBar {
         self.set_state(ChatActionBarState::Editing(message_id));
     }
 
-    pub(crate) fn update_stack_page(&self) {
+    fn update_stack_page(&self) {
         let imp = self.imp();
         if let Some(chat) = self.chat() {
             match chat.type_() {
@@ -777,6 +829,28 @@ impl ChatActionBar {
                 },
             }
         }
+    }
+
+    fn update_signal_groups(&self) {
+        let imp = self.imp();
+
+        let chat = self.chat();
+        imp.chat_signal_group
+            .get()
+            .unwrap()
+            .set_target(chat.as_ref());
+
+        let basic_group = chat.as_ref().and_then(|c| c.type_().basic_group());
+        imp.basic_group_signal_group
+            .get()
+            .unwrap()
+            .set_target(basic_group);
+
+        let supergroup = chat.as_ref().and_then(|c| c.type_().supergroup());
+        imp.supergroup_signal_group
+            .get()
+            .unwrap()
+            .set_target(supergroup);
     }
 }
 
