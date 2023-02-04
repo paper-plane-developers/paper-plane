@@ -49,6 +49,20 @@ impl ChatType {
             _ => return None,
         })
     }
+
+    pub(crate) fn basic_group(&self) -> Option<&BasicGroup> {
+        Some(match self {
+            ChatType::BasicGroup(basic_group) => basic_group,
+            _ => return None,
+        })
+    }
+
+    pub(crate) fn supergroup(&self) -> Option<&Supergroup> {
+        Some(match self {
+            ChatType::Supergroup(supergroup) => supergroup,
+            _ => return None,
+        })
+    }
 }
 
 mod imp {
