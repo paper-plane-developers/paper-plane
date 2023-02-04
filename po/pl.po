@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-01 16:05+0100\n"
-"PO-Revision-Date: 2023-02-01 14:41+0000\n"
-"Last-Translator: yuraiz <7516890@gmail.com>\n"
+"PO-Revision-Date: 2023-02-05 15:46+0000\n"
+"Last-Translator: Karol Lademan <karol@lademan.dev>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
 "Language: pl\n"
@@ -117,11 +117,11 @@ msgstr "Napis"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
-msgstr "_Poprzedni"
+msgstr "_Wstecz"
 
 #: data/resources/ui/login.ui:58
 msgid "_Next"
-msgstr "_Następny"
+msgstr "_Naprzód"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
@@ -218,7 +218,7 @@ msgstr "Wprowadź kod wysłany na e-mail"
 
 #: data/resources/ui/login.ui:650
 msgid "Unable to access your e-mail?"
-msgstr "_Nie masz dostępu do swojego emaila?"
+msgstr "Nie masz dostępu do swojego emaila?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
@@ -226,11 +226,11 @@ msgstr "_Odpowiedz"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr "_Usuń dla wszystkich"
+msgstr "Usuń dla _wszystkich"
 
 #: data/resources/ui/message-menu.ui:16
 msgid "_Delete for Me"
-msgstr "_Usuń dla mnie"
+msgstr "Usuń dla _mnie"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
@@ -321,7 +321,7 @@ msgstr "_Odepnij"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr "_Oznacz jako nieprzeczytane"
+msgstr "Oznacz jako nieprzeczytane"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
@@ -697,7 +697,7 @@ msgstr "Link"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr "Skopiowano ze schowka"
+msgstr "Skopiowano do schowka"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:119
@@ -707,7 +707,7 @@ msgstr "%e %B"
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/item_row.rs:122
 msgid "%B %e, %Y"
-msgstr "%e %B %Y"
+msgstr "%e %B, %Y"
 
 #: src/session/content/message_row/indicators_model.rs:157
 msgid "edited"
