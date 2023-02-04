@@ -213,7 +213,7 @@ impl Sidebar {
             );
             imp.marked_as_unread_handler_id.replace(Some(handler_id));
 
-            let item = chat.session().chat_list().find_chat_item(chat.id());
+            let item = chat.session().main_chat_list().find_chat_item(chat.id());
             imp.selection.set_selected_item(item.map(|i| i.upcast()));
 
             if chat.is_marked_as_unread() {
@@ -240,7 +240,7 @@ impl Sidebar {
 
         if let Some(ref session) = session {
             imp.selection
-                .set_model(Some(session.chat_list().clone().upcast()));
+                .set_model(Some(session.main_chat_list().clone().upcast()));
         }
 
         imp.session.replace(session);

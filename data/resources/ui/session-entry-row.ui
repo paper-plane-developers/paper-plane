@@ -50,14 +50,14 @@
         <property name="justify">center</property>
         <binding name="label">
           <lookup name="unread-count" type="ChatList">
-            <lookup name="chat-list" type="Session">
+            <lookup name="main-chat-list" type="Session">
               <lookup name="session">SessionEntryRow</lookup>
             </lookup>
           </lookup>
         </binding>
         <binding name="visible">
           <lookup name="unread-count" type="ChatList">
-            <lookup name="chat-list" type="Session">
+            <lookup name="main-chat-list" type="Session">
               <lookup name="session">SessionEntryRow</lookup>
             </lookup>
           </lookup>
