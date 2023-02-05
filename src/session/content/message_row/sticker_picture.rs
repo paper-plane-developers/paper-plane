@@ -17,7 +17,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for StickerPicture {
-        const NAME: &'static str = "ContentStickerPicture";
+        const NAME: &'static str = "MessageStickerPicture";
         type Type = super::StickerPicture;
         type ParentType = gtk::Widget;
     }

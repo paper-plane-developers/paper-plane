@@ -45,7 +45,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageRow" parent="GtkWidget">
+      <template class="MessageRow" parent="GtkWidget">
         <child>
           <object class="GtkGestureClick">
             <property name="button">1</property>
@@ -64,7 +64,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageRow {
-        const NAME: &'static str = "ContentMessageRow";
+        const NAME: &'static str = "MessageRow";
         type Type = super::MessageRow;
         type ParentType = gtk::Widget;
 

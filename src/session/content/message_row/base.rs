@@ -10,7 +10,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageBase" parent="GtkWidget">
+      <template class="MessageBase" parent="GtkWidget">
         <child>
           <object class="GtkGestureClick">
             <property name="button">3</property>
@@ -30,7 +30,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageBase {
-        const NAME: &'static str = "ContentMessageBase";
+        const NAME: &'static str = "MessageBase";
         const ABSTRACT: bool = true;
         type Type = super::MessageBase;
         type ParentType = gtk::Widget;

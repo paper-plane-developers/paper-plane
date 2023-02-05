@@ -27,7 +27,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageText {
-        const NAME: &'static str = "ContentMessageText";
+        const NAME: &'static str = "MessageText";
         type Type = super::MessageText;
         type ParentType = MessageBase;
 
