@@ -996,7 +996,7 @@ impl Login {
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
-        dialog.add_responses(&[("ok", &gettext("_Ok"))]);
+        dialog.add_responses(&[("ok", &gettext("_OK"))]);
         dialog.set_default_response(Some("ok"));
 
         dialog.run_async(
