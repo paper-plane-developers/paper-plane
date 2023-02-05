@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2022-02-01 22:52+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2023-02-06 22:55+0000\n"
+"Last-Translator: Marcus Behrendt <marcus.behrendt.86@gmail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -54,13 +54,12 @@ msgid "Recently used sessions"
 msgstr "Kürzlich verwendete Sitzungen"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
-"Die nach dem Namen des Datenbankverzeichnisses geordnete Liste der zuletzt "
-"verwendeten Sitzungen"
+"Eine Liste der zuletzt verwendeten Sitzungen, sortiert nach den Namen der "
+"Datenbankverzeichnisse"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:8
@@ -101,26 +100,24 @@ msgstr ""
 "Wähle ein Gespräch aus, um mit der Nachrichtenübermittlung zu beginnen."
 
 #: data/resources/ui/content-chat-action-bar.ui:89
-#, fuzzy
 msgid "Message"
-msgstr "Sprachnachricht"
+msgstr "Nachricht"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Nach unten scrollen"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Infos anzeigen"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Gespräche suchen"
+msgstr "Chat verlassen"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Bildunterschrift"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -132,7 +129,7 @@ msgstr "_Nächste"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
-msgstr ""
+msgstr "Willkommen"
 
 #: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
@@ -158,7 +155,7 @@ msgstr "Code"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Der Code kann nicht mehr gesendet werden."
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -201,14 +198,13 @@ msgid "Use Recovery Code"
 msgstr "Wiederherstellungscode verwenden"
 
 #: data/resources/ui/login.ui:474
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
-"Beim Einrichten deines Cloud-Passworts hast du eine E-Mail-Adresse für die "
-"Wiederherstellung angegeben. Wir können dir einen Code an diese E-Mail-"
-"Adresse senden, mit dem du dein Passwort zurücksetzen kannst."
+"Bei der Einrichtung Ihres Cloud-Passworts haben Sie eine E-Mail-Adresse für "
+"die Wiederherstellung angegeben. Dorthin kann ein Code gesendet werden, um "
+"Ihr Passwort zurückzusetzen."
 
 #: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
@@ -223,31 +219,28 @@ msgid "_Delete Account"
 msgstr "_Konto löschen"
 
 #: data/resources/ui/login.ui:607
-#, fuzzy
 msgid "Enter the code e-mailed to you"
-msgstr "Gib den per E-Mail gesendeten Code ein"
+msgstr "Geben Sie den Code ein, den Sie per E-Mail erhalten haben"
 
 #: data/resources/ui/login.ui:650
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_Du kannst nicht auf deine E-Mail zugreifen?"
+msgstr "Sie können nicht auf Ihre E-Mail zugreifen?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Anworten"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Für _Alle Löschen"
 
 #: data/resources/ui/message-menu.ui:16
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_Konto löschen"
+msgstr "Für _Mich Löschen"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: data/resources/ui/phone-number-input.ui:17
 msgid "Phone Number"
@@ -262,16 +255,17 @@ msgid "Dark Theme"
 msgstr "Dunkles Farbschema"
 
 #: data/resources/ui/preferences-window.ui:35
+#, fuzzy
 msgid "Storage"
-msgstr ""
+msgstr "Speicher"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Cache-Größe"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Cache Leeren"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -299,15 +293,14 @@ msgid "Search Chats"
 msgstr "Gespräche suchen"
 
 #: data/resources/ui/shortcuts.ui:39
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "Gesprächliste"
+msgstr "Chatverlauf"
 
 #: data/resources/ui/shortcuts.ui:42
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Foto aus der Zwischenablage Senden"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -327,57 +320,52 @@ msgstr "_Über Telegrand"
 
 #: data/resources/ui/sidebar-row-menu.ui:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Anheften"
 
 #: data/resources/ui/sidebar-row-menu.ui:11
 msgid "_Unpin"
-msgstr ""
+msgstr "_Loslösen"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "Als _Ungelesen Markieren"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Als _Gelesen Markieren"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Gespräche suchen"
+msgstr "Suche"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "Gespräche suchen"
+msgstr "Keine Suchergebnisse"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Probieren Sie eine andere Suche."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Telegrand developers"
-msgstr "Telegrand"
+msgstr "Telegrand-Entwickler"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Sponsoren"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
 #: src/session/sidebar/search/mod.rs:208
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Sprachnachricht"
+msgstr "Gespeichertes"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_Konto löschen"
+msgstr "Gelöschtes Konto"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Die Admins dieser Gruppe haben Ihnen das Schreiben hier untersagt"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -392,13 +380,13 @@ msgstr "%H:%M"
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e %B %Y"
+msgstr "%e. %B %Y, %H:%M Uhr"
 
 #: src/expressions.rs:120
+#, fuzzy
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "Das Schreiben von Nachrichten ist in dieser Gruppe nicht erlaubt."
 
 #: src/login.rs:380
 #, fuzzy
