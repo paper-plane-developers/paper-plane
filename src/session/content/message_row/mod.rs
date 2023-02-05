@@ -30,7 +30,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
-use crate::session::components::Avatar;
+use crate::components::Avatar;
 use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 

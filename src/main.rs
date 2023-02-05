@@ -6,6 +6,7 @@ mod application;
 #[rustfmt::skip]
 #[allow(clippy::all)]
 mod config;
+mod components;
 mod expressions;
 mod i18n;
 mod login;

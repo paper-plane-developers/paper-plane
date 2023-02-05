@@ -2,7 +2,7 @@ use adw::subclass::prelude::*;
 use gtk::glib;
 use gtk::prelude::*;
 
-use crate::session::components::Avatar;
+use crate::components::Avatar;
 
 mod imp {
     use super::*;
