@@ -239,8 +239,8 @@ impl ChatHistory {
         if let Some(chat) = self.chat() {
             let dialog = adw::MessageDialog::new(
                 Some(&self.parent_window().unwrap()),
-                Some("Leave chat?"),
-                Some("Do you want to leave this chat?"),
+                Some(&gettext("Leave chat?")),
+                Some(&gettext("Do you want to leave this chat?")),
             );
             dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
             dialog.set_default_response(Some("no"));
