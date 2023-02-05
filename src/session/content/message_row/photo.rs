@@ -8,6 +8,7 @@ use tdlib::types::File;
 use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
 };
+use crate::session::content::ChatHistory;
 use crate::tdlib::{BoxedMessageContent, Message};
 use crate::utils::parse_formatted_text;
 use crate::Session;
@@ -39,6 +40,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_instance_callbacks();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -136,7 +138,20 @@ impl MessageBaseExt for MessagePhoto {
     }
 }
 
+#[gtk::template_callbacks]
 impl MessagePhoto {
+    #[template_callback]
+    fn on_released(&self) {
+        let chat_history = self.ancestor(ChatHistory::static_type()).unwrap();
+        let chat = chat_history
+            .downcast_ref::<ChatHistory>()
+            .unwrap()
+            .chat()
+            .unwrap();
+        chat.session()
+            .open_media(self.message(), &*self.imp().picture);
+    }
+
     fn update_photo(&self, message: &Message) {
         if let MessageContent::MessagePhoto(data) = message.content().0 {
             let imp = self.imp();

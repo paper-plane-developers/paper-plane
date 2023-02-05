@@ -2,6 +2,13 @@
 <interface>
   <template class="Session" parent="AdwBin">
     <child>
+      <object class="GtkOverlay">
+        <child type="overlay">
+          <object class="MediaViewer" id="media_viewer">
+            <property name="visible">False</property>
+            </object>
+          </child>
+          <child>
       <object class="AdwLeaflet" id="leaflet">
         <property name="can-navigate-back">True</property>
         <child>
@@ -24,6 +31,8 @@
             <property name="compact" bind-source="leaflet" bind-property="folded" bind-flags="sync-create"/>
           </object>
         </child>
+      </object>
+                  </child>
       </object>
     </child>
   </template>

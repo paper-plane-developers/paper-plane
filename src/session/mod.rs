@@ -1,9 +1,11 @@
 mod components;
 mod content;
+mod media_viewer;
 mod preferences_window;
 mod sidebar;
 
 use self::content::Content;
+use self::media_viewer::MediaViewer;
 use self::preferences_window::PreferencesWindow;
 use self::sidebar::Sidebar;
 
@@ -19,7 +21,7 @@ use tdlib::types::File;
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
-    BasicGroup, BoxedScopeNotificationSettings, ChatList, SecretChat, Supergroup, User,
+    BasicGroup, BoxedScopeNotificationSettings, ChatList, Message, SecretChat, Supergroup, User,
 };
 use crate::utils::{log_out, spawn};
 
@@ -53,6 +55,8 @@ mod imp {
         pub(super) downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
         #[template_child]
         pub(super) leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub(super) media_viewer: TemplateChild<MediaViewer>,
         #[template_child]
         pub(super) sidebar: TemplateChild<Sidebar>,
         #[template_child]
@@ -500,5 +504,9 @@ impl Session {
 
     pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel) {
         self.imp().sidebar.set_sessions(sessions, self);
+    }
+
+    pub(crate) fn open_media(&self, message: Message, source_widget: &impl IsA<gtk::Widget>) {
+        self.imp().media_viewer.open_media(message, source_widget);
     }
 }

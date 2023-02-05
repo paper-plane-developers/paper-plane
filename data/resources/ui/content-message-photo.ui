@@ -10,7 +10,14 @@
           <class name="media"/>
         </style>
         <property name="prefix">
-          <object class="ContentMediaPicture" id="picture"/>
+          <object class="ContentMediaPicture" id="picture">
+            <child>
+              <object class="GtkGestureClick">
+                <property name="button">1</property>
+                <signal name="released" handler="on_released" swapped="true"/>
+              </object>
+            </child>
+          </object>
         </property>
       </object>
     </child>
