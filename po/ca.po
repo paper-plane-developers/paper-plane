@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2023-02-04 17:42+0000\n"
 "Last-Translator: Ícar N. S. <icar.nin@pm.me>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
@@ -98,7 +98,7 @@ msgstr "No s’ha seleccionat cap xat"
 msgid "Select a chat to start messaging."
 msgstr "Seleccioneu un xat per a començar a comunicar-vos."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr "Missatge"
 
@@ -109,6 +109,11 @@ msgstr "Desplaceu-vos a baix del tot"
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Mostra la informació"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "Cerca els xats"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -410,11 +415,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr "Accepteu les condicions d’ús?"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr "_No"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr "_Sí"
 
@@ -422,7 +429,7 @@ msgstr "_Sí"
 msgid "Terms of Service"
 msgstr "Condicions d’ús"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr "D'_acord"
 
@@ -442,7 +449,7 @@ msgstr ""
 "\n"
 "Voleu suprimir el vostre compte?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr "_Cancel·la"
 
@@ -458,10 +465,6 @@ msgstr ""
 "Si no podeu restaurar l’accés al correu electrònic, les opcions restants són "
 "o bé recordar la vostra contrasenya o bé suprimir i tornar a crear el vostre "
 "compte."
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr "D'_acord"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -518,6 +521,20 @@ msgstr "vist per última vegada: %x"
 msgid "last seen yesterday at %l:%M %p"
 msgstr "vist per última vegada ahir a les %H:%M"
 
+#: src/strings.rs:43
+#, fuzzy
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "vist fa molt de temps"
+msgstr[1] "vist fa molt de temps"
+
+#: src/strings.rs:50
+#, fuzzy
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "vist fa molt de temps"
+msgstr[1] "vist fa molt de temps"
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr "vist ara mateix"
@@ -554,16 +571,51 @@ msgstr "El missatge no és compatible"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "Foto"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "Adhesiu"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "Vídeo"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr "Missatge de veu"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "Missatge de veu"
 
 #: src/strings.rs:206
@@ -590,12 +642,32 @@ msgstr "Trucada cancel·lada"
 msgid "Missed call"
 msgstr "Trucada perduda"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "Trucada de vídeo"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "Trucada"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "Trucada de vídeo"
 
 #: src/strings.rs:251
 msgid "Outgoing call"
+msgstr "Trucada"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "Trucada de vídeo"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
 msgstr "Trucada"
 
 #: src/strings.rs:266
@@ -606,17 +678,73 @@ msgstr "Trucada de vídeo"
 msgid "Incoming call"
 msgstr "Trucada"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "S’ha creat el canal"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "S’ha creat el canal"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "S’ha canviat la foto del canal"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "{sender} ha fixat una foto"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "S’ha eliminat la foto del canal"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "Heu eliminat la foto del grup"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "Us heu unit al grup"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+#, fuzzy
+msgid "{sender} added {users}"
+msgstr "{sender} ha fixat un adhesiu"
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "Heu abandonat el grup"
+
+#: src/strings.rs:382
+#, fuzzy
+msgid "{sender} removed {user}"
+msgstr "{sender} ha fixat un adhesiu"
+
+#: src/strings.rs:404
+#, fuzzy
+msgid "{sender} pinned \"{text}\""
+msgstr "{sender} ha fixat un fitxer"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -654,29 +782,53 @@ msgstr "{sender} ha fixat un missatge de veu"
 msgid "{sender} pinned a message"
 msgstr "{sender} ha fixat un missatge"
 
+#: src/strings.rs:425
+#, fuzzy
+msgid "{sender} joined Telegram"
+msgstr "{sender} ha fixat un fitxer"
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr "S'ha netejat la memòria cau"
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr "Missatge suprimit"
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr "Obre un fitxer"
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr "_Obre"
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
 msgstr "Imatges"
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+#, fuzzy
+msgid "Do you want to leave this chat?"
+msgstr "Voleu suprimir aquest missatge?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -689,6 +841,13 @@ msgstr "Mòbil"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "Nom d’usuari"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -801,6 +960,9 @@ msgstr "Codi de país no vàlid"
 msgid "Test Account"
 msgstr "Compte de prova"
 
+#~ msgid "_Ok"
+#~ msgstr "D'_acord"
+
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Us donem la benvinguda al Telegrand"
 
@@ -810,20 +972,8 @@ msgstr "Compte de prova"
 #~ msgid "_Go Back"
 #~ msgstr "Torna _enrere"
 
-#~ msgid "Sticker"
-#~ msgstr "Adhesiu"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "Heu eliminat la foto del grup"
-
-#~ msgid "You joined the group"
-#~ msgstr "Us heu unit al grup"
-
 #~ msgid ", "
 #~ msgstr ", "
-
-#~ msgid "You left the group"
-#~ msgstr "Heu abandonat el grup"
 
 #~ msgid "Document"
 #~ msgstr "Document"

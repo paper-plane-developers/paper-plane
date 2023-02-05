@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2021-09-18 23:07+0200\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language-Team: \n"
@@ -94,7 +94,7 @@ msgstr "Cap de discussion pas seleccionada"
 msgid "Select a chat to start messaging."
 msgstr "Seleccionatz una discussion per començar de charrar."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr ""
 
@@ -104,6 +104,10 @@ msgstr ""
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
+msgstr ""
+
+#: data/resources/ui/content-chat-history.ui:158
+msgid "Leave Chat"
 msgstr ""
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
@@ -394,11 +398,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr ""
 
@@ -406,7 +412,7 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr ""
 
@@ -422,7 +428,7 @@ msgid ""
 "Do you want to delete your account?"
 msgstr ""
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr ""
 
@@ -434,10 +440,6 @@ msgstr ""
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
-msgstr ""
-
-#: src/login.rs:999
-msgid "_Ok"
 msgstr ""
 
 #. Translators: This is an authentication method
@@ -496,6 +498,18 @@ msgstr ""
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
+#: src/strings.rs:43
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/strings.rs:50
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr ""
@@ -533,16 +547,49 @@ msgstr "Messatge pas pres en carga"
 msgid "GIF"
 msgstr ""
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
+msgstr ""
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+msgid "{emoji} Sticker"
 msgstr ""
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr ""
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr ""
+
+#: src/strings.rs:189
+msgid "Voice Message, {caption}"
 msgstr ""
 
 #: src/strings.rs:206
@@ -569,6 +616,14 @@ msgstr ""
 msgid "Missed call"
 msgstr ""
 
+#: src/strings.rs:239
+msgid "Outgoing video call ({duration})"
+msgstr ""
+
+#: src/strings.rs:244
+msgid "Outgoing call ({duration})"
+msgstr ""
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr ""
@@ -576,6 +631,15 @@ msgstr ""
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr ""
+
+#: src/strings.rs:256
+msgid "Incoming video call ({duration})"
+msgstr ""
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "Sonada entranta"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -585,16 +649,64 @@ msgstr ""
 msgid "Incoming call"
 msgstr "Sonada entranta"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 msgid "Channel created"
+msgstr ""
+
+#: src/strings.rs:296
+msgid "Channel renamed to \"{title}\""
+msgstr ""
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
 msgstr ""
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr ""
 
+#: src/strings.rs:315
+msgid "{sender} changed the group photo"
+msgstr ""
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
+msgstr ""
+
+#: src/strings.rs:327
+msgid "{sender} removed the group photo"
+msgstr ""
+
+#: src/strings.rs:335 src/strings.rs:370
+msgid "{sender} joined the group"
+msgstr ""
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+msgid "{sender} added {users}"
+msgstr ""
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+msgid "{sender} left the group"
+msgstr ""
+
+#: src/strings.rs:382
+msgid "{sender} removed {user}"
+msgstr ""
+
+#: src/strings.rs:404
+msgid "{sender} pinned \"{text}\""
 msgstr ""
 
 #: src/strings.rs:406
@@ -633,28 +745,50 @@ msgstr ""
 msgid "{sender} pinned a message"
 msgstr ""
 
+#: src/strings.rs:425
+msgid "{sender} joined Telegram"
+msgstr ""
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+msgid "Do you want to leave this chat?"
 msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
@@ -668,6 +802,13 @@ msgstr ""
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr ""
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264

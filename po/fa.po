@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2022-02-06 15:56+0000\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/telegrand/"
@@ -97,7 +97,7 @@ msgstr "هیچ گپی گزیده نشده"
 msgid "Select a chat to start messaging."
 msgstr "برای آغاز پیام‌رسانی، گپی را برگزینید."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 #, fuzzy
 msgid "Message"
 msgstr "پیام صوتی"
@@ -109,6 +109,11 @@ msgstr ""
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "مشاهدهٔ اطَلاعات"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "جست‌وجوی گپ‌ها"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -417,11 +422,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr "شرایط خدمت را می‌پذیرید؟"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr ""
 
@@ -429,7 +436,7 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "شرایط خدمت"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr ""
 
@@ -449,7 +456,7 @@ msgstr ""
 "\n"
 "می‌خواهید حسابتان را حذف کنید؟"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr ""
 
@@ -465,10 +472,6 @@ msgid ""
 msgstr ""
 "اگر نتوانستید دسترسی به رایانامه را بازیابید، تنها گزینه‌های پیش رویتان به "
 "خاطر آوردن گذرواژه‌تان یا حذف و ساخت دوبارهٔ حسابتان است."
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr ""
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -527,6 +530,18 @@ msgstr ""
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
+#: src/strings.rs:43
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/strings.rs:50
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr ""
@@ -565,17 +580,52 @@ msgstr "پیام پشتیبانی نشده"
 msgid "GIF"
 msgstr "جیف"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "عکس"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "برچسب"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "ویدیو"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 #, fuzzy
 msgid "Voice Message"
+msgstr "پیام صوتی"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "پیام صوتی"
 
 #: src/strings.rs:206
@@ -603,6 +653,16 @@ msgstr "تماس لغو شده"
 msgid "Missed call"
 msgstr "تماس بی‌پاسخ"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "تماس تصویری خروجی"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "تماس خروجی"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "تماس تصویری خروجی"
@@ -610,6 +670,16 @@ msgstr "تماس تصویری خروجی"
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr "تماس خروجی"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "تماس تصویری ورودی"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "تماس دریافتی"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -619,19 +689,72 @@ msgstr "تماس تصویری ورودی"
 msgid "Incoming call"
 msgstr "تماس دریافتی"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 #, fuzzy
 msgid "Channel created"
 msgstr "عکس کانال برداشته شد"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "عکس کانال برداشته شد"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 #, fuzzy
 msgid "Channel photo changed"
 msgstr "عکس کانال برداشته شد"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "عکس گروه را برداشتید"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "عکس کانال برداشته شد"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "عکس گروه را برداشتید"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "به گروه پیوستید"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+msgid "{sender} added {users}"
+msgstr ""
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "گروه را ترک کردید"
+
+#: src/strings.rs:382
+msgid "{sender} removed {user}"
+msgstr ""
+
+#: src/strings.rs:404
+msgid "{sender} pinned \"{text}\""
+msgstr ""
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -669,28 +792,50 @@ msgstr ""
 msgid "{sender} pinned a message"
 msgstr ""
 
+#: src/strings.rs:425
+msgid "{sender} joined Telegram"
+msgstr ""
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+msgid "Do you want to leave this chat?"
 msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
@@ -704,6 +849,13 @@ msgstr "همراه"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "نام کاربری"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -828,20 +980,8 @@ msgstr "_حذف حساب"
 #~ msgid "_Go Back"
 #~ msgstr "_بازگشت"
 
-#~ msgid "Sticker"
-#~ msgstr "برچسب"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "عکس گروه را برداشتید"
-
-#~ msgid "You joined the group"
-#~ msgstr "به گروه پیوستید"
-
 #~ msgid ", "
 #~ msgstr "، "
-
-#~ msgid "You left the group"
-#~ msgstr "گروه را ترک کردید"
 
 #~ msgid "Document"
 #~ msgstr "سند"

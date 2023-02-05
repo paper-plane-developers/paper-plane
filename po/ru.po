@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2023-02-01 14:41+0000\n"
 "Last-Translator: yuraiz <7516890@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/telegrand/"
@@ -16,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
@@ -99,7 +99,7 @@ msgstr "Чат не выбран"
 msgid "Select a chat to start messaging."
 msgstr "Выберите чат, чтобы начать обмен сообщениями."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr "Cообщение"
 
@@ -110,6 +110,11 @@ msgstr "Прокрутить донизу"
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Посмотреть информацию"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "Поиск чатов"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -409,11 +414,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr "Принимаете ли вы условия предоставления услуг?"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr "_Нет"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr "_Да"
 
@@ -421,7 +428,7 @@ msgstr "_Да"
 msgid "Terms of Service"
 msgstr "Условия предоставления услуг"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr "_ОК"
 
@@ -441,7 +448,7 @@ msgstr ""
 "\n"
 "Вы хотите удалить свой аккаунт?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr "_Отмена"
 
@@ -456,10 +463,6 @@ msgid ""
 msgstr ""
 "Если вы не можете восстановить доступ к электронной почте, то вам остается "
 "либо вспомнить пароль, либо удалить и создать учетную запись заново."
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr "_Ок"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -516,6 +519,22 @@ msgstr "был(а) %x"
 msgid "last seen yesterday at %l:%M %p"
 msgstr "был(а) вчера в %H:%M"
 
+#: src/strings.rs:43
+#, fuzzy
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "был(а) очень давно"
+msgstr[1] "был(а) очень давно"
+msgstr[2] "был(а) очень давно"
+
+#: src/strings.rs:50
+#, fuzzy
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "был(а) очень давно"
+msgstr[1] "был(а) очень давно"
+msgstr[2] "был(а) очень давно"
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr "был(а) только что"
@@ -552,16 +571,51 @@ msgstr "Сообщение не поддерживается"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "Фото"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "Стикер"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "Видео"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr "Голосовое сообщение"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "Голосовое сообщение"
 
 #: src/strings.rs:206
@@ -588,6 +642,16 @@ msgstr "Отмененный вызов"
 msgid "Missed call"
 msgstr "Пропущенный вызов"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "Исходящий видеозвонок"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "Исходящий звонок"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "Исходящий видеозвонок"
@@ -595,6 +659,16 @@ msgstr "Исходящий видеозвонок"
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr "Исходящий звонок"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "Входящий видеозвонок"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "Входящий вызов"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -604,17 +678,73 @@ msgstr "Входящий видеозвонок"
 msgid "Incoming call"
 msgstr "Входящий вызов"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "Канал создан"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "Канал создан"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "Фото канала изменено"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "{sender} закрепил(а) фото"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Фото канала удалено"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "Вы удалили групповое фото"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "Вы присоединились к группе"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+#, fuzzy
+msgid "{sender} added {users}"
+msgstr "{sender} закрепил(а) стикер"
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "Вы покинули группу"
+
+#: src/strings.rs:382
+#, fuzzy
+msgid "{sender} removed {user}"
+msgstr "{sender} закрепил(а) стикер"
+
+#: src/strings.rs:404
+#, fuzzy
+msgid "{sender} pinned \"{text}\""
+msgstr "{sender} закрепил(а) файл"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -652,29 +782,53 @@ msgstr "{sender} закрепил(а) голосовое сообщение"
 msgid "{sender} pinned a message"
 msgstr "{sender} закрепил(а) сообщение"
 
+#: src/strings.rs:425
+#, fuzzy
+msgid "{sender} joined Telegram"
+msgstr "{sender} закрепил(а) файл"
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr "Кеш очищен"
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr "Удалённое сообщение"
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr "Открыть файл"
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr "_Открыть"
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
 msgstr "Изображения"
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+#, fuzzy
+msgid "Do you want to leave this chat?"
+msgstr "Вы хотите удалить это сообщение?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -687,6 +841,14 @@ msgstr "Мобильный"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "Имя пользователя"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -799,6 +961,9 @@ msgstr "Недействительный код страны"
 msgid "Test Account"
 msgstr "Тестовый аккаунт"
 
+#~ msgid "_Ok"
+#~ msgstr "_Ок"
+
 #~ msgid "Deleted"
 #~ msgstr "Удалено"
 
@@ -811,20 +976,8 @@ msgstr "Тестовый аккаунт"
 #~ msgid "_Go Back"
 #~ msgstr "_Назад"
 
-#~ msgid "Sticker"
-#~ msgstr "Стикер"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "Вы удалили групповое фото"
-
-#~ msgid "You joined the group"
-#~ msgstr "Вы присоединились к группе"
-
 #~ msgid ", "
 #~ msgstr ", "
-
-#~ msgid "You left the group"
-#~ msgstr "Вы покинули группу"
 
 #~ msgid "Document"
 #~ msgstr "Документ"

@@ -25,6 +25,7 @@ src/utils.rs
 src/window.rs
 src/session/preferences_window.rs
 src/session/content/chat_action_bar.rs
+src/session/content/chat_history.rs
 src/session/content/chat_info_window.rs
 src/session/content/item_row.rs
 src/session/content/message_row/indicators_model.rs
