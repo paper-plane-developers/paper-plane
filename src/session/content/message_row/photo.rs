@@ -33,7 +33,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessagePhoto {
-        const NAME: &'static str = "ContentMessagePhoto";
+        const NAME: &'static str = "MessagePhoto";
         type Type = super::MessagePhoto;
         type ParentType = MessageBase;
 

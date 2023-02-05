@@ -30,7 +30,7 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
-use crate::session::components::Avatar;
+use crate::components::Avatar;
 use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 
@@ -45,7 +45,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageRow" parent="GtkWidget">
+      <template class="MessageRow" parent="GtkWidget">
         <child>
           <object class="GtkGestureClick">
             <property name="button">1</property>
@@ -64,7 +64,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageRow {
-        const NAME: &'static str = "ContentMessageRow";
+        const NAME: &'static str = "MessageRow";
         type Type = super::MessageRow;
         type ParentType = gtk::Widget;
 

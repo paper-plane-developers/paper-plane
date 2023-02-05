@@ -13,7 +13,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMediaPicture" parent="GtkWidget">
+      <template class="MessageMediaPicture" parent="GtkWidget">
         <child>
           <object class="GtkPicture" id="picture">
             <property name="content-fit">cover</property>
@@ -30,7 +30,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MediaPicture {
-        const NAME: &'static str = "ContentMediaPicture";
+        const NAME: &'static str = "MessageMediaPicture";
         type Type = super::MediaPicture;
         type ParentType = gtk::Widget;
 

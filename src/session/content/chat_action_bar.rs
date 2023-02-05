@@ -9,7 +9,7 @@ use tdlib::enums::{
 };
 use tdlib::{functions, types};
 
-use crate::session::components::MessageEntry;
+use crate::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
 use crate::tdlib::{BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState};
 use crate::utils::{spawn, temp_dir};

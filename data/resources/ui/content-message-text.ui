@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ContentMessageText" parent="ContentMessageBase">
+  <template class="MessageText" parent="MessageBase">
     <child>
       <object class="MessageBubble" id="message_bubble">
         <style>

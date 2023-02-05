@@ -10,7 +10,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
 
-    use crate::session::components::Avatar;
+    use crate::components::Avatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

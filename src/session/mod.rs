@@ -1,4 +1,3 @@
-mod components;
 mod content;
 mod preferences_window;
 mod sidebar;

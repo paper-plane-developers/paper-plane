@@ -22,7 +22,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
     <interface>
-      <template class="ContentMessageVideo" parent="ContentMessageBase">
+      <template class="MessageVideo" parent="MessageBase">
         <child>
           <object class="MessageBubble" id="message_bubble">
             <style>
@@ -31,7 +31,7 @@ mod imp {
             <property name="prefix">
               <object class="GtkOverlay">
                 <child>
-                  <object class="ContentMediaPicture" id="picture"/>
+                  <object class="MessageMediaPicture" id="picture"/>
                 </child>
                 <child type="overlay">
                   <object class="GtkLabel" id="indicator">
@@ -63,7 +63,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageVideo {
-        const NAME: &'static str = "ContentMessageVideo";
+        const NAME: &'static str = "MessageVideo";
         type Type = super::MessageVideo;
         type ParentType = MessageBase;
 

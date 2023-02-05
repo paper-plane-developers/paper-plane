@@ -14,7 +14,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
-    use crate::session::components::Avatar as ComponentsAvatar;
+    use crate::components::Avatar as ComponentsAvatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]

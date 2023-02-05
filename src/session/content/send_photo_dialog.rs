@@ -6,8 +6,8 @@ use tdlib::enums::{InputFile, InputMessageContent};
 use tdlib::functions;
 use tdlib::types::{InputFileLocal, InputMessagePhoto};
 
+use crate::components::MessageEntry;
 use crate::expressions;
-use crate::session::components::MessageEntry;
 use crate::tdlib::Chat;
 use crate::utils::spawn;
 

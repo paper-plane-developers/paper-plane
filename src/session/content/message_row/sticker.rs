@@ -33,7 +33,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for MessageSticker {
-        const NAME: &'static str = "ContentMessageSticker";
+        const NAME: &'static str = "MessageSticker";
         type Type = super::MessageSticker;
         type ParentType = MessageBase;
 
