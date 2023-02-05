@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-01 16:05+0100\n"
-"PO-Revision-Date: 2023-02-01 14:41+0000\n"
+"PO-Revision-Date: 2023-02-02 19:59+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/nl/>\n"
@@ -54,11 +54,10 @@ msgid "Recently used sessions"
 msgstr "Onlangs gebruikte sessies"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
-msgstr "De lijst met onlangs gebruikte sessies gesorteerd op databasemapnaam"
+msgstr "Een lijst met onlangs gebruikte sessies gesorteerd op database-mapnaam"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:8
@@ -147,7 +146,7 @@ msgstr "Code"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "De code kan niet meer worden verzonden"
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -190,14 +189,13 @@ msgid "Use Recovery Code"
 msgstr "Herstelcode gebruiken"
 
 #: data/resources/ui/login.ui:474
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
 "Toen u uw cloud-wachtwoord heeft ingesteld heeft u een herstel-e-mailadres "
-"opgegeven. We kunnen een code naar dit e-mailadres sturen om uw wachtwoord "
-"opnieuw in te stellen."
+"opgegeven. Er kan een code naar dit e-mailadres worden gestuurd om uw "
+"wachtwoord opnieuw in te stellen."
 
 #: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
@@ -212,7 +210,6 @@ msgid "_Delete Account"
 msgstr "Account _verwijderen"
 
 #: data/resources/ui/login.ui:607
-#, fuzzy
 msgid "Enter the code e-mailed to you"
 msgstr "Voer de code in die via e-mail naar u is verstuurd"
 
@@ -359,6 +356,7 @@ msgstr "Verwijderd account"
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
 msgstr ""
+"De administratoren van deze groep hebben u verboden om hier te schrijven"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -378,18 +376,16 @@ msgstr "%e %B %Y, %H:%M"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "Berichten sturen is niet toegestaan in deze groep"
 
 #: src/login.rs:380
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
 "Een manier om uw account te blijven gebruiken is door deze te verwijderen en "
-"daarna opnieuw aan te maken."
+"daarna opnieuw aan te maken"
 
 #: src/login.rs:385
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
@@ -407,7 +403,6 @@ msgstr ""
 "samen met alle gedeelde media en bestanden!"
 
 #: src/login.rs:684
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
 msgstr "Accepteert u de servicevoorwaarden?"
 
@@ -452,7 +447,6 @@ msgid "Sorry"
 msgstr "Sorry"
 
 #: src/login.rs:994
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -496,11 +490,11 @@ msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "U heeft een ongeldige landcode ingevoerd"
 
 #: src/strings.rs:24
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "lang geleden voor het laatst gezien"
 
 #: src/strings.rs:25
 msgid "online"
@@ -517,7 +511,7 @@ msgstr "%x voor het laatst gezien"
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "gisteren om %H:%M voor het laatst gezien"
 
 #: src/strings.rs:56
 msgid "last seen just now"
@@ -529,11 +523,11 @@ msgstr "recent voor het laatst gezien"
 
 #: src/strings.rs:60
 msgid "last seen within a week"
-msgstr ""
+msgstr "deze week voor het laatst gezien"
 
 #: src/strings.rs:61
 msgid "last seen within a month"
-msgstr ""
+msgstr "deze maand voor het laatst gezien"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
@@ -625,7 +619,7 @@ msgstr "{sender} heeft een GIF vastgezet"
 
 #: src/strings.rs:407
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "{sender} heeft een audiobestand vastgezet"
 
 #: src/strings.rs:408
 msgid "{sender} pinned a file"
@@ -645,11 +639,11 @@ msgstr "{sender} heeft een video vastgezet"
 
 #: src/strings.rs:412
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "{sender} heeft een videobericht vastgezet"
 
 #: src/strings.rs:413
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "{sender} heeft een audiobericht vastgezet"
 
 #: src/strings.rs:414 src/strings.rs:416
 msgid "{sender} pinned a message"
@@ -724,11 +718,11 @@ msgstr "gesponsord"
 
 #: src/session/content/message_row/mod.rs:166
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Wilt u dit bericht voor <b>iedereen</b> verwijderen?"
 
 #: src/session/content/message_row/mod.rs:168
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Wilt u dit bericht verwijderen?"
 
 #: src/session/content/message_row/mod.rs:172
 msgid "Confirm Message Deletion"

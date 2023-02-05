@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-01 16:05+0100\n"
-"PO-Revision-Date: 2022-03-15 07:58+0000\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
+"PO-Revision-Date: 2023-02-04 17:42+0000\n"
+"Last-Translator: Ícar N. S. <icar.nin@pm.me>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ca/>\n"
 "Language: ca\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -47,14 +47,13 @@ msgstr "Alçada per defecte de la finestra"
 #: data/com.github.melix99.telegrand.gschema.xml.in:16
 #: data/com.github.melix99.telegrand.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Comportament de la finestra maximitzada per defecte"
+msgstr "Comportament per defecte de la finestra maximitzada"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr "Sessions usades recentment"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
@@ -65,11 +64,11 @@ msgstr ""
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.ui:8
 msgid "Color Scheme"
-msgstr "Combinació de colors"
+msgstr "Esquema de colors"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "La combinació de colors utilitzada per l’aplicació"
+msgstr "L'esquema de colors utilitzat per l’aplicació"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
 msgid "Main window"
@@ -100,13 +99,12 @@ msgid "Select a chat to start messaging."
 msgstr "Seleccioneu un xat per a començar a comunicar-vos."
 
 #: data/resources/ui/content-chat-action-bar.ui:84
-#, fuzzy
 msgid "Message"
-msgstr "Missatge de veu"
+msgstr "Missatge"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Desplaceu-vos a baix del tot"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
@@ -114,7 +112,7 @@ msgstr "Mostra la informació"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Llegenda"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -126,11 +124,11 @@ msgstr "_Següent"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
-msgstr ""
+msgstr "Benvingut"
 
 #: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
-msgstr "_Inicia una sessió amb un codi QR"
+msgstr "_Inicia la sessió amb un codi QR"
 
 #: data/resources/ui/login.ui:166
 msgid "Scan Code"
@@ -139,8 +137,8 @@ msgstr "Escanegeu el codi"
 #: data/resources/ui/login.ui:167
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
-"Escanegeu aquest codi amb una altra aplicació de Telegram registrada al "
-"vostre compte."
+"Escanegeu aquest codi amb una altra aplicació de Telegram amb el vostre "
+"compte."
 
 #: data/resources/ui/login.ui:189
 msgid "Enter the Verification Code"
@@ -152,7 +150,7 @@ msgstr "Codi"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "El codi ja no es pot enviar."
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -195,7 +193,6 @@ msgid "Use Recovery Code"
 msgstr "Useu el codi de recuperació"
 
 #: data/resources/ui/login.ui:474
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
@@ -218,31 +215,28 @@ msgid "_Delete Account"
 msgstr "_Suprimeix el compte"
 
 #: data/resources/ui/login.ui:607
-#, fuzzy
 msgid "Enter the code e-mailed to you"
 msgstr "Introduïu el codi enviat pel correu"
 
 #: data/resources/ui/login.ui:650
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_No heu pogut accedir al vostre correu?"
+msgstr "_No podeu accedir al vostre correu?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Respon"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Suprimeix per a tothom"
 
 #: data/resources/ui/message-menu.ui:16
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_Suprimeix el compte"
+msgstr "_Suprimeix per mi"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
-msgstr ""
+msgstr "País"
 
 #: data/resources/ui/phone-number-input.ui:17
 msgid "Phone Number"
@@ -258,15 +252,15 @@ msgstr "Tema fosc"
 
 #: data/resources/ui/preferences-window.ui:35
 msgid "Storage"
-msgstr ""
+msgstr "Emmagatzematge"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Mida de la memòria cau"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Neteja la memòria cau"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -294,15 +288,14 @@ msgid "Search Chats"
 msgstr "Cerca els xats"
 
 #: data/resources/ui/shortcuts.ui:39
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "Llista de xats"
+msgstr "Historial dels xats"
 
 #: data/resources/ui/shortcuts.ui:42
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Envia una foto des del porta-retalls"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -322,57 +315,52 @@ msgstr "_Quant al Telegrand"
 
 #: data/resources/ui/sidebar-row-menu.ui:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Ancora"
 
 #: data/resources/ui/sidebar-row-menu.ui:11
 msgid "_Unpin"
-msgstr ""
+msgstr "_Desancora"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "_Marca com a no llegit"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Marca com a _llegit"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Cerca els xats"
+msgstr "Cerca"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "Cerca els xats"
+msgstr "Cap resultat de la cerca"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Proveu una cerca diferent."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Telegrand developers"
-msgstr "Telegrand"
+msgstr "Desenvolupadors del Telegrand"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Patrocinadors"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
 #: src/session/sidebar/search/mod.rs:208
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Missatge de veu"
+msgstr "Missatges desats"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_Suprimeix el compte"
+msgstr "Compte suprimit"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Els administradors d'aquest grup us hi han restringit l'escriptura"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -387,31 +375,28 @@ msgstr "%H:%M"
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e de %B del %Y"
+msgstr "%e de %B del %Y, %H:%M"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "No està permès escriure missatges en aquest grup."
 
 #: src/login.rs:380
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
-"Una manera de continuar utilitzant el vostre compte és suprimir el vostre "
-"compte i després tornar-lo a crear"
+"Una manera de continuar utilitzant el vostre compte és suprimir-lo i, "
+"després, tornar-lo a crear"
 
 #: src/login.rs:385
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
 msgstr ""
 "Com que no heu proporcionat una adreça de correu electrònic de recuperació, "
-"l’única manera de continuar utilitzant el vostre compte és suprimir-lo i "
-"després tornar a crear-lo"
+"l’única manera de continuar utilitzant el vostre compte és suprimir-lo i, "
+"després, tornar a crear-lo"
 
 #: src/login.rs:393
 msgid ""
@@ -422,17 +407,16 @@ msgstr ""
 "amb qualsevol mitjà i fitxer que hàgiu compartit."
 
 #: src/login.rs:684
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
 msgstr "Accepteu les condicions d’ús?"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_No"
-msgstr ""
+msgstr "_No"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_Yes"
-msgstr ""
+msgstr "_Sí"
 
 #: src/login.rs:688
 msgid "Terms of Service"
@@ -440,7 +424,7 @@ msgstr "Condicions d’ús"
 
 #: src/login.rs:689
 msgid "_OK"
-msgstr ""
+msgstr "D'_acord"
 
 #: src/login.rs:911
 msgid "Warning"
@@ -453,120 +437,116 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
-"Perdreu tots els teus xats i missatges, juntament amb qualsevol mitjà i "
+"Perdreu tots els vostres xats i missatges, juntament amb qualsevol mitjà i "
 "fitxer que hàgiu compartit!\n"
 "\n"
 "Voleu suprimir el vostre compte?"
 
 #: src/login.rs:919 src/session/content/chat_action_bar.rs:270
 msgid "_Cancel"
-msgstr ""
+msgstr "_Cancel·la"
 
 #: src/login.rs:992
 msgid "Sorry"
 msgstr "Ens sap greu"
 
 #: src/login.rs:994
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
 msgstr ""
 "Si no podeu restaurar l’accés al correu electrònic, les opcions restants són "
-"recordar la vostra contrasenya o suprimir i tornar a crear el vostre compte."
+"o bé recordar la vostra contrasenya o bé suprimir i tornar a crear el vostre "
+"compte."
 
 #: src/login.rs:999
 msgid "_Ok"
-msgstr ""
+msgstr "D'_acord"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
-#, fuzzy
 msgid "Telegram"
-msgstr "Telegrand"
+msgstr "Telegram"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1070
 msgid "Call"
-msgstr ""
+msgstr "Truca"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1072
 msgid "Flash Call"
-msgstr ""
+msgstr "Trucada Flash"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1074
-#, fuzzy
 msgid "Missed Call"
 msgstr "Trucada perduda"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1076
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Heu introduït un codi de país no vàlid."
 
 #: src/strings.rs:24
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "vist fa molt de temps"
 
 #: src/strings.rs:25
 msgid "online"
-msgstr ""
+msgstr "en línia"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:34
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "vist per última vegada: %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "vist per última vegada ahir a les %H:%M"
 
 #: src/strings.rs:56
 msgid "last seen just now"
-msgstr ""
+msgstr "vist ara mateix"
 
 #: src/strings.rs:59
 msgid "last seen recently"
-msgstr ""
+msgstr "vist recentment"
 
 #: src/strings.rs:60
 msgid "last seen within a week"
-msgstr ""
+msgstr "vist per última vegada fa menys d'una setmana"
 
 #: src/strings.rs:61
 msgid "last seen within a month"
-msgstr ""
+msgstr "vist per última vegada fa menys d'un mes"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
-msgstr ""
+msgstr "La fotografia ha vençut"
 
 #: src/strings.rs:88
 msgid "Video has expired"
-msgstr ""
+msgstr "El vídeo ha vençut"
 
 #: src/strings.rs:89
-#, fuzzy
 msgid "Video Message"
 msgstr "Missatge de veu"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "Unsupported Message"
 msgstr "El missatge no és compatible"
 
@@ -583,28 +563,26 @@ msgid "Video"
 msgstr "Vídeo"
 
 #: src/strings.rs:187
-#, fuzzy
 msgid "Voice Message"
 msgstr "Missatge de veu"
 
 #: src/strings.rs:206
 msgid "Declined outgoing video call"
-msgstr "S’ha refusat la trucada de vídeo sortint"
+msgstr "S’ha refusat la trucada de vídeo"
 
 #: src/strings.rs:208
 msgid "Declined outgoing call"
-msgstr "S’ha refusat la trucada sortint"
+msgstr "S’ha refusat la trucada"
 
 #: src/strings.rs:214
 msgid "Declined incoming video call"
-msgstr "S’ha refusat la trucada de vídeo entrant"
+msgstr "S’ha refusat la trucada de vídeo"
 
 #: src/strings.rs:216
 msgid "Declined incoming call"
-msgstr "S’ha refusat la trucada entrant"
+msgstr "S’ha refusat la trucada"
 
 #: src/strings.rs:224
-#, fuzzy
 msgid "Canceled call"
 msgstr "Trucada cancel·lada"
 
@@ -614,29 +592,27 @@ msgstr "Trucada perduda"
 
 #: src/strings.rs:249
 msgid "Outgoing video call"
-msgstr "Trucada de vídeo sortint"
+msgstr "Trucada de vídeo"
 
 #: src/strings.rs:251
 msgid "Outgoing call"
-msgstr "Trucada sortint"
+msgstr "Trucada"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
-msgstr "Trucada de vídeo entrant"
+msgstr "Trucada de vídeo"
 
 #: src/strings.rs:268 src/window.rs:213
 msgid "Incoming call"
-msgstr "Trucada entrant"
+msgstr "Trucada"
 
 #: src/strings.rs:282
-#, fuzzy
 msgid "Channel created"
-msgstr "S’ha eliminat la foto del canal"
+msgstr "S’ha creat el canal"
 
 #: src/strings.rs:311
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "S’ha eliminat la foto del canal"
+msgstr "S’ha canviat la foto del canal"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
@@ -644,67 +620,67 @@ msgstr "S’ha eliminat la foto del canal"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "{sender} ha fixat un GIF"
 
 #: src/strings.rs:407
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "{sender} ha fixat un fitxer d'àudio"
 
 #: src/strings.rs:408
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "{sender} ha fixat un fitxer"
 
 #: src/strings.rs:409
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "{sender} ha fixat una foto"
 
 #: src/strings.rs:410
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "{sender} ha fixat un adhesiu"
 
 #: src/strings.rs:411
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "{sender} ha fixat un vídeo"
 
 #: src/strings.rs:412
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "{sender} ha fixat un missatge de vídeo"
 
 #: src/strings.rs:413
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "{sender} ha fixat un missatge de veu"
 
 #: src/strings.rs:414 src/strings.rs:416
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "{sender} ha fixat un missatge"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
-msgstr ""
+msgstr "S'ha netejat la memòria cau"
 
 #: src/session/content/chat_action_bar.rs:218
 msgid "Unknown"
-msgstr ""
+msgstr "Desconegut"
 
 #: src/session/content/chat_action_bar.rs:220
 msgid "Deleted Message"
-msgstr ""
+msgstr "Missatge suprimit"
 
 #: src/session/content/chat_action_bar.rs:266
 msgid "Open File"
-msgstr ""
+msgstr "Obre un fitxer"
 
 #: src/session/content/chat_action_bar.rs:269
 msgid "_Open"
-msgstr ""
+msgstr "_Obre"
 
 #: src/session/content/chat_action_bar.rs:274
 msgid "Images"
-msgstr ""
+msgstr "Imatges"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
@@ -717,15 +693,15 @@ msgstr "Nom d’usuari"
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Descripció"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Enllaç"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "S'ha copiat al porta-retalls"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:119
@@ -739,27 +715,27 @@ msgstr "%e de %B del %Y"
 
 #: src/session/content/message_row/indicators_model.rs:157
 msgid "edited"
-msgstr ""
+msgstr "editat"
 
 #: src/session/content/message_row/indicators_model.rs:162
 msgid "sponsored"
-msgstr ""
+msgstr "patrocinat"
 
 #: src/session/content/message_row/mod.rs:166
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Voleu suprimir aquest missatge per a <b>tothom</b>?"
 
 #: src/session/content/message_row/mod.rs:168
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Voleu suprimir aquest missatge?"
 
 #: src/session/content/message_row/mod.rs:172
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "Confirmeu la supressió del missatge"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
-msgstr "Aquest missatge no és compatible"
+msgstr "Aquest missatge no està suportat"
 
 #: src/session/sidebar/row.rs:427
 msgid "Draft"
@@ -771,62 +747,59 @@ msgstr "Vós"
 
 #: src/session/sidebar/row.rs:709
 msgid "choosing a contact"
-msgstr ""
+msgstr "escollint un contacte"
 
 #: src/session/sidebar/row.rs:727
 msgid "choosing a location"
-msgstr ""
+msgstr "escollint una ubicació"
 
 #: src/session/sidebar/row.rs:745
 msgid "choosing a sticker"
-msgstr ""
+msgstr "escollint un adhesiu"
 
 #: src/session/sidebar/row.rs:763
-#, fuzzy
 msgid "recording a video"
-msgstr "Trucada de vídeo entrant"
+msgstr "gravant un vídeo"
 
 #: src/session/sidebar/row.rs:781
 msgid "recording a video note"
-msgstr ""
+msgstr "enregistrant una nota de vídeo"
 
 #: src/session/sidebar/row.rs:799
 msgid "recording a voice note"
-msgstr ""
+msgstr "enregistrant una nota de veu"
 
 #: src/session/sidebar/row.rs:817
 msgid "playing a game"
-msgstr ""
+msgstr "jugant a un joc"
 
 #: src/session/sidebar/row.rs:835
 msgid "typing"
-msgstr ""
+msgstr "escrivint"
 
 #: src/session/sidebar/row.rs:950
 msgid "watching an animation"
-msgstr ""
+msgstr "veient una animació"
 
 #: src/session/sidebar/search/section_row.rs:137
-#, fuzzy
 msgid "Chats"
-msgstr "Llista de xats"
+msgstr "Xats"
 
 #: src/session/sidebar/search/section_row.rs:140
 msgid "Global Search"
-msgstr ""
+msgstr "Cerca global"
 
 #: src/session/sidebar/search/section_row.rs:143
 msgid "Recent"
-msgstr ""
+msgstr "Recents"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Codi de país no vàlid"
 
 #: src/tdlib/country_info.rs:124
-#, fuzzy
 msgid "Test Account"
-msgstr "_Suprimeix el compte"
+msgstr "Compte de prova"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Us donem la benvinguda al Telegrand"

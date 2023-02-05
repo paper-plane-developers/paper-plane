@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-01 16:05+0100\n"
-"PO-Revision-Date: 2023-01-31 20:15+0000\n"
+"PO-Revision-Date: 2023-02-04 17:42+0000\n"
 "Last-Translator: Marco Melorio <marco.melorio@protonmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
@@ -113,7 +113,7 @@ msgstr "Guarda info"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Didascalia"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -229,12 +229,11 @@ msgstr "_Rispondi"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Elimina per _tutti"
 
 #: data/resources/ui/message-menu.ui:16
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "Elimina account"
+msgstr "_Elimina per me"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
@@ -254,15 +253,15 @@ msgstr "Tema scuro"
 
 #: data/resources/ui/preferences-window.ui:35
 msgid "Storage"
-msgstr ""
+msgstr "Archivio"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Dimensione cache"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Cancella la cache"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -318,24 +317,23 @@ msgstr "Inform_azioni"
 
 #: data/resources/ui/sidebar-row-menu.ui:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Fissa"
 
 #: data/resources/ui/sidebar-row-menu.ui:11
 msgid "_Unpin"
-msgstr ""
+msgstr "_Togli"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "Segna come _non letto"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Segna come _letto"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Cerca conversazione"
+msgstr "Cerca"
 
 #: data/resources/ui/sidebar-search.ui:75
 #, fuzzy
@@ -390,11 +388,10 @@ msgid "Writing messages isn't allowed in this group."
 msgstr ""
 
 #: src/login.rs:380
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
-"Un modo per continuare a usare il tuo account è eliminarlo e poi ricrearlo"
+"Un modo per continuare ad usare il tuo account è eliminarlo e poi ricrearlo"
 
 #: src/login.rs:385
 #, fuzzy
@@ -419,11 +416,11 @@ msgstr "Accetti i termini di servizio?"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_No"
-msgstr ""
+msgstr "_No"
 
 #: src/login.rs:685 src/session/content/message_row/mod.rs:178
 msgid "_Yes"
-msgstr ""
+msgstr "_Si"
 
 #: src/login.rs:688
 msgid "Terms of Service"
@@ -431,7 +428,7 @@ msgstr "Termini di servizio"
 
 #: src/login.rs:689
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: src/login.rs:911
 msgid "Warning"
@@ -451,14 +448,13 @@ msgstr ""
 
 #: src/login.rs:919 src/session/content/chat_action_bar.rs:270
 msgid "_Cancel"
-msgstr ""
+msgstr "_Annulla"
 
 #: src/login.rs:992
 msgid "Sorry"
 msgstr "Mi dispiace"
 
 #: src/login.rs:994
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -469,7 +465,7 @@ msgstr ""
 
 #: src/login.rs:999
 msgid "_Ok"
-msgstr ""
+msgstr "_OK"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -484,7 +480,7 @@ msgstr "SMS"
 #. Translators: This is an authentication method
 #: src/login.rs:1070
 msgid "Call"
-msgstr ""
+msgstr "Chiamata"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1072
@@ -499,7 +495,7 @@ msgstr "Chiamata persa"
 #. Translators: This is an authentication method
 #: src/login.rs:1076
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
@@ -507,48 +503,48 @@ msgstr ""
 
 #: src/strings.rs:24
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "ultimo accesso molto tempo fa"
 
 #: src/strings.rs:25
 msgid "online"
-msgstr ""
+msgstr "in linea"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:34
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "ultimo accesso %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "ultimo accesso ieri alle %H:%M"
 
 #: src/strings.rs:56
 msgid "last seen just now"
-msgstr ""
+msgstr "ultimo accesso adesso"
 
 #: src/strings.rs:59
 msgid "last seen recently"
-msgstr ""
+msgstr "ultimo accesso di recente"
 
 #: src/strings.rs:60
 msgid "last seen within a week"
-msgstr ""
+msgstr "ultimo accesso entro una settimana"
 
 #: src/strings.rs:61
 msgid "last seen within a month"
-msgstr ""
+msgstr "ultimo accesso entro un mese"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
-msgstr ""
+msgstr "La foto è scaduta"
 
 #: src/strings.rs:88
 msgid "Video has expired"
-msgstr ""
+msgstr "Il video è scaduto"
 
 #: src/strings.rs:89
 msgid "Video Message"
@@ -591,7 +587,6 @@ msgid "Declined incoming call"
 msgstr "Chiamata in entrata rifiutata"
 
 #: src/strings.rs:224
-#, fuzzy
 msgid "Canceled call"
 msgstr "Chiamata annullata"
 
@@ -620,9 +615,8 @@ msgid "Channel created"
 msgstr "Canale creato"
 
 #: src/strings.rs:311
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "Foto del canale rimossa"
+msgstr "Foto del canale cambiata"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
@@ -630,7 +624,7 @@ msgstr "Foto del canale rimossa"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "{sender} ha fissato una GIF"
 
 #: src/strings.rs:407
 msgid "{sender} pinned an audio file"
@@ -638,19 +632,19 @@ msgstr ""
 
 #: src/strings.rs:408
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "{sender} ha fissato un file"
 
 #: src/strings.rs:409
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "{sender} ha fissato una foto"
 
 #: src/strings.rs:410
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "{sender} ha fissato uno sticker"
 
 #: src/strings.rs:411
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "{sender} ha fissato un video"
 
 #: src/strings.rs:412
 msgid "{sender} pinned a video message"
@@ -662,7 +656,7 @@ msgstr ""
 
 #: src/strings.rs:414 src/strings.rs:416
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "{sender} ha fissato un messaggio"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
@@ -674,15 +668,15 @@ msgstr ""
 
 #: src/session/content/chat_action_bar.rs:220
 msgid "Deleted Message"
-msgstr ""
+msgstr "Messaggio eliminato"
 
 #: src/session/content/chat_action_bar.rs:266
 msgid "Open File"
-msgstr ""
+msgstr "Apri file"
 
 #: src/session/content/chat_action_bar.rs:269
 msgid "_Open"
-msgstr ""
+msgstr "_Apri"
 
 #: src/session/content/chat_action_bar.rs:274
 msgid "Images"
@@ -690,7 +684,7 @@ msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
@@ -703,11 +697,11 @@ msgstr "Nome utente"
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
@@ -725,11 +719,11 @@ msgstr "%e %B %Y"
 
 #: src/session/content/message_row/indicators_model.rs:157
 msgid "edited"
-msgstr ""
+msgstr "modificato"
 
 #: src/session/content/message_row/indicators_model.rs:162
 msgid "sponsored"
-msgstr ""
+msgstr "sponsorizzato"
 
 #: src/session/content/message_row/mod.rs:166
 msgid "Do you want to delete this message for <b>everyone</b>?"
@@ -793,17 +787,16 @@ msgid "watching an animation"
 msgstr ""
 
 #: src/session/sidebar/search/section_row.rs:137
-#, fuzzy
 msgid "Chats"
-msgstr "Lista di conversazioni"
+msgstr "Chat"
 
 #: src/session/sidebar/search/section_row.rs:140
 msgid "Global Search"
-msgstr ""
+msgstr "Ricerca globale"
 
 #: src/session/sidebar/search/section_row.rs:143
 msgid "Recent"
-msgstr ""
+msgstr "Recenti"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
