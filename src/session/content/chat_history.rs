@@ -15,6 +15,7 @@ const MIN_N_ITEMS: u32 = 20;
 
 mod imp {
     use super::*;
+    use crate::components::Avatar as ComponentsAvatar;
     use adw::subclass::prelude::BinImpl;
     use once_cell::sync::Lazy;
     use once_cell::unsync::OnceCell;
@@ -29,7 +30,11 @@ mod imp {
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) sticky: Cell<bool>,
         #[template_child]
-        pub(super) window_title: TemplateChild<adw::WindowTitle>,
+        pub(super) title_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub(super) chat_title: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) chat_avatar: TemplateChild<ComponentsAvatar>,
         #[template_child]
         pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
@@ -46,7 +51,9 @@ mod imp {
                 message_menu: Default::default(),
                 is_auto_scrolling: Default::default(),
                 sticky: Cell::new(false),
-                window_title: Default::default(),
+                title_box: Default::default(),
+                chat_title: Default::default(),
+                chat_avatar: Default::default(),
                 scrolled_window: Default::default(),
                 list_view: Default::default(),
                 chat_action_bar: Default::default(),
@@ -208,13 +215,27 @@ impl ChatHistory {
 
     fn setup_expressions(&self) {
         let chat_expression = Self::this_expression("chat");
+        let mobile_view_expression = Self::this_expression("compact");
 
-        // Chat title
+        /* Chat title*/
         expressions::chat_display_name(&chat_expression).bind(
-            &*self.imp().window_title,
-            "title",
+            &*self.imp().chat_title,
+            "label",
             Some(self),
         );
+
+        // Chat title alignment
+        /*mobile_view_expression
+        .chain_closure::<gtk::Align>(closure!(|_: Self, compact: bool| {
+            if compact {
+                gtk::Align::Start
+            } else {
+                gtk::Align::Center
+            }
+        }))
+        .upcast()
+        .bind(&*self.imp().title_box, "halign", Some(self));*/
+        mobile_view_expression.bind(&*self.imp().chat_avatar, "visible", Some(self));
     }
 
     fn load_older_messages(&self, adj: &gtk::Adjustment) {

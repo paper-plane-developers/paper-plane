@@ -17,7 +17,29 @@
                   </object>
                 </child>
                 <child type="title">
-                  <object class="AdwWindowTitle" id="window_title"/>
+                  <object class="GtkButton">
+                    <style>
+                      <class name="image-button"/>
+                      <class name="no-hover"/>
+                    </style>
+                    <property name="action-name">chat-history.view-info</property>
+                    <property name="child">
+                      <object class="GtkBox" id="title_box">
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="ComponentsAvatar" id="chat_avatar">
+                            <property name="size">32</property>
+                            <binding name="item">
+                              <lookup name="chat">ContentChatHistory</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="chat_title"/>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
                 </child>
                 <child type="end">
                   <object class="GtkMenuButton">

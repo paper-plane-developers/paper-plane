@@ -302,3 +302,7 @@ window.chat-info .main-page > list {
 .squared {
   border-radius: 0;
 }
+
+.no-hover:hover {
+  background: initial;
+}
