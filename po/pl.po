@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2023-02-05 15:46+0000\n"
 "Last-Translator: Karol Lademan <karol@lademan.dev>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
@@ -99,7 +99,7 @@ msgstr "Nie wybrano czatu"
 msgid "Select a chat to start messaging."
 msgstr "Wybierz czat, aby rozpocząć rozmowę."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr "Wiadomość"
 
@@ -110,6 +110,11 @@ msgstr "Przewiń do dołu"
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Zobacz informacje"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "Przeszukaj czaty"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -407,11 +412,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr "Czy akceptujesz Zasady korzystania z Usługi?"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr "_Nie"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr "_Tak"
 
@@ -419,7 +426,7 @@ msgstr "_Tak"
 msgid "Terms of Service"
 msgstr "Zasady Korzystania z Usługi"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr "_OK"
 
@@ -439,7 +446,7 @@ msgstr ""
 "\n"
 "Czy chcesz usunąć swoje konto?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr "_Anuluj"
 
@@ -454,10 +461,6 @@ msgid ""
 msgstr ""
 "Jeśli stracisz dostęp do emaila, twoimi pozostałymi opcjami będzie "
 "zapamiętanie hasła albo usunięcie i ponowne stworzenie konta."
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr "_Ok"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -514,6 +517,22 @@ msgstr "ostatnio widziano %x"
 msgid "last seen yesterday at %l:%M %p"
 msgstr "ostatnio widziano %l:%M %p"
 
+#: src/strings.rs:43
+#, fuzzy
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "widziano dawno temu"
+msgstr[1] "widziano dawno temu"
+msgstr[2] "widziano dawno temu"
+
+#: src/strings.rs:50
+#, fuzzy
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "widziano dawno temu"
+msgstr[1] "widziano dawno temu"
+msgstr[2] "widziano dawno temu"
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr "ostatnio widziano przed chwilą"
@@ -550,16 +569,51 @@ msgstr "Nieobsługiwana wiadomość"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "Zdjęcie"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "Naklejka"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "Wideo"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr "Wiadomość głosowa"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "Wiadomość głosowa"
 
 #: src/strings.rs:206
@@ -586,6 +640,16 @@ msgstr "Anulowane połączenie"
 msgid "Missed call"
 msgstr "Nieodebrane połączenie"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "Wychodzące połączenie wideo"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "Wychodzące połączenie"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "Wychodzące połączenie wideo"
@@ -593,6 +657,16 @@ msgstr "Wychodzące połączenie wideo"
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr "Wychodzące połączenie"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "Przychodzące połączenie wideo"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "Przychodzące połączenie"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -602,17 +676,73 @@ msgstr "Przychodzące połączenie wideo"
 msgid "Incoming call"
 msgstr "Przychodzące połączenie"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "Stworzono kanał"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "Stworzono kanał"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "Zmieniono zdjęcie kanału"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "Użytkownik {sender} przypiął zdjęcie"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Usunięto zdjęcie kanału"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "Usunięto zdjęcie grupy"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "Dołączono do grupy"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+#, fuzzy
+msgid "{sender} added {users}"
+msgstr "Użytkownik {sender} przypiął naklejkę"
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "Opuszczono grupę"
+
+#: src/strings.rs:382
+#, fuzzy
+msgid "{sender} removed {user}"
+msgstr "Użytkownik {sender} przypiął naklejkę"
+
+#: src/strings.rs:404
+#, fuzzy
+msgid "{sender} pinned \"{text}\""
+msgstr "Użytkownik {sender} przypiął plik"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -650,29 +780,53 @@ msgstr "Użytkownik {sender} przypiął wiadomość głosową"
 msgid "{sender} pinned a message"
 msgstr "Użytkownik {sender} przypiął wiadomość"
 
+#: src/strings.rs:425
+#, fuzzy
+msgid "{sender} joined Telegram"
+msgstr "{} dołączył do Telegrama"
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr "Wyczyszczono pamięc podręczną"
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr "Nieznane"
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr "Usunięta wiadomość"
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr "Otwórz plik"
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr "_Otwórz"
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
 msgstr "Obrazy"
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+#, fuzzy
+msgid "Do you want to leave this chat?"
+msgstr "Czy chcesz usunąć tą wiadomość?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -685,6 +839,14 @@ msgstr "Telefon"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "Nazwa użytkownika"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -797,6 +959,9 @@ msgstr "Niepoprawny kod kraju"
 msgid "Test Account"
 msgstr "Konto testowe"
 
+#~ msgid "_Ok"
+#~ msgstr "_Ok"
+
 #~ msgid "Deleted"
 #~ msgstr "Usunięte"
 
@@ -809,20 +974,8 @@ msgstr "Konto testowe"
 #~ msgid "_Go Back"
 #~ msgstr "_Wróć"
 
-#~ msgid "Sticker"
-#~ msgstr "Naklejka"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "Usunięto zdjęcie grupy"
-
-#~ msgid "You joined the group"
-#~ msgstr "Dołączono do grupy"
-
 #~ msgid ", "
 #~ msgstr ", "
-
-#~ msgid "You left the group"
-#~ msgstr "Opuszczono grupę"
 
 #~ msgid "Document"
 #~ msgstr "Dokument"
@@ -850,6 +1003,3 @@ msgstr "Konto testowe"
 
 #~ msgid "Enter the Encryption Key"
 #~ msgstr "Wpisz Klucz Szyfrujący"
-
-#~ msgid "{} joined Telegram"
-#~ msgstr "{} dołączył do Telegrama"

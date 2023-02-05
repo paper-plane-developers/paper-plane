@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2022-01-24 14:54+0000\n"
 "Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -97,7 +97,7 @@ msgstr "未选中对话"
 msgid "Select a chat to start messaging."
 msgstr "请选择一个对话开始聊天。"
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 #, fuzzy
 msgid "Message"
 msgstr "语音消息"
@@ -109,6 +109,11 @@ msgstr ""
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "查看信息"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "搜索聊天"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -415,11 +420,13 @@ msgstr "请注意，你将丢失全部的聊天对话和消息，还有你分享
 msgid "Do you accept the Terms of Service?"
 msgstr "你接受此服务条款吗？"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr ""
 
@@ -427,7 +434,7 @@ msgstr ""
 msgid "Terms of Service"
 msgstr "服务条款"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr ""
 
@@ -446,7 +453,7 @@ msgstr ""
 "\n"
 "你确定要删除你的帐户吗？"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr ""
 
@@ -462,10 +469,6 @@ msgid ""
 msgstr ""
 "如果你无法恢复电子邮箱的访问，你仅存的选择是记起你的密码，或者删除后重新创建"
 "你的帐户。"
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr ""
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -524,6 +527,16 @@ msgstr ""
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
+#: src/strings.rs:43
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] ""
+
+#: src/strings.rs:50
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] ""
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr ""
@@ -562,17 +575,52 @@ msgstr "不支持的消息"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "照片"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "贴纸"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "视频"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 #, fuzzy
 msgid "Voice Message"
+msgstr "语音消息"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "语音消息"
 
 #: src/strings.rs:206
@@ -600,12 +648,32 @@ msgstr "已取消去电"
 msgid "Missed call"
 msgstr "未接来电"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "视频去电"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "来电"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "视频去电"
 
 #: src/strings.rs:251
 msgid "Outgoing call"
+msgstr "来电"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "视频来电"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
 msgstr "来电"
 
 #: src/strings.rs:266
@@ -616,19 +684,72 @@ msgstr "视频来电"
 msgid "Incoming call"
 msgstr "来电"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 #, fuzzy
 msgid "Channel created"
 msgstr "频道照片已被移除"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "频道照片已被移除"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 #, fuzzy
 msgid "Channel photo changed"
 msgstr "频道照片已被移除"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "你已移除群组照片"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "频道照片已被移除"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "你已移除群组照片"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "你已加入群组"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+msgid "{sender} added {users}"
+msgstr ""
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "你已离开群组"
+
+#: src/strings.rs:382
+msgid "{sender} removed {user}"
+msgstr ""
+
+#: src/strings.rs:404
+msgid "{sender} pinned \"{text}\""
+msgstr ""
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -666,28 +787,51 @@ msgstr ""
 msgid "{sender} pinned a message"
 msgstr ""
 
+#: src/strings.rs:425
+#, fuzzy
+msgid "{sender} joined Telegram"
+msgstr "{} 已加入 Telegram"
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+msgid "Do you want to leave this chat?"
 msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
@@ -701,6 +845,12 @@ msgstr "移动"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "用户名"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -825,20 +975,8 @@ msgstr "删除帐户(_D)"
 #~ msgid "_Go Back"
 #~ msgstr "返回(_G)"
 
-#~ msgid "Sticker"
-#~ msgstr "贴纸"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "你已移除群组照片"
-
-#~ msgid "You joined the group"
-#~ msgstr "你已加入群组"
-
 #~ msgid ", "
 #~ msgstr "、 "
-
-#~ msgid "You left the group"
-#~ msgstr "你已离开群组"
 
 #~ msgid "Document"
 #~ msgstr "文档"
@@ -860,6 +998,3 @@ msgstr "删除帐户(_D)"
 
 #~ msgid "Enter the Encryption Key"
 #~ msgstr "输入密钥"
-
-#~ msgid "{} joined Telegram"
-#~ msgstr "{} 已加入 Telegram"

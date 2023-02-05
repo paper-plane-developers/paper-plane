@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2022-06-15 04:19+0000\n"
 "Last-Translator: ᅟ <rmnscnce@ya.ru>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/telegrand/"
@@ -97,7 +97,7 @@ msgstr "Tak Ada Obrolan Yang Dipilih"
 msgid "Select a chat to start messaging."
 msgstr "Pilih sebuah obrolan untuk mulai mengobrol."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr ""
 
@@ -108,6 +108,11 @@ msgstr ""
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Lihat Info"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "Cari Obrolan"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -410,11 +415,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr ""
 
@@ -422,7 +429,7 @@ msgstr ""
 msgid "Terms of Service"
 msgstr ""
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr ""
 
@@ -438,7 +445,7 @@ msgid ""
 "Do you want to delete your account?"
 msgstr ""
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr ""
 
@@ -450,10 +457,6 @@ msgstr ""
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
-msgstr ""
-
-#: src/login.rs:999
-msgid "_Ok"
 msgstr ""
 
 #. Translators: This is an authentication method
@@ -513,6 +516,16 @@ msgstr ""
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
+#: src/strings.rs:43
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] ""
+
+#: src/strings.rs:50
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] ""
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr ""
@@ -550,16 +563,50 @@ msgstr "Pesan tidak didukung"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "Foto"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "Stiker"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "Video"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr ""
+
+#: src/strings.rs:189
+msgid "Voice Message, {caption}"
 msgstr ""
 
 #: src/strings.rs:206
@@ -587,6 +634,15 @@ msgstr "Panggilan dibatalkan"
 msgid "Missed call"
 msgstr "Panggilan tidak terjawab"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "Panggilan video keluar"
+
+#: src/strings.rs:244
+msgid "Outgoing call ({duration})"
+msgstr ""
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "Panggilan video keluar"
@@ -594,6 +650,16 @@ msgstr "Panggilan video keluar"
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr ""
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "Panggilan video masuk ditolak"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "Panggilan masuk"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -603,19 +669,72 @@ msgstr ""
 msgid "Incoming call"
 msgstr "Panggilan masuk"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 #, fuzzy
 msgid "Channel created"
 msgstr "Foto channel dibuang"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "Foto channel dibuang"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 #, fuzzy
 msgid "Channel photo changed"
 msgstr "Foto channel dibuang"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "Anda menghapus foto grup"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Foto channel dibuang"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "Anda menghapus foto grup"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "Anda bergabung dengan grup"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+msgid "{sender} added {users}"
+msgstr ""
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "Anda meninggalkan grup"
+
+#: src/strings.rs:382
+msgid "{sender} removed {user}"
+msgstr ""
+
+#: src/strings.rs:404
+msgid "{sender} pinned \"{text}\""
+msgstr ""
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -653,28 +772,50 @@ msgstr ""
 msgid "{sender} pinned a message"
 msgstr ""
 
+#: src/strings.rs:425
+msgid "{sender} joined Telegram"
+msgstr ""
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+msgid "Do you want to leave this chat?"
 msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
@@ -688,6 +829,12 @@ msgstr "Ponsel"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "Nama pengguna"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -808,20 +955,8 @@ msgstr "_Hapus Akun"
 #~ msgid "Appearance"
 #~ msgstr "Tampilan"
 
-#~ msgid "Sticker"
-#~ msgstr "Stiker"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "Anda menghapus foto grup"
-
-#~ msgid "You joined the group"
-#~ msgstr "Anda bergabung dengan grup"
-
 #~ msgid ", "
 #~ msgstr ", "
-
-#~ msgid "You left the group"
-#~ msgstr "Anda meninggalkan grup"
 
 #~ msgid "Document"
 #~ msgstr "Dokumen"

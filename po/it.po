@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-01 16:05+0100\n"
+"POT-Creation-Date: 2023-02-05 17:24+0100\n"
 "PO-Revision-Date: 2023-02-04 17:42+0000\n"
 "Last-Translator: Marco Melorio <marco.melorio@protonmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
@@ -99,7 +99,7 @@ msgstr "Nessuna chat selezionata"
 msgid "Select a chat to start messaging."
 msgstr "Seleziona una chat per iniziare a messaggiare."
 
-#: data/resources/ui/content-chat-action-bar.ui:84
+#: data/resources/ui/content-chat-action-bar.ui:89
 msgid "Message"
 msgstr "Messaggio"
 
@@ -110,6 +110,11 @@ msgstr ""
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Guarda info"
+
+#: data/resources/ui/content-chat-history.ui:158
+#, fuzzy
+msgid "Leave Chat"
+msgstr "Cerca conversazione"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -414,11 +419,13 @@ msgstr ""
 msgid "Do you accept the Terms of Service?"
 msgstr "Accetti i termini di servizio?"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_No"
 msgstr "_No"
 
-#: src/login.rs:685 src/session/content/message_row/mod.rs:178
+#: src/login.rs:685 src/session/content/chat_history.rs:245
+#: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
 msgstr "_Si"
 
@@ -426,7 +433,7 @@ msgstr "_Si"
 msgid "Terms of Service"
 msgstr "Termini di servizio"
 
-#: src/login.rs:689
+#: src/login.rs:689 src/login.rs:999
 msgid "_OK"
 msgstr "_OK"
 
@@ -446,7 +453,7 @@ msgstr ""
 "\n"
 "Vuoi eliminare il tuo account?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:270
+#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
 msgstr "_Annulla"
 
@@ -462,10 +469,6 @@ msgstr ""
 "Se non puoi ripristinare l'accesso alle e-mail, le opzioni rimaste sono "
 "quelle di ricordarti la tua password o di cancellare e ricreare il tuo "
 "account."
-
-#: src/login.rs:999
-msgid "_Ok"
-msgstr "_OK"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -522,6 +525,20 @@ msgstr "ultimo accesso %x"
 msgid "last seen yesterday at %l:%M %p"
 msgstr "ultimo accesso ieri alle %H:%M"
 
+#: src/strings.rs:43
+#, fuzzy
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "ultimo accesso molto tempo fa"
+msgstr[1] "ultimo accesso molto tempo fa"
+
+#: src/strings.rs:50
+#, fuzzy
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "ultimo accesso molto tempo fa"
+msgstr[1] "ultimo accesso molto tempo fa"
+
 #: src/strings.rs:56
 msgid "last seen just now"
 msgstr "ultimo accesso adesso"
@@ -558,16 +575,51 @@ msgstr "Messaggio non supportato"
 msgid "GIF"
 msgstr "GIF"
 
+#: src/strings.rs:128
+msgid "GIF, {caption}"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "{title} – {performer}"
+msgstr ""
+
+#: src/strings.rs:142
+msgid "{title} – {performer}, {caption}"
+msgstr ""
+
+#: src/strings.rs:158
+msgid "{file_name}, {caption}"
+msgstr ""
+
 #: src/strings.rs:166
 msgid "Photo"
 msgstr "Foto"
+
+#: src/strings.rs:168
+msgid "Photo, {caption}"
+msgstr ""
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:174
+#, fuzzy
+msgid "{emoji} Sticker"
+msgstr "Adesivo"
 
 #: src/strings.rs:179
 msgid "Video"
 msgstr "Video"
 
+#: src/strings.rs:181
+msgid "Video, {caption}"
+msgstr ""
+
 #: src/strings.rs:187
 msgid "Voice Message"
+msgstr "Messaggio vocale"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "Voice Message, {caption}"
 msgstr "Messaggio vocale"
 
 #: src/strings.rs:206
@@ -594,6 +646,16 @@ msgstr "Chiamata annullata"
 msgid "Missed call"
 msgstr "Chiamata persa"
 
+#: src/strings.rs:239
+#, fuzzy
+msgid "Outgoing video call ({duration})"
+msgstr "Videochiamata in uscita"
+
+#: src/strings.rs:244
+#, fuzzy
+msgid "Outgoing call ({duration})"
+msgstr "Chiamata in uscita"
+
 #: src/strings.rs:249
 msgid "Outgoing video call"
 msgstr "Videochiamata in uscita"
@@ -601,6 +663,16 @@ msgstr "Videochiamata in uscita"
 #: src/strings.rs:251
 msgid "Outgoing call"
 msgstr "Chiamata in uscita"
+
+#: src/strings.rs:256
+#, fuzzy
+msgid "Incoming video call ({duration})"
+msgstr "Videochiamata in entrata"
+
+#: src/strings.rs:261
+#, fuzzy
+msgid "Incoming call ({duration})"
+msgstr "Chiamata in arrivo"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -610,17 +682,73 @@ msgstr "Videochiamata in entrata"
 msgid "Incoming call"
 msgstr "Chiamata in arrivo"
 
+#: src/strings.rs:275 src/strings.rs:286
+msgid "{sender} created the group \"{title}\""
+msgstr ""
+
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "Canale creato"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "Channel renamed to \"{title}\""
+msgstr "Canale creato"
+
+#: src/strings.rs:301
+msgid "{sender} changed the group name to \"{title}\""
+msgstr ""
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "Foto del canale cambiata"
 
+#: src/strings.rs:315
+#, fuzzy
+msgid "{sender} changed the group photo"
+msgstr "{sender} ha fissato una foto"
+
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Foto del canale rimossa"
+
+#: src/strings.rs:327
+#, fuzzy
+msgid "{sender} removed the group photo"
+msgstr "Hai rimosso la foto del gruppo"
+
+#: src/strings.rs:335 src/strings.rs:370
+#, fuzzy
+msgid "{sender} joined the group"
+msgstr "Sei entrato nel gruppo"
+
+#: src/strings.rs:340
+msgid "{sender} added {first_user} and {second_user}"
+msgstr ""
+
+#: src/strings.rs:354
+#, fuzzy
+msgid "{sender} added {users}"
+msgstr "{sender} ha fissato uno sticker"
+
+#: src/strings.rs:363
+msgid "{sender} joined the group via invite link"
+msgstr ""
+
+#: src/strings.rs:377
+#, fuzzy
+msgid "{sender} left the group"
+msgstr "Hai abbandonato il gruppo"
+
+#: src/strings.rs:382
+#, fuzzy
+msgid "{sender} removed {user}"
+msgstr "{sender} ha fissato uno sticker"
+
+#: src/strings.rs:404
+#, fuzzy
+msgid "{sender} pinned \"{text}\""
+msgstr "{sender} ha fissato un file"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -658,28 +786,51 @@ msgstr ""
 msgid "{sender} pinned a message"
 msgstr "{sender} ha fissato un messaggio"
 
+#: src/strings.rs:425
+#, fuzzy
+msgid "{sender} joined Telegram"
+msgstr "{sender} ha fissato un file"
+
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:218
+#: src/session/content/chat_action_bar.rs:109
+#: src/session/content/chat_action_bar.rs:620
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:111
+#: src/session/content/chat_action_bar.rs:622
+msgid "Mute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:220
+#: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
 msgstr "Messaggio eliminato"
 
-#: src/session/content/chat_action_bar.rs:266
+#: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
 msgstr "Apri file"
 
-#: src/session/content/chat_action_bar.rs:269
+#: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
 msgstr "_Apri"
 
-#: src/session/content/chat_action_bar.rs:274
+#: src/session/content/chat_action_bar.rs:329
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_history.rs:242
+msgid "Leave chat?"
+msgstr ""
+
+#: src/session/content/chat_history.rs:243
+msgid "Do you want to leave this chat?"
 msgstr ""
 
 #: src/session/content/chat_info_window.rs:131
@@ -693,6 +844,13 @@ msgstr "Cellulare"
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
 msgstr "Nome utente"
+
+#: src/session/content/chat_info_window.rs:174
+#: src/session/content/chat_info_window.rs:223
+msgid "{num} member"
+msgid_plural "{num} members"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
@@ -806,6 +964,9 @@ msgstr ""
 msgid "Test Account"
 msgstr "Account di test"
 
+#~ msgid "_Ok"
+#~ msgstr "_OK"
+
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Benvenuto su Telegrand"
 
@@ -815,20 +976,8 @@ msgstr "Account di test"
 #~ msgid "_Go Back"
 #~ msgstr "Indietro"
 
-#~ msgid "Sticker"
-#~ msgstr "Adesivo"
-
-#~ msgid "You removed the group photo"
-#~ msgstr "Hai rimosso la foto del gruppo"
-
-#~ msgid "You joined the group"
-#~ msgstr "Sei entrato nel gruppo"
-
 #~ msgid ", "
 #~ msgstr ", "
-
-#~ msgid "You left the group"
-#~ msgstr "Hai abbandonato il gruppo"
 
 #~ msgid "Document"
 #~ msgstr "Documenti"
