@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2022-02-01 22:52+0000\n"
+"PO-Revision-Date: 2023-02-06 22:55+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/fr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -106,7 +106,7 @@ msgstr "Message vocal"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Faire défiler vers le bas"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
@@ -119,7 +119,7 @@ msgstr "Rechercher des discussions"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Légende"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -131,7 +131,7 @@ msgstr "_Suivant"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
-msgstr ""
+msgstr "Bienvenue"
 
 #: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
@@ -156,7 +156,7 @@ msgstr "Code"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Le code ne peut plus être envoyé."
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -232,11 +232,11 @@ msgstr "Impossible d'accéder à vos courriels ?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Répondre"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Supprimer pour _Tout le monde"
 
 #: data/resources/ui/message-menu.ui:16
 #, fuzzy
@@ -245,7 +245,7 @@ msgstr "_Supprimer le compte"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
-msgstr ""
+msgstr "Pays"
 
 #: data/resources/ui/phone-number-input.ui:17
 msgid "Phone Number"
@@ -261,15 +261,15 @@ msgstr "Thème sombre"
 
 #: data/resources/ui/preferences-window.ui:35
 msgid "Storage"
-msgstr ""
+msgstr "Stockage"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Taille du cache"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Vider le cache"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
