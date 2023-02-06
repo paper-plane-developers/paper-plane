@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2023-02-05 15:46+0000\n"
+"PO-Revision-Date: 2023-02-06 22:55+0000\n"
 "Last-Translator: Karol Lademan <karol@lademan.dev>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
@@ -112,9 +112,8 @@ msgid "View Info"
 msgstr "Zobacz informacje"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Przeszukaj czaty"
+msgstr "Opuść czat"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -379,7 +378,7 @@ msgstr "%H:%M"
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%B %e, %Y %l:%M %p"
+msgstr "%B %e, %Y %H:%M"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
@@ -515,23 +514,22 @@ msgstr "ostatnio widziano %x"
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
-msgstr "ostatnio widziano %l:%M %p"
+msgstr "ostatnio widziano %H:%M"
 
 #: src/strings.rs:43
-#, fuzzy
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] "widziano dawno temu"
-msgstr[1] "widziano dawno temu"
-msgstr[2] "widziano dawno temu"
+msgstr[0] "widziano godzinę temu"
+msgstr[1] "widziano {num} godziny temu"
+msgstr[2] "widziano {num} godzin temu"
 
 #: src/strings.rs:50
 #, fuzzy
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] "widziano dawno temu"
-msgstr[1] "widziano dawno temu"
-msgstr[2] "widziano dawno temu"
+msgstr[0] "widziano minutę temu"
+msgstr[1] "widziano {num} minuty temu"
+msgstr[2] "widziano {num} minut temu"
 
 #: src/strings.rs:56
 msgid "last seen just now"
@@ -571,19 +569,19 @@ msgstr "GIF"
 
 #: src/strings.rs:128
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "GIF, {caption}"
 
 #: src/strings.rs:136
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:142
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:158
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:166
 msgid "Photo"
@@ -591,13 +589,12 @@ msgstr "Zdjęcie"
 
 #: src/strings.rs:168
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "Zdjęcie, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:174
-#, fuzzy
 msgid "{emoji} Sticker"
-msgstr "Naklejka"
+msgstr "Naklejka {emoji}"
 
 #: src/strings.rs:179
 msgid "Video"
@@ -605,16 +602,15 @@ msgstr "Wideo"
 
 #: src/strings.rs:181
 msgid "Video, {caption}"
-msgstr ""
+msgstr "Wideo, {caption}"
 
 #: src/strings.rs:187
 msgid "Voice Message"
 msgstr "Wiadomość głosowa"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "Wiadomość głosowa"
+msgstr "Wiadomość głosowa, {caption}"
 
 #: src/strings.rs:206
 msgid "Declined outgoing video call"
@@ -641,14 +637,12 @@ msgid "Missed call"
 msgstr "Nieodebrane połączenie"
 
 #: src/strings.rs:239
-#, fuzzy
 msgid "Outgoing video call ({duration})"
-msgstr "Wychodzące połączenie wideo"
+msgstr "Wychodzące połączenie wideo ({duration})"
 
 #: src/strings.rs:244
-#, fuzzy
 msgid "Outgoing call ({duration})"
-msgstr "Wychodzące połączenie"
+msgstr "Wychodzące połączenie ({duration})"
 
 #: src/strings.rs:249
 msgid "Outgoing video call"
@@ -659,14 +653,12 @@ msgid "Outgoing call"
 msgstr "Wychodzące połączenie"
 
 #: src/strings.rs:256
-#, fuzzy
 msgid "Incoming video call ({duration})"
-msgstr "Przychodzące połączenie wideo"
+msgstr "Przychodzące połączenie wideo ({duration})"
 
 #: src/strings.rs:261
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "Przychodzące połączenie"
+msgstr "Przychodzące połączenie ({duration})"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -678,71 +670,63 @@ msgstr "Przychodzące połączenie"
 
 #: src/strings.rs:275 src/strings.rs:286
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "Użytkownik {sender} stworzył grupę „{title}”"
 
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "Stworzono kanał"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
-msgstr "Stworzono kanał"
+msgstr "Zmieniono nazwę kanału na „{title}”"
 
 #: src/strings.rs:301
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "Użytkownik {sender} zmienił nazwę na „{title}”"
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "Zmieniono zdjęcie kanału"
 
 #: src/strings.rs:315
-#, fuzzy
 msgid "{sender} changed the group photo"
-msgstr "Użytkownik {sender} przypiął zdjęcie"
+msgstr "Użytkownik {sender} zmienił zdjęcie grupy"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Usunięto zdjęcie kanału"
 
 #: src/strings.rs:327
-#, fuzzy
 msgid "{sender} removed the group photo"
-msgstr "Usunięto zdjęcie grupy"
+msgstr "Użytkownik {sender} usunął zdjęcie grupy"
 
 #: src/strings.rs:335 src/strings.rs:370
-#, fuzzy
 msgid "{sender} joined the group"
-msgstr "Dołączono do grupy"
+msgstr "Użytkownik {sender} dołączył do grupy"
 
 #: src/strings.rs:340
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "Użytkownik {sender} dodał {first_user} i {second_user}"
 
 #: src/strings.rs:354
-#, fuzzy
 msgid "{sender} added {users}"
-msgstr "Użytkownik {sender} przypiął naklejkę"
+msgstr "Użytkownik {sender} dodał {users}"
 
 #: src/strings.rs:363
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "Użytkownik {sender} dołączył do grupy poprzez link zaproszenia"
 
 #: src/strings.rs:377
-#, fuzzy
 msgid "{sender} left the group"
-msgstr "Opuszczono grupę"
+msgstr "Użytkownik {sender} opuścił grupę"
 
 #: src/strings.rs:382
-#, fuzzy
 msgid "{sender} removed {user}"
-msgstr "Użytkownik {sender} przypiął naklejkę"
+msgstr "Użytkownik {sender} usunął {user}"
 
 #: src/strings.rs:404
-#, fuzzy
 msgid "{sender} pinned \"{text}\""
-msgstr "Użytkownik {sender} przypiął plik"
+msgstr "Użytkownik {sender} przypiął „{text}”"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -781,9 +765,8 @@ msgid "{sender} pinned a message"
 msgstr "Użytkownik {sender} przypiął wiadomość"
 
 #: src/strings.rs:425
-#, fuzzy
 msgid "{sender} joined Telegram"
-msgstr "{} dołączył do Telegrama"
+msgstr "Użytkownik {sender} dołączył do Telegrama"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
@@ -792,12 +775,12 @@ msgstr "Wyczyszczono pamięc podręczną"
 #: src/session/content/chat_action_bar.rs:109
 #: src/session/content/chat_action_bar.rs:620
 msgid "Unmute"
-msgstr ""
+msgstr "Włącz powiadomienia"
 
 #: src/session/content/chat_action_bar.rs:111
 #: src/session/content/chat_action_bar.rs:622
 msgid "Mute"
-msgstr ""
+msgstr "Wyłącz powiadomienia"
 
 #: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
@@ -821,12 +804,11 @@ msgstr "Obrazy"
 
 #: src/session/content/chat_history.rs:242
 msgid "Leave chat?"
-msgstr ""
+msgstr "Opuścić czat?"
 
 #: src/session/content/chat_history.rs:243
-#, fuzzy
 msgid "Do you want to leave this chat?"
-msgstr "Czy chcesz usunąć tą wiadomość?"
+msgstr "Czy chcesz opuścić ten czat?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -844,9 +826,9 @@ msgstr "Nazwa użytkownika"
 #: src/session/content/chat_info_window.rs:223
 msgid "{num} member"
 msgid_plural "{num} members"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "{num} członek"
+msgstr[1] "{num} członków"
+msgstr[2] "{num} członków"
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264

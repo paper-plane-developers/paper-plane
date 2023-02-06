@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2023-02-02 19:59+0000\n"
+"PO-Revision-Date: 2023-02-06 22:55+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/nl/>\n"
@@ -109,9 +109,8 @@ msgid "View Info"
 msgstr "Info bekijken"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Chats doorzoeken"
+msgstr "Gesprek verlaten"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
@@ -517,18 +516,16 @@ msgid "last seen yesterday at %l:%M %p"
 msgstr "gisteren om %H:%M voor het laatst gezien"
 
 #: src/strings.rs:43
-#, fuzzy
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] "lang geleden voor het laatst gezien"
-msgstr[1] "lang geleden voor het laatst gezien"
+msgstr[0] "{num} uur geleden voor het laatst gezien"
+msgstr[1] "{num} uur geleden voor het laatst gezien"
 
 #: src/strings.rs:50
-#, fuzzy
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] "lang geleden voor het laatst gezien"
-msgstr[1] "lang geleden voor het laatst gezien"
+msgstr[0] "{num} minuut geleden voor het laatst gezien"
+msgstr[1] "{num} minuten geleden voor het laatst gezien"
 
 #: src/strings.rs:56
 msgid "last seen just now"
@@ -568,19 +565,19 @@ msgstr "GIF"
 
 #: src/strings.rs:128
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "GIF, {caption}"
 
 #: src/strings.rs:136
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:142
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:158
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:166
 msgid "Photo"
@@ -588,13 +585,12 @@ msgstr "Foto"
 
 #: src/strings.rs:168
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "Foto, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:174
-#, fuzzy
 msgid "{emoji} Sticker"
-msgstr "Sticker"
+msgstr "{emoji} Sticker"
 
 #: src/strings.rs:179
 msgid "Video"
@@ -602,16 +598,15 @@ msgstr "Video"
 
 #: src/strings.rs:181
 msgid "Video, {caption}"
-msgstr ""
+msgstr "Video, {caption}"
 
 #: src/strings.rs:187
 msgid "Voice Message"
 msgstr "Spraakbericht"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "Spraakbericht"
+msgstr "Spraakbericht, {caption}"
 
 #: src/strings.rs:206
 msgid "Declined outgoing video call"
@@ -638,14 +633,12 @@ msgid "Missed call"
 msgstr "Gemiste oproep"
 
 #: src/strings.rs:239
-#, fuzzy
 msgid "Outgoing video call ({duration})"
-msgstr "Uitgaande video-oproep"
+msgstr "Uitgaande video-oproep ({duration})"
 
 #: src/strings.rs:244
-#, fuzzy
 msgid "Outgoing call ({duration})"
-msgstr "Uitgaande oproep"
+msgstr "Uitgaande oproep ({duration})"
 
 #: src/strings.rs:249
 msgid "Outgoing video call"
@@ -656,14 +649,12 @@ msgid "Outgoing call"
 msgstr "Uitgaande oproep"
 
 #: src/strings.rs:256
-#, fuzzy
 msgid "Incoming video call ({duration})"
-msgstr "Inkomende video-oproep"
+msgstr "Inkomende video-oproep ({duration})"
 
 #: src/strings.rs:261
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "Inkomende oproep"
+msgstr "Inkomende oproep ({duration})"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -675,71 +666,63 @@ msgstr "Inkomende oproep"
 
 #: src/strings.rs:275 src/strings.rs:286
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "{sender} heeft de groep ‘{title}’ aangemaakt"
 
 #: src/strings.rs:282
 msgid "Channel created"
 msgstr "Kanaal aangemaakt"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
-msgstr "Kanaal aangemaakt"
+msgstr "Kanaalnaam aangepast naar ‘{title}’"
 
 #: src/strings.rs:301
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "{sender} heeft de groepsnaam aangepast naar ‘{title}’"
 
 #: src/strings.rs:311
 msgid "Channel photo changed"
 msgstr "Kanaalfoto aangepast"
 
 #: src/strings.rs:315
-#, fuzzy
 msgid "{sender} changed the group photo"
-msgstr "{sender} heeft een foto vastgezet"
+msgstr "{sender} heeft de groepsfoto aangepast"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Kanaalfoto verwijderd"
 
 #: src/strings.rs:327
-#, fuzzy
 msgid "{sender} removed the group photo"
-msgstr "U heeft de groepsfoto verwijderd"
+msgstr "{sender} heeft de groepsfoto verwijderd"
 
 #: src/strings.rs:335 src/strings.rs:370
-#, fuzzy
 msgid "{sender} joined the group"
-msgstr "U neemt nu deel aan deze groep"
+msgstr "{sender} neemt nu deel aan deze groep"
 
 #: src/strings.rs:340
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "{sender} heeft {first_user} en {second_user} toegevoegd"
 
 #: src/strings.rs:354
-#, fuzzy
 msgid "{sender} added {users}"
-msgstr "{sender} heeft een sticker vastgezet"
+msgstr "{sender} heeft {users} toegevoegd"
 
 #: src/strings.rs:363
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "{sender} is deelnemer geworden van deze groep via een uitnodigingslink"
 
 #: src/strings.rs:377
-#, fuzzy
 msgid "{sender} left the group"
-msgstr "U heeft de groep verlaten"
+msgstr "{sender} heeft de groep verlaten"
 
 #: src/strings.rs:382
-#, fuzzy
 msgid "{sender} removed {user}"
-msgstr "{sender} heeft een sticker vastgezet"
+msgstr "{sender} heeft {user} verwijderd"
 
 #: src/strings.rs:404
-#, fuzzy
 msgid "{sender} pinned \"{text}\""
-msgstr "{sender} heeft een bestand vastgezet"
+msgstr "{sender} heeft ‘{text}’ vastgezet"
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
@@ -778,9 +761,8 @@ msgid "{sender} pinned a message"
 msgstr "{sender} heeft een bericht vastgezet"
 
 #: src/strings.rs:425
-#, fuzzy
 msgid "{sender} joined Telegram"
-msgstr "{sender} heeft een bestand vastgezet"
+msgstr "{sender} heeft nu Telegram"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
@@ -789,12 +771,12 @@ msgstr "Cache geleegd"
 #: src/session/content/chat_action_bar.rs:109
 #: src/session/content/chat_action_bar.rs:620
 msgid "Unmute"
-msgstr ""
+msgstr "Dempen opheffen"
 
 #: src/session/content/chat_action_bar.rs:111
 #: src/session/content/chat_action_bar.rs:622
 msgid "Mute"
-msgstr ""
+msgstr "Dempen"
 
 #: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
@@ -818,12 +800,11 @@ msgstr "Afbeeldingen"
 
 #: src/session/content/chat_history.rs:242
 msgid "Leave chat?"
-msgstr ""
+msgstr "Gesprek verlaten?"
 
 #: src/session/content/chat_history.rs:243
-#, fuzzy
 msgid "Do you want to leave this chat?"
-msgstr "Wilt u dit bericht verwijderen?"
+msgstr "Wilt u dit gesprek verlaten?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -841,8 +822,8 @@ msgstr "Gebruikersnaam"
 #: src/session/content/chat_info_window.rs:223
 msgid "{num} member"
 msgid_plural "{num} members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num} deelnemer"
+msgstr[1] "{num} deelnemers"
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
