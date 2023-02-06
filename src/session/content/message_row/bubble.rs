@@ -163,10 +163,7 @@ impl MessageBubble {
 
         imp.indicators.set_message(message.clone().upcast());
 
-        if message.is_outgoing()
-            // Do not mark channel posts as outgoing
-            && matches!(message.chat().type_(), ChatType::Supergroup(data) if !data.is_channel())
-        {
+        if message.is_outgoing() {
             self.add_css_class("outgoing");
         } else {
             self.remove_css_class("outgoing");
