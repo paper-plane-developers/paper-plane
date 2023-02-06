@@ -75,10 +75,7 @@ mod imp {
                 Some("x"),
                 move |widget, _, variant| {
                     let message_id = variant.and_then(|v| v.get()).unwrap();
-                    widget
-                        .imp()
-                        .chat_action_bar
-                        .set_reply_to_message_id(message_id);
+                    widget.imp().chat_action_bar.reply_to_message_id(message_id);
                 },
             );
             klass.install_action_async(

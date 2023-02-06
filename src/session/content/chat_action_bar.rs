@@ -17,6 +17,13 @@ use crate::{expressions, strings};
 
 const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
 
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+enum ChatActionBarState {
+    #[default]
+    Composing,
+    Replying(i64),
+}
+
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
@@ -27,7 +34,7 @@ mod imp {
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
-        pub(super) reply_to_message_id: Cell<i64>,
+        pub(super) state: Cell<ChatActionBarState>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
@@ -64,7 +71,7 @@ mod imp {
                 "chat-action-bar.cancel-action",
                 None,
                 move |widget, _, _| {
-                    widget.set_reply_to_message_id(0);
+                    widget.set_state(ChatActionBarState::Composing);
                 },
             );
             klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
@@ -143,34 +150,23 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecObject::builder::<Chat>("chat")
-                        .explicit_notify()
-                        .build(),
-                    glib::ParamSpecInt64::builder("reply-to-message-id")
-                        .explicit_notify()
-                        .build(),
-                ]
+                vec![glib::ParamSpecObject::builder::<Chat>("chat")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
-            let obj = self.obj();
-
             match pspec.name() {
-                "chat" => obj.set_chat(value.get().unwrap()),
-                "reply-to-message-id" => obj.set_reply_to_message_id(value.get().unwrap()),
+                "chat" => self.obj().set_chat(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
         fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            let obj = self.obj();
-
             match pspec.name() {
-                "chat" => obj.chat().to_value(),
-                "reply-to-message-id" => obj.reply_to_message_id().to_value(),
+                "chat" => self.obj().chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -250,38 +246,51 @@ impl ChatActionBar {
         glib::Object::builder().build()
     }
 
-    fn update_top_bar(&self) {
+    fn set_state(&self, state: ChatActionBarState) {
         let imp = self.imp();
-        let reply_to_message_id = imp.reply_to_message_id.get();
+        if imp.state.get() == state {
+            return;
+        }
 
-        if reply_to_message_id == 0 {
-            imp.top_bar_sender_label.set_text(None);
-            imp.top_bar_message_label.set_text(None);
-            imp.top_bar_revealer.set_reveal_child(false);
-        } else {
-            // TODO: Use TDLib to retrieve the message if we don't have it locally
-            if let Some(message) = self
-                .chat()
-                .and_then(|c| c.history().message_by_id(reply_to_message_id))
-            {
-                // TODO: Make these labels auto update
-                imp.top_bar_sender_label
-                    .set_text(Some(&strings::message_sender(message.sender(), true)));
-                imp.top_bar_message_label
-                    .set_text(Some(&strings::message_content(&message)));
-            } else {
-                imp.top_bar_sender_label.set_text(Some(&gettext("Unknown")));
-                imp.top_bar_message_label
-                    .set_text(Some(&gettext("Deleted Message")));
+        imp.state.set(state);
+        self.update_top_bar();
+    }
+
+    fn update_top_bar(&self) {
+        use ChatActionBarState::*;
+        let imp = self.imp();
+
+        match imp.state.get() {
+            Composing => {
+                imp.top_bar_sender_label.set_text(None);
+                imp.top_bar_message_label.set_text(None);
+                imp.top_bar_revealer.set_reveal_child(false);
             }
+            Replying(message_id) => {
+                // TODO: Use TDLib to retrieve the message if we don't have it locally
+                if let Some(message) = self
+                    .chat()
+                    .and_then(|c| c.history().message_by_id(message_id))
+                {
+                    // TODO: Make these labels auto update
+                    imp.top_bar_sender_label
+                        .set_text(Some(&strings::message_sender(message.sender(), true)));
+                    imp.top_bar_message_label
+                        .set_text(Some(&strings::message_content(&message)));
+                } else {
+                    imp.top_bar_sender_label.set_text(Some(&gettext("Unknown")));
+                    imp.top_bar_message_label
+                        .set_text(Some(&gettext("Deleted Message")));
+                }
 
-            imp.top_bar_revealer.set_reveal_child(true);
+                imp.top_bar_revealer.set_reveal_child(true);
+            }
         }
     }
 
     fn reset(&self) {
+        self.set_state(ChatActionBarState::Composing);
         self.imp().message_entry.set_formatted_text(None);
-        self.set_reply_to_message_id(0);
     }
 
     async fn compose_text_message(&self) -> Option<InputMessageContent> {
@@ -346,7 +355,12 @@ impl ChatActionBar {
             if let Some(message) = self.compose_text_message().await {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
-                let reply_to_message_id = self.imp().reply_to_message_id.get();
+                let reply_to_message_id =
+                    if let ChatActionBarState::Replying(id) = self.imp().state.get() {
+                        id
+                    } else {
+                        0
+                    };
 
                 // Send the message
                 let result = functions::send_message(
@@ -418,7 +432,12 @@ impl ChatActionBar {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
-            let reply_to_message_id = self.imp().reply_to_message_id.get();
+            let reply_to_message_id =
+                if let ChatActionBarState::Replying(id) = self.imp().state.get() {
+                    id
+                } else {
+                    0
+                };
             let draft_message =
                 self.compose_text_message()
                     .await
@@ -440,6 +459,12 @@ impl ChatActionBar {
     fn load_draft_message(&self, message: BoxedDraftMessage) {
         let imp = self.imp();
 
+        if message.0.reply_to_message_id != 0 {
+            self.set_state(ChatActionBarState::Replying(message.0.reply_to_message_id));
+        } else {
+            self.set_state(ChatActionBarState::Composing);
+        }
+
         if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
             imp.message_entry
                 .set_formatted_text(Some(BoxedFormattedText(content.text)));
@@ -450,8 +475,6 @@ impl ChatActionBar {
             );
             imp.message_entry.set_formatted_text(None);
         }
-
-        self.set_reply_to_message_id(message.0.reply_to_message_id);
     }
 
     async fn send_chat_action(&self, action: ChatAction) {
@@ -563,19 +586,8 @@ impl ChatActionBar {
         self.update_stack_page();
     }
 
-    pub(crate) fn reply_to_message_id(&self) -> i64 {
-        self.imp().reply_to_message_id.get()
-    }
-
-    pub(crate) fn set_reply_to_message_id(&self, reply_to_message_id: i64) {
-        if self.reply_to_message_id() == reply_to_message_id {
-            return;
-        }
-
-        self.imp().reply_to_message_id.set(reply_to_message_id);
-        self.update_top_bar();
-
-        self.notify("reply-to-message-id");
+    pub(crate) fn reply_to_message_id(&self, message_id: i64) {
+        self.set_state(ChatActionBarState::Replying(message_id));
     }
 
     pub(crate) fn update_stack_page(&self) {
