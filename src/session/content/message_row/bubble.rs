@@ -163,7 +163,13 @@ impl MessageBubble {
 
         imp.indicators.set_message(message.clone().upcast());
 
-        if message.is_outgoing() {
+        let is_channel = if let ChatType::Supergroup(data) = message.chat().type_() {
+            data.is_channel()
+        } else {
+            false
+        };
+
+        if message.is_outgoing() && !is_channel {
             self.add_css_class("outgoing");
         } else {
             self.remove_css_class("outgoing");
