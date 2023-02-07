@@ -11,6 +11,18 @@ messagesticker.needs-repainting > overlay > widget > widget {
   filter: invert(1);
 }
 
+messagebubble:not(.outgoing) {
+  background: #262626;
+}
+
+messagebubble.outgoing {
+  background-color: #2c52ac;
+}
+
+.event-row {
+  background-color: alpha(#404040, 0.8);
+}
+
 .chat-list row .unread-count-muted {
   background-color: @dark_2;
 }
@@ -42,3 +54,9 @@ messagesticker.needs-repainting > overlay > widget > widget {
 .sender-text-pink {
   color: #ff5694;
 }
+
+/* Values for the cairo renderer */
+.fallback messagebubble:not(.outgoing) {
+  background: #303030;
+}
+/* End of values for cairo renderer */

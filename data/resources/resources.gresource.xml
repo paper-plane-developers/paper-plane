@@ -11,6 +11,8 @@
     <file preprocess="xml-stripblanks">icons/scalable/status/message-unread-left-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-unread-right-symbolic.svg</file>
 
+    <file compressed="true">images/pattern.svg</file>
+
     <file compressed="true" preprocess="xml-stripblanks">ui/add-account-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/avatar-with-selection.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/components-avatar.ui</file>

@@ -125,19 +125,35 @@ listview.chat-history > row {
   border-radius: 9px;
 }
 
+/* Values for the cairo renderer */
+.fallback {
+  background: @view_bg_color;
+}
+
+.fallback messagebubble:not(.outgoing) {
+  background: #f0f0f0;
+}
+
+.fallback .event-row {
+  background: transparent;
+  color: currentColor;
+}
+/* End of values for cairo renderer */
+
 button.scroll-to-bottom {
+  background-color: @window_bg_color;
   box-shadow: 0 1px 3px 0 alpha(black, 0.3);
   margin: 9px;
 }
 
 messagebubble {
-  background: alpha(currentColor, 0.08);
+  background: white;
   border-radius: 15px;
+  box-shadow: 0 1px alpha(black, 0.1);
 }
 
 messagebubble.outgoing {
-  background: @accent_bg_color;
-  color: @accent_fg_color;
+  background-color: #ddecff;
 }
 
 messagebubble:not(.outgoing):dir(ltr),
@@ -152,7 +168,7 @@ messagebubble:not(.outgoing):dir(rtl) {
 
 messagebubble.outgoing link,
 messagebubble.outgoing messagereply label.message {
-  color: @accent_fg_color;
+  color: @window_fg_color;
 }
 
 messagebubble messageindicators {
@@ -315,9 +331,12 @@ messagesticker {
 }
 
 .event-row {
+  background-color: alpha(black, 0.2);
   font-size: smaller;
   font-weight: bold;
-  padding: 3px;
+  color: white;
+  border-radius: 9999px;
+  padding: 3px 6px;
 }
 
 .sender-text-red {

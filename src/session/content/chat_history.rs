@@ -7,7 +7,7 @@ use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
 use crate::session::content::{
-    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
+    Background, ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
 };
 use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
@@ -27,12 +27,15 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
+        pub(super) chat_handler: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) model: RefCell<Option<ChatHistoryModel>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) sticky: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
+        #[template_child]
+        pub(super) background: TemplateChild<Background>,
         #[template_child]
         pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
@@ -343,6 +346,18 @@ impl ChatHistory {
                     }
                 }
             }));
+
+            let handler = chat.connect_new_message(clone!(@weak self as obj => move |_, msg| {
+                if msg.is_outgoing() {
+                    obj.imp().background.animate();
+                }
+            }));
+
+            if let Some(old_handler) = self.imp().chat_handler.replace(Some(handler)) {
+                if let Some(old_chat) = &*imp.chat.borrow() {
+                    old_chat.disconnect(old_handler);
+                }
+            }
 
             let selection = gtk::NoSelection::new(Some(list_view_model));
             imp.list_view.set_model(Some(&selection));
