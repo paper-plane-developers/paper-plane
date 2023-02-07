@@ -9,8 +9,7 @@
               <class name="toolbar"/>
             </style>
             <child>
-              <object class="GtkImage">
-                <property name="icon-name">mail-reply-sender</property>
+              <object class="GtkImage" id="top_bar_image">
                 <!-- Set the same width as the other buttons -->
                 <property name="width-request">34</property>
                 <style>
@@ -35,7 +34,7 @@
                 <property name="hexpand">True</property>
                 <property name="valign">center</property>
                 <child>
-                  <object class="GtkInscription" id="top_bar_sender_label">
+                  <object class="GtkInscription" id="top_bar_title_label">
                     <property name="text-overflow">ellipsize-end</property>
                     <style>
                       <class name="heading"/>
@@ -96,7 +95,7 @@
                 <child>
                   <object class="GtkButton" id="send_message_button">
                     <property name="valign">end</property>
-                    <property name="action-name">chat-action-bar.send-text-message</property>
+                    <property name="action-name">chat-action-bar.send-message</property>
                     <property name="icon-name">go-up-symbolic</property>
                     <style>
                       <class name="circular"/>

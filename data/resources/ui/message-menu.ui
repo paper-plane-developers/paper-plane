@@ -8,7 +8,12 @@
         <attribute name="hidden-when">action-disabled</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Delete for _Everyone</attribute>
+        <attribute name="label" translatable="yes">_Edit</attribute>
+        <attribute name="action">message-row.edit</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Delete for Ever_yone</attribute>
         <attribute name="action">message-row.revoke-delete</attribute>
         <attribute name="hidden-when">action-disabled</attribute>
       </item>

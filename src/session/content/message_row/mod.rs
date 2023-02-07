@@ -75,6 +75,7 @@ mod imp {
             klass.install_action("message-row.reply", None, move |widget, _, _| {
                 widget.reply()
             });
+            klass.install_action("message-row.edit", None, move |widget, _, _| widget.edit());
             klass.install_action("message-row.revoke-delete", None, move |widget, _, _| {
                 widget.show_delete_dialog(true)
             });
@@ -155,6 +156,13 @@ impl MessageRow {
     fn reply(&self) {
         if let Ok(message) = self.message().downcast::<Message>() {
             self.activate_action("chat-history.reply", Some(&message.id().to_variant()))
+                .unwrap();
+        }
+    }
+
+    fn edit(&self) {
+        if let Ok(message) = self.message().downcast::<Message>() {
+            self.activate_action("chat-history.edit", Some(&message.id().to_variant()))
                 .unwrap();
         }
     }
@@ -287,8 +295,20 @@ impl MessageRow {
         }
     }
 
+    fn can_edit_message(&self) -> bool {
+        if let Some(message) = self.message().downcast_ref::<Message>() {
+            let is_text_message = matches!(message.content().0, MessageContent::MessageText(_));
+
+            // TODO: Support more message types in the future
+            is_text_message && message.is_outgoing() && can_send_messages_in_chat(&message.chat())
+        } else {
+            false
+        }
+    }
+
     fn update_actions(&self) {
         self.action_set_enabled("message-row.reply", self.can_reply_to_message());
+        self.action_set_enabled("message-row.edit", self.can_edit_message());
 
         if let Some(message) = self.message().downcast_ref::<Message>() {
             self.action_set_enabled("message-row.delete", message.can_be_deleted_only_for_self());

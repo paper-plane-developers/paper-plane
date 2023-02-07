@@ -5,17 +5,26 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{
-    ChatAction, ChatMemberStatus, InputMessageContent, MessageSender as TdMessageSender, UserType,
+    ChatAction, ChatMemberStatus, InputMessageContent, MessageContent,
+    MessageSender as TdMessageSender, UserType,
 };
 use tdlib::{functions, types};
 
 use crate::components::MessageEntry;
 use crate::session::content::SendPhotoDialog;
 use crate::tdlib::{BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState};
-use crate::utils::{spawn, temp_dir};
+use crate::utils::{block_on, spawn, temp_dir};
 use crate::{expressions, strings};
 
 const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+enum ChatActionBarState {
+    #[default]
+    Composing,
+    Replying(i64),
+    Editing(i64),
+}
 
 mod imp {
     use super::*;
@@ -27,13 +36,15 @@ mod imp {
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,
-        pub(super) reply_to_message_id: Cell<i64>,
+        pub(super) state: Cell<ChatActionBarState>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         #[template_child]
         pub(super) top_bar_revealer: TemplateChild<gtk::Revealer>,
         #[template_child]
-        pub(super) top_bar_sender_label: TemplateChild<gtk::Inscription>,
+        pub(super) top_bar_image: TemplateChild<gtk::Image>,
+        #[template_child]
+        pub(super) top_bar_title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) top_bar_message_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -64,7 +75,7 @@ mod imp {
                 "chat-action-bar.cancel-action",
                 None,
                 move |widget, _, _| {
-                    widget.set_reply_to_message_id(0);
+                    widget.cancel_action();
                 },
             );
             klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
@@ -72,13 +83,15 @@ mod imp {
                     widget.select_file().await;
                 }));
             });
-            klass.install_action(
-                "chat-action-bar.send-text-message",
+            klass.install_action_async(
+                "chat-action-bar.send-message",
                 None,
-                move |widget, _, _| {
-                    spawn(clone!(@weak widget => async move {
+                |widget, _, _| async move {
+                    if let ChatActionBarState::Editing(_) = widget.imp().state.get() {
+                        widget.edit_message().await;
+                    } else {
                         widget.send_text_message().await;
-                    }));
+                    }
                 },
             );
 
@@ -143,34 +156,23 @@ mod imp {
     impl ObjectImpl for ChatActionBar {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecObject::builder::<Chat>("chat")
-                        .explicit_notify()
-                        .build(),
-                    glib::ParamSpecInt64::builder("reply-to-message-id")
-                        .explicit_notify()
-                        .build(),
-                ]
+                vec![glib::ParamSpecObject::builder::<Chat>("chat")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
-            let obj = self.obj();
-
             match pspec.name() {
-                "chat" => obj.set_chat(value.get().unwrap()),
-                "reply-to-message-id" => obj.set_reply_to_message_id(value.get().unwrap()),
+                "chat" => self.obj().set_chat(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
         fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            let obj = self.obj();
-
             match pspec.name() {
-                "chat" => obj.chat().to_value(),
-                "reply-to-message-id" => obj.reply_to_message_id().to_value(),
+                "chat" => self.obj().chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -187,13 +189,13 @@ mod imp {
 
             self.message_entry.connect_formatted_text_notify(
                 clone!(@weak obj => move |message_entry, _| {
-                    // Enable the send-text-message action only when the message entry contains
+                    // Enable the send-message action only when the message entry contains
                     // at least one non-whitespace character
                     let should_enable = message_entry
                         .formatted_text()
                         .map(|f| f.0.text.contains(|c: char| !c.is_whitespace()))
                         .unwrap_or_default();
-                    obj.action_set_enabled("chat-action-bar.send-text-message", should_enable);
+                    obj.action_set_enabled("chat-action-bar.send-message", should_enable);
 
                     // Send typing action
                     spawn(clone!(@weak obj => async move {
@@ -213,12 +215,12 @@ mod imp {
                 }));
 
             // The message entry is always empty at this point, so disable the
-            // send-text-message action
-            obj.action_set_enabled("chat-action-bar.send-text-message", false);
+            // send-message action
+            obj.action_set_enabled("chat-action-bar.send-message", false);
 
             self.message_entry
                 .connect_activate(clone!(@weak obj => move |_| {
-                    obj.activate_action("chat-action-bar.send-text-message", None).unwrap()
+                    obj.activate_action("chat-action-bar.send-message", None).unwrap()
                 }));
         }
 
@@ -250,38 +252,138 @@ impl ChatActionBar {
         glib::Object::builder().build()
     }
 
-    fn update_top_bar(&self) {
-        let imp = self.imp();
-        let reply_to_message_id = imp.reply_to_message_id.get();
+    fn cancel_action(&self) {
+        use ChatActionBarState::*;
 
-        if reply_to_message_id == 0 {
-            imp.top_bar_sender_label.set_text(None);
-            imp.top_bar_message_label.set_text(None);
-            imp.top_bar_revealer.set_reveal_child(false);
-        } else {
-            // TODO: Use TDLib to retrieve the message if we don't have it locally
-            if let Some(message) = self
-                .chat()
-                .and_then(|c| c.history().message_by_id(reply_to_message_id))
-            {
-                // TODO: Make these labels auto update
-                imp.top_bar_sender_label
-                    .set_text(Some(&strings::message_sender(message.sender(), true)));
-                imp.top_bar_message_label
-                    .set_text(Some(&strings::message_content(&message)));
+        if let Editing(_) = self.imp().state.get() {
+            // If we were editing, go back to the previous state by loading the
+            // draft message if we have one, otherwise just reset everything
+            // and go back to the "Composing" state.
+            if let Some(draft_message) = self.chat().and_then(|c| c.draft_message()) {
+                self.load_draft_message(draft_message);
             } else {
-                imp.top_bar_sender_label.set_text(Some(&gettext("Unknown")));
-                imp.top_bar_message_label
-                    .set_text(Some(&gettext("Deleted Message")));
+                self.reset();
             }
+        } else {
+            // We were probably replying, so just go back to "Composing" state
+            self.set_state(Composing);
+        }
+    }
 
-            imp.top_bar_revealer.set_reveal_child(true);
+    fn set_state(&self, state: ChatActionBarState) {
+        let imp = self.imp();
+        if imp.state.get() == state {
+            return;
+        }
+
+        // If we were editing, reset the message entry
+        if let ChatActionBarState::Editing(_) = imp.state.get() {
+            self.imp().message_entry.set_formatted_text(None);
+        }
+
+        // If the new state is "Editing", save the current
+        // message composition state as draft message first
+        if let ChatActionBarState::Editing(_) = state {
+            block_on(async move {
+                self.save_message_as_draft().await;
+            });
+        }
+
+        imp.state.set(state);
+
+        self.update_top_bar();
+        self.update_send_button();
+
+        if let ChatActionBarState::Editing(message_id) = state {
+            self.load_message_to_edit(message_id);
+        }
+    }
+
+    fn update_top_bar(&self) {
+        use ChatActionBarState::*;
+        let imp = self.imp();
+
+        match imp.state.get() {
+            Composing => {
+                imp.top_bar_title_label.set_text(None);
+                imp.top_bar_message_label.set_text(None);
+                imp.top_bar_revealer.set_reveal_child(false);
+            }
+            Replying(message_id) => {
+                // TODO: Use TDLib to retrieve the message if we don't have it locally
+                if let Some(message) = self
+                    .chat()
+                    .and_then(|c| c.history().message_by_id(message_id))
+                {
+                    // TODO: Make these labels auto update
+                    imp.top_bar_title_label
+                        .set_text(Some(&strings::message_sender(message.sender(), true)));
+                    imp.top_bar_message_label
+                        .set_text(Some(&strings::message_content(&message)));
+                } else {
+                    imp.top_bar_title_label.set_text(Some(&gettext("Unknown")));
+                    imp.top_bar_message_label
+                        .set_text(Some(&gettext("Deleted Message")));
+                }
+
+                imp.top_bar_image
+                    .set_icon_name(Some("mail-reply-sender-symbolic"));
+                imp.top_bar_revealer.set_reveal_child(true);
+            }
+            Editing(message_id) => {
+                // TODO: Use TDLib to retrieve the message if we don't have it locally
+                if let Some(message) = self
+                    .chat()
+                    .and_then(|c| c.history().message_by_id(message_id))
+                {
+                    imp.top_bar_title_label
+                        .set_text(Some(&gettext("Edit Message")));
+                    imp.top_bar_message_label
+                        .set_text(Some(&strings::message_content(&message)));
+                } else {
+                    imp.top_bar_title_label.set_text(Some(&gettext("Unknown")));
+                    imp.top_bar_message_label
+                        .set_text(Some(&gettext("Deleted Message")));
+                }
+
+                imp.top_bar_image.set_icon_name(Some("edit-symbolic"));
+                imp.top_bar_revealer.set_reveal_child(true);
+            }
+        }
+    }
+
+    fn update_send_button(&self) {
+        use ChatActionBarState::*;
+        let imp = self.imp();
+
+        match imp.state.get() {
+            Editing(_) => {
+                imp.send_message_button.set_icon_name("done-symbolic");
+            }
+            _ => {
+                imp.send_message_button.set_icon_name("go-up-symbolic");
+            }
+        }
+    }
+
+    fn load_message_to_edit(&self, message_id: i64) {
+        if let Some(chat) = self.chat() {
+            if let Some(message) = chat.history().message_by_id(message_id) {
+                match message.content().0 {
+                    MessageContent::MessageText(data) => {
+                        self.imp()
+                            .message_entry
+                            .set_formatted_text(Some(BoxedFormattedText(data.text)));
+                    }
+                    _ => unimplemented!(),
+                }
+            }
         }
     }
 
     fn reset(&self) {
+        self.set_state(ChatActionBarState::Composing);
         self.imp().message_entry.set_formatted_text(None);
-        self.set_reply_to_message_id(0);
     }
 
     async fn compose_text_message(&self) -> Option<InputMessageContent> {
@@ -341,12 +443,36 @@ impl ChatActionBar {
         }
     }
 
+    async fn edit_message(&self) {
+        if let Some(chat) = self.chat() {
+            if let ChatActionBarState::Editing(message_id) = self.imp().state.get() {
+                if let Some(message) = self.compose_text_message().await {
+                    let client_id = chat.session().client_id();
+                    let chat_id = chat.id();
+
+                    let result =
+                        functions::edit_message_text(chat_id, message_id, message, client_id).await;
+                    if let Err(e) = result {
+                        log::warn!("Error editing a text message: {:?}", e);
+                    }
+
+                    self.cancel_action();
+                }
+            }
+        }
+    }
+
     async fn send_text_message(&self) {
         if let Some(chat) = self.chat() {
             if let Some(message) = self.compose_text_message().await {
                 let client_id = chat.session().client_id();
                 let chat_id = chat.id();
-                let reply_to_message_id = self.imp().reply_to_message_id.get();
+                let reply_to_message_id =
+                    if let ChatActionBarState::Replying(id) = self.imp().state.get() {
+                        id
+                    } else {
+                        0
+                    };
 
                 // Send the message
                 let result = functions::send_message(
@@ -418,7 +544,12 @@ impl ChatActionBar {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
             let chat_id = chat.id();
-            let reply_to_message_id = self.imp().reply_to_message_id.get();
+            let reply_to_message_id =
+                if let ChatActionBarState::Replying(id) = self.imp().state.get() {
+                    id
+                } else {
+                    0
+                };
             let draft_message =
                 self.compose_text_message()
                     .await
@@ -440,6 +571,12 @@ impl ChatActionBar {
     fn load_draft_message(&self, message: BoxedDraftMessage) {
         let imp = self.imp();
 
+        if message.0.reply_to_message_id != 0 {
+            self.set_state(ChatActionBarState::Replying(message.0.reply_to_message_id));
+        } else {
+            self.set_state(ChatActionBarState::Composing);
+        }
+
         if let InputMessageContent::InputMessageText(content) = message.0.input_message_text {
             imp.message_entry
                 .set_formatted_text(Some(BoxedFormattedText(content.text)));
@@ -450,8 +587,6 @@ impl ChatActionBar {
             );
             imp.message_entry.set_formatted_text(None);
         }
-
-        self.set_reply_to_message_id(message.0.reply_to_message_id);
     }
 
     async fn send_chat_action(&self, action: ChatAction) {
@@ -563,19 +698,12 @@ impl ChatActionBar {
         self.update_stack_page();
     }
 
-    pub(crate) fn reply_to_message_id(&self) -> i64 {
-        self.imp().reply_to_message_id.get()
+    pub(crate) fn reply_to_message_id(&self, message_id: i64) {
+        self.set_state(ChatActionBarState::Replying(message_id));
     }
 
-    pub(crate) fn set_reply_to_message_id(&self, reply_to_message_id: i64) {
-        if self.reply_to_message_id() == reply_to_message_id {
-            return;
-        }
-
-        self.imp().reply_to_message_id.set(reply_to_message_id);
-        self.update_top_bar();
-
-        self.notify("reply-to-message-id");
+    pub(crate) fn edit_message_id(&self, message_id: i64) {
+        self.set_state(ChatActionBarState::Editing(message_id));
     }
 
     pub(crate) fn update_stack_page(&self) {
