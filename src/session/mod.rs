@@ -12,13 +12,13 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
-use tdlib::enums::{self, NotificationSettingsScope, Update};
+use tdlib::enums::{self, ChatList as TdChatList, NotificationSettingsScope, Update};
 use tdlib::functions;
-use tdlib::types::File;
+use tdlib::types::{ChatPosition as TdChatPosition, File};
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
-    BasicGroup, BoxedScopeNotificationSettings, ChatList, SecretChat, Supergroup, User,
+    BasicGroup, BoxedScopeNotificationSettings, Chat, ChatList, SecretChat, Supergroup, User,
 };
 use crate::utils::{log_out, spawn};
 
@@ -38,7 +38,10 @@ mod imp {
         pub(super) client_id: Cell<i32>,
         pub(super) database_info: OnceCell<BoxedDatabaseInfo>,
         pub(super) me: WeakRef<User>,
-        pub(super) chat_list: OnceCell<ChatList>,
+        pub(super) main_chat_list: OnceCell<ChatList>,
+        pub(super) archive_chat_list: OnceCell<ChatList>,
+        pub(super) filter_chat_lists: RefCell<HashMap<i32, ChatList>>,
+        pub(super) chats: RefCell<HashMap<i64, Chat>>,
         pub(super) users: RefCell<HashMap<i64, User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, Supergroup>>,
@@ -103,7 +106,7 @@ mod imp {
                     glib::ParamSpecObject::builder::<User>("me")
                         .read_only()
                         .build(),
-                    glib::ParamSpecObject::builder::<ChatList>("chat-list")
+                    glib::ParamSpecObject::builder::<ChatList>("main-chat-list")
                         .read_only()
                         .build(),
                     glib::ParamSpecBoxed::builder::<BoxedScopeNotificationSettings>(
@@ -147,7 +150,7 @@ mod imp {
                 "client-id" => obj.client_id().to_value(),
                 "database-info" => obj.database_info().to_value(),
                 "me" => self.me.upgrade().to_value(),
-                "chat-list" => obj.chat_list().to_value(),
+                "main-chat-list" => obj.main_chat_list().to_value(),
                 "private-chats-notification-settings" => {
                     obj.private_chats_notification_settings().to_value()
                 }
@@ -191,6 +194,51 @@ impl Session {
 
     pub(crate) fn handle_update(&self, update: Update) {
         match update {
+            Update::NewChat(data) => {
+                // No need to update the chat positions here, tdlib sends
+                // the correct chat positions in other updates later
+                let chat = Chat::new(data.chat, self);
+                self.imp().chats.borrow_mut().insert(chat.id(), chat);
+            }
+            Update::ChatTitle(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatPhoto(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatPermissions(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatLastMessage(ref data) => {
+                let chat = self.chat(data.chat_id);
+                for position in &data.positions {
+                    self.handle_chat_position_update(&chat, position);
+                }
+                chat.handle_update(update);
+            }
+            Update::ChatPosition(ref data) => {
+                self.handle_chat_position_update(&self.chat(data.chat_id), &data.position)
+            }
+            Update::ChatReadInbox(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatReadOutbox(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatDraftMessage(ref data) => {
+                let chat = self.chat(data.chat_id);
+                for position in &data.positions {
+                    self.handle_chat_position_update(&chat, position);
+                }
+                chat.handle_update(update);
+            }
+            Update::ChatNotificationSettings(ref data) => {
+                self.chat(data.chat_id).handle_update(update)
+            }
+            Update::ChatUnreadMentionCount(ref data) => {
+                self.chat(data.chat_id).handle_update(update)
+            }
+            Update::ChatIsBlocked(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatIsMarkedAsUnread(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::DeleteMessages(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatAction(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::MessageContent(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::MessageEdited(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::MessageMentionRead(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::MessageSendSucceeded(ref data) => {
+                self.chat(data.message.chat_id).handle_update(update)
+            }
+            Update::NewMessage(ref data) => self.chat(data.message.chat_id).handle_update(update),
             Update::BasicGroup(data) => {
                 let mut basic_groups = self.imp().basic_groups.borrow_mut();
                 match basic_groups.entry(data.basic_group.id) {
@@ -199,28 +247,6 @@ impl Session {
                         entry.insert(BasicGroup::from_td_object(data.basic_group));
                     }
                 }
-            }
-            Update::ChatAction(_)
-            | Update::ChatDraftMessage(_)
-            | Update::ChatIsBlocked(_)
-            | Update::ChatIsMarkedAsUnread(_)
-            | Update::ChatLastMessage(_)
-            | Update::ChatNotificationSettings(_)
-            | Update::ChatPermissions(_)
-            | Update::ChatPhoto(_)
-            | Update::ChatPosition(_)
-            | Update::ChatReadInbox(_)
-            | Update::ChatReadOutbox(_)
-            | Update::ChatTitle(_)
-            | Update::ChatUnreadMentionCount(_)
-            | Update::DeleteMessages(_)
-            | Update::MessageContent(_)
-            | Update::MessageEdited(_)
-            | Update::MessageMentionRead(_)
-            | Update::MessageSendSucceeded(_)
-            | Update::NewChat(_)
-            | Update::NewMessage(_) => {
-                self.chat_list().handle_update(update);
             }
             Update::File(update) => {
                 self.handle_file_update(update.file);
@@ -258,12 +284,20 @@ impl Session {
                     }
                 }
             }
-            Update::UnreadMessageCount(ref update_) => {
-                // TODO: Also handle archived chats
-                if let tdlib::enums::ChatList::Main = update_.chat_list {
-                    self.chat_list().handle_update(update)
+            Update::UnreadMessageCount(data) => match data.chat_list {
+                TdChatList::Main => {
+                    self.main_chat_list()
+                        .update_unread_message_count(data.unread_count);
                 }
-            }
+                TdChatList::Archive => {
+                    self.archive_chat_list()
+                        .update_unread_message_count(data.unread_count);
+                }
+                TdChatList::Filter(data_) => {
+                    self.filter_chat_list(data_.chat_filter_id)
+                        .update_unread_message_count(data.unread_count);
+                }
+            },
             Update::User(data) => {
                 let mut users = self.imp().users.borrow_mut();
                 match users.entry(data.user.id) {
@@ -278,6 +312,20 @@ impl Session {
             }
             _ => {}
         }
+    }
+
+    /// Returns the `Chat` of the specified id, if present.
+    pub(crate) fn try_chat(&self, chat_id: i64) -> Option<Chat> {
+        self.imp().chats.borrow().get(&chat_id).cloned()
+    }
+
+    /// Returns the `Chat` of the specified id. Panics if the chat is not present.
+    ///
+    /// Note that TDLib guarantees that types are always returned before their ids,
+    /// so if you use an id returned by TDLib, it should be expected that the
+    /// relative `Chat` exists in the list.
+    pub(crate) fn chat(&self, chat_id: i64) -> Chat {
+        self.try_chat(chat_id).expect("Failed to get expected Chat")
     }
 
     /// Returns the `User` of the specified id. Panics if the user is not present.
@@ -336,6 +384,26 @@ impl Session {
             .clone()
     }
 
+    /// Returns the main chat list.
+    pub(crate) fn main_chat_list(&self) -> &ChatList {
+        self.imp().main_chat_list.get_or_init(ChatList::new)
+    }
+
+    /// Returns the list of archived chats.
+    pub(crate) fn archive_chat_list(&self) -> &ChatList {
+        self.imp().archive_chat_list.get_or_init(ChatList::new)
+    }
+
+    /// Returns the filter chat list of the specified id.
+    pub(crate) fn filter_chat_list(&self, chat_filter_id: i32) -> ChatList {
+        self.imp()
+            .filter_chat_lists
+            .borrow_mut()
+            .entry(chat_filter_id)
+            .or_insert_with(ChatList::new)
+            .clone()
+    }
+
     pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
@@ -372,8 +440,7 @@ impl Session {
 
     pub(crate) fn select_chat(&self, chat_id: i64) {
         let imp = self.imp();
-        let chat = self.chat_list().get(chat_id);
-        imp.sidebar.set_selected_chat(Some(chat));
+        imp.sidebar.set_selected_chat(Some(self.chat(chat_id)));
         imp.leaflet.navigate(adw::NavigationDirection::Forward);
     }
 
@@ -385,6 +452,22 @@ impl Session {
         let imp = self.imp();
         imp.leaflet.navigate(adw::NavigationDirection::Back);
         imp.sidebar.begin_chats_search();
+    }
+
+    fn handle_chat_position_update(&self, chat: &Chat, position: &TdChatPosition) {
+        match &position.list {
+            TdChatList::Main => {
+                self.main_chat_list().update_chat_position(chat, position);
+            }
+            TdChatList::Archive => {
+                self.archive_chat_list()
+                    .update_chat_position(chat, position);
+            }
+            TdChatList::Filter(data) => {
+                self.filter_chat_list(data.chat_filter_id)
+                    .update_chat_position(chat, position);
+            }
+        }
     }
 
     fn handle_file_update(&self, file: File) {
@@ -426,10 +509,6 @@ impl Session {
         assert!(imp.me.upgrade().is_none());
         imp.me.set(Some(me));
         self.notify("me");
-    }
-
-    pub(crate) fn chat_list(&self) -> &ChatList {
-        self.imp().chat_list.get_or_init(|| ChatList::new(self))
     }
 
     fn private_chats_notification_settings(&self) -> Option<BoxedScopeNotificationSettings> {
@@ -494,7 +573,7 @@ impl Session {
 
     pub(crate) fn fetch_chats(&self) {
         let client_id = self.imp().client_id.get();
-        self.chat_list().fetch(client_id);
+        self.main_chat_list().fetch(client_id);
     }
 
     pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel) {

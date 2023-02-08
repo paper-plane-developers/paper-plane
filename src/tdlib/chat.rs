@@ -1,7 +1,7 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{self, ChatType as TdChatType, Update};
+use tdlib::enums::{ChatType as TdChatType, Update};
 use tdlib::types::Chat as TelegramChat;
 use tdlib::{functions, types};
 
@@ -68,8 +68,6 @@ mod imp {
         pub(super) last_read_outbox_message_id: Cell<i64>,
         pub(super) is_marked_as_unread: Cell<bool>,
         pub(super) last_message: RefCell<Option<Message>>,
-        pub(super) order: Cell<i64>,
-        pub(super) is_pinned: Cell<bool>,
         pub(super) unread_mention_count: Cell<i32>,
         pub(super) unread_count: Cell<i32>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
@@ -108,10 +106,6 @@ mod imp {
                         .read_only()
                         .build(),
                     glib::ParamSpecObject::builder::<Message>("last-message")
-                        .read_only()
-                        .build(),
-                    glib::ParamSpecInt64::builder("order").read_only().build(),
-                    glib::ParamSpecBoolean::builder("is-pinned")
                         .read_only()
                         .build(),
                     glib::ParamSpecInt::builder("unread-mention-count")
@@ -157,8 +151,6 @@ mod imp {
                 "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
                 "is-marked-as-unread" => obj.is_marked_as_unread().to_value(),
                 "last-message" => obj.last_message().to_value(),
-                "order" => obj.order().to_value(),
-                "is-pinned" => obj.is_pinned().to_value(),
                 "unread-mention-count" => obj.unread_mention_count().to_value(),
                 "unread-count" => obj.unread_count().to_value(),
                 "draft-message" => obj.draft_message().to_value(),
@@ -198,15 +190,6 @@ impl Chat {
             .set(td_chat.last_read_outbox_message_id);
         imp.is_marked_as_unread.set(td_chat.is_marked_as_unread);
         imp.last_message.replace(last_message);
-
-        for position in td_chat.positions {
-            if let enums::ChatList::Main = position.list {
-                imp.order.set(position.order);
-                imp.is_pinned.set(position.is_pinned);
-                break;
-            }
-        }
-
         imp.unread_mention_count.set(td_chat.unread_mention_count);
         imp.unread_count.set(td_chat.unread_count);
         imp.draft_message.replace(draft_message);
@@ -230,26 +213,11 @@ impl Chat {
             }
             ChatDraftMessage(update) => {
                 self.set_draft_message(update.draft_message.map(BoxedDraftMessage));
-
-                for position in update.positions {
-                    if let enums::ChatList::Main = position.list {
-                        self.set_order(position.order);
-                        self.set_is_pinned(position.is_pinned);
-                        break;
-                    }
-                }
             }
             ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
             ChatIsMarkedAsUnread(update) => self.set_marked_as_unread(update.is_marked_as_unread),
             ChatLastMessage(update) => {
                 self.set_last_message(update.last_message.map(|m| Message::new(m, self)));
-
-                for position in update.positions {
-                    if let enums::ChatList::Main = position.list {
-                        self.set_order(position.order);
-                        break;
-                    }
-                }
             }
             ChatNotificationSettings(update) => {
                 self.set_notification_settings(BoxedChatNotificationSettings(
@@ -260,12 +228,6 @@ impl Chat {
                 self.set_permissions(BoxedChatPermissions(update.permissions))
             }
             ChatPhoto(update) => self.set_avatar(update.photo.map(Into::into)),
-            ChatPosition(update) => {
-                if let enums::ChatList::Main = update.position.list {
-                    self.set_order(update.position.order);
-                    self.set_is_pinned(update.position.is_pinned);
-                }
-            }
             ChatReadInbox(update) => self.set_unread_count(update.unread_count),
             ChatReadOutbox(update) => {
                 self.set_last_read_outbox_message_id(update.last_read_outbox_message_id);
@@ -377,37 +339,6 @@ impl Chat {
         self.notify("last-message");
     }
 
-    pub(crate) fn order(&self) -> i64 {
-        self.imp().order.get()
-    }
-
-    fn set_order(&self, order: i64) {
-        if self.order() == order {
-            return;
-        }
-        self.imp().order.set(order);
-        self.notify("order");
-    }
-
-    pub(crate) fn connect_order_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_notify_local(Some("order"), f)
-    }
-
-    pub(crate) fn is_pinned(&self) -> bool {
-        self.imp().is_pinned.get()
-    }
-
-    fn set_is_pinned(&self, is_pinned: bool) {
-        if self.is_pinned() == is_pinned {
-            return;
-        }
-        self.imp().is_pinned.set(is_pinned);
-        self.notify("is-pinned");
-    }
-
     pub(crate) fn unread_mention_count(&self) -> i32 {
         self.imp().unread_mention_count.get()
     }
@@ -491,16 +422,6 @@ impl Chat {
         }
         self.imp().permissions.replace(Some(permissions));
         self.notify("permissions");
-    }
-
-    pub(crate) async fn toggle_is_pinned(&self) -> Result<(), types::Error> {
-        functions::toggle_chat_is_pinned(
-            enums::ChatList::Main,
-            self.id(),
-            !self.is_pinned(),
-            self.session().client_id(),
-        )
-        .await
     }
 
     pub(crate) async fn mark_as_read(&self) -> Result<(), types::Error> {

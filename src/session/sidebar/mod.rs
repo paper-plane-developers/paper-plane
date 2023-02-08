@@ -15,7 +15,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
-use crate::tdlib::Chat;
+use crate::tdlib::{Chat, ChatListItem};
 use crate::utils::spawn;
 use crate::Session;
 
@@ -80,8 +80,8 @@ mod imp {
         fn list_activate(&self, pos: u32) {
             self.selection.set_selected_position(pos);
 
-            let chat = self.selection.selected_item().unwrap().downcast().unwrap();
-            self.obj().select_chat(chat);
+            let item: ChatListItem = self.selection.selected_item().unwrap().downcast().unwrap();
+            self.obj().select_chat(item.chat());
         }
 
         #[template_callback]
@@ -213,6 +213,9 @@ impl Sidebar {
             );
             imp.marked_as_unread_handler_id.replace(Some(handler_id));
 
+            let item = chat.session().main_chat_list().find_chat_item(chat.id());
+            imp.selection.set_selected_item(item.map(|i| i.upcast()));
+
             if chat.is_marked_as_unread() {
                 spawn(async move {
                     if let Err(e) = chat.mark_as_read().await {
@@ -220,10 +223,9 @@ impl Sidebar {
                     }
                 });
             }
+        } else {
+            imp.selection.set_selected_item(None);
         }
-
-        imp.selection
-            .set_selected_item(selected_chat.clone().map(Chat::upcast));
 
         imp.selected_chat.replace(selected_chat);
         self.notify("selected-chat");
@@ -237,27 +239,8 @@ impl Sidebar {
         let imp = self.imp();
 
         if let Some(ref session) = session {
-            let filter = gtk::CustomFilter::new(|item| {
-                let chat = item.downcast_ref::<Chat>().unwrap();
-                chat.order() > 0
-            });
-            let sorter = gtk::CustomSorter::new(|item1, item2| {
-                let chat1 = item1.downcast_ref::<Chat>().unwrap();
-                let chat2 = item2.downcast_ref::<Chat>().unwrap();
-                chat2.order().cmp(&chat1.order()).into()
-            });
-
-            session.chat_list().connect_positions_changed(
-                clone!(@weak filter, @weak sorter => move |_| {
-                    filter.changed(gtk::FilterChange::Different);
-                    sorter.changed(gtk::SorterChange::Different);
-                }),
-            );
-
-            let filter_model = gtk::FilterListModel::new(Some(session.chat_list()), Some(&filter));
-            let sort_model = gtk::SortListModel::new(Some(&filter_model), Some(&sorter));
-
-            imp.selection.set_model(Some(sort_model.upcast()));
+            imp.selection
+                .set_model(Some(session.main_chat_list().clone().upcast()));
         }
 
         imp.session.replace(session);
