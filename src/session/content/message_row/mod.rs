@@ -300,7 +300,7 @@ impl MessageRow {
             let is_text_message = matches!(message.content().0, MessageContent::MessageText(_));
 
             // TODO: Support more message types in the future
-            is_text_message && message.is_outgoing() && can_send_messages_in_chat(&message.chat())
+            is_text_message && message.can_be_edited() && can_send_messages_in_chat(&message.chat())
         } else {
             false
         }
