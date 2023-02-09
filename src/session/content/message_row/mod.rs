@@ -406,16 +406,16 @@ fn can_send_messages_in_chat(chat: &Chat) -> bool {
         ChatType::BasicGroup(supergroup) => Some(supergroup.status()),
         _ => None,
     };
-    let can_send_message_as_member = member_status
+    member_status
         .map(|s| match s.0 {
             Creator(_) => true,
             Administrator(_) => true,
-            Member => true,
-            Restricted(data) => data.permissions.can_send_messages,
+            Member => chat.permissions().0.can_send_messages,
+            Restricted(data) => {
+                chat.permissions().0.can_send_messages && data.permissions.can_send_messages
+            }
             Left => false,
             Banned(_) => false,
         })
-        .unwrap_or(true);
-
-    chat.permissions().0.can_send_messages && can_send_message_as_member
+        .unwrap_or(true)
 }
