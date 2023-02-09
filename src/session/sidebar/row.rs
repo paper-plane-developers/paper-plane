@@ -45,8 +45,6 @@ mod imp {
         #[template_child]
         pub(super) status_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub(super) empty_status_bin: TemplateChild<adw::Bin>,
-        #[template_child]
         pub(super) pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
         pub(super) unread_mention_label: TemplateChild<gtk::Label>,
@@ -227,45 +225,6 @@ impl Row {
                 }
             }))
             .bind(&*imp.unread_count_label, "label", Some(self));
-
-        // Decide what to show (exclusive): pin icon, unread label, unread count or marked as unread
-        // bin.
-        gtk::ClosureExpression::new::<gtk::Widget>(
-            &[
-                item_expression
-                    .chain_property::<ChatListItem>("is-pinned")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("unread-count")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("unread-mention-count")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("is_marked_as_unread")
-                    .upcast(),
-            ],
-            closure!(|obj: Self,
-                      is_pinned: bool,
-                      unread_count: i32,
-                      unread_mention: i32,
-                      is_marked_as_unread: bool| {
-                let imp = obj.imp();
-
-                let visible_child: &gtk::Widget = if unread_mention > 0 {
-                    imp.unread_mention_label.upcast_ref()
-                } else if unread_count > 0 || is_marked_as_unread {
-                    imp.unread_count_label.upcast_ref()
-                } else if is_pinned {
-                    imp.pin_icon.upcast_ref()
-                } else {
-                    imp.empty_status_bin.upcast_ref()
-                };
-
-                visible_child.clone()
-            }),
-        )
-        .bind(&*imp.status_stack, "visible-child", Some(self));
     }
 
     fn create_signal_groups(&self) {
@@ -276,6 +235,7 @@ impl Row {
             "notify::is-pinned",
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
                 obj.update_actions();
                 None
             }),
@@ -287,6 +247,7 @@ impl Row {
             "notify::is-marked-as-unread",
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
                 obj.update_actions();
                 None
             }),
@@ -295,7 +256,16 @@ impl Row {
             "notify::unread-count",
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
                 obj.update_actions();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::unread-mention-count",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
                 None
             }),
         );
@@ -578,9 +548,31 @@ impl Row {
 
         imp.item.replace(item);
 
+        self.update_status_stack();
         self.update_actions();
 
         self.notify("item");
+    }
+
+    fn update_status_stack(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let stack = &imp.status_stack;
+
+            if chat.unread_mention_count() > 0 {
+                stack.set_visible_child(&*imp.unread_mention_label);
+                stack.set_visible(true);
+            } else if chat.unread_count() > 0 || chat.is_marked_as_unread() {
+                stack.set_visible_child(&*imp.unread_count_label);
+                stack.set_visible(true);
+            } else if item.is_pinned() {
+                stack.set_visible_child(&*imp.pin_icon);
+                stack.set_visible(true);
+            } else {
+                stack.set_visible(false);
+            }
+        }
     }
 
     fn update_actions(&self) {
