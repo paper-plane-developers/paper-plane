@@ -17,6 +17,7 @@ use crate::{expressions, strings, Session};
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::RefCell;
 
     use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
@@ -27,8 +28,8 @@ mod imp {
     pub(crate) struct Row {
         pub(super) item: RefCell<Option<ChatListItem>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        pub(super) item_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
-        pub(super) chat_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) item_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
         #[template_child]
         pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -148,6 +149,7 @@ mod imp {
                 });
 
             self.obj().setup_expressions();
+            self.obj().create_signal_groups();
         }
 
         fn dispose(&self) {
@@ -266,6 +268,40 @@ impl Row {
         .bind(&*imp.status_stack, "visible-child", Some(self));
     }
 
+    fn create_signal_groups(&self) {
+        let imp = self.imp();
+
+        let item_signal_group = glib::SignalGroup::new(ChatListItem::static_type());
+        item_signal_group.connect_local(
+            "notify::is-pinned",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_actions();
+                None
+            }),
+        );
+        imp.item_signal_group.set(item_signal_group).unwrap();
+
+        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        chat_signal_group.connect_local(
+            "notify::is-marked-as-unread",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_actions();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::unread-count",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_actions();
+                None
+            }),
+        );
+        imp.chat_signal_group.set(chat_signal_group).unwrap();
+    }
+
     pub(crate) fn item(&self) -> Option<ChatListItem> {
         self.imp().item.borrow().clone()
     }
@@ -280,14 +316,6 @@ impl Row {
 
         while let Some(binding) = bindings.pop() {
             binding.unwatch();
-        }
-
-        if let Some(handler_id) = imp.item_notify_handler_id.take() {
-            self.item().unwrap().disconnect(handler_id);
-        }
-
-        if let Some(handler_id) = imp.chat_notify_handler_id.take() {
-            self.item().unwrap().chat().disconnect(handler_id);
         }
 
         if let Some(ref item) = item {
@@ -537,33 +565,26 @@ impl Row {
             )
             .bind(&*imp.unread_count_label, "css-classes", Some(&chat));
             bindings.push(unread_binding);
-
-            let handler_id = item.connect_notify_local(
-                Some("is-pinned"),
-                clone!(@weak self as obj => move |item, _| {
-                    obj.update_actions(Some(item));
-                }),
-            );
-            imp.item_notify_handler_id.replace(Some(handler_id));
-
-            let handler_id = item.chat().connect_notify_local(
-                None,
-                clone!(@weak self as obj, @weak item => move |_, pspec| {
-                    if pspec.name() == "is-marked-as-unread" || pspec.name() == "unread-count" {
-                        obj.update_actions(Some(&item))
-                    }
-                }),
-            );
-            imp.chat_notify_handler_id.replace(Some(handler_id));
         }
 
-        self.update_actions(item.as_ref());
+        imp.item_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref());
+        imp.chat_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref().map(|i| i.chat()).as_ref());
+
         imp.item.replace(item);
+
+        self.update_actions();
+
         self.notify("item");
     }
 
-    fn update_actions(&self, item: Option<&ChatListItem>) {
-        if let Some(item) = item {
+    fn update_actions(&self) {
+        if let Some(item) = self.item() {
             let chat = item.chat();
 
             self.update_pin_actions(!item.is_pinned(), item.is_pinned());
