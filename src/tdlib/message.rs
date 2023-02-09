@@ -58,6 +58,7 @@ mod imp {
         pub(super) id: Cell<i64>,
         pub(super) sender: OnceCell<MessageSender>,
         pub(super) is_outgoing: Cell<bool>,
+        pub(super) can_be_edited: Cell<bool>,
         pub(super) can_be_deleted_only_for_self: Cell<bool>,
         pub(super) can_be_deleted_for_all_users: Cell<bool>,
         pub(super) sending_state: RefCell<Option<BoxedMessageSendingState>>,
@@ -83,6 +84,9 @@ mod imp {
                         .read_only()
                         .build(),
                     glib::ParamSpecBoolean::builder("is-outgoing")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecBoolean::builder("can-be-edited")
                         .read_only()
                         .build(),
                     glib::ParamSpecBoolean::builder("can-be-deleted-only-for-self")
@@ -119,6 +123,7 @@ mod imp {
                 "id" => obj.id().to_value(),
                 "sender" => obj.sender().to_value(),
                 "is-outgoing" => obj.is_outgoing().to_value(),
+                "can-be-edited" => obj.can_be_edited().to_value(),
                 "can-be-deleted-only-for-self" => obj.can_be_deleted_only_for_self().to_value(),
                 "can-be-deleted-for-all-users" => obj.can_be_deleted_for_all_users().to_value(),
                 "sending-state" => obj.sending_state().to_value(),
@@ -153,6 +158,7 @@ impl Message {
         imp.id.set(td_message.id);
         imp.sender.set(sender).unwrap();
         imp.is_outgoing.set(td_message.is_outgoing);
+        imp.can_be_edited.set(td_message.can_be_edited);
         imp.can_be_deleted_only_for_self
             .set(td_message.can_be_deleted_only_for_self);
         imp.can_be_deleted_for_all_users
@@ -198,6 +204,10 @@ impl Message {
 
     pub(crate) fn is_outgoing(&self) -> bool {
         self.imp().is_outgoing.get()
+    }
+
+    pub(crate) fn can_be_edited(&self) -> bool {
+        self.imp().can_be_edited.get()
     }
 
     pub(crate) fn can_be_deleted_only_for_self(&self) -> bool {
