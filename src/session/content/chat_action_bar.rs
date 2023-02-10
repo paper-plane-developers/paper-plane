@@ -224,8 +224,8 @@ mod imp {
         }
 
         fn dispose(&self) {
-            self.message_entry.unparent();
-            self.send_message_button.unparent();
+            self.top_bar_revealer.unparent();
+            self.action_bar_stack.unparent();
             if let Some(emoji_chooser) = self.emoji_chooser.take() {
                 emoji_chooser.unparent();
             }
