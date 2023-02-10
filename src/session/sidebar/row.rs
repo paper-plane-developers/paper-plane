@@ -11,7 +11,7 @@ use crate::tdlib::{
     BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatListItem, ChatType,
     Message, MessageForwardInfo, MessageForwardOrigin,
 };
-use crate::utils::{dim_and_escape, escape, spawn};
+use crate::utils::{dim_and_escape, spawn};
 use crate::{expressions, strings, Session};
 
 mod imp {
@@ -37,7 +37,7 @@ mod imp {
         #[template_child]
         pub(super) timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) message_prefix_label: TemplateChild<gtk::Label>,
+        pub(super) subtitle_prefix_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
@@ -137,9 +137,6 @@ mod imp {
 
         fn constructed(&self) {
             self.parent_constructed();
-
-            self.message_prefix_label
-                .connect_label_notify(|label| label.set_visible(!label.label().is_empty()));
 
             self.message_thumbnail
                 .connect_notify_local(Some("paintable"), |thumbnail, _| {
@@ -282,6 +279,23 @@ impl Row {
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_message_status_icon();
+                obj.update_subtitle_prefix_label();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::draft-message",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_subtitle_prefix_label();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::actions",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_subtitle_prefix_label();
                 None
             }),
         );
@@ -353,38 +367,6 @@ impl Row {
             }))
             .bind(&*imp.timestamp_label, "label", Some(&chat));
             bindings.push(timestamp_binding);
-
-            // Actions, draft message and last message bindings.
-            let message_prefix_binding = gtk::ClosureExpression::new::<String>(
-                [
-                    actions_expression.upcast_ref(),
-                    draft_message_expression.upcast_ref(),
-                    last_message_expression.upcast_ref(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          message: Option<Message>| {
-                    actions
-                        .last()
-                        .map(|_| String::new())
-                        .or_else(|| {
-                            draft_message.map(|_| {
-                                    format!(
-                                        "<span foreground=\"#e01b24\">{}:</span>",
-                                        gettext("Draft"),
-                                    )
-                                })
-                        })
-                        .or_else(|| {
-                            message
-                                .and_then(sender_label)
-                                .map(|sender_label| format!("{sender_label}:"))
-                        })
-                }),
-            )
-            .bind(&*imp.message_prefix_label, "label", Some(&chat));
-            bindings.push(message_prefix_binding);
 
             let thumbnail_paintable_binding = gtk::ClosureExpression::new::<Option<gdk::Texture>>(
                 [
@@ -503,6 +485,7 @@ impl Row {
         imp.item.replace(item);
 
         self.update_message_status_icon();
+        self.update_subtitle_prefix_label();
         self.update_status_stack();
         self.update_actions();
 
@@ -538,6 +521,28 @@ impl Row {
                 icon.set_visible(true);
             } else {
                 icon.set_visible(false);
+            }
+        }
+    }
+
+    fn update_subtitle_prefix_label(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.subtitle_prefix_label;
+
+            if chat.actions().last().is_some() {
+                label.set_visible(false);
+            } else if chat.draft_message().is_some() {
+                label.set_label(&gettext("Draft:"));
+                label.add_css_class("error");
+                label.set_visible(true);
+            } else if let Some(sender) = chat.last_message().and_then(sender_label) {
+                label.set_label(&format!("{sender}:"));
+                label.remove_css_class("error");
+                label.set_visible(true);
+            } else {
+                label.set_visible(false);
             }
         }
     }
@@ -630,7 +635,7 @@ fn sender_label(message: Message) -> Option<String> {
             Some(if message.is_outgoing() {
                 gettext("You")
             } else {
-                escape(&strings::message_sender(message.sender(), false))
+                strings::message_sender(message.sender(), false)
             })
         } else {
             None
