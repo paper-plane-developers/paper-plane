@@ -7,10 +7,10 @@ use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
 use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
-    BoxedDraftMessage, BoxedMessageContent, Chat, ChatAction, ChatActionList, ChatListItem,
-    ChatType, Message, MessageForwardInfo, MessageForwardOrigin,
+    BoxedDraftMessage, Chat, ChatAction, ChatListItem, ChatType, Message, MessageForwardInfo,
+    MessageForwardOrigin,
 };
-use crate::utils::{dim_and_escape, spawn};
+use crate::utils::spawn;
 use crate::{expressions, strings, Session};
 
 mod imp {
@@ -41,7 +41,7 @@ mod imp {
         #[template_child]
         pub(super) minithumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
-        pub(super) bottom_label: TemplateChild<gtk::Inscription>,
+        pub(super) subtitle_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) status_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -276,6 +276,7 @@ impl Row {
                 obj.update_message_status_icon();
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
+                obj.update_subtitle_label();
                 None
             }),
         );
@@ -285,6 +286,7 @@ impl Row {
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
+                obj.update_subtitle_label();
                 None
             }),
         );
@@ -294,6 +296,7 @@ impl Row {
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
+                obj.update_subtitle_label();
                 None
             }),
         );
@@ -354,7 +357,6 @@ impl Row {
         if let Some(ref item) = item {
             let last_message_expression = Chat::this_expression("last-message");
             let draft_message_expression = Chat::this_expression("draft-message");
-            let actions_expression = Chat::this_expression("actions");
             let chat = item.chat();
 
             // Timestamp label bindings
@@ -398,42 +400,6 @@ impl Row {
             }))
             .bind(&*imp.timestamp_label, "label", Some(&chat));
             bindings.push(timestamp_binding);
-
-            let content_expression = last_message_expression.chain_property::<Message>("content");
-
-            let message_binding = gtk::ClosureExpression::new::<String>(
-                &[
-                    // TODO: In the future, consider making this a bit more efficient: We
-                    // sometimes don't need to update if for example an action was removed that
-                    // was not in the group of recent actions.
-                    actions_expression.upcast(),
-                    draft_message_expression.upcast(),
-                    last_message_expression.upcast(),
-                    content_expression.upcast(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          last_message: Option<Message>,
-                          _content: BoxedMessageContent| {
-                    actions
-                        .last()
-                        .map(|action| {
-                            format!(
-                                "<span foreground=\"#3584e4\">{}</span>",
-                                stringify_action(&action)
-                            )
-                        })
-                        .or_else(|| draft_message.map(|m| dim_and_escape(&draft_message_text(m.0))))
-                        .or_else(|| {
-                            last_message
-                                .map(|message| dim_and_escape(&strings::message_content(&message)))
-                        })
-                        .unwrap_or_default()
-                }),
-            )
-            .bind(&*imp.bottom_label, "markup", Some(&chat));
-            bindings.push(message_binding);
         }
 
         imp.item_signal_group
@@ -454,6 +420,7 @@ impl Row {
         self.update_message_status_icon();
         self.update_subtitle_prefix_label();
         self.update_minithumbnail();
+        self.update_subtitle_label();
         self.update_status_stack();
         self.update_unread_count_style();
         self.update_actions();
@@ -529,6 +496,34 @@ impl Row {
                 minithumbnail.set_visible(true);
             } else {
                 minithumbnail.set_visible(false);
+            }
+        }
+    }
+
+    fn update_subtitle_label(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.subtitle_label;
+
+            if let Some(actions) = chat.actions().last().map(|a| stringify_action(&a)) {
+                label.set_text(Some(&actions));
+                label.remove_css_class("dim-label");
+                label.add_css_class("accent");
+            } else if let Some(draft_message) =
+                chat.draft_message().map(|d| draft_message_text(d.0))
+            {
+                label.set_text(Some(&draft_message));
+                label.add_css_class("dim-label");
+                label.remove_css_class("accent");
+            } else if let Some(last_message) =
+                chat.last_message().map(|m| strings::message_content(&m))
+            {
+                label.set_text(Some(&last_message));
+                label.add_css_class("dim-label");
+                label.remove_css_class("accent");
+            } else {
+                label.set_text(None);
             }
         }
     }
