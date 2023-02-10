@@ -7,9 +7,8 @@ use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
 use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
-    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
-    BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatListItem, ChatType,
-    Message, MessageForwardInfo, MessageForwardOrigin,
+    BoxedDraftMessage, BoxedMessageContent, Chat, ChatAction, ChatActionList, ChatListItem,
+    ChatType, Message, MessageForwardInfo, MessageForwardOrigin,
 };
 use crate::utils::{dim_and_escape, spawn};
 use crate::{expressions, strings, Session};
@@ -30,6 +29,7 @@ mod imp {
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) item_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) session_signal_group: OnceCell<glib::SignalGroup>,
         #[template_child]
         pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -297,7 +297,42 @@ impl Row {
                 None
             }),
         );
+        chat_signal_group.connect_local(
+            "notify::notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
+
+        let session_signal_group = glib::SignalGroup::new(Session::static_type());
+        session_signal_group.connect_local(
+            "notify::private-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        session_signal_group.connect_local(
+            "notify::group-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        session_signal_group.connect_local(
+            "notify::channel-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        imp.session_signal_group.set(session_signal_group).unwrap();
     }
 
     pub(crate) fn item(&self) -> Option<ChatListItem> {
@@ -320,8 +355,6 @@ impl Row {
             let last_message_expression = Chat::this_expression("last-message");
             let draft_message_expression = Chat::this_expression("draft-message");
             let actions_expression = Chat::this_expression("actions");
-            let notification_settings_expression = Chat::this_expression("notification-settings");
-            let session_expression = Chat::this_expression("session");
             let chat = item.chat();
 
             // Timestamp label bindings
@@ -401,54 +434,6 @@ impl Row {
             )
             .bind(&*imp.bottom_label, "markup", Some(&chat));
             bindings.push(message_binding);
-
-            // Unread count css classes binding
-            let scope_notification_settings_expression = session_expression
-                .chain_property::<Session>(match chat.type_() {
-                    ChatType::Private(_) | ChatType::Secret(_) => {
-                        "private-chats-notification-settings"
-                    }
-                    ChatType::BasicGroup(_) => "group-chats-notification-settings",
-                    ChatType::Supergroup(supergroup) => {
-                        if supergroup.is_channel() {
-                            "channel-chats-notification-settings"
-                        } else {
-                            "group-chats-notification-settings"
-                        }
-                    }
-                });
-            let unread_binding = gtk::ClosureExpression::new::<Vec<String>>(
-                &[
-                    notification_settings_expression.upcast(),
-                    scope_notification_settings_expression.upcast(),
-                ],
-                closure!(|_: Chat,
-                              notification_settings: BoxedChatNotificationSettings,
-                              scope_notification_settings: Option<
-                        BoxedScopeNotificationSettings,
-                    >| {
-                        vec![
-                            "unread-count".to_string(),
-                            if notification_settings.0.use_default_mute_for {
-                                if scope_notification_settings
-                                    .map(|s| s.0.mute_for > 0)
-                                    .unwrap_or(notification_settings.0.mute_for > 0)
-                                {
-                                    "unread-count-muted"
-                                } else {
-                                    "unread-count-unmuted"
-                                }
-                            } else if notification_settings.0.mute_for > 0 {
-                                "unread-count-muted"
-                            } else {
-                                "unread-count-unmuted"
-                            }
-                            .to_string(),
-                        ]
-                    }),
-            )
-            .bind(&*imp.unread_count_label, "css-classes", Some(&chat));
-            bindings.push(unread_binding);
         }
 
         imp.item_signal_group
@@ -459,6 +444,10 @@ impl Row {
             .get()
             .unwrap()
             .set_target(item.as_ref().map(|i| i.chat()).as_ref());
+        imp.session_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref().map(|i| i.chat().session()).as_ref());
 
         imp.item.replace(item);
 
@@ -466,6 +455,7 @@ impl Row {
         self.update_subtitle_prefix_label();
         self.update_minithumbnail();
         self.update_status_stack();
+        self.update_unread_count_style();
         self.update_actions();
 
         self.notify("item");
@@ -561,6 +551,42 @@ impl Row {
             } else {
                 stack.set_visible(false);
             }
+        }
+    }
+
+    fn update_unread_count_style(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.unread_count_label;
+
+            let notification_settings = chat.notification_settings();
+            let scope_notification_settings = match chat.type_() {
+                ChatType::Private(_) | ChatType::Secret(_) => {
+                    chat.session().private_chats_notification_settings()
+                }
+                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                    chat.session().channel_chats_notification_settings()
+                }
+                _ => chat.session().group_chats_notification_settings(),
+            };
+
+            let css_class = if notification_settings.0.use_default_mute_for {
+                if scope_notification_settings
+                    .map(|s| s.0.mute_for > 0)
+                    .unwrap_or(notification_settings.0.mute_for > 0)
+                {
+                    "unread-count-muted"
+                } else {
+                    "unread-count-unmuted"
+                }
+            } else if notification_settings.0.mute_for > 0 {
+                "unread-count-muted"
+            } else {
+                "unread-count-unmuted"
+            };
+
+            label.set_css_classes(&["unread-count", css_class]);
         }
     }
 
