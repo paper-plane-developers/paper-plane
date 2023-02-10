@@ -7,8 +7,7 @@ use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
 use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
-    BoxedDraftMessage, Chat, ChatAction, ChatListItem, ChatType, Message, MessageForwardInfo,
-    MessageForwardOrigin,
+    Chat, ChatAction, ChatListItem, ChatType, Message, MessageForwardInfo, MessageForwardOrigin,
 };
 use crate::utils::spawn;
 use crate::{expressions, strings, Session};
@@ -26,7 +25,6 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub(crate) struct Row {
         pub(super) item: RefCell<Option<ChatListItem>>,
-        pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) item_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) session_signal_group: OnceCell<glib::SignalGroup>,
@@ -274,6 +272,7 @@ impl Row {
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_message_status_icon();
+                obj.update_timestamp();
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
                 obj.update_subtitle_label();
@@ -284,6 +283,7 @@ impl Row {
             "notify::draft-message",
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_timestamp();
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
                 obj.update_subtitle_label();
@@ -348,59 +348,6 @@ impl Row {
         }
 
         let imp = self.imp();
-        let mut bindings = imp.bindings.borrow_mut();
-
-        while let Some(binding) = bindings.pop() {
-            binding.unwatch();
-        }
-
-        if let Some(ref item) = item {
-            let last_message_expression = Chat::this_expression("last-message");
-            let draft_message_expression = Chat::this_expression("draft-message");
-            let chat = item.chat();
-
-            // Timestamp label bindings
-            let timestamp_binding = gtk::ClosureExpression::new::<i32>(
-                &[
-                    draft_message_expression.clone().upcast(),
-                    last_message_expression.clone().upcast(),
-                ],
-                closure!(|_: Chat,
-                          draft_message: Option<BoxedDraftMessage>,
-                          last_message: Option<Message>| {
-                    draft_message.map(|m| m.0.date).unwrap_or_else(|| {
-                        // ... Or, if there is no draft message use the timestamp of the
-                        // last message.
-                        last_message.map(|m| m.date()).unwrap_or_default()
-                    })
-                }),
-            )
-            .chain_closure::<glib::GString>(closure!(|_: Chat, date: i32| {
-                let datetime_now = glib::DateTime::now_local().unwrap();
-                let datetime = glib::DateTime::from_unix_utc(date as i64)
-                    .and_then(|t| t.to_local())
-                    .unwrap();
-
-                let difference = datetime_now.difference(&datetime);
-                let hours_difference = difference.as_hours();
-                let days_difference = difference.as_days();
-
-                if hours_difference <= 16 {
-                    datetime.format(&gettext("%l:%M %p")).unwrap()
-                } else if days_difference < 6 {
-                    // Show the day of the week
-                    datetime.format("%a").unwrap()
-                } else if days_difference < 364 {
-                    // Show the day and the month
-                    datetime.format("%d %b").unwrap()
-                } else {
-                    // Show the entire date
-                    datetime.format("%x").unwrap()
-                }
-            }))
-            .bind(&*imp.timestamp_label, "label", Some(&chat));
-            bindings.push(timestamp_binding);
-        }
 
         imp.item_signal_group
             .get()
@@ -418,6 +365,7 @@ impl Row {
         imp.item.replace(item);
 
         self.update_message_status_icon();
+        self.update_timestamp();
         self.update_subtitle_prefix_label();
         self.update_minithumbnail();
         self.update_subtitle_label();
@@ -457,6 +405,26 @@ impl Row {
                 icon.set_visible(true);
             } else {
                 icon.set_visible(false);
+            }
+        }
+    }
+
+    fn update_timestamp(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.timestamp_label;
+
+            let date = chat
+                .draft_message()
+                .map(|m| m.0.date)
+                .or_else(|| chat.last_message().map(|m| m.date()));
+
+            if let Some(date) = date {
+                label.set_label(&timestamp_text(date as i64));
+                label.set_visible(true);
+            } else {
+                label.set_visible(false);
             }
         }
     }
@@ -962,4 +930,29 @@ fn stringify_action(action: &ChatAction) -> String {
         }
         Cancel => unreachable!(),
     }
+}
+
+fn timestamp_text(date: i64) -> glib::GString {
+    let datetime_now = glib::DateTime::now_local().unwrap();
+    let datetime = glib::DateTime::from_unix_utc(date)
+        .and_then(|t| t.to_local())
+        .unwrap();
+
+    let difference = datetime_now.difference(&datetime);
+    let hours_difference = difference.as_hours();
+    let days_difference = difference.as_days();
+
+    if hours_difference <= 16 {
+        datetime.format(&gettext("%l:%M %p"))
+    } else if days_difference < 6 {
+        // Show the day of the week
+        datetime.format("%a")
+    } else if days_difference < 364 {
+        // Show the day and the month
+        datetime.format("%d %b")
+    } else {
+        // Show the entire date
+        datetime.format("%x")
+    }
+    .unwrap()
 }
