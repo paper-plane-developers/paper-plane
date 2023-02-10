@@ -34,11 +34,13 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
-            klass.install_action("preferences.clear-cache", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
+            klass.install_action_async(
+                "preferences.clear-cache",
+                None,
+                |widget, _, _| async move {
                     widget.clear_cache().await;
-                }));
-            });
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

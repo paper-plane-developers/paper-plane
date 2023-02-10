@@ -108,20 +108,14 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
-            klass.install_action("login.previous", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
-                    widget.previous().await;
-                }));
+            klass.install_action_async("login.previous", None, |widget, _, _| async move {
+                widget.previous().await;
             });
-            klass.install_action("login.next", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
-                    widget.next().await;
-                }));
+            klass.install_action_async("login.next", None, |widget, _, _| async move {
+                widget.next().await;
             });
-            klass.install_action("login.use-qr-code", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
-                    widget.request_qr_code().await;
-                }));
+            klass.install_action_async("login.use-qr-code", None, |widget, _, _| async move {
+                widget.request_qr_code().await;
             });
             klass.install_action(
                 "login.go-to-forgot-password-page",
@@ -155,10 +149,8 @@ mod imp {
             klass.install_action("login.show-tos-dialog", None, move |widget, _, _| {
                 widget.show_tos_dialog(false)
             });
-            klass.install_action("login.resend-auth-code", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
-                    widget.resend_auth_code().await;
-                }));
+            klass.install_action_async("login.resend-auth-code", None, |widget, _, _| async move {
+                widget.resend_auth_code().await;
             });
         }
 

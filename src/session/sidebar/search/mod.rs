@@ -58,21 +58,18 @@ mod imp {
             klass.install_action("sidebar-search.go-back", None, move |widget, _, _| {
                 widget.emit_by_name::<()>("close", &[]);
             });
-            klass.install_action(
+            klass.install_action_async(
                 "sidebar-search.clear-recent-chats",
                 None,
-                move |widget, _, _| {
-                    spawn(clone!(@weak widget => async move {
-                        let session = widget.session().unwrap();
-                        if let Err(e) =
-                            functions::clear_recently_found_chats(session.client_id()).await
-                        {
-                            log::warn!("Failed to clear recently found chats: {:?}", e);
-                        }
+                |widget, _, _| async move {
+                    let session = widget.session().unwrap();
+                    if let Err(e) = functions::clear_recently_found_chats(session.client_id()).await
+                    {
+                        log::warn!("Failed to clear recently found chats: {:?}", e);
+                    }
 
-                        // Update search view
-                        widget.search().await;
-                    }));
+                    // Update search view
+                    widget.search().await;
                 },
             );
         }

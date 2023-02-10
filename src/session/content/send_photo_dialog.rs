@@ -9,7 +9,6 @@ use tdlib::types::{InputFileLocal, InputMessagePhoto};
 use crate::components::MessageEntry;
 use crate::expressions;
 use crate::tdlib::Chat;
-use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -40,13 +39,11 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
-            klass.install_action(
+            klass.install_action_async(
                 "send-photo-dialog.send-message",
                 None,
-                move |widget, _, _| {
-                    spawn(clone!(@weak widget => async move {
-                        widget.send_message().await;
-                    }));
+                |widget, _, _| async move {
+                    widget.send_message().await;
                 },
             );
         }

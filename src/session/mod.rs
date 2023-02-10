@@ -76,10 +76,8 @@ mod imp {
                     .leaflet
                     .navigate(adw::NavigationDirection::Back);
             });
-            klass.install_action("session.log-out", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
-                    log_out(widget.client_id()).await;
-                }));
+            klass.install_action_async("session.log-out", None, |widget, _, _| async move {
+                log_out(widget.client_id()).await;
             });
             klass.install_action("session.show-preferences", None, move |widget, _, _| {
                 let parent_window = widget.root().and_then(|r| r.downcast().ok());
