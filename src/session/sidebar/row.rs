@@ -269,6 +269,22 @@ impl Row {
                 None
             }),
         );
+        chat_signal_group.connect_local(
+            "notify::last-read-outbox-message-id",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_message_status_icon();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::last-message",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_message_status_icon();
+                None
+            }),
+        );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
     }
 
@@ -295,68 +311,6 @@ impl Row {
             let notification_settings_expression = Chat::this_expression("notification-settings");
             let session_expression = Chat::this_expression("session");
             let chat = item.chat();
-
-            // Message status bindings
-            if !chat.is_own_chat() {
-                let message_status_visibility_binding = last_message_expression
-                    .chain_property::<Message>("is-outgoing")
-                    .bind(&*imp.message_status_icon, "visible", Some(&chat));
-                bindings.push(message_status_visibility_binding);
-
-                let message_status_icon_binding = gtk::ClosureExpression::new::<String>(
-                    [
-                        last_message_expression.upcast_ref(),
-                        Chat::this_expression("last-read-outbox-message-id").upcast_ref(),
-                    ],
-                    closure!(
-                        |_: Chat, last_message: Option<Message>, last_read_msg_id: i64| {
-                            last_message
-                                .filter(Message::is_outgoing)
-                                .map(|message| match message.sending_state() {
-                                    Some(state) => match state.0 {
-                                        MessageSendingState::Failed(_) => "message-failed-symbolic",
-                                        MessageSendingState::Pending => "message-pending-symbolic",
-                                    },
-                                    None => {
-                                        if message.id() == last_read_msg_id {
-                                            "message-read-symbolic"
-                                        } else {
-                                            "message-unread-right-symbolic"
-                                        }
-                                    }
-                                })
-                                .unwrap_or("")
-                        }
-                    ),
-                )
-                .bind(&*imp.message_status_icon, "icon-name", Some(&chat));
-                bindings.push(message_status_icon_binding);
-
-                let message_status_css_binding = last_message_expression
-                    .chain_closure::<Vec<String>>(closure!(
-                        |_: Chat, last_message: Option<Message>| {
-                            last_message
-                                .filter(Message::is_outgoing)
-                                .map(|message| {
-                                    vec![match message.sending_state() {
-                                        Some(state) => match state.0 {
-                                            MessageSendingState::Failed(_) => "error",
-                                            MessageSendingState::Pending => "dim-label",
-                                        },
-                                        None => "accent",
-                                    }
-                                    .to_string()]
-                                })
-                                .unwrap_or_default()
-                        }
-                    ))
-                    .bind(&*imp.message_status_icon, "css-classes", Some(&chat));
-                bindings.push(message_status_css_binding);
-            } else {
-                imp.message_status_icon.set_visible(false);
-                imp.message_status_icon.set_icon_name(None);
-                imp.message_status_icon.set_css_classes(&[]);
-            }
 
             // Timestamp label bindings
             let timestamp_binding = gtk::ClosureExpression::new::<i32>(
@@ -548,10 +502,44 @@ impl Row {
 
         imp.item.replace(item);
 
+        self.update_message_status_icon();
         self.update_status_stack();
         self.update_actions();
 
         self.notify("item");
+    }
+
+    fn update_message_status_icon(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let icon = &imp.message_status_icon;
+
+            if chat.is_own_chat() {
+                icon.set_visible(false);
+            } else if let Some(message) = chat.last_message().filter(Message::is_outgoing) {
+                let (icon_name, css_class) = match message.sending_state() {
+                    Some(state) => match state.0 {
+                        MessageSendingState::Failed(_) => ("message-failed-symbolic", "error"),
+                        MessageSendingState::Pending => ("message-pending-symbolic", "dim-label"),
+                    },
+                    None => (
+                        if message.id() == chat.last_read_outbox_message_id() {
+                            "message-read-symbolic"
+                        } else {
+                            "message-unread-right-symbolic"
+                        },
+                        "accent",
+                    ),
+                };
+
+                icon.set_icon_name(Some(icon_name));
+                icon.set_css_classes(&[css_class]);
+                icon.set_visible(true);
+            } else {
+                icon.set_visible(false);
+            }
+        }
     }
 
     fn update_status_stack(&self) {
