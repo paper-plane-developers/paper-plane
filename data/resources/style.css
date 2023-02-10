@@ -265,7 +265,7 @@ messageindicators,
 
 .message-entry > overlay > entry {
   padding: 0 9px;
-  border-radius: 15px;
+  border-radius: 18px;
 }
 
 .message-entry > overlay > entry > scrolledwindow > scrollbar {
