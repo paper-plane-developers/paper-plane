@@ -74,9 +74,9 @@
                           <property name="label" translatable="yes">Scroll to bottom</property>
                         </accessibility>
                         <style>
-                          <class name="osd"/>
                           <class name="circular"/>
-                          <class name="scroll-to-bottom-button"/>
+                          <class name="opaque"/>
+                          <class name="scroll-to-bottom"/>
                         </style>
                       </object>
                     </child>
