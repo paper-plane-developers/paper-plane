@@ -39,7 +39,7 @@ mod imp {
         #[template_child]
         pub(super) subtitle_prefix_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
+        pub(super) minithumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
         pub(super) bottom_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -137,11 +137,6 @@ mod imp {
 
         fn constructed(&self) {
             self.parent_constructed();
-
-            self.message_thumbnail
-                .connect_notify_local(Some("paintable"), |thumbnail, _| {
-                    thumbnail.set_visible(thumbnail.paintable().is_some())
-                });
 
             self.obj().setup_expressions();
             self.obj().create_signal_groups();
@@ -280,6 +275,7 @@ impl Row {
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_message_status_icon();
                 obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
                 None
             }),
         );
@@ -288,6 +284,7 @@ impl Row {
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
                 None
             }),
         );
@@ -296,6 +293,7 @@ impl Row {
             false,
             clone!(@weak self as obj => @default-return None, move |_| {
                 obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
                 None
             }),
         );
@@ -367,26 +365,6 @@ impl Row {
             }))
             .bind(&*imp.timestamp_label, "label", Some(&chat));
             bindings.push(timestamp_binding);
-
-            let thumbnail_paintable_binding = gtk::ClosureExpression::new::<Option<gdk::Texture>>(
-                [
-                    actions_expression.upcast_ref(),
-                    draft_message_expression.upcast_ref(),
-                    last_message_expression.upcast_ref(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          message: Option<Message>| {
-                    if actions.n_items() > 0 || draft_message.is_some() {
-                        None
-                    } else {
-                        message.and_then(message_thumbnail_texture)
-                    }
-                }),
-            )
-            .bind(&*imp.message_thumbnail, "paintable", Some(&chat));
-            bindings.push(thumbnail_paintable_binding);
 
             let content_expression = last_message_expression.chain_property::<Message>("content");
 
@@ -486,6 +464,7 @@ impl Row {
 
         self.update_message_status_icon();
         self.update_subtitle_prefix_label();
+        self.update_minithumbnail();
         self.update_status_stack();
         self.update_actions();
 
@@ -543,6 +522,23 @@ impl Row {
                 label.set_visible(true);
             } else {
                 label.set_visible(false);
+            }
+        }
+    }
+
+    fn update_minithumbnail(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let minithumbnail = &imp.minithumbnail;
+
+            if chat.actions().n_items() > 0 || chat.draft_message().is_some() {
+                minithumbnail.set_visible(false);
+            } else if let Some(texture) = chat.last_message().and_then(message_thumbnail_texture) {
+                minithumbnail.set_paintable(Some(texture.upcast()));
+                minithumbnail.set_visible(true);
+            } else {
+                minithumbnail.set_visible(false);
             }
         }
     }
