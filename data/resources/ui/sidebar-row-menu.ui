@@ -26,5 +26,6 @@
   </menu>
   <object class="GtkPopoverMenu" id="menu">
     <property name="menu-model">model</property>
+    <property name="has-arrow">False</property>
   </object>
 </interface>

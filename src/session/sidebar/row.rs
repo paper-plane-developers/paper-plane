@@ -87,15 +87,21 @@ mod imp {
     #[gtk::template_callbacks]
     impl Row {
         #[template_callback]
-        fn on_pressed(&self) {
-            self.show_menu();
+        fn on_pressed(&self, _n_press: i32, x: f64, y: f64) {
+            self.show_menu(x as i32, y as i32);
         }
 
-        fn show_menu(&self) {
+        #[template_callback]
+        fn on_long_pressed(&self, x: f64, y: f64) {
+            self.show_menu(x as i32, y as i32);
+        }
+
+        fn show_menu(&self, x: i32, y: i32) {
             let obj = self.obj();
             let sidebar = obj.ancestor(Sidebar::static_type()).unwrap();
             let menu = sidebar.downcast_ref::<Sidebar>().unwrap().row_menu();
 
+            menu.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
             menu.unparent();
             menu.set_parent(&*obj);
             menu.popup();
