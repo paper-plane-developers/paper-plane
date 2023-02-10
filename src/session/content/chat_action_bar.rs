@@ -78,11 +78,13 @@ mod imp {
                     widget.cancel_action();
                 },
             );
-            klass.install_action("chat-action-bar.select-file", None, move |widget, _, _| {
-                spawn(clone!(@weak widget => async move {
+            klass.install_action_async(
+                "chat-action-bar.select-file",
+                None,
+                |widget, _, _| async move {
                     widget.select_file().await;
-                }));
-            });
+                },
+            );
             klass.install_action_async(
                 "chat-action-bar.send-message",
                 None,
@@ -94,7 +96,6 @@ mod imp {
                     }
                 },
             );
-
             klass.install_action_async(
                 "chat-action-bar.join-chat",
                 None,
@@ -111,7 +112,6 @@ mod imp {
                     }
                 },
             );
-
             klass.install_action_async(
                 "chat-action-bar.toggle-mute",
                 None,
@@ -125,7 +125,6 @@ mod imp {
                     }
                 },
             );
-
             klass.install_action_async(
                 "chat-action-bar.unblock-chat",
                 None,
@@ -225,8 +224,8 @@ mod imp {
         }
 
         fn dispose(&self) {
-            self.message_entry.unparent();
-            self.send_message_button.unparent();
+            self.top_bar_revealer.unparent();
+            self.action_bar_stack.unparent();
             if let Some(emoji_chooser) = self.emoji_chooser.take() {
                 emoji_chooser.unparent();
             }

@@ -148,7 +148,23 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for Sidebar {}
+    impl WidgetImpl for Sidebar {
+        fn direction_changed(&self, previous_direction: gtk::TextDirection) {
+            let obj = self.obj();
+
+            if obj.direction() == previous_direction {
+                return;
+            }
+
+            if let Some(menu) = self.row_menu.get() {
+                menu.set_halign(if obj.direction() == gtk::TextDirection::Rtl {
+                    gtk::Align::End
+                } else {
+                    gtk::Align::Start
+                });
+            }
+        }
+    }
 }
 
 glib::wrapper! {
@@ -169,9 +185,18 @@ impl Sidebar {
 
     pub(crate) fn row_menu(&self) -> &gtk::PopoverMenu {
         self.imp().row_menu.get_or_init(|| {
-            gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/sidebar-row-menu.ui")
-                .object::<gtk::PopoverMenu>("menu")
-                .unwrap()
+            let menu =
+                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/sidebar-row-menu.ui")
+                    .object::<gtk::PopoverMenu>("menu")
+                    .unwrap();
+
+            menu.set_halign(if self.direction() == gtk::TextDirection::Rtl {
+                gtk::Align::End
+            } else {
+                gtk::Align::Start
+            });
+
+            menu
         })
     }
 

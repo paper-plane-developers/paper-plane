@@ -15,7 +15,7 @@
     <child>
       <object class="GtkGestureLongPress">
         <property name="touch-only">True</property>
-        <signal name="pressed" handler="on_pressed" swapped="true"/>
+        <signal name="pressed" handler="on_long_pressed" swapped="true"/>
       </object>
     </child>
     <child>

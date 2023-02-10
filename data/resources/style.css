@@ -128,9 +128,10 @@ sidebarsearchitemrow {
   margin: 0 6px;
 }
 
-.scroll-to-bottom-button {
-  margin: 12px;
-  padding: 3px;
+button.scroll-to-bottom {
+  background-color: @window_bg_color;
+  box-shadow: inset 0 0 0 1px @borders;
+  margin: 6px;
 }
 
 messagebubble {
@@ -265,7 +266,7 @@ messageindicators,
 
 .message-entry > overlay > entry {
   padding: 0 9px;
-  border-radius: 15px;
+  border-radius: 18px;
 }
 
 .message-entry > overlay > entry > scrolledwindow > scrollbar {

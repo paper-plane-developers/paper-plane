@@ -20,7 +20,7 @@ mod imp {
     use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
@@ -36,22 +36,6 @@ mod imp {
         pub(super) list_view: TemplateChild<gtk::ListView>,
         #[template_child]
         pub(super) chat_action_bar: TemplateChild<ChatActionBar>,
-    }
-
-    impl Default for ChatHistory {
-        fn default() -> Self {
-            Self {
-                compact: Default::default(),
-                chat: Default::default(),
-                message_menu: Default::default(),
-                is_auto_scrolling: Default::default(),
-                sticky: Cell::new(false),
-                window_title: Default::default(),
-                scrolled_window: Default::default(),
-                list_view: Default::default(),
-                chat_action_bar: Default::default(),
-            }
-        }
     }
 
     #[glib::object_subclass]
