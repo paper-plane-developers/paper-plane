@@ -144,6 +144,14 @@ messagebubble.outgoing {
   color: @accent_fg_color;
 }
 
+messagebubble:not(.outgoing):dir(ltr), messagebubble.outgoing:dir(rtl) {
+  margin-right: 38px;
+}
+
+messagebubble.outgoing:dir(ltr), messagebubble:not(.outgoing):dir(rtl) {
+  margin-left: 38px;
+}
+
 messagebubble.outgoing link {
   color: @accent_fg_color;
 }

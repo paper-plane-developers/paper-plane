@@ -7,7 +7,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
 
-    const SIZE: i32 = 200;
+    const SIZE: i32 = 176;
 
     #[derive(Debug, Default)]
     pub(crate) struct StickerPicture {

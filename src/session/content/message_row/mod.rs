@@ -363,12 +363,8 @@ impl MessageRow {
 
         if is_outgoing {
             content.set_halign(gtk::Align::End);
-            content.set_margin_start(AVATAR_SIZE + SPACING);
-            content.set_margin_end(0);
         } else {
             content.set_halign(gtk::Align::Start);
-            content.set_margin_start(0);
-            content.set_margin_end(AVATAR_SIZE + SPACING);
         }
     }
 
