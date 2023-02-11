@@ -5,7 +5,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{
-    ChatAction, ChatMemberStatus, InputMessageContent, MessageContent,
+    ChatAction, ChatMemberStatus, FormattedText, InputMessageContent, MessageContent,
     MessageSender as TdMessageSender, UserType,
 };
 use tdlib::{functions, types};
@@ -367,12 +367,21 @@ impl ChatActionBar {
 
     fn load_message_to_edit(&self, message_id: i64) {
         if let Some(chat) = self.chat() {
+            let client_id = chat.session().client_id();
+
             if let Some(message) = chat.history().message_by_id(message_id) {
                 match message.content().0 {
                     MessageContent::MessageText(data) => {
-                        self.imp()
-                            .message_entry
-                            .set_formatted_text(Some(BoxedFormattedText(data.text)));
+                        block_on(async move {
+                            let FormattedText::FormattedText(markdown_text) =
+                                functions::get_markdown_text(data.text, client_id)
+                                    .await
+                                    .unwrap();
+
+                            self.imp()
+                                .message_entry
+                                .set_formatted_text(Some(BoxedFormattedText(markdown_text)));
+                        });
                     }
                     _ => unimplemented!(),
                 }
