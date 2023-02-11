@@ -11,33 +11,19 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageIndicators" parent="GtkWidget">
-        <property name="layout-manager">
-          <object class="GtkBoxLayout">
-            <property name="spacing">3</property>
-          </object>
-        </property>
-        <child>
-          <object class="GtkLabel">
-            <binding name="label">
-              <lookup name="message-info">
-                <lookup name="model">MessageIndicators</lookup>
-              </lookup>
-            </binding>
-          </object>
-        </child>
-        <child>
-          <object class="GtkImage" id="sending_state_icon">
-            <binding name="icon-name">
-              <lookup name="sending-state-icon-name">
-                <lookup name="model">MessageIndicators</lookup>
-              </lookup>
-            </binding>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageIndicators {
+        layout-manager: BoxLayout {
+            spacing: 3;
+        };
+
+        Label {
+            label: bind MessageIndicators.model.message-info;
+        }
+
+        Image sending_state_icon {
+            icon-name: bind MessageIndicators.model.sending-state-icon-name;
+        }
+    }
     "#)]
     pub(crate) struct MessageIndicators {
         pub(super) model: MessageIndicatorsModel,

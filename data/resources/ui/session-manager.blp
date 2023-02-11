@@ -1,0 +1,14 @@
+using Gtk 4.0;
+
+template SessionManager {
+  layout-manager: BinLayout {};
+
+  Stack main_stack {
+    visible-child: login;
+    transition-type: crossfade;
+
+    .Login login {}
+
+    Stack sessions {}
+  }
+}

@@ -1,0 +1,115 @@
+using Gtk 4.0;
+using Adw 1;
+
+template SidebarRow {
+  layout-manager:   BoxLayout {
+    spacing: 12;
+  };
+
+  GestureClick {
+    button: 3;
+    released => on_pressed() swapped;
+  }
+
+  GestureLongPress {
+    touch-only: true;
+    pressed => on_long_pressed() swapped;
+  }
+
+  .SidebarAvatar {
+    item: bind SidebarRow.item.chat;
+  }
+
+  Box {
+    orientation: vertical;
+    spacing: 6;
+    valign: center;
+
+    Box {
+      spacing: 6;
+
+      Inscription title_label {
+        hexpand: true;
+        text-overflow: ellipsize_end;
+      }
+
+      Box {
+        spacing: 3;
+
+        Image message_status_icon {}
+
+        Label timestamp_label {
+          single-line-mode: true;
+
+          styles [
+            "dim-label",
+            "numeric",
+            "caption",
+          ]
+        }
+      }
+    }
+
+    Box {
+      spacing: 6;
+
+      Box {
+        spacing: 3;
+
+        Label message_prefix_label {
+          single-line-mode: true;
+          use-markup: true;
+          ellipsize: end;
+          xalign: 0;
+
+          styles ["small-body"]
+        }
+
+        .SidebarMiniThumbnail message_thumbnail {
+          visible: "False";
+          valign: "center";
+        }
+
+        Inscription bottom_label {
+          hexpand: true;
+          text-overflow: ellipsize_end;
+          valign: center;
+
+          styles ["small-body"]
+        }
+      }
+
+      Stack status_stack {
+        Adw.Bin empty_status_bin {
+        }
+
+        Image pin_icon {
+          halign: center;
+          valign: center;
+          icon-name: "view-pin-symbolic";
+
+          styles ["dim-label"]
+        }
+
+        Label unread_mention_label {
+          halign: center;
+          valign: center;
+          justify: center;
+          label: "@";
+
+          styles [
+            "unread-mention-count",
+          ]
+        }
+
+        Label unread_count_label {
+          halign: center;
+          valign: center;
+          width-chars: 1;
+          ellipsize: end;
+          justify: center;
+        }
+      }
+    }
+  }
+}

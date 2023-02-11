@@ -1,0 +1,11 @@
+using Gtk 4.0;
+
+template MessagePhoto : .MessageBase {
+  layout-manager: BinLayout {};
+
+  .MessageBubble message_bubble {
+    styles ["media"]
+
+    prefix: .MessageMediaPicture picture {};
+  }
+}

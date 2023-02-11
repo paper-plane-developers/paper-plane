@@ -1,0 +1,39 @@
+using Gtk 4.0;
+using Adw 1;
+
+template Content : Adw.Bin {
+  hexpand: true;
+  width-request: 300;
+
+  Stack stack {
+    Box unselected_chat {
+      orientation: vertical;
+
+      Overlay {
+        Adw.HeaderBar {
+          show-start-title-buttons: false;
+
+          [title]
+          Adw.WindowTitle {}
+        }
+
+        [overlay]
+        .ComponentsSnow snow {
+          sensitive: false;
+        }
+      }
+
+      Adw.StatusPage {
+        vexpand: true;
+        icon-name: "user-available-symbolic";
+        title: _("No Chat Selected");
+        description: _("Select a chat to start messaging.");
+      }
+    }
+
+    .ContentChatHistory chat_history {
+      compact: bind Content.compact;
+      chat: bind Content.chat;
+    }
+  }
+}

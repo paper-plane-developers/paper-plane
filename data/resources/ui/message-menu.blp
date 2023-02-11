@@ -1,0 +1,34 @@
+using Gtk 4.0;
+
+menu model {
+  section {
+    item {
+      label: _("_Reply");
+      action: "message-row.reply";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("_Edit");
+      action: "message-row.edit";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("Delete for Ever_yone");
+      action: "message-row.revoke-delete";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("_Delete for Me");
+      action: "message-row.delete";
+      hidden-when: "action-disabled";
+    }
+  }
+}
+
+PopoverMenu menu {
+  menu-model: model;
+  has-arrow: false;
+}

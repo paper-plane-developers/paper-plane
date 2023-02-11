@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template Session : Adw.Bin {
+  Adw.Leaflet leaflet {
+    can-navigate-back: true;
+
+    .Sidebar sidebar {
+      compact: bind leaflet.folded;
+      selected-chat: bind content.chat bidirectional;
+      session: "Session";
+    }
+
+    Adw.LeafletPage {
+      navigatable: false;
+      child: Separator {};
+    }
+
+    .Content content {
+      compact: bind leaflet.folded;
+    }
+  }
+}

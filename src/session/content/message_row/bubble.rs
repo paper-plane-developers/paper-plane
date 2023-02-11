@@ -25,44 +25,35 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageBubble" parent="GtkWidget">
-        <child>
-          <object class="GtkOverlay" id="overlay">
-            <child>
-              <object class="GtkBox">
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkLabel" id="sender_label">
-                    <property name="ellipsize">end</property>
-                    <property name="xalign">0</property>
-                    <property name="visible">False</property>
-                    <style>
-                      <class name="heading"/>
-                      <class name="small-body"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwBin" id="prefix_bin"/>
-                </child>
-                <child>
-                  <object class="MessageLabel" id="message_label">
-                    <property name="visible">False</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="overlay">
-              <object class="MessageIndicators" id="indicators">
-                <property name="halign">end</property>
-                <property name="valign">end</property>
-              </object>
-            </child>
-          </object>
-        </child>
-      </template>
-    </interface>
+    using Adw 1;
+
+    template MessageBubble {
+        Overlay overlay {
+            Box {
+                orientation: vertical;
+
+                Label sender_label {
+                    styles ["caption-heading"]
+
+                    ellipsize: end;
+                    xalign: 0;
+                    visible: false;
+                }
+
+                Adw.Bin prefix_bin {}
+
+                .MessageLabel message_label {
+                    visible: false;
+                }
+            }
+
+            [overlay]
+            .MessageIndicators indicators {
+                halign: end;
+                valign: end;
+            }
+        }
+    }
     "#)]
     pub(crate) struct MessageBubble {
         pub(super) sender_color_class: RefCell<Option<String>>,

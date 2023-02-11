@@ -1,0 +1,36 @@
+using Gtk 4.0;
+
+template MessageDocument : .MessageBase {
+  .MessageBubble message_bubble {
+    styles ["document"]
+
+    prefix: Box {
+      spacing: 6;
+
+      styles ["file"]
+
+      GestureClick click {
+        button: 1;
+      }
+
+      Image file_status_image {}
+
+      Box {
+        hexpand: true;
+        valign: center;
+        orientation: vertical;
+
+        Label file_name_label {
+          xalign: 0;
+          ellipsize: middle;
+        }
+
+        Label file_size_label {
+          styles ["numeric", "dim-label", "caption"]
+
+          xalign: 0;
+        }
+      }
+    };
+  }
+}

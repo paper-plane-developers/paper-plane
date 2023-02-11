@@ -9,22 +9,17 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageBase" parent="GtkWidget">
-        <child>
-          <object class="GtkGestureClick">
-            <property name="button">3</property>
-            <signal name="released" handler="on_pressed" swapped="true"/>
-          </object>
-        </child>
-        <child>
-          <object class="GtkGestureLongPress">
-            <property name="touch-only">True</property>
-            <signal name="pressed" handler="on_long_pressed" swapped="true"/>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageBase {
+        GestureClick {
+            button: 3;
+            released => on_pressed() swapped;
+        }
+
+        GestureLongPress {
+            touch-only: true;
+            pressed => on_long_pressed() swapped;
+        }
+    }
     "#)]
     pub(crate) struct MessageBase {}
 

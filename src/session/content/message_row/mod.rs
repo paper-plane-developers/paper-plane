@@ -44,16 +44,12 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageRow" parent="GtkWidget">
-        <child>
-          <object class="GtkGestureClick">
-            <property name="button">1</property>
-            <signal name="released" handler="on_released" swapped="true"/>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageRow {
+        GestureClick {
+            button: 1;
+            released => on_released() swapped;
+        }
+    }
     "#)]
     pub(crate) struct MessageRow {
         /// A `Message` or `SponsoredMessage`

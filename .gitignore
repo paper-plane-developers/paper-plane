@@ -9,3 +9,5 @@ src/config.rs
 *.ui~
 .flatpak/
 .vscode/
+
+/subprojects/blueprint-compiler

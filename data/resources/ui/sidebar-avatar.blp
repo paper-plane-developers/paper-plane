@@ -1,0 +1,28 @@
+using Gtk 4.0;
+using Adw 1;
+
+template SidebarAvatar {
+  layout-manager:   BinLayout {};
+
+  .ComponentsAvatar avatar {
+    size: "48";
+  }
+
+  Adw.Bin online_indicator_mask {
+    styles ["online-indicator-mask"]
+
+    halign: end;
+    valign: end;
+    visible: bind SidebarAvatar.is-online;
+  }
+
+  Adw.Bin online_indicator_dot {
+    styles ["online-indicator-dot"]
+
+    halign: end;
+    valign: end;
+    margin-bottom: 2;
+    margin-end: 2;
+    visible: bind SidebarAvatar.is-online;
+  }
+}

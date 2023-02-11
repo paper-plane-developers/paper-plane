@@ -14,24 +14,17 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="SidebarSearchItemRow" parent="GtkWidget">
-        <child>
-          <object class="ComponentsAvatar" id="avatar">
-            <property name="size">32</property>
-            <binding name="item">
-              <lookup name="item">SidebarSearchItemRow</lookup>
-            </binding>
-          </object>
-        </child>
-        <child>
-          <object class="GtkInscription" id="label">
-            <property name="hexpand">True</property>
-            <property name="text-overflow">ellipsize-end</property>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template SidebarSearchItemRow {
+        .ComponentsAvatar avatar {
+            size: 32;
+            item: bind SidebarSearchItemRow.item;
+        }
+
+        Inscription label {
+            hexpand: true;
+            text-overflow: ellipsize_end;
+        }
+    }
     "#)]
     pub(crate) struct ItemRow {
         /// A `Chat` or `User`

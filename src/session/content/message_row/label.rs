@@ -14,19 +14,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageLabel" parent="GtkWidget">
-        <child>
-          <object class="GtkLabel" id="label">
-            <property name="use-markup">True</property>
-            <property name="wrap">True</property>
-            <property name="wrap-mode">word-char</property>
-            <property name="xalign">0</property>
-            <property name="yalign">0</property>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageLabel {
+        Label label {
+            use-markup: true;
+            wrap: true;
+            wrap-mode: word_char;
+            xalign: 0;
+            yalign: 0;
+        }
+    }
     "#)]
     pub(crate) struct MessageLabel {
         pub(super) text: RefCell<String>,

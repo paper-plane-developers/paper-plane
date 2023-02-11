@@ -1,0 +1,9 @@
+using Gtk 4.0;
+
+template SessionSwitcher : Popover {
+  name: "account-switcher";
+
+  ListView entries {
+    single-click-activate: true;
+  }
+}
