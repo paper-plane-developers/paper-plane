@@ -1,11 +1,8 @@
+use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::cmp::Ordering;
-use std::collections::hash_map::Entry;
-use tdlib::enums::{self, Update};
-use tdlib::functions;
-use tdlib::types::Message as TelegramMessage;
 use thiserror::Error;
 
 use crate::tdlib::{Chat, ChatHistoryItem, ChatHistoryItemType, Message};
@@ -23,14 +20,13 @@ mod imp {
     use glib::WeakRef;
     use once_cell::sync::Lazy;
     use std::cell::{Cell, RefCell};
-    use std::collections::{HashMap, VecDeque};
+    use std::collections::VecDeque;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistory {
         pub(super) chat: WeakRef<Chat>,
         pub(super) is_loading: Cell<bool>,
         pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
-        pub(super) message_map: RefCell<HashMap<i64, Message>>,
     }
 
     #[glib::object_subclass]
@@ -86,9 +82,18 @@ glib::wrapper! {
 
 impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        let chat_history: ChatHistory = glib::Object::new();
-        chat_history.imp().chat.set(Some(chat));
-        chat_history
+        let obj: ChatHistory = glib::Object::new();
+
+        obj.imp().chat.set(Some(chat));
+
+        chat.connect_new_message(clone!(@weak obj => move |_, message| {
+            obj.push_front(message);
+        }));
+        chat.connect_deleted_message(clone!(@weak obj => move |_, message| {
+            obj.remove(message);
+        }));
+
+        obj
     }
 
     /// Loads older messages from this chat history.
@@ -101,9 +106,6 @@ impl ChatHistory {
             return Err(ChatHistoryError::AlreadyLoading);
         }
 
-        let chat = self.chat();
-        let client_id = chat.session().client_id();
-        let chat_id = chat.id();
         let oldest_message_id = imp
             .list
             .borrow()
@@ -115,55 +117,18 @@ impl ChatHistory {
 
         imp.is_loading.set(true);
 
-        let result =
-            functions::get_chat_history(chat_id, oldest_message_id, 0, limit, false, client_id)
-                .await;
+        let result = self.chat().get_chat_history(oldest_message_id, limit).await;
 
         imp.is_loading.set(false);
 
-        let enums::Messages::Messages(data) = result.map_err(ChatHistoryError::Tdlib)?;
+        let messages = result.map_err(ChatHistoryError::Tdlib)?;
 
-        if data.messages.is_empty() {
+        if messages.is_empty() {
             return Ok(false);
         }
 
-        let messages = data.messages.into_iter().flatten().collect();
         self.append(messages);
-
         Ok(true)
-    }
-
-    pub(crate) fn message_by_id(&self, id: i64) -> Option<Message> {
-        let imp = self.imp();
-        imp.message_map.borrow().get(&id).cloned()
-    }
-
-    pub(crate) fn handle_update(&self, update: Update) {
-        use Update::*;
-
-        match update {
-            DeleteMessages(update) => {
-                if !update.from_cache {
-                    for message_id in update.message_ids {
-                        self.remove(message_id);
-                    }
-                }
-            }
-            MessageContent(ref update_) => self.handle_message_update(update_.message_id, update),
-            MessageEdited(ref update_) => self.handle_message_update(update_.message_id, update),
-            MessageSendSucceeded(update) => {
-                self.remove(update.old_message_id);
-                self.push_front(update.message);
-            }
-            NewMessage(update) => self.push_front(update.message),
-            _ => {}
-        }
-    }
-
-    fn handle_message_update(&self, message_id: i64, update: Update) {
-        if let Some(message) = self.imp().message_map.borrow().get(&message_id) {
-            message.handle_update(update);
-        }
     }
 
     fn items_changed(&self, position: u32, removed: u32, added: u32) {
@@ -266,41 +231,22 @@ impl ChatHistory {
             .items_changed(position, removed, added);
     }
 
-    fn push_front(&self, message: TelegramMessage) {
-        let imp = self.imp();
+    fn push_front(&self, message: Message) {
+        self.imp()
+            .list
+            .borrow_mut()
+            .push_front(ChatHistoryItem::for_message(message));
 
-        let mut message_map = imp.message_map.borrow_mut();
-
-        if let Entry::Vacant(entry) = message_map.entry(message.id) {
-            let message = Message::new(message, &self.chat());
-
-            entry.insert(message.clone());
-
-            imp.list
-                .borrow_mut()
-                .push_front(ChatHistoryItem::for_message(message));
-
-            // We always need to drop all references before handing over control. Else, we could end
-            // up with a borrowing error somewhere else.
-            drop(message_map);
-            self.items_changed(0, 0, 1);
-        }
+        self.items_changed(0, 0, 1);
     }
 
-    fn append(&self, messages: Vec<TelegramMessage>) {
+    fn append(&self, messages: Vec<Message>) {
         let imp = self.imp();
-        let chat = self.chat();
         let added = messages.len();
 
         imp.list.borrow_mut().reserve(added);
 
         for message in messages {
-            let message = Message::new(message, &chat);
-
-            imp.message_map
-                .borrow_mut()
-                .insert(message.id(), message.clone());
-
             imp.list
                 .borrow_mut()
                 .push_back(ChatHistoryItem::for_message(message));
@@ -310,42 +256,42 @@ impl ChatHistory {
         self.items_changed(index as u32, 0, added as u32);
     }
 
-    fn remove(&self, message_id: i64) {
+    fn remove(&self, message: Message) {
         let imp = self.imp();
 
-        if let Some(message) = imp.message_map.borrow_mut().remove(&message_id) {
-            // Put this in a block, so that we only need to borrow the list once and the runtime
-            // borrow checker does not panic in Self::items_changed when it borrows the list again.
-            let index = {
-                let mut list = imp.list.borrow_mut();
+        // Put this in a block, so that we only need to borrow the list once and the runtime
+        // borrow checker does not panic in Self::items_changed when it borrows the list again.
+        let index = {
+            let mut list = imp.list.borrow_mut();
 
-                // The elements in this list are ordered. While the day dividers are ordered
-                // only by their date time, the messages are additionally sorted by their id. We
-                // can exploit this by applying a binary search.
-                let index = list
-                    .binary_search_by(|m| match m.type_() {
-                        ChatHistoryItemType::Message(message) => message_id.cmp(&message.id()),
-                        ChatHistoryItemType::DayDivider(date_time) => {
-                            let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
-                                .unwrap()
-                                .cmp(date_time);
-                            if let Ordering::Equal = ordering {
-                                // We found the day divider of the message. Therefore, the message
-                                // must be among the following elements.
-                                Ordering::Greater
-                            } else {
-                                ordering
-                            }
+            // The elements in this list are ordered. While the day dividers are ordered
+            // only by their date time, the messages are additionally sorted by their id. We
+            // can exploit this by applying a binary search.
+            let index = list
+                .binary_search_by(|m| match m.type_() {
+                    ChatHistoryItemType::Message(other_message) => {
+                        message.id().cmp(&other_message.id())
+                    }
+                    ChatHistoryItemType::DayDivider(date_time) => {
+                        let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
+                            .unwrap()
+                            .cmp(date_time);
+                        if let Ordering::Equal = ordering {
+                            // We found the day divider of the message. Therefore, the message
+                            // must be among the following elements.
+                            Ordering::Greater
+                        } else {
+                            ordering
                         }
-                    })
-                    .unwrap();
+                    }
+                })
+                .unwrap();
 
-                list.remove(index);
-                index as u32
-            };
+            list.remove(index);
+            index as u32
+        };
 
-            self.items_changed(index, 1, 0);
-        }
+        self.items_changed(index, 1, 0);
     }
 
     pub(crate) fn chat(&self) -> Chat {

@@ -310,10 +310,7 @@ impl ChatActionBar {
             }
             Replying(message_id) => {
                 // TODO: Use TDLib to retrieve the message if we don't have it locally
-                if let Some(message) = self
-                    .chat()
-                    .and_then(|c| c.history().message_by_id(message_id))
-                {
+                if let Some(message) = self.chat().and_then(|c| c.message(message_id)) {
                     // TODO: Make these labels auto update
                     imp.top_bar_title_label
                         .set_text(Some(&strings::message_sender(message.sender(), true)));
@@ -331,10 +328,7 @@ impl ChatActionBar {
             }
             Editing(message_id) => {
                 // TODO: Use TDLib to retrieve the message if we don't have it locally
-                if let Some(message) = self
-                    .chat()
-                    .and_then(|c| c.history().message_by_id(message_id))
-                {
+                if let Some(message) = self.chat().and_then(|c| c.message(message_id)) {
                     imp.top_bar_title_label
                         .set_text(Some(&gettext("Edit Message")));
                     imp.top_bar_message_label
@@ -369,7 +363,7 @@ impl ChatActionBar {
         if let Some(chat) = self.chat() {
             let client_id = chat.session().client_id();
 
-            if let Some(message) = chat.history().message_by_id(message_id) {
+            if let Some(message) = chat.message(message_id) {
                 match message.content().0 {
                     MessageContent::MessageText(data) => {
                         block_on(async move {

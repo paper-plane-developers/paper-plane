@@ -53,10 +53,12 @@ impl ChatType {
 
 mod imp {
     use super::*;
+    use glib::subclass::Signal;
     use glib::WeakRef;
     use once_cell::sync::Lazy;
     use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
+    use std::collections::HashMap;
 
     #[derive(Debug, Default)]
     pub(crate) struct Chat {
@@ -76,6 +78,7 @@ mod imp {
         pub(super) actions: OnceCell<ChatActionList>,
         pub(super) session: WeakRef<Session>,
         pub(super) permissions: RefCell<Option<BoxedChatPermissions>>,
+        pub(super) messages: RefCell<HashMap<i64, Message>>,
     }
 
     #[glib::object_subclass]
@@ -85,6 +88,20 @@ mod imp {
     }
 
     impl ObjectImpl for Chat {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("new-message")
+                        .param_types([Message::static_type()])
+                        .build(),
+                    Signal::builder("deleted-message")
+                        .param_types([Message::static_type()])
+                        .build(),
+                ]
+            });
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -203,6 +220,7 @@ impl Chat {
 
     pub(crate) fn handle_update(&self, update: Update) {
         use Update::*;
+        let imp = self.imp();
 
         match update {
             ChatAction(update) => {
@@ -236,12 +254,51 @@ impl Chat {
             ChatUnreadMentionCount(update) => {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
-            DeleteMessages(_)
-            | MessageContent(_)
-            | MessageEdited(_)
-            | MessageSendSucceeded(_)
-            | NewMessage(_) => {
-                self.history().handle_update(update);
+            DeleteMessages(data) => {
+                if !data.from_cache {
+                    let mut messages = imp.messages.borrow_mut();
+                    let deleted_messages: Vec<_> = data
+                        .message_ids
+                        .into_iter()
+                        .map(|id| messages.remove(&id).unwrap())
+                        .collect();
+
+                    drop(messages);
+                    for message in deleted_messages {
+                        self.emit_by_name::<()>("deleted-message", &[&message]);
+                    }
+                }
+            }
+            MessageContent(ref data) => {
+                if let Some(message) = self.message(data.message_id) {
+                    message.handle_update(update);
+                }
+            }
+            MessageEdited(ref data) => {
+                if let Some(message) = self.message(data.message_id) {
+                    message.handle_update(update);
+                }
+            }
+            MessageSendSucceeded(data) => {
+                let mut messages = imp.messages.borrow_mut();
+                let old_message = messages.remove(&data.old_message_id);
+
+                let message_id = data.message.id;
+                let message = Message::new(data.message, self);
+                messages.insert(message_id, message.clone());
+
+                drop(messages);
+                self.emit_by_name::<()>("deleted-message", &[&old_message]);
+                self.emit_by_name::<()>("new-message", &[&message]);
+            }
+            NewMessage(data) => {
+                let message_id = data.message.id;
+                let message = Message::new(data.message, self);
+                imp.messages
+                    .borrow_mut()
+                    .insert(message_id, message.clone());
+
+                self.emit_by_name::<()>("new-message", &[&message]);
             }
             MessageMentionRead(update) => {
                 self.set_unread_mention_count(update.unread_mention_count)
@@ -422,6 +479,62 @@ impl Chat {
         }
         self.imp().permissions.replace(Some(permissions));
         self.notify("permissions");
+    }
+
+    pub(crate) fn connect_new_message<F: Fn(&Self, Message) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("new-message", true, move |values| {
+            let obj = values[0].get().unwrap();
+            let message = values[1].get().unwrap();
+            f(obj, message);
+            None
+        })
+    }
+
+    pub(crate) fn connect_deleted_message<F: Fn(&Self, Message) + 'static>(
+        &self,
+        f: F,
+    ) -> glib::SignalHandlerId {
+        self.connect_local("deleted-message", true, move |values| {
+            let obj = values[0].get().unwrap();
+            let message = values[1].get().unwrap();
+            f(obj, message);
+            None
+        })
+    }
+
+    /// Returns the `Message` of the specified id, if present in the cache.
+    pub(crate) fn message(&self, message_id: i64) -> Option<Message> {
+        self.imp().messages.borrow().get(&message_id).cloned()
+    }
+
+    pub(crate) async fn get_chat_history(
+        &self,
+        from_message_id: i64,
+        limit: i32,
+    ) -> Result<Vec<Message>, types::Error> {
+        let client_id = self.session().client_id();
+        let result =
+            functions::get_chat_history(self.id(), from_message_id, 0, limit, false, client_id)
+                .await;
+
+        let tdlib::enums::Messages::Messages(data) = result?;
+
+        let mut messages = self.imp().messages.borrow_mut();
+        let loaded_messages: Vec<Message> = data
+            .messages
+            .into_iter()
+            .flatten()
+            .map(|m| Message::new(m, self))
+            .collect();
+
+        for message in &loaded_messages {
+            messages.insert(message.id(), message.clone());
+        }
+
+        Ok(loaded_messages)
     }
 
     pub(crate) async fn mark_as_read(&self) -> Result<(), types::Error> {

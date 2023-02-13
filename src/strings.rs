@@ -394,7 +394,7 @@ fn message_chat_delete_member(deleted_user: &User, sender: &MessageSender) -> St
 
 fn message_game_score(game: &MessageGameScore, chat: &Chat, sender: &MessageSender) -> String {
     let sender_string = message_sender(sender, true);
-    let game_title = match chat.history().message_by_id(game.game_message_id) {
+    let game_title = match chat.message(game.game_message_id) {
         Some(message) => match message.content().0 {
             tdlib::enums::MessageContent::MessageGame(MessageGame { game }) => Some(game.title),
             _ => unreachable!(),
@@ -427,7 +427,7 @@ fn message_pin_message(message_id: i64, chat: &Chat, sender: &MessageSender) -> 
 
     // TODO: Add a way to retrieve the message and update the string
     // in case we don't have the message stored locally.
-    let string = match chat.history().message_by_id(message_id) {
+    let string = match chat.message(message_id) {
         Some(message) => match message.content().0 {
             MessageText(data) => {
                 const TEXT_LENGTH: usize = 32;
