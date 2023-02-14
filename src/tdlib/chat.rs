@@ -7,7 +7,7 @@ use tdlib::{functions, types};
 
 use crate::tdlib::{
     Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
-    ChatActionList, ChatHistory, Message, SecretChat, Supergroup, User,
+    ChatActionList, Message, SecretChat, Supergroup, User,
 };
 use crate::Session;
 
@@ -74,7 +74,6 @@ mod imp {
         pub(super) unread_count: Cell<i32>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
-        pub(super) history: OnceCell<ChatHistory>,
         pub(super) actions: OnceCell<ChatActionList>,
         pub(super) session: WeakRef<Session>,
         pub(super) permissions: RefCell<Option<BoxedChatPermissions>>,
@@ -139,9 +138,6 @@ mod imp {
                     )
                     .read_only()
                     .build(),
-                    glib::ParamSpecObject::builder::<ChatHistory>("history")
-                        .read_only()
-                        .build(),
                     glib::ParamSpecObject::builder::<ChatActionList>("actions")
                         .read_only()
                         .build(),
@@ -172,7 +168,6 @@ mod imp {
                 "unread-count" => obj.unread_count().to_value(),
                 "draft-message" => obj.draft_message().to_value(),
                 "notification-settings" => obj.notification_settings().to_value(),
-                "history" => obj.history().to_value(),
                 "actions" => obj.actions().to_value(),
                 "permissions" => obj.permissions().to_value(),
                 "session" => obj.session().to_value(),
@@ -449,10 +444,6 @@ impl Chat {
             .notification_settings
             .replace(Some(notification_settings));
         self.notify("notification-settings");
-    }
-
-    pub(crate) fn history(&self) -> &ChatHistory {
-        self.imp().history.get_or_init(|| ChatHistory::new(self))
     }
 
     pub(crate) fn actions(&self) -> &ChatActionList {
