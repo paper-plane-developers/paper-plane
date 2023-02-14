@@ -250,12 +250,14 @@ impl Chat {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
             DeleteMessages(data) => {
+                // FIXME: This should be removed after we notify opened and closed chats to TDLib
+                // See discussion here: https://t.me/tdlibchat/65304
                 if !data.from_cache {
                     let mut messages = imp.messages.borrow_mut();
-                    let deleted_messages: Vec<_> = data
+                    let deleted_messages: Vec<Message> = data
                         .message_ids
                         .into_iter()
-                        .map(|id| messages.remove(&id).unwrap())
+                        .filter_map(|id| messages.remove(&id))
                         .collect();
 
                     drop(messages);
