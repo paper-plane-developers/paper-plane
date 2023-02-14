@@ -7,7 +7,7 @@ use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
 use crate::session::content::{
-    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatInfoWindow, ItemRow,
+    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
 };
 use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
@@ -48,7 +48,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            ItemRow::static_type();
+            ChatHistoryRow::static_type();
             klass.bind_template();
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
