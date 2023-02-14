@@ -142,8 +142,8 @@ impl ChatInfoWindow {
         // Phone number
         if !user.phone_number().is_empty() {
             let row = adw::ActionRow::builder()
-                .title(&format!("+{}", &user.phone_number()))
-                .subtitle(&gettext("Mobile"))
+                .title(format!("+{}", &user.phone_number()))
+                .subtitle(gettext("Mobile"))
                 .build();
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
@@ -152,8 +152,8 @@ impl ChatInfoWindow {
         // Username
         if !user.username().is_empty() {
             let row = adw::ActionRow::builder()
-                .title(&format!("@{}", &user.username()))
-                .subtitle(&gettext("Username"))
+                .title(format!("@{}", &user.username()))
+                .subtitle(gettext("Username"))
                 .build();
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
@@ -202,7 +202,7 @@ impl ChatInfoWindow {
         if !basic_group_full_info.description.is_empty() {
             let row = adw::ActionRow::builder()
                 .title(&basic_group_full_info.description)
-                .subtitle(&gettext("Description"))
+                .subtitle(gettext("Description"))
                 .build();
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
@@ -231,8 +231,8 @@ impl ChatInfoWindow {
         // Link
         if !supergroup.username().is_empty() {
             let row = adw::ActionRow::builder()
-                .title(&format!("https://t.me/{}", &supergroup.username()))
-                .subtitle(&gettext("Link"))
+                .title(format!("https://t.me/{}", &supergroup.username()))
+                .subtitle(gettext("Link"))
                 .build();
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
@@ -261,7 +261,7 @@ impl ChatInfoWindow {
         if !supergroup_full_info.description.is_empty() {
             let row = adw::ActionRow::builder()
                 .title(&supergroup_full_info.description)
-                .subtitle(&gettext("Description"))
+                .subtitle(gettext("Description"))
                 .build();
             self.make_row_copyable(&row);
             imp.info_list.append(&row);

@@ -294,7 +294,7 @@ impl Message {
                     }
                     MessageForwardOrigin::HiddenUser { sender_name }
                     | MessageForwardOrigin::MessageImport { sender_name } => {
-                        gtk::ConstantExpression::new(&sender_name).upcast()
+                        gtk::ConstantExpression::new(sender_name).upcast()
                     }
                 })
                 .unwrap_or_else(|| self.sender_display_name_expression())

@@ -177,9 +177,9 @@ impl MessageRow {
         };
 
         let dialog = adw::MessageDialog::builder()
-            .heading(&gettext("Confirm Message Deletion"))
+            .heading(gettext("Confirm Message Deletion"))
             .body_use_markup(true)
-            .body(&message)
+            .body(message)
             .transient_for(&window)
             .build();
 

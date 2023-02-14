@@ -900,8 +900,8 @@ impl Login {
 
     fn show_delete_account_dialog(&self) {
         let dialog = adw::MessageDialog::builder()
-            .heading(&gettext("Warning"))
-            .body(&gettext(
+            .heading(gettext("Warning"))
+            .body(gettext(
                 "You will lose all your chats and messages, along with any media and files you shared!\n\nDo you want to delete your account?",
             ))
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
@@ -981,8 +981,8 @@ impl Login {
 
     fn show_no_email_access_dialog(&self) {
         let dialog = adw::MessageDialog::builder()
-            .heading(&gettext("Sorry"))
-            .body(&gettext(
+            .heading(gettext("Sorry"))
+            .body(gettext(
                 "If you can't restore access to the e-mail, your remaining options are either to remember your password or to delete and then recreate your account.",
             ))
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())

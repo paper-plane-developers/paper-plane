@@ -163,7 +163,7 @@ impl Application {
             .website("https://github.com/melix99/telegrand")
             .issue_url("https://github.com/melix99/telegrand/issues")
             .support_url("https://t.me/telegrandchat")
-            .developer_name(&gettext("Telegrand developers"))
+            .developer_name(gettext("Telegrand developers"))
             .copyright("© 2021–2022 Marco Melorio")
             .license_type(gtk::License::Gpl30)
             .developers([
