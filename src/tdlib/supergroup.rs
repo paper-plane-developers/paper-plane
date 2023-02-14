@@ -68,7 +68,7 @@ glib::wrapper! {
 
 impl Supergroup {
     pub(crate) fn from_td_object(td_supergroup: TdSupergroup) -> Self {
-        let supergroup: Supergroup = glib::Object::builder().build();
+        let supergroup: Supergroup = glib::Object::new();
         let imp = supergroup.imp();
 
         let username = td_supergroup

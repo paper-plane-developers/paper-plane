@@ -27,7 +27,7 @@ use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::components::Avatar;
@@ -187,9 +187,9 @@ impl MessageRow {
         dialog.set_default_response(Some("no"));
         dialog.set_response_appearance("yes", adw::ResponseAppearance::Destructive);
 
-        dialog.run_async(
-            None,
-            clone!(@weak self as obj => move |_, response| {
+        dialog.choose(
+            gio::Cancellable::NONE,
+            clone!(@weak self as obj => move |response| {
                 if response == "yes" {
                     if let Ok(message) = obj.message().downcast::<Message>() {
                         spawn(async move {

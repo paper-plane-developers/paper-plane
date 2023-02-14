@@ -215,7 +215,6 @@ mod imp {
             // We give focus the the phone number entry as soon as the user has selected an country
             // from the combo box.
             let focus_events = gtk::EventControllerFocus::new();
-            self.combo_row.add_controller(&focus_events);
             focus_events.connect_leave(clone!(@weak obj => move |_| {
                 // We need to set the cursor position at the end on the next idle.
                 glib::idle_add_local(clone!(
@@ -225,6 +224,7 @@ mod imp {
                     }
                 ));
             }));
+            self.combo_row.add_controller(focus_events);
         }
 
         fn dispose(&self) {

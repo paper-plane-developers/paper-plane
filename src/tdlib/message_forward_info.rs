@@ -119,7 +119,7 @@ impl MessageForwardInfo {
             }
         };
 
-        let message_forward_info: MessageForwardInfo = glib::Object::builder().build();
+        let message_forward_info: MessageForwardInfo = glib::Object::new();
         let imp = message_forward_info.imp();
 
         imp.date.set(forward_info.date);

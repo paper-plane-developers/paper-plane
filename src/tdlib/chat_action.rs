@@ -71,7 +71,7 @@ impl ChatAction {
         sender: &enums::MessageSender,
         chat: &Chat,
     ) -> Self {
-        let chat_action: ChatAction = glib::Object::builder().build();
+        let chat_action: ChatAction = glib::Object::new();
         let imp = chat_action.imp();
 
         let type_ = BoxedChatActionType(type_);

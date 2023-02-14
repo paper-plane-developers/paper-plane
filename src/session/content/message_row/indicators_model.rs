@@ -77,7 +77,7 @@ impl Default for MessageIndicatorsModel {
 
 impl MessageIndicatorsModel {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn message(&self) -> glib::Object {

@@ -74,7 +74,7 @@ glib::wrapper! {
 
 impl From<&Chat> for ChatActionList {
     fn from(chat: &Chat) -> Self {
-        let chat_action_list: ChatActionList = glib::Object::builder().build();
+        let chat_action_list: ChatActionList = glib::Object::new();
         chat_action_list.imp().chat.set(Some(chat));
         chat_action_list
     }

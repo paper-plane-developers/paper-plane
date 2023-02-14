@@ -95,7 +95,7 @@ mod imp {
                 let height = widget.height() as f32;
                 let bounds = graphene::Rect::new(0.0, 0.0, wigth, height);
 
-                snapshot.push_gl_shader(shader, &bounds, &args_builder.to_args());
+                snapshot.push_gl_shader(shader, &bounds, args_builder.to_args());
                 snapshot.pop();
             }
         }

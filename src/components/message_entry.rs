@@ -110,7 +110,6 @@ mod imp {
             // Handle the enter key to emit the "activate" signal if neither the "ctrl" nor the
             // "shift" modifier are pressed at the same time.
             let key_events = gtk::EventControllerKey::new();
-            self.text_view.add_controller(&key_events);
             key_events.connect_key_pressed(
                 clone!(@weak obj => @default-return gtk::Inhibit(false), move |_, key, _, modifier| {
                     gtk::Inhibit(
@@ -126,12 +125,13 @@ mod imp {
                     )
                 }),
             );
+            self.text_view.add_controller(key_events);
 
             let press = gtk::GestureClick::new();
             press.connect_pressed(clone!(@weak obj => move |_, _, _, _| {
                 obj.emit_by_name::<()>("emoji-button-press", &[&*obj.imp().emoji_button]);
             }));
-            self.emoji_button.add_controller(&press);
+            self.emoji_button.add_controller(press);
 
             self.text_view
                 .buffer()
@@ -164,7 +164,7 @@ glib::wrapper! {
 
 impl MessageEntry {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn text_buffer_changed(&self) {

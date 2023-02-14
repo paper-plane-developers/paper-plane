@@ -144,7 +144,7 @@ glib::wrapper! {
 
 impl Message {
     pub(crate) fn new(td_message: TdMessage, chat: &Chat) -> Self {
-        let message: Message = glib::Object::builder().build();
+        let message: Message = glib::Object::new();
         let imp = message.imp();
 
         let sender = MessageSender::from_td_object(&td_message.sender_id, &chat.session());

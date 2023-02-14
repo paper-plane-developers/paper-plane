@@ -58,7 +58,7 @@ glib::wrapper! {
 
 impl BasicGroup {
     pub(crate) fn from_td_object(td_basic_group: TdBasicGroup) -> Self {
-        let basic_group: BasicGroup = glib::Object::builder().build();
+        let basic_group: BasicGroup = glib::Object::new();
         let imp = basic_group.imp();
 
         let status = BoxedChatMemberStatus(td_basic_group.status);

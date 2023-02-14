@@ -86,7 +86,7 @@ glib::wrapper! {
 }
 
 impl SessionSwitcher {
-    pub(crate) fn set_sessions(&self, sessions: &SelectionModel, this_session: &Session) {
+    pub(crate) fn set_sessions(&self, sessions: SelectionModel, this_session: &Session) {
         let entries = self.imp().entries.get();
 
         // There is no permanent stuff to take care of,
@@ -147,7 +147,7 @@ impl SessionSwitcher {
                 .into()
         });
 
-        let sessions_sort_model = gtk::SortListModel::new(Some(sessions), Some(&session_sorter));
+        let sessions_sort_model = gtk::SortListModel::new(Some(sessions), Some(session_sorter));
 
         let end_items = ExtraItemObj::list_store();
 
@@ -155,8 +155,8 @@ impl SessionSwitcher {
         items_split.append(&sessions_sort_model);
         items_split.append(&end_items);
 
-        let items = gtk::FlattenListModel::new(Some(&items_split));
-        let selectable_items = &gtk::NoSelection::new(Some(&items));
+        let items = gtk::FlattenListModel::new(Some(items_split));
+        let selectable_items = &gtk::NoSelection::new(Some(items));
 
         entries.set_model(Some(selectable_items));
     }

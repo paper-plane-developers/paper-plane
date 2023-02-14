@@ -166,15 +166,15 @@ impl Application {
             .developer_name(&gettext("Telegrand developers"))
             .copyright("© 2021–2022 Marco Melorio")
             .license_type(gtk::License::Gpl30)
-            .developers(vec![
-                "Marco Melorio https://github.com/melix99".into(),
-                "Marcus Behrendt https://github.com/marhkb".into(),
-                "Carlod https://github.com/just-carlod".into(),
+            .developers([
+                "Marco Melorio https://github.com/melix99",
+                "Marcus Behrendt https://github.com/marhkb",
+                "Carlod https://github.com/just-carlod",
             ])
-            .designers(vec!["Marco Melorio https://github.com/melix99".into()])
-            .artists(vec![
-                "Mateus Santos https://github.com/swyknox".into(),
-                "noëlle https://github.com/jannuary".into(),
+            .designers(["Marco Melorio https://github.com/melix99"])
+            .artists([
+                "Mateus Santos https://github.com/swyknox",
+                "noëlle https://github.com/jannuary",
             ])
             .build();
 

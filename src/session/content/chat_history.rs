@@ -188,7 +188,7 @@ impl Default for ChatHistory {
 
 impl ChatHistory {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn setup_expressions(&self) {
@@ -231,7 +231,7 @@ impl ChatHistory {
             dialog.set_default_response(Some("no"));
             dialog.set_close_response("no");
             dialog.set_response_appearance("yes", adw::ResponseAppearance::Destructive);
-            let response = dialog.run_future().await;
+            let response = dialog.choose_future().await;
             if response == "yes" {
                 let result = functions::leave_chat(chat.id(), chat.session().client_id()).await;
                 if let Err(e) = result {
@@ -241,7 +241,6 @@ impl ChatHistory {
                     chat.session().imp().sidebar.get().set_selected_chat(None);
                 }
             }
-            dialog.close();
         }
     }
 
@@ -321,7 +320,7 @@ impl ChatHistory {
 
                 list.append(chat.history());
 
-                gtk::FlattenListModel::new(Some(&list)).upcast()
+                gtk::FlattenListModel::new(Some(list)).upcast()
             } else {
                 chat.history().to_owned().upcast()
             };
@@ -342,7 +341,7 @@ impl ChatHistory {
                 }
             }));
 
-            let selection = gtk::NoSelection::new(Some(&list_model));
+            let selection = gtk::NoSelection::new(Some(list_model));
             imp.list_view.set_model(Some(&selection));
         }
 

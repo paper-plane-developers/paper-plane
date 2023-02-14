@@ -109,7 +109,7 @@ impl Default for MiniThumbnail {
 
 impl MiniThumbnail {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn paintable(&self) -> Option<gdk::Paintable> {

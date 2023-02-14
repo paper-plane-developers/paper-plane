@@ -205,7 +205,7 @@ impl PreferencesWindow {
                 let size = glib::format_size(data.size as u64);
                 self.imp().cache_size_label.set_label(&size);
 
-                self.add_toast(&adw::Toast::new(&gettext("Cache cleared")));
+                self.add_toast(adw::Toast::new(&gettext("Cache cleared")));
             }
             Err(e) => {
                 log::warn!("Error optimizing the storage: {e:?}");

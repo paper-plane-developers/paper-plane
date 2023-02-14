@@ -76,7 +76,7 @@ glib::wrapper! {
 
 impl ChatList {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn fetch(&self, client_id: i32) {

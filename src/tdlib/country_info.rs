@@ -95,7 +95,7 @@ impl From<types::CountryInfo> for CountryInfo {
 
 impl CountryInfo {
     fn new(calling_codes: BTreeSet<String>, country_code: String, name: String) -> Self {
-        let country_info: CountryInfo = glib::Object::builder().build();
+        let country_info: CountryInfo = glib::Object::new();
         let imp = country_info.imp();
 
         let calling_codes = CallingCodes(calling_codes);

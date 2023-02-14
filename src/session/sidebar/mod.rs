@@ -180,7 +180,7 @@ impl Default for Sidebar {
 
 impl Sidebar {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn row_menu(&self) -> &gtk::PopoverMenu {
@@ -276,7 +276,7 @@ impl Sidebar {
         self.imp().session.borrow().to_owned()
     }
 
-    pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel, this_session: &Session) {
+    pub(crate) fn set_sessions(&self, sessions: gtk::SelectionModel, this_session: &Session) {
         self.imp()
             .session_switcher
             .set_sessions(sessions, this_session);

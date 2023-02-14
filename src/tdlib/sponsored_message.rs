@@ -69,7 +69,7 @@ impl SponsoredMessage {
 
         // TODO: Support multiple sponsored messages
         if let Some(td_sponsored_message) = td_sponsored_messages.messages.first() {
-            let sponsored_message: SponsoredMessage = glib::Object::builder().build();
+            let sponsored_message: SponsoredMessage = glib::Object::new();
             let imp = sponsored_message.imp();
 
             let content = BoxedMessageContent(td_sponsored_message.clone().content);

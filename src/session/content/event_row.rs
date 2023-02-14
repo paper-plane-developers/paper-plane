@@ -72,7 +72,7 @@ impl Default for EventRow {
 
 impl EventRow {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn label(&self) -> String {

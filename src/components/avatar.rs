@@ -103,7 +103,7 @@ impl Default for Avatar {
 
 impl Avatar {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn setup_expressions(&self) {
