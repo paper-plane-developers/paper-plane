@@ -6,9 +6,9 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::{EventRow, MessageRow};
+use crate::session::content::{ChatHistoryItem, ChatHistoryItemType, EventRow, MessageRow};
 use crate::strings;
-use crate::tdlib::{ChatHistoryItem, ChatHistoryItemType, SponsoredMessage};
+use crate::tdlib::SponsoredMessage;
 
 mod imp {
     use super::*;

@@ -1,5 +1,7 @@
 mod chat_action_bar;
 mod chat_history;
+mod chat_history_item;
+mod chat_history_model;
 mod chat_info_window;
 mod event_row;
 mod item_row;
@@ -8,6 +10,8 @@ mod send_photo_dialog;
 
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
+use self::chat_history_item::{ChatHistoryItem, ChatHistoryItemType};
+use self::chat_history_model::{ChatHistoryError, ChatHistoryModel};
 use self::chat_info_window::ChatInfoWindow;
 use self::event_row::EventRow;
 use self::item_row::ItemRow;

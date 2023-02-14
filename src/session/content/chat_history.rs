@@ -6,10 +6,10 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
-use crate::session::content::{ChatActionBar, ChatInfoWindow, ItemRow};
-use crate::tdlib::{
-    Chat, ChatHistory as ChatHistoryModel, ChatHistoryError, ChatType, SponsoredMessage,
+use crate::session::content::{
+    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatInfoWindow, ItemRow,
 };
+use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
 

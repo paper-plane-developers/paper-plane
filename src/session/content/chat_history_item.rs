@@ -6,7 +6,7 @@ use gtk::subclass::prelude::*;
 use crate::tdlib::Message;
 
 #[derive(Clone, Debug, glib::Boxed)]
-#[boxed_type(name = "ChatHistoryItemType")]
+#[boxed_type(name = "ContentChatHistoryItemType")]
 pub(crate) enum ChatHistoryItemType {
     Message(Message),
     DayDivider(DateTime),
@@ -23,7 +23,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for ChatHistoryItem {
-        const NAME: &'static str = "ChatHistoryItem";
+        const NAME: &'static str = "ContentChatHistoryItem";
         type Type = super::ChatHistoryItem;
     }
 

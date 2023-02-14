@@ -5,7 +5,8 @@ use gtk::{gio, glib};
 use std::cmp::Ordering;
 use thiserror::Error;
 
-use crate::tdlib::{Chat, ChatHistoryItem, ChatHistoryItemType, Message};
+use crate::session::content::{ChatHistoryItem, ChatHistoryItemType};
+use crate::tdlib::{Chat, Message};
 
 #[derive(Error, Debug)]
 pub(crate) enum ChatHistoryError {
@@ -23,20 +24,20 @@ mod imp {
     use std::collections::VecDeque;
 
     #[derive(Debug, Default)]
-    pub(crate) struct ChatHistory {
+    pub(crate) struct ChatHistoryModel {
         pub(super) chat: WeakRef<Chat>,
         pub(super) is_loading: Cell<bool>,
         pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatHistory {
-        const NAME: &'static str = "ChatHistory";
-        type Type = super::ChatHistory;
+    impl ObjectSubclass for ChatHistoryModel {
+        const NAME: &'static str = "ContentChatHistoryModel";
+        type Type = super::ChatHistoryModel;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for ChatHistory {
+    impl ObjectImpl for ChatHistoryModel {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<Chat>("chat")
@@ -56,7 +57,7 @@ mod imp {
         }
     }
 
-    impl ListModelImpl for ChatHistory {
+    impl ListModelImpl for ChatHistoryModel {
         fn item_type(&self) -> glib::Type {
             ChatHistoryItem::static_type()
         }
@@ -76,13 +77,13 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct ChatHistory(ObjectSubclass<imp::ChatHistory>)
+    pub(crate) struct ChatHistoryModel(ObjectSubclass<imp::ChatHistoryModel>)
         @implements gio::ListModel;
 }
 
-impl ChatHistory {
+impl ChatHistoryModel {
     pub(crate) fn new(chat: &Chat) -> Self {
-        let obj: ChatHistory = glib::Object::new();
+        let obj: ChatHistoryModel = glib::Object::new();
 
         obj.imp().chat.set(Some(chat));
 
