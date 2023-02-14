@@ -35,7 +35,7 @@ use temp_dir::TempDir;
 pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
 pub(crate) static TEMP_DIR: OnceCell<PathBuf> = OnceCell::new();
 
-fn main() {
+fn main() -> glib::ExitCode {
     // Prepare i18n
     gettextrs::setlocale(LocaleCategory::LcAll, "");
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
@@ -90,7 +90,7 @@ fn main() {
         }
     }
 
-    app.run();
+    app.run()
 }
 
 /// Global options for the application

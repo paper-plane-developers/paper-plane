@@ -10,10 +10,10 @@ gnome = import('gnome')
 
 base_id = 'com.github.melix99.telegrand'
 
-dependency('glib-2.0', version: '>= 2.66')
-dependency('gio-2.0', version: '>= 2.66')
-dependency('gtk4', version: '>= 4.8.0')
-dependency('libadwaita-1', version: '>= 1.2')
+dependency('glib-2.0', version: '>= 2.72')
+dependency('gio-2.0', version: '>= 2.72')
+dependency('gtk4', version: '>= 4.9.4')
+dependency('libadwaita-1', version: '>= 1.3')
 dependency('tdjson', version: '== 1.8.10')
 
 glib_compile_resources = find_program('glib-compile-resources', required: true)

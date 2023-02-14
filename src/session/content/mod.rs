@@ -113,7 +113,7 @@ impl Default for Content {
 
 impl Content {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn handle_paste_action(&self) {

@@ -90,7 +90,7 @@ impl Default for AvatarWithSelection {
 
 impl AvatarWithSelection {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn set_selected(&self, selected: bool) {

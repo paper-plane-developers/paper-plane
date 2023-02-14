@@ -50,7 +50,7 @@ mod imp {
                 obj.activate_action("app.new-login-production-server", None).unwrap();
             }));
 
-            obj.add_controller(&long_press_events);
+            obj.add_controller(long_press_events);
         }
 
         fn dispose(&self) {
@@ -70,7 +70,7 @@ glib::wrapper! {
 
 impl AddAccountRow {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 }
 

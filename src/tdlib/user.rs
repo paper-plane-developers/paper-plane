@@ -91,7 +91,7 @@ glib::wrapper! {
 
 impl User {
     pub(crate) fn from_td_object(td_user: TdUser, session: &Session) -> Self {
-        let user: User = glib::Object::builder().build();
+        let user: User = glib::Object::new();
         let imp = user.imp();
 
         let type_ = BoxedUserType(td_user.r#type);

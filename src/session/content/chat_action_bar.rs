@@ -248,7 +248,7 @@ impl Default for ChatActionBar {
 
 impl ChatActionBar {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn cancel_action(&self) {

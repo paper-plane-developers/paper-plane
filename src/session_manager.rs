@@ -681,7 +681,7 @@ impl SessionManager {
         session.fetch_chats();
 
         imp.sessions.add_child(session);
-        session.set_sessions(&imp.sessions.pages());
+        session.set_sessions(imp.sessions.pages());
 
         imp.clients.borrow_mut().insert(
             client_id,

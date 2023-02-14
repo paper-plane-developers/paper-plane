@@ -60,7 +60,7 @@ glib::wrapper! {
 
 impl ChatListItem {
     pub(crate) fn new(chat: &Chat, position: &TdChatPosition) -> ChatListItem {
-        let obj: ChatListItem = glib::Object::builder().build();
+        let obj: ChatListItem = glib::Object::new();
         let imp = obj.imp();
 
         imp.chat.set(Some(chat));

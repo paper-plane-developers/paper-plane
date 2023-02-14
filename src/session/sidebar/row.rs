@@ -175,7 +175,7 @@ impl Default for Row {
 
 impl Row {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn toggle_chat_is_pinned(&self) {

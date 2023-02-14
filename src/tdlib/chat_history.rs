@@ -86,7 +86,7 @@ glib::wrapper! {
 
 impl ChatHistory {
     pub(crate) fn new(chat: &Chat) -> Self {
-        let chat_history: ChatHistory = glib::Object::builder().build();
+        let chat_history: ChatHistory = glib::Object::new();
         chat_history.imp().chat.set(Some(chat));
         chat_history
     }

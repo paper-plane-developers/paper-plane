@@ -114,7 +114,7 @@ mod imp {
                 snapshot.push_gl_shader(
                     compiled_mask_shader,
                     &child_node.bounds(),
-                    &gsk::ShaderArgsBuilder::new(compiled_mask_shader, None).to_args(),
+                    gsk::ShaderArgsBuilder::new(compiled_mask_shader, None).to_args(),
                 );
             }
 
@@ -148,7 +148,7 @@ impl Default for Avatar {
 
 impl Avatar {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     fn setup_is_online_binding(&self, user: &User) {

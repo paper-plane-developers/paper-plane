@@ -57,7 +57,7 @@ mod imp {
                     glib::ParamSpecObject::builder::<User>("user")
                         .read_only()
                         .build(),
-                    glib::ParamSpecEnum::builder("state", SecretChatState::default())
+                    glib::ParamSpecEnum::builder::<SecretChatState>("state")
                         .read_only()
                         .build(),
                 ]
@@ -84,7 +84,7 @@ glib::wrapper! {
 
 impl SecretChat {
     pub(crate) fn from_td_object(td_secret_chat: TdSecretChat, user: User) -> Self {
-        let secret_chat: SecretChat = glib::Object::builder().build();
+        let secret_chat: SecretChat = glib::Object::new();
         let imp = secret_chat.imp();
 
         let state = SecretChatState::from_td_object(&td_secret_chat.state);

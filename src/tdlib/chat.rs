@@ -171,7 +171,7 @@ glib::wrapper! {
 
 impl Chat {
     pub(crate) fn new(td_chat: TelegramChat, session: &Session) -> Self {
-        let chat: Chat = glib::Object::builder().build();
+        let chat: Chat = glib::Object::new();
         let imp = chat.imp();
 
         let type_ = ChatType::from_td_object(&td_chat.r#type, session);

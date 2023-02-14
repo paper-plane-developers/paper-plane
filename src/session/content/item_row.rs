@@ -74,7 +74,7 @@ impl Default for ItemRow {
 
 impl ItemRow {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn item(&self) -> Option<glib::Object> {

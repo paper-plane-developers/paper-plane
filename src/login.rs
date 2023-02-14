@@ -1,8 +1,8 @@
 use adw::prelude::*;
 use gettextrs::gettext;
-use gtk::gdk;
 use gtk::glib::{self, clone};
 use gtk::subclass::prelude::*;
+use gtk::{gdk, gio};
 use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
 use tdlib::{functions, types};
 
@@ -201,7 +201,7 @@ impl Default for Login {
 
 impl Login {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn set_session_manager(&self, session_manager: SessionManager) {
@@ -668,7 +668,7 @@ impl Login {
     fn show_tos_dialog(&self, user_needs_to_accept: bool) {
         let dialog = adw::MessageDialog::builder()
             .body_use_markup(true)
-            .body(&self.imp().tos_text.borrow())
+            .body(&*self.imp().tos_text.borrow())
             .transient_for(self.root().unwrap().downcast_ref::<gtk::Window>().unwrap())
             .build();
 
@@ -682,9 +682,9 @@ impl Login {
             dialog.set_default_response(Some("ok"));
         }
 
-        dialog.run_async(
-            None,
-            clone!(@weak self as obj => move |_, response| {
+        dialog.choose(
+            gio::Cancellable::NONE,
+            clone!(@weak self as obj => move |response| {
                 if response == "no" {
                     // If the user declines the ToS, don't proceed and just stay in
                     // the view but unfreeze it again.
@@ -914,9 +914,9 @@ impl Login {
         dialog.set_default_response(Some("cancel"));
         dialog.set_response_appearance("delete", adw::ResponseAppearance::Destructive);
 
-        dialog.run_async(
-            None,
-            clone!(@weak self as obj => move |_, response| {
+        dialog.choose(
+            gio::Cancellable::NONE,
+            clone!(@weak self as obj => move |response| {
                 if response == "delete" {
                     obj.freeze();
                     let client_id = obj.imp().client_id.get();
@@ -991,9 +991,9 @@ impl Login {
         dialog.add_responses(&[("ok", &gettext("_OK"))]);
         dialog.set_default_response(Some("ok"));
 
-        dialog.run_async(
-            None,
-            clone!(@weak self as obj => move |_, _| {
+        dialog.choose(
+            gio::Cancellable::NONE,
+            clone!(@weak self as obj => move |_| {
                 obj.imp()
                     .password_recovery_code_entry_row
                     .grab_focus();

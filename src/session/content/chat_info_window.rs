@@ -281,7 +281,7 @@ impl ChatInfoWindow {
             action_row.clipboard().set_text(&action_row.title());
 
             let toast = adw::Toast::new(&gettext("Copied to clipboard"));
-            obj.imp().toast_overlay.add_toast(&toast);
+            obj.imp().toast_overlay.add_toast(toast);
         }));
     }
 

@@ -574,7 +574,7 @@ impl Session {
         self.main_chat_list().fetch(client_id);
     }
 
-    pub(crate) fn set_sessions(&self, sessions: &gtk::SelectionModel) {
+    pub(crate) fn set_sessions(&self, sessions: gtk::SelectionModel) {
         self.imp().sidebar.set_sessions(sessions, self);
     }
 }

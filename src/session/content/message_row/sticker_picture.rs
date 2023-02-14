@@ -101,7 +101,7 @@ impl Default for StickerPicture {
 
 impl StickerPicture {
     pub(crate) fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 
     pub(crate) fn aspect_ratio(&self) -> f64 {

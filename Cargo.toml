@@ -5,12 +5,12 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
 edition = "2021"
 
 [dependencies]
-adw = { version = "0.2", package = "libadwaita", features = ["v1_2"] }
+adw = { version = "0.3", package = "libadwaita", features = ["v1_3"] }
 anyhow = "1.0"
 ellipse = "0.2"
 futures = { version = "0.3", default-features = false }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.5", package = "gtk4", features = ["v4_8", "xml_validation"] }
+gtk = { version = "0.6", package = "gtk4", features = ["v4_8", "xml_validation"] }
 image = { version = "0.24", default-features = false, features = ["webp"] }
 indexmap = "1.9"
 locale_config = "0.3"

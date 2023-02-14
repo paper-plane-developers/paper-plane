@@ -49,7 +49,7 @@ glib::wrapper! {
 
 impl CountryList {
     pub(crate) fn from_td_object(mut countries: types::Countries, use_test_dc: bool) -> Self {
-        let obj: Self = glib::Object::builder().build();
+        let obj: Self = glib::Object::new();
 
         // This has to be sorted here directly, as it seems the AdwComboBoxRow (where the Country-
         // List is used) can't be controlled through an `SingleSelection` and `SortListModel`.

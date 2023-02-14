@@ -40,20 +40,38 @@
             "name": "gtk",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dbuild-tests=false",
+                "-Dintrospection=disabled",
                 "-Ddemos=false",
+                "-Dbuild-testsuite=false",
                 "-Dbuild-examples=false",
-                "-Dintrospection=disabled"
+                "-Dbuild-tests=false"
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.8.3"
+                    "type": "archive",
+                    "url": "https://gitlab.gnome.org/GNOME/gtk/-/archive/4.9.4/gtk-4.9.4.tar.gz",
+                    "sha256": "2d0790f8c8f80daa9a6e79ae2672365703f6097752453f023adc26913df7cfce"
                 },
                 {
                     "type": "patch",
                     "path": "gtk-reversed-list.patch"
+                }
+            ]
+        },
+        {
+            "name": "libadwaita",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dintrospection=disabled",
+                "-Dvapi=false",
+                "-Dtests=false",
+                "-Dexamples=false"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita/-/archive/1.3.beta/libadwaita-1.3.beta.tar.gz",
+                    "sha256": "a77379fee96377f4264d8350793bfbd55343574d16d5d1fc1de4016dba53f755"
                 }
             ]
         },
