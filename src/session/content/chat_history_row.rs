@@ -6,9 +6,9 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::{EventRow, MessageRow};
+use crate::session::content::{ChatHistoryItem, ChatHistoryItemType, EventRow, MessageRow};
 use crate::strings;
-use crate::tdlib::{ChatHistoryItem, ChatHistoryItemType, SponsoredMessage};
+use crate::tdlib::SponsoredMessage;
 
 mod imp {
     use super::*;
@@ -16,19 +16,19 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub(crate) struct ItemRow {
+    pub(crate) struct ChatHistoryRow {
         /// An `ChatHistoryItem` or `SponsoredMessage`
         pub(super) item: RefCell<Option<glib::Object>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ItemRow {
-        const NAME: &'static str = "ContentItemRow";
-        type Type = super::ItemRow;
+    impl ObjectSubclass for ChatHistoryRow {
+        const NAME: &'static str = "ContentChatHistoryRow";
+        type Type = super::ChatHistoryRow;
         type ParentType = adw::Bin;
     }
 
-    impl ObjectImpl for ItemRow {
+    impl ObjectImpl for ChatHistoryRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<glib::Object>("item")
@@ -57,22 +57,22 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ItemRow {}
-    impl BinImpl for ItemRow {}
+    impl WidgetImpl for ChatHistoryRow {}
+    impl BinImpl for ChatHistoryRow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct ItemRow(ObjectSubclass<imp::ItemRow>)
+    pub(crate) struct ChatHistoryRow(ObjectSubclass<imp::ChatHistoryRow>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for ItemRow {
+impl Default for ChatHistoryRow {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl ItemRow {
+impl ChatHistoryRow {
     pub(crate) fn new() -> Self {
         glib::Object::new()
     }

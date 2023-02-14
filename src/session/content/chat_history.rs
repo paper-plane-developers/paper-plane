@@ -6,8 +6,10 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
-use crate::session::content::{ChatActionBar, ChatInfoWindow, ItemRow};
-use crate::tdlib::{Chat, ChatHistoryError, ChatType, SponsoredMessage};
+use crate::session::content::{
+    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
+};
+use crate::tdlib::{Chat, ChatType, SponsoredMessage};
 use crate::utils::spawn;
 use crate::{expressions, Session};
 
@@ -25,6 +27,7 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
+        pub(super) model: RefCell<Option<ChatHistoryModel>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) sticky: Cell<bool>,
@@ -45,7 +48,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            ItemRow::static_type();
+            ChatHistoryRow::static_type();
             klass.bind_template();
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
@@ -204,9 +207,9 @@ impl ChatHistory {
 
     fn load_older_messages(&self, adj: &gtk::Adjustment) {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
-            if let Some(chat) = self.chat() {
-                spawn(clone!(@weak chat => async move {
-                    if let Err(ChatHistoryError::Tdlib(e)) = chat.history().load_older_messages(20).await {
+            if let Some(model) = self.imp().model.borrow().as_ref() {
+                spawn(clone!(@weak model => async move {
+                    if let Err(ChatHistoryError::Tdlib(e)) = model.load_older_messages(20).await {
                         log::warn!("Couldn't load more chat messages: {:?}", e);
                     }
                 }));
@@ -307,8 +310,10 @@ impl ChatHistory {
                 },
             );
 
+            let model = ChatHistoryModel::new(chat);
+
             // Request sponsored message, if needed
-            let list_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
+            let list_view_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
                 let list = gio::ListStore::new(gio::ListModel::static_type());
 
@@ -318,18 +323,17 @@ impl ChatHistory {
                 list.append(&sponsored_message_list);
                 self.request_sponsored_message(&chat.session(), chat.id(), &sponsored_message_list);
 
-                list.append(chat.history());
+                list.append(&model);
 
                 gtk::FlattenListModel::new(Some(list)).upcast()
             } else {
-                chat.history().to_owned().upcast()
+                model.clone().upcast()
             };
 
-            let chat_history = chat.history();
-            spawn(clone!(@weak chat_history => async move {
-                while chat_history.n_items() < MIN_N_ITEMS {
-                    let limit = MIN_N_ITEMS - chat_history.n_items();
-                    match chat_history.load_older_messages(limit as i32).await {
+            spawn(clone!(@weak model => async move {
+                while model.n_items() < MIN_N_ITEMS {
+                    let limit = MIN_N_ITEMS - model.n_items();
+                    match model.load_older_messages(limit as i32).await {
                         Ok(can_load_more) => if !can_load_more {
                             break;
                         }
@@ -341,8 +345,10 @@ impl ChatHistory {
                 }
             }));
 
-            let selection = gtk::NoSelection::new(Some(list_model));
+            let selection = gtk::NoSelection::new(Some(list_view_model));
             imp.list_view.set_model(Some(&selection));
+
+            imp.model.replace(Some(model));
         }
 
         imp.chat.replace(chat);
