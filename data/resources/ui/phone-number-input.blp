@@ -1,0 +1,22 @@
+using Gtk 4.0;
+using Adw 1;
+
+template PhoneNumberInput {
+  layout-manager: BinLayout {};
+
+  ListBox list_box {
+    styles ["boxed-list"]
+
+    Adw.ComboRow combo_row {
+      selectable: false;
+      title: _("Country");
+    }
+
+    Adw.EntryRow entry_row {
+      styles ["numeric"]
+
+      title: _("Phone Number");
+      input-purpose: phone;
+    }
+  }
+}

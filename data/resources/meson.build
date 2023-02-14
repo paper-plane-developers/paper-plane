@@ -1,3 +1,36 @@
+blueprints = custom_target('blueprints',
+  input: files(
+    'ui/add-account-row.blp',
+    'ui/avatar-with-selection.blp',
+    'ui/content-chat-action-bar.blp',
+    'ui/components-avatar.blp',
+    'ui/content-event-row.blp',
+    'ui/content-chat-info-window.blp',
+    'ui/content-send-photo-dialog.blp',
+    'ui/content.blp',
+    'ui/login.blp',
+    'ui/session-entry-row.blp',
+    'ui/phone-number-input.blp',
+    'ui/session-manager.blp',
+    'ui/session.blp',
+    'ui/shortcuts.blp',
+    'ui/sidebar-row-menu.blp',
+    'ui/sidebar-session-switcher.blp',
+    'ui/window.blp',
+    'ui/content-message-sticker.blp',
+    'ui/content-message-text.blp',
+    'ui/content-message-document.blp',
+    'ui/components-message-entry.blp',
+    'ui/content-message-photo.blp',
+    'ui/sidebar-avatar.blp',
+    'ui/sidebar-row.blp',
+    'ui/message-menu.blp',
+    'ui/preferences-window.blp',
+  ),
+  output: '.',
+  command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+)
+
 # Resources
 resources = gnome.compile_resources(
   'resources',
@@ -6,4 +39,5 @@ resources = gnome.compile_resources(
   source_dir: meson.current_build_dir(),
   install: true,
   install_dir: pkgdatadir,
+  dependencies: blueprints,
 )

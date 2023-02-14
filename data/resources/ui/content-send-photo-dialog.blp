@@ -1,0 +1,43 @@
+using Gtk 4.0;
+using Adw 1;
+
+template ContentSendPhotoDialog : Window {
+  default-width: 500;
+  default-height: 500;
+  modal: true;
+
+  [titlebar]
+  HeaderBar header_bar {
+    styles ["flat"]
+  }
+
+  Box {
+    orientation: vertical;
+
+    Picture picture {
+      vexpand: true;
+    }
+
+    Separator {}
+
+    Adw.Clamp {
+      child: Box {
+        styles ["toolbar"]
+
+        .MessageEntry caption_entry {
+          hexpand: "True";
+          placeholder-text: _("Caption");
+          chat: bind ContentSendPhotoDialog.chat;
+        }
+
+        Button {
+          styles ["circular", "suggested-action"]
+
+          action-name: "send-photo-dialog.send-message";
+          icon-name: "go-up-symbolic";
+          valign: end;
+        }
+      };
+    }
+  }
+}

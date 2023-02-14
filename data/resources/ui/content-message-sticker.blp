@@ -1,0 +1,15 @@
+using Gtk 4.0;
+
+template MessageSticker : .MessageBase {
+  layout-manager: BinLayout {};
+
+  Overlay {
+    .MessageStickerPicture picture {}
+
+    [overlay]
+    .MessageIndicators indicators {
+      halign: end;
+      valign: end;
+    }
+  }
+}

@@ -21,33 +21,23 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageVideo" parent="MessageBase">
-        <child>
-          <object class="MessageBubble" id="message_bubble">
-            <style>
-              <class name="media"/>
-            </style>
-            <property name="prefix">
-              <object class="GtkOverlay">
-                <child>
-                  <object class="MessageMediaPicture" id="picture"/>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="indicator">
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <style>
-                      <class name="osd-indicator"/>
-                    </style>
-                  </object>
-                </child>
-              </object>
-            </property>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageVideo : .MessageBase {
+        .MessageBubble message_bubble {
+            styles ["media"]
+
+            prefix: Overlay {
+                .MessageMediaPicture picture {}
+
+                [overlay]
+                Label indicator {
+                    halign: start;
+                    valign: start;
+
+                    styles ["osd-indicator"]
+                }
+            };
+        }
+    }
     "#)]
     pub(crate) struct MessageVideo {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,

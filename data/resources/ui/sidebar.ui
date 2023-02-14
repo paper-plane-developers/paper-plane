@@ -38,7 +38,8 @@
               <object class="GtkOverlay">
                 <child>
                   <object class="AdwHeaderBar">
-                    <property name="show-end-title-buttons" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
+                    <property name="show-end-title-buttons" bind-source="Sidebar"
+                      bind-property="compact" bind-flags="sync-create"/>
                     <child type="start">
                       <object class="GtkMenuButton">
                         <property name="popover">
@@ -125,8 +126,10 @@
         </child>
         <child>
           <object class="SidebarSearch" id="search">
-            <property name="compact" bind-source="Sidebar" bind-property="compact" bind-flags="sync-create"/>
-            <property name="session" bind-source="Sidebar" bind-property="session" bind-flags="sync-create"/>
+            <property name="compact" bind-source="Sidebar" bind-property="compact"
+              bind-flags="sync-create"/>
+            <property name="session" bind-source="Sidebar" bind-property="session"
+              bind-flags="sync-create"/>
             <signal name="close" handler="close_search" swapped="true"/>
           </object>
         </child>

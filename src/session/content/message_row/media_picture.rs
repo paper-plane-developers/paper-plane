@@ -12,15 +12,11 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="MessageMediaPicture" parent="GtkWidget">
-        <child>
-          <object class="GtkPicture" id="picture">
-            <property name="content-fit">cover</property>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template MessageMediaPicture {
+        Picture picture {
+            content-fit: cover;
+        }
+    }
     "#)]
     pub(crate) struct MediaPicture {
         pub(super) aspect_ratio: Cell<f64>,

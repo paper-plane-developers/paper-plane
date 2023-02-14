@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="ComponentsAvatar" parent="AdwBin">
-    <property name="child">
-      <object class="AdwAvatar" id="avatar"/>
-    </property>
-  </template>
-</interface>

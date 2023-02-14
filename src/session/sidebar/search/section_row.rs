@@ -12,19 +12,14 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    <interface>
-      <template class="SidebarSearchSectionRow" parent="GtkWidget">
-        <child>
-          <object class="GtkInscription" id="label">
-            <property name="hexpand">True</property>
-            <property name="text-overflow">ellipsize-end</property>
-            <style>
-              <class name="heading"/>
-            </style>
-          </object>
-        </child>
-      </template>
-    </interface>
+    template SidebarSearchSectionRow {
+        Inscription label {
+            styles ["heading"]
+
+            hexpand: true;
+            text-overflow: ellipsize_end;
+        }
+    }
     "#)]
     pub(crate) struct SectionRow {
         pub(super) section_type: Cell<SectionType>,
