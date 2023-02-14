@@ -459,6 +459,8 @@ pub(crate) fn message_content(message: &Message) -> String {
         MessageExpiredVideo => gettext("Video has expired"),
         MessageVideoNote(_) => gettext("Video Message"),
         MessageVoiceNote(data) => message_voice_note(&data.caption.text),
+        MessageAnimatedEmoji(data) => data.emoji,
+        MessageDice(data) => data.emoji,
         MessageCall(data) => message_call(
             &data.discard_reason,
             data.is_video,
