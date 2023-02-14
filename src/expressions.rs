@@ -68,7 +68,7 @@ pub(crate) fn restriction_expression(chat: &Chat) -> gtk::Expression {
             restriction_label_expression::<Supergroup, _>(data)
         }
         ChatType::BasicGroup(data) => restriction_label_expression::<BasicGroup, _>(data),
-        _ => gtk::ConstantExpression::new(&"").upcast(),
+        _ => gtk::ConstantExpression::new("").upcast(),
     }
 }
 
