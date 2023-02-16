@@ -157,7 +157,8 @@ impl Selection {
                     position + added,
                 ));
             } else {
-                imp.item_position.set(item_position + (added - removed));
+                imp.item_position
+                    .set((item_position as i64 + (added as i64 - removed as i64)) as u32);
             }
         }
 
