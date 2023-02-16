@@ -10,7 +10,7 @@ mod send_photo_dialog;
 
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
-use self::chat_history_item::{ChatHistoryItem, ChatHistoryItemType};
+use self::chat_history_item::{ChatHistoryItem, ChatHistoryItemType, MessageStyle};
 use self::chat_history_model::{ChatHistoryError, ChatHistoryModel};
 use self::chat_history_row::ChatHistoryRow;
 use self::chat_info_window::ChatInfoWindow;

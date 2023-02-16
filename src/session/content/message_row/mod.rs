@@ -31,6 +31,7 @@ use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::components::Avatar;
+use crate::session::content::{ChatHistoryItem, ChatHistoryRow, MessageStyle};
 use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
 use crate::utils::spawn;
 
@@ -124,7 +125,27 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageRow {}
+    impl WidgetImpl for MessageRow {
+        fn map(&self) {
+            self.parent_map();
+            let obj = self.obj();
+            if let Some(style) = obj.message_style() {
+                use MessageStyle::*;
+                let avatar_is_visible = match style {
+                    Single | Last => true,
+                    First | Center => false,
+                };
+                if let Some(avatar) = self.avatar.borrow().as_ref() {
+                    avatar.set_visible(avatar_is_visible);
+                    if !avatar_is_visible {
+                        obj.set_margin_start(AVATAR_SIZE + 6);
+                    } else {
+                        obj.set_margin_start(0);
+                    }
+                }
+            }
+        }
+    }
 }
 
 glib::wrapper! {
@@ -200,6 +221,17 @@ impl MessageRow {
 
     pub(crate) fn message(&self) -> glib::Object {
         self.imp().message.borrow().clone().unwrap()
+    }
+
+    pub(crate) fn message_style(&self) -> Option<MessageStyle> {
+        let item = self
+            .parent()?
+            .downcast::<ChatHistoryRow>()
+            .ok()?
+            .item()?
+            .downcast::<ChatHistoryItem>()
+            .ok()?;
+        Some(item.style())
     }
 
     pub(crate) fn set_message(&self, message: glib::Object) {
