@@ -5,7 +5,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::MessageSendingState;
 
-use crate::tdlib::{Message, SponsoredMessage};
+use crate::tdlib::{Message, MessageInteractionInfo, SponsoredMessage};
 
 mod imp {
     use super::*;
@@ -15,6 +15,7 @@ mod imp {
     #[derive(Debug, Default)]
     pub(crate) struct MessageIndicatorsModel {
         pub(super) message: RefCell<Option<glib::Object>>,
+        pub(super) reply_count_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) is_edited_handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) sending_state_handler_id: RefCell<Option<glib::SignalHandlerId>>,
     }
@@ -31,6 +32,9 @@ mod imp {
                 vec![
                     glib::ParamSpecObject::builder::<glib::Object>("message")
                         .explicit_notify()
+                        .build(),
+                    glib::ParamSpecUInt::builder("reply-count")
+                        .read_only()
                         .build(),
                     glib::ParamSpecString::builder("message-info")
                         .read_only()
@@ -57,6 +61,7 @@ mod imp {
 
             match pspec.name() {
                 "message" => obj.message().to_value(),
+                "reply-count" => obj.reply_count().to_value(),
                 "message-info" => obj.message_info().to_value(),
                 "sending-state-icon-name" => obj.sending_state_icon_name().to_value(),
                 _ => unimplemented!(),
@@ -88,6 +93,14 @@ impl MessageIndicatorsModel {
         let imp = self.imp();
         let old = imp.message.replace(Some(message));
         if old != *imp.message.borrow() {
+            if let Some(handler_id) = imp.reply_count_handler_id.take() {
+                old.as_ref()
+                    .unwrap()
+                    .downcast_ref::<Message>()
+                    .unwrap()
+                    .disconnect(handler_id);
+            }
+
             if let Some(handler_id) = imp.is_edited_handler_id.take() {
                 old.as_ref()
                     .unwrap()
@@ -105,6 +118,12 @@ impl MessageIndicatorsModel {
             }
 
             if let Ok(message) = self.message().downcast::<Message>() {
+                let handler_id = message.interaction_info().connect_notify_local(
+                    Some("reply-count"),
+                    clone!(@weak self as obj => move |_, _| obj.notify("reply-count")),
+                );
+                imp.reply_count_handler_id.replace(Some(handler_id));
+
                 if !message.is_edited() {
                     let handler_id = message.connect_notify_local(
                         Some("is-edited"),
@@ -137,9 +156,21 @@ impl MessageIndicatorsModel {
             }
 
             self.notify("message");
+            self.notify("reply-count");
             self.notify("message-info");
             self.notify("sending-state-icon-name");
         }
+    }
+
+    pub(crate) fn reply_count(&self) -> u32 {
+        self.imp()
+            .message
+            .borrow()
+            .as_ref()
+            .and_then(|message| message.downcast_ref::<Message>())
+            .map(Message::interaction_info)
+            .map(MessageInteractionInfo::reply_count)
+            .unwrap_or(0)
     }
 
     pub(crate) fn message_info(&self) -> String {

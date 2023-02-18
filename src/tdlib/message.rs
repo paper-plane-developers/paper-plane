@@ -7,7 +7,7 @@ use tdlib::types::{Error as TdError, Message as TdMessage};
 
 use crate::tdlib::{
     BoxedMessageContent, BoxedMessageSendingState, Chat, MessageForwardInfo, MessageForwardOrigin,
-    User,
+    MessageInteractionInfo, User,
 };
 use crate::{expressions, Session};
 
@@ -65,6 +65,7 @@ mod imp {
         pub(super) date: Cell<i32>,
         pub(super) content: RefCell<Option<BoxedMessageContent>>,
         pub(super) is_edited: Cell<bool>,
+        pub(super) interaction_info: OnceCell<MessageInteractionInfo>,
         pub(super) chat: WeakRef<Chat>,
         pub(super) forward_info: OnceCell<Option<MessageForwardInfo>>,
     }
@@ -105,6 +106,9 @@ mod imp {
                     glib::ParamSpecBoolean::builder("is-edited")
                         .read_only()
                         .build(),
+                    glib::ParamSpecObject::builder::<MessageInteractionInfo>("interaction-info")
+                        .read_only()
+                        .build(),
                     glib::ParamSpecObject::builder::<Chat>("chat")
                         .read_only()
                         .build(),
@@ -130,6 +134,7 @@ mod imp {
                 "date" => obj.date().to_value(),
                 "content" => obj.content().to_value(),
                 "is-edited" => obj.is_edited().to_value(),
+                "interaction-info" => obj.interaction_info().to_value(),
                 "chat" => obj.chat().to_value(),
                 "forward-info" => obj.forward_info().to_value(),
                 _ => unimplemented!(),
@@ -167,6 +172,9 @@ impl Message {
         imp.date.set(td_message.date);
         imp.content.replace(Some(content));
         imp.is_edited.set(is_edited);
+        imp.interaction_info
+            .set(MessageInteractionInfo::from(td_message.interaction_info))
+            .unwrap();
         imp.chat.set(Some(chat));
         imp.forward_info.set(forward_info).unwrap();
 
@@ -180,6 +188,9 @@ impl Message {
                 self.set_content(new_content);
             }
             Update::MessageEdited(data) => self.set_is_edited(data.edit_date > 0),
+            Update::MessageInteractionInfo(data) => {
+                self.interaction_info().update(data.interaction_info)
+            }
             _ => {}
         }
     }
@@ -248,6 +259,10 @@ impl Message {
         }
         self.imp().is_edited.set(is_edited);
         self.notify("is-edited");
+    }
+
+    pub(crate) fn interaction_info(&self) -> &MessageInteractionInfo {
+        self.imp().interaction_info.get().unwrap()
     }
 
     pub(crate) fn connect_content_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(

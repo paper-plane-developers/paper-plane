@@ -232,6 +232,9 @@ impl Session {
             Update::ChatAction(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::MessageContent(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::MessageEdited(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::MessageInteractionInfo(ref data) => {
+                self.chat(data.chat_id).handle_update(update)
+            }
             Update::MessageMentionRead(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::MessageSendSucceeded(ref data) => {
                 self.chat(data.message.chat_id).handle_update(update)
