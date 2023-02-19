@@ -2,6 +2,10 @@
   background-color: @dark_2;
 }
 
+button.scroll-to-bottom {
+  box-shadow: 0 1px 3px 0 alpha(black, 0.6);
+}
+
 /* sticker must be repainted to a text color in messages */
 messagesticker.needs-repainting > overlay > widget > widget {
   filter: invert(1);
