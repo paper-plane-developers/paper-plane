@@ -43,7 +43,7 @@ mod imp {
         #[template_child]
         pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub(super) main_box: TemplateChild<gtk::Box>,
+        pub(super) main_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
         pub(super) session_switcher: TemplateChild<SessionSwitcher>,
         #[template_child]
@@ -86,7 +86,7 @@ mod imp {
 
         #[template_callback]
         fn close_search(&self) {
-            self.stack.set_visible_child(&*self.main_box);
+            self.stack.set_visible_child(&*self.main_view);
         }
     }
 

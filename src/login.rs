@@ -35,7 +35,7 @@ mod imp {
         pub(super) code_has_next_type: Cell<bool>,
         pub(super) code_next_type_countdown_id: RefCell<Option<SourceId>>,
         #[template_child]
-        pub(super) outer_box: TemplateChild<gtk::Box>,
+        pub(super) toolbar_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
         pub(super) previous_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -417,7 +417,7 @@ impl Login {
                 }));
 
                 // Make everything invisible.
-                imp.outer_box.set_visible(false);
+                imp.toolbar_view.set_visible(false);
             }
             _ => {}
         }
@@ -505,7 +505,7 @@ impl Login {
         imp.content.set_visible_child_name(page_name);
 
         // Make sure everything is visible.
-        imp.outer_box.set_visible(true);
+        imp.toolbar_view.set_visible(true);
 
         self.unfreeze();
         if let Some(widget_to_focus) = widget_to_focus {

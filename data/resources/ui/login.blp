@@ -8,10 +8,10 @@ SizeGroup {
 }
 
 template Login : Adw.Bin {
-  Box outer_box {
-    orientation: vertical;
+  Adw.ToolbarView toolbar_view {
     visible: false;
 
+    [top]
     HeaderBar {
       [start]
       Button previous_button {
@@ -57,7 +57,7 @@ template Login : Adw.Bin {
       }
     }
 
-    Adw.Leaflet content {
+    content: Adw.Leaflet content {
       can-unfold: false;
       vexpand: true;
 
@@ -495,6 +495,6 @@ template Login : Adw.Bin {
           }
         };
       }
-    }
+    };
   }
 }

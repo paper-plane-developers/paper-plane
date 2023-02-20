@@ -2,9 +2,8 @@
 <interface>
   <template class="SidebarSearch" parent="GtkWidget">
     <child>
-      <object class="GtkBox" id="content">
-        <property name="orientation">vertical</property>
-        <child>
+      <object class="AdwToolbarView" id="toolbar_view">
+        <child type="top">
           <object class="AdwHeaderBar">
             <property name="show-end-title-buttons" bind-source="SidebarSearch" bind-property="compact" bind-flags="sync-create"/>
             <property name="title-widget">
@@ -21,7 +20,7 @@
             </child>
           </object>
         </child>
-        <child>
+        <property name="content">
           <object class="GtkStack" id="stack">
             <property name="vexpand">True</property>
             <child>
@@ -82,7 +81,7 @@
               </object>
             </child>
           </object>
-        </child>
+        </property>
       </object>
     </child>
   </template>

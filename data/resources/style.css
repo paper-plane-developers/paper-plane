@@ -60,10 +60,6 @@
   background-color: @accent_bg_color;
 }
 
-.chat-list {
-  background: @window_bg_color;
-}
-
 .online-indicator-mask {
   border-radius: 9999px;
   background-color: @window_bg_color;
@@ -120,6 +116,7 @@ sidebarsearchitemrow {
 }
 
 listview.chat-history {
+  background: transparent;
   padding: 3px 0;
 }
 

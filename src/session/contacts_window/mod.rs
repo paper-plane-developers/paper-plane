@@ -28,12 +28,11 @@ mod imp {
         <property name="default-width">360</property>
         <property name="default-height">600</property>
         <property name="content">
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
-            <child>
+          <object class="AdwToolbarView">
+            <child type="top">
               <object class="GtkHeaderBar"/>
             </child>
-            <child>
+            <property name="content">
               <object class="GtkScrolledWindow">
                 <property name="vexpand">true</property>
                 <property name="hscrollbar-policy">never</property>
@@ -83,7 +82,7 @@ mod imp {
                   </object>
                 </property>
               </object>
-            </child>
+            </property>
           </object>
         </property>
       </template>

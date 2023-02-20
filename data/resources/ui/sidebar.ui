@@ -38,9 +38,8 @@
         <property name="transition-duration">100</property>
         <property name="transition-type">crossfade</property>
         <child>
-          <object class="GtkBox" id="main_box">
-            <property name="orientation">vertical</property>
-            <child>
+          <object class="AdwToolbarView" id="main_view">
+            <child type="top">
               <object class="GtkOverlay">
                 <child>
                   <object class="AdwHeaderBar">
@@ -87,7 +86,7 @@
                 </child>
               </object>
             </child>
-            <child>
+            <property name="content">
               <object class="GtkScrolledWindow">
                 <property name="vexpand">True</property>
                 <property name="hscrollbar-policy">never</property>
@@ -127,7 +126,7 @@
                   </object>
                 </child>
               </object>
-            </child>
+            </property>
           </object>
         </child>
         <child>
