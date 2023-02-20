@@ -863,8 +863,7 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 [[package]]
 name = "libadwaita"
 version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1c4efd2020a4fcedbad2c4a97de97bf6045e5dc49d61d5a5d0cfd753db60700"
+source = "git+https://gitlab.gnome.org/World/Rust/libadwaita-rs?branch=v0.3-adaptive-states-and-more#e6ec4f54f96362877175866ea864c8a5ecf31b5f"
 dependencies = [
  "bitflags",
  "futures-channel",
@@ -882,8 +881,7 @@ dependencies = [
 [[package]]
 name = "libadwaita-sys"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0727b85b4fe2b1bed5ac90df6343de15cbf8118bfb96d7c3cc1512681a4b34ac"
+source = "git+https://gitlab.gnome.org/World/Rust/libadwaita-rs?branch=v0.3-adaptive-states-and-more#e6ec4f54f96362877175866ea864c8a5ecf31b5f"
 dependencies = [
  "gdk4-sys",
  "gio-sys",

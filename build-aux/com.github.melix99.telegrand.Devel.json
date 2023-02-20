@@ -85,19 +85,58 @@
             ]
         },
         {
+            "name": "appstream",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dstemming=false",
+                "-Dapidocs=false"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ximion/appstream.git"
+                }
+            ],
+            "modules": [
+                {
+                    "name": "libyaml",
+                    "buildsystem": "autotools",
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/yaml/libyaml.git"
+                        }
+                    ]
+                },
+                {
+                    "name": "libxmlb",
+                    "buildsystem": "meson",
+                    "config-opts": [
+                        "-Dgtkdoc=false"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/hughsie/libxmlb.git",
+                            "branch": "main"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "libadwaita",
             "buildsystem": "meson",
             "config-opts": [
-                "-Dintrospection=disabled",
                 "-Dvapi=false",
                 "-Dtests=false",
                 "-Dexamples=false"
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita/-/archive/1.3.rc/libadwaita-1.3.rc.tar.gz",
-                    "sha256": "e4641fe7e79969e0afa6fd6b683d26dea4ce4304df4ad1f1cc50983f2e56618e"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+                    "commit": "8923e2806eebc72cc98ca4c15c9c1ace9a541acd"
                 }
             ]
         },
