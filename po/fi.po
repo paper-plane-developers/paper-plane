@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-05 17:24+0100\n"
+"POT-Creation-Date: 2023-02-21 21:49+0100\n"
 "PO-Revision-Date: 2022-02-01 22:52+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/telegrand/"
@@ -63,7 +63,7 @@ msgstr ""
 "tietokantahakemiston nimen mukaan"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
-#: data/resources/ui/preferences-window.ui:8
+#: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr "Väriteema"
 
@@ -79,30 +79,38 @@ msgstr "Pääikkuna"
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
-#: data/resources/ui/add-account-row.ui:6
+#: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
 msgstr "_Tuotantopalvelin"
 
-#: data/resources/ui/add-account-row.ui:10
+#: data/resources/ui/add-account-row.blp:11
 msgid "_Test Server"
 msgstr "_Testipalvelin"
 
-#: data/resources/ui/add-account-row.ui:33
+#: data/resources/ui/add-account-row.blp:33
 msgid "_Add Account"
 msgstr "_Lisää tili"
 
-#: data/resources/ui/content.ui:32
+#: data/resources/ui/content.blp:29
 msgid "No Chat Selected"
 msgstr "Ei keskustelua valittu"
 
-#: data/resources/ui/content.ui:33
+#: data/resources/ui/content.blp:30
 msgid "Select a chat to start messaging."
 msgstr "Valitse keskustelu aloittaaksesi viestien lähettämisen."
 
-#: data/resources/ui/content-chat-action-bar.ui:89
+#: data/resources/ui/content-chat-action-bar.blp:68
 #, fuzzy
 msgid "Message"
 msgstr "Ääniviesti"
+
+#: data/resources/ui/content-chat-action-bar.blp:96
+msgid "Unblock"
+msgstr ""
+
+#: data/resources/ui/content-chat-action-bar.blp:113
+msgid "Join"
+msgstr ""
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -117,61 +125,61 @@ msgstr "Näytä tiedot"
 msgid "Leave Chat"
 msgstr "Hae keskusteluista"
 
-#: data/resources/ui/content-send-photo-dialog.ui:35
+#: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
 msgstr ""
 
-#: data/resources/ui/login.ui:29
+#: data/resources/ui/login.blp:25
 msgid "_Previous"
 msgstr "_Edellinen"
 
-#: data/resources/ui/login.ui:58
+#: data/resources/ui/login.blp:48
 msgid "_Next"
 msgstr "_Seuraava"
 
-#: data/resources/ui/login.ui:87
+#: data/resources/ui/login.blp:68
 msgid "Welcome"
 msgstr ""
 
-#: data/resources/ui/login.ui:107
+#: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
 msgstr "_Kirjaudu sisään QR-koodin avulla"
 
-#: data/resources/ui/login.ui:166
+#: data/resources/ui/login.blp:127
 msgid "Scan Code"
 msgstr "Skannaa koodi"
 
-#: data/resources/ui/login.ui:167
+#: data/resources/ui/login.blp:128
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
 "Skannaa tämä koodi toisella Telegram-sovelluksella, joka on kirjautunut "
 "tilillesi."
 
-#: data/resources/ui/login.ui:189
+#: data/resources/ui/login.blp:144
 msgid "Enter the Verification Code"
 msgstr "Syötä vahvistuskoodi"
 
-#: data/resources/ui/login.ui:202 data/resources/ui/login.ui:621
+#: data/resources/ui/login.blp:160 data/resources/ui/login.blp:477
 msgid "Code"
 msgstr "Koodi"
 
-#: data/resources/ui/login.ui:237
+#: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
 msgstr ""
 
-#: data/resources/ui/login.ui:286
+#: data/resources/ui/login.blp:218
 msgid "Register New Account"
 msgstr "Rekisteröi uusi tili"
 
-#: data/resources/ui/login.ui:300
+#: data/resources/ui/login.blp:233
 msgid "First Name"
 msgstr "Etunimi"
 
-#: data/resources/ui/login.ui:305
+#: data/resources/ui/login.blp:237
 msgid "Last Name"
 msgstr "Sukunimi"
 
-#: data/resources/ui/login.ui:338
+#: data/resources/ui/login.blp:259
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -179,27 +187,27 @@ msgstr ""
 "Rekisteröitymällä,\n"
 "hyväksyt <a href=\"\">Palveluehdot</a>."
 
-#: data/resources/ui/login.ui:354
+#: data/resources/ui/login.blp:271
 msgid "Enter Your Password"
 msgstr "Syötä salasanasi"
 
-#: data/resources/ui/login.ui:367
+#: data/resources/ui/login.blp:285
 msgid "Password"
 msgstr "Salasana"
 
-#: data/resources/ui/login.ui:375
+#: data/resources/ui/login.blp:292
 msgid "Hint"
 msgstr "Vihje"
 
-#: data/resources/ui/login.ui:398
+#: data/resources/ui/login.blp:308
 msgid "_Forgot password?"
 msgstr "_Unohditko salasanan?"
 
-#: data/resources/ui/login.ui:461
+#: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
 msgstr "Käytä palautuskoodia"
 
-#: data/resources/ui/login.ui:474
+#: data/resources/ui/login.blp:363
 #, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
@@ -209,101 +217,106 @@ msgstr ""
 "lähettää sinulle tähän sähköpostiosoitteeseen koodin, jolla voit palauttaa "
 "salasanasi."
 
-#: data/resources/ui/login.ui:493
+#: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
 msgstr "_Lähetä palautuskoodi"
 
-#: data/resources/ui/login.ui:555
+#: data/resources/ui/login.blp:425
 msgid "Account Deletion"
 msgstr "Tilin poistaminen"
 
-#: data/resources/ui/login.ui:582 src/login.rs:920
+#: data/resources/ui/login.blp:445 src/login.rs:912
 msgid "_Delete Account"
 msgstr "_Poista tili"
 
-#: data/resources/ui/login.ui:607
+#: data/resources/ui/login.blp:460
 #, fuzzy
 msgid "Enter the code e-mailed to you"
 msgstr "Syötä sähköpostitse lähetetty koodi"
 
-#: data/resources/ui/login.ui:650
+#: data/resources/ui/login.blp:493
 #, fuzzy
 msgid "Unable to access your e-mail?"
 msgstr "_Etkö pääse käsiksi sähköpostiisi?"
 
-#: data/resources/ui/message-menu.ui:6
+#: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
 msgstr ""
 
-#: data/resources/ui/message-menu.ui:11
-msgid "Delete for _Everyone"
+#: data/resources/ui/message-menu.blp:12
+msgid "_Edit"
 msgstr ""
 
-#: data/resources/ui/message-menu.ui:16
+#: data/resources/ui/message-menu.blp:18
+#, fuzzy
+msgid "Delete for Ever_yone"
+msgstr "_Poista tili"
+
+#: data/resources/ui/message-menu.blp:24
 #, fuzzy
 msgid "_Delete for Me"
 msgstr "_Poista tili"
 
-#: data/resources/ui/phone-number-input.ui:12
+#: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
 msgstr ""
 
-#: data/resources/ui/phone-number-input.ui:17
+#: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
 msgstr "Puhelinnumero"
 
-#: data/resources/ui/preferences-window.ui:11
+#: data/resources/ui/preferences-window.blp:10
 msgid "Follow System Colors"
 msgstr "Seuraa järjestelmän värejä"
 
-#: data/resources/ui/preferences-window.ui:22
+#: data/resources/ui/preferences-window.blp:19
 msgid "Dark Theme"
 msgstr "Tumma teema"
 
-#: data/resources/ui/preferences-window.ui:35
+#: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
 msgstr ""
 
-#: data/resources/ui/preferences-window.ui:38
+#: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
 msgstr ""
 
-#: data/resources/ui/preferences-window.ui:50
+#: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
 msgstr ""
 
-#: data/resources/ui/shortcuts.ui:11
+#: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Yleiset"
 
-#: data/resources/ui/shortcuts.ui:14
+#: data/resources/ui/shortcuts.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Näytä pikavalinnat"
 
-#: data/resources/ui/shortcuts.ui:20
+#: data/resources/ui/shortcuts.blp:19
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Lopeta"
 
-#: data/resources/ui/shortcuts.ui:28
+#: data/resources/ui/shortcuts.blp:25
 msgctxt "shortcut window"
 msgid "Chat List"
 msgstr "Keskusteluluettelo"
 
-#: data/resources/ui/shortcuts.ui:31
+#: data/resources/ui/shortcuts.blp:28
 msgctxt "shortcut window"
 msgid "Search Chats"
 msgstr "Hae keskusteluista"
 
-#: data/resources/ui/shortcuts.ui:39
+#: data/resources/ui/shortcuts.blp:34
 #, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
 msgstr "Keskusteluluettelo"
 
-#: data/resources/ui/shortcuts.ui:42
+#: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
 msgstr ""
@@ -324,19 +337,19 @@ msgstr "_Näppäimistön pikavalinnat"
 msgid "_About Telegrand"
 msgstr "_Tietoja Telegrandista"
 
-#: data/resources/ui/sidebar-row-menu.ui:6
+#: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
 msgstr ""
 
-#: data/resources/ui/sidebar-row-menu.ui:11
+#: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
 msgstr ""
 
-#: data/resources/ui/sidebar-row-menu.ui:16
+#: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
 msgstr ""
 
-#: data/resources/ui/sidebar-row-menu.ui:21
+#: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
 msgstr ""
 
@@ -363,13 +376,13 @@ msgstr "Telegrand"
 msgid "Sponsors"
 msgstr ""
 
-#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
-#: src/session/sidebar/search/mod.rs:208
+#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
+#: src/session/sidebar/search/mod.rs:205
 #, fuzzy
 msgid "Saved Messages"
 msgstr "Ääniviesti"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:13
 #, fuzzy
 msgid "Deleted Account"
 msgstr "_Poista tili"
@@ -382,8 +395,8 @@ msgstr ""
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:105
-#: src/session/content/message_row/indicators_model.rs:155
-#: src/session/sidebar/row.rs:394
+#: src/session/content/message_row/indicators_model.rs:186
+#: src/session/sidebar/row.rs:946
 msgid "%l:%M %p"
 msgstr "%H.%M"
 
@@ -399,7 +412,7 @@ msgstr "%e %B %Y"
 msgid "Writing messages isn't allowed in this group."
 msgstr ""
 
-#: src/login.rs:380
+#: src/login.rs:372
 #, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
@@ -407,7 +420,7 @@ msgstr ""
 "Yksi tapa jatkaa tilisi käyttöä on poistaa tilisi ja luoda se sitten "
 "uudelleen"
 
-#: src/login.rs:385
+#: src/login.rs:377
 #, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
@@ -416,7 +429,7 @@ msgstr ""
 "Koska et ole antanut palautussähköpostiosoitetta, ainoa tapa jatkaa tilisi "
 "käyttöä on poistaa tilisi ja luoda se uudelleen"
 
-#: src/login.rs:393
+#: src/login.rs:385
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
@@ -424,34 +437,34 @@ msgstr ""
 "Huomaa, että menetät kaikki keskustelut ja viestit sekä jakamasi mediat ja "
 "tiedostot!"
 
-#: src/login.rs:684
+#: src/login.rs:676
 #, fuzzy
 msgid "Do you accept the Terms of Service?"
 msgstr "Hyväksytkö käyttöehdot?"
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_No"
 msgstr ""
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_Yes"
 msgstr ""
 
-#: src/login.rs:688
+#: src/login.rs:680
 msgid "Terms of Service"
 msgstr "Käyttöehdot"
 
-#: src/login.rs:689 src/login.rs:999
+#: src/login.rs:681 src/login.rs:991
 msgid "_OK"
 msgstr ""
 
-#: src/login.rs:911
+#: src/login.rs:903
 msgid "Warning"
 msgstr "Varoitus"
 
-#: src/login.rs:913
+#: src/login.rs:905
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -463,15 +476,15 @@ msgstr ""
 "\n"
 "Haluatko poistaa tilisi?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
+#: src/login.rs:911 src/session/content/chat_action_bar.rs:429
 msgid "_Cancel"
 msgstr ""
 
-#: src/login.rs:992
+#: src/login.rs:984
 msgid "Sorry"
 msgstr "Anteeksi"
 
-#: src/login.rs:994
+#: src/login.rs:986
 #, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
@@ -482,34 +495,34 @@ msgstr ""
 "luominen uudelleen."
 
 #. Translators: This is an authentication method
-#: src/login.rs:1066
+#: src/login.rs:1058
 #, fuzzy
 msgid "Telegram"
 msgstr "Telegrand"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1068
+#: src/login.rs:1060
 msgid "SMS"
 msgstr ""
 
 #. Translators: This is an authentication method
-#: src/login.rs:1070
+#: src/login.rs:1062
 msgid "Call"
 msgstr ""
 
 #. Translators: This is an authentication method
-#: src/login.rs:1072
+#: src/login.rs:1064
 msgid "Flash Call"
 msgstr ""
 
 #. Translators: This is an authentication method
-#: src/login.rs:1074
+#: src/login.rs:1066
 #, fuzzy
 msgid "Missed Call"
 msgstr "Vastaamatta jäänyt puhelu"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1076
+#: src/login.rs:1068
 msgid "Fragment"
 msgstr ""
 
@@ -517,16 +530,16 @@ msgstr ""
 msgid "You entered an invalid country code."
 msgstr ""
 
-#: src/strings.rs:24
+#: src/strings.rs:25
 msgid "last seen a long time ago"
 msgstr ""
 
-#: src/strings.rs:25
+#: src/strings.rs:26
 msgid "online"
 msgstr ""
 
 #. Translators: This is an online status with the date
-#: src/strings.rs:34
+#: src/strings.rs:35
 #, c-format
 msgid "last seen %x"
 msgstr ""
@@ -534,317 +547,346 @@ msgstr ""
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:39
+#: src/strings.rs:40
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
-#: src/strings.rs:43
+#: src/strings.rs:44
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/strings.rs:50
+#: src/strings.rs:51
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/strings.rs:56
+#: src/strings.rs:57
 msgid "last seen just now"
 msgstr ""
 
-#: src/strings.rs:59
+#: src/strings.rs:60
 msgid "last seen recently"
 msgstr ""
 
-#: src/strings.rs:60
+#: src/strings.rs:61
 msgid "last seen within a week"
 msgstr ""
 
-#: src/strings.rs:61
+#: src/strings.rs:62
 msgid "last seen within a month"
 msgstr ""
 
-#: src/strings.rs:85
+#: src/strings.rs:86
 msgid "Photo has expired"
 msgstr ""
 
-#: src/strings.rs:88
+#: src/strings.rs:89
 msgid "Video has expired"
 msgstr ""
 
-#: src/strings.rs:89
+#: src/strings.rs:90
 #, fuzzy
 msgid "Video Message"
 msgstr "Ääniviesti"
 
-#: src/strings.rs:120
+#: src/strings.rs:121
+msgid "{sender} took a screenshot!"
+msgstr ""
+
+#: src/strings.rs:126
 #, fuzzy
 msgid "Unsupported Message"
 msgstr "Ei tuettu viesti"
 
-#: src/strings.rs:126
+#: src/strings.rs:132
 msgid "GIF"
 msgstr "GIF"
 
-#: src/strings.rs:128
+#: src/strings.rs:134
 msgid "GIF, {caption}"
 msgstr ""
 
-#: src/strings.rs:136
+#: src/strings.rs:142
 msgid "{title} – {performer}"
 msgstr ""
 
-#: src/strings.rs:142
+#: src/strings.rs:148
 msgid "{title} – {performer}, {caption}"
 msgstr ""
 
-#: src/strings.rs:158
+#: src/strings.rs:164
 msgid "{file_name}, {caption}"
 msgstr ""
 
-#: src/strings.rs:166
+#: src/strings.rs:172
 msgid "Photo"
 msgstr "Valokuva"
 
-#: src/strings.rs:168
+#: src/strings.rs:174
 msgid "Photo, {caption}"
 msgstr ""
 
 #. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:174
+#: src/strings.rs:180
 #, fuzzy
 msgid "{emoji} Sticker"
 msgstr "Tarra"
 
-#: src/strings.rs:179
+#: src/strings.rs:185
 msgid "Video"
 msgstr "Video"
 
-#: src/strings.rs:181
+#: src/strings.rs:187
 msgid "Video, {caption}"
 msgstr ""
 
-#: src/strings.rs:187
+#: src/strings.rs:193
 #, fuzzy
 msgid "Voice Message"
 msgstr "Ääniviesti"
 
-#: src/strings.rs:189
+#: src/strings.rs:195
 #, fuzzy
 msgid "Voice Message, {caption}"
 msgstr "Ääniviesti"
 
-#: src/strings.rs:206
+#: src/strings.rs:212
 msgid "Declined outgoing video call"
 msgstr "Lähtevä videopuhelu hylätty"
 
-#: src/strings.rs:208
+#: src/strings.rs:214
 msgid "Declined outgoing call"
 msgstr "Lähtevä puhelu hylätty"
 
-#: src/strings.rs:214
+#: src/strings.rs:220
 msgid "Declined incoming video call"
 msgstr "Saapuva videopuhelu hylätty"
 
-#: src/strings.rs:216
+#: src/strings.rs:222
 msgid "Declined incoming call"
 msgstr "Saapuva puhelu hylätty"
 
-#: src/strings.rs:224
+#: src/strings.rs:230
 #, fuzzy
 msgid "Canceled call"
 msgstr "Puhelu peruutettu"
 
-#: src/strings.rs:226
+#: src/strings.rs:232
 msgid "Missed call"
 msgstr "Vastaamatta jäänyt puhelu"
 
-#: src/strings.rs:239
+#: src/strings.rs:245
 #, fuzzy
 msgid "Outgoing video call ({duration})"
 msgstr "Lähtevä videopuhelu"
 
-#: src/strings.rs:244
+#: src/strings.rs:250
 #, fuzzy
 msgid "Outgoing call ({duration})"
 msgstr "Lähtevä puhelu"
 
-#: src/strings.rs:249
+#: src/strings.rs:255
 msgid "Outgoing video call"
 msgstr "Lähtevä videopuhelu"
 
-#: src/strings.rs:251
+#: src/strings.rs:257
 msgid "Outgoing call"
 msgstr "Lähtevä puhelu"
 
-#: src/strings.rs:256
+#: src/strings.rs:262
 #, fuzzy
 msgid "Incoming video call ({duration})"
 msgstr "Saapuva videopuhelu"
 
-#: src/strings.rs:261
+#: src/strings.rs:267
 #, fuzzy
 msgid "Incoming call ({duration})"
 msgstr "Saapuva puhelu"
 
-#: src/strings.rs:266
+#: src/strings.rs:272
 msgid "Incoming video call"
 msgstr "Saapuva videopuhelu"
 
-#: src/strings.rs:268 src/window.rs:213
+#: src/strings.rs:274 src/window.rs:213
 msgid "Incoming call"
 msgstr "Saapuva puhelu"
 
-#: src/strings.rs:275 src/strings.rs:286
+#: src/strings.rs:281 src/strings.rs:292
 msgid "{sender} created the group \"{title}\""
 msgstr ""
 
-#: src/strings.rs:282
+#: src/strings.rs:288
 #, fuzzy
 msgid "Channel created"
 msgstr "Kanavan kuva poistettu"
 
-#: src/strings.rs:296
+#: src/strings.rs:302
 #, fuzzy
 msgid "Channel renamed to \"{title}\""
 msgstr "Kanavan kuva poistettu"
 
-#: src/strings.rs:301
+#: src/strings.rs:307
 msgid "{sender} changed the group name to \"{title}\""
 msgstr ""
 
-#: src/strings.rs:311
+#: src/strings.rs:317
 #, fuzzy
 msgid "Channel photo changed"
 msgstr "Kanavan kuva poistettu"
 
-#: src/strings.rs:315
+#: src/strings.rs:321
 #, fuzzy
 msgid "{sender} changed the group photo"
 msgstr "Sinä poistit ryhmäkuvan"
 
-#: src/strings.rs:323
+#: src/strings.rs:329
 msgid "Channel photo removed"
 msgstr "Kanavan kuva poistettu"
 
-#: src/strings.rs:327
+#: src/strings.rs:333
 #, fuzzy
 msgid "{sender} removed the group photo"
 msgstr "Sinä poistit ryhmäkuvan"
 
-#: src/strings.rs:335 src/strings.rs:370
+#: src/strings.rs:341 src/strings.rs:376
 #, fuzzy
 msgid "{sender} joined the group"
 msgstr "Liityit ryhmään"
 
-#: src/strings.rs:340
+#: src/strings.rs:346
 msgid "{sender} added {first_user} and {second_user}"
 msgstr ""
 
-#: src/strings.rs:354
+#: src/strings.rs:360
 msgid "{sender} added {users}"
 msgstr ""
 
-#: src/strings.rs:363
+#: src/strings.rs:369
 msgid "{sender} joined the group via invite link"
 msgstr ""
 
-#: src/strings.rs:377
+#: src/strings.rs:383
 #, fuzzy
 msgid "{sender} left the group"
 msgstr "Sinä jätit ryhmän"
 
-#: src/strings.rs:382
+#: src/strings.rs:388
 msgid "{sender} removed {user}"
 msgstr ""
 
-#: src/strings.rs:404
+#: src/strings.rs:407
+msgid "{sender} scored {points} in {game}"
+msgstr ""
+
+#: src/strings.rs:416
+msgid "{sender} scored {points}"
+msgstr ""
+
+#: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
 msgstr ""
 
-#: src/strings.rs:406
+#: src/strings.rs:442
 msgid "{sender} pinned a GIF"
 msgstr ""
 
-#: src/strings.rs:407
+#: src/strings.rs:443
 msgid "{sender} pinned an audio file"
 msgstr ""
 
-#: src/strings.rs:408
+#: src/strings.rs:444
 msgid "{sender} pinned a file"
 msgstr ""
 
-#: src/strings.rs:409
+#: src/strings.rs:445
 msgid "{sender} pinned a photo"
 msgstr ""
 
-#: src/strings.rs:410
+#: src/strings.rs:446
 msgid "{sender} pinned a sticker"
 msgstr ""
 
-#: src/strings.rs:411
+#: src/strings.rs:447
 msgid "{sender} pinned a video"
 msgstr ""
 
-#: src/strings.rs:412
+#: src/strings.rs:448
 msgid "{sender} pinned a video message"
 msgstr ""
 
-#: src/strings.rs:413
+#: src/strings.rs:449
 msgid "{sender} pinned a voice message"
 msgstr ""
 
-#: src/strings.rs:414 src/strings.rs:416
+#: src/strings.rs:450 src/strings.rs:452
 msgid "{sender} pinned a message"
 msgstr ""
 
-#: src/strings.rs:425
+#: src/strings.rs:461
 msgid "{sender} joined Telegram"
 msgstr ""
 
-#: src/session/preferences_window.rs:206
+#: src/session/preferences_window.rs:208
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:109
-#: src/session/content/chat_action_bar.rs:620
+#: src/session/content/chat_action_bar.rs:122
+#: src/session/content/chat_action_bar.rs:750
 msgid "Unmute"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:111
-#: src/session/content/chat_action_bar.rs:622
+#: src/session/content/chat_action_bar.rs:124
+#: src/session/content/chat_action_bar.rs:752
 msgid "Mute"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:273
+#: src/session/content/chat_action_bar.rs:320
+#: src/session/content/chat_action_bar.rs:337
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:275
+#: src/session/content/chat_action_bar.rs:322
+#: src/session/content/chat_action_bar.rs:339
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:321
+#: src/session/content/chat_action_bar.rs:333
+#, fuzzy
+msgid "Edit Message"
+msgstr "Ääniviesti"
+
+#: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:324
+#: src/session/content/chat_action_bar.rs:428
 msgid "_Open"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:329
+#: src/session/content/chat_action_bar.rs:433
 msgid "Images"
 msgstr ""
 
-#: src/session/content/chat_history.rs:242
+#: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
 msgstr ""
 
-#: src/session/content/chat_history.rs:243
+#: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
 msgstr ""
+
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/chat_history_row.rs:121
+msgid "%B %e"
+msgstr "%e %B"
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/chat_history_row.rs:124
+msgid "%B %e, %Y"
+msgstr "%e %B %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -878,33 +920,23 @@ msgstr ""
 msgid "Copied to clipboard"
 msgstr ""
 
-#. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:119
-msgid "%B %e"
-msgstr "%e %B"
-
-#. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:122
-msgid "%B %e, %Y"
-msgstr "%e %B %Y"
-
-#: src/session/content/message_row/indicators_model.rs:157
+#: src/session/content/message_row/indicators_model.rs:188
 msgid "edited"
 msgstr ""
 
-#: src/session/content/message_row/indicators_model.rs:162
+#: src/session/content/message_row/indicators_model.rs:193
 msgid "sponsored"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:166
+#: src/session/content/message_row/mod.rs:170
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:168
+#: src/session/content/message_row/mod.rs:172
 msgid "Do you want to delete this message?"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:172
+#: src/session/content/message_row/mod.rs:176
 msgid "Confirm Message Deletion"
 msgstr ""
 
@@ -912,61 +944,62 @@ msgstr ""
 msgid "This message is unsupported"
 msgstr "Tätä viestiä ei tueta"
 
-#: src/session/sidebar/row.rs:427
-msgid "Draft"
+#: src/session/sidebar/row.rs:441
+#, fuzzy
+msgid "Draft:"
 msgstr "Luonnos"
 
-#: src/session/sidebar/row.rs:643
+#: src/session/sidebar/row.rs:621
 msgid "You"
 msgstr "Sinä"
 
-#: src/session/sidebar/row.rs:709
+#: src/session/sidebar/row.rs:687
 msgid "choosing a contact"
 msgstr ""
 
-#: src/session/sidebar/row.rs:727
+#: src/session/sidebar/row.rs:705
 msgid "choosing a location"
 msgstr ""
 
-#: src/session/sidebar/row.rs:745
+#: src/session/sidebar/row.rs:723
 msgid "choosing a sticker"
 msgstr ""
 
-#: src/session/sidebar/row.rs:763
+#: src/session/sidebar/row.rs:741
 #, fuzzy
 msgid "recording a video"
 msgstr "Saapuva videopuhelu"
 
-#: src/session/sidebar/row.rs:781
+#: src/session/sidebar/row.rs:759
 msgid "recording a video note"
 msgstr ""
 
-#: src/session/sidebar/row.rs:799
+#: src/session/sidebar/row.rs:777
 msgid "recording a voice note"
 msgstr ""
 
-#: src/session/sidebar/row.rs:817
+#: src/session/sidebar/row.rs:795
 msgid "playing a game"
 msgstr ""
 
-#: src/session/sidebar/row.rs:835
+#: src/session/sidebar/row.rs:813
 msgid "typing"
 msgstr ""
 
-#: src/session/sidebar/row.rs:950
+#: src/session/sidebar/row.rs:928
 msgid "watching an animation"
 msgstr ""
 
-#: src/session/sidebar/search/section_row.rs:137
+#: src/session/sidebar/search/section_row.rs:130
 #, fuzzy
 msgid "Chats"
 msgstr "Keskusteluluettelo"
 
-#: src/session/sidebar/search/section_row.rs:140
+#: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
 msgstr ""
 
-#: src/session/sidebar/search/section_row.rs:143
+#: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
 msgstr ""
 

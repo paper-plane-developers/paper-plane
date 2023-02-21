@@ -2,18 +2,18 @@ data/com.github.melix99.telegrand.desktop.in.in
 data/com.github.melix99.telegrand.gschema.xml.in
 data/com.github.melix99.telegrand.metainfo.xml.in.in
 
-data/resources/ui/add-account-row.ui
-data/resources/ui/content.ui
-data/resources/ui/content-chat-action-bar.ui
+data/resources/ui/add-account-row.blp
+data/resources/ui/content.blp
+data/resources/ui/content-chat-action-bar.blp
 data/resources/ui/content-chat-history.ui
-data/resources/ui/content-send-photo-dialog.ui
-data/resources/ui/login.ui
-data/resources/ui/message-menu.ui
-data/resources/ui/phone-number-input.ui
-data/resources/ui/preferences-window.ui
-data/resources/ui/shortcuts.ui
+data/resources/ui/content-send-photo-dialog.blp
+data/resources/ui/login.blp
+data/resources/ui/message-menu.blp
+data/resources/ui/phone-number-input.blp
+data/resources/ui/preferences-window.blp
+data/resources/ui/shortcuts.blp
 data/resources/ui/sidebar.ui
-data/resources/ui/sidebar-row-menu.ui
+data/resources/ui/sidebar-row-menu.blp
 data/resources/ui/sidebar-search.ui
 
 src/application.rs
@@ -26,8 +26,8 @@ src/window.rs
 src/session/preferences_window.rs
 src/session/content/chat_action_bar.rs
 src/session/content/chat_history.rs
+src/session/content/chat_history_row.rs
 src/session/content/chat_info_window.rs
-src/session/content/item_row.rs
 src/session/content/message_row/indicators_model.rs
 src/session/content/message_row/mod.rs
 src/session/content/message_row/text.rs
