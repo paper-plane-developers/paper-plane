@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2022-03-18 15:05+0000\n"
+"PO-Revision-Date: 2023-02-20 13:36+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/sv/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -54,12 +54,11 @@ msgid "Recently used sessions"
 msgstr "Nyligen använda sessioner"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
-"Den ordnade listan över senast använda sessioner efter deras "
+"En lista över senast använda sessioner, sorterade efter deras "
 "databaskatalognamn"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
@@ -100,26 +99,24 @@ msgid "Select a chat to start messaging."
 msgstr "Välj en chatt för att börja skicka meddelanden."
 
 #: data/resources/ui/content-chat-action-bar.ui:89
-#, fuzzy
 msgid "Message"
-msgstr "Röstmeddelande"
+msgstr "Meddelande"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Bläddra till botten"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Visa information"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Sök chattar"
+msgstr "Lämna chatt"
 
 #: data/resources/ui/content-send-photo-dialog.ui:35
 msgid "Caption"
-msgstr ""
+msgstr "Rubrik"
 
 #: data/resources/ui/login.ui:29
 msgid "_Previous"
@@ -131,7 +128,7 @@ msgstr "_Nästa"
 
 #: data/resources/ui/login.ui:87
 msgid "Welcome"
-msgstr ""
+msgstr "Välkommen"
 
 #: data/resources/ui/login.ui:107
 msgid "_Log in using QR code"
@@ -156,7 +153,7 @@ msgstr "Kod"
 
 #: data/resources/ui/login.ui:237
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Denna kod kan inte skickas längre."
 
 #: data/resources/ui/login.ui:286
 msgid "Register New Account"
@@ -199,14 +196,12 @@ msgid "Use Recovery Code"
 msgstr "Använd återställningskod"
 
 #: data/resources/ui/login.ui:474
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
-"När du angav ditt molnlösenord angav du en återställningse-postadress. Vi "
-"kan skicka en kod till denna e-postadress som du kan använda för att "
-"återställa ditt lösenord."
+"När du ställde in ditt molnlösenord angav du en återställnings-e-postadress. "
+"En kod kan skickas dit för att återställa ditt lösenord."
 
 #: data/resources/ui/login.ui:493
 msgid "_Send recovery code"
@@ -221,31 +216,28 @@ msgid "_Delete Account"
 msgstr "_Radera konto"
 
 #: data/resources/ui/login.ui:607
-#, fuzzy
 msgid "Enter the code e-mailed to you"
-msgstr "Ange koden skickad via e-post"
+msgstr "Ange koden som skickats till dig via e-post"
 
 #: data/resources/ui/login.ui:650
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_Kan du inte komma åt din e-post?"
+msgstr "Kan du inte komma åt din e-post?"
 
 #: data/resources/ui/message-menu.ui:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Svara"
 
 #: data/resources/ui/message-menu.ui:11
 msgid "Delete for _Everyone"
-msgstr ""
+msgstr "Ta bort för _alla"
 
 #: data/resources/ui/message-menu.ui:16
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_Radera konto"
+msgstr "_Radera för mig"
 
 #: data/resources/ui/phone-number-input.ui:12
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: data/resources/ui/phone-number-input.ui:17
 msgid "Phone Number"
@@ -261,15 +253,15 @@ msgstr "Mörkt tema"
 
 #: data/resources/ui/preferences-window.ui:35
 msgid "Storage"
-msgstr ""
+msgstr "Lagring"
 
 #: data/resources/ui/preferences-window.ui:38
 msgid "Cache Size"
-msgstr ""
+msgstr "Cachestorlek"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr ""
+msgstr "Rensa cache"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -297,15 +289,14 @@ msgid "Search Chats"
 msgstr "Sök chattar"
 
 #: data/resources/ui/shortcuts.ui:39
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "Chattlista"
+msgstr "Chatthistorik"
 
 #: data/resources/ui/shortcuts.ui:42
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Skicka foto från Urklipp"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -325,57 +316,52 @@ msgstr "_Om Telegrand"
 
 #: data/resources/ui/sidebar-row-menu.ui:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Fäst"
 
 #: data/resources/ui/sidebar-row-menu.ui:11
 msgid "_Unpin"
-msgstr ""
+msgstr "_Avfäst"
 
 #: data/resources/ui/sidebar-row-menu.ui:16
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "_Markera som oläst"
 
 #: data/resources/ui/sidebar-row-menu.ui:21
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Markera som _läst"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Sök chattar"
+msgstr "Sök"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "Sök chattar"
+msgstr "Inga sökresultat"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Prova med en annan sökning."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Telegrand developers"
-msgstr "Telegrand"
+msgstr "Telegrand utvecklare"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Sponsorer"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
 #: src/session/sidebar/search/mod.rs:208
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Röstmeddelande"
+msgstr "Sparade meddelanden"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_Radera konto"
+msgstr "Borttaget konto"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Administratörerna för denna grupp har hindrat dig från att skriva här"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -390,30 +376,27 @@ msgstr "%H.%M"
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e %B %Y"
+msgstr "%B %e, %Å %l:%M %p"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "Det är inte tillåtet att skriva meddelanden i den här gruppen."
 
 #: src/login.rs:380
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
-"Ett sätt att fortsätta använda ditt konto är att ta bort ditt konto och "
-"sedan återskapa det"
+"Ett sätt att fortsätta använda ditt konto är att ta bort och sedan återskapa "
+"det"
 
 #: src/login.rs:385
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
 msgstr ""
-"Eftersom du inte har angett en återställningsadress är det enda sättet att "
-"fortsätta använda ditt konto att ta bort ditt konto och sedan återskapa det"
+"Eftersom du inte har angett en återställnings-e-postadress är det enda "
+"sättet att fortsätta använda ditt konto att ta bort och sedan återskapa det"
 
 #: src/login.rs:393
 msgid ""
@@ -424,19 +407,18 @@ msgstr ""
 "tillsammans med alla media och filer du delat!"
 
 #: src/login.rs:684
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
 msgstr "Godkänner du användarvillkoren?"
 
 #: src/login.rs:685 src/session/content/chat_history.rs:245
 #: src/session/content/message_row/mod.rs:178
 msgid "_No"
-msgstr ""
+msgstr "_Nej"
 
 #: src/login.rs:685 src/session/content/chat_history.rs:245
 #: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
-msgstr ""
+msgstr "_Ja"
 
 #: src/login.rs:688
 msgid "Terms of Service"
@@ -444,7 +426,7 @@ msgstr "Användarvillkoren"
 
 #: src/login.rs:689 src/login.rs:999
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: src/login.rs:911
 msgid "Warning"
@@ -464,122 +446,117 @@ msgstr ""
 
 #: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
-msgstr ""
+msgstr "_Avbryt"
 
 #: src/login.rs:992
 msgid "Sorry"
 msgstr "Förlåt"
 
 #: src/login.rs:994
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
 msgstr ""
-"Om du inte kan återställa åtkomsten till din e-post är dina återstående "
-"alternativ antingen att komma ihåg ditt lösenord eller att ta bort och "
+"Om du inte kan återställa åtkomsten via e-post är dina återstående "
+"alternativ antingen att komma ihåg ditt lösenord eller att radera och sedan "
 "återskapa ditt konto."
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
-#, fuzzy
 msgid "Telegram"
-msgstr "Telegrand"
+msgstr "Telegram"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1070
 msgid "Call"
-msgstr ""
+msgstr "Ring"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1072
 msgid "Flash Call"
-msgstr ""
+msgstr "Snabbring"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1074
-#, fuzzy
 msgid "Missed Call"
 msgstr "Missat samtal"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1076
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Du angav en ogiltig landskod."
 
 #: src/strings.rs:24
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "senast sedd för länge sedan"
 
 #: src/strings.rs:25
 msgid "online"
-msgstr ""
+msgstr "online"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:34
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "senast sedd %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:39
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "senast sedd igår vid %l:%M %p"
 
 #: src/strings.rs:43
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "sågs senast för {num} timme sedan"
+msgstr[1] "sågs senast för {num} timmar sedan"
 
 #: src/strings.rs:50
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "sågs senast för {num} minut sedan"
+msgstr[1] "sågs senast för {num} minuter sedan"
 
 #: src/strings.rs:56
 msgid "last seen just now"
-msgstr ""
+msgstr "sågs senast just precis nu"
 
 #: src/strings.rs:59
 msgid "last seen recently"
-msgstr ""
+msgstr "senast sedd nyligen"
 
 #: src/strings.rs:60
 msgid "last seen within a week"
-msgstr ""
+msgstr "senast sedd inom en vecka"
 
 #: src/strings.rs:61
 msgid "last seen within a month"
-msgstr ""
+msgstr "senast sedd inom en månad"
 
 #: src/strings.rs:85
 msgid "Photo has expired"
-msgstr ""
+msgstr "Foto har gått ut"
 
 #: src/strings.rs:88
 msgid "Video has expired"
-msgstr ""
+msgstr "Video har gått ut"
 
 #: src/strings.rs:89
-#, fuzzy
 msgid "Video Message"
-msgstr "Röstmeddelande"
+msgstr "Videomeddelande"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "Unsupported Message"
 msgstr "Icke-stött meddelande"
 
@@ -589,19 +566,19 @@ msgstr "GIF"
 
 #: src/strings.rs:128
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "GIF, {caption}"
 
 #: src/strings.rs:136
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:142
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:158
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:166
 msgid "Photo"
@@ -609,13 +586,12 @@ msgstr "Bild"
 
 #: src/strings.rs:168
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "Foto, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:174
-#, fuzzy
 msgid "{emoji} Sticker"
-msgstr "Klistermärke"
+msgstr "{emoji} Klistermärke"
 
 #: src/strings.rs:179
 msgid "Video"
@@ -623,17 +599,15 @@ msgstr "Video"
 
 #: src/strings.rs:181
 msgid "Video, {caption}"
-msgstr ""
+msgstr "Video, {caption}"
 
 #: src/strings.rs:187
-#, fuzzy
 msgid "Voice Message"
 msgstr "Röstmeddelande"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "Röstmeddelande"
+msgstr "Röstmeddelande, {caption}"
 
 #: src/strings.rs:206
 msgid "Declined outgoing video call"
@@ -652,7 +626,6 @@ msgid "Declined incoming call"
 msgstr "Nekat inkommande samtal"
 
 #: src/strings.rs:224
-#, fuzzy
 msgid "Canceled call"
 msgstr "Avbrutet samtal"
 
@@ -661,14 +634,12 @@ msgid "Missed call"
 msgstr "Missat samtal"
 
 #: src/strings.rs:239
-#, fuzzy
 msgid "Outgoing video call ({duration})"
-msgstr "Utgående videosamtal"
+msgstr "Utgående videosamtal ({duration})"
 
 #: src/strings.rs:244
-#, fuzzy
 msgid "Outgoing call ({duration})"
-msgstr "Utgående samtal"
+msgstr "Utgående samtal ({duration})"
 
 #: src/strings.rs:249
 msgid "Outgoing video call"
@@ -679,14 +650,12 @@ msgid "Outgoing call"
 msgstr "Utgående samtal"
 
 #: src/strings.rs:256
-#, fuzzy
 msgid "Incoming video call ({duration})"
-msgstr "Inkommande videosamtal"
+msgstr "Inkommande videosamtal ({duration})"
 
 #: src/strings.rs:261
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "Inkommande samtal"
+msgstr "Inkommande samtal ({duration})"
 
 #: src/strings.rs:266
 msgid "Incoming video call"
@@ -698,156 +667,149 @@ msgstr "Inkommande samtal"
 
 #: src/strings.rs:275 src/strings.rs:286
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "{sender} skapade grupp \"{title}\""
 
 #: src/strings.rs:282
-#, fuzzy
 msgid "Channel created"
-msgstr "Kanalbild borttagen"
+msgstr "Kanal skapad"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
-msgstr "Kanalbild borttagen"
+msgstr "Kanal har bytt namn till \"{title}\""
 
 #: src/strings.rs:301
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "{sender} ändrade gruppnamnet till \"{title}\""
 
 #: src/strings.rs:311
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "Kanalbild borttagen"
+msgstr "Kanalfoto ändrat"
 
 #: src/strings.rs:315
-#, fuzzy
 msgid "{sender} changed the group photo"
-msgstr "Du tog bort kanalbilden"
+msgstr "{sender} ändrade gruppfotot"
 
 #: src/strings.rs:323
 msgid "Channel photo removed"
 msgstr "Kanalbild borttagen"
 
 #: src/strings.rs:327
-#, fuzzy
 msgid "{sender} removed the group photo"
-msgstr "Du tog bort kanalbilden"
+msgstr "{sender} tog bort gruppfoto"
 
 #: src/strings.rs:335 src/strings.rs:370
-#, fuzzy
 msgid "{sender} joined the group"
-msgstr "Du gick med i gruppen"
+msgstr "{sender} gick med i gruppen"
 
 #: src/strings.rs:340
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "{sender} lade till {first_user} och {second_user}"
 
 #: src/strings.rs:354
 msgid "{sender} added {users}"
-msgstr ""
+msgstr "{sender} la till {users}"
 
 #: src/strings.rs:363
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "{sender} gick med i gruppen via inbjudningslänk"
 
 #: src/strings.rs:377
-#, fuzzy
 msgid "{sender} left the group"
-msgstr "Du lämnade gruppen"
+msgstr "{sender} lämnade gruppen"
 
 #: src/strings.rs:382
 msgid "{sender} removed {user}"
-msgstr ""
+msgstr "{sender} tog bort {user}"
 
 #: src/strings.rs:404
 msgid "{sender} pinned \"{text}\""
-msgstr ""
+msgstr "{sender} fäste \"{text}\""
 
 #: src/strings.rs:406
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "{sender} fäste en GIF"
 
 #: src/strings.rs:407
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "{sender} fäste en ljudfil"
 
 #: src/strings.rs:408
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "{sender} fäste en fil"
 
 #: src/strings.rs:409
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "{sender} fäste ett foto"
 
 #: src/strings.rs:410
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "{sender} fäste ett klistermärke"
 
 #: src/strings.rs:411
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "{sender} fäste en video"
 
 #: src/strings.rs:412
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "{sender} fäste ett videomeddelande"
 
 #: src/strings.rs:413
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "{sender} fäste ett röstmeddelande"
 
 #: src/strings.rs:414 src/strings.rs:416
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "{sender} fäste ett meddelande"
 
 #: src/strings.rs:425
 msgid "{sender} joined Telegram"
-msgstr ""
+msgstr "{sender} gick med i Telegram"
 
 #: src/session/preferences_window.rs:206
 msgid "Cache cleared"
-msgstr ""
+msgstr "Cache rensad"
 
 #: src/session/content/chat_action_bar.rs:109
 #: src/session/content/chat_action_bar.rs:620
 msgid "Unmute"
-msgstr ""
+msgstr "Avtysta"
 
 #: src/session/content/chat_action_bar.rs:111
 #: src/session/content/chat_action_bar.rs:622
 msgid "Mute"
-msgstr ""
+msgstr "Tysta"
 
 #: src/session/content/chat_action_bar.rs:273
 msgid "Unknown"
-msgstr ""
+msgstr "Okänd"
 
 #: src/session/content/chat_action_bar.rs:275
 msgid "Deleted Message"
-msgstr ""
+msgstr "Borttaget meddelande"
 
 #: src/session/content/chat_action_bar.rs:321
 msgid "Open File"
-msgstr ""
+msgstr "Öppna fil"
 
 #: src/session/content/chat_action_bar.rs:324
 msgid "_Open"
-msgstr ""
+msgstr "_Öppna"
 
 #: src/session/content/chat_action_bar.rs:329
 msgid "Images"
-msgstr ""
+msgstr "Bilder"
 
 #: src/session/content/chat_history.rs:242
 msgid "Leave chat?"
-msgstr ""
+msgstr "Lämna chatt?"
 
 #: src/session/content/chat_history.rs:243
 msgid "Do you want to leave this chat?"
-msgstr ""
+msgstr "Vill du lämna den här chatten?"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
@@ -861,21 +823,21 @@ msgstr "Användarnamn"
 #: src/session/content/chat_info_window.rs:223
 msgid "{num} member"
 msgid_plural "{num} members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num} medlem"
+msgstr[1] "{num} medlemmar"
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Beskrivning"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Länk"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Kopierad till urklipp"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/item_row.rs:119
@@ -889,23 +851,23 @@ msgstr "%e %B %Y"
 
 #: src/session/content/message_row/indicators_model.rs:157
 msgid "edited"
-msgstr ""
+msgstr "redigerad"
 
 #: src/session/content/message_row/indicators_model.rs:162
 msgid "sponsored"
-msgstr ""
+msgstr "sponsrad"
 
 #: src/session/content/message_row/mod.rs:166
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Vill du radera det här meddelandet för <b>alla</b>?"
 
 #: src/session/content/message_row/mod.rs:168
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Vill du radera det här meddelandet?"
 
 #: src/session/content/message_row/mod.rs:172
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "Bekräfta radering av meddelande"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
@@ -921,62 +883,59 @@ msgstr "Du"
 
 #: src/session/sidebar/row.rs:709
 msgid "choosing a contact"
-msgstr ""
+msgstr "väljer en kontakt"
 
 #: src/session/sidebar/row.rs:727
 msgid "choosing a location"
-msgstr ""
+msgstr "väljer en plats"
 
 #: src/session/sidebar/row.rs:745
 msgid "choosing a sticker"
-msgstr ""
+msgstr "väljer ett klistermärke"
 
 #: src/session/sidebar/row.rs:763
-#, fuzzy
 msgid "recording a video"
-msgstr "Inkommande videosamtal"
+msgstr "spelar in en video"
 
 #: src/session/sidebar/row.rs:781
 msgid "recording a video note"
-msgstr ""
+msgstr "spelar in en videoanteckning"
 
 #: src/session/sidebar/row.rs:799
 msgid "recording a voice note"
-msgstr ""
+msgstr "spelar in en röstanteckning"
 
 #: src/session/sidebar/row.rs:817
 msgid "playing a game"
-msgstr ""
+msgstr "spelar ett spel"
 
 #: src/session/sidebar/row.rs:835
 msgid "typing"
-msgstr ""
+msgstr "skriver"
 
 #: src/session/sidebar/row.rs:950
 msgid "watching an animation"
-msgstr ""
+msgstr "tittar på en animation"
 
 #: src/session/sidebar/search/section_row.rs:137
-#, fuzzy
 msgid "Chats"
-msgstr "Chattlista"
+msgstr "Chatter"
 
 #: src/session/sidebar/search/section_row.rs:140
 msgid "Global Search"
-msgstr ""
+msgstr "Global sök"
 
 #: src/session/sidebar/search/section_row.rs:143
 msgid "Recent"
-msgstr ""
+msgstr "Senaste"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Ogiltig landskod"
 
 #: src/tdlib/country_info.rs:124
-#, fuzzy
 msgid "Test Account"
-msgstr "_Radera konto"
+msgstr "Testa konto"
 
 #~ msgid "Welcome to Telegrand"
 #~ msgstr "Välkommen till Telegrand"

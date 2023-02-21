@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-05 17:24+0100\n"
-"PO-Revision-Date: 2023-02-06 22:55+0000\n"
-"Last-Translator: Marcus Behrendt <marcus.behrendt.86@gmail.com>\n"
+"PO-Revision-Date: 2023-02-07 23:42+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/de/>\n"
 "Language: de\n"
@@ -265,7 +265,7 @@ msgstr "Cache-Größe"
 
 #: data/resources/ui/preferences-window.ui:50
 msgid "Clear Cache"
-msgstr "Cache Leeren"
+msgstr "Cache leeren"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -422,12 +422,12 @@ msgstr "Akzeptieren Sie die Nutzungsbedingungen?"
 #: src/login.rs:685 src/session/content/chat_history.rs:245
 #: src/session/content/message_row/mod.rs:178
 msgid "_No"
-msgstr ""
+msgstr "_Nein"
 
 #: src/login.rs:685 src/session/content/chat_history.rs:245
 #: src/session/content/message_row/mod.rs:178
 msgid "_Yes"
-msgstr ""
+msgstr "_Ja"
 
 #: src/login.rs:688
 msgid "Terms of Service"
@@ -435,7 +435,7 @@ msgstr "Nutzungsbedingungen"
 
 #: src/login.rs:689 src/login.rs:999
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: src/login.rs:911
 msgid "Warning"
@@ -455,7 +455,7 @@ msgstr ""
 
 #: src/login.rs:919 src/session/content/chat_action_bar.rs:325
 msgid "_Cancel"
-msgstr ""
+msgstr "_Abbrechen"
 
 #: src/login.rs:992
 msgid "Sorry"
@@ -480,17 +480,17 @@ msgstr "Telegrand"
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1070
 msgid "Call"
-msgstr ""
+msgstr "Anruf"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1072
 msgid "Flash Call"
-msgstr ""
+msgstr "Flash-Anruf"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1074
