@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-06 22:55+0000\n"
+"PO-Revision-Date: 2023-02-23 11:37+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/nl/>\n"
@@ -102,11 +102,11 @@ msgstr "Bericht"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Deblokkeren"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Deelnemen"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -235,10 +235,9 @@ msgstr "_Antwoorden"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Bewerken"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
 msgstr "Verwijderen voor _iedereen"
 
@@ -569,9 +568,8 @@ msgid "Video Message"
 msgstr "Videobericht"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} heeft een foto vastgezet"
+msgstr "{sender} heeft een schermafdruk gemaakt!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -740,12 +738,11 @@ msgstr "{sender} heeft {user} verwijderd"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} heeft {points} punten behaald in {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} heeft {user} verwijderd"
+msgstr "{sender} heeft {points} punten behaald"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -816,9 +813,8 @@ msgid "Deleted Message"
 msgstr "Verwijderd bericht"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Bericht"
+msgstr "Bericht bewerken"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -907,9 +903,8 @@ msgid "This message is unsupported"
 msgstr "Dit bericht wordt niet ondersteund"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Concept"
+msgstr "Concept:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"
