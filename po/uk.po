@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-05 17:24+0100\n"
+"POT-Creation-Date: 2023-02-21 21:49+0100\n"
 "PO-Revision-Date: 2023-02-01 14:41+0000\n"
 "Last-Translator: Dan <denqwerta@gmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/telegrand/"
@@ -62,7 +62,7 @@ msgstr ""
 "Список останніх використаних сесій, впорядкований за ім'ям їх теки бази даних"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
-#: data/resources/ui/preferences-window.ui:8
+#: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr "Схема кольорів"
 
@@ -78,29 +78,37 @@ msgstr "Головне вікно"
 msgid "Marco Melorio"
 msgstr "Марко Мелоріо"
 
-#: data/resources/ui/add-account-row.ui:6
+#: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
 msgstr "_Основний сервер"
 
-#: data/resources/ui/add-account-row.ui:10
+#: data/resources/ui/add-account-row.blp:11
 msgid "_Test Server"
 msgstr "_Тестовий сервер"
 
-#: data/resources/ui/add-account-row.ui:33
+#: data/resources/ui/add-account-row.blp:33
 msgid "_Add Account"
 msgstr "_Додати обліковий запис"
 
-#: data/resources/ui/content.ui:32
+#: data/resources/ui/content.blp:29
 msgid "No Chat Selected"
 msgstr "Немає вибраного чату"
 
-#: data/resources/ui/content.ui:33
+#: data/resources/ui/content.blp:30
 msgid "Select a chat to start messaging."
 msgstr "Виберіть чат, щоб почати спілкування."
 
-#: data/resources/ui/content-chat-action-bar.ui:89
+#: data/resources/ui/content-chat-action-bar.blp:68
 msgid "Message"
 msgstr "Повідомлення"
+
+#: data/resources/ui/content-chat-action-bar.blp:96
+msgid "Unblock"
+msgstr ""
+
+#: data/resources/ui/content-chat-action-bar.blp:113
+msgid "Join"
+msgstr ""
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -115,61 +123,61 @@ msgstr "Подивитись інформацію"
 msgid "Leave Chat"
 msgstr "Шукати Чати"
 
-#: data/resources/ui/content-send-photo-dialog.ui:35
+#: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
 msgstr "Підпис"
 
-#: data/resources/ui/login.ui:29
+#: data/resources/ui/login.blp:25
 msgid "_Previous"
 msgstr "_Попередній"
 
-#: data/resources/ui/login.ui:58
+#: data/resources/ui/login.blp:48
 msgid "_Next"
 msgstr "_Наступний"
 
-#: data/resources/ui/login.ui:87
+#: data/resources/ui/login.blp:68
 msgid "Welcome"
 msgstr "Вітаємо"
 
-#: data/resources/ui/login.ui:107
+#: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
 msgstr "_Увійти за допомогою QR коду"
 
-#: data/resources/ui/login.ui:166
+#: data/resources/ui/login.blp:127
 msgid "Scan Code"
 msgstr "Сканувати код"
 
-#: data/resources/ui/login.ui:167
+#: data/resources/ui/login.blp:128
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
 "Відскануйте цей код у іншому застосунку Telegram, у якому ви увійшли у ваш "
 "обліковий запис."
 
-#: data/resources/ui/login.ui:189
+#: data/resources/ui/login.blp:144
 msgid "Enter the Verification Code"
 msgstr "Введіть код верифікації"
 
-#: data/resources/ui/login.ui:202 data/resources/ui/login.ui:621
+#: data/resources/ui/login.blp:160 data/resources/ui/login.blp:477
 msgid "Code"
 msgstr "Код"
 
-#: data/resources/ui/login.ui:237
+#: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
 msgstr "Код більше не може бути надісланий."
 
-#: data/resources/ui/login.ui:286
+#: data/resources/ui/login.blp:218
 msgid "Register New Account"
 msgstr "Зареєструвати новий обліковий запис"
 
-#: data/resources/ui/login.ui:300
+#: data/resources/ui/login.blp:233
 msgid "First Name"
 msgstr "Ім'я"
 
-#: data/resources/ui/login.ui:305
+#: data/resources/ui/login.blp:237
 msgid "Last Name"
 msgstr "Прізвище"
 
-#: data/resources/ui/login.ui:338
+#: data/resources/ui/login.blp:259
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -177,27 +185,27 @@ msgstr ""
 "Створюючи обліковий запис,\n"
 "ви погоджуєтесь з <a href=\"\">Умовами користування</a>."
 
-#: data/resources/ui/login.ui:354
+#: data/resources/ui/login.blp:271
 msgid "Enter Your Password"
 msgstr "Введіть свій пароль"
 
-#: data/resources/ui/login.ui:367
+#: data/resources/ui/login.blp:285
 msgid "Password"
 msgstr "Пароль"
 
-#: data/resources/ui/login.ui:375
+#: data/resources/ui/login.blp:292
 msgid "Hint"
 msgstr "Підказка"
 
-#: data/resources/ui/login.ui:398
+#: data/resources/ui/login.blp:308
 msgid "_Forgot password?"
 msgstr "_Забули пароль?"
 
-#: data/resources/ui/login.ui:461
+#: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
 msgstr "Скористуватись кодом відновлення"
 
-#: data/resources/ui/login.ui:474
+#: data/resources/ui/login.blp:363
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
@@ -205,97 +213,102 @@ msgstr ""
 "Під час встановлення свого хмарного паролю, ви надали адресу електронної "
 "пошти для відновлення. Туди може бути надіслано код для скидання паролю."
 
-#: data/resources/ui/login.ui:493
+#: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
 msgstr "_Відправити код для відновлення"
 
-#: data/resources/ui/login.ui:555
+#: data/resources/ui/login.blp:425
 msgid "Account Deletion"
 msgstr "Видалення облікового запису"
 
-#: data/resources/ui/login.ui:582 src/login.rs:920
+#: data/resources/ui/login.blp:445 src/login.rs:912
 msgid "_Delete Account"
 msgstr "_Видалити обліковий запис"
 
-#: data/resources/ui/login.ui:607
+#: data/resources/ui/login.blp:460
 msgid "Enter the code e-mailed to you"
 msgstr "Введіть код, відправлений на пошту"
 
-#: data/resources/ui/login.ui:650
+#: data/resources/ui/login.blp:493
 msgid "Unable to access your e-mail?"
 msgstr "Не маєте доступу до пошти?"
 
-#: data/resources/ui/message-menu.ui:6
+#: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
 msgstr "_Відповідь"
 
-#: data/resources/ui/message-menu.ui:11
-msgid "Delete for _Everyone"
+#: data/resources/ui/message-menu.blp:12
+msgid "_Edit"
+msgstr ""
+
+#: data/resources/ui/message-menu.blp:18
+#, fuzzy
+msgid "Delete for Ever_yone"
 msgstr "Видалити для _Всіх"
 
-#: data/resources/ui/message-menu.ui:16
+#: data/resources/ui/message-menu.blp:24
 msgid "_Delete for Me"
 msgstr "_Видалити для мене"
 
-#: data/resources/ui/phone-number-input.ui:12
+#: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
 msgstr "Країна"
 
-#: data/resources/ui/phone-number-input.ui:17
+#: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
 msgstr "Номер телефону"
 
-#: data/resources/ui/preferences-window.ui:11
+#: data/resources/ui/preferences-window.blp:10
 msgid "Follow System Colors"
 msgstr "Відповідати Системним Кольорам"
 
-#: data/resources/ui/preferences-window.ui:22
+#: data/resources/ui/preferences-window.blp:19
 msgid "Dark Theme"
 msgstr "Темна Тема"
 
-#: data/resources/ui/preferences-window.ui:35
+#: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
 msgstr "Сховище"
 
-#: data/resources/ui/preferences-window.ui:38
+#: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
 msgstr "Розмір кешу"
 
-#: data/resources/ui/preferences-window.ui:50
+#: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
 msgstr "Очистити кеш"
 
-#: data/resources/ui/shortcuts.ui:11
+#: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Загальне"
 
-#: data/resources/ui/shortcuts.ui:14
+#: data/resources/ui/shortcuts.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Показати Скорочення"
 
-#: data/resources/ui/shortcuts.ui:20
+#: data/resources/ui/shortcuts.blp:19
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Вийти"
 
-#: data/resources/ui/shortcuts.ui:28
+#: data/resources/ui/shortcuts.blp:25
 msgctxt "shortcut window"
 msgid "Chat List"
 msgstr "Список чатів"
 
-#: data/resources/ui/shortcuts.ui:31
+#: data/resources/ui/shortcuts.blp:28
 msgctxt "shortcut window"
 msgid "Search Chats"
 msgstr "Шукати Чати"
 
-#: data/resources/ui/shortcuts.ui:39
+#: data/resources/ui/shortcuts.blp:34
 msgctxt "shortcut window"
 msgid "Chat History"
 msgstr "Історія чату"
 
-#: data/resources/ui/shortcuts.ui:42
+#: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
 msgstr "Надіслати фото з буферу обміну"
@@ -316,19 +329,19 @@ msgstr "_Клавіатурні скорочення"
 msgid "_About Telegrand"
 msgstr "_Про Telegrand"
 
-#: data/resources/ui/sidebar-row-menu.ui:6
+#: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
 msgstr "_Закріпити"
 
-#: data/resources/ui/sidebar-row-menu.ui:11
+#: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
 msgstr "_Відкріпити"
 
-#: data/resources/ui/sidebar-row-menu.ui:16
+#: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
 msgstr "_Позначити як непрочитане"
 
-#: data/resources/ui/sidebar-row-menu.ui:21
+#: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
 msgstr "Позначити як _прочитане"
 
@@ -352,12 +365,12 @@ msgstr "Розробники Telegrand"
 msgid "Sponsors"
 msgstr "Спонсори"
 
-#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
-#: src/session/sidebar/search/mod.rs:208
+#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
+#: src/session/sidebar/search/mod.rs:205
 msgid "Saved Messages"
 msgstr "Збережене"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:13
 msgid "Deleted Account"
 msgstr "_Видалений акаунт"
 
@@ -369,8 +382,8 @@ msgstr "Адміністратори цієї групи заборонили в
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:105
-#: src/session/content/message_row/indicators_model.rs:155
-#: src/session/sidebar/row.rs:394
+#: src/session/content/message_row/indicators_model.rs:186
+#: src/session/sidebar/row.rs:946
 msgid "%l:%M %p"
 msgstr "%l:%M %p"
 
@@ -385,14 +398,14 @@ msgstr "%a, %e %B, %Y %H:%M"
 msgid "Writing messages isn't allowed in this group."
 msgstr "В цій групі не дозволено писати повідомлення."
 
-#: src/login.rs:380
+#: src/login.rs:372
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
 "Єдиний спосіб продовжити користуватись вашим обліковим записом — це видалити "
 "та створити його ще раз"
 
-#: src/login.rs:385
+#: src/login.rs:377
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
@@ -401,7 +414,7 @@ msgstr ""
 "спосіб продовжити користуватись обліковим записом — це видалити та створити "
 "його ще раз"
 
-#: src/login.rs:393
+#: src/login.rs:385
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
@@ -409,33 +422,33 @@ msgstr ""
 "Будь ласка зверніть увагу, що ви втратите усі чати та повідомлення, разом із "
 "усіма медіа та файлами, якими ви поділилися!"
 
-#: src/login.rs:684
+#: src/login.rs:676
 msgid "Do you accept the Terms of Service?"
 msgstr "Чи приймаєте Ви Умови Користування?"
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_No"
 msgstr "_Ні"
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_Yes"
 msgstr "_Так"
 
-#: src/login.rs:688
+#: src/login.rs:680
 msgid "Terms of Service"
 msgstr "Умови Користування"
 
-#: src/login.rs:689 src/login.rs:999
+#: src/login.rs:681 src/login.rs:991
 msgid "_OK"
 msgstr "_ОК"
 
-#: src/login.rs:911
+#: src/login.rs:903
 msgid "Warning"
 msgstr "Увага"
 
-#: src/login.rs:913
+#: src/login.rs:905
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -447,15 +460,15 @@ msgstr ""
 "\n"
 "Ви хочете видалити свій обліковий запис?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
+#: src/login.rs:911 src/session/content/chat_action_bar.rs:429
 msgid "_Cancel"
 msgstr "_Скасувати"
 
-#: src/login.rs:992
+#: src/login.rs:984
 msgid "Sorry"
 msgstr "Вибачте"
 
-#: src/login.rs:994
+#: src/login.rs:986
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -464,32 +477,32 @@ msgstr ""
 "згадати Ваш пароль або видалити та створити Ваш обліковий запис знову."
 
 #. Translators: This is an authentication method
-#: src/login.rs:1066
+#: src/login.rs:1058
 msgid "Telegram"
 msgstr "Telegram"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1068
+#: src/login.rs:1060
 msgid "SMS"
 msgstr "SMS"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1070
+#: src/login.rs:1062
 msgid "Call"
 msgstr "Дзвінок"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1072
+#: src/login.rs:1064
 msgid "Flash Call"
 msgstr "Бліц Дзвінок"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1074
+#: src/login.rs:1066
 msgid "Missed Call"
 msgstr "Пропущений виклик"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1076
+#: src/login.rs:1068
 msgid "Fragment"
 msgstr "Fragment"
 
@@ -497,16 +510,16 @@ msgstr "Fragment"
 msgid "You entered an invalid country code."
 msgstr "Ви ввели недійсний код країни."
 
-#: src/strings.rs:24
+#: src/strings.rs:25
 msgid "last seen a long time ago"
 msgstr "відвідини — давно"
 
-#: src/strings.rs:25
+#: src/strings.rs:26
 msgid "online"
 msgstr "в мережі"
 
 #. Translators: This is an online status with the date
-#: src/strings.rs:34
+#: src/strings.rs:35
 #, c-format
 msgid "last seen %x"
 msgstr "відвідини — %x"
@@ -514,11 +527,11 @@ msgstr "відвідини — %x"
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:39
+#: src/strings.rs:40
 msgid "last seen yesterday at %l:%M %p"
 msgstr "відвідини — вчора о %H:%M"
 
-#: src/strings.rs:43
+#: src/strings.rs:44
 #, fuzzy
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
@@ -526,7 +539,7 @@ msgstr[0] "відвідини — давно"
 msgstr[1] "відвідини — давно"
 msgstr[2] "відвідини — давно"
 
-#: src/strings.rs:50
+#: src/strings.rs:51
 #, fuzzy
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
@@ -534,300 +547,331 @@ msgstr[0] "відвідини — давно"
 msgstr[1] "відвідини — давно"
 msgstr[2] "відвідини — давно"
 
-#: src/strings.rs:56
+#: src/strings.rs:57
 msgid "last seen just now"
 msgstr "відвідини — щойно"
 
-#: src/strings.rs:59
+#: src/strings.rs:60
 msgid "last seen recently"
 msgstr "відвідини — нещодавно"
 
-#: src/strings.rs:60
+#: src/strings.rs:61
 msgid "last seen within a week"
 msgstr "відвідини — цього тижня"
 
-#: src/strings.rs:61
+#: src/strings.rs:62
 msgid "last seen within a month"
 msgstr "відвідини — цього місяця"
 
-#: src/strings.rs:85
+#: src/strings.rs:86
 msgid "Photo has expired"
 msgstr "Фото застаріло"
 
-#: src/strings.rs:88
+#: src/strings.rs:89
 msgid "Video has expired"
 msgstr "Відео застаріло"
 
-#: src/strings.rs:89
+#: src/strings.rs:90
 msgid "Video Message"
 msgstr "Відео повідомлення"
 
-#: src/strings.rs:120
+#: src/strings.rs:121
+#, fuzzy
+msgid "{sender} took a screenshot!"
+msgstr "Фото прикріплено {sender}"
+
+#: src/strings.rs:126
 msgid "Unsupported Message"
 msgstr "Непідтримуване повідомлення"
 
-#: src/strings.rs:126
+#: src/strings.rs:132
 msgid "GIF"
 msgstr "GIF"
 
-#: src/strings.rs:128
+#: src/strings.rs:134
 msgid "GIF, {caption}"
 msgstr ""
 
-#: src/strings.rs:136
+#: src/strings.rs:142
 msgid "{title} – {performer}"
 msgstr ""
 
-#: src/strings.rs:142
+#: src/strings.rs:148
 msgid "{title} – {performer}, {caption}"
 msgstr ""
 
-#: src/strings.rs:158
+#: src/strings.rs:164
 msgid "{file_name}, {caption}"
 msgstr ""
 
-#: src/strings.rs:166
+#: src/strings.rs:172
 msgid "Photo"
 msgstr "Світлина"
 
-#: src/strings.rs:168
+#: src/strings.rs:174
 msgid "Photo, {caption}"
 msgstr ""
 
 #. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:174
+#: src/strings.rs:180
 #, fuzzy
 msgid "{emoji} Sticker"
 msgstr "Стікер"
 
-#: src/strings.rs:179
+#: src/strings.rs:185
 msgid "Video"
 msgstr "Відео"
 
-#: src/strings.rs:181
+#: src/strings.rs:187
 msgid "Video, {caption}"
 msgstr ""
 
-#: src/strings.rs:187
+#: src/strings.rs:193
 msgid "Voice Message"
 msgstr "Голосове повідомлення"
 
-#: src/strings.rs:189
+#: src/strings.rs:195
 #, fuzzy
 msgid "Voice Message, {caption}"
 msgstr "Голосове повідомлення"
 
-#: src/strings.rs:206
+#: src/strings.rs:212
 msgid "Declined outgoing video call"
 msgstr "Відхилений вихідний відеовиклик"
 
-#: src/strings.rs:208
+#: src/strings.rs:214
 msgid "Declined outgoing call"
 msgstr "Відхилений вихідний виклик"
 
-#: src/strings.rs:214
+#: src/strings.rs:220
 msgid "Declined incoming video call"
 msgstr "Відхилений вхідний відеовиклик"
 
-#: src/strings.rs:216
+#: src/strings.rs:222
 msgid "Declined incoming call"
 msgstr "Відхилений вхідний виклик"
 
-#: src/strings.rs:224
+#: src/strings.rs:230
 msgid "Canceled call"
 msgstr "Скасований виклик"
 
-#: src/strings.rs:226
+#: src/strings.rs:232
 msgid "Missed call"
 msgstr "Пропущений виклик"
 
-#: src/strings.rs:239
+#: src/strings.rs:245
 #, fuzzy
 msgid "Outgoing video call ({duration})"
 msgstr "Вихідний відеовиклик"
 
-#: src/strings.rs:244
+#: src/strings.rs:250
 #, fuzzy
 msgid "Outgoing call ({duration})"
 msgstr "Вихідний виклик"
 
-#: src/strings.rs:249
+#: src/strings.rs:255
 msgid "Outgoing video call"
 msgstr "Вихідний відеовиклик"
 
-#: src/strings.rs:251
+#: src/strings.rs:257
 msgid "Outgoing call"
 msgstr "Вихідний виклик"
 
-#: src/strings.rs:256
+#: src/strings.rs:262
 #, fuzzy
 msgid "Incoming video call ({duration})"
 msgstr "Вхідний відеовиклик"
 
-#: src/strings.rs:261
+#: src/strings.rs:267
 #, fuzzy
 msgid "Incoming call ({duration})"
 msgstr "_Вхідний виклик"
 
-#: src/strings.rs:266
+#: src/strings.rs:272
 msgid "Incoming video call"
 msgstr "Вхідний відеовиклик"
 
-#: src/strings.rs:268 src/window.rs:213
+#: src/strings.rs:274 src/window.rs:213
 msgid "Incoming call"
 msgstr "_Вхідний виклик"
 
-#: src/strings.rs:275 src/strings.rs:286
+#: src/strings.rs:281 src/strings.rs:292
 msgid "{sender} created the group \"{title}\""
 msgstr ""
 
-#: src/strings.rs:282
+#: src/strings.rs:288
 msgid "Channel created"
 msgstr "Канал створено"
 
-#: src/strings.rs:296
+#: src/strings.rs:302
 #, fuzzy
 msgid "Channel renamed to \"{title}\""
 msgstr "Канал створено"
 
-#: src/strings.rs:301
+#: src/strings.rs:307
 msgid "{sender} changed the group name to \"{title}\""
 msgstr ""
 
-#: src/strings.rs:311
+#: src/strings.rs:317
 msgid "Channel photo changed"
 msgstr "Світлину каналу змінено"
 
-#: src/strings.rs:315
+#: src/strings.rs:321
 #, fuzzy
 msgid "{sender} changed the group photo"
 msgstr "Фото прикріплено {sender}"
 
-#: src/strings.rs:323
+#: src/strings.rs:329
 msgid "Channel photo removed"
 msgstr "Світлину каналу видалено"
 
-#: src/strings.rs:327
+#: src/strings.rs:333
 #, fuzzy
 msgid "{sender} removed the group photo"
 msgstr "Ви видалили світлину групи"
 
-#: src/strings.rs:335 src/strings.rs:370
+#: src/strings.rs:341 src/strings.rs:376
 #, fuzzy
 msgid "{sender} joined the group"
 msgstr "Ви приєдналися до цієї групи"
 
-#: src/strings.rs:340
+#: src/strings.rs:346
 msgid "{sender} added {first_user} and {second_user}"
 msgstr ""
 
-#: src/strings.rs:354
+#: src/strings.rs:360
 #, fuzzy
 msgid "{sender} added {users}"
 msgstr "Стікер прикріплено {sender}"
 
-#: src/strings.rs:363
+#: src/strings.rs:369
 msgid "{sender} joined the group via invite link"
 msgstr ""
 
-#: src/strings.rs:377
+#: src/strings.rs:383
 #, fuzzy
 msgid "{sender} left the group"
 msgstr "Ви вийшли із групи"
 
-#: src/strings.rs:382
+#: src/strings.rs:388
 #, fuzzy
 msgid "{sender} removed {user}"
 msgstr "Стікер прикріплено {sender}"
 
-#: src/strings.rs:404
+#: src/strings.rs:407
+msgid "{sender} scored {points} in {game}"
+msgstr ""
+
+#: src/strings.rs:416
+#, fuzzy
+msgid "{sender} scored {points}"
+msgstr "Стікер прикріплено {sender}"
+
+#: src/strings.rs:440
 #, fuzzy
 msgid "{sender} pinned \"{text}\""
 msgstr "Файл прикріплено {sender}"
 
-#: src/strings.rs:406
+#: src/strings.rs:442
 msgid "{sender} pinned a GIF"
 msgstr "GIF прикріплено {sender}"
 
-#: src/strings.rs:407
+#: src/strings.rs:443
 msgid "{sender} pinned an audio file"
 msgstr "Аудіофайл прикріплено {sender}"
 
-#: src/strings.rs:408
+#: src/strings.rs:444
 msgid "{sender} pinned a file"
 msgstr "Файл прикріплено {sender}"
 
-#: src/strings.rs:409
+#: src/strings.rs:445
 msgid "{sender} pinned a photo"
 msgstr "Фото прикріплено {sender}"
 
-#: src/strings.rs:410
+#: src/strings.rs:446
 msgid "{sender} pinned a sticker"
 msgstr "Стікер прикріплено {sender}"
 
-#: src/strings.rs:411
+#: src/strings.rs:447
 msgid "{sender} pinned a video"
 msgstr "Відео прикріплено {sender}"
 
-#: src/strings.rs:412
+#: src/strings.rs:448
 msgid "{sender} pinned a video message"
 msgstr "Відеоповідомлення прикріплено {sender}"
 
-#: src/strings.rs:413
+#: src/strings.rs:449
 msgid "{sender} pinned a voice message"
 msgstr "Голосове повідомлення прикріплено {sender}"
 
-#: src/strings.rs:414 src/strings.rs:416
+#: src/strings.rs:450 src/strings.rs:452
 msgid "{sender} pinned a message"
 msgstr "Повідомлення прикріплено {sender}"
 
-#: src/strings.rs:425
+#: src/strings.rs:461
 #, fuzzy
 msgid "{sender} joined Telegram"
 msgstr "Файл прикріплено {sender}"
 
-#: src/session/preferences_window.rs:206
+#: src/session/preferences_window.rs:208
 msgid "Cache cleared"
 msgstr "Кеш очищено"
 
-#: src/session/content/chat_action_bar.rs:109
-#: src/session/content/chat_action_bar.rs:620
+#: src/session/content/chat_action_bar.rs:122
+#: src/session/content/chat_action_bar.rs:750
 msgid "Unmute"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:111
-#: src/session/content/chat_action_bar.rs:622
+#: src/session/content/chat_action_bar.rs:124
+#: src/session/content/chat_action_bar.rs:752
 msgid "Mute"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:273
+#: src/session/content/chat_action_bar.rs:320
+#: src/session/content/chat_action_bar.rs:337
 msgid "Unknown"
 msgstr "Невідомо"
 
-#: src/session/content/chat_action_bar.rs:275
+#: src/session/content/chat_action_bar.rs:322
+#: src/session/content/chat_action_bar.rs:339
 msgid "Deleted Message"
 msgstr "Видалене повідомлення"
 
-#: src/session/content/chat_action_bar.rs:321
+#: src/session/content/chat_action_bar.rs:333
+#, fuzzy
+msgid "Edit Message"
+msgstr "Повідомлення"
+
+#: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
 msgstr "Відкрити файл"
 
-#: src/session/content/chat_action_bar.rs:324
+#: src/session/content/chat_action_bar.rs:428
 msgid "_Open"
 msgstr "_Відкрити"
 
-#: src/session/content/chat_action_bar.rs:329
+#: src/session/content/chat_action_bar.rs:433
 msgid "Images"
 msgstr "Зображення"
 
-#: src/session/content/chat_history.rs:242
+#: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
 msgstr ""
 
-#: src/session/content/chat_history.rs:243
+#: src/session/content/chat_history.rs:231
 #, fuzzy
 msgid "Do you want to leave this chat?"
 msgstr "Чи хочете Ви видалити це повідомлення?"
+
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/chat_history_row.rs:121
+msgid "%B %e"
+msgstr "%e %B"
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/chat_history_row.rs:124
+msgid "%B %e, %Y"
+msgstr "%e %B, %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -862,33 +906,23 @@ msgstr "Посилання"
 msgid "Copied to clipboard"
 msgstr "Скопійовано до буферу обміну"
 
-#. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:119
-msgid "%B %e"
-msgstr "%e %B"
-
-#. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:122
-msgid "%B %e, %Y"
-msgstr "%e %B, %Y"
-
-#: src/session/content/message_row/indicators_model.rs:157
+#: src/session/content/message_row/indicators_model.rs:188
 msgid "edited"
 msgstr "редаговано"
 
-#: src/session/content/message_row/indicators_model.rs:162
+#: src/session/content/message_row/indicators_model.rs:193
 msgid "sponsored"
 msgstr "спонсоровано"
 
-#: src/session/content/message_row/mod.rs:166
+#: src/session/content/message_row/mod.rs:170
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr "Ви хочете видалити це повідомлення для <b>всіх</b>?"
 
-#: src/session/content/message_row/mod.rs:168
+#: src/session/content/message_row/mod.rs:172
 msgid "Do you want to delete this message?"
 msgstr "Чи хочете Ви видалити це повідомлення?"
 
-#: src/session/content/message_row/mod.rs:172
+#: src/session/content/message_row/mod.rs:176
 msgid "Confirm Message Deletion"
 msgstr "Підтвердіть видалення повідомлення"
 
@@ -896,59 +930,60 @@ msgstr "Підтвердіть видалення повідомлення"
 msgid "This message is unsupported"
 msgstr "Це повідомлення не підтримується"
 
-#: src/session/sidebar/row.rs:427
-msgid "Draft"
+#: src/session/sidebar/row.rs:441
+#, fuzzy
+msgid "Draft:"
 msgstr "Чернетка"
 
-#: src/session/sidebar/row.rs:643
+#: src/session/sidebar/row.rs:621
 msgid "You"
 msgstr "Ви"
 
-#: src/session/sidebar/row.rs:709
+#: src/session/sidebar/row.rs:687
 msgid "choosing a contact"
 msgstr "обирає контакт"
 
-#: src/session/sidebar/row.rs:727
+#: src/session/sidebar/row.rs:705
 msgid "choosing a location"
 msgstr "обирає локацію"
 
-#: src/session/sidebar/row.rs:745
+#: src/session/sidebar/row.rs:723
 msgid "choosing a sticker"
 msgstr "обирає стікер"
 
-#: src/session/sidebar/row.rs:763
+#: src/session/sidebar/row.rs:741
 msgid "recording a video"
 msgstr "записує відео"
 
-#: src/session/sidebar/row.rs:781
+#: src/session/sidebar/row.rs:759
 msgid "recording a video note"
 msgstr "записує відеонотатку"
 
-#: src/session/sidebar/row.rs:799
+#: src/session/sidebar/row.rs:777
 msgid "recording a voice note"
 msgstr "записує голосову нотатку"
 
-#: src/session/sidebar/row.rs:817
+#: src/session/sidebar/row.rs:795
 msgid "playing a game"
 msgstr "грає гру"
 
-#: src/session/sidebar/row.rs:835
+#: src/session/sidebar/row.rs:813
 msgid "typing"
 msgstr "пише"
 
-#: src/session/sidebar/row.rs:950
+#: src/session/sidebar/row.rs:928
 msgid "watching an animation"
 msgstr "переглядає анімацію"
 
-#: src/session/sidebar/search/section_row.rs:137
+#: src/session/sidebar/search/section_row.rs:130
 msgid "Chats"
 msgstr "Чати"
 
-#: src/session/sidebar/search/section_row.rs:140
+#: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
 msgstr "Глобальний пошук"
 
-#: src/session/sidebar/search/section_row.rs:143
+#: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
 msgstr "Нещодавні"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-05 17:24+0100\n"
+"POT-Creation-Date: 2023-02-21 21:49+0100\n"
 "PO-Revision-Date: 2023-02-08 21:05+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
@@ -62,7 +62,7 @@ msgstr ""
 "nombres de directorio de base de datos"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
-#: data/resources/ui/preferences-window.ui:8
+#: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr "Esquema de colores"
 
@@ -78,29 +78,37 @@ msgstr "Ventana principal"
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
-#: data/resources/ui/add-account-row.ui:6
+#: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
 msgstr "Servidor de _producción"
 
-#: data/resources/ui/add-account-row.ui:10
+#: data/resources/ui/add-account-row.blp:11
 msgid "_Test Server"
 msgstr "Servidor de p_ruebas"
 
-#: data/resources/ui/add-account-row.ui:33
+#: data/resources/ui/add-account-row.blp:33
 msgid "_Add Account"
 msgstr "_Añadir cuenta"
 
-#: data/resources/ui/content.ui:32
+#: data/resources/ui/content.blp:29
 msgid "No Chat Selected"
 msgstr "Ningún chat seleccionado"
 
-#: data/resources/ui/content.ui:33
+#: data/resources/ui/content.blp:30
 msgid "Select a chat to start messaging."
 msgstr "Seleccione un chat para empezar a conversar."
 
-#: data/resources/ui/content-chat-action-bar.ui:89
+#: data/resources/ui/content-chat-action-bar.blp:68
 msgid "Message"
 msgstr "Mensaje"
+
+#: data/resources/ui/content-chat-action-bar.blp:96
+msgid "Unblock"
+msgstr ""
+
+#: data/resources/ui/content-chat-action-bar.blp:113
+msgid "Join"
+msgstr ""
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -114,60 +122,60 @@ msgstr "Ver información"
 msgid "Leave Chat"
 msgstr "Abandonar el chat"
 
-#: data/resources/ui/content-send-photo-dialog.ui:35
+#: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
 msgstr "Leyenda"
 
-#: data/resources/ui/login.ui:29
+#: data/resources/ui/login.blp:25
 msgid "_Previous"
 msgstr "A_nterior"
 
-#: data/resources/ui/login.ui:58
+#: data/resources/ui/login.blp:48
 msgid "_Next"
 msgstr "_Siguiente"
 
-#: data/resources/ui/login.ui:87
+#: data/resources/ui/login.blp:68
 msgid "Welcome"
 msgstr "Bienvenidos"
 
-#: data/resources/ui/login.ui:107
+#: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
 msgstr "_Acceder mediante código QR"
 
-#: data/resources/ui/login.ui:166
+#: data/resources/ui/login.blp:127
 msgid "Scan Code"
 msgstr "Escanear código"
 
-#: data/resources/ui/login.ui:167
+#: data/resources/ui/login.blp:128
 msgid "Scan this code with another Telegram app logged into your account."
 msgstr ""
 "Escanee este código con otra aplicación de Telegram conectada a su cuenta."
 
-#: data/resources/ui/login.ui:189
+#: data/resources/ui/login.blp:144
 msgid "Enter the Verification Code"
 msgstr "Introduzca el código de verificación"
 
-#: data/resources/ui/login.ui:202 data/resources/ui/login.ui:621
+#: data/resources/ui/login.blp:160 data/resources/ui/login.blp:477
 msgid "Code"
 msgstr "Código"
 
-#: data/resources/ui/login.ui:237
+#: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
 msgstr "El código ya no se puede enviar."
 
-#: data/resources/ui/login.ui:286
+#: data/resources/ui/login.blp:218
 msgid "Register New Account"
 msgstr "Registrar una cuenta nueva"
 
-#: data/resources/ui/login.ui:300
+#: data/resources/ui/login.blp:233
 msgid "First Name"
 msgstr "Nombre"
 
-#: data/resources/ui/login.ui:305
+#: data/resources/ui/login.blp:237
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: data/resources/ui/login.ui:338
+#: data/resources/ui/login.blp:259
 msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
@@ -175,27 +183,27 @@ msgstr ""
 "Al registrarse,\n"
 "acepta las <a href=\"\">condiciones del servicio</a>."
 
-#: data/resources/ui/login.ui:354
+#: data/resources/ui/login.blp:271
 msgid "Enter Your Password"
 msgstr "Introduzca su contraseña"
 
-#: data/resources/ui/login.ui:367
+#: data/resources/ui/login.blp:285
 msgid "Password"
 msgstr "Contraseña"
 
-#: data/resources/ui/login.ui:375
+#: data/resources/ui/login.blp:292
 msgid "Hint"
 msgstr "Sugerencia"
 
-#: data/resources/ui/login.ui:398
+#: data/resources/ui/login.blp:308
 msgid "_Forgot password?"
 msgstr "¿_Olvidó su contraseña?"
 
-#: data/resources/ui/login.ui:461
+#: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
 msgstr "Usar el código de recuperación"
 
-#: data/resources/ui/login.ui:474
+#: data/resources/ui/login.blp:363
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
@@ -204,97 +212,102 @@ msgstr ""
 "correo electrónico de recuperación. Allí se puede enviar un código para "
 "restablecer la contraseña."
 
-#: data/resources/ui/login.ui:493
+#: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
 msgstr "_Enviar código de recuperación"
 
-#: data/resources/ui/login.ui:555
+#: data/resources/ui/login.blp:425
 msgid "Account Deletion"
 msgstr "Eliminación de la cuenta"
 
-#: data/resources/ui/login.ui:582 src/login.rs:920
+#: data/resources/ui/login.blp:445 src/login.rs:912
 msgid "_Delete Account"
 msgstr "_Eliminar cuenta"
 
-#: data/resources/ui/login.ui:607
+#: data/resources/ui/login.blp:460
 msgid "Enter the code e-mailed to you"
 msgstr "Introduzca el código que le hemos enviado por correo electrónico"
 
-#: data/resources/ui/login.ui:650
+#: data/resources/ui/login.blp:493
 msgid "Unable to access your e-mail?"
 msgstr "¿No puede acceder a su correo electrónico?"
 
-#: data/resources/ui/message-menu.ui:6
+#: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
 msgstr "_Responder"
 
-#: data/resources/ui/message-menu.ui:11
-msgid "Delete for _Everyone"
+#: data/resources/ui/message-menu.blp:12
+msgid "_Edit"
+msgstr ""
+
+#: data/resources/ui/message-menu.blp:18
+#, fuzzy
+msgid "Delete for Ever_yone"
 msgstr "Eliminar para _todos"
 
-#: data/resources/ui/message-menu.ui:16
+#: data/resources/ui/message-menu.blp:24
 msgid "_Delete for Me"
 msgstr "_Eliminar para mí"
 
-#: data/resources/ui/phone-number-input.ui:12
+#: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
 msgstr "País"
 
-#: data/resources/ui/phone-number-input.ui:17
+#: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
 msgstr "Número de teléfono"
 
-#: data/resources/ui/preferences-window.ui:11
+#: data/resources/ui/preferences-window.blp:10
 msgid "Follow System Colors"
 msgstr "Seguir los colores del sistema"
 
-#: data/resources/ui/preferences-window.ui:22
+#: data/resources/ui/preferences-window.blp:19
 msgid "Dark Theme"
 msgstr "Tema oscuro"
 
-#: data/resources/ui/preferences-window.ui:35
+#: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
 msgstr "Almacenamiento"
 
-#: data/resources/ui/preferences-window.ui:38
+#: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
 msgstr "Tamaño de la caché"
 
-#: data/resources/ui/preferences-window.ui:50
+#: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
 msgstr "Limpiar caché"
 
-#: data/resources/ui/shortcuts.ui:11
+#: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "General"
 
-#: data/resources/ui/shortcuts.ui:14
+#: data/resources/ui/shortcuts.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Mostrar atajos"
 
-#: data/resources/ui/shortcuts.ui:20
+#: data/resources/ui/shortcuts.blp:19
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Salir"
 
-#: data/resources/ui/shortcuts.ui:28
+#: data/resources/ui/shortcuts.blp:25
 msgctxt "shortcut window"
 msgid "Chat List"
 msgstr "Lista de chats"
 
-#: data/resources/ui/shortcuts.ui:31
+#: data/resources/ui/shortcuts.blp:28
 msgctxt "shortcut window"
 msgid "Search Chats"
 msgstr "Buscar chats"
 
-#: data/resources/ui/shortcuts.ui:39
+#: data/resources/ui/shortcuts.blp:34
 msgctxt "shortcut window"
 msgid "Chat History"
 msgstr "Historial del chat"
 
-#: data/resources/ui/shortcuts.ui:42
+#: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
 msgstr "Enviar foto desde el portapapeles"
@@ -315,19 +328,19 @@ msgstr "_Atajos del teclado"
 msgid "_About Telegrand"
 msgstr "_Acerca de Telegrand"
 
-#: data/resources/ui/sidebar-row-menu.ui:6
+#: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
 msgstr "_Fijar"
 
-#: data/resources/ui/sidebar-row-menu.ui:11
+#: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
 msgstr "_Desfijar"
 
-#: data/resources/ui/sidebar-row-menu.ui:16
+#: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
 msgstr "_Marcar como no leído"
 
-#: data/resources/ui/sidebar-row-menu.ui:21
+#: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
 msgstr "Marcar como _leído"
 
@@ -351,12 +364,12 @@ msgstr "Desarrolladores de Telegrand"
 msgid "Sponsors"
 msgstr "Patrocinadores"
 
-#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:119
-#: src/session/sidebar/search/mod.rs:208
+#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
+#: src/session/sidebar/search/mod.rs:205
 msgid "Saved Messages"
 msgstr "Mensajes guardados"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:12
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:13
 msgid "Deleted Account"
 msgstr "Cuenta eliminada"
 
@@ -368,8 +381,8 @@ msgstr "Los administradores de este grupo le han restringido escribir aquí"
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:105
-#: src/session/content/message_row/indicators_model.rs:155
-#: src/session/sidebar/row.rs:394
+#: src/session/content/message_row/indicators_model.rs:186
+#: src/session/sidebar/row.rs:946
 msgid "%l:%M %p"
 msgstr "%H:%M"
 
@@ -384,13 +397,13 @@ msgstr "%e de %B de %Y %H:%M"
 msgid "Writing messages isn't allowed in this group."
 msgstr "Escribir mensajes no está permitido en este grupo."
 
-#: src/login.rs:380
+#: src/login.rs:372
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
 "Una forma de seguir usando su cuenta es eliminarla y luego volver a crearla"
 
-#: src/login.rs:385
+#: src/login.rs:377
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
@@ -399,7 +412,7 @@ msgstr ""
 "recuperación, la única forma de seguir usando su cuenta es eliminarla y "
 "volver a crearla"
 
-#: src/login.rs:393
+#: src/login.rs:385
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
@@ -407,33 +420,33 @@ msgstr ""
 "¡Tenga en cuenta que perderá todos sus chats y mensajes, junto con cualquier "
 "medio y archivo que haya compartido!"
 
-#: src/login.rs:684
+#: src/login.rs:676
 msgid "Do you accept the Terms of Service?"
 msgstr "¿Acepta las condiciones del servicio?"
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_No"
 msgstr "_No"
 
-#: src/login.rs:685 src/session/content/chat_history.rs:245
-#: src/session/content/message_row/mod.rs:178
+#: src/login.rs:677 src/session/content/chat_history.rs:233
+#: src/session/content/message_row/mod.rs:182
 msgid "_Yes"
 msgstr "_Sí"
 
-#: src/login.rs:688
+#: src/login.rs:680
 msgid "Terms of Service"
 msgstr "Condiciones del servicio"
 
-#: src/login.rs:689 src/login.rs:999
+#: src/login.rs:681 src/login.rs:991
 msgid "_OK"
 msgstr "_Vale"
 
-#: src/login.rs:911
+#: src/login.rs:903
 msgid "Warning"
 msgstr "Atención"
 
-#: src/login.rs:913
+#: src/login.rs:905
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -445,15 +458,15 @@ msgstr ""
 "\n"
 "¿Quiere eliminar su cuenta?"
 
-#: src/login.rs:919 src/session/content/chat_action_bar.rs:325
+#: src/login.rs:911 src/session/content/chat_action_bar.rs:429
 msgid "_Cancel"
 msgstr "_Cancelar"
 
-#: src/login.rs:992
+#: src/login.rs:984
 msgid "Sorry"
 msgstr "Lo sentimos"
 
-#: src/login.rs:994
+#: src/login.rs:986
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -462,32 +475,32 @@ msgstr ""
 "quedan son recordar la contraseña o eliminar y volver a crear la cuenta."
 
 #. Translators: This is an authentication method
-#: src/login.rs:1066
+#: src/login.rs:1058
 msgid "Telegram"
 msgstr "Telegram"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1068
+#: src/login.rs:1060
 msgid "SMS"
 msgstr "SMS"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1070
+#: src/login.rs:1062
 msgid "Call"
 msgstr "Llamada"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1072
+#: src/login.rs:1064
 msgid "Flash Call"
 msgstr "Llamada instantánea"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1074
+#: src/login.rs:1066
 msgid "Missed Call"
 msgstr "Llamada perdida"
 
 #. Translators: This is an authentication method
-#: src/login.rs:1076
+#: src/login.rs:1068
 msgid "Fragment"
 msgstr "Fragmento"
 
@@ -495,16 +508,16 @@ msgstr "Fragmento"
 msgid "You entered an invalid country code."
 msgstr "Ha introducido un código de país no válido."
 
-#: src/strings.rs:24
+#: src/strings.rs:25
 msgid "last seen a long time ago"
 msgstr "visto por última vez hace mucho tiempo"
 
-#: src/strings.rs:25
+#: src/strings.rs:26
 msgid "online"
 msgstr "en línea"
 
 #. Translators: This is an online status with the date
-#: src/strings.rs:34
+#: src/strings.rs:35
 #, c-format
 msgid "last seen %x"
 msgstr "visto por última vez %x"
@@ -512,300 +525,331 @@ msgstr "visto por última vez %x"
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:39
+#: src/strings.rs:40
 msgid "last seen yesterday at %l:%M %p"
 msgstr "visto por última vez ayer a las %H:%M"
 
-#: src/strings.rs:43
+#: src/strings.rs:44
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
 msgstr[0] "visto por última vez hace {num} hora"
 msgstr[1] "visto por última vez hace {num} horas"
 
-#: src/strings.rs:50
+#: src/strings.rs:51
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
 msgstr[0] "visto por última vez hace {num} minuto"
 msgstr[1] "visto por última vez hace {num} minutos"
 
-#: src/strings.rs:56
+#: src/strings.rs:57
 msgid "last seen just now"
 msgstr "visto por última vez hace un momento"
 
-#: src/strings.rs:59
+#: src/strings.rs:60
 msgid "last seen recently"
 msgstr "visto por última vez recientemente"
 
-#: src/strings.rs:60
+#: src/strings.rs:61
 msgid "last seen within a week"
 msgstr "visto por última vez hace menos de una semana"
 
-#: src/strings.rs:61
+#: src/strings.rs:62
 msgid "last seen within a month"
 msgstr "visto por última vez hace menos de un mes"
 
-#: src/strings.rs:85
+#: src/strings.rs:86
 msgid "Photo has expired"
 msgstr "Foto caducada"
 
-#: src/strings.rs:88
+#: src/strings.rs:89
 msgid "Video has expired"
 msgstr "Vídeo caducado"
 
-#: src/strings.rs:89
+#: src/strings.rs:90
 msgid "Video Message"
 msgstr "Mensaje de vídeo"
 
-#: src/strings.rs:120
+#: src/strings.rs:121
+#, fuzzy
+msgid "{sender} took a screenshot!"
+msgstr "{sender} fijó una foto"
+
+#: src/strings.rs:126
 msgid "Unsupported Message"
 msgstr "Mensaje no soportado"
 
-#: src/strings.rs:126
+#: src/strings.rs:132
 msgid "GIF"
 msgstr "GIF"
 
-#: src/strings.rs:128
+#: src/strings.rs:134
 msgid "GIF, {caption}"
 msgstr "GIF, {caption}"
 
-#: src/strings.rs:136
+#: src/strings.rs:142
 msgid "{title} – {performer}"
 msgstr "{title} – {performer}"
 
-#: src/strings.rs:142
+#: src/strings.rs:148
 msgid "{title} – {performer}, {caption}"
 msgstr "{title} – {performer}, {caption}"
 
-#: src/strings.rs:158
+#: src/strings.rs:164
 msgid "{file_name}, {caption}"
 msgstr "{file_name}, {caption}"
 
-#: src/strings.rs:166
+#: src/strings.rs:172
 msgid "Photo"
 msgstr "Foto"
 
-#: src/strings.rs:168
+#: src/strings.rs:174
 msgid "Photo, {caption}"
 msgstr "Fotografía, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:174
+#: src/strings.rs:180
 msgid "{emoji} Sticker"
 msgstr "{emoji} Adhesivo"
 
-#: src/strings.rs:179
+#: src/strings.rs:185
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/strings.rs:181
+#: src/strings.rs:187
 msgid "Video, {caption}"
 msgstr "Vídeo, {caption}"
 
-#: src/strings.rs:187
+#: src/strings.rs:193
 msgid "Voice Message"
 msgstr "Mensaje de voz"
 
-#: src/strings.rs:189
+#: src/strings.rs:195
 msgid "Voice Message, {caption}"
 msgstr "Mensaje de voz, {caption}"
 
-#: src/strings.rs:206
+#: src/strings.rs:212
 msgid "Declined outgoing video call"
 msgstr "Videollamada saliente rechazada"
 
-#: src/strings.rs:208
+#: src/strings.rs:214
 msgid "Declined outgoing call"
 msgstr "Llamada saliente rechazada"
 
-#: src/strings.rs:214
+#: src/strings.rs:220
 msgid "Declined incoming video call"
 msgstr "Videollamada entrante rechazada"
 
-#: src/strings.rs:216
+#: src/strings.rs:222
 msgid "Declined incoming call"
 msgstr "Llamada entrante rechazada"
 
-#: src/strings.rs:224
+#: src/strings.rs:230
 msgid "Canceled call"
 msgstr "Llamada cancelada"
 
-#: src/strings.rs:226
+#: src/strings.rs:232
 msgid "Missed call"
 msgstr "Llamada perdida"
 
-#: src/strings.rs:239
+#: src/strings.rs:245
 msgid "Outgoing video call ({duration})"
 msgstr "Videollamada saliente ({duration})"
 
-#: src/strings.rs:244
+#: src/strings.rs:250
 msgid "Outgoing call ({duration})"
 msgstr "Llamada saliente ({duration})"
 
-#: src/strings.rs:249
+#: src/strings.rs:255
 msgid "Outgoing video call"
 msgstr "Videollamada saliente"
 
-#: src/strings.rs:251
+#: src/strings.rs:257
 msgid "Outgoing call"
 msgstr "Llamada saliente"
 
-#: src/strings.rs:256
+#: src/strings.rs:262
 msgid "Incoming video call ({duration})"
 msgstr "Videollamada entrante ({duration})"
 
-#: src/strings.rs:261
+#: src/strings.rs:267
 msgid "Incoming call ({duration})"
 msgstr "Llamada entrante ({duration})"
 
-#: src/strings.rs:266
+#: src/strings.rs:272
 msgid "Incoming video call"
 msgstr "Videollamada entrante"
 
-#: src/strings.rs:268 src/window.rs:213
+#: src/strings.rs:274 src/window.rs:213
 msgid "Incoming call"
 msgstr "Llamada entrante"
 
-#: src/strings.rs:275 src/strings.rs:286
+#: src/strings.rs:281 src/strings.rs:292
 msgid "{sender} created the group \"{title}\""
 msgstr "{sender} creó el grupo con el nombre \"{title}\""
 
-#: src/strings.rs:282
+#: src/strings.rs:288
 msgid "Channel created"
 msgstr "Canal creado"
 
-#: src/strings.rs:296
+#: src/strings.rs:302
 msgid "Channel renamed to \"{title}\""
 msgstr "Canal renombrado a \"{title}\""
 
-#: src/strings.rs:301
+#: src/strings.rs:307
 msgid "{sender} changed the group name to \"{title}\""
 msgstr "{sender} cambió el nombre del grupo a \"{title}\""
 
-#: src/strings.rs:311
+#: src/strings.rs:317
 msgid "Channel photo changed"
 msgstr "Foto del canal cambiada"
 
-#: src/strings.rs:315
+#: src/strings.rs:321
 msgid "{sender} changed the group photo"
 msgstr "{sender} cambió la foto del grupo"
 
-#: src/strings.rs:323
+#: src/strings.rs:329
 msgid "Channel photo removed"
 msgstr "Foto del canal eliminada"
 
-#: src/strings.rs:327
+#: src/strings.rs:333
 msgid "{sender} removed the group photo"
 msgstr "{sender} eliminó la foto de grupo"
 
-#: src/strings.rs:335 src/strings.rs:370
+#: src/strings.rs:341 src/strings.rs:376
 msgid "{sender} joined the group"
 msgstr "{sender} se unió al grupo"
 
-#: src/strings.rs:340
+#: src/strings.rs:346
 msgid "{sender} added {first_user} and {second_user}"
 msgstr "{sender} añadió {first_user} y {second_user}"
 
-#: src/strings.rs:354
+#: src/strings.rs:360
 msgid "{sender} added {users}"
 msgstr "{sender} añadido {users}"
 
-#: src/strings.rs:363
+#: src/strings.rs:369
 msgid "{sender} joined the group via invite link"
 msgstr "{sender} se unió al grupo a través de la nvitación"
 
-#: src/strings.rs:377
+#: src/strings.rs:383
 msgid "{sender} left the group"
 msgstr "{sender} abandonó el grupo"
 
-#: src/strings.rs:382
+#: src/strings.rs:388
 msgid "{sender} removed {user}"
 msgstr "{sender} eliminó a {user}"
 
-#: src/strings.rs:404
+#: src/strings.rs:407
+msgid "{sender} scored {points} in {game}"
+msgstr ""
+
+#: src/strings.rs:416
+#, fuzzy
+msgid "{sender} scored {points}"
+msgstr "{sender} eliminó a {user}"
+
+#: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
 msgstr "{sender} fijó \"{text}\""
 
-#: src/strings.rs:406
+#: src/strings.rs:442
 msgid "{sender} pinned a GIF"
 msgstr "{sender} fijó un GIF"
 
-#: src/strings.rs:407
+#: src/strings.rs:443
 msgid "{sender} pinned an audio file"
 msgstr "{sender} fijó un archivo de audio"
 
-#: src/strings.rs:408
+#: src/strings.rs:444
 msgid "{sender} pinned a file"
 msgstr "{sender} fijó un archivo"
 
-#: src/strings.rs:409
+#: src/strings.rs:445
 msgid "{sender} pinned a photo"
 msgstr "{sender} fijó una foto"
 
-#: src/strings.rs:410
+#: src/strings.rs:446
 msgid "{sender} pinned a sticker"
 msgstr "{sender} fijó una pegatina"
 
-#: src/strings.rs:411
+#: src/strings.rs:447
 msgid "{sender} pinned a video"
 msgstr "{sender} fijó un vídeo"
 
-#: src/strings.rs:412
+#: src/strings.rs:448
 msgid "{sender} pinned a video message"
 msgstr "{sender} fijó un mensaje de vídeo"
 
-#: src/strings.rs:413
+#: src/strings.rs:449
 msgid "{sender} pinned a voice message"
 msgstr "{sender} fijó un mensaje de voz"
 
-#: src/strings.rs:414 src/strings.rs:416
+#: src/strings.rs:450 src/strings.rs:452
 msgid "{sender} pinned a message"
 msgstr "{sender} fijó un mensaje"
 
-#: src/strings.rs:425
+#: src/strings.rs:461
 msgid "{sender} joined Telegram"
 msgstr "{sender} se unió a Telegram"
 
-#: src/session/preferences_window.rs:206
+#: src/session/preferences_window.rs:208
 msgid "Cache cleared"
 msgstr "Caché vaciada"
 
-#: src/session/content/chat_action_bar.rs:109
-#: src/session/content/chat_action_bar.rs:620
+#: src/session/content/chat_action_bar.rs:122
+#: src/session/content/chat_action_bar.rs:750
 msgid "Unmute"
 msgstr "No silenciar"
 
-#: src/session/content/chat_action_bar.rs:111
-#: src/session/content/chat_action_bar.rs:622
+#: src/session/content/chat_action_bar.rs:124
+#: src/session/content/chat_action_bar.rs:752
 msgid "Mute"
 msgstr "Silenciar"
 
-#: src/session/content/chat_action_bar.rs:273
+#: src/session/content/chat_action_bar.rs:320
+#: src/session/content/chat_action_bar.rs:337
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: src/session/content/chat_action_bar.rs:275
+#: src/session/content/chat_action_bar.rs:322
+#: src/session/content/chat_action_bar.rs:339
 msgid "Deleted Message"
 msgstr "Mensaje eliminado"
 
-#: src/session/content/chat_action_bar.rs:321
+#: src/session/content/chat_action_bar.rs:333
+#, fuzzy
+msgid "Edit Message"
+msgstr "Mensaje"
+
+#: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
 msgstr "Abrir archivo"
 
-#: src/session/content/chat_action_bar.rs:324
+#: src/session/content/chat_action_bar.rs:428
 msgid "_Open"
 msgstr "_Abrir"
 
-#: src/session/content/chat_action_bar.rs:329
+#: src/session/content/chat_action_bar.rs:433
 msgid "Images"
 msgstr "Imágenes"
 
-#: src/session/content/chat_history.rs:242
+#: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
 msgstr "¿Abandonar el chat?"
 
-#: src/session/content/chat_history.rs:243
+#: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
 msgstr "¿Quieres abandonar este chat?"
+
+#. Translators: This is a date format in the day divider without the year
+#: src/session/content/chat_history_row.rs:121
+msgid "%B %e"
+msgstr "%e de %B"
+
+#. Translators: This is a date format in the day divider with the year
+#: src/session/content/chat_history_row.rs:124
+msgid "%B %e, %Y"
+msgstr "%e de %B del %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -839,33 +883,23 @@ msgstr "Enlace"
 msgid "Copied to clipboard"
 msgstr "Copiado al portapapeles"
 
-#. Translators: This is a date format in the day divider without the year
-#: src/session/content/item_row.rs:119
-msgid "%B %e"
-msgstr "%e de %B"
-
-#. Translators: This is a date format in the day divider with the year
-#: src/session/content/item_row.rs:122
-msgid "%B %e, %Y"
-msgstr "%e de %B del %Y"
-
-#: src/session/content/message_row/indicators_model.rs:157
+#: src/session/content/message_row/indicators_model.rs:188
 msgid "edited"
 msgstr "editado"
 
-#: src/session/content/message_row/indicators_model.rs:162
+#: src/session/content/message_row/indicators_model.rs:193
 msgid "sponsored"
 msgstr "patrocinado"
 
-#: src/session/content/message_row/mod.rs:166
+#: src/session/content/message_row/mod.rs:170
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr "¿Quieres eliminar este mensaje para <b>todos</b>?"
 
-#: src/session/content/message_row/mod.rs:168
+#: src/session/content/message_row/mod.rs:172
 msgid "Do you want to delete this message?"
 msgstr "¿Quiere eliminar este mensaje?"
 
-#: src/session/content/message_row/mod.rs:172
+#: src/session/content/message_row/mod.rs:176
 msgid "Confirm Message Deletion"
 msgstr "Confirmar eliminación del mensaje"
 
@@ -873,59 +907,60 @@ msgstr "Confirmar eliminación del mensaje"
 msgid "This message is unsupported"
 msgstr "Este mensaje no está admitido"
 
-#: src/session/sidebar/row.rs:427
-msgid "Draft"
+#: src/session/sidebar/row.rs:441
+#, fuzzy
+msgid "Draft:"
 msgstr "Borrador"
 
-#: src/session/sidebar/row.rs:643
+#: src/session/sidebar/row.rs:621
 msgid "You"
 msgstr "Usted"
 
-#: src/session/sidebar/row.rs:709
+#: src/session/sidebar/row.rs:687
 msgid "choosing a contact"
 msgstr "eligiendo un contacto"
 
-#: src/session/sidebar/row.rs:727
+#: src/session/sidebar/row.rs:705
 msgid "choosing a location"
 msgstr "eligiendo una ubicación"
 
-#: src/session/sidebar/row.rs:745
+#: src/session/sidebar/row.rs:723
 msgid "choosing a sticker"
 msgstr "eligiendo una pegatina"
 
-#: src/session/sidebar/row.rs:763
+#: src/session/sidebar/row.rs:741
 msgid "recording a video"
 msgstr "grabando un vídeo"
 
-#: src/session/sidebar/row.rs:781
+#: src/session/sidebar/row.rs:759
 msgid "recording a video note"
 msgstr "grabando una nota de vídeo"
 
-#: src/session/sidebar/row.rs:799
+#: src/session/sidebar/row.rs:777
 msgid "recording a voice note"
 msgstr "grabando una nota de voz"
 
-#: src/session/sidebar/row.rs:817
+#: src/session/sidebar/row.rs:795
 msgid "playing a game"
 msgstr "jugando un juego"
 
-#: src/session/sidebar/row.rs:835
+#: src/session/sidebar/row.rs:813
 msgid "typing"
 msgstr "escribiendo"
 
-#: src/session/sidebar/row.rs:950
+#: src/session/sidebar/row.rs:928
 msgid "watching an animation"
 msgstr "viendo una animación"
 
-#: src/session/sidebar/search/section_row.rs:137
+#: src/session/sidebar/search/section_row.rs:130
 msgid "Chats"
 msgstr "Chats"
 
-#: src/session/sidebar/search/section_row.rs:140
+#: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
 msgstr "Búsqueda global"
 
-#: src/session/sidebar/search/section_row.rs:143
+#: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
 msgstr "Reciente"
 
