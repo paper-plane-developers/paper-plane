@@ -7,16 +7,15 @@ use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
 use tdlib::types::DraftMessage;
 
 use crate::tdlib::{
-    BoxedChatNotificationSettings, BoxedDraftMessage, BoxedMessageContent,
-    BoxedScopeNotificationSettings, Chat, ChatAction, ChatActionList, ChatListItem, ChatType,
-    Message, MessageForwardInfo, MessageForwardOrigin,
+    Chat, ChatAction, ChatListItem, ChatType, Message, MessageForwardInfo, MessageForwardOrigin,
 };
-use crate::utils::{dim_and_escape, escape, spawn};
+use crate::utils::spawn;
 use crate::{expressions, strings, Session};
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::RefCell;
 
     use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
@@ -26,9 +25,9 @@ mod imp {
     #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
     pub(crate) struct Row {
         pub(super) item: RefCell<Option<ChatListItem>>,
-        pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        pub(super) item_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
-        pub(super) chat_notify_handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) item_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
+        pub(super) session_signal_group: OnceCell<glib::SignalGroup>,
         #[template_child]
         pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
@@ -36,15 +35,13 @@ mod imp {
         #[template_child]
         pub(super) timestamp_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) message_prefix_label: TemplateChild<gtk::Label>,
+        pub(super) subtitle_prefix_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub(super) message_thumbnail: TemplateChild<MiniThumbnail>,
+        pub(super) minithumbnail: TemplateChild<MiniThumbnail>,
         #[template_child]
-        pub(super) bottom_label: TemplateChild<gtk::Inscription>,
+        pub(super) subtitle_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) status_stack: TemplateChild<gtk::Stack>,
-        #[template_child]
-        pub(super) empty_status_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub(super) pin_icon: TemplateChild<gtk::Image>,
         #[template_child]
@@ -139,15 +136,8 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            self.message_prefix_label
-                .connect_label_notify(|label| label.set_visible(!label.label().is_empty()));
-
-            self.message_thumbnail
-                .connect_notify_local(Some("paintable"), |thumbnail, _| {
-                    thumbnail.set_visible(thumbnail.paintable().is_some())
-                });
-
             self.obj().setup_expressions();
+            self.obj().create_signal_groups();
         }
 
         fn dispose(&self) {
@@ -225,45 +215,127 @@ impl Row {
                 }
             }))
             .bind(&*imp.unread_count_label, "label", Some(self));
+    }
 
-        // Decide what to show (exclusive): pin icon, unread label, unread count or marked as unread
-        // bin.
-        gtk::ClosureExpression::new::<gtk::Widget>(
-            &[
-                item_expression
-                    .chain_property::<ChatListItem>("is-pinned")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("unread-count")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("unread-mention-count")
-                    .upcast(),
-                chat_expression
-                    .chain_property::<Chat>("is_marked_as_unread")
-                    .upcast(),
-            ],
-            closure!(|obj: Self,
-                      is_pinned: bool,
-                      unread_count: i32,
-                      unread_mention: i32,
-                      is_marked_as_unread: bool| {
-                let imp = obj.imp();
+    fn create_signal_groups(&self) {
+        let imp = self.imp();
 
-                let visible_child: &gtk::Widget = if unread_mention > 0 {
-                    imp.unread_mention_label.upcast_ref()
-                } else if unread_count > 0 || is_marked_as_unread {
-                    imp.unread_count_label.upcast_ref()
-                } else if is_pinned {
-                    imp.pin_icon.upcast_ref()
-                } else {
-                    imp.empty_status_bin.upcast_ref()
-                };
-
-                visible_child.clone()
+        let item_signal_group = glib::SignalGroup::new(ChatListItem::static_type());
+        item_signal_group.connect_local(
+            "notify::is-pinned",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
+                obj.update_actions();
+                None
             }),
-        )
-        .bind(&*imp.status_stack, "visible-child", Some(self));
+        );
+        imp.item_signal_group.set(item_signal_group).unwrap();
+
+        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        chat_signal_group.connect_local(
+            "notify::is-marked-as-unread",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
+                obj.update_actions();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::unread-count",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
+                obj.update_actions();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::unread-mention-count",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_status_stack();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::last-read-outbox-message-id",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_message_status_icon();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::last-message",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_message_status_icon();
+                obj.update_timestamp();
+                obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
+                obj.update_subtitle_label();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::draft-message",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_timestamp();
+                obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
+                obj.update_subtitle_label();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::actions",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_subtitle_prefix_label();
+                obj.update_minithumbnail();
+                obj.update_subtitle_label();
+                None
+            }),
+        );
+        chat_signal_group.connect_local(
+            "notify::notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        imp.chat_signal_group.set(chat_signal_group).unwrap();
+
+        let session_signal_group = glib::SignalGroup::new(Session::static_type());
+        session_signal_group.connect_local(
+            "notify::private-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        session_signal_group.connect_local(
+            "notify::group-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        session_signal_group.connect_local(
+            "notify::channel-chats-notification-settings",
+            false,
+            clone!(@weak self as obj => @default-return None, move |_| {
+                obj.update_unread_count_style();
+                None
+            }),
+        );
+        imp.session_signal_group.set(session_signal_group).unwrap();
     }
 
     pub(crate) fn item(&self) -> Option<ChatListItem> {
@@ -276,294 +348,213 @@ impl Row {
         }
 
         let imp = self.imp();
-        let mut bindings = imp.bindings.borrow_mut();
 
-        while let Some(binding) = bindings.pop() {
-            binding.unwatch();
-        }
+        imp.item_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref());
+        imp.chat_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref().map(|i| i.chat()).as_ref());
+        imp.session_signal_group
+            .get()
+            .unwrap()
+            .set_target(item.as_ref().map(|i| i.chat().session()).as_ref());
 
-        if let Some(handler_id) = imp.item_notify_handler_id.take() {
-            self.item().unwrap().disconnect(handler_id);
-        }
-
-        if let Some(handler_id) = imp.chat_notify_handler_id.take() {
-            self.item().unwrap().chat().disconnect(handler_id);
-        }
-
-        if let Some(ref item) = item {
-            let last_message_expression = Chat::this_expression("last-message");
-            let draft_message_expression = Chat::this_expression("draft-message");
-            let actions_expression = Chat::this_expression("actions");
-            let notification_settings_expression = Chat::this_expression("notification-settings");
-            let session_expression = Chat::this_expression("session");
-            let chat = item.chat();
-
-            // Message status bindings
-            if !chat.is_own_chat() {
-                let message_status_visibility_binding = last_message_expression
-                    .chain_property::<Message>("is-outgoing")
-                    .bind(&*imp.message_status_icon, "visible", Some(&chat));
-                bindings.push(message_status_visibility_binding);
-
-                let message_status_icon_binding = gtk::ClosureExpression::new::<String>(
-                    [
-                        last_message_expression.upcast_ref(),
-                        Chat::this_expression("last-read-outbox-message-id").upcast_ref(),
-                    ],
-                    closure!(
-                        |_: Chat, last_message: Option<Message>, last_read_msg_id: i64| {
-                            last_message
-                                .filter(Message::is_outgoing)
-                                .map(|message| match message.sending_state() {
-                                    Some(state) => match state.0 {
-                                        MessageSendingState::Failed(_) => "message-failed-symbolic",
-                                        MessageSendingState::Pending => "message-pending-symbolic",
-                                    },
-                                    None => {
-                                        if message.id() == last_read_msg_id {
-                                            "message-read-symbolic"
-                                        } else {
-                                            "message-unread-right-symbolic"
-                                        }
-                                    }
-                                })
-                                .unwrap_or("")
-                        }
-                    ),
-                )
-                .bind(&*imp.message_status_icon, "icon-name", Some(&chat));
-                bindings.push(message_status_icon_binding);
-
-                let message_status_css_binding = last_message_expression
-                    .chain_closure::<Vec<String>>(closure!(
-                        |_: Chat, last_message: Option<Message>| {
-                            last_message
-                                .filter(Message::is_outgoing)
-                                .map(|message| {
-                                    vec![match message.sending_state() {
-                                        Some(state) => match state.0 {
-                                            MessageSendingState::Failed(_) => "error",
-                                            MessageSendingState::Pending => "dim-label",
-                                        },
-                                        None => "accent",
-                                    }
-                                    .to_string()]
-                                })
-                                .unwrap_or_default()
-                        }
-                    ))
-                    .bind(&*imp.message_status_icon, "css-classes", Some(&chat));
-                bindings.push(message_status_css_binding);
-            } else {
-                imp.message_status_icon.set_visible(false);
-                imp.message_status_icon.set_icon_name(None);
-                imp.message_status_icon.set_css_classes(&[]);
-            }
-
-            // Timestamp label bindings
-            let timestamp_binding = gtk::ClosureExpression::new::<i32>(
-                &[
-                    draft_message_expression.clone().upcast(),
-                    last_message_expression.clone().upcast(),
-                ],
-                closure!(|_: Chat,
-                          draft_message: Option<BoxedDraftMessage>,
-                          last_message: Option<Message>| {
-                    draft_message.map(|m| m.0.date).unwrap_or_else(|| {
-                        // ... Or, if there is no draft message use the timestamp of the
-                        // last message.
-                        last_message.map(|m| m.date()).unwrap_or_default()
-                    })
-                }),
-            )
-            .chain_closure::<glib::GString>(closure!(|_: Chat, date: i32| {
-                let datetime_now = glib::DateTime::now_local().unwrap();
-                let datetime = glib::DateTime::from_unix_utc(date as i64)
-                    .and_then(|t| t.to_local())
-                    .unwrap();
-
-                let difference = datetime_now.difference(&datetime);
-                let hours_difference = difference.as_hours();
-                let days_difference = difference.as_days();
-
-                if hours_difference <= 16 {
-                    datetime.format(&gettext("%l:%M %p")).unwrap()
-                } else if days_difference < 6 {
-                    // Show the day of the week
-                    datetime.format("%a").unwrap()
-                } else if days_difference < 364 {
-                    // Show the day and the month
-                    datetime.format("%d %b").unwrap()
-                } else {
-                    // Show the entire date
-                    datetime.format("%x").unwrap()
-                }
-            }))
-            .bind(&*imp.timestamp_label, "label", Some(&chat));
-            bindings.push(timestamp_binding);
-
-            // Actions, draft message and last message bindings.
-            let message_prefix_binding = gtk::ClosureExpression::new::<String>(
-                [
-                    actions_expression.upcast_ref(),
-                    draft_message_expression.upcast_ref(),
-                    last_message_expression.upcast_ref(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          message: Option<Message>| {
-                    actions
-                        .last()
-                        .map(|_| String::new())
-                        .or_else(|| {
-                            draft_message.map(|_| {
-                                    format!(
-                                        "<span foreground=\"#e01b24\">{}:</span>",
-                                        gettext("Draft"),
-                                    )
-                                })
-                        })
-                        .or_else(|| {
-                            message
-                                .and_then(sender_label)
-                                .map(|sender_label| format!("{sender_label}:"))
-                        })
-                }),
-            )
-            .bind(&*imp.message_prefix_label, "label", Some(&chat));
-            bindings.push(message_prefix_binding);
-
-            let thumbnail_paintable_binding = gtk::ClosureExpression::new::<Option<gdk::Texture>>(
-                [
-                    actions_expression.upcast_ref(),
-                    draft_message_expression.upcast_ref(),
-                    last_message_expression.upcast_ref(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          message: Option<Message>| {
-                    if actions.n_items() > 0 || draft_message.is_some() {
-                        None
-                    } else {
-                        message.and_then(message_thumbnail_texture)
-                    }
-                }),
-            )
-            .bind(&*imp.message_thumbnail, "paintable", Some(&chat));
-            bindings.push(thumbnail_paintable_binding);
-
-            let content_expression = last_message_expression.chain_property::<Message>("content");
-
-            let message_binding = gtk::ClosureExpression::new::<String>(
-                &[
-                    // TODO: In the future, consider making this a bit more efficient: We
-                    // sometimes don't need to update if for example an action was removed that
-                    // was not in the group of recent actions.
-                    actions_expression.upcast(),
-                    draft_message_expression.upcast(),
-                    last_message_expression.upcast(),
-                    content_expression.upcast(),
-                ],
-                closure!(|_: Chat,
-                          actions: ChatActionList,
-                          draft_message: Option<BoxedDraftMessage>,
-                          last_message: Option<Message>,
-                          _content: BoxedMessageContent| {
-                    actions
-                        .last()
-                        .map(|action| {
-                            format!(
-                                "<span foreground=\"#3584e4\">{}</span>",
-                                stringify_action(&action)
-                            )
-                        })
-                        .or_else(|| draft_message.map(|m| dim_and_escape(&draft_message_text(m.0))))
-                        .or_else(|| {
-                            last_message
-                                .map(|message| dim_and_escape(&strings::message_content(&message)))
-                        })
-                        .unwrap_or_default()
-                }),
-            )
-            .bind(&*imp.bottom_label, "markup", Some(&chat));
-            bindings.push(message_binding);
-
-            // Unread count css classes binding
-            let scope_notification_settings_expression = session_expression
-                .chain_property::<Session>(match chat.type_() {
-                    ChatType::Private(_) | ChatType::Secret(_) => {
-                        "private-chats-notification-settings"
-                    }
-                    ChatType::BasicGroup(_) => "group-chats-notification-settings",
-                    ChatType::Supergroup(supergroup) => {
-                        if supergroup.is_channel() {
-                            "channel-chats-notification-settings"
-                        } else {
-                            "group-chats-notification-settings"
-                        }
-                    }
-                });
-            let unread_binding = gtk::ClosureExpression::new::<Vec<String>>(
-                &[
-                    notification_settings_expression.upcast(),
-                    scope_notification_settings_expression.upcast(),
-                ],
-                closure!(|_: Chat,
-                              notification_settings: BoxedChatNotificationSettings,
-                              scope_notification_settings: Option<
-                        BoxedScopeNotificationSettings,
-                    >| {
-                        vec![
-                            "unread-count".to_string(),
-                            if notification_settings.0.use_default_mute_for {
-                                if scope_notification_settings
-                                    .map(|s| s.0.mute_for > 0)
-                                    .unwrap_or(notification_settings.0.mute_for > 0)
-                                {
-                                    "unread-count-muted"
-                                } else {
-                                    "unread-count-unmuted"
-                                }
-                            } else if notification_settings.0.mute_for > 0 {
-                                "unread-count-muted"
-                            } else {
-                                "unread-count-unmuted"
-                            }
-                            .to_string(),
-                        ]
-                    }),
-            )
-            .bind(&*imp.unread_count_label, "css-classes", Some(&chat));
-            bindings.push(unread_binding);
-
-            let handler_id = item.connect_notify_local(
-                Some("is-pinned"),
-                clone!(@weak self as obj => move |item, _| {
-                    obj.update_actions(Some(item));
-                }),
-            );
-            imp.item_notify_handler_id.replace(Some(handler_id));
-
-            let handler_id = item.chat().connect_notify_local(
-                None,
-                clone!(@weak self as obj, @weak item => move |_, pspec| {
-                    if pspec.name() == "is-marked-as-unread" || pspec.name() == "unread-count" {
-                        obj.update_actions(Some(&item))
-                    }
-                }),
-            );
-            imp.chat_notify_handler_id.replace(Some(handler_id));
-        }
-
-        self.update_actions(item.as_ref());
         imp.item.replace(item);
+
+        self.update_message_status_icon();
+        self.update_timestamp();
+        self.update_subtitle_prefix_label();
+        self.update_minithumbnail();
+        self.update_subtitle_label();
+        self.update_status_stack();
+        self.update_unread_count_style();
+        self.update_actions();
+
         self.notify("item");
     }
 
-    fn update_actions(&self, item: Option<&ChatListItem>) {
-        if let Some(item) = item {
+    fn update_message_status_icon(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let icon = &imp.message_status_icon;
+
+            if chat.is_own_chat() {
+                icon.set_visible(false);
+            } else if let Some(message) = chat.last_message().filter(Message::is_outgoing) {
+                let (icon_name, css_class) = match message.sending_state() {
+                    Some(state) => match state.0 {
+                        MessageSendingState::Failed(_) => ("message-failed-symbolic", "error"),
+                        MessageSendingState::Pending => ("message-pending-symbolic", "dim-label"),
+                    },
+                    None => (
+                        if message.id() == chat.last_read_outbox_message_id() {
+                            "message-read-symbolic"
+                        } else {
+                            "message-unread-right-symbolic"
+                        },
+                        "accent",
+                    ),
+                };
+
+                icon.set_icon_name(Some(icon_name));
+                icon.set_css_classes(&[css_class]);
+                icon.set_visible(true);
+            } else {
+                icon.set_visible(false);
+            }
+        }
+    }
+
+    fn update_timestamp(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.timestamp_label;
+
+            let date = chat
+                .draft_message()
+                .map(|m| m.0.date)
+                .or_else(|| chat.last_message().map(|m| m.date()));
+
+            if let Some(date) = date {
+                label.set_label(&timestamp_text(date as i64));
+                label.set_visible(true);
+            } else {
+                label.set_visible(false);
+            }
+        }
+    }
+
+    fn update_subtitle_prefix_label(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.subtitle_prefix_label;
+
+            if chat.actions().last().is_some() {
+                label.set_visible(false);
+            } else if chat.draft_message().is_some() {
+                label.set_label(&gettext("Draft:"));
+                label.add_css_class("error");
+                label.set_visible(true);
+            } else if let Some(sender) = chat.last_message().and_then(sender_label) {
+                label.set_label(&format!("{sender}:"));
+                label.remove_css_class("error");
+                label.set_visible(true);
+            } else {
+                label.set_visible(false);
+            }
+        }
+    }
+
+    fn update_minithumbnail(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let minithumbnail = &imp.minithumbnail;
+
+            if chat.actions().n_items() > 0 || chat.draft_message().is_some() {
+                minithumbnail.set_visible(false);
+            } else if let Some(texture) = chat.last_message().and_then(message_thumbnail_texture) {
+                minithumbnail.set_paintable(Some(texture.upcast()));
+                minithumbnail.set_visible(true);
+            } else {
+                minithumbnail.set_visible(false);
+            }
+        }
+    }
+
+    fn update_subtitle_label(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.subtitle_label;
+
+            if let Some(actions) = chat.actions().last().map(|a| stringify_action(&a)) {
+                label.set_text(Some(&actions));
+                label.remove_css_class("dim-label");
+                label.add_css_class("accent");
+            } else if let Some(draft_message) =
+                chat.draft_message().map(|d| draft_message_text(d.0))
+            {
+                label.set_text(Some(&draft_message));
+                label.add_css_class("dim-label");
+                label.remove_css_class("accent");
+            } else if let Some(last_message) =
+                chat.last_message().map(|m| strings::message_content(&m))
+            {
+                label.set_text(Some(&last_message));
+                label.add_css_class("dim-label");
+                label.remove_css_class("accent");
+            } else {
+                label.set_text(None);
+            }
+        }
+    }
+
+    fn update_status_stack(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let stack = &imp.status_stack;
+
+            if chat.unread_mention_count() > 0 {
+                stack.set_visible_child(&*imp.unread_mention_label);
+                stack.set_visible(true);
+            } else if chat.unread_count() > 0 || chat.is_marked_as_unread() {
+                stack.set_visible_child(&*imp.unread_count_label);
+                stack.set_visible(true);
+            } else if item.is_pinned() {
+                stack.set_visible_child(&*imp.pin_icon);
+                stack.set_visible(true);
+            } else {
+                stack.set_visible(false);
+            }
+        }
+    }
+
+    fn update_unread_count_style(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat();
+            let label = &imp.unread_count_label;
+
+            let notification_settings = chat.notification_settings();
+            let scope_notification_settings = match chat.type_() {
+                ChatType::Private(_) | ChatType::Secret(_) => {
+                    chat.session().private_chats_notification_settings()
+                }
+                ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+                    chat.session().channel_chats_notification_settings()
+                }
+                _ => chat.session().group_chats_notification_settings(),
+            };
+
+            let css_class = if notification_settings.0.use_default_mute_for {
+                if scope_notification_settings
+                    .map(|s| s.0.mute_for > 0)
+                    .unwrap_or(notification_settings.0.mute_for > 0)
+                {
+                    "unread-count-muted"
+                } else {
+                    "unread-count-unmuted"
+                }
+            } else if notification_settings.0.mute_for > 0 {
+                "unread-count-muted"
+            } else {
+                "unread-count-unmuted"
+            };
+
+            label.set_css_classes(&["unread-count", css_class]);
+        }
+    }
+
+    fn update_actions(&self) {
+        if let Some(item) = self.item() {
             let chat = item.chat();
 
             self.update_pin_actions(!item.is_pinned(), item.is_pinned());
@@ -629,7 +620,7 @@ fn sender_label(message: Message) -> Option<String> {
             Some(if message.is_outgoing() {
                 gettext("You")
             } else {
-                escape(&strings::message_sender(message.sender(), false))
+                strings::message_sender(message.sender(), false)
             })
         } else {
             None
@@ -939,4 +930,29 @@ fn stringify_action(action: &ChatAction) -> String {
         }
         Cancel => unreachable!(),
     }
+}
+
+fn timestamp_text(date: i64) -> glib::GString {
+    let datetime_now = glib::DateTime::now_local().unwrap();
+    let datetime = glib::DateTime::from_unix_utc(date)
+        .and_then(|t| t.to_local())
+        .unwrap();
+
+    let difference = datetime_now.difference(&datetime);
+    let hours_difference = difference.as_hours();
+    let days_difference = difference.as_days();
+
+    if hours_difference <= 16 {
+        datetime.format(&gettext("%l:%M %p"))
+    } else if days_difference < 6 {
+        // Show the day of the week
+        datetime.format("%a")
+    } else if days_difference < 364 {
+        // Show the day and the month
+        datetime.format("%d %b")
+    } else {
+        // Show the entire date
+        datetime.format("%x")
+    }
+    .unwrap()
 }

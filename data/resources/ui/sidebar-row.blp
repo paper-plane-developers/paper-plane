@@ -56,21 +56,19 @@ template SidebarRow {
       Box {
         spacing: 3;
 
-        Label message_prefix_label {
-          single-line-mode: true;
-          use-markup: true;
+        Label subtitle_prefix_label {
           ellipsize: end;
           xalign: 0;
 
           styles ["small-body"]
         }
 
-        .SidebarMiniThumbnail message_thumbnail {
+        .SidebarMiniThumbnail minithumbnail {
           visible: "False";
           valign: "center";
         }
 
-        Inscription bottom_label {
+        Inscription subtitle_label {
           hexpand: true;
           text-overflow: ellipsize_end;
           valign: center;
@@ -80,9 +78,6 @@ template SidebarRow {
       }
 
       Stack status_stack {
-        Adw.Bin empty_status_bin {
-        }
-
         Image pin_icon {
           halign: center;
           valign: center;
