@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-06 22:55+0000\n"
+"PO-Revision-Date: 2023-02-23 11:37+0000\n"
 "Last-Translator: Karol Lademan <karol@lademan.dev>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/pl/>\n"
@@ -105,11 +105,11 @@ msgstr "Wiadomość"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Odblokuj"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Dołącz"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -238,10 +238,9 @@ msgstr "_Odpowiedz"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Edytuj"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
 msgstr "Usuń dla _wszystkich"
 
@@ -573,9 +572,8 @@ msgid "Video Message"
 msgstr "Wiadomość wideo"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "Użytkownik {sender} przypiął zdjęcie"
+msgstr "Użytkownik {sender} zrobił zrzut ekranu!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -744,12 +742,11 @@ msgstr "Użytkownik {sender} usunął {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "Użytkownik {sender} zdobył {points} punktów w {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "Użytkownik {sender} usunął {user}"
+msgstr "Użytkownik {sender} zdobył {points} punktów"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -820,9 +817,8 @@ msgid "Deleted Message"
 msgstr "Usunięta wiadomość"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Wiadomość"
+msgstr "Edytuj wiadomość"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -912,9 +908,8 @@ msgid "This message is unsupported"
 msgstr "Ta wiadomość jest nieobsługiwana"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Szkic"
+msgstr "Szkic:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"
