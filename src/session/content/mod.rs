@@ -18,11 +18,13 @@ use self::event_row::EventRow;
 use self::message_row::MessageRow;
 use self::send_photo_dialog::SendPhotoDialog;
 
+use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::tdlib::Chat;
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
@@ -140,7 +142,23 @@ impl Content {
             imp.stack.set_visible_child(&imp.unselected_chat.get());
         }
 
-        imp.chat.replace(chat);
+        // Mark the previous chat as closed, if any
+        if let Some(old_chat) = imp.chat.replace(chat) {
+            spawn(clone!(@weak old_chat => async move {
+                if let Err(e) = old_chat.close().await {
+                    log::warn!("Error closing a chat: {e:?}");
+                }
+            }));
+        }
+
+        // Mark the new chat as opened, if any
+        if let Some(chat) = imp.chat.borrow().as_ref() {
+            spawn(clone!(@weak chat => async move {
+                if let Err(e) = chat.open().await {
+                    log::warn!("Error opening a chat: {e:?}");
+                }
+            }));
+        }
 
         self.notify("chat");
     }
