@@ -36,11 +36,13 @@ use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
 const SPACING: i32 = 6;
+const VISIBLE_MESSAGE_DELAY_MILLIS: u64 = 100;
 
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
     use std::cell::RefCell;
+    use std::time::Duration;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
@@ -124,7 +126,43 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for MessageRow {}
+    impl WidgetImpl for MessageRow {
+        fn map(&self) {
+            self.parent_map();
+
+            let obj = self.obj();
+            glib::timeout_add_local_once(
+                Duration::from_millis(VISIBLE_MESSAGE_DELAY_MILLIS),
+                clone!(@weak obj => move || if obj.is_mapped() {
+                    if let Ok(message) = obj.message().downcast::<Message>() {
+                        obj.activate_action(
+                            "chat-history.add-visible-message",
+                            Some(&message.id().to_variant()),
+                        )
+                        .unwrap();
+                    }
+                }),
+            );
+        }
+
+        fn unmap(&self) {
+            self.parent_unmap();
+
+            let obj = self.obj();
+            glib::timeout_add_local_once(
+                Duration::from_millis(VISIBLE_MESSAGE_DELAY_MILLIS),
+                clone!(@weak obj => move || if !obj.is_mapped() {
+                    if let Ok(message) = obj.message().downcast::<Message>() {
+                        obj.activate_action(
+                            "chat-history.remove-visible-message",
+                            Some(&message.id().to_variant()),
+                        )
+                        .unwrap();
+                    }
+                }),
+            );
+        }
+    }
 }
 
 glib::wrapper! {

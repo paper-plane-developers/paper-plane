@@ -21,6 +21,7 @@ mod imp {
     use once_cell::sync::Lazy;
     use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
+    use std::collections::HashSet;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
@@ -31,6 +32,7 @@ mod imp {
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) sticky: Cell<bool>,
+        pub(super) visible_messages: RefCell<HashSet<i64>>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -74,6 +76,38 @@ mod imp {
                 None,
                 |widget, _, _| async move {
                     widget.show_leave_chat_dialog().await;
+                },
+            );
+            klass.install_action_async(
+                "chat-history.add-visible-message",
+                Some("x"),
+                |widget, _, variant| async move {
+                    let message_id = variant.and_then(|v| v.get()).unwrap();
+                    if widget
+                        .imp()
+                        .visible_messages
+                        .borrow_mut()
+                        .insert(message_id)
+                    {
+                        println!("ADD {}", message_id);
+                        widget.update_visible_messages().await;
+                    }
+                },
+            );
+            klass.install_action_async(
+                "chat-history.remove-visible-message",
+                Some("x"),
+                |widget, _, variant| async move {
+                    let message_id = variant.and_then(|v| v.get()).unwrap();
+                    if widget
+                        .imp()
+                        .visible_messages
+                        .borrow_mut()
+                        .remove(&message_id)
+                    {
+                        println!("REMOVE {}", message_id);
+                        widget.update_visible_messages().await;
+                    }
                 },
             );
         }
@@ -214,6 +248,39 @@ impl ChatHistory {
                     }
                 }));
             }
+        }
+    }
+
+    async fn update_visible_messages(&self) {
+        if let Some(chat) = self.chat() {
+            let client_id = chat.session().client_id();
+            let message_ids = self
+                .imp()
+                .visible_messages
+                .borrow()
+                .clone()
+                .into_iter()
+                .collect();
+            let result =
+                tdlib::functions::view_messages(chat.id(), 0, message_ids, false, client_id).await;
+
+            if let Err(e) = result {
+                log::warn!("Error setting visible messages: {e:?}");
+            }
+
+            let msgs: Vec<String> = self
+                .imp()
+                .visible_messages
+                .borrow()
+                .iter()
+                .map(|id| {
+                    let message = self.chat().unwrap().message(*id).unwrap();
+                    format!("{} ||| {}", crate::strings::message_content(&message), id)
+                })
+                .collect();
+            dbg!(msgs);
+            println!();
+            println!();
         }
     }
 
