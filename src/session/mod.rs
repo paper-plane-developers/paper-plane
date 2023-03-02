@@ -1,7 +1,9 @@
+mod contacts_window;
 mod content;
 mod preferences_window;
 mod sidebar;
 
+use self::contacts_window::ContactsWindow;
 use self::content::Content;
 use self::preferences_window::PreferencesWindow;
 use self::sidebar::Sidebar;
@@ -14,7 +16,7 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::{Entry, HashMap};
 use tdlib::enums::{self, ChatList as TdChatList, NotificationSettingsScope, Update};
 use tdlib::functions;
-use tdlib::types::{ChatPosition as TdChatPosition, File};
+use tdlib::types::{ChatPosition as TdChatPosition, Error as TdError, File};
 
 use crate::session_manager::DatabaseInfo;
 use crate::tdlib::{
@@ -83,6 +85,16 @@ mod imp {
                 let parent_window = widget.root().and_then(|r| r.downcast().ok());
                 let preferences = PreferencesWindow::new(parent_window.as_ref(), widget);
                 preferences.present();
+            });
+            klass.install_action("session.show-contacts", None, move |widget, _, _| {
+                let parent = widget.root().and_then(|r| r.downcast().ok());
+                let contacts = ContactsWindow::new(parent.as_ref(), widget.clone());
+
+                contacts.connect_contact_activated(clone!(@weak widget => move |_, user_id| {
+                    widget.select_chat(user_id);
+                }));
+
+                contacts.present();
             });
         }
 
@@ -403,6 +415,17 @@ impl Session {
             .entry(chat_filter_id)
             .or_insert_with(ChatList::new)
             .clone()
+    }
+
+    /// Fetches the contacts of the user.
+    pub(crate) async fn fetch_contacts(&self) -> Result<Vec<User>, TdError> {
+        let client_id = self.imp().client_id.get();
+        let result = functions::get_contacts(client_id).await;
+
+        result.map(|data| {
+            let tdlib::enums::Users::Users(users) = data;
+            users.user_ids.into_iter().map(|id| self.user(id)).collect()
+        })
     }
 
     pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {

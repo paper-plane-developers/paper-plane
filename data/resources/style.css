@@ -299,6 +299,11 @@ messageindicators,
   filter: opacity(0.5);
 }
 
+contactrow {
+  border-spacing: 9px;
+  margin: 6px 0;
+}
+
 window.chat-info .main-page {
   margin: 12px;
   border-spacing: 6px;
