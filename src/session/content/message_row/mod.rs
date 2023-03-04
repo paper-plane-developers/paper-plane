@@ -2,7 +2,6 @@ mod base;
 mod bubble;
 mod document;
 mod indicators;
-mod indicators_model;
 mod label;
 mod media_picture;
 mod photo;
