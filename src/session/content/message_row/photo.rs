@@ -9,7 +9,7 @@ use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
 };
 use crate::tdlib::{BoxedMessageContent, Message};
-use crate::utils::parse_formatted_text;
+use crate::utils::{decode_image_from_path, parse_formatted_text};
 use crate::Session;
 
 use super::base::MessageBaseExt;
@@ -158,7 +158,7 @@ impl MessagePhoto {
                 .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
             if photo_size.photo.local.is_downloading_completed {
-                self.load_photo_from_path(&photo_size.photo.local.path);
+                self.load_photo(&photo_size.photo.local.path);
             } else {
                 imp.picture.set_paintable(
                     data.photo
@@ -184,7 +184,7 @@ impl MessagePhoto {
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.load_photo_from_path(&file.local.path);
+                    obj.load_photo(&file.local.path);
                 }
 
                 glib::Continue(true)
@@ -194,10 +194,14 @@ impl MessagePhoto {
         session.download_file(file_id, sender);
     }
 
-    fn load_photo_from_path(&self, path: &str) {
-        // TODO: Consider changing this to use an async api when
-        // https://github.com/gtk-rs/gtk4-rs/pull/777 is merged
-        let texture = gdk::Texture::from_filename(path).unwrap();
-        self.imp().picture.set_paintable(Some(&texture));
+    fn load_photo(&self, path: &str) {
+        match decode_image_from_path(path) {
+            Ok(texture) => {
+                self.imp().picture.set_paintable(Some(&texture));
+            }
+            Err(e) => {
+                log::warn!("Error decoding a photo: {e:?}");
+            }
+        }
     }
 }

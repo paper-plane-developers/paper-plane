@@ -1,10 +1,7 @@
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib, CompositeTemplate};
-use image::io::Reader as ImageReader;
-use image::ImageFormat;
-use std::io::Cursor;
+use gtk::{glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -12,7 +9,7 @@ use crate::session::content::message_row::{
     MessageBase, MessageBaseImpl, MessageIndicators, StickerPicture,
 };
 use crate::tdlib::Message;
-use crate::utils::spawn;
+use crate::utils::decode_image_from_path;
 
 use super::base::MessageBaseExt;
 
@@ -133,34 +130,13 @@ impl MessageBaseExt for MessageSticker {
 
 impl MessageSticker {
     fn load_sticker(&self, path: &str) {
-        let picture = &*self.imp().picture;
-        let file = gio::File::for_path(path);
-        spawn(clone!(@weak picture => async move {
-            match file.load_bytes_future().await {
-                Ok((bytes, _)) => {
-                    let flat_samples = ImageReader::with_format(Cursor::new(bytes), ImageFormat::WebP)
-                        .decode()
-                        .unwrap()
-                        .into_rgba8()
-                        .into_flat_samples();
-
-                    let (stride, width, height) = flat_samples.extents();
-                    let gtk_stride = stride * width;
-
-                    let bytes = glib::Bytes::from_owned(flat_samples.samples);
-                    let texture = gdk::MemoryTexture::new(
-                        width as i32,
-                        height as i32,
-                        gdk::MemoryFormat::R8g8b8a8,
-                        &bytes,
-                        gtk_stride,
-                    );
-                    picture.set_texture(Some(texture.upcast()));
-                }
-                Err(e) => {
-                    log::warn!("Failed to load a sticker: {}", e);
-                }
+        match decode_image_from_path(path) {
+            Ok(texture) => {
+                self.imp().picture.set_texture(Some(texture.upcast()));
             }
-        }));
+            Err(e) => {
+                log::warn!("Error decoding a sticker: {e:?}");
+            }
+        }
     }
 }
