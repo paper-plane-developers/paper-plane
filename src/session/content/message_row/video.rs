@@ -3,13 +3,12 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
-use tdlib::types::File;
 
 use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
 };
 use crate::tdlib::Message;
-use crate::utils::parse_formatted_text;
+use crate::utils::{parse_formatted_text, spawn};
 use crate::Session;
 
 use super::base::MessageBaseExt;
@@ -166,7 +165,7 @@ impl MessageVideo {
         imp.picture.set_aspect_ratio(aspect_ratio);
 
         if file.local.is_downloading_completed {
-            self.load_video_from_path(&file.local.path);
+            self.load_video(&file.local.path);
         } else {
             imp.picture.set_paintable(
                 minithumbnail
@@ -179,28 +178,25 @@ impl MessageVideo {
                     .as_ref(),
             );
 
-            self.download_video(file.id, session);
+            let file_id = file.id;
+            spawn(clone!(@weak self as obj, @weak session => async move {
+                obj.download_video(file_id, &session).await;
+            }));
         }
     }
 
-    fn download_video(&self, file_id: i32, session: &Session) {
-        let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
-
-        receiver.attach(
-            None,
-            clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                if file.local.is_downloading_completed {
-                    obj.load_video_from_path(&file.local.path);
-                }
-
-                glib::Continue(true)
-            }),
-        );
-
-        session.download_file(file_id, sender);
+    async fn download_video(&self, file_id: i32, session: &Session) {
+        match session.download_file(file_id).await {
+            Ok(file) => {
+                self.load_video(&file.local.path);
+            }
+            Err(e) => {
+                log::warn!("Failed to download a video: {e:?}");
+            }
+        }
     }
 
-    fn load_video_from_path(&self, path: &str) {
+    fn load_video(&self, path: &str) {
         let imp = self.imp();
 
         let media = gtk::MediaFile::for_filename(path);

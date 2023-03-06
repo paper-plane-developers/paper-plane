@@ -193,16 +193,11 @@ impl MessageDocument {
                 // Download file
                 image.set_icon_name(Some("document-save-symbolic"));
                 click.connect_released(clone!(@weak self as obj, @weak session => move |click, _, _, _| {
-                    let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
-                    receiver.attach(
-                        None,
-                        clone!(@weak obj, @weak session => @default-return glib::Continue(false), move |file| {
-                            // TODO: fix bug mentioned here
-                            // https://github.com/melix99/telegrand/pull/372#discussion_r968841370
-                            glib::Continue(obj.update_status(file, session) != FileStatus::Downloaded)
+                    // TODO: Fix bug mentioned here
+                    // https://github.com/melix99/telegrand/pull/372#discussion_r968841370
+                    session.download_file_with_updates(file_id, clone!(@weak obj, @weak session => move |file| {
+                        obj.update_status(file, session);
                     }));
-
-                    session.download_file(file_id, sender);
 
                     obj.imp().file_status_image.set_icon_name(Some("media-playback-stop-symbolic"));
                     let handler_id = click.connect_released(clone!(@weak session => move |_, _, _, _| {

@@ -3,7 +3,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
-use tdlib::types::File;
 
 use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
@@ -176,26 +175,24 @@ impl MessagePhoto {
                         .as_ref(),
                 );
 
-                self.download_photo(photo_size.photo.id, &message.chat().session());
+                let file_id = photo_size.photo.id;
+                let session = message.chat().session();
+                spawn(clone!(@weak self as obj, @weak session => async move {
+                    obj.download_photo(file_id, &session).await;
+                }));
             }
         }
     }
 
-    fn download_photo(&self, file_id: i32, session: &Session) {
-        let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
-
-        receiver.attach(
-            None,
-            clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                if file.local.is_downloading_completed {
-                    obj.load_photo(file.local.path);
-                }
-
-                glib::Continue(true)
-            }),
-        );
-
-        session.download_file(file_id, sender);
+    async fn download_photo(&self, file_id: i32, session: &Session) {
+        match session.download_file(file_id).await {
+            Ok(file) => {
+                self.load_photo(file.local.path);
+            }
+            Err(e) => {
+                log::warn!("Failed to download a photo: {e:?}");
+            }
+        }
     }
 
     fn load_photo(&self, path: String) {

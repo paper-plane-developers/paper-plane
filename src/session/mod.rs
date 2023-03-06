@@ -8,7 +8,7 @@ use self::content::Content;
 use self::preferences_window::PreferencesWindow;
 use self::sidebar::Sidebar;
 
-use glib::{clone, SyncSender};
+use glib::{clone, Sender};
 use gtk::glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -54,7 +54,7 @@ mod imp {
             RefCell<Option<BoxedScopeNotificationSettings>>,
         pub(super) channel_chats_notification_settings:
             RefCell<Option<BoxedScopeNotificationSettings>>,
-        pub(super) downloading_files: RefCell<HashMap<i32, Vec<SyncSender<File>>>>,
+        pub(super) downloading_files: RefCell<HashMap<i32, Vec<Sender<File>>>>,
         #[template_child]
         pub(super) leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
@@ -428,7 +428,28 @@ impl Session {
         })
     }
 
-    pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
+    /// Downloads a file of the specified id. This will only return when the file
+    /// downloading has completed or has failed.
+    pub(crate) async fn download_file(&self, file_id: i32) -> Result<File, TdError> {
+        let client_id = self.client_id();
+        let result = functions::download_file(file_id, 5, 0, 0, true, client_id).await;
+
+        result.map(|data| {
+            let tdlib::enums::File::File(file) = data;
+            file
+        })
+    }
+
+    /// Downloads a file of the specified id and calls a closure every time there's an update
+    /// about the progress or when the download has completed.
+    pub(crate) fn download_file_with_updates<F: Fn(File) + 'static>(&self, file_id: i32, f: F) {
+        let (sender, receiver) = glib::MainContext::channel::<File>(glib::PRIORITY_DEFAULT);
+        receiver.attach(None, move |file| {
+            let is_downloading_active = file.local.is_downloading_active;
+            f(file);
+            glib::Continue(is_downloading_active)
+        });
+
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
             Entry::Occupied(mut entry) => {

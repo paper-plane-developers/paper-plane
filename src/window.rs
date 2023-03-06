@@ -242,27 +242,24 @@ impl Window {
                                 Some(&notification_id.to_string()),
                                 &notification,
                             );
-                            let (sender, receiver) = glib::MainContext::sync_channel::<
-                                tdlib::types::File,
-                            >(
-                                Default::default(), 5
-                            );
-                            receiver.attach(
-                                None,
-                                clone!(@weak app => @default-return glib::Continue(false), move |file| {
-                                    if file.local.is_downloading_completed {
-                                        if let Ok(texture) = gdk::Texture::from_filename(&file.local.path) {
-                                            notification.set_icon(&texture);
-                                        }
-                                        app.send_notification(Some(&notification_id.to_string()), &notification);
-                                        glib::Continue(false)
-                                    }
-                                    else {
-                                        glib::Continue(true)
-                                    }
-                                }));
 
-                            client.session.download_file(avatar_file.id, sender);
+                            let file_id = avatar_file.id;
+                            let session = &client.session;
+                            spawn(
+                                clone!(@weak self as obj, @weak session, @weak app => async move {
+                                    match session.download_file(file_id).await {
+                                        Ok(file) => {
+                                            let texture = gdk::Texture::from_filename(file.local.path).unwrap();
+                                            notification.set_icon(&texture);
+
+                                            app.send_notification(Some(&notification_id.to_string()), &notification);
+                                        }
+                                        Err(e) => {
+                                            log::warn!("Failed to download an avatar: {e:?}");
+                                        }
+                                    }
+                                }),
+                            );
                         }
                     }
                 }
