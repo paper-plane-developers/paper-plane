@@ -202,7 +202,7 @@ impl MessageDocument {
                             glib::Continue(obj.update_status(file, session) != FileStatus::Downloaded)
                     }));
 
-                    session.download_file(file_id, sender);
+                    session.download_file_with_updates(file_id, sender);
 
                     obj.imp().file_status_image.set_icon_name(Some("media-playback-stop-symbolic"));
                     let handler_id = click.connect_released(clone!(@weak session => move |_, _, _, _| {

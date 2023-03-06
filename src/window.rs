@@ -262,7 +262,9 @@ impl Window {
                                     }
                                 }));
 
-                            client.session.download_file(avatar_file.id, sender);
+                            client
+                                .session
+                                .download_file_with_updates(avatar_file.id, sender);
                         }
                     }
                 }

@@ -172,7 +172,7 @@ impl Avatar {
                     }),
                 );
 
-                session.download_file(file.id, sender);
+                session.download_file_with_updates(file.id, sender);
             }
         } else {
             self.imp().avatar.set_custom_image(gdk::Paintable::NONE);

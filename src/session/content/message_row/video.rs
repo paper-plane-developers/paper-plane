@@ -197,7 +197,7 @@ impl MessageVideo {
             }),
         );
 
-        session.download_file(file_id, sender);
+        session.download_file_with_updates(file_id, sender);
     }
 
     fn load_video_from_path(&self, path: &str) {

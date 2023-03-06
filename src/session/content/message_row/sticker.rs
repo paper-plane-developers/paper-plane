@@ -124,7 +124,7 @@ impl MessageBaseExt for MessageSticker {
                 message
                     .chat()
                     .session()
-                    .download_file(data.sticker.sticker.id, sender);
+                    .download_file_with_updates(data.sticker.sticker.id, sender);
             }
         }
 

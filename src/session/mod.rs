@@ -428,7 +428,7 @@ impl Session {
         })
     }
 
-    pub(crate) fn download_file(&self, file_id: i32, sender: SyncSender<File>) {
+    pub(crate) fn download_file_with_updates(&self, file_id: i32, sender: SyncSender<File>) {
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
             Entry::Occupied(mut entry) => {

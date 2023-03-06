@@ -195,7 +195,7 @@ impl MessagePhoto {
             }),
         );
 
-        session.download_file(file_id, sender);
+        session.download_file_with_updates(file_id, sender);
     }
 
     fn load_photo(&self, path: String) {
