@@ -257,31 +257,25 @@ impl ChatActionBar {
         let imp = self.imp();
 
         let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
-        chat_signal_group.connect_local(
-            "notify::notification-settings",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("notification-settings"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_stack_page();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::is-blocked",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("is-blocked"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_stack_page();
-                None
             }),
         );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
 
         let basic_group_signal_group = glib::SignalGroup::new(BasicGroup::static_type());
-        basic_group_signal_group.connect_local(
-            "notify::status",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        basic_group_signal_group.connect_notify_local(
+            Some("status"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_stack_page();
-                None
             }),
         );
         imp.basic_group_signal_group
@@ -289,12 +283,10 @@ impl ChatActionBar {
             .unwrap();
 
         let supergroup_signal_group = glib::SignalGroup::new(Supergroup::static_type());
-        supergroup_signal_group.connect_local(
-            "notify::status",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        supergroup_signal_group.connect_notify_local(
+            Some("status"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_stack_page();
-                None
             }),
         );
         imp.supergroup_signal_group
