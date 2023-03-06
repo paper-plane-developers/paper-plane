@@ -3,13 +3,13 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
-use tdlib::types::File;
 
 use crate::session::content::message_row::{
     MessageBase, MessageBaseImpl, MessageIndicators, StickerPicture,
 };
 use crate::tdlib::Message;
 use crate::utils::{decode_image_from_path, spawn};
+use crate::Session;
 
 use super::base::MessageBaseExt;
 
@@ -107,24 +107,12 @@ impl MessageBaseExt for MessageSticker {
             if data.sticker.sticker.local.is_downloading_completed {
                 self.load_sticker(data.sticker.sticker.local.path);
             } else {
-                let (sender, receiver) =
-                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
+                let file_id = data.sticker.sticker.id;
+                let session = message.chat().session();
 
-                receiver.attach(
-                    None,
-                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                        if file.local.is_downloading_completed {
-                            obj.load_sticker(file.local.path);
-                        }
-
-                        glib::Continue(true)
-                    }),
-                );
-
-                message
-                    .chat()
-                    .session()
-                    .download_file_with_updates(data.sticker.sticker.id, sender);
+                spawn(clone!(@weak self as obj, @weak session => async move {
+                    obj.download_sticker(file_id, &session).await;
+                }));
             }
         }
 
@@ -133,6 +121,17 @@ impl MessageBaseExt for MessageSticker {
 }
 
 impl MessageSticker {
+    async fn download_sticker(&self, file_id: i32, session: &Session) {
+        match session.download_file(file_id).await {
+            Ok(file) => {
+                self.load_sticker(file.local.path);
+            }
+            Err(e) => {
+                log::warn!("Failed to download a sticker: {e:?}");
+            }
+        }
+    }
+
     fn load_sticker(&self, path: String) {
         let message_id = self.message().id();
 

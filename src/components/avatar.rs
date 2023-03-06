@@ -2,9 +2,9 @@ use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib};
-use tdlib::types::File;
 
 use crate::tdlib::{Avatar as AvatarItem, Chat, User};
+use crate::utils::spawn;
 use crate::{expressions, Session};
 
 mod imp {
@@ -158,24 +158,26 @@ impl Avatar {
                 let texture = gdk::Texture::from_filename(&file.local.path).unwrap();
                 self.imp().avatar.set_custom_image(Some(&texture));
             } else {
-                let (sender, receiver) =
-                    glib::MainContext::sync_channel::<File>(Default::default(), 5);
+                let file_id = file.id;
 
-                receiver.attach(
-                    None,
-                    clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
-                        if file.local.is_downloading_completed {
-                            let texture = gdk::Texture::from_filename(&file.local.path).unwrap();
-                            obj.imp().avatar.set_custom_image(Some(&texture));
-                        }
-                        glib::Continue(true)
-                    }),
-                );
-
-                session.download_file_with_updates(file.id, sender);
+                spawn(clone!(@weak self as obj, @weak session => async move {
+                    obj.download_avatar(file_id, &session).await;
+                }));
             }
         } else {
             self.imp().avatar.set_custom_image(gdk::Paintable::NONE);
+        }
+    }
+
+    async fn download_avatar(&self, file_id: i32, session: &Session) {
+        match session.download_file(file_id).await {
+            Ok(file) => {
+                let texture = gdk::Texture::from_filename(file.local.path).unwrap();
+                self.imp().avatar.set_custom_image(Some(&texture));
+            }
+            Err(e) => {
+                log::warn!("Failed to download an avatar: {e:?}");
+            }
         }
     }
 

@@ -428,6 +428,18 @@ impl Session {
         })
     }
 
+    /// Downloads a file of the specified id. This will only return when the file
+    /// downloading has completed or has failed.
+    pub(crate) async fn download_file(&self, file_id: i32) -> Result<File, TdError> {
+        let client_id = self.client_id();
+        let result = functions::download_file(file_id, 5, 0, 0, true, client_id).await;
+
+        result.map(|data| {
+            let tdlib::enums::File::File(file) = data;
+            file
+        })
+    }
+
     pub(crate) fn download_file_with_updates(&self, file_id: i32, sender: SyncSender<File>) {
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
