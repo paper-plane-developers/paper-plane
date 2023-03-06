@@ -121,24 +121,20 @@ impl MessageIndicators {
         let imp = self.imp();
 
         let message_signal_group = glib::SignalGroup::new(Message::static_type());
-        message_signal_group.connect_local(
-            "notify::is-edited",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        message_signal_group.connect_notify_local(
+            Some("is-edited"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_message_info();
-                None
             }),
         );
         imp.message_signal_group.set(message_signal_group).unwrap();
 
         let interaction_info_signal_group =
             glib::SignalGroup::new(MessageInteractionInfo::static_type());
-        interaction_info_signal_group.connect_local(
-            "notify::reply-count",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        interaction_info_signal_group.connect_notify_local(
+            Some("reply-count"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_reply_count();
-                None
             }),
         );
         imp.interaction_info_signal_group
@@ -146,12 +142,10 @@ impl MessageIndicators {
             .unwrap();
 
         let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
-        chat_signal_group.connect_local(
-            "notify::last-read-outbox-message-id",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("last-read-outbox-message-id"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_sending_state();
-                None
             }),
         );
         imp.chat_signal_group.set(chat_signal_group).unwrap();

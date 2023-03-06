@@ -221,118 +221,94 @@ impl Row {
         let imp = self.imp();
 
         let item_signal_group = glib::SignalGroup::new(ChatListItem::static_type());
-        item_signal_group.connect_local(
-            "notify::is-pinned",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        item_signal_group.connect_notify_local(
+            Some("is-pinned"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_status_stack();
                 obj.update_actions();
-                None
             }),
         );
         imp.item_signal_group.set(item_signal_group).unwrap();
 
         let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
-        chat_signal_group.connect_local(
-            "notify::is-marked-as-unread",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("is-marked-as-unread"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_status_stack();
                 obj.update_actions();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::unread-count",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("unread-count"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_status_stack();
                 obj.update_actions();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::unread-mention-count",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("unread-mention-count"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_status_stack();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::last-read-outbox-message-id",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("last-read-outbox-message-id"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_message_status_icon();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::last-message",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("last-message"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_message_status_icon();
                 obj.update_timestamp();
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
                 obj.update_subtitle_label();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::draft-message",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("draft-message"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_timestamp();
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
                 obj.update_subtitle_label();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::actions",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("actions"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_subtitle_prefix_label();
                 obj.update_minithumbnail();
                 obj.update_subtitle_label();
-                None
             }),
         );
-        chat_signal_group.connect_local(
-            "notify::notification-settings",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        chat_signal_group.connect_notify_local(
+            Some("notification-settings"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_unread_count_style();
-                None
             }),
         );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
 
         let session_signal_group = glib::SignalGroup::new(Session::static_type());
-        session_signal_group.connect_local(
-            "notify::private-chats-notification-settings",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        session_signal_group.connect_notify_local(
+            Some("private-chats-notification-settings"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_unread_count_style();
-                None
             }),
         );
-        session_signal_group.connect_local(
-            "notify::group-chats-notification-settings",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        session_signal_group.connect_notify_local(
+            Some("group-chats-notification-settings"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_unread_count_style();
-                None
             }),
         );
-        session_signal_group.connect_local(
-            "notify::channel-chats-notification-settings",
-            false,
-            clone!(@weak self as obj => @default-return None, move |_| {
+        session_signal_group.connect_notify_local(
+            Some("channel-chats-notification-settings"),
+            clone!(@weak self as obj => move |_, _| {
                 obj.update_unread_count_style();
-                None
             }),
         );
         imp.session_signal_group.set(session_signal_group).unwrap();
