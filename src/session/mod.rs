@@ -440,7 +440,16 @@ impl Session {
         })
     }
 
-    pub(crate) fn download_file_with_updates(&self, file_id: i32, sender: SyncSender<File>) {
+    /// Downloads a file of the specified id and calls a closure every time there's an update
+    /// about the progress or when the download has completed.
+    pub(crate) fn download_file_with_updates<F: Fn(File) + 'static>(&self, file_id: i32, f: F) {
+        let (sender, receiver) = glib::MainContext::sync_channel::<File>(Default::default(), 5);
+        receiver.attach(None, move |file| {
+            let is_downloading_active = file.local.is_downloading_active;
+            f(file);
+            glib::Continue(is_downloading_active)
+        });
+
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
         match downloading_files.entry(file_id) {
             Entry::Occupied(mut entry) => {
