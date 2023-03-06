@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-06 22:55+0000\n"
+"PO-Revision-Date: 2023-02-27 18:38+0000\n"
 "Last-Translator: yuraiz <7516890@gmail.com>\n"
 "Language-Team: Belarusian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/be/>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
@@ -105,11 +105,11 @@ msgstr "Паведамленне"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Разблакіраваць"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Далучыцца"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -239,10 +239,9 @@ msgstr "_Адказаць"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Рэдагаваць"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
 msgstr "_Выдаліць для ўсіх"
 
@@ -260,7 +259,7 @@ msgstr "Нумар тэлефону"
 
 #: data/resources/ui/preferences-window.blp:10
 msgid "Follow System Colors"
-msgstr "ВыкарыстоЎваць сістэмныя колеры"
+msgstr "Выкарыстоўваць сістэмныя колеры"
 
 #: data/resources/ui/preferences-window.blp:19
 msgid "Dark Theme"
@@ -574,9 +573,8 @@ msgid "Video Message"
 msgstr "Відэапаведамленне"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} замацаваў(ла) фота"
+msgstr "{sender} зрабіў(-ла) здымак экрана!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -745,12 +743,11 @@ msgstr "{sender} выдаліў(-ла) {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} набраў(-ла) {points} у гульне {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} выдаліў(-ла) {user}"
+msgstr "{sender} набраў(-ла) {points}"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -821,9 +818,8 @@ msgid "Deleted Message"
 msgstr "Выдаленае паведамленне"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Паведамленне"
+msgstr "Рэдагаваць паведамленне"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -913,9 +909,8 @@ msgid "This message is unsupported"
 msgstr "Гэтае паведамленне не падтрымліваецца"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Чарнавік"
+msgstr "Чарнавік:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"

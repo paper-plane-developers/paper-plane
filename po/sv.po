@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-20 13:36+0000\n"
+"PO-Revision-Date: 2023-02-27 18:38+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/sv/>\n"
@@ -104,11 +104,11 @@ msgstr "Meddelande"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Avblockera"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Gå med"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -237,12 +237,11 @@ msgstr "_Svara"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Redigera"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
-msgstr "Ta bort för _alla"
+msgstr "Ta bort för alli_hopa"
 
 #: data/resources/ui/message-menu.blp:24
 msgid "_Delete for Me"
@@ -570,9 +569,8 @@ msgid "Video Message"
 msgstr "Videomeddelande"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} fäste ett foto"
+msgstr "{sender} tog en skärmdump!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -741,12 +739,11 @@ msgstr "{sender} tog bort {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} fick poäng {points} i {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} tog bort {user}"
+msgstr "{sender} fick {points}"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -817,9 +814,8 @@ msgid "Deleted Message"
 msgstr "Borttaget meddelande"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Meddelande"
+msgstr "Redigera meddelande"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -908,9 +904,8 @@ msgid "This message is unsupported"
 msgstr "Det här meddelandet stöds inte"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Utkast"
+msgstr "Utkast:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"

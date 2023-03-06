@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-08 21:05+0000\n"
+"PO-Revision-Date: 2023-02-23 11:37+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
@@ -104,11 +104,11 @@ msgstr "Mensaje"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Desbloquear"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Únete a"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -238,12 +238,11 @@ msgstr "_Responder"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Editar"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
-msgstr "Eliminar para _todos"
+msgstr "Suprimir para siempre"
 
 #: data/resources/ui/message-menu.blp:24
 msgid "_Delete for Me"
@@ -570,9 +569,8 @@ msgid "Video Message"
 msgstr "Mensaje de vídeo"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} fijó una foto"
+msgstr "¡{sender} tomó una captura de pantalla!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -741,12 +739,11 @@ msgstr "{sender} eliminó a {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} anotó {points} en {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} eliminó a {user}"
+msgstr "{sender} obtuvo {points}"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -817,9 +814,8 @@ msgid "Deleted Message"
 msgstr "Mensaje eliminado"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Mensaje"
+msgstr "Editar el mensaje"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -908,9 +904,8 @@ msgid "This message is unsupported"
 msgstr "Este mensaje no está admitido"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Borrador"
+msgstr "Borrador:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"

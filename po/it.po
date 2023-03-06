@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-07 23:42+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2023-03-04 22:40+0000\n"
+"Last-Translator: \"J. Lavoie\" <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -104,11 +104,11 @@ msgstr "Messaggio"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Sblocca"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Unisciti"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -239,10 +239,9 @@ msgstr "_Rispondi"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "Modifica"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
 msgstr "Elimina per _tutti"
 
@@ -571,9 +570,8 @@ msgid "Video Message"
 msgstr "Videomessaggio"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} ha fissato una foto"
+msgstr "{sender} ha fatto una schermata!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -742,12 +740,11 @@ msgstr "{sender} ha rimosso {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} ha totalizzato {points} punti in {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} ha rimosso {user}"
+msgstr "{sender} ha totalizzato {points} punti"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -818,9 +815,8 @@ msgid "Deleted Message"
 msgstr "Messaggio eliminato"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Messaggio"
+msgstr "Modifica messaggio"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -909,9 +905,8 @@ msgid "This message is unsupported"
 msgstr "Questo messaggio non è supportato"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Bozza"
+msgstr "Bozza:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"

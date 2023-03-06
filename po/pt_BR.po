@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-21 21:49+0100\n"
-"PO-Revision-Date: 2023-02-06 22:55+0000\n"
+"PO-Revision-Date: 2023-02-23 11:37+0000\n"
 "Last-Translator: Alisson Lauffer <alissonvitortc@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/pt_BR/>\n"
@@ -104,11 +104,11 @@ msgstr "Mensagem"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Desbloquear"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Entrar"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
@@ -236,10 +236,9 @@ msgstr "_Responder"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Editar"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
 msgstr "Apagar para _todos"
 
@@ -568,9 +567,8 @@ msgid "Video Message"
 msgstr "Mensagem de vídeo"
 
 #: src/strings.rs:121
-#, fuzzy
 msgid "{sender} took a screenshot!"
-msgstr "{sender} fixou uma foto"
+msgstr "{sender} realizou uma captura da tela!"
 
 #: src/strings.rs:126
 msgid "Unsupported Message"
@@ -739,12 +737,11 @@ msgstr "{sender} removeu {user}"
 
 #: src/strings.rs:407
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender} marcou {points} pontos em {game}"
 
 #: src/strings.rs:416
-#, fuzzy
 msgid "{sender} scored {points}"
-msgstr "{sender} removeu {user}"
+msgstr "{sender} marcou {points} pontos"
 
 #: src/strings.rs:440
 msgid "{sender} pinned \"{text}\""
@@ -815,9 +812,8 @@ msgid "Deleted Message"
 msgstr "Mensagem excluída"
 
 #: src/session/content/chat_action_bar.rs:333
-#, fuzzy
 msgid "Edit Message"
-msgstr "Mensagem"
+msgstr "Editar mensagem"
 
 #: src/session/content/chat_action_bar.rs:425
 msgid "Open File"
@@ -906,9 +902,8 @@ msgid "This message is unsupported"
 msgstr "Esta mensagem não é suportada"
 
 #: src/session/sidebar/row.rs:441
-#, fuzzy
 msgid "Draft:"
-msgstr "Rascunho"
+msgstr "Rascunho:"
 
 #: src/session/sidebar/row.rs:621
 msgid "You"
