@@ -1,7 +1,7 @@
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -9,7 +9,7 @@ use crate::session::content::message_row::{
     MessageBase, MessageBaseImpl, MessageIndicators, StickerPicture,
 };
 use crate::tdlib::Message;
-use crate::utils::decode_image_from_path;
+use crate::utils::{decode_image_from_path, spawn};
 
 use super::base::MessageBaseExt;
 
@@ -90,6 +90,11 @@ impl MessageBaseExt for MessageSticker {
             return;
         }
 
+        imp.message.replace(Some(message));
+
+        let message_ref = imp.message.borrow();
+        let message = message_ref.as_ref().unwrap();
+
         imp.indicators.set_message(message.clone().upcast());
 
         imp.picture.set_texture(None);
@@ -100,7 +105,7 @@ impl MessageBaseExt for MessageSticker {
                 .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
 
             if data.sticker.sticker.local.is_downloading_completed {
-                self.load_sticker(&data.sticker.sticker.local.path);
+                self.load_sticker(data.sticker.sticker.local.path);
             } else {
                 let (sender, receiver) =
                     glib::MainContext::sync_channel::<File>(Default::default(), 5);
@@ -109,7 +114,7 @@ impl MessageBaseExt for MessageSticker {
                     None,
                     clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                         if file.local.is_downloading_completed {
-                            obj.load_sticker(&file.local.path);
+                            obj.load_sticker(file.local.path);
                         }
 
                         glib::Continue(true)
@@ -123,20 +128,34 @@ impl MessageBaseExt for MessageSticker {
             }
         }
 
-        imp.message.replace(Some(message));
         self.notify("message");
     }
 }
 
 impl MessageSticker {
-    fn load_sticker(&self, path: &str) {
-        match decode_image_from_path(path) {
-            Ok(texture) => {
-                self.imp().picture.set_texture(Some(texture.upcast()));
+    fn load_sticker(&self, path: String) {
+        let message_id = self.message().id();
+
+        spawn(clone!(@weak self as obj => async move {
+            let result = gio::spawn_blocking(move || decode_image_from_path(&path))
+                .await
+                .unwrap();
+
+            // Check if the current message id is the same as the one at
+            // the time of the request. It may be changed because of the
+            // ListView recycling while decoding the image.
+            if obj.message().id() != message_id {
+                return;
             }
-            Err(e) => {
-                log::warn!("Error decoding a sticker: {e:?}");
+
+            match result {
+                Ok(texture) => {
+                    obj.imp().picture.set_texture(Some(texture.upcast()));
+                }
+                Err(e) => {
+                    log::warn!("Error decoding a sticker: {e:?}");
+                }
             }
-        }
+        }));
     }
 }

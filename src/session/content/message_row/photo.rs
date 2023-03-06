@@ -1,7 +1,7 @@
 use glib::{clone, closure};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::{gdk, gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -9,7 +9,7 @@ use crate::session::content::message_row::{
     MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
 };
 use crate::tdlib::{BoxedMessageContent, Message};
-use crate::utils::{decode_image_from_path, parse_formatted_text};
+use crate::utils::{decode_image_from_path, parse_formatted_text, spawn};
 use crate::Session;
 
 use super::base::MessageBaseExt;
@@ -109,7 +109,12 @@ impl MessageBaseExt for MessagePhoto {
             old_message.disconnect(handler_id);
         }
 
-        imp.message_bubble.update_from_message(&message, true);
+        imp.message.replace(Some(message));
+
+        let message_ref = imp.message.borrow();
+        let message = message_ref.as_ref().unwrap();
+
+        imp.message_bubble.update_from_message(message, true);
 
         // Setup caption expression
         let caption_binding = Message::this_expression("content")
@@ -120,7 +125,7 @@ impl MessageBaseExt for MessagePhoto {
                     unreachable!();
                 }
             }))
-            .bind(&*imp.message_bubble, "label", Some(&message));
+            .bind(&*imp.message_bubble, "label", Some(message));
         imp.binding.replace(Some(caption_binding));
 
         // Load photo
@@ -129,36 +134,35 @@ impl MessageBaseExt for MessagePhoto {
                 obj.update_photo(message);
             }));
         imp.handler_id.replace(Some(handler_id));
-        self.update_photo(&message);
+        self.update_photo(message);
 
-        imp.message.replace(Some(message));
         self.notify("message");
     }
 }
 
 impl MessagePhoto {
     fn update_photo(&self, message: &Message) {
-        if let MessageContent::MessagePhoto(data) = message.content().0 {
+        if let MessageContent::MessagePhoto(mut data) = message.content().0 {
             let imp = self.imp();
             // Choose the right photo size based on the screen scale factor.
             // See https://core.telegram.org/api/files#image-thumbnail-types for more
             // information about photo sizes.
             let photo_size = if self.scale_factor() > 2 {
-                data.photo.sizes.last().unwrap()
+                data.photo.sizes.pop().unwrap()
             } else {
                 let type_ = if self.scale_factor() > 1 { "y" } else { "x" };
-                data.photo
-                    .sizes
-                    .iter()
-                    .find(|s| s.r#type == type_)
-                    .unwrap_or_else(|| data.photo.sizes.last().unwrap())
+
+                match data.photo.sizes.iter().position(|s| s.r#type == type_) {
+                    Some(pos) => data.photo.sizes.swap_remove(pos),
+                    None => data.photo.sizes.pop().unwrap(),
+                }
             };
 
             imp.picture
                 .set_aspect_ratio(photo_size.width as f64 / photo_size.height as f64);
 
             if photo_size.photo.local.is_downloading_completed {
-                self.load_photo(&photo_size.photo.local.path);
+                self.load_photo(photo_size.photo.local.path);
             } else {
                 imp.picture.set_paintable(
                     data.photo
@@ -184,7 +188,7 @@ impl MessagePhoto {
             None,
             clone!(@weak self as obj => @default-return glib::Continue(false), move |file| {
                 if file.local.is_downloading_completed {
-                    obj.load_photo(&file.local.path);
+                    obj.load_photo(file.local.path);
                 }
 
                 glib::Continue(true)
@@ -194,14 +198,29 @@ impl MessagePhoto {
         session.download_file(file_id, sender);
     }
 
-    fn load_photo(&self, path: &str) {
-        match decode_image_from_path(path) {
-            Ok(texture) => {
-                self.imp().picture.set_paintable(Some(&texture));
+    fn load_photo(&self, path: String) {
+        let message_id = self.message().id();
+
+        spawn(clone!(@weak self as obj => async move {
+            let result = gio::spawn_blocking(move || decode_image_from_path(&path))
+                .await
+                .unwrap();
+
+            // Check if the current message id is the same as the one at
+            // the time of the request. It may be changed because of the
+            // ListView recycling while decoding the image.
+            if obj.message().id() != message_id {
+                return;
             }
-            Err(e) => {
-                log::warn!("Error decoding a photo: {e:?}");
+
+            match result {
+                Ok(texture) => {
+                    obj.imp().picture.set_paintable(Some(&texture));
+                }
+                Err(e) => {
+                    log::warn!("Error decoding a photo: {e:?}");
+                }
             }
-        }
+        }));
     }
 }
