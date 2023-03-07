@@ -23,9 +23,6 @@ mod imp {
         pub(super) item: RefCell<Option<glib::Object>>,
         pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) is_online: Cell<bool>,
-        // The first Option indicates whether we've once tried to compile the shader. The second
-        // Option contains the compiled shader.
-        pub(super) mask_shader: RefCell<Option<Option<gsk::GLShader>>>,
         #[template_child]
         pub(super) avatar: TemplateChild<ComponentsAvatar>,
         #[template_child]
@@ -92,8 +89,6 @@ mod imp {
     }
 
     impl WidgetImpl for Avatar {
-        // Inspired by
-        // https://gitlab.gnome.org/GNOME/libadwaita/-/blob/1171616701bf12a1c56bbad3f0e8821208d87029/src/adw-indicator-bin.c
         fn snapshot(&self, snapshot: &gtk::Snapshot) {
             let obj = self.obj();
 
@@ -102,33 +97,13 @@ mod imp {
                 return;
             }
 
-            let child_snapshot = gtk::Snapshot::new();
-            obj.snapshot_child(&*self.avatar, &child_snapshot);
-            let child_node = child_snapshot.to_node().unwrap();
+            snapshot.push_mask(gsk::MaskMode::InvertedAlpha);
 
-            obj.ensure_mask_shader();
+            obj.snapshot_child(&*self.online_indicator_mask, snapshot);
+            snapshot.pop();
 
-            let maybe_compiled_masked_shader = self.mask_shader.borrow().clone().flatten();
-
-            if let Some(ref compiled_mask_shader) = maybe_compiled_masked_shader {
-                snapshot.push_gl_shader(
-                    compiled_mask_shader,
-                    &child_node.bounds(),
-                    gsk::ShaderArgsBuilder::new(compiled_mask_shader, None).to_args(),
-                );
-            }
-
-            snapshot.append_node(&child_node);
-
-            if maybe_compiled_masked_shader.is_some() {
-                snapshot.gl_shader_pop_texture();
-                obj.snapshot_child(&*self.online_indicator_mask, snapshot);
-                snapshot.gl_shader_pop_texture();
-
-                snapshot.pop();
-            } else {
-                obj.snapshot_child(&*self.online_indicator_mask, snapshot);
-            }
+            obj.snapshot_child(&*self.avatar, snapshot);
+            snapshot.pop();
 
             obj.snapshot_child(&*self.online_indicator_dot, snapshot);
         }
@@ -225,30 +200,5 @@ impl Avatar {
         }
         self.imp().is_online.set(is_online);
         self.notify("is-online");
-    }
-
-    // Inspired by
-    // https://gitlab.gnome.org/GNOME/libadwaita/-/blob/1171616701bf12a1c56bbad3f0e8821208d87029/src/adw-indicator-bin.c
-    fn ensure_mask_shader(&self) {
-        let imp = self.imp();
-
-        if imp.mask_shader.borrow().is_some() {
-            // We've already tried to compile the shader before.
-            return;
-        }
-
-        let shader = gsk::GLShader::from_resource("/org/gnome/Adwaita/glsl/mask.glsl");
-        let renderer = self.native().unwrap().renderer();
-        let compiled_shader = match shader.compile(&renderer) {
-            Err(e) => {
-                // If shaders aren't supported, the error doesn't matter and we just silently fall
-                // back.
-                log::error!("Couldn't compile shader: {}", e);
-                None
-            }
-            Ok(_) => Some(shader),
-        };
-
-        imp.mask_shader.replace(Some(compiled_shader));
     }
 }
