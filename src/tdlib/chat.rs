@@ -264,20 +264,16 @@ impl Chat {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
             DeleteMessages(data) => {
-                // FIXME: This should be removed after we notify opened and closed chats to TDLib
-                // See discussion here: https://t.me/tdlibchat/65304
-                if !data.from_cache {
-                    let mut messages = imp.messages.borrow_mut();
-                    let deleted_messages: Vec<Message> = data
-                        .message_ids
-                        .into_iter()
-                        .filter_map(|id| messages.remove(&id))
-                        .collect();
+                let mut messages = imp.messages.borrow_mut();
+                let deleted_messages: Vec<Message> = data
+                    .message_ids
+                    .into_iter()
+                    .filter_map(|id| messages.remove(&id))
+                    .collect();
 
-                    drop(messages);
-                    for message in deleted_messages {
-                        self.emit_by_name::<()>("deleted-message", &[&message]);
-                    }
+                drop(messages);
+                for message in deleted_messages {
+                    self.emit_by_name::<()>("deleted-message", &[&message]);
                 }
             }
             MessageContent(ref data) => {
@@ -520,6 +516,21 @@ impl Chat {
     /// Returns the `Message` of the specified id, if present in the cache.
     pub(crate) fn message(&self, message_id: i64) -> Option<Message> {
         self.imp().messages.borrow().get(&message_id).cloned()
+    }
+
+    // Mark this chat as opened. This allows receiving additional updates for this
+    // chat and it's also needed to correctly manage the internal message cache.
+    pub(crate) async fn open(&self) -> Result<(), types::Error> {
+        let chat_id = self.id();
+        let client_id = self.session().client_id();
+        functions::open_chat(chat_id, client_id).await
+    }
+
+    // Mark this chat as closed.
+    pub(crate) async fn close(&self) -> Result<(), types::Error> {
+        let chat_id = self.id();
+        let client_id = self.session().client_id();
+        functions::close_chat(chat_id, client_id).await
     }
 
     pub(crate) async fn get_chat_history(
