@@ -12,7 +12,7 @@ base_id = 'com.github.melix99.telegrand'
 
 dependency('glib-2.0', version: '>= 2.72')
 dependency('gio-2.0', version: '>= 2.72')
-dependency('gtk4', version: '>= 4.9.4')
+dependency('gtk4', version: '>= 4.10')
 dependency('libadwaita-1', version: '>= 1.3')
 dependency('tdjson', version: '== 1.8.10')
 

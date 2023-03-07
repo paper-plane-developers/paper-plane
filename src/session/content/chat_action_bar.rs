@@ -463,28 +463,24 @@ impl ChatActionBar {
     }
 
     async fn select_file(&self) {
-        let parent_window = self.root().unwrap().downcast::<gtk::Window>().unwrap();
-        let file_chooser = gtk::FileChooserNative::new(
-            Some(&gettext("Open File")),
-            Some(&parent_window),
-            gtk::FileChooserAction::Open,
-            Some(&gettext("_Open")),
-            Some(&gettext("_Cancel")),
-        );
+        let dialog = gtk::FileDialog::new();
         let filter = gtk::FileFilter::new();
+        let filters = gio::ListStore::new(gtk::FileFilter::static_type());
+        let parent = self.root().and_downcast::<gtk::Window>().unwrap();
 
         filter.set_name(Some(&gettext("Images")));
         for mime in PHOTO_MIME_TYPES {
             filter.add_mime_type(mime);
         }
-        file_chooser.add_filter(&filter);
 
-        if file_chooser.run_future().await == gtk::ResponseType::Accept {
-            if let Some(file) = file_chooser.file() {
-                let path = file.path().unwrap().to_str().unwrap().to_string();
-                let chat = self.chat().unwrap();
-                SendPhotoDialog::new(&Some(parent_window), chat, path).present();
-            }
+        filters.append(&filter);
+        dialog.set_filters(&filters);
+
+        if let Ok(file) = dialog.open_future(Some(&parent)).await {
+            let path = file.path().unwrap().to_str().unwrap().to_string();
+            let chat = self.chat().unwrap();
+
+            SendPhotoDialog::new(&Some(parent), chat, path).present();
         }
     }
 

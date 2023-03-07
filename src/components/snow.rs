@@ -83,7 +83,7 @@ mod imp {
                 let frame_time = widget.frame_clock().unwrap().frame_time();
                 let time = (frame_time - self.time_start.get()) as f32 / 1000000.0;
 
-                let color = self.obj().style_context().color();
+                let color = self.obj().color();
                 let color =
                     graphene::Vec4::new(color.red(), color.green(), color.blue(), color.alpha());
                 let args_builder = gsk::ShaderArgsBuilder::new(shader, None);
