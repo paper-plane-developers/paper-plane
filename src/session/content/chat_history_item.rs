@@ -12,13 +12,25 @@ pub(crate) enum ChatHistoryItemType {
     DayDivider(DateTime),
 }
 
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, glib::Enum)]
+#[enum_type(name = "MessageStyle")]
+pub(crate) enum MessageStyle {
+    #[default]
+    Single,
+    First,
+    Last,
+    Center,
+}
+
 mod imp {
     use super::*;
     use once_cell::sync::{Lazy, OnceCell};
+    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistoryItem {
         pub(super) type_: OnceCell<ChatHistoryItemType>,
+        pub(super) style: Cell<MessageStyle>,
     }
 
     #[glib::object_subclass]
@@ -30,12 +42,22 @@ mod imp {
     impl ObjectImpl for ChatHistoryItem {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecBoxed::builder::<ChatHistoryItemType>("type")
-                    .write_only()
-                    .construct_only()
-                    .build()]
+                vec![
+                    glib::ParamSpecBoxed::builder::<ChatHistoryItemType>("type")
+                        .write_only()
+                        .construct_only()
+                        .build(),
+                    glib::ParamSpecEnum::builder::<MessageStyle>("style").build(),
+                ]
             });
             PROPERTIES.as_ref()
+        }
+
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "style" => self.style.get().into(),
+                _ => unimplemented!(),
+            }
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
@@ -43,6 +65,9 @@ mod imp {
                 "type" => {
                     let type_ = value.get::<ChatHistoryItemType>().unwrap();
                     self.type_.set(type_).unwrap();
+                }
+                "style" => {
+                    self.style.set(value.get().unwrap());
                 }
                 _ => unimplemented!(),
             }
@@ -67,6 +92,52 @@ impl ChatHistoryItem {
 
     pub(crate) fn type_(&self) -> &ChatHistoryItemType {
         self.imp().type_.get().unwrap()
+    }
+
+    pub(crate) fn style(&self) -> MessageStyle {
+        self.imp().style.get()
+    }
+
+    pub(crate) fn set_style(&self, style: MessageStyle) {
+        self.imp().style.set(style);
+    }
+
+    pub(crate) fn is_groupable(&self) -> bool {
+        if let Some(message) = self.message() {
+            use tdlib::enums::MessageContent::*;
+            matches!(
+                message.content().0,
+                MessageText(_)
+                    | MessageAnimation(_)
+                    | MessageAudio(_)
+                    | MessageDocument(_)
+                    | MessagePhoto(_)
+                    | MessageSticker(_)
+                    | MessageVideo(_)
+                    | MessageVideoNote(_)
+                    | MessageVoiceNote(_)
+                    | MessageLocation(_)
+                    | MessageVenue(_)
+                    | MessageContact(_)
+                    | MessageAnimatedEmoji(_)
+                    | MessageDice(_)
+                    | MessageGame(_)
+                    | MessagePoll(_)
+                    | MessageInvoice(_)
+                    | MessageCall(_)
+                    | MessageUnsupported
+            )
+        } else {
+            false
+        }
+    }
+
+    pub(crate) fn group_key(&self) -> Option<(bool, i64)> {
+        if self.is_groupable() {
+            self.message().map(|m| (m.is_outgoing(), m.sender().id()))
+        } else {
+            None
+        }
     }
 
     pub(crate) fn message(&self) -> Option<&Message> {

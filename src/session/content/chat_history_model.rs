@@ -2,10 +2,11 @@ use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
+use itertools::Itertools;
 use std::cmp::Ordering;
 use thiserror::Error;
 
-use crate::session::content::{ChatHistoryItem, ChatHistoryItemType};
+use crate::session::content::{ChatHistoryItem, ChatHistoryItemType, MessageStyle};
 use crate::tdlib::{Chat, Message};
 
 #[derive(Error, Debug)]
@@ -227,6 +228,68 @@ impl ChatHistoryModel {
 
             (position as u32, removed)
         };
+
+        // Set message styles
+        {
+            let list = imp.list.borrow_mut();
+            let range = list.range((position as usize)..(position as usize + added as usize));
+            for (_, mut group) in &range.group_by(|item| item.group_key()) {
+                use MessageStyle::*;
+                if let Some(last) = group.next() {
+                    if let Some(first) = group
+                        .map(|m| {
+                            m.set_style(Center);
+                            m
+                        })
+                        .last()
+                    {
+                        last.set_style(Last);
+                        first.set_style(First);
+                    } else {
+                        last.set_style(Single);
+                    }
+                }
+            }
+
+            // Check corner cases
+            fn refresh_grouping_at_connection(first: &ChatHistoryItem, second: &ChatHistoryItem) {
+                if first.group_key() == second.group_key() {
+                    use MessageStyle::*;
+
+                    let new_style = match first.style() {
+                        Single => First,
+                        Last => Center,
+                        other => other,
+                    };
+
+                    first.set_style(new_style);
+
+                    let new_style = match second.style() {
+                        Single => Last,
+                        First => Center,
+                        other => other,
+                    };
+
+                    second.set_style(new_style);
+                }
+            }
+
+            if position > 0 {
+                if let Some(after_last) = list.get(position as usize - 1) {
+                    if let Some(last) = list.get(position as usize) {
+                        refresh_grouping_at_connection(last, after_last);
+                    }
+                }
+            }
+
+            if position + added + 1 < list.len() as u32 {
+                if let Some(before_first) = list.get((position + added) as usize + 1) {
+                    if let Some(first) = list.get((position + added) as usize) {
+                        refresh_grouping_at_connection(before_first, first);
+                    }
+                }
+            }
+        }
 
         self.upcast_ref::<gio::ListModel>()
             .items_changed(position, removed, added);

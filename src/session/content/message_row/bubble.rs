@@ -4,7 +4,8 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-use crate::session::content::message_row::{MessageIndicators, MessageLabel};
+use crate::session::content::message_row::{MessageIndicators, MessageLabel, MessageRow};
+use crate::session::content::MessageStyle;
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, SponsoredMessage};
 
 const MAX_WIDTH: i32 = 400;
@@ -115,6 +116,20 @@ mod imp {
     }
 
     impl WidgetImpl for MessageBubble {
+        fn map(&self) {
+            self.parent_map();
+            if let Some(style) = self.style() {
+                use MessageStyle::*;
+                let label_is_visible = match style {
+                    Single | First => true,
+                    Last | Center => false,
+                };
+                if self.sender_color_class.borrow().is_some() {
+                    self.sender_label.set_visible(label_is_visible);
+                }
+            }
+        }
+
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             // Limit the widget width
             if orientation == gtk::Orientation::Horizontal {
@@ -139,6 +154,17 @@ mod imp {
 
         fn request_mode(&self) -> gtk::SizeRequestMode {
             gtk::SizeRequestMode::HeightForWidth
+        }
+    }
+
+    impl MessageBubble {
+        fn style(&self) -> Option<MessageStyle> {
+            self.obj()
+                .parent()?
+                .parent()?
+                .downcast::<MessageRow>()
+                .ok()?
+                .message_style()
         }
     }
 }
