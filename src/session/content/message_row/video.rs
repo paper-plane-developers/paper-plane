@@ -1,5 +1,5 @@
 use glib::clone;
-use gtk::prelude::*;
+use gst::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
@@ -16,6 +16,7 @@ use super::base::MessageBaseExt;
 mod imp {
     use super::*;
     use once_cell::sync::Lazy;
+    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -42,6 +43,8 @@ mod imp {
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) message: RefCell<Option<Message>>,
         pub(super) is_animation: Cell<bool>,
+        pub(super) pipeline: OnceCell<gst::Pipeline>,
+        pub(super) file_src: OnceCell<gst::Element>,
         #[template_child]
         pub(super) message_bubble: TemplateChild<MessageBubble>,
         #[template_child]
@@ -91,9 +94,45 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            self.obj().create_pipeline();
+        }
+
+        fn dispose(&self) {
+            if let Some(pipeline) = self.pipeline.get() {
+                pipeline
+                    .set_state(gst::State::Null)
+                    .expect("Unable to set the pipeline to the `Null` state");
+                pipeline.bus().unwrap().remove_watch().unwrap();
+            }
+        }
     }
 
-    impl WidgetImpl for MessageVideo {}
+    impl WidgetImpl for MessageVideo {
+        fn map(&self) {
+            self.parent_map();
+
+            self.pipeline
+                .get()
+                .unwrap()
+                .set_state(gst::State::Playing)
+                .unwrap();
+        }
+
+        fn unmap(&self) {
+            self.parent_unmap();
+
+            self.pipeline
+                .get()
+                .unwrap()
+                .set_state(gst::State::Paused)
+                .unwrap();
+        }
+    }
+
     impl MessageBaseImpl for MessageVideo {}
 }
 
@@ -133,6 +172,78 @@ impl MessageBaseExt for MessageVideo {
 }
 
 impl MessageVideo {
+    fn create_pipeline(&self) {
+        let imp = self.imp();
+        let pipeline = gst::Pipeline::new(None);
+
+        let src = gst::ElementFactory::make("filesrc").build().unwrap();
+        let decodebin = gst::ElementFactory::make("decodebin").build().unwrap();
+        let gtksink = gst::ElementFactory::make("gtk4paintablesink")
+            .build()
+            .unwrap();
+
+        // Need to set state to Ready to get a GL context
+        gtksink.set_state(gst::State::Ready).unwrap();
+
+        let paintable = gtksink.property::<gdk::Paintable>("paintable");
+        imp.picture.set_paintable(Some(&paintable));
+
+        let sink = if paintable
+            .property::<Option<gdk::GLContext>>("gl-context")
+            .is_some()
+        {
+            gst::ElementFactory::make("glsinkbin")
+                .property("sink", &gtksink)
+                .build()
+                .unwrap()
+        } else {
+            let sink = gst::Bin::default();
+            let convert = gst::ElementFactory::make("videoconvert").build().unwrap();
+
+            sink.add(&convert).unwrap();
+            sink.add(&gtksink).unwrap();
+            convert.link(&gtksink).unwrap();
+
+            sink.add_pad(
+                &gst::GhostPad::with_target(Some("sink"), &convert.static_pad("sink").unwrap())
+                    .unwrap(),
+            )
+            .unwrap();
+
+            sink.upcast()
+        };
+
+        decodebin.connect_pad_added(clone!(@weak sink => move |_, src_pad| {
+            let sink_pad = sink.static_pad("sink").unwrap();
+            if !sink_pad.is_linked() {
+                src_pad.link(&sink_pad).unwrap();
+            }
+        }));
+
+        pipeline.add_many(&[&src, &decodebin, &sink]).unwrap();
+
+        src.link(&decodebin).unwrap();
+
+        let bus = pipeline.bus().unwrap();
+        bus.add_watch_local(
+            clone!(@weak pipeline => @default-return glib::Continue(false), move |_, msg| {
+                use gst::MessageView;
+
+                if let MessageView::Eos(_) = msg.view() {
+                    pipeline
+                        .seek_simple(gst::SeekFlags::FLUSH, gst::ClockTime::from_seconds(0))
+                        .unwrap();
+                }
+
+                glib::Continue(true)
+            }),
+        )
+        .unwrap();
+
+        imp.pipeline.set(pipeline).unwrap();
+        imp.file_src.set(src).unwrap();
+    }
+
     fn update_content(&self, content: MessageContent, session: &Session) {
         let imp = self.imp();
 
@@ -198,20 +309,18 @@ impl MessageVideo {
 
     fn load_video(&self, path: &str) {
         let imp = self.imp();
+        let pipeline = imp.pipeline.get().unwrap();
 
-        let media = gtk::MediaFile::for_filename(path);
-        media.set_muted(true);
-        media.set_loop(true);
-        media.play();
+        imp.file_src.get().unwrap().set_property("location", path);
 
-        if !imp.is_animation.get() {
-            media.connect_timestamp_notify(clone!(@weak self as obj => move |media| {
-                let time = (media.duration() - media.timestamp()) / i64::pow(10, 6);
-                obj.update_remaining_time(time);
-            }));
-        }
+        pipeline.set_state(gst::State::Playing).unwrap();
 
-        imp.picture.set_paintable(Some(&media));
+        // if !imp.is_animation.get() {
+        //     media.connect_timestamp_notify(clone!(@weak self as obj => move |media| {
+        //         let time = (media.duration() - media.timestamp()) / i64::pow(10, 6);
+        //         obj.update_remaining_time(time);
+        //     }));
+        // }
     }
 
     fn update_remaining_time(&self, time: i64) {
