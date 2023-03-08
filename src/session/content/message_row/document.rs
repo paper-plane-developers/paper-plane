@@ -281,6 +281,10 @@ impl MessageDocument {
                         }
                     }));
                 }
+            } else {
+                imp.file_thumbnail_picture.set_visible(true);
+                imp.file_thumbnail_picture
+                    .set_paintable(gdk::Paintable::NONE);
             }
         }
     }
