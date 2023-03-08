@@ -10,7 +10,7 @@ jobs:
     name: Typos
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: crate-ci/typos@master
         with:
           config: ./.github/workflows/typos.toml
@@ -19,12 +19,9 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          profile: minimal
-          toolchain: nightly
-          override: true
           components: rustfmt
       - name: Create blank versions of configured file
         run: echo -e "" >> src/config.rs
@@ -43,7 +40,7 @@ jobs:
       # Don't fail the whole workflow if one architecture fails
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # Docker is required by the docker/setup-qemu-action which enables emulation
       - name: Install dependencies
         if: ${{ matrix.arch != 'x86_64' }}
@@ -54,12 +51,9 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
-      - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v5
         with:
           bundle: telegrand.flatpak
           manifest-path: build-aux/com.github.melix99.telegrand.Devel.json
-          run-tests: true
           arch: ${{ matrix.arch }}
-          # TODO: Currently there is bug where, roughly speaking, there is an error in the creation of the cache.
-          #       Consider this for removal as soon as flatpak-builder@v5 is released, which is supposed to fix it.
           cache-key: flatpak-builder-${{ github.sha }}
