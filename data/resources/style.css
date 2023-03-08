@@ -238,6 +238,12 @@ messagebubble messagereply {
   margin: 3px 0;
 }
 
+messagesticker messagereply {
+  background: alpha(currentColor, 0.08);
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+
 messagereply {
   border-spacing: 6px;
 }
@@ -249,6 +255,10 @@ messagereply separator {
 /* Do not use the sender color */
 messagereply label.message {
   color: @window_fg_color;
+}
+
+messagesticker {
+  border-spacing: 6px;
 }
 
 .event-row {
