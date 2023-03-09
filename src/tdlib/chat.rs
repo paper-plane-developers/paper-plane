@@ -522,6 +522,28 @@ impl Chat {
         self.imp().messages.borrow().get(&message_id).cloned()
     }
 
+    /// Returns the `Message` of the specified id, if present in the cache. Otherwise it
+    /// fetches it from the server and then it returns the result.
+    pub(crate) async fn fetch_message(&self, message_id: i64) -> Result<Message, types::Error> {
+        if let Some(message) = self.message(message_id) {
+            return Ok(message);
+        }
+
+        let client_id = self.session().client_id();
+        let result = functions::get_message(self.id(), message_id, client_id).await;
+
+        result.map(|r| {
+            let tdlib::enums::Message::Message(message) = r;
+
+            self.imp()
+                .messages
+                .borrow_mut()
+                .entry(message_id)
+                .or_insert(Message::new(message, self))
+                .clone()
+        })
+    }
+
     pub(crate) async fn get_chat_history(
         &self,
         from_message_id: i64,

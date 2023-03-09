@@ -1,17 +1,19 @@
+use adw::prelude::*;
 use glib::clone;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 
 use crate::session::content::message_row::{
-    MessageBase, MessageBaseImpl, MessageIndicators, StickerPicture,
+    MessageBase, MessageBaseImpl, MessageIndicators, MessageReply, StickerPicture,
 };
 use crate::tdlib::Message;
 use crate::utils::{decode_image_from_path, spawn};
 use crate::Session;
 
 use super::base::MessageBaseExt;
+
+const MAX_REPLY_CHAR_WIDTH: i32 = 18;
 
 mod imp {
     use super::*;
@@ -24,6 +26,8 @@ mod imp {
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
         pub(super) picture: TemplateChild<StickerPicture>,
+        #[template_child]
+        pub(super) sticker_overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
         pub(super) indicators: TemplateChild<MessageIndicators>,
     }
@@ -97,6 +101,23 @@ impl MessageBaseExt for MessageSticker {
 
         imp.indicators.set_message(message.clone().upcast());
 
+        if message.reply_to_message_id() != 0 {
+            let reply = MessageReply::new(
+                message.chat(),
+                message.reply_to_message_id(),
+                message.is_outgoing(),
+            );
+            reply.set_valign(gtk::Align::Start);
+            reply.set_max_char_width(MAX_REPLY_CHAR_WIDTH);
+
+            // FIXME: Do not show message reply when message is being deleted
+            // Sticker and the reply should be at the opposite sides of the box
+            if message.is_outgoing() {
+                reply.insert_before(self, Some(&imp.sticker_overlay.get()));
+            } else {
+                reply.insert_after(self, Some(&imp.sticker_overlay.get()));
+            }
+        }
         imp.picture.set_texture(None);
 
         if let MessageContent::MessageSticker(data) = message.content().0 {

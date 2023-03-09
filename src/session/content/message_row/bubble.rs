@@ -4,7 +4,7 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-use crate::session::content::message_row::{MessageIndicators, MessageLabel};
+use crate::session::content::message_row::{MessageIndicators, MessageLabel, MessageReply};
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, SponsoredMessage};
 
 const MAX_WIDTH: i32 = 400;
@@ -40,6 +40,8 @@ mod imp {
                     visible: false;
                 }
 
+                Adw.Bin message_reply_bin {}
+
                 Adw.Bin prefix_bin {}
 
                 .MessageLabel message_label {
@@ -62,6 +64,8 @@ mod imp {
         pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
         pub(super) sender_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub(super) message_reply_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub(super) prefix_bin: TemplateChild<adw::Bin>,
         #[template_child]
@@ -192,6 +196,20 @@ impl MessageBubble {
         } else {
             None
         };
+
+        // Handle MessageReply
+        if message.reply_to_message_id() != 0 {
+            let reply = MessageReply::new(
+                message.chat(),
+                message.reply_to_message_id(),
+                message.is_outgoing(),
+            );
+
+            // FIXME: Do not show message reply when message is being deleted
+            imp.message_reply_bin.set_child(Some(&reply));
+        } else {
+            imp.message_reply_bin.set_child(gtk::Widget::NONE);
+        }
 
         // Show sender label, if needed
         if let Some(maybe_id) = show_sender {

@@ -1,9 +1,9 @@
 using Gtk 4.0;
 
 template MessageSticker : .MessageBase {
-  layout-manager: BinLayout {};
+  layout-manager: BoxLayout {};
 
-  Overlay {
+  Overlay sticker_overlay {
     .MessageStickerPicture picture {}
 
     [overlay]
