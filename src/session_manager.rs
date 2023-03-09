@@ -729,6 +729,37 @@ impl SessionManager {
         }
     }
 
+    pub(crate) fn handle_telegram_link(&self, link: String) {
+        let client_id = self.active_logged_in_client_id();
+        if let Some(client_id) = client_id {
+            spawn(clone!(@weak self as obj => async move {
+                let result = functions::get_internal_link_type(link, client_id).await;
+                if let Ok(link_type) = result {
+                    use enums::InternalLinkType::*;
+                    // TODO: Support other link types
+                    #[allow(clippy::single_match)]
+                    match link_type {
+                        PublicChat(data) => obj.open_chat_by_username(data.chat_username),
+                        _ => (),
+                    }
+                }
+            }));
+        }
+    }
+
+    pub(crate) fn open_chat_by_username(&self, username: String) {
+        let client_id = self.active_logged_in_client_id();
+        if let Some(client_id) = client_id {
+            spawn(clone!(@weak self as obj => async move {
+                let result = functions::search_public_chat(username, client_id).await;
+                if let Ok(chat) = result {
+                    let enums::Chat::Chat(chat) = chat;
+                    obj.select_chat(client_id, chat.id);
+                }
+            }))
+        }
+    }
+
     pub(crate) fn begin_chats_search(&self) {
         if let Some(client_id) = self.active_logged_in_client_id() {
             let clients = self.imp().clients.borrow();
