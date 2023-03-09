@@ -47,6 +47,16 @@ mod imp {
             obj.main_window().present();
         }
 
+        fn open(&self, files: &[gio::File], _hint: &str) {
+            debug!("Application::open");
+
+            let app = self.obj();
+            let url = files.first().map(|f| f.uri().into()).unwrap();
+            app.main_window()
+                .session_manager()
+                .handle_telegram_link(url);
+        }
+
         fn startup(&self) {
             debug!("GtkApplication<Application>::startup");
 
@@ -88,6 +98,7 @@ impl Application {
         glib::Object::builder()
             .property("application-id", APP_ID)
             .property("resource-base-path", "/com/github/melix99/telegrand/")
+            .property("flags", gio::ApplicationFlags::HANDLES_OPEN)
             .build()
     }
 
