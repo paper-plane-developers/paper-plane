@@ -2,10 +2,12 @@
 Name=Telegrand
 Comment=A Telegram client optimized for the GNOME desktop
 Type=Application
-Exec=telegrand
+TryExec=telegrand
+Exec=telegrand %U
 Terminal=false
 Categories=GNOME;GTK;
 Keywords=Gnome;GTK;
+MimeType=x-scheme-handler/tg;
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=@icon@
 StartupNotify=true
