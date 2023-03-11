@@ -28,8 +28,9 @@ src/session/content/chat_action_bar.rs
 src/session/content/chat_history.rs
 src/session/content/chat_history_row.rs
 src/session/content/chat_info_window.rs
-src/session/content/message_row/indicators_model.rs
+src/session/content/message_row/indicators.rs
 src/session/content/message_row/mod.rs
+src/session/content/message_row/reply.rs
 src/session/content/message_row/text.rs
 src/session/sidebar/row.rs
 src/session/sidebar/search/item_row.rs
