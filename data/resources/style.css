@@ -131,7 +131,7 @@ listview.chat-history > row {
 button.scroll-to-bottom {
   background-color: @window_bg_color;
   box-shadow: inset 0 0 0 1px @borders;
-  margin: 6px;
+  margin: 6px 9px;
 }
 
 messagebubble {
