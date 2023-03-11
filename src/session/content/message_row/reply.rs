@@ -93,7 +93,7 @@ mod imp {
 
         fn constructed(&self) {
             self.message_label
-                .set_label(&gettextrs::gettext("Loading ..."));
+                .set_label(&gettextrs::gettext("Loading…"));
 
             let obj = self.obj();
             spawn(clone!(@weak obj => async move {

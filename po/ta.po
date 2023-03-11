@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-21 21:49+0100\n"
+"POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -305,14 +305,18 @@ msgid "_Log Out"
 msgstr ""
 
 #: data/resources/ui/sidebar.ui:12
+msgid "_Contacts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
 msgstr ""
 
-#: data/resources/ui/sidebar.ui:16
+#: data/resources/ui/sidebar.ui:22
 msgid "_Keyboard Shortcuts"
 msgstr ""
 
-#: data/resources/ui/sidebar.ui:20
+#: data/resources/ui/sidebar.ui:26
 msgid "_About Telegrand"
 msgstr ""
 
@@ -357,7 +361,7 @@ msgstr ""
 msgid "Saved Messages"
 msgstr ""
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:13
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
 msgid "Deleted Account"
 msgstr ""
 
@@ -368,9 +372,8 @@ msgstr ""
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:105
-#: src/session/content/message_row/indicators_model.rs:186
-#: src/session/sidebar/row.rs:946
+#: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
+#: src/session/sidebar/row.rs:646
 msgid "%l:%M %p"
 msgstr ""
 
@@ -407,12 +410,12 @@ msgid "Do you accept the Terms of Service?"
 msgstr ""
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:182
+#: src/session/content/message_row/mod.rs:183
 msgid "_No"
 msgstr ""
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:182
+#: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
 msgstr ""
 
@@ -436,7 +439,7 @@ msgid ""
 "Do you want to delete your account?"
 msgstr ""
 
-#: src/login.rs:911 src/session/content/chat_action_bar.rs:429
+#: src/login.rs:911
 msgid "_Cancel"
 msgstr ""
 
@@ -484,16 +487,240 @@ msgstr ""
 msgid "You entered an invalid country code."
 msgstr ""
 
-#: src/strings.rs:25
+#: src/strings.rs:28
+msgid "{sender} is choosing a contact"
+msgstr ""
+
+#: src/strings.rs:32
+msgid "{sender1} and {sender2} are choosing contacts"
+msgstr ""
+
+#: src/strings.rs:39
+msgid "{num} people are choosing contacts"
+msgstr ""
+
+#: src/strings.rs:44
+msgid "choosing a contact"
+msgstr ""
+
+#: src/strings.rs:51
+msgid "{sender} is choosing a location"
+msgstr ""
+
+#: src/strings.rs:55
+msgid "{sender1} and {sender2} are choosing locations"
+msgstr ""
+
+#: src/strings.rs:62
+msgid "{num} people are choosing locations"
+msgstr ""
+
+#: src/strings.rs:67
+msgid "choosing a location"
+msgstr ""
+
+#: src/strings.rs:74
+msgid "{sender} is choosing a sticker"
+msgstr ""
+
+#: src/strings.rs:78
+msgid "{sender1} and {sender2} are choosing stickers"
+msgstr ""
+
+#: src/strings.rs:85
+msgid "{num} people are choosing stickers"
+msgstr ""
+
+#: src/strings.rs:90
+msgid "choosing a sticker"
+msgstr ""
+
+#: src/strings.rs:97
+msgid "{sender} is recording a video"
+msgstr ""
+
+#: src/strings.rs:101
+msgid "{sender1} and {sender2} are recording videos"
+msgstr ""
+
+#: src/strings.rs:108
+msgid "{num} people are recording videos"
+msgstr ""
+
+#: src/strings.rs:113
+msgid "recording a video"
+msgstr ""
+
+#: src/strings.rs:120
+msgid "{sender} is recording a video note"
+msgstr ""
+
+#: src/strings.rs:124
+msgid "{sender1} and {sender2} are recording video notes"
+msgstr ""
+
+#: src/strings.rs:131
+msgid "{num} people are recording video notes"
+msgstr ""
+
+#: src/strings.rs:136
+msgid "recording a video note"
+msgstr ""
+
+#: src/strings.rs:143
+msgid "{sender} is recording a voice note"
+msgstr ""
+
+#: src/strings.rs:147
+msgid "{sender1} and {sender2} are recording voice notes"
+msgstr ""
+
+#: src/strings.rs:154
+msgid "{num} people are recording voice notes"
+msgstr ""
+
+#: src/strings.rs:159
+msgid "recording a voice note"
+msgstr ""
+
+#: src/strings.rs:166
+msgid "{sender} is playing a game"
+msgstr ""
+
+#: src/strings.rs:170
+msgid "{sender1} and {sender2} are playing games"
+msgstr ""
+
+#: src/strings.rs:177
+msgid "{num} people are playing games"
+msgstr ""
+
+#: src/strings.rs:182
+msgid "playing a game"
+msgstr ""
+
+#: src/strings.rs:189
+msgid "{sender} is typing"
+msgstr ""
+
+#: src/strings.rs:193
+msgid "{sender1} and {sender2} are typing"
+msgstr ""
+
+#: src/strings.rs:199
+msgid "{num} people are typing"
+msgstr ""
+
+#: src/strings.rs:202
+msgid "typing"
+msgstr ""
+
+#: src/strings.rs:209
+msgid "{sender} is uploading a document ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:216
+msgid "{sender1} and {sender2} are uploading documents"
+msgstr ""
+
+#: src/strings.rs:223
+msgid "{num} people are uploading documents"
+msgstr ""
+
+#: src/strings.rs:229
+msgid "uploading a document ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:238
+msgid "{sender} is uploading a photo ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:245
+msgid "{sender1} and {sender2} are uploading photos"
+msgstr ""
+
+#: src/strings.rs:252
+msgid "{num} people are uploading photos"
+msgstr ""
+
+#: src/strings.rs:258
+msgid "uploading a photo ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:267
+msgid "{sender} is uploading a video ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:274
+msgid "{sender1} and {sender2} are uploading videos"
+msgstr ""
+
+#: src/strings.rs:281
+msgid "{num} people are uploading videos"
+msgstr ""
+
+#: src/strings.rs:287
+msgid "uploading a video ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:296
+msgid "{sender} is uploading a video note ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:303
+msgid "{sender1} and {sender2} are uploading video notes"
+msgstr ""
+
+#: src/strings.rs:310
+msgid "{num} people are uploading video notes"
+msgstr ""
+
+#: src/strings.rs:316
+msgid "uploading a video note ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:325
+msgid "{sender} is uploading a voice note ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:332
+msgid "{sender1} and {sender2} are uploading voice notes"
+msgstr ""
+
+#: src/strings.rs:339
+msgid "{num} people are uploading voice notes"
+msgstr ""
+
+#: src/strings.rs:345
+msgid "uploading a voice note ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:354
+msgid "{sender} is watching an animation {emoji}"
+msgstr ""
+
+#: src/strings.rs:361
+msgid "{sender1} and {sender2} are watching animations {emoji}"
+msgstr ""
+
+#: src/strings.rs:369
+msgid "{num} people are watching animations {emoji}"
+msgstr ""
+
+#: src/strings.rs:374
+msgid "watching an animation"
+msgstr ""
+
+#: src/strings.rs:395
 msgid "last seen a long time ago"
 msgstr ""
 
-#: src/strings.rs:26
+#: src/strings.rs:396
 msgid "online"
 msgstr ""
 
 #. Translators: This is an online status with the date
-#: src/strings.rs:35
+#: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
 msgstr ""
@@ -501,268 +728,268 @@ msgstr ""
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:40
+#: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
 msgstr ""
 
-#: src/strings.rs:44
+#: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/strings.rs:51
+#: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/strings.rs:57
+#: src/strings.rs:427
 msgid "last seen just now"
 msgstr ""
 
-#: src/strings.rs:60
+#: src/strings.rs:430
 msgid "last seen recently"
 msgstr ""
 
-#: src/strings.rs:61
+#: src/strings.rs:431
 msgid "last seen within a week"
 msgstr ""
 
-#: src/strings.rs:62
+#: src/strings.rs:432
 msgid "last seen within a month"
 msgstr ""
 
-#: src/strings.rs:86
+#: src/strings.rs:456
 msgid "Photo has expired"
 msgstr ""
 
-#: src/strings.rs:89
+#: src/strings.rs:459
 msgid "Video has expired"
 msgstr ""
 
-#: src/strings.rs:90
+#: src/strings.rs:460
 msgid "Video Message"
 msgstr ""
 
-#: src/strings.rs:121
+#: src/strings.rs:491
 msgid "{sender} took a screenshot!"
 msgstr ""
 
-#: src/strings.rs:126
+#: src/strings.rs:496
 msgid "Unsupported Message"
 msgstr ""
 
-#: src/strings.rs:132
+#: src/strings.rs:502
 msgid "GIF"
 msgstr ""
 
-#: src/strings.rs:134
+#: src/strings.rs:504
 msgid "GIF, {caption}"
 msgstr ""
 
-#: src/strings.rs:142
+#: src/strings.rs:512
 msgid "{title} – {performer}"
 msgstr ""
 
-#: src/strings.rs:148
+#: src/strings.rs:518
 msgid "{title} – {performer}, {caption}"
 msgstr ""
 
-#: src/strings.rs:164
+#: src/strings.rs:534
 msgid "{file_name}, {caption}"
 msgstr ""
 
-#: src/strings.rs:172
+#: src/strings.rs:542
 msgid "Photo"
 msgstr ""
 
-#: src/strings.rs:174
+#: src/strings.rs:544
 msgid "Photo, {caption}"
 msgstr ""
 
 #. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:180
+#: src/strings.rs:550
 msgid "{emoji} Sticker"
 msgstr ""
 
-#: src/strings.rs:185
+#: src/strings.rs:555
 msgid "Video"
 msgstr ""
 
-#: src/strings.rs:187
+#: src/strings.rs:557
 msgid "Video, {caption}"
 msgstr ""
 
-#: src/strings.rs:193
+#: src/strings.rs:563
 msgid "Voice Message"
 msgstr ""
 
-#: src/strings.rs:195
+#: src/strings.rs:565
 msgid "Voice Message, {caption}"
 msgstr ""
 
-#: src/strings.rs:212
+#: src/strings.rs:582
 msgid "Declined outgoing video call"
 msgstr ""
 
-#: src/strings.rs:214
+#: src/strings.rs:584
 msgid "Declined outgoing call"
 msgstr ""
 
-#: src/strings.rs:220
+#: src/strings.rs:590
 msgid "Declined incoming video call"
 msgstr ""
 
-#: src/strings.rs:222
+#: src/strings.rs:592
 msgid "Declined incoming call"
 msgstr ""
 
-#: src/strings.rs:230
+#: src/strings.rs:600
 msgid "Canceled call"
 msgstr ""
 
-#: src/strings.rs:232
+#: src/strings.rs:602
 msgid "Missed call"
 msgstr ""
 
-#: src/strings.rs:245
+#: src/strings.rs:615
 msgid "Outgoing video call ({duration})"
 msgstr ""
 
-#: src/strings.rs:250
+#: src/strings.rs:620
 msgid "Outgoing call ({duration})"
 msgstr ""
 
-#: src/strings.rs:255
+#: src/strings.rs:625
 msgid "Outgoing video call"
 msgstr ""
 
-#: src/strings.rs:257
+#: src/strings.rs:627
 msgid "Outgoing call"
 msgstr ""
 
-#: src/strings.rs:262
+#: src/strings.rs:632
 msgid "Incoming video call ({duration})"
 msgstr ""
 
-#: src/strings.rs:267
+#: src/strings.rs:637
 msgid "Incoming call ({duration})"
 msgstr ""
 
-#: src/strings.rs:272
+#: src/strings.rs:642
 msgid "Incoming video call"
 msgstr ""
 
-#: src/strings.rs:274 src/window.rs:213
+#: src/strings.rs:644 src/window.rs:213
 msgid "Incoming call"
 msgstr ""
 
-#: src/strings.rs:281 src/strings.rs:292
+#: src/strings.rs:651 src/strings.rs:662
 msgid "{sender} created the group \"{title}\""
 msgstr ""
 
-#: src/strings.rs:288
+#: src/strings.rs:658
 msgid "Channel created"
 msgstr ""
 
-#: src/strings.rs:302
+#: src/strings.rs:672
 msgid "Channel renamed to \"{title}\""
 msgstr ""
 
-#: src/strings.rs:307
+#: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
 msgstr ""
 
-#: src/strings.rs:317
+#: src/strings.rs:687
 msgid "Channel photo changed"
 msgstr ""
 
-#: src/strings.rs:321
+#: src/strings.rs:691
 msgid "{sender} changed the group photo"
 msgstr ""
 
-#: src/strings.rs:329
+#: src/strings.rs:699
 msgid "Channel photo removed"
 msgstr ""
 
-#: src/strings.rs:333
+#: src/strings.rs:703
 msgid "{sender} removed the group photo"
 msgstr ""
 
-#: src/strings.rs:341 src/strings.rs:376
+#: src/strings.rs:711 src/strings.rs:746
 msgid "{sender} joined the group"
 msgstr ""
 
-#: src/strings.rs:346
+#: src/strings.rs:716
 msgid "{sender} added {first_user} and {second_user}"
 msgstr ""
 
-#: src/strings.rs:360
+#: src/strings.rs:730
 msgid "{sender} added {users}"
 msgstr ""
 
-#: src/strings.rs:369
+#: src/strings.rs:739
 msgid "{sender} joined the group via invite link"
 msgstr ""
 
-#: src/strings.rs:383
+#: src/strings.rs:753
 msgid "{sender} left the group"
 msgstr ""
 
-#: src/strings.rs:388
+#: src/strings.rs:758
 msgid "{sender} removed {user}"
 msgstr ""
 
-#: src/strings.rs:407
+#: src/strings.rs:777
 msgid "{sender} scored {points} in {game}"
 msgstr ""
 
-#: src/strings.rs:416
+#: src/strings.rs:786
 msgid "{sender} scored {points}"
 msgstr ""
 
-#: src/strings.rs:440
+#: src/strings.rs:810
 msgid "{sender} pinned \"{text}\""
 msgstr ""
 
-#: src/strings.rs:442
+#: src/strings.rs:812
 msgid "{sender} pinned a GIF"
 msgstr ""
 
-#: src/strings.rs:443
+#: src/strings.rs:813
 msgid "{sender} pinned an audio file"
 msgstr ""
 
-#: src/strings.rs:444
+#: src/strings.rs:814
 msgid "{sender} pinned a file"
 msgstr ""
 
-#: src/strings.rs:445
+#: src/strings.rs:815
 msgid "{sender} pinned a photo"
 msgstr ""
 
-#: src/strings.rs:446
+#: src/strings.rs:816
 msgid "{sender} pinned a sticker"
 msgstr ""
 
-#: src/strings.rs:447
+#: src/strings.rs:817
 msgid "{sender} pinned a video"
 msgstr ""
 
-#: src/strings.rs:448
+#: src/strings.rs:818
 msgid "{sender} pinned a video message"
 msgstr ""
 
-#: src/strings.rs:449
+#: src/strings.rs:819
 msgid "{sender} pinned a voice message"
 msgstr ""
 
-#: src/strings.rs:450 src/strings.rs:452
+#: src/strings.rs:820 src/strings.rs:822
 msgid "{sender} pinned a message"
 msgstr ""
 
-#: src/strings.rs:461
+#: src/strings.rs:831
 msgid "{sender} joined Telegram"
 msgstr ""
 
@@ -770,40 +997,30 @@ msgstr ""
 msgid "Cache cleared"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:122
-#: src/session/content/chat_action_bar.rs:750
-msgid "Unmute"
-msgstr ""
-
-#: src/session/content/chat_action_bar.rs:124
-#: src/session/content/chat_action_bar.rs:752
-msgid "Mute"
-msgstr ""
-
-#: src/session/content/chat_action_bar.rs:320
-#: src/session/content/chat_action_bar.rs:337
+#: src/session/content/chat_action_bar.rs:363
+#: src/session/content/chat_action_bar.rs:380
 msgid "Unknown"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:322
-#: src/session/content/chat_action_bar.rs:339
+#: src/session/content/chat_action_bar.rs:365
+#: src/session/content/chat_action_bar.rs:382
 msgid "Deleted Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:333
+#: src/session/content/chat_action_bar.rs:376
 msgid "Edit Message"
 msgstr ""
 
-#: src/session/content/chat_action_bar.rs:425
-msgid "Open File"
-msgstr ""
-
-#: src/session/content/chat_action_bar.rs:428
-msgid "_Open"
-msgstr ""
-
-#: src/session/content/chat_action_bar.rs:433
+#: src/session/content/chat_action_bar.rs:471
 msgid "Images"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:790
+msgid "Unmute"
+msgstr ""
+
+#: src/session/content/chat_action_bar.rs:792
+msgid "Mute"
 msgstr ""
 
 #: src/session/content/chat_history.rs:230
@@ -856,72 +1073,40 @@ msgstr ""
 msgid "Copied to clipboard"
 msgstr ""
 
-#: src/session/content/message_row/indicators_model.rs:188
+#: src/session/content/message_row/indicators.rs:266
 msgid "edited"
 msgstr ""
 
-#: src/session/content/message_row/indicators_model.rs:193
+#: src/session/content/message_row/indicators.rs:271
 msgid "sponsored"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:170
+#: src/session/content/message_row/mod.rs:171
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:172
+#: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
 msgstr ""
 
-#: src/session/content/message_row/mod.rs:176
+#: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
+msgstr ""
+
+#: src/session/content/message_row/reply.rs:96
+msgid "Loading…"
 msgstr ""
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
 msgstr ""
 
-#: src/session/sidebar/row.rs:441
+#: src/session/sidebar/row.rs:417
 msgid "Draft:"
 msgstr ""
 
-#: src/session/sidebar/row.rs:621
+#: src/session/sidebar/row.rs:597
 msgid "You"
-msgstr ""
-
-#: src/session/sidebar/row.rs:687
-msgid "choosing a contact"
-msgstr ""
-
-#: src/session/sidebar/row.rs:705
-msgid "choosing a location"
-msgstr ""
-
-#: src/session/sidebar/row.rs:723
-msgid "choosing a sticker"
-msgstr ""
-
-#: src/session/sidebar/row.rs:741
-msgid "recording a video"
-msgstr ""
-
-#: src/session/sidebar/row.rs:759
-msgid "recording a video note"
-msgstr ""
-
-#: src/session/sidebar/row.rs:777
-msgid "recording a voice note"
-msgstr ""
-
-#: src/session/sidebar/row.rs:795
-msgid "playing a game"
-msgstr ""
-
-#: src/session/sidebar/row.rs:813
-msgid "typing"
-msgstr ""
-
-#: src/session/sidebar/row.rs:928
-msgid "watching an animation"
 msgstr ""
 
 #: src/session/sidebar/search/section_row.rs:130

@@ -119,13 +119,13 @@ sidebarsearchitemrow {
   border-spacing: 12px;
 }
 
-.chat-history listview {
+listview.chat-history {
   padding: 3px 0;
 }
 
-.chat-history row {
-  border-radius: 5px;
-  margin: 0 6px;
+listview.chat-history > row {
+  margin: 2px 4px;
+  border-radius: 9px;
 }
 
 button.scroll-to-bottom {

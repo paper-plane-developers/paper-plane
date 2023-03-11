@@ -90,7 +90,6 @@
                 <property name="hscrollbar-policy">never</property>
                 <style>
                   <class name="view"/>
-                  <class name="chat-history"/>
                 </style>
                 <property name="child">
                   <object class="AdwClampScrollable">
@@ -100,6 +99,9 @@
                     <property name="child">
                       <object class="GtkListView" id="list_view">
                         <property name="reversed">True</property>
+                        <style>
+                          <class name="chat-history"/>
+                        </style>
                         <property name="factory">
                           <object class="GtkBuilderListItemFactory">
                             <property name="bytes"><![CDATA[
@@ -109,8 +111,6 @@
     <property name="activatable">False</property>
     <property name="child">
       <object class="ContentChatHistoryRow">
-        <property name="margin-top">3</property>
-        <property name="margin-bottom">3</property>
         <binding name="item">
           <lookup name="item">GtkListItem</lookup>
         </binding>

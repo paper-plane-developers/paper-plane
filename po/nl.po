@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-21 21:49+0100\n"
+"POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2023-02-23 11:37+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
@@ -313,14 +313,18 @@ msgid "_Log Out"
 msgstr "_Uitloggen"
 
 #: data/resources/ui/sidebar.ui:12
+msgid "_Contacts"
+msgstr ""
+
+#: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
 msgstr "_Voorkeuren"
 
-#: data/resources/ui/sidebar.ui:16
+#: data/resources/ui/sidebar.ui:22
 msgid "_Keyboard Shortcuts"
 msgstr "_Sneltoetsen"
 
-#: data/resources/ui/sidebar.ui:20
+#: data/resources/ui/sidebar.ui:26
 msgid "_About Telegrand"
 msgstr "_Over Telegrand"
 
@@ -365,7 +369,7 @@ msgstr "Sponsoren"
 msgid "Saved Messages"
 msgstr "Opgeslagen berichten"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:13
+#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
 msgid "Deleted Account"
 msgstr "Verwijderd account"
 
@@ -377,9 +381,8 @@ msgstr ""
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:105
-#: src/session/content/message_row/indicators_model.rs:186
-#: src/session/sidebar/row.rs:946
+#: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
+#: src/session/sidebar/row.rs:646
 msgid "%l:%M %p"
 msgstr "%H:%M"
 
@@ -423,12 +426,12 @@ msgid "Do you accept the Terms of Service?"
 msgstr "Accepteert u de servicevoorwaarden?"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:182
+#: src/session/content/message_row/mod.rs:183
 msgid "_No"
 msgstr "_Nee"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:182
+#: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
 msgstr "_Ja"
 
@@ -456,7 +459,7 @@ msgstr ""
 "\n"
 "Wilt u uw account verwijderen?"
 
-#: src/login.rs:911 src/session/content/chat_action_bar.rs:429
+#: src/login.rs:911
 msgid "_Cancel"
 msgstr "_Annuleren"
 
@@ -506,16 +509,267 @@ msgstr "Fragment"
 msgid "You entered an invalid country code."
 msgstr "U heeft een ongeldige landcode ingevoerd"
 
-#: src/strings.rs:25
+#: src/strings.rs:28
+#, fuzzy
+msgid "{sender} is choosing a contact"
+msgstr "contact aan het kiezen"
+
+#: src/strings.rs:32
+msgid "{sender1} and {sender2} are choosing contacts"
+msgstr ""
+
+#: src/strings.rs:39
+#, fuzzy
+msgid "{num} people are choosing contacts"
+msgstr "contact aan het kiezen"
+
+#: src/strings.rs:44
+msgid "choosing a contact"
+msgstr "contact aan het kiezen"
+
+#: src/strings.rs:51
+#, fuzzy
+msgid "{sender} is choosing a location"
+msgstr "locatie aan het kiezen"
+
+#: src/strings.rs:55
+msgid "{sender1} and {sender2} are choosing locations"
+msgstr ""
+
+#: src/strings.rs:62
+#, fuzzy
+msgid "{num} people are choosing locations"
+msgstr "locatie aan het kiezen"
+
+#: src/strings.rs:67
+msgid "choosing a location"
+msgstr "locatie aan het kiezen"
+
+#: src/strings.rs:74
+#, fuzzy
+msgid "{sender} is choosing a sticker"
+msgstr "{sender} heeft een sticker vastgezet"
+
+#: src/strings.rs:78
+#, fuzzy
+msgid "{sender1} and {sender2} are choosing stickers"
+msgstr "{sender} heeft een sticker vastgezet"
+
+#: src/strings.rs:85
+#, fuzzy
+msgid "{num} people are choosing stickers"
+msgstr "sticker aan het kiezen"
+
+#: src/strings.rs:90
+msgid "choosing a sticker"
+msgstr "sticker aan het kiezen"
+
+#: src/strings.rs:97
+#, fuzzy
+msgid "{sender} is recording a video"
+msgstr "{sender} heeft een video vastgezet"
+
+#: src/strings.rs:101
+msgid "{sender1} and {sender2} are recording videos"
+msgstr ""
+
+#: src/strings.rs:108
+#, fuzzy
+msgid "{num} people are recording videos"
+msgstr "video aan het opnemen"
+
+#: src/strings.rs:113
+msgid "recording a video"
+msgstr "video aan het opnemen"
+
+#: src/strings.rs:120
+#, fuzzy
+msgid "{sender} is recording a video note"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:124
+msgid "{sender1} and {sender2} are recording video notes"
+msgstr ""
+
+#: src/strings.rs:131
+#, fuzzy
+msgid "{num} people are recording video notes"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:136
+msgid "recording a video note"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:143
+#, fuzzy
+msgid "{sender} is recording a voice note"
+msgstr "spraakbericht aan het opnemen"
+
+#: src/strings.rs:147
+msgid "{sender1} and {sender2} are recording voice notes"
+msgstr ""
+
+#: src/strings.rs:154
+#, fuzzy
+msgid "{num} people are recording voice notes"
+msgstr "spraakbericht aan het opnemen"
+
+#: src/strings.rs:159
+msgid "recording a voice note"
+msgstr "spraakbericht aan het opnemen"
+
+#: src/strings.rs:166
+#, fuzzy
+msgid "{sender} is playing a game"
+msgstr "spel aan het spelen"
+
+#: src/strings.rs:170
+msgid "{sender1} and {sender2} are playing games"
+msgstr ""
+
+#: src/strings.rs:177
+msgid "{num} people are playing games"
+msgstr ""
+
+#: src/strings.rs:182
+msgid "playing a game"
+msgstr "spel aan het spelen"
+
+#: src/strings.rs:189
+#, fuzzy
+msgid "{sender} is typing"
+msgstr "{sender} heeft {points} punten behaald"
+
+#: src/strings.rs:193
+#, fuzzy
+msgid "{sender1} and {sender2} are typing"
+msgstr "{sender} heeft {users} toegevoegd"
+
+#: src/strings.rs:199
+msgid "{num} people are typing"
+msgstr ""
+
+#: src/strings.rs:202
+msgid "typing"
+msgstr "aan het typen"
+
+#: src/strings.rs:209
+msgid "{sender} is uploading a document ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:216
+msgid "{sender1} and {sender2} are uploading documents"
+msgstr ""
+
+#: src/strings.rs:223
+msgid "{num} people are uploading documents"
+msgstr ""
+
+#: src/strings.rs:229
+msgid "uploading a document ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:238
+#, fuzzy
+msgid "{sender} is uploading a photo ({progress}%)"
+msgstr "{sender} heeft een foto vastgezet"
+
+#: src/strings.rs:245
+#, fuzzy
+msgid "{sender1} and {sender2} are uploading photos"
+msgstr "{sender} heeft de groepsfoto aangepast"
+
+#: src/strings.rs:252
+msgid "{num} people are uploading photos"
+msgstr ""
+
+#: src/strings.rs:258
+msgid "uploading a photo ({progress}%)"
+msgstr ""
+
+#: src/strings.rs:267
+#, fuzzy
+msgid "{sender} is uploading a video ({progress}%)"
+msgstr "{sender} heeft een videobericht vastgezet"
+
+#: src/strings.rs:274
+msgid "{sender1} and {sender2} are uploading videos"
+msgstr ""
+
+#: src/strings.rs:281
+msgid "{num} people are uploading videos"
+msgstr ""
+
+#: src/strings.rs:287
+#, fuzzy
+msgid "uploading a video ({progress}%)"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:296
+#, fuzzy
+msgid "{sender} is uploading a video note ({progress}%)"
+msgstr "{sender} heeft een videobericht vastgezet"
+
+#: src/strings.rs:303
+msgid "{sender1} and {sender2} are uploading video notes"
+msgstr ""
+
+#: src/strings.rs:310
+#, fuzzy
+msgid "{num} people are uploading video notes"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:316
+#, fuzzy
+msgid "uploading a video note ({progress}%)"
+msgstr "videobericht aan het opnemen"
+
+#: src/strings.rs:325
+#, fuzzy
+msgid "{sender} is uploading a voice note ({progress}%)"
+msgstr "{sender} heeft een audiobericht vastgezet"
+
+#: src/strings.rs:332
+msgid "{sender1} and {sender2} are uploading voice notes"
+msgstr ""
+
+#: src/strings.rs:339
+#, fuzzy
+msgid "{num} people are uploading voice notes"
+msgstr "spraakbericht aan het opnemen"
+
+#: src/strings.rs:345
+#, fuzzy
+msgid "uploading a voice note ({progress}%)"
+msgstr "spraakbericht aan het opnemen"
+
+#: src/strings.rs:354
+#, fuzzy
+msgid "{sender} is watching an animation {emoji}"
+msgstr "animatie aan het kijken"
+
+#: src/strings.rs:361
+msgid "{sender1} and {sender2} are watching animations {emoji}"
+msgstr ""
+
+#: src/strings.rs:369
+msgid "{num} people are watching animations {emoji}"
+msgstr ""
+
+#: src/strings.rs:374
+msgid "watching an animation"
+msgstr "animatie aan het kijken"
+
+#: src/strings.rs:395
 msgid "last seen a long time ago"
 msgstr "lang geleden voor het laatst gezien"
 
-#: src/strings.rs:26
+#: src/strings.rs:396
 msgid "online"
 msgstr "online"
 
 #. Translators: This is an online status with the date
-#: src/strings.rs:35
+#: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
 msgstr "%x voor het laatst gezien"
@@ -523,268 +777,268 @@ msgstr "%x voor het laatst gezien"
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:40
+#: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
 msgstr "gisteren om %H:%M voor het laatst gezien"
 
-#: src/strings.rs:44
+#: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
 msgstr[0] "{num} uur geleden voor het laatst gezien"
 msgstr[1] "{num} uur geleden voor het laatst gezien"
 
-#: src/strings.rs:51
+#: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
 msgstr[0] "{num} minuut geleden voor het laatst gezien"
 msgstr[1] "{num} minuten geleden voor het laatst gezien"
 
-#: src/strings.rs:57
+#: src/strings.rs:427
 msgid "last seen just now"
 msgstr "net voor het laatst gezien"
 
-#: src/strings.rs:60
+#: src/strings.rs:430
 msgid "last seen recently"
 msgstr "recent voor het laatst gezien"
 
-#: src/strings.rs:61
+#: src/strings.rs:431
 msgid "last seen within a week"
 msgstr "deze week voor het laatst gezien"
 
-#: src/strings.rs:62
+#: src/strings.rs:432
 msgid "last seen within a month"
 msgstr "deze maand voor het laatst gezien"
 
-#: src/strings.rs:86
+#: src/strings.rs:456
 msgid "Photo has expired"
 msgstr "Foto is verlopen"
 
-#: src/strings.rs:89
+#: src/strings.rs:459
 msgid "Video has expired"
 msgstr "Video is verlopen"
 
-#: src/strings.rs:90
+#: src/strings.rs:460
 msgid "Video Message"
 msgstr "Videobericht"
 
-#: src/strings.rs:121
+#: src/strings.rs:491
 msgid "{sender} took a screenshot!"
 msgstr "{sender} heeft een schermafdruk gemaakt!"
 
-#: src/strings.rs:126
+#: src/strings.rs:496
 msgid "Unsupported Message"
 msgstr "Niet-ondersteund bericht"
 
-#: src/strings.rs:132
+#: src/strings.rs:502
 msgid "GIF"
 msgstr "GIF"
 
-#: src/strings.rs:134
+#: src/strings.rs:504
 msgid "GIF, {caption}"
 msgstr "GIF, {caption}"
 
-#: src/strings.rs:142
+#: src/strings.rs:512
 msgid "{title} – {performer}"
 msgstr "{title} – {performer}"
 
-#: src/strings.rs:148
+#: src/strings.rs:518
 msgid "{title} – {performer}, {caption}"
 msgstr "{title} – {performer}, {caption}"
 
-#: src/strings.rs:164
+#: src/strings.rs:534
 msgid "{file_name}, {caption}"
 msgstr "{file_name}, {caption}"
 
-#: src/strings.rs:172
+#: src/strings.rs:542
 msgid "Photo"
 msgstr "Foto"
 
-#: src/strings.rs:174
+#: src/strings.rs:544
 msgid "Photo, {caption}"
 msgstr "Foto, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:180
+#: src/strings.rs:550
 msgid "{emoji} Sticker"
 msgstr "{emoji} Sticker"
 
-#: src/strings.rs:185
+#: src/strings.rs:555
 msgid "Video"
 msgstr "Video"
 
-#: src/strings.rs:187
+#: src/strings.rs:557
 msgid "Video, {caption}"
 msgstr "Video, {caption}"
 
-#: src/strings.rs:193
+#: src/strings.rs:563
 msgid "Voice Message"
 msgstr "Spraakbericht"
 
-#: src/strings.rs:195
+#: src/strings.rs:565
 msgid "Voice Message, {caption}"
 msgstr "Spraakbericht, {caption}"
 
-#: src/strings.rs:212
+#: src/strings.rs:582
 msgid "Declined outgoing video call"
 msgstr "Geweigerde uitgaande video-oproep"
 
-#: src/strings.rs:214
+#: src/strings.rs:584
 msgid "Declined outgoing call"
 msgstr "Geweigerde uitgaande oproep"
 
-#: src/strings.rs:220
+#: src/strings.rs:590
 msgid "Declined incoming video call"
 msgstr "Geweigerde inkomende video-oproep"
 
-#: src/strings.rs:222
+#: src/strings.rs:592
 msgid "Declined incoming call"
 msgstr "Geweigerde inkomende oproep"
 
-#: src/strings.rs:230
+#: src/strings.rs:600
 msgid "Canceled call"
 msgstr "Geannuleerde oproep"
 
-#: src/strings.rs:232
+#: src/strings.rs:602
 msgid "Missed call"
 msgstr "Gemiste oproep"
 
-#: src/strings.rs:245
+#: src/strings.rs:615
 msgid "Outgoing video call ({duration})"
 msgstr "Uitgaande video-oproep ({duration})"
 
-#: src/strings.rs:250
+#: src/strings.rs:620
 msgid "Outgoing call ({duration})"
 msgstr "Uitgaande oproep ({duration})"
 
-#: src/strings.rs:255
+#: src/strings.rs:625
 msgid "Outgoing video call"
 msgstr "Uitgaande video-oproep"
 
-#: src/strings.rs:257
+#: src/strings.rs:627
 msgid "Outgoing call"
 msgstr "Uitgaande oproep"
 
-#: src/strings.rs:262
+#: src/strings.rs:632
 msgid "Incoming video call ({duration})"
 msgstr "Inkomende video-oproep ({duration})"
 
-#: src/strings.rs:267
+#: src/strings.rs:637
 msgid "Incoming call ({duration})"
 msgstr "Inkomende oproep ({duration})"
 
-#: src/strings.rs:272
+#: src/strings.rs:642
 msgid "Incoming video call"
 msgstr "Inkomende video-oproep"
 
-#: src/strings.rs:274 src/window.rs:213
+#: src/strings.rs:644 src/window.rs:213
 msgid "Incoming call"
 msgstr "Inkomende oproep"
 
-#: src/strings.rs:281 src/strings.rs:292
+#: src/strings.rs:651 src/strings.rs:662
 msgid "{sender} created the group \"{title}\""
 msgstr "{sender} heeft de groep ‘{title}’ aangemaakt"
 
-#: src/strings.rs:288
+#: src/strings.rs:658
 msgid "Channel created"
 msgstr "Kanaal aangemaakt"
 
-#: src/strings.rs:302
+#: src/strings.rs:672
 msgid "Channel renamed to \"{title}\""
 msgstr "Kanaalnaam aangepast naar ‘{title}’"
 
-#: src/strings.rs:307
+#: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
 msgstr "{sender} heeft de groepsnaam aangepast naar ‘{title}’"
 
-#: src/strings.rs:317
+#: src/strings.rs:687
 msgid "Channel photo changed"
 msgstr "Kanaalfoto aangepast"
 
-#: src/strings.rs:321
+#: src/strings.rs:691
 msgid "{sender} changed the group photo"
 msgstr "{sender} heeft de groepsfoto aangepast"
 
-#: src/strings.rs:329
+#: src/strings.rs:699
 msgid "Channel photo removed"
 msgstr "Kanaalfoto verwijderd"
 
-#: src/strings.rs:333
+#: src/strings.rs:703
 msgid "{sender} removed the group photo"
 msgstr "{sender} heeft de groepsfoto verwijderd"
 
-#: src/strings.rs:341 src/strings.rs:376
+#: src/strings.rs:711 src/strings.rs:746
 msgid "{sender} joined the group"
 msgstr "{sender} neemt nu deel aan deze groep"
 
-#: src/strings.rs:346
+#: src/strings.rs:716
 msgid "{sender} added {first_user} and {second_user}"
 msgstr "{sender} heeft {first_user} en {second_user} toegevoegd"
 
-#: src/strings.rs:360
+#: src/strings.rs:730
 msgid "{sender} added {users}"
 msgstr "{sender} heeft {users} toegevoegd"
 
-#: src/strings.rs:369
+#: src/strings.rs:739
 msgid "{sender} joined the group via invite link"
 msgstr "{sender} is deelnemer geworden van deze groep via een uitnodigingslink"
 
-#: src/strings.rs:383
+#: src/strings.rs:753
 msgid "{sender} left the group"
 msgstr "{sender} heeft de groep verlaten"
 
-#: src/strings.rs:388
+#: src/strings.rs:758
 msgid "{sender} removed {user}"
 msgstr "{sender} heeft {user} verwijderd"
 
-#: src/strings.rs:407
+#: src/strings.rs:777
 msgid "{sender} scored {points} in {game}"
 msgstr "{sender} heeft {points} punten behaald in {game}"
 
-#: src/strings.rs:416
+#: src/strings.rs:786
 msgid "{sender} scored {points}"
 msgstr "{sender} heeft {points} punten behaald"
 
-#: src/strings.rs:440
+#: src/strings.rs:810
 msgid "{sender} pinned \"{text}\""
 msgstr "{sender} heeft ‘{text}’ vastgezet"
 
-#: src/strings.rs:442
+#: src/strings.rs:812
 msgid "{sender} pinned a GIF"
 msgstr "{sender} heeft een GIF vastgezet"
 
-#: src/strings.rs:443
+#: src/strings.rs:813
 msgid "{sender} pinned an audio file"
 msgstr "{sender} heeft een audiobestand vastgezet"
 
-#: src/strings.rs:444
+#: src/strings.rs:814
 msgid "{sender} pinned a file"
 msgstr "{sender} heeft een bestand vastgezet"
 
-#: src/strings.rs:445
+#: src/strings.rs:815
 msgid "{sender} pinned a photo"
 msgstr "{sender} heeft een foto vastgezet"
 
-#: src/strings.rs:446
+#: src/strings.rs:816
 msgid "{sender} pinned a sticker"
 msgstr "{sender} heeft een sticker vastgezet"
 
-#: src/strings.rs:447
+#: src/strings.rs:817
 msgid "{sender} pinned a video"
 msgstr "{sender} heeft een video vastgezet"
 
-#: src/strings.rs:448
+#: src/strings.rs:818
 msgid "{sender} pinned a video message"
 msgstr "{sender} heeft een videobericht vastgezet"
 
-#: src/strings.rs:449
+#: src/strings.rs:819
 msgid "{sender} pinned a voice message"
 msgstr "{sender} heeft een audiobericht vastgezet"
 
-#: src/strings.rs:450 src/strings.rs:452
+#: src/strings.rs:820 src/strings.rs:822
 msgid "{sender} pinned a message"
 msgstr "{sender} heeft een bericht vastgezet"
 
-#: src/strings.rs:461
+#: src/strings.rs:831
 msgid "{sender} joined Telegram"
 msgstr "{sender} heeft nu Telegram"
 
@@ -792,41 +1046,31 @@ msgstr "{sender} heeft nu Telegram"
 msgid "Cache cleared"
 msgstr "Cache geleegd"
 
-#: src/session/content/chat_action_bar.rs:122
-#: src/session/content/chat_action_bar.rs:750
-msgid "Unmute"
-msgstr "Dempen opheffen"
-
-#: src/session/content/chat_action_bar.rs:124
-#: src/session/content/chat_action_bar.rs:752
-msgid "Mute"
-msgstr "Dempen"
-
-#: src/session/content/chat_action_bar.rs:320
-#: src/session/content/chat_action_bar.rs:337
+#: src/session/content/chat_action_bar.rs:363
+#: src/session/content/chat_action_bar.rs:380
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: src/session/content/chat_action_bar.rs:322
-#: src/session/content/chat_action_bar.rs:339
+#: src/session/content/chat_action_bar.rs:365
+#: src/session/content/chat_action_bar.rs:382
 msgid "Deleted Message"
 msgstr "Verwijderd bericht"
 
-#: src/session/content/chat_action_bar.rs:333
+#: src/session/content/chat_action_bar.rs:376
 msgid "Edit Message"
 msgstr "Bericht bewerken"
 
-#: src/session/content/chat_action_bar.rs:425
-msgid "Open File"
-msgstr "Bestand openen"
-
-#: src/session/content/chat_action_bar.rs:428
-msgid "_Open"
-msgstr "_Openen"
-
-#: src/session/content/chat_action_bar.rs:433
+#: src/session/content/chat_action_bar.rs:471
 msgid "Images"
 msgstr "Afbeeldingen"
+
+#: src/session/content/chat_action_bar.rs:790
+msgid "Unmute"
+msgstr "Dempen opheffen"
+
+#: src/session/content/chat_action_bar.rs:792
+msgid "Mute"
+msgstr "Dempen"
 
 #: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
@@ -878,73 +1122,41 @@ msgstr "Link"
 msgid "Copied to clipboard"
 msgstr "Gekopieerd naar klembord"
 
-#: src/session/content/message_row/indicators_model.rs:188
+#: src/session/content/message_row/indicators.rs:266
 msgid "edited"
 msgstr "bewerkt"
 
-#: src/session/content/message_row/indicators_model.rs:193
+#: src/session/content/message_row/indicators.rs:271
 msgid "sponsored"
 msgstr "gesponsord"
 
-#: src/session/content/message_row/mod.rs:170
+#: src/session/content/message_row/mod.rs:171
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr "Wilt u dit bericht voor <b>iedereen</b> verwijderen?"
 
-#: src/session/content/message_row/mod.rs:172
+#: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
 msgstr "Wilt u dit bericht verwijderen?"
 
-#: src/session/content/message_row/mod.rs:176
+#: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
 msgstr "Verwijderen van bericht bevestigen"
+
+#: src/session/content/message_row/reply.rs:96
+msgid "Loading…"
+msgstr ""
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
 msgstr "Dit bericht wordt niet ondersteund"
 
-#: src/session/sidebar/row.rs:441
+#: src/session/sidebar/row.rs:417
 msgid "Draft:"
 msgstr "Concept:"
 
-#: src/session/sidebar/row.rs:621
+#: src/session/sidebar/row.rs:597
 msgid "You"
 msgstr "U"
-
-#: src/session/sidebar/row.rs:687
-msgid "choosing a contact"
-msgstr "contact aan het kiezen"
-
-#: src/session/sidebar/row.rs:705
-msgid "choosing a location"
-msgstr "locatie aan het kiezen"
-
-#: src/session/sidebar/row.rs:723
-msgid "choosing a sticker"
-msgstr "sticker aan het kiezen"
-
-#: src/session/sidebar/row.rs:741
-msgid "recording a video"
-msgstr "video aan het opnemen"
-
-#: src/session/sidebar/row.rs:759
-msgid "recording a video note"
-msgstr "videobericht aan het opnemen"
-
-#: src/session/sidebar/row.rs:777
-msgid "recording a voice note"
-msgstr "spraakbericht aan het opnemen"
-
-#: src/session/sidebar/row.rs:795
-msgid "playing a game"
-msgstr "spel aan het spelen"
-
-#: src/session/sidebar/row.rs:813
-msgid "typing"
-msgstr "aan het typen"
-
-#: src/session/sidebar/row.rs:928
-msgid "watching an animation"
-msgstr "animatie aan het kijken"
 
 #: src/session/sidebar/search/section_row.rs:130
 msgid "Chats"
@@ -965,6 +1177,12 @@ msgstr "Ongeldige landcode"
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
 msgstr "Test-account"
+
+#~ msgid "Open File"
+#~ msgstr "Bestand openen"
+
+#~ msgid "_Open"
+#~ msgstr "_Openen"
 
 #~ msgid "_Ok"
 #~ msgstr "_Ok"
