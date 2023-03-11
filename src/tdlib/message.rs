@@ -68,6 +68,7 @@ mod imp {
         pub(super) interaction_info: OnceCell<MessageInteractionInfo>,
         pub(super) chat: WeakRef<Chat>,
         pub(super) forward_info: OnceCell<Option<MessageForwardInfo>>,
+        pub(super) reply_in_chat_id: Cell<i64>,
         pub(super) reply_to_message_id: Cell<i64>,
     }
 
@@ -116,6 +117,9 @@ mod imp {
                     glib::ParamSpecObject::builder::<MessageForwardInfo>("forward-info")
                         .read_only()
                         .build(),
+                    glib::ParamSpecInt64::builder("reply-in-chat-id")
+                        .read_only()
+                        .build(),
                     glib::ParamSpecInt64::builder("reply-to-message-id")
                         .read_only()
                         .build(),
@@ -141,6 +145,7 @@ mod imp {
                 "interaction-info" => obj.interaction_info().to_value(),
                 "chat" => obj.chat().to_value(),
                 "forward-info" => obj.forward_info().to_value(),
+                "reply-in-chat-id" => obj.reply_in_chat_id().to_value(),
                 "reply-to-message-id" => obj.reply_to_message_id().to_value(),
                 _ => unimplemented!(),
             }
@@ -182,6 +187,7 @@ impl Message {
             .unwrap();
         imp.chat.set(Some(chat));
         imp.forward_info.set(forward_info).unwrap();
+        imp.reply_in_chat_id.set(td_message.reply_in_chat_id);
         imp.reply_to_message_id.set(td_message.reply_to_message_id);
 
         message
@@ -284,6 +290,10 @@ impl Message {
 
     pub(crate) fn forward_info(&self) -> Option<&MessageForwardInfo> {
         self.imp().forward_info.get().unwrap().as_ref()
+    }
+
+    pub(crate) fn reply_in_chat_id(&self) -> i64 {
+        self.imp().reply_in_chat_id.get()
     }
 
     pub(crate) fn reply_to_message_id(&self) -> i64 {

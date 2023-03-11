@@ -4,14 +4,14 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
 use crate::strings;
-use crate::tdlib::{Chat, ChatType, Message, MessageSender};
+use crate::tdlib::{ChatType, Message, MessageSender};
 use crate::utils::spawn;
 
 mod imp {
     use gtk::glib::{ParamSpec, Properties, Value};
 
     use super::*;
-    use std::cell::{Cell, RefCell};
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::MessageReply)]
@@ -47,14 +47,9 @@ mod imp {
     pub(crate) struct MessageReply {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        pub(super) is_loading: Cell<bool>,
 
         #[property(get, set, construct_only)]
-        pub(super) chat: RefCell<Option<Chat>>,
-        #[property(get, set, construct_only)]
-        pub(super) reply_id: Cell<i64>,
-        #[property(get, set, construct_only)]
-        pub(super) is_outgoing: Cell<bool>,
+        pub(super) message: RefCell<Option<Message>>,
 
         #[template_child]
         pub(super) separator: TemplateChild<gtk::Separator>,
@@ -97,10 +92,13 @@ mod imp {
         }
 
         fn constructed(&self) {
-            self.is_loading.set(true);
             self.message_label
                 .set_label(&gettextrs::gettext("Loading ..."));
-            self.obj().load_message();
+
+            let obj = self.obj();
+            spawn(clone!(@weak obj => async move {
+                obj.load_replied_message().await;
+            }));
         }
 
         fn dispose(&self) {
@@ -117,36 +115,27 @@ glib::wrapper! {
 }
 
 impl MessageReply {
-    pub(crate) fn new(chat: Chat, reply_id: i64, is_outgoing: bool) -> Self {
-        glib::Object::builder()
-            .property("chat", chat)
-            .property("reply-id", reply_id)
-            .property("is-outgoing", is_outgoing)
-            .build()
+    pub(crate) fn new(message: &Message) -> Self {
+        glib::Object::builder().property("message", message).build()
     }
 
-    fn load_message(&self) {
+    async fn load_replied_message(&self) {
         let imp = self.imp();
 
-        let reply_id = imp.reply_id.get();
-        let chat = self.chat().unwrap();
-
-        if let Some(message) = chat.message(reply_id) {
-            self.update_from_message(&message);
+        let message = self.message().unwrap();
+        let reply_to_message_id = message.reply_to_message_id();
+        let is_outgoing = message.is_outgoing();
+        let chat = if message.reply_in_chat_id() != 0 {
+            message.chat().session().chat(message.reply_in_chat_id())
         } else {
-            spawn(clone!(@weak self as obj => async move {
-                let chat = obj.imp().chat.borrow().clone().unwrap();
-                if let Ok(message) = chat.fetch_message(reply_id).await {
-                    obj.update_from_message(&message);
-                } else {
-                    // Message doesn't exist, so we should remove "Loading..." caption
-                    // TODO: Impelent it properly using signals
-                    obj.imp().message_label.set_label("Deleted message");
-                }
-            }));
-        }
+            message.chat()
+        };
 
-        imp.is_loading.set(false);
+        if let Ok(message) = chat.fetch_message(reply_to_message_id).await {
+            self.update_from_message(&message, is_outgoing);
+        } else {
+            imp.message_label.set_label("Deleted message");
+        }
     }
 
     pub(crate) fn set_max_char_width(&self, n_chars: i32) {
@@ -154,7 +143,7 @@ impl MessageReply {
         self.imp().sender_label.set_max_width_chars(n_chars);
     }
 
-    fn update_from_message(&self, message: &Message) {
+    fn update_from_message(&self, replied_message: &Message, is_outgoing: bool) {
         let imp = self.imp();
         let mut bindings = imp.bindings.borrow_mut();
         while let Some(binding) = bindings.pop() {
@@ -168,19 +157,19 @@ impl MessageReply {
         }
         // Show sender label, if needed
         let show_sender = !matches!(
-            message.chat().type_(),
+            replied_message.chat().type_(),
             ChatType::Supergroup(data) if data.is_channel()
         );
         if show_sender {
-            let sender_name_expression = message.sender_name_expression();
+            let sender_name_expression = replied_message.sender_name_expression();
             let sender_binding =
                 sender_name_expression.bind(&*imp.sender_label, "label", glib::Object::NONE);
 
             bindings.push(sender_binding);
 
-            if !imp.is_outgoing.get() {
+            if !is_outgoing {
                 // Color sender label
-                if let MessageSender::User(user) = message.sender() {
+                if let MessageSender::User(user) = replied_message.sender() {
                     let classes = vec![
                         "sender-text-red",
                         "sender-text-orange",
@@ -202,9 +191,7 @@ impl MessageReply {
 
         // Set content label expression
 
-        let caption = strings::message_content(message.clone().as_ref());
+        let caption = strings::message_content(replied_message.clone().as_ref());
         imp.message_label.set_label(&caption);
-
-        self.imp().is_loading.set(false);
     }
 }

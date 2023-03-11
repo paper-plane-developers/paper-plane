@@ -161,8 +161,7 @@ messagebubble messageindicators {
   opacity: 0.7;
 }
 
-messagebubble.text > overlay,
-messagebubble.document > overlay {
+messagebubble > overlay {
   padding: 6px 9px;
 }
 
@@ -198,19 +197,22 @@ messagebubble.document .file:active > image {
 messagebubble.media mediapicture {
   min-width: 150px;
   min-height: 100px;
-  /* Message bubble border-radius (15px) - margin (1px)  */
+  /* Negate margins to achieve 1px padding with the message bubble */
+  margin: -5px -8px;
+  /* Message bubble border-radius (15px) - padding (1px)  */
   border-radius: 14px;
-  margin: 1px;
+}
+
+messagebubble.media.with-reply mediapicture {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  margin-top: 3px;
 }
 
 messagebubble.media.with-label mediapicture {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  margin: 1px 1px 0;
-}
-
-messagebubble.media messagelabel {
-  margin: 6px 9px;
+  margin-bottom: 6px;
 }
 
 messageindicators image {
@@ -225,7 +227,6 @@ messagesticker messageindicators,
   opacity: 1; /* Reset opacity from message bubble */
   border-radius: 9999px;
   padding: 2px 6px;
-  margin: 6px;
 }
 
 messageindicators,

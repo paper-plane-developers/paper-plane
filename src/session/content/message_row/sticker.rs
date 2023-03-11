@@ -102,11 +102,7 @@ impl MessageBaseExt for MessageSticker {
         imp.indicators.set_message(message.clone().upcast());
 
         if message.reply_to_message_id() != 0 {
-            let reply = MessageReply::new(
-                message.chat(),
-                message.reply_to_message_id(),
-                message.is_outgoing(),
-            );
+            let reply = MessageReply::new(message);
             reply.set_valign(gtk::Align::Start);
             reply.set_max_char_width(MAX_REPLY_CHAR_WIDTH);
 
