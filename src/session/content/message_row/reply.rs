@@ -125,7 +125,11 @@ impl MessageReply {
         let message = self.message().unwrap();
         let reply_to_message_id = message.reply_to_message_id();
         let is_outgoing = message.is_outgoing();
-        let chat = message.chat();
+        let chat = if message.reply_in_chat_id() != 0 {
+            message.chat().session().chat(message.reply_in_chat_id())
+        } else {
+            message.chat()
+        };
 
         if let Ok(message) = chat.fetch_message(reply_to_message_id).await {
             self.update_from_message(&message, is_outgoing);
