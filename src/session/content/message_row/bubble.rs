@@ -199,11 +199,7 @@ impl MessageBubble {
 
         // Handle MessageReply
         if message.reply_to_message_id() != 0 {
-            let reply = MessageReply::new(
-                message.chat(),
-                message.reply_to_message_id(),
-                message.is_outgoing(),
-            );
+            let reply = MessageReply::new(message);
 
             // FIXME: Do not show message reply when message is being deleted
             imp.message_reply_bin.set_child(Some(&reply));
