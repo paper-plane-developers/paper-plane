@@ -11,7 +11,7 @@ mod imp {
     use gtk::glib::{ParamSpec, Properties, Value};
 
     use super::*;
-    use std::cell::{Cell, RefCell};
+    use std::cell::RefCell;
 
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::MessageReply)]
@@ -47,7 +47,6 @@ mod imp {
     pub(crate) struct MessageReply {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
-        pub(super) is_loading: Cell<bool>,
 
         #[property(get, set, construct_only)]
         pub(super) message: RefCell<Option<Message>>,
@@ -93,10 +92,13 @@ mod imp {
         }
 
         fn constructed(&self) {
-            self.is_loading.set(true);
             self.message_label
                 .set_label(&gettextrs::gettext("Loading ..."));
-            self.obj().load_message();
+
+            let obj = self.obj();
+            spawn(clone!(@weak obj => async move {
+                obj.load_replied_message().await;
+            }));
         }
 
         fn dispose(&self) {
@@ -117,7 +119,7 @@ impl MessageReply {
         glib::Object::builder().property("message", message).build()
     }
 
-    fn load_message(&self) {
+    async fn load_replied_message(&self) {
         let imp = self.imp();
 
         let message = self.message().unwrap();
@@ -125,21 +127,11 @@ impl MessageReply {
         let is_outgoing = message.is_outgoing();
         let chat = message.chat();
 
-        if let Some(message) = chat.message(reply_to_message_id) {
+        if let Ok(message) = chat.fetch_message(reply_to_message_id).await {
             self.update_from_message(&message, is_outgoing);
         } else {
-            spawn(clone!(@weak self as obj => async move {
-                if let Ok(message) = chat.fetch_message(reply_to_message_id).await {
-                    obj.update_from_message(&message, is_outgoing);
-                } else {
-                    // Message doesn't exist, so we should remove "Loading..." caption
-                    // TODO: Impelent it properly using signals
-                    obj.imp().message_label.set_label("Deleted message");
-                }
-            }));
+            imp.message_label.set_label("Deleted message");
         }
-
-        imp.is_loading.set(false);
     }
 
     pub(crate) fn set_max_char_width(&self, n_chars: i32) {
@@ -197,7 +189,5 @@ impl MessageReply {
 
         let caption = strings::message_content(replied_message.clone().as_ref());
         imp.message_label.set_label(&caption);
-
-        self.imp().is_loading.set(false);
     }
 }
