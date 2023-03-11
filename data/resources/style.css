@@ -203,6 +203,12 @@ messagebubble.media mediapicture {
   border-radius: 14px;
 }
 
+messagebubble.media.with-reply mediapicture {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  margin-top: 3px;
+}
+
 messagebubble.media.with-label mediapicture {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;

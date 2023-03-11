@@ -203,8 +203,12 @@ impl MessageBubble {
 
             // FIXME: Do not show message reply when message is being deleted
             imp.message_reply_bin.set_child(Some(&reply));
+
+            self.add_css_class("with-reply");
         } else {
             imp.message_reply_bin.set_child(gtk::Widget::NONE);
+
+            self.remove_css_class("with-reply");
         }
 
         // Show sender label, if needed
