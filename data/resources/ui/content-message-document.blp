@@ -4,7 +4,7 @@ template MessageDocument : .MessageBase {
   .MessageBubble message_bubble {
     styles ["document"]
 
-    prefix: Box {
+    prefix: Box file_box {
       spacing: 6;
 
       styles ["file"]
@@ -13,7 +13,21 @@ template MessageDocument : .MessageBase {
         button: 1;
       }
 
-      Image file_status_image {}
+      Overlay {
+
+        [overlay]
+        Picture file_thumbnail_picture {
+          content-fit: cover;
+          visible: false;
+        }
+
+        [overlay]
+        Image file_status_image {
+          halign: center;
+          valign: center;
+        }
+      }
+
 
       Box {
         hexpand: true;
