@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-03-04 22:40+0000\n"
-"Last-Translator: \"J. Lavoie\" <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2023-03-13 11:40+0000\n"
+"Last-Translator: Michael Moroni <michaelmoroni@disroot.org>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/it/>\n"
 "Language: it\n"
@@ -318,7 +318,7 @@ msgstr "_Esci"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Contatti"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -512,36 +512,32 @@ msgid "You entered an invalid country code."
 msgstr "È stato inserito un codice paese non valido."
 
 #: src/strings.rs:28
-#, fuzzy
 msgid "{sender} is choosing a contact"
-msgstr "scegliere un contatto"
+msgstr "{sender} sta scegliendo un contatto"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} e {sender2} stanno scegliendo contatti"
 
 #: src/strings.rs:39
-#, fuzzy
 msgid "{num} people are choosing contacts"
-msgstr "scegliere un contatto"
+msgstr "{num} persone stanno scegliendo contatti"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
 msgstr "scegliere un contatto"
 
 #: src/strings.rs:51
-#, fuzzy
 msgid "{sender} is choosing a location"
-msgstr "scegliere una posizione"
+msgstr "{sender} sta scegliendo una posizione"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} e {sender2} stanno scegliendo posizioni"
 
 #: src/strings.rs:62
-#, fuzzy
 msgid "{num} people are choosing locations"
-msgstr "scegliere una posizione"
+msgstr "{num} persone stanno scegliendo posizioni"
 
 #: src/strings.rs:67
 msgid "choosing a location"
