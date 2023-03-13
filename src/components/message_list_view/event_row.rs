@@ -9,15 +9,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/github/melix99/telegrand/ui/content-event-row.ui")]
-    pub(crate) struct EventRow {
+    pub(crate) struct MessageListViewEventRow {
         #[template_child]
         pub(super) label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for EventRow {
-        const NAME: &'static str = "ContentEventRow";
-        type Type = super::EventRow;
+    impl ObjectSubclass for MessageListViewEventRow {
+        const NAME: &'static str = "MessageListViewEventRow";
+        type Type = super::MessageListViewEventRow;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -29,7 +29,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for EventRow {
+    impl ObjectImpl for MessageListViewEventRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> =
                 Lazy::new(|| vec![glib::ParamSpecString::builder("label").build()]);
@@ -55,22 +55,22 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for EventRow {}
-    impl BinImpl for EventRow {}
+    impl WidgetImpl for MessageListViewEventRow {}
+    impl BinImpl for MessageListViewEventRow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct EventRow(ObjectSubclass<imp::EventRow>)
+    pub(crate) struct MessageListViewEventRow(ObjectSubclass<imp::MessageListViewEventRow>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for EventRow {
+impl Default for MessageListViewEventRow {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl EventRow {
+impl MessageListViewEventRow {
     pub(crate) fn new() -> Self {
         glib::Object::new()
     }

@@ -2,7 +2,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{glib, pango, CompositeTemplate};
 
-use crate::session::content::message_row::MessageIndicators;
+use super::MessageIndicators;
 
 const OBJECT_REPLACEMENT_CHARACTER: char = '\u{FFFC}';
 const INDICATORS_SPACING: i32 = 6;

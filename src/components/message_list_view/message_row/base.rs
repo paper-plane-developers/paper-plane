@@ -1,11 +1,11 @@
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::{glib, CompositeTemplate};
 
 mod imp {
     use super::*;
 
-    use crate::session::content::ChatHistory;
+    use crate::components::MessageListView;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
@@ -44,26 +44,24 @@ mod imp {
     impl MessageBase {
         #[template_callback]
         fn on_pressed(&self, _n_press: i32, x: f64, y: f64) {
-            self.show_message_menu(x as i32, y as i32);
+            self.show_message_menu(x, y);
         }
 
         #[template_callback]
         fn on_long_pressed(&self, x: f64, y: f64) {
-            self.show_message_menu(x as i32, y as i32);
+            self.show_message_menu(x, y);
         }
 
-        fn show_message_menu(&self, x: i32, y: i32) {
+        fn show_message_menu(&self, x: f64, y: f64) {
             let obj = self.obj();
-            let chat_history = obj.ancestor(ChatHistory::static_type()).unwrap();
-            let menu = chat_history
-                .downcast_ref::<ChatHistory>()
-                .unwrap()
-                .message_menu();
+            let list_view = obj
+                .ancestor(MessageListView::static_type())
+                .and_downcast::<MessageListView>()
+                .unwrap();
+            let (x, y) = obj.translate_coordinates(&list_view, x, y).unwrap();
 
-            menu.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
-            menu.unparent();
-            menu.set_parent(&*obj);
-            menu.popup();
+            obj.activate_action("message-list-view.show-message-menu", Some(&(x, y).into()))
+                .unwrap();
         }
     }
 

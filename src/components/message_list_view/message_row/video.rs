@@ -4,14 +4,11 @@ use gtk::subclass::prelude::*;
 use gtk::{gdk, glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{
-    MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
-};
+use super::base::MessageBaseExt;
+use super::{MediaPicture, MessageBase, MessageBaseImpl, MessageBubble};
 use crate::tdlib::Message;
 use crate::utils::{parse_formatted_text, spawn};
 use crate::Session;
-
-use super::base::MessageBaseExt;
 
 mod imp {
     use super::*;

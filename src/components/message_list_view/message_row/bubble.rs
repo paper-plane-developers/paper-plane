@@ -4,7 +4,7 @@ use gtk::{glib, CompositeTemplate};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-use crate::session::content::message_row::{MessageIndicators, MessageLabel, MessageReply};
+use super::{MessageIndicators, MessageLabel, MessageReply};
 use crate::tdlib::{Chat, ChatType, Message, MessageSender, SponsoredMessage};
 
 const MAX_WIDTH: i32 = 400;

@@ -1,25 +1,19 @@
 use adw::prelude::*;
 use gettextrs::gettext;
-use glib::clone;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::{glib, CompositeTemplate};
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
-use crate::session::content::{
-    ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
-};
-use crate::tdlib::{Chat, ChatType, SponsoredMessage};
-use crate::utils::spawn;
-use crate::{expressions, Session};
-
-const MIN_N_ITEMS: u32 = 20;
+use super::{ChatActionBar, ChatInfoWindow};
+use crate::components::MessageListView;
+use crate::expressions;
+use crate::tdlib::{Chat, ChatType};
 
 mod imp {
     use super::*;
     use adw::subclass::prelude::BinImpl;
     use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -27,16 +21,10 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
-        pub(super) model: RefCell<Option<ChatHistoryModel>>,
-        pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
-        pub(super) is_auto_scrolling: Cell<bool>,
-        pub(super) sticky: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
-        pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
-        #[template_child]
-        pub(super) list_view: TemplateChild<gtk::ListView>,
+        pub(super) message_list_view: TemplateChild<MessageListView>,
         #[template_child]
         pub(super) chat_action_bar: TemplateChild<ChatActionBar>,
     }
@@ -48,14 +36,10 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            ChatHistoryRow::static_type();
             klass.bind_template();
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
                 widget.open_info_dialog();
-            });
-            klass.install_action("chat-history.scroll-down", None, move |widget, _, _| {
-                widget.scroll_down();
             });
             klass.install_action(
                 "chat-history.reply",
@@ -91,9 +75,6 @@ mod imp {
                     glib::ParamSpecObject::builder::<Chat>("chat")
                         .explicit_notify()
                         .build(),
-                    glib::ParamSpecBoolean::builder("sticky")
-                        .read_only()
-                        .build(),
                 ]
             });
             PROPERTIES.as_ref()
@@ -111,7 +92,6 @@ mod imp {
                     let chat = value.get().unwrap();
                     obj.set_chat(chat);
                 }
-                "sticky" => obj.set_sticky(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -122,59 +102,17 @@ mod imp {
             match pspec.name() {
                 "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
-                "sticky" => obj.sticky().to_value(),
                 _ => unimplemented!(),
             }
         }
 
         fn constructed(&self) {
             self.parent_constructed();
-
-            let obj = self.obj();
-
-            obj.setup_expressions();
-
-            let adj = self.list_view.vadjustment().unwrap();
-            adj.connect_value_changed(clone!(@weak obj => move |adj| {
-                let imp = obj.imp();
-
-                if imp.is_auto_scrolling.get() {
-                    if adj.value() + adj.page_size() >= adj.upper() {
-                        imp.is_auto_scrolling.set(false);
-                        obj.set_sticky(true);
-                    }
-                } else {
-                    obj.set_sticky(adj.value() + adj.page_size() >= adj.upper());
-                    obj.load_older_messages(adj);
-                }
-            }));
-
-            adj.connect_upper_notify(clone!(@weak obj => move |_| {
-                if obj.sticky() || obj.imp().is_auto_scrolling.get() {
-                    obj.scroll_down();
-                }
-            }));
+            self.obj().setup_expressions();
         }
     }
 
-    impl WidgetImpl for ChatHistory {
-        fn direction_changed(&self, previous_direction: gtk::TextDirection) {
-            let obj = self.obj();
-
-            if obj.direction() == previous_direction {
-                return;
-            }
-
-            if let Some(menu) = self.message_menu.get() {
-                menu.set_halign(if obj.direction() == gtk::TextDirection::Rtl {
-                    gtk::Align::End
-                } else {
-                    gtk::Align::Start
-                });
-            }
-        }
-    }
-
+    impl WidgetImpl for ChatHistory {}
     impl BinImpl for ChatHistory {}
 }
 
@@ -203,18 +141,6 @@ impl ChatHistory {
             "title",
             Some(self),
         );
-    }
-
-    fn load_older_messages(&self, adj: &gtk::Adjustment) {
-        if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
-            if let Some(model) = self.imp().model.borrow().as_ref() {
-                spawn(clone!(@weak model => async move {
-                    if let Err(ChatHistoryError::Tdlib(e)) = model.load_older_messages(20).await {
-                        log::warn!("Couldn't load more chat messages: {:?}", e);
-                    }
-                }));
-            }
-        }
     }
 
     fn open_info_dialog(&self) {
@@ -251,40 +177,6 @@ impl ChatHistory {
         self.root()?.downcast().ok()
     }
 
-    fn request_sponsored_message(&self, session: &Session, chat_id: i64, list: &gio::ListStore) {
-        spawn(clone!(@weak session, @weak list => async move {
-            match SponsoredMessage::request(chat_id, &session).await {
-                Ok(sponsored_message) => {
-                    if let Some(sponsored_message) = sponsored_message {
-                        list.append(&sponsored_message);
-                    }
-                }
-                Err(e) => {
-                    if e.code != 404 {
-                        log::warn!("Failed to request a SponsoredMessage: {:?}", e);
-                    }
-                }
-            }
-        }));
-    }
-
-    pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
-        self.imp().message_menu.get_or_init(|| {
-            let menu =
-                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/message-menu.ui")
-                    .object::<gtk::PopoverMenu>("menu")
-                    .unwrap();
-
-            menu.set_halign(if self.direction() == gtk::TextDirection::Rtl {
-                gtk::Align::End
-            } else {
-                gtk::Align::Start
-            });
-
-            menu
-        })
-    }
-
     pub(crate) fn handle_paste_action(&self) {
         self.imp().chat_action_bar.handle_paste_action();
     }
@@ -310,70 +202,10 @@ impl ChatHistory {
                 },
             );
 
-            let model = ChatHistoryModel::new(chat);
-
-            // Request sponsored message, if needed
-            let list_view_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
-            {
-                let list = gio::ListStore::new(gio::ListModel::static_type());
-
-                // We need to create a list here so that we can append the sponsored message
-                // to the chat history in the GtkListView using a GtkFlattenListModel
-                let sponsored_message_list = gio::ListStore::new(SponsoredMessage::static_type());
-                list.append(&sponsored_message_list);
-                self.request_sponsored_message(&chat.session(), chat.id(), &sponsored_message_list);
-
-                list.append(&model);
-
-                gtk::FlattenListModel::new(Some(list)).upcast()
-            } else {
-                model.clone().upcast()
-            };
-
-            spawn(clone!(@weak model => async move {
-                while model.n_items() < MIN_N_ITEMS {
-                    let limit = MIN_N_ITEMS - model.n_items();
-                    match model.load_older_messages(limit as i32).await {
-                        Ok(can_load_more) => if !can_load_more {
-                            break;
-                        }
-                        Err(e) => {
-                            log::warn!("Couldn't load initial history messages: {}", e);
-                            break;
-                        }
-                    }
-                }
-            }));
-
-            let selection = gtk::NoSelection::new(Some(list_view_model));
-            imp.list_view.set_model(Some(&selection));
-
-            imp.model.replace(Some(model));
+            imp.message_list_view.load_messages(chat);
         }
 
         imp.chat.replace(chat);
         self.notify("chat");
-    }
-
-    pub(crate) fn sticky(&self) -> bool {
-        self.imp().sticky.get()
-    }
-
-    fn set_sticky(&self, sticky: bool) {
-        if self.sticky() == sticky {
-            return;
-        }
-
-        self.imp().sticky.set(sticky);
-        self.notify("sticky");
-    }
-
-    fn scroll_down(&self) {
-        let imp = self.imp();
-
-        imp.is_auto_scrolling.set(true);
-
-        imp.scrolled_window
-            .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
     }
 }

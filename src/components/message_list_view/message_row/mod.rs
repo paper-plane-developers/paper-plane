@@ -23,15 +23,12 @@ use self::text::MessageText;
 use self::video::MessageVideo;
 
 use adw::prelude::*;
-use gettextrs::gettext;
-use glib::clone;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFormat};
 
 use crate::components::Avatar;
 use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
-use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
 const SPACING: i32 = 6;
@@ -71,12 +68,6 @@ mod imp {
                 widget.reply()
             });
             klass.install_action("message-row.edit", None, move |widget, _, _| widget.edit());
-            klass.install_action("message-row.revoke-delete", None, move |widget, _, _| {
-                widget.show_delete_dialog(true)
-            });
-            klass.install_action("message-row.delete", None, move |widget, _, _| {
-                widget.show_delete_dialog(false)
-            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -160,41 +151,6 @@ impl MessageRow {
             self.activate_action("chat-history.edit", Some(&message.id().to_variant()))
                 .unwrap();
         }
-    }
-
-    fn show_delete_dialog(&self, revoke: bool) {
-        let window: gtk::Window = self.root().and_then(|root| root.downcast().ok()).unwrap();
-
-        let message = if revoke {
-            gettext("Do you want to delete this message for <b>everyone</b>?")
-        } else {
-            gettext("Do you want to delete this message?")
-        };
-
-        let dialog = adw::MessageDialog::builder()
-            .heading(gettext("Confirm Message Deletion"))
-            .body_use_markup(true)
-            .body(message)
-            .transient_for(&window)
-            .build();
-
-        dialog.add_responses(&[("no", &gettext("_No")), ("yes", &gettext("_Yes"))]);
-        dialog.set_default_response(Some("no"));
-        dialog.set_response_appearance("yes", adw::ResponseAppearance::Destructive);
-
-        dialog.choose(
-            gio::Cancellable::NONE,
-            clone!(@weak self as obj => move |response| {
-                if response == "yes" {
-                    if let Ok(message) = obj.message().downcast::<Message>() {
-                        spawn(async move {
-                            if let Err(e) = message.delete(revoke).await {
-                                log::warn!("Error deleting a message (revoke = {}): {:?}", revoke, e);
-                            }
-                        });
-                    }
-                }
-            }));
     }
 
     pub(crate) fn message(&self) -> glib::Object {

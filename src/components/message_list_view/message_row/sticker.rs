@@ -3,13 +3,10 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{MessageContent, StickerFullType};
 
-use crate::components::Sticker;
-use crate::session::content::message_row::{
-    MessageBase, MessageBaseImpl, MessageIndicators, MessageReply,
-};
-use crate::tdlib::Message;
-
 use super::base::MessageBaseExt;
+use super::{MessageBase, MessageBaseImpl, MessageIndicators, MessageReply};
+use crate::components::Sticker;
+use crate::tdlib::Message;
 
 const MAX_REPLY_CHAR_WIDTH: i32 = 18;
 
