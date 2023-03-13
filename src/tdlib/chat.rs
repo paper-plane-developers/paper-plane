@@ -539,7 +539,7 @@ impl Chat {
                 .messages
                 .borrow_mut()
                 .entry(message_id)
-                .or_insert(Message::new(message, self))
+                .or_insert_with(|| Message::new(message, self))
                 .clone()
         })
     }
