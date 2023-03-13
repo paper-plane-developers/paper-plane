@@ -5,8 +5,8 @@ use gtk::{glib, CompositeTemplate};
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
-use super::{ChatActionBar, ChatInfoWindow};
-use crate::components::MessageListView;
+use super::{ChatActionBar, ChatInfoWindow, PinnedMessagesBar};
+use crate::components::{MessageListView, MessageListViewType};
 use crate::expressions;
 use crate::tdlib::{Chat, ChatType};
 
@@ -23,6 +23,8 @@ mod imp {
         pub(super) chat: RefCell<Option<Chat>>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
+        #[template_child]
+        pub(super) pinned_messages_bar: TemplateChild<PinnedMessagesBar>,
         #[template_child]
         pub(super) message_list_view: TemplateChild<MessageListView>,
         #[template_child]
@@ -202,7 +204,8 @@ impl ChatHistory {
                 },
             );
 
-            imp.message_list_view.load_messages(chat);
+            imp.message_list_view
+                .load_messages(MessageListViewType::ChatHistory, chat);
         }
 
         imp.chat.replace(chat);

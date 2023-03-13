@@ -33,6 +33,9 @@
             </child>
           </object>
         </child>
+        <child type="top">
+          <object class="PinnedMessagesBar" id="pinned_messages_bar"/>
+        </child>
         <property name="content">
           <object class="MessageListView" id="message_list_view"/>
         </property>

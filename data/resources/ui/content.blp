@@ -32,9 +32,13 @@ template Content : Adw.Bin {
       };
     }
 
-    .ContentChatHistory chat_history {
-      compact: bind Content.compact;
-      chat: bind Content.chat;
+    Adw.Leaflet chat_leaflet {
+      can-unfold: false;
+
+      .ContentChatHistory chat_history {
+        compact: bind Content.compact;
+        chat: bind Content.chat;
+      }
     }
   }
 }

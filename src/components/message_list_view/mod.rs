@@ -22,6 +22,13 @@ use crate::Session;
 
 const MIN_N_ITEMS: u32 = 20;
 
+#[derive(Debug, Default, Clone, Copy)]
+pub(crate) enum MessageListViewType {
+    #[default]
+    ChatHistory,
+    PinnedMessages,
+}
+
 mod imp {
     use super::*;
     use once_cell::unsync::OnceCell;
@@ -146,9 +153,9 @@ glib::wrapper! {
 }
 
 impl MessageListView {
-    pub(crate) fn load_messages(&self, chat: &Chat) {
+    pub(crate) fn load_messages(&self, type_: MessageListViewType, chat: &Chat) {
         let imp = self.imp();
-        let model = MessageListViewModel::new(chat);
+        let model = MessageListViewModel::new(type_, chat);
 
         // Request sponsored message, if needed
         let list_view_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())

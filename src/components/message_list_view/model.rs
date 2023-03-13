@@ -3,9 +3,10 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::cmp::Ordering;
+use tdlib::enums::SearchMessagesFilter;
 use thiserror::Error;
 
-use super::{MessageListViewItem, MessageListViewItemType};
+use super::{MessageListViewItem, MessageListViewItemType, MessageListViewType};
 use crate::tdlib::{Chat, Message};
 
 #[derive(Error, Debug)]
@@ -25,6 +26,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub(crate) struct MessageListViewModel {
+        pub(super) type_: Cell<MessageListViewType>,
         pub(super) chat: WeakRef<Chat>,
         pub(super) is_loading: Cell<bool>,
         pub(super) list: RefCell<VecDeque<MessageListViewItem>>,
@@ -82,9 +84,10 @@ glib::wrapper! {
 }
 
 impl MessageListViewModel {
-    pub(crate) fn new(chat: &Chat) -> Self {
+    pub(crate) fn new(type_: MessageListViewType, chat: &Chat) -> Self {
         let obj: MessageListViewModel = glib::Object::new();
 
+        obj.imp().type_.set(type_);
         obj.imp().chat.set(Some(chat));
 
         chat.connect_new_message(clone!(@weak obj => move |_, message| {
@@ -121,7 +124,21 @@ impl MessageListViewModel {
 
         imp.is_loading.set(true);
 
-        let result = self.chat().get_chat_history(oldest_message_id, limit).await;
+        let result = match imp.type_.get() {
+            MessageListViewType::ChatHistory => {
+                self.chat().get_chat_history(oldest_message_id, limit).await
+            }
+            MessageListViewType::PinnedMessages => {
+                self.chat()
+                    .search_messages(
+                        String::new(),
+                        oldest_message_id,
+                        limit,
+                        Some(SearchMessagesFilter::Pinned),
+                    )
+                    .await
+            }
+        };
 
         imp.is_loading.set(false);
 
