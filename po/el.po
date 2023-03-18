@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-03-15 13:40+0000\n"
+"PO-Revision-Date: 2023-03-19 11:37+0000\n"
 "Last-Translator: devlocalhost <lazarecobani@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/el/>\n"
@@ -76,7 +76,7 @@ msgstr "Κύριο παράθυρο"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
 msgid "Marco Melorio"
-msgstr ""
+msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
@@ -116,7 +116,7 @@ msgstr "Μετακίνηση προς τα κάτω"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
-msgstr "προβολή πληροφοριών"
+msgstr "Προβολή πληροφοριών"
 
 #: data/resources/ui/content-chat-history.ui:158
 msgid "Leave Chat"
@@ -498,12 +498,12 @@ msgstr "Κλήση"
 #. Translators: This is an authentication method
 #: src/login.rs:1064
 msgid "Flash Call"
-msgstr ""
+msgstr "Φλας κλήση"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
 msgid "Missed Call"
-msgstr ""
+msgstr "Αναπάντητη Κλήση"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1068
@@ -512,179 +512,179 @@ msgstr ""
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Εισαγάγατε έναν μη έγκυρο κωδικό χώρας."
 
 #: src/strings.rs:28
 msgid "{sender} is choosing a contact"
-msgstr ""
+msgstr "Ο/Η {sender} επιλέγει μια επαφή"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} επιλέγουν επαφές"
 
 #: src/strings.rs:39
 msgid "{num} people are choosing contacts"
-msgstr ""
+msgstr "{num} άτομα επιλέγουν επαφές"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
-msgstr ""
+msgstr "επιλέγοντας μια επαφή"
 
 #: src/strings.rs:51
 msgid "{sender} is choosing a location"
-msgstr ""
+msgstr "Ο/Η {sender} επιλέγει μια τοποθεσία"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} επιλέγουν μια τοποθεσία"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
-msgstr ""
+msgstr "{num} χρήστες επιλέγουν μια τοποθεσία"
 
 #: src/strings.rs:67
 msgid "choosing a location"
-msgstr ""
+msgstr "επιλέγοντας μια τοποθεσία"
 
 #: src/strings.rs:74
 msgid "{sender} is choosing a sticker"
-msgstr ""
+msgstr "Ο/Η {sender} επιλέγει ένα αυτοκόλλητο"
 
 #: src/strings.rs:78
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr ""
+msgstr "Ο/Η {sender1} και {sender2} επιλέγουν ένα αυτοκόλλητο"
 
 #: src/strings.rs:85
 msgid "{num} people are choosing stickers"
-msgstr ""
+msgstr "{num} άνθρωποι επιλέγουν ένα αυτοκόλλητο"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
-msgstr ""
+msgstr "επιλέγοντας ένα αυτοκόλλητο"
 
 #: src/strings.rs:97
 msgid "{sender} is recording a video"
-msgstr ""
+msgstr "Ο/Η {sender} καταγράφει ένα βίντεο"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} καταγράφουν ένα βίντεο"
 
 #: src/strings.rs:108
 msgid "{num} people are recording videos"
-msgstr ""
+msgstr "{num} άνθρωποι καταγράφουν ένα βίντεο"
 
 #: src/strings.rs:113
 msgid "recording a video"
-msgstr ""
+msgstr "καταγράφοντας ένα βίντεο"
 
 #: src/strings.rs:120
 msgid "{sender} is recording a video note"
-msgstr ""
+msgstr "Ο/Η {sender} καταγράφει μια βίντεο σημείωση"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} καταγράφουν μία βίντεο σημείωση"
 
 #: src/strings.rs:131
 msgid "{num} people are recording video notes"
-msgstr ""
+msgstr "{num} χρήστες καταγράφουν μία βίντεο σημείωση"
 
 #: src/strings.rs:136
 msgid "recording a video note"
-msgstr ""
+msgstr "καταγράφοντας μια βίντεο σημείωση"
 
 #: src/strings.rs:143
 msgid "{sender} is recording a voice note"
-msgstr ""
+msgstr "Ο/Η {sender} ηχογραφεί μια φωνητική σημείωση"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "Ο/Η και Ο/Η ηχογραφούν μια φωνητική σημείωση"
 
 #: src/strings.rs:154
 msgid "{num} people are recording voice notes"
-msgstr ""
+msgstr "{num} άνθρωποι ηχογραφούν μια φωνητική σημείωση"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
-msgstr ""
+msgstr "ηχογραφεί μια φωνητική σημείωση"
 
 #: src/strings.rs:166
 msgid "{sender} is playing a game"
-msgstr ""
+msgstr "Ο/Η {sender} παίζει ένα παιχνίδι"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} παίζουν ένα παιχνίδι"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{} άτομα παίζουν ένα παιχνίδι"
 
 #: src/strings.rs:182
 msgid "playing a game"
-msgstr ""
+msgstr "παίζοντας ένα παιχνίδι"
 
 #: src/strings.rs:189
 msgid "{sender} is typing"
-msgstr ""
+msgstr "Ο/Η {sender} πληκτρολογεί"
 
 #: src/strings.rs:193
 msgid "{sender1} and {sender2} are typing"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} πληκτρολογούν"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} χρήστες πληκτρολογούν"
 
 #: src/strings.rs:202
 msgid "typing"
-msgstr ""
+msgstr "πληκτρολογεί"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "Ο/Η {sender} ανεβάζει ένα έγγραφο ({progress}%)"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} ανεβάζουν ένα έγγραφο"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} άτομα ανεβάζουν έγγραφα"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "ανεβάζοντας ένα έγγραφο ({progress}%)"
 
 #: src/strings.rs:238
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr ""
+msgstr "Ο/Η ανεβάζει μια φωτογραφία ({progress}%)"
 
 #: src/strings.rs:245
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} ανεβάζουν φωτογραφίες"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} άτομα ανεβάζουν φωτογραφίες"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "ανεβάζοντας μια φωτογραφία ({progress}%)"
 
 #: src/strings.rs:267
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr ""
+msgstr "Ο/Η {sender} ανεβάζει ένα βίντεο"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} ανεβάζουν βίντεο"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} άτομα ανεβάζουν βίντεο"
 
 #: src/strings.rs:287
 msgid "uploading a video ({progress}%)"
@@ -1052,7 +1052,7 @@ msgstr ""
 
 #: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
-msgstr ""
+msgstr "Αποχώρηση από την συνομιλία;"
 
 #: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
@@ -1114,7 +1114,7 @@ msgstr ""
 
 #: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Θέλετε να διαγράψετε αυτό το μήνυμα;"
 
 #: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
@@ -1134,11 +1134,11 @@ msgstr ""
 
 #: src/session/sidebar/row.rs:597
 msgid "You"
-msgstr ""
+msgstr "Εσείς"
 
 #: src/session/sidebar/search/section_row.rs:130
 msgid "Chats"
-msgstr ""
+msgstr "Συνομιλίες"
 
 #: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
@@ -1146,11 +1146,11 @@ msgstr ""
 
 #: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
-msgstr ""
+msgstr "Πρόσφατα"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Μη έγκυρος κωδικός χώρας"
 
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
