@@ -4,7 +4,11 @@ use std::hash::Hash;
 use std::hash::Hasher;
 
 use adw::prelude::*;
+use glib::clone;
+use gtk::gdk;
 use gtk::glib;
+use gtk::graphene;
+use gtk::gsk;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
@@ -32,6 +36,7 @@ mod imp {
     pub(crate) struct MessageBubble {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) sender_binding: RefCell<Option<gtk::ExpressionWatch>>,
+        pub(super) parent_list_view: RefCell<glib::WeakRef<gtk::ListView>>,
         #[template_child]
         pub(super) box_: TemplateChild<gtk::Box>,
         #[template_child]
@@ -99,6 +104,45 @@ mod imp {
     }
 
     impl WidgetImpl for MessageBubble {
+        fn realize(&self) {
+            self.parent_realize();
+
+            let widget = self.obj();
+
+            if let Some(view) = widget.parent_list_view() {
+                self.parent_list_view.replace(view.downgrade());
+                view.vadjustment()
+                    .unwrap()
+                    .connect_value_notify(clone!(@weak widget => move |_| {
+                        widget.queue_draw();
+                    }));
+            }
+        }
+
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let widget = self.obj();
+            if widget.has_css_class("outgoing") {
+                let width = widget.width() as f32;
+                let height = widget.height() as f32;
+
+                let bounds = graphene::Rect::new(0.0, 0.0, width, height);
+                let gradient_bounds = widget.gradient_bounds();
+                let [first, second] = widget.linear_gradient_colors();
+
+                snapshot.append_linear_gradient(
+                    &bounds,
+                    &graphene::Point::new(0.0, gradient_bounds.y()),
+                    &graphene::Point::new(0.0, gradient_bounds.height()),
+                    &[
+                        gsk::ColorStop::new(0.0, first),
+                        gsk::ColorStop::new(1.0, second),
+                    ],
+                );
+            }
+
+            self.parent_snapshot(snapshot);
+        }
+
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             // Limit the widget width
             if orientation == gtk::Orientation::Horizontal {
@@ -297,6 +341,46 @@ impl MessageBubble {
             imp.overlay.remove_overlay(&*imp.indicators);
             imp.message_label
                 .set_indicators(Some(imp.indicators.clone()));
+        }
+    }
+
+    fn parent_list_view(&self) -> Option<gtk::ListView> {
+        let mut parent = self.parent()?;
+        loop {
+            match parent.downcast() {
+                Ok(list_view) => return Some(list_view),
+                Err(not_list_view) => parent = not_list_view.parent()?,
+            }
+        }
+    }
+
+    fn gradient_bounds(&self) -> graphene::Rect {
+        if let Some(view) = self.imp().parent_list_view.borrow().upgrade() {
+            let view_bounds = view.compute_bounds(self.imp().obj().as_ref()).unwrap();
+
+            graphene::Rect::new(
+                view_bounds.x(),
+                view_bounds.y(),
+                view_bounds.width() + view_bounds.x(),
+                view_bounds.height() + view_bounds.y(),
+            )
+        } else {
+            panic!("can't get parent ListView");
+        }
+    }
+
+    fn linear_gradient_colors(&self) -> [gdk::RGBA; 2] {
+        // default colors from iOS
+        if !adw::StyleManager::default().is_dark() {
+            [
+                gdk::RGBA::new(0.91764706, 0.9882353, 0.8235294, 1.0),
+                gdk::RGBA::new(0.91764706, 0.9882353, 0.8235294, 1.0),
+            ]
+        } else {
+            [
+                gdk::RGBA::new(0.21960784, 0.32156864, 0.89411765, 1.0),
+                gdk::RGBA::new(0.63529414, 0.3372549, 0.58431375, 1.0),
+            ]
         }
     }
 }
