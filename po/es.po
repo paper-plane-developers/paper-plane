@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-02-23 11:37+0000\n"
+"PO-Revision-Date: 2023-03-15 13:40+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -317,7 +317,7 @@ msgstr "_Cerrar sesión"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Contactos"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -511,144 +511,128 @@ msgid "You entered an invalid country code."
 msgstr "Ha introducido un código de país no válido."
 
 #: src/strings.rs:28
-#, fuzzy
 msgid "{sender} is choosing a contact"
-msgstr "eligiendo un contacto"
+msgstr "{sender} está seleccionando un contacto"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} y {sender2} están eligiendo contactos"
 
 #: src/strings.rs:39
-#, fuzzy
 msgid "{num} people are choosing contacts"
-msgstr "eligiendo un contacto"
+msgstr "{num} de personas están eligiendo contactos"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
 msgstr "eligiendo un contacto"
 
 #: src/strings.rs:51
-#, fuzzy
 msgid "{sender} is choosing a location"
-msgstr "eligiendo una ubicación"
+msgstr "{sender} está eligiendo una ubicación"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} y {sender2} están eligiendo las ubicaciones"
 
 #: src/strings.rs:62
-#, fuzzy
 msgid "{num} people are choosing locations"
-msgstr "eligiendo una ubicación"
+msgstr "{num} de personas están eligiendo las ubicaciones"
 
 #: src/strings.rs:67
 msgid "choosing a location"
 msgstr "eligiendo una ubicación"
 
 #: src/strings.rs:74
-#, fuzzy
 msgid "{sender} is choosing a sticker"
-msgstr "{sender} fijó una pegatina"
+msgstr "{sender} está eligiendo un sticker"
 
 #: src/strings.rs:78
-#, fuzzy
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr "{sender} fijó una pegatina"
+msgstr "{sender1} y {sender2} están eligiendo stickers"
 
 #: src/strings.rs:85
-#, fuzzy
 msgid "{num} people are choosing stickers"
-msgstr "eligiendo una pegatina"
+msgstr "{num} personas están eligiendo stickers"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
 msgstr "eligiendo una pegatina"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "{sender} fijó un vídeo"
+msgstr "{sender} está grabando un video"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "{sender1} y {sender2} están grabando videos"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "grabando un vídeo"
+msgstr "{num} personas están grabando videos"
 
 #: src/strings.rs:113
 msgid "recording a video"
 msgstr "grabando un vídeo"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
-msgstr "grabando una nota de vídeo"
+msgstr "{sender} está grabando una nota de video"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "{sender1} y {sender2} están grabando notas de video"
 
 #: src/strings.rs:131
-#, fuzzy
 msgid "{num} people are recording video notes"
-msgstr "grabando una nota de vídeo"
+msgstr "{num} personas están grabando notas de video"
 
 #: src/strings.rs:136
 msgid "recording a video note"
 msgstr "grabando una nota de vídeo"
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
-msgstr "grabando una nota de voz"
+msgstr "{sender} está grabando una nota de voz"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "{sender1} y {sender2} están grabando notas de voz"
 
 #: src/strings.rs:154
-#, fuzzy
 msgid "{num} people are recording voice notes"
-msgstr "grabando una nota de voz"
+msgstr "{num} personas están grabando notas de voz"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
 msgstr "grabando una nota de voz"
 
 #: src/strings.rs:166
-#, fuzzy
 msgid "{sender} is playing a game"
-msgstr "jugando un juego"
+msgstr "{sender} está jugando a un juego"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "{sender1} y {sender2} están jugando"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{num} personas están jugando"
 
 #: src/strings.rs:182
 msgid "playing a game"
 msgstr "jugando un juego"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
-msgstr "{sender} obtuvo {points}"
+msgstr "{sender} está escribiendo"
 
 #: src/strings.rs:193
-#, fuzzy
 msgid "{sender1} and {sender2} are typing"
-msgstr "{sender} añadido {users}"
+msgstr "{sender1} y {sender2} están escribiendo"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} personas están escribiendo"
 
 #: src/strings.rs:202
 msgid "typing"
@@ -656,106 +640,95 @@ msgstr "escribiendo"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "{sender} está subiendo un documento ({progress}%)"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "{sender1} y {sender2} están subiendo documentos"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} personas están subiendo documentos"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "cargando un archivo ({progress}%)"
 
 #: src/strings.rs:238
-#, fuzzy
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "{sender} fijó una foto"
+msgstr "{sender} está subiendo una foto ({progress}%)"
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr "{sender} cambió la foto del grupo"
+msgstr "{sender1} y {sender2} están subiendo fotos"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} personas están subiendo fotos"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "subiendo una foto ({progress}%)"
 
 #: src/strings.rs:267
-#, fuzzy
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr "{sender} fijó un mensaje de vídeo"
+msgstr "{sender} está subiendo un video ({progress}%)"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "{sender1} y {sender2} están subiendo videos"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} personas están subiendo videos"
 
 #: src/strings.rs:287
-#, fuzzy
 msgid "uploading a video ({progress}%)"
-msgstr "grabando una nota de vídeo"
+msgstr "subiendo un video ({progress}%)"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} fijó un mensaje de vídeo"
+msgstr "{sender} está subiendo una nota de video ({progress}%)"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "{sender1} y {sender2} están subiendo notas de video"
 
 #: src/strings.rs:310
-#, fuzzy
 msgid "{num} people are uploading video notes"
-msgstr "grabando una nota de vídeo"
+msgstr "{num} personas están subiendo notas de video"
 
 #: src/strings.rs:316
-#, fuzzy
 msgid "uploading a video note ({progress}%)"
-msgstr "grabando una nota de vídeo"
+msgstr "subiendo una nota de video ({progress}%)"
 
 #: src/strings.rs:325
-#, fuzzy
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr "{sender} fijó un mensaje de voz"
+msgstr "{sender} está subiendo una nota de voz ({progress}%)"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "{sender1} y {sender2} están subiendo notas de voz"
 
 #: src/strings.rs:339
-#, fuzzy
 msgid "{num} people are uploading voice notes"
-msgstr "grabando una nota de voz"
+msgstr "{num} personas están subiendo notas de voz"
 
 #: src/strings.rs:345
-#, fuzzy
 msgid "uploading a voice note ({progress}%)"
-msgstr "grabando una nota de voz"
+msgstr "cargando una nota de voz ({progress}%)"
 
 #: src/strings.rs:354
-#, fuzzy
 msgid "{sender} is watching an animation {emoji}"
-msgstr "viendo una animación"
+msgstr "{sender} está viendo una animación {emoji}"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1} y {sender2} están viendo las animaciones {emoji}"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} personas están viendo las animaciones {emoji}"
 
 #: src/strings.rs:374
 msgid "watching an animation"
@@ -1145,7 +1118,7 @@ msgstr "Confirmar eliminación del mensaje"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "Cargando…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"

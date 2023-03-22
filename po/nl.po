@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-02-23 11:37+0000\n"
+"PO-Revision-Date: 2023-03-17 10:37+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -28,7 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "Een Telegram-cliënt geoptimaliseerd voor het Gnome-bureaublad"
+msgstr "Een Telegram-cliënt geoptimaliseerd voor GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -314,7 +314,7 @@ msgstr "_Uitloggen"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Contacten"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -510,144 +510,128 @@ msgid "You entered an invalid country code."
 msgstr "U heeft een ongeldige landcode ingevoerd"
 
 #: src/strings.rs:28
-#, fuzzy
 msgid "{sender} is choosing a contact"
-msgstr "contact aan het kiezen"
+msgstr "{sender} is een contact aan het kiezen"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn contacten aan het kiezen"
 
 #: src/strings.rs:39
-#, fuzzy
 msgid "{num} people are choosing contacts"
-msgstr "contact aan het kiezen"
+msgstr "{num} mensen zijn contacten aan het kiezen"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
 msgstr "contact aan het kiezen"
 
 #: src/strings.rs:51
-#, fuzzy
 msgid "{sender} is choosing a location"
-msgstr "locatie aan het kiezen"
+msgstr "{sender} is een locatie aan het kiezen"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn locaties aan het kiezen"
 
 #: src/strings.rs:62
-#, fuzzy
 msgid "{num} people are choosing locations"
-msgstr "locatie aan het kiezen"
+msgstr "{num} mensen zijn locaties aan het kiezen"
 
 #: src/strings.rs:67
 msgid "choosing a location"
 msgstr "locatie aan het kiezen"
 
 #: src/strings.rs:74
-#, fuzzy
 msgid "{sender} is choosing a sticker"
-msgstr "{sender} heeft een sticker vastgezet"
+msgstr "{sender} is een sticker aan het kiezen"
 
 #: src/strings.rs:78
-#, fuzzy
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr "{sender} heeft een sticker vastgezet"
+msgstr "{sender1} en {sender2} zijn stickers aan het kiezen"
 
 #: src/strings.rs:85
-#, fuzzy
 msgid "{num} people are choosing stickers"
-msgstr "sticker aan het kiezen"
+msgstr "{num} mensen zijn stickers aan het kiezen"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
 msgstr "sticker aan het kiezen"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "{sender} heeft een video vastgezet"
+msgstr "{sender} is een video aan het opnemen"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn video's aan het opnemen"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "video aan het opnemen"
+msgstr "{num} mensen zijn video's aan het opnemen"
 
 #: src/strings.rs:113
 msgid "recording a video"
 msgstr "video aan het opnemen"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
-msgstr "videobericht aan het opnemen"
+msgstr "{sender} is een videobericht aan het opnemen"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn videoberichten aan het opnemen"
 
 #: src/strings.rs:131
-#, fuzzy
 msgid "{num} people are recording video notes"
-msgstr "videobericht aan het opnemen"
+msgstr "{num} mensen zijn videoberichten aan het opnemen"
 
 #: src/strings.rs:136
 msgid "recording a video note"
 msgstr "videobericht aan het opnemen"
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
-msgstr "spraakbericht aan het opnemen"
+msgstr "{sender} is een spraakbericht aan het opnemen"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn spraakberichten aan het opnemen"
 
 #: src/strings.rs:154
-#, fuzzy
 msgid "{num} people are recording voice notes"
-msgstr "spraakbericht aan het opnemen"
+msgstr "{num} mensen zijn spraakberichten aan het opnemen"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
 msgstr "spraakbericht aan het opnemen"
 
 #: src/strings.rs:166
-#, fuzzy
 msgid "{sender} is playing a game"
-msgstr "spel aan het spelen"
+msgstr "{sender} is een spel aan het spelen"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn spellen aan het spelen"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{num} mensen zijn spellen aan het spelen"
 
 #: src/strings.rs:182
 msgid "playing a game"
 msgstr "spel aan het spelen"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
-msgstr "{sender} heeft {points} punten behaald"
+msgstr "{sender} is aan het typen"
 
 #: src/strings.rs:193
-#, fuzzy
 msgid "{sender1} and {sender2} are typing"
-msgstr "{sender} heeft {users} toegevoegd"
+msgstr "{sender1} en {sender2} zijn aan het typen"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} mensen zijn aan het typen"
 
 #: src/strings.rs:202
 msgid "typing"
@@ -655,106 +639,95 @@ msgstr "aan het typen"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "{sender} is een document aan het uploaden ({progress}%)"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "{sender1} and {sender2} zijn documenten aan het uploaden"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} mensen zijn documenten aan het uploaden"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "document aan het uploaden ({progress}%)"
 
 #: src/strings.rs:238
-#, fuzzy
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "{sender} heeft een foto vastgezet"
+msgstr "{sender} is een foto aan het uploaden ({progress}%)"
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr "{sender} heeft de groepsfoto aangepast"
+msgstr "{sender1} en {sender2} zijn foto's aan het uploaden"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} mensen zijn foto's aan het uploaden"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "foto aan het uploaden ({progress}%)"
 
 #: src/strings.rs:267
-#, fuzzy
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr "{sender} heeft een videobericht vastgezet"
+msgstr "{sender} is een video aan het uploaden ({progress}%)"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn video's aan het uploaden"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} mensen zijn video's aan het uploaden"
 
 #: src/strings.rs:287
-#, fuzzy
 msgid "uploading a video ({progress}%)"
-msgstr "videobericht aan het opnemen"
+msgstr "video aan het uploaden ({progress}%)"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} heeft een videobericht vastgezet"
+msgstr "{sender} is een videobericht aan het uploaden ({progress}%)"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn videoberichten aan het uploaden"
 
 #: src/strings.rs:310
-#, fuzzy
 msgid "{num} people are uploading video notes"
-msgstr "videobericht aan het opnemen"
+msgstr "{num} mensen zijn videoberichten aan het uploaden"
 
 #: src/strings.rs:316
-#, fuzzy
 msgid "uploading a video note ({progress}%)"
-msgstr "videobericht aan het opnemen"
+msgstr "videobericht aan het uploaden ({progress}%)"
 
 #: src/strings.rs:325
-#, fuzzy
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr "{sender} heeft een audiobericht vastgezet"
+msgstr "{sender} is een spraakbericht aan het uploaden ({progress}%)"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn spraakberichten aan het uploaden"
 
 #: src/strings.rs:339
-#, fuzzy
 msgid "{num} people are uploading voice notes"
-msgstr "spraakbericht aan het opnemen"
+msgstr "{num} mensen zijn spraakberichten aan het uploaden"
 
 #: src/strings.rs:345
-#, fuzzy
 msgid "uploading a voice note ({progress}%)"
-msgstr "spraakbericht aan het opnemen"
+msgstr "spraakbericht aan het uploaden ({progress}%)"
 
 #: src/strings.rs:354
-#, fuzzy
 msgid "{sender} is watching an animation {emoji}"
-msgstr "animatie aan het kijken"
+msgstr "{sender} is een animatie aan het kijken {emoji}"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1} en {sender2} zijn animaties aan het kijken {emoji}"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} mensen zijn animaties aan het kijken {emoji}"
 
 #: src/strings.rs:374
 msgid "watching an animation"
@@ -1144,7 +1117,7 @@ msgstr "Verwijderen van bericht bevestigen"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "Laden…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
