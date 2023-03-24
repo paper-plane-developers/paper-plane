@@ -1,0 +1,78 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplLoginCode {
+  layout-manager: BinLayout { };
+
+  Adw.ToolbarView {
+
+    [top]
+    Adw.HeaderBar {
+
+      [start]
+      Button {
+        action-name: "login.reset";
+        icon-name: "go-previous-symbolic";
+        tooltip-text: _("Phone Number");
+      }
+    }
+
+    Adw.StatusPage status_page {
+      icon-name: "mail-send-symbolic";
+      title: _("Enter the Verification Code");
+
+      Adw.Clamp {
+        maximum-size: 300;
+        tightening-threshold: 200;
+
+        Box input_box {
+          orientation: vertical;
+
+          ListBox {
+            styles ["boxed-list"]
+
+            Adw.EntryRow entry_row {
+              styles ["numeric"]
+
+              entry-activated => $on_entry_row_activated() swapped;
+
+              title: _("Code");
+              input-purpose: digits;
+            }
+          }
+
+          Button {
+            styles ["suggested-action", "pill"]
+
+            margin-top: 9;
+            margin-start: 12;
+            margin-end: 12;
+            action-name: "login.code.next";
+
+            Stack next_button_stack {
+              StackPage {
+                name: "label";
+                child: Label {
+                  label: _("_Next");
+                  use-underline: true;
+                };
+              }
+              StackPage {
+                name: "spinner";
+                child: Spinner {
+                  spinning: true;
+                  vexpand: true;
+                };
+              }
+            }
+          }
+
+          LinkButton resend_link_button {
+            action-name: "login.code.resend-auth-code";
+            margin-top: 12;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,45 +1,4 @@
-# UI resources
-blueprints = custom_target('blueprints',
-  input: files(
-    'login.blp',
-    'phone_number_input.blp',
-    'session_manager.blp',
-    'window.blp',
-
-    'components/avatar.blp',
-    'components/message_entry.blp',
-    'session/content/chat_action_bar.blp',
-    'session/content/chat_info_window.blp',
-    'session/content/event_row.blp',
-    'session/content/message_row/document/mod.blp',
-    'session/content/message_row/photo.blp',
-    'session/content/message_row/text.blp',
-    'session/content/mod.blp',
-    'session/content/message_menu.blp',
-    'session/content/send_media_window.blp',
-    'session/mod.blp',
-    'session/preferences_window.blp',
-    'session/sidebar/avatar.blp',
-    'session/sidebar/row.blp',
-    'session/sidebar/row_menu.blp',
-    'session/sidebar/session_switcher/add_account_row.blp',
-    'session/sidebar/session_switcher/avatar_with_selection.blp',
-    'session/sidebar/session_switcher/mod.blp',
-    'session/sidebar/session_switcher/session_entry_row.blp',
-  ),
-  output: '.',
-  command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
-)
-
-ui_resources = gnome.compile_resources(
-  'ui-resources',
-  'ui-resources.gresource.xml',
-  gresource_bundle: true,
-  source_dir: meson.current_build_dir(),
-  install: true,
-  install_dir: pkgdatadir,
-  dependencies: blueprints,
-)
+subdir('ui')
 
 global_conf = configuration_data()
 global_conf.set_quoted('APP_ID', application_id)

@@ -1,0 +1,16 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplSidebarSearchItemRow {
+  layout-manager: BoxLayout {};
+
+  $PaplAvatar avatar {
+    size: 32;
+    item: bind template.item;
+  }
+
+  Inscription label {
+    hexpand: true;
+    text-overflow: ellipsize_end;
+  }
+}

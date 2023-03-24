@@ -1,0 +1,31 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $Content : Adw.Bin {
+  Stack stack {
+    Adw.ToolbarView unselected_chat_view {
+      [top]
+      Overlay {
+        Adw.HeaderBar {
+          show-title: false;
+        }
+
+        [overlay]
+        $PaplSnow PaplSnow {
+          sensitive: false;
+        }
+      }
+
+      content: Adw.StatusPage {
+        vexpand: true;
+        icon-name: "user-available-symbolic";
+        title: _("No Chat Selected");
+        description: _("Select a chat to start messaging.");
+      };
+    }
+
+    $PaplChatHistory chat_history {
+      chat: bind template.chat;
+    }
+  }
+}

@@ -1,34 +1,25 @@
 use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
-use tdlib::enums::CallDiscardReason;
-use tdlib::enums::UserStatus;
-use tdlib::enums::UserType;
-use tdlib::types::MessageGame;
-use tdlib::types::MessageGameScore;
 
 use crate::i18n::gettext_f;
 use crate::i18n::ngettext_f;
-use crate::tdlib::Chat;
-use crate::tdlib::ChatAction;
-use crate::tdlib::ChatType;
-use crate::tdlib::Message;
-use crate::tdlib::MessageSender;
-use crate::tdlib::User;
-use crate::utils::freplace;
-use crate::utils::human_friendly_duration;
+use crate::model;
+use crate::utils;
 
-pub(crate) fn chat_action(action: &ChatAction) -> String {
+pub(crate) fn chat_action(action: &model::ChatAction) -> String {
     use tdlib::enums::ChatAction::*;
 
+    let chat = action.chat_();
+
     let show_sender = matches!(
-        action.chat().type_(),
-        ChatType::BasicGroup(_) | ChatType::Supergroup(_)
+        chat.chat_type(),
+        model::ChatType::BasicGroup(_) | model::ChatType::Supergroup(_)
     );
 
-    let td_action = &action.type_().0;
+    let td_action = &action.action_type().0;
 
-    let action_group = action.chat().actions().group(td_action);
+    let action_group = chat.actions().group(td_action);
 
     match td_action {
         ChoosingContact => {
@@ -36,13 +27,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is choosing a contact",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are choosing contacts",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -59,13 +50,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is choosing a location",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are choosing locations",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -82,13 +73,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is choosing a sticker",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are choosing stickers",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -105,13 +96,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is recording a video",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are recording videos",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -128,13 +119,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is recording a video note",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are recording video notes",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -151,13 +142,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is recording a voice note",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are recording voice notes",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -174,13 +165,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is playing a game",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are playing games",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -197,13 +188,13 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                 match action_group.len() {
                     1 => gettext_f(
                         "{sender} is typing",
-                        &[("sender", &message_sender(action_group[0].sender(), false))],
+                        &[("sender", &message_sender(&action_group[0].sender(), false))],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are typing",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f("{num} people are typing", &[("num", &len.to_string())]),
@@ -218,15 +209,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is uploading a document ({progress}%)",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("progress", &action.progress.to_string()),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are uploading documents",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -247,15 +238,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is uploading a photo ({progress}%)",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("progress", &action.progress.to_string()),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are uploading photos",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -276,15 +267,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is uploading a video ({progress}%)",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("progress", &action.progress.to_string()),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are uploading videos",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -305,15 +296,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is uploading a video note ({progress}%)",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("progress", &action.progress.to_string()),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are uploading video notes",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -334,15 +325,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is uploading a voice note ({progress}%)",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("progress", &action.progress.to_string()),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are uploading voice notes",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                         ],
                     ),
                     len => gettext_f(
@@ -363,15 +354,15 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
                     1 => gettext_f(
                         "{sender} is watching an animation {emoji}",
                         &[
-                            ("sender", &message_sender(action_group[0].sender(), false)),
+                            ("sender", &message_sender(&action_group[0].sender(), false)),
                             ("emoji", &action.emoji),
                         ],
                     ),
                     2 => gettext_f(
                         "{sender1} and {sender2} are watching animations {emoji}",
                         &[
-                            ("sender1", &message_sender(action_group[0].sender(), false)),
-                            ("sender2", &message_sender(action_group[1].sender(), false)),
+                            ("sender1", &message_sender(&action_group[0].sender(), false)),
+                            ("sender2", &message_sender(&action_group[1].sender(), false)),
                             ("emoji", &action.emoji),
                         ],
                     ),
@@ -388,8 +379,8 @@ pub(crate) fn chat_action(action: &ChatAction) -> String {
     }
 }
 
-pub(crate) fn user_display_name(user: &User, use_full_name: bool) -> String {
-    if let UserType::Deleted = user.type_().0 {
+pub(crate) fn user_display_name(user: &model::User, use_full_name: bool) -> String {
+    if let tdlib::enums::UserType::Deleted = user.user_type().0 {
         gettext("Deleted Account")
     } else if user.last_name().is_empty() || !use_full_name {
         user.first_name()
@@ -400,11 +391,13 @@ pub(crate) fn user_display_name(user: &User, use_full_name: bool) -> String {
     }
 }
 
-pub(crate) fn user_status(status: &UserStatus) -> String {
+pub(crate) fn user_status(status: &tdlib::enums::UserStatus) -> String {
+    use tdlib::enums::UserStatus::*;
+
     match status {
-        UserStatus::Empty => gettext("last seen a long time ago"),
-        UserStatus::Online(_) => gettext("online"),
-        UserStatus::Offline(data) => {
+        Empty => gettext("last seen a long time ago"),
+        Online(_) => gettext("online"),
+        Offline(data) => {
             let now = glib::DateTime::now_local().unwrap();
             let was_online = glib::DateTime::from_unix_local(data.was_online as i64).unwrap();
             let time_span = now.difference(&was_online);
@@ -437,23 +430,24 @@ pub(crate) fn user_status(status: &UserStatus) -> String {
                 gettext("last seen just now")
             }
         }
-        UserStatus::Recently => gettext("last seen recently"),
-        UserStatus::LastWeek => gettext("last seen within a week"),
-        UserStatus::LastMonth => gettext("last seen within a month"),
+        Recently => gettext("last seen recently"),
+        LastWeek => gettext("last seen within a week"),
+        LastMonth => gettext("last seen within a month"),
     }
 }
 
-pub(crate) fn message_sender(sender: &MessageSender, use_full_name: bool) -> String {
+pub(crate) fn message_sender(sender: &model::MessageSender, use_full_name: bool) -> String {
     match sender {
-        MessageSender::Chat(chat) => chat.title(),
-        MessageSender::User(user) => user_display_name(user, use_full_name),
+        model::MessageSender::Chat(chat) => chat.title(),
+        model::MessageSender::User(user) => user_display_name(user, use_full_name),
     }
 }
 
-pub(crate) fn message_content(message: &Message) -> String {
+pub(crate) fn message_content(message: &model::Message) -> String {
     use tdlib::enums::MessageContent::*;
+
     let sender = message.sender();
-    let chat = message.chat();
+    let chat = message.chat_();
 
     match message.content().0 {
         MessageText(data) => data.text.text,
@@ -477,34 +471,34 @@ pub(crate) fn message_content(message: &Message) -> String {
             data.duration,
             message.is_outgoing(),
         ),
-        MessageBasicGroupChatCreate(data) => message_basic_group_chat_create(&data.title, sender),
+        MessageBasicGroupChatCreate(data) => message_basic_group_chat_create(&data.title, &sender),
         MessageSupergroupChatCreate(data) => {
-            message_supergroup_chat_create(&data.title, &chat, sender)
+            message_supergroup_chat_create(&data.title, &chat, &sender)
         }
-        MessageChatChangeTitle(data) => message_chat_change_title(&data.title, &chat, sender),
-        MessageChatChangePhoto(_) => message_chat_change_photo(&chat, sender),
-        MessageChatDeletePhoto => message_chat_delete_photo(&chat, sender),
+        MessageChatChangeTitle(data) => message_chat_change_title(&data.title, &chat, &sender),
+        MessageChatChangePhoto(_) => message_chat_change_photo(&chat, &sender),
+        MessageChatDeletePhoto => message_chat_delete_photo(&chat, &sender),
         MessageChatAddMembers(data) => {
             let added_users = data
                 .member_user_ids
                 .into_iter()
-                .map(|id| chat.session().user(id))
+                .map(|id| chat.session_().user(id))
                 .collect();
-            message_chat_add_members(sender, &added_users)
+            message_chat_add_members(&sender, &added_users)
         }
-        MessageChatJoinByLink => message_chat_join_by_link(sender),
-        MessageChatJoinByRequest => message_chat_join_by_request(sender),
+        MessageChatJoinByLink => message_chat_join_by_link(&sender),
+        MessageChatJoinByRequest => message_chat_join_by_request(&sender),
         MessageChatDeleteMember(data) => {
-            let deleted_user = chat.session().user(data.user_id);
-            message_chat_delete_member(&deleted_user, sender)
+            let deleted_user = chat.session_().user(data.user_id);
+            message_chat_delete_member(&deleted_user, &sender)
         }
-        MessagePinMessage(data) => message_pin_message(data.message_id, &chat, sender),
+        MessagePinMessage(data) => message_pin_message(data.message_id, &chat, &sender),
         MessageScreenshotTaken => gettext_f(
             "{sender} took a screenshot!",
-            &[("sender", &message_sender(sender, true))],
+            &[("sender", &message_sender(&sender, true))],
         ),
-        MessageGameScore(data) => message_game_score(&data, &chat, sender),
-        MessageContactRegistered => message_contact_registered(sender),
+        MessageGameScore(data) => message_game_score(&data, &chat, &sender),
+        MessageContactRegistered => message_contact_registered(&sender),
         _ => gettext("Unsupported Message"),
     }
 }
@@ -579,13 +573,15 @@ fn message_voice_note(caption: &str) -> String {
 }
 
 fn message_call(
-    discard_reason: &CallDiscardReason,
+    discard_reason: &tdlib::enums::CallDiscardReason,
     is_video: bool,
     duration: i32,
     is_outgoing: bool,
 ) -> String {
+    use tdlib::enums::CallDiscardReason::*;
+
     match discard_reason {
-        CallDiscardReason::Declined => {
+        Declined => {
             if is_outgoing {
                 // Telegram Desktop/Android labels declined outgoing calls just as
                 // "Outgoing call" and puts a red arrow in the message bubble. We should be
@@ -604,10 +600,8 @@ fn message_call(
                 gettext("Declined incoming call")
             }
         }
-        CallDiscardReason::Disconnected | CallDiscardReason::HungUp | CallDiscardReason::Empty => {
-            made_message_call(is_outgoing, is_video, duration)
-        }
-        CallDiscardReason::Missed => {
+        Disconnected | HungUp | Empty => made_message_call(is_outgoing, is_video, duration),
+        Missed => {
             if is_outgoing {
                 gettext("Canceled call")
             } else {
@@ -625,12 +619,12 @@ fn made_message_call(is_outgoing: bool, is_video: bool, duration: i32) -> String
             if is_video {
                 gettext_f(
                     "Outgoing video call ({duration})",
-                    &[("duration", &human_friendly_duration(duration))],
+                    &[("duration", &utils::human_friendly_duration(duration))],
                 )
             } else {
                 gettext_f(
                     "Outgoing call ({duration})",
-                    &[("duration", &human_friendly_duration(duration))],
+                    &[("duration", &utils::human_friendly_duration(duration))],
                 )
             }
         } else if is_video {
@@ -642,12 +636,12 @@ fn made_message_call(is_outgoing: bool, is_video: bool, duration: i32) -> String
         if is_video {
             gettext_f(
                 "Incoming video call ({duration})",
-                &[("duration", &human_friendly_duration(duration))],
+                &[("duration", &utils::human_friendly_duration(duration))],
             )
         } else {
             gettext_f(
                 "Incoming call ({duration})",
-                &[("duration", &human_friendly_duration(duration))],
+                &[("duration", &utils::human_friendly_duration(duration))],
             )
         }
     } else if is_video {
@@ -657,7 +651,7 @@ fn made_message_call(is_outgoing: bool, is_video: bool, duration: i32) -> String
     }
 }
 
-fn message_basic_group_chat_create(title: &str, sender: &MessageSender) -> String {
+fn message_basic_group_chat_create(title: &str, sender: &model::MessageSender) -> String {
     let sender = message_sender(sender, true);
     gettext_f(
         "{sender} created the group \"{title}\"",
@@ -665,9 +659,15 @@ fn message_basic_group_chat_create(title: &str, sender: &MessageSender) -> Strin
     )
 }
 
-fn message_supergroup_chat_create(title: &str, chat: &Chat, sender: &MessageSender) -> String {
-    match chat.type_() {
-        ChatType::Supergroup(supergroup) if supergroup.is_channel() => gettext("Channel created"),
+fn message_supergroup_chat_create(
+    title: &str,
+    chat: &model::Chat,
+    sender: &model::MessageSender,
+) -> String {
+    match chat.chat_type() {
+        model::ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+            gettext("Channel created")
+        }
         _ => {
             let sender = message_sender(sender, true);
             gettext_f(
@@ -678,9 +678,13 @@ fn message_supergroup_chat_create(title: &str, chat: &Chat, sender: &MessageSend
     }
 }
 
-fn message_chat_change_title(title: &str, chat: &Chat, sender: &MessageSender) -> String {
-    match chat.type_() {
-        ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+fn message_chat_change_title(
+    title: &str,
+    chat: &model::Chat,
+    sender: &model::MessageSender,
+) -> String {
+    match chat.chat_type() {
+        model::ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
             gettext_f("Channel renamed to \"{title}\"", &[("title", title)])
         }
         _ => {
@@ -693,9 +697,9 @@ fn message_chat_change_title(title: &str, chat: &Chat, sender: &MessageSender) -
     }
 }
 
-fn message_chat_change_photo(chat: &Chat, sender: &MessageSender) -> String {
-    match chat.type_() {
-        ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+fn message_chat_change_photo(chat: &model::Chat, sender: &model::MessageSender) -> String {
+    match chat.chat_type() {
+        model::ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
             gettext("Channel photo changed")
         }
         _ => {
@@ -705,9 +709,9 @@ fn message_chat_change_photo(chat: &Chat, sender: &MessageSender) -> String {
     }
 }
 
-fn message_chat_delete_photo(chat: &Chat, sender: &MessageSender) -> String {
-    match chat.type_() {
-        ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
+fn message_chat_delete_photo(chat: &model::Chat, sender: &model::MessageSender) -> String {
+    match chat.chat_type() {
+        model::ChatType::Supergroup(supergroup) if supergroup.is_channel() => {
             gettext("Channel photo removed")
         }
         _ => {
@@ -717,9 +721,12 @@ fn message_chat_delete_photo(chat: &Chat, sender: &MessageSender) -> String {
     }
 }
 
-fn message_chat_add_members(sender: &MessageSender, added_users: &Vec<User>) -> String {
+fn message_chat_add_members(
+    sender: &model::MessageSender,
+    added_users: &Vec<model::User>,
+) -> String {
     let sender_string = message_sender(sender, true);
-    if sender.as_user().map(User::id) == added_users.first().map(User::id) {
+    if sender.as_user().map(model::User::id) == added_users.first().map(model::User::id) {
         gettext_f("{sender} joined the group", &[("sender", &sender_string)])
     } else if added_users.len() == 2 {
         let first_user = user_display_name(added_users.first().unwrap(), true);
@@ -745,7 +752,7 @@ fn message_chat_add_members(sender: &MessageSender, added_users: &Vec<User>) -> 
     }
 }
 
-fn message_chat_join_by_link(sender: &MessageSender) -> String {
+fn message_chat_join_by_link(sender: &model::MessageSender) -> String {
     let sender = message_sender(sender, true);
     gettext_f(
         "{sender} joined the group via invite link",
@@ -753,15 +760,15 @@ fn message_chat_join_by_link(sender: &MessageSender) -> String {
     )
 }
 
-fn message_chat_join_by_request(sender: &MessageSender) -> String {
+fn message_chat_join_by_request(sender: &model::MessageSender) -> String {
     let sender = message_sender(sender, true);
     gettext_f("{sender} joined the group", &[("sender", &sender)])
 }
 
-fn message_chat_delete_member(deleted_user: &User, sender: &MessageSender) -> String {
+fn message_chat_delete_member(deleted_user: &model::User, sender: &model::MessageSender) -> String {
     let sender_string = message_sender(sender, true);
     match sender {
-        MessageSender::User(user) if user.id() == deleted_user.id() => {
+        model::MessageSender::User(user) if user.id() == deleted_user.id() => {
             gettext_f("{sender} left the group", &[("sender", &sender_string)])
         }
         _ => {
@@ -774,11 +781,17 @@ fn message_chat_delete_member(deleted_user: &User, sender: &MessageSender) -> St
     }
 }
 
-fn message_game_score(game: &MessageGameScore, chat: &Chat, sender: &MessageSender) -> String {
+fn message_game_score(
+    game: &tdlib::types::MessageGameScore,
+    chat: &model::Chat,
+    sender: &model::MessageSender,
+) -> String {
     let sender_string = message_sender(sender, true);
     let game_title = match chat.message(game.game_message_id) {
         Some(message) => match message.content().0 {
-            tdlib::enums::MessageContent::MessageGame(MessageGame { game }) => Some(game.title),
+            tdlib::enums::MessageContent::MessageGame(tdlib::types::MessageGame { game }) => {
+                Some(game.title)
+            }
             _ => unreachable!(),
         },
         None => None,
@@ -804,7 +817,11 @@ fn message_game_score(game: &MessageGameScore, chat: &Chat, sender: &MessageSend
     }
 }
 
-fn message_pin_message(message_id: i64, chat: &Chat, sender: &MessageSender) -> String {
+fn message_pin_message(
+    message_id: i64,
+    chat: &model::Chat,
+    sender: &model::MessageSender,
+) -> String {
     use tdlib::enums::MessageContent::*;
 
     // TODO: Add a way to retrieve the message and update the string
@@ -835,10 +852,10 @@ fn message_pin_message(message_id: i64, chat: &Chat, sender: &MessageSender) -> 
     };
 
     let sender = message_sender(sender, true);
-    freplace(string, &[("sender", &sender)])
+    utils::freplace(string, &[("sender", &sender)])
 }
 
-fn message_contact_registered(sender: &MessageSender) -> String {
+fn message_contact_registered(sender: &model::MessageSender) -> String {
     let sender = message_sender(sender, true);
     gettext_f("{sender} joined Telegram", &[("sender", &sender)])
 }

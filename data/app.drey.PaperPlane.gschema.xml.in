@@ -16,10 +16,10 @@
       <summary>Default window maximized behaviour</summary>
       <description>Default window maximized behaviour</description>
     </key>
-    <key name="recently-used-sessions" type="as">
-      <default>[]</default>
-      <summary>Recently used sessions</summary>
-      <description>A list of most recently used sessions, sorted by their database directory names</description>
+    <key name="last-used-session" type="s">
+      <default>''</default>
+      <summary>Last used session</summary>
+      <description>The directory name of the last used session</description>
     </key>
     <key name="color-scheme" type="s">
       <choices>

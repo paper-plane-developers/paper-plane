@@ -1,0 +1,52 @@
+using Gtk 4.0;
+
+template $PaplMessageDocument : $PaplMessageBase {
+  layout-manager: BinLayout {};
+
+  $PaplMessageBubble message_bubble {
+    styles ["document"]
+
+    prefix: Box file_box {
+      spacing: 6;
+
+      styles ["file"]
+
+      GestureClick click {
+        button: 1;
+      }
+
+      Overlay {
+
+        [overlay]
+        Picture file_thumbnail_picture {
+          content-fit: cover;
+          visible: false;
+        }
+
+        [overlay]
+        $PaplMessageDocumentStatusIndicator status_indicator {
+          halign: center;
+          valign: center;
+        }
+      }
+
+
+      Box {
+        hexpand: true;
+        valign: center;
+        orientation: vertical;
+
+        Label file_name_label {
+          xalign: 0;
+          ellipsize: middle;
+        }
+
+        Label file_size_label {
+          styles ["numeric", "dim-label", "caption"]
+
+          xalign: 0;
+        }
+      }
+    };
+  }
+}

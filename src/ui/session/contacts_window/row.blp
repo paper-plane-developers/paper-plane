@@ -1,0 +1,30 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplContactRow {
+  layout-manager: BoxLayout {};
+
+  $PaplAvatar avatar {
+    size: 32;
+    item: bind template.user;
+  }
+
+  Box labels_box {
+    orientation: vertical;
+    homogeneous: true;
+    hexpand: true;
+
+    Inscription name_label {
+      text-overflow: ellipsize_end;
+    }
+
+    Inscription status_label {
+      text-overflow: ellipsize_end;
+
+      styles [
+          "dim-label",
+          "small-body",
+      ]
+    }
+  }
+}

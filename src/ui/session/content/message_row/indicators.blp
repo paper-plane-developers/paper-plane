@@ -1,0 +1,21 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplMessageIndicators {
+  layout-manager: BoxLayout {
+    spacing: 3;
+  };
+
+  Box reply_count_box {
+    spacing: 3;
+
+    Image {
+      icon-name: "mail-reply-sender-symbolic";
+    }
+
+    Label reply_count_label {}
+  }
+
+  Label message_info_label {}
+  Image sending_state_icon {}
+}

@@ -1,25 +1,39 @@
 use std::future::Future;
+use std::ops::Deref;
 use std::path::PathBuf;
 
 use gettextrs::gettext;
 use gtk::gdk;
+use gtk::gio;
 use gtk::glib;
+use gtk::prelude::*;
 use image::io::Reader as ImageReader;
-use locale_config::Locale;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use tdlib::enums::TextEntityType;
-use tdlib::functions;
-use tdlib::types;
-use tdlib::types::FormattedText;
 use thiserror::Error;
 
 use crate::config;
-use crate::session_manager::DatabaseInfo;
 use crate::APPLICATION_OPTS;
 use crate::TEMP_DIR;
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
+
+#[derive(Debug)]
+pub(crate) struct PaperPlaneSettings(gio::Settings);
+
+impl Default for PaperPlaneSettings {
+    fn default() -> Self {
+        Self(gio::Settings::new(config::APP_ID))
+    }
+}
+
+impl Deref for PaperPlaneSettings {
+    type Target = gio::Settings;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 pub(crate) fn escape(text: &str) -> String {
     text.replace('&', "&amp;")
@@ -50,24 +64,24 @@ pub(crate) fn linkify(text: &str) -> String {
     }
 }
 
-pub(crate) fn convert_to_markup(text: String, entity: &TextEntityType) -> String {
+pub(crate) fn convert_to_markup(text: String, entity: &tdlib::enums::TextEntityType) -> String {
+    use tdlib::enums::TextEntityType::*;
+
     match entity {
-        TextEntityType::Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
-        TextEntityType::EmailAddress => format!("<a href='mailto:{text}'>{text}</a>"),
-        TextEntityType::PhoneNumber => format!("<a href='tel:{text}'>{text}</a>"),
-        TextEntityType::Bold => format!("<b>{text}</b>"),
-        TextEntityType::Italic => format!("<i>{text}</i>"),
-        TextEntityType::Underline => format!("<u>{text}</u>"),
-        TextEntityType::Strikethrough => format!("<s>{text}</s>"),
-        TextEntityType::Code | TextEntityType::Pre | TextEntityType::PreCode(_) => {
-            format!("<tt>{text}</tt>")
-        }
-        TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
+        Url => format!("<a href='{}'>{}</a>", linkify(&text), text),
+        EmailAddress => format!("<a href='mailto:{text}'>{text}</a>"),
+        PhoneNumber => format!("<a href='tel:{text}'>{text}</a>"),
+        Bold => format!("<b>{text}</b>"),
+        Italic => format!("<i>{text}</i>"),
+        Underline => format!("<u>{text}</u>"),
+        Strikethrough => format!("<s>{text}</s>"),
+        Code | Pre | PreCode(_) => format!("<tt>{text}</tt>"),
+        TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
         _ => text,
     }
 }
 
-pub(crate) fn parse_formatted_text(formatted_text: FormattedText) -> String {
+pub(crate) fn parse_formatted_text(formatted_text: tdlib::types::FormattedText) -> String {
     let mut entities = formatted_text.entities.iter();
     let mut entity = entities.next();
     let mut output = String::new();
@@ -166,53 +180,6 @@ pub(crate) fn temp_dir() -> Option<&'static PathBuf> {
     TEMP_DIR.get()
 }
 
-pub(crate) async fn send_tdlib_parameters(
-    client_id: i32,
-    database_info: &DatabaseInfo,
-) -> Result<(), types::Error> {
-    let system_language_code = {
-        let locale = Locale::current().to_string();
-        if !locale.is_empty() {
-            locale
-        } else {
-            "en_US".to_string()
-        }
-    };
-
-    let database_directory = data_dir()
-        .join(&database_info.directory_base_name)
-        .to_str()
-        .expect("Data directory path is not a valid unicode string")
-        .into();
-
-    functions::set_tdlib_parameters(
-        database_info.use_test_dc,
-        database_directory,
-        String::new(),
-        String::new(),
-        true,
-        true,
-        true,
-        true,
-        config::TG_API_ID,
-        config::TG_API_HASH.into(),
-        system_language_code,
-        "Desktop".into(),
-        String::new(),
-        config::VERSION.into(),
-        true,
-        false,
-        client_id,
-    )
-    .await
-}
-
-pub(crate) async fn log_out(client_id: i32) {
-    if let Err(e) = functions::log_out(client_id).await {
-        log::error!("Could not logout client with id={}: {:?}", client_id, e);
-    }
-}
-
 /// Spawn a future on the default `MainContext`
 pub(crate) fn spawn<F: Future<Output = ()> + 'static>(fut: F) {
     let ctx = glib::MainContext::default();
@@ -282,4 +249,50 @@ pub(crate) fn decode_image_from_path(path: &str) -> Result<gdk::MemoryTexture, D
     );
 
     Ok(texture)
+}
+
+pub(crate) fn show_toast<W: glib::IsA<gtk::Widget>>(widget: &W, title: impl Into<glib::GString>) {
+    widget
+        .ancestor(adw::ToastOverlay::static_type())
+        .unwrap()
+        .downcast::<adw::ToastOverlay>()
+        .unwrap()
+        .add_toast(
+            adw::Toast::builder()
+                .title(title)
+                .timeout(3)
+                .priority(adw::ToastPriority::High)
+                .build(),
+        );
+}
+
+pub(crate) fn ancestor<W: IsA<gtk::Widget>, T: IsA<gtk::Widget>>(widget: &W) -> T {
+    widget
+        .ancestor(T::static_type())
+        .and_downcast::<T>()
+        .unwrap()
+}
+
+pub(crate) fn unparent_children<W: IsA<gtk::Widget>>(widget: &W) {
+    let mut child = widget.first_child();
+    while let Some(child_) = child {
+        child = child_.next_sibling();
+        child_.unparent();
+    }
+}
+
+pub(crate) struct ChildIter(Option<gtk::Widget>);
+impl From<&gtk::Widget> for ChildIter {
+    fn from(widget: &gtk::Widget) -> Self {
+        Self(widget.first_child())
+    }
+}
+impl Iterator for ChildIter {
+    type Item = gtk::Widget;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let r = self.0.take();
+        self.0 = r.as_ref().and_then(|widget| widget.next_sibling());
+        r
+    }
 }

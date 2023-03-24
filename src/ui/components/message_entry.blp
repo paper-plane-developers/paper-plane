@@ -1,0 +1,47 @@
+using Gtk 4.0;
+
+template $PaplMessageEntry {
+  layout-manager: BinLayout {};
+
+  styles ["message-entry"]
+
+  Overlay overlay {
+
+    [overlay]
+    Inscription placeholder {
+      styles ["dim-label"]
+
+      can-target: false;
+      text-overflow: ellipsize_end;
+    }
+
+    Box {
+      css-name: "entry";
+
+      styles ["small-pill"]
+
+      ScrolledWindow {
+        max-content-height: 200;
+        hscrollbar-policy: never;
+        propagate-natural-height: true;
+        hexpand: true;
+
+        child: TextView text_view {
+          top-margin: 6;
+          bottom-margin: 6;
+          wrap-mode: word_char;
+          valign: center;
+
+          GestureClick {
+            pressed => $on_gesture_click_pressed();
+          }
+        };
+      }
+
+      Image emoji_button {
+        icon-name: "emoji-people-symbolic";
+        valign: end;
+      }
+    }
+  }
+}

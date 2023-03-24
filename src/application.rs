@@ -3,7 +3,6 @@ use std::cell::OnceCell;
 use adw::subclass::prelude::AdwApplicationImpl;
 use gettextrs::gettext;
 use glib::clone;
-use glib::WeakRef;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
@@ -11,23 +10,20 @@ use gtk::subclass::prelude::*;
 use log::debug;
 use log::info;
 
-use crate::config::APP_ID;
-use crate::config::PKGDATADIR;
-use crate::config::PROFILE;
-use crate::config::VERSION;
-use crate::Window;
+use crate::config;
+use crate::ui;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
     pub(crate) struct Application {
-        pub(super) window: OnceCell<WeakRef<Window>>,
+        pub(super) window: OnceCell<glib::WeakRef<ui::Window>>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for Application {
-        const NAME: &'static str = "Application";
+        const NAME: &'static str = "PaplApplication";
         type Type = super::Application;
         type ParentType = adw::Application;
     }
@@ -45,7 +41,7 @@ mod imp {
                 return;
             }
 
-            let window = Window::new(&obj);
+            let window = ui::Window::new(&obj);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -56,16 +52,16 @@ mod imp {
         fn startup(&self) {
             debug!("GtkApplication<Application>::startup");
 
-            info!("Paper Plane ({})", APP_ID);
-            info!("Version: {} ({})", VERSION, PROFILE);
-            info!("Datadir: {}", PKGDATADIR);
+            info!("Paper Plane ({})", config::APP_ID);
+            info!("Version: {} ({})", config::VERSION, config::PROFILE);
+            info!("Datadir: {}", config::PKGDATADIR);
 
             self.parent_startup();
 
             let obj = self.obj();
 
             // Set icons for shell
-            gtk::Window::set_default_icon_name(APP_ID);
+            gtk::Window::set_default_icon_name(config::APP_ID);
 
             obj.setup_gactions();
             obj.setup_accels();
@@ -92,12 +88,12 @@ impl Default for Application {
 impl Application {
     pub(crate) fn new() -> Self {
         glib::Object::builder()
-            .property("application-id", APP_ID)
+            .property("application-id", config::APP_ID)
             .property("resource-base-path", "/app/drey/paper-plane/")
             .build()
     }
 
-    fn main_window(&self) -> Window {
+    fn main_window(&self) -> ui::Window {
         self.imp().window.get().unwrap().upgrade().unwrap()
     }
 
@@ -132,7 +128,7 @@ impl Application {
             gio::SimpleAction::new("new-login-production-server", None);
         action_new_login_production_server.connect_activate(
             clone!(@weak self as app => move |_, _| {
-                app.main_window().session_manager().add_new_session(false);
+                app.main_window().client_manager_view().add_new_client(false);
             }),
         );
         self.add_action(&action_new_login_production_server);
@@ -140,7 +136,7 @@ impl Application {
         // New login on test server
         let action_new_login_test_server = gio::SimpleAction::new("new-login-test-server", None);
         action_new_login_test_server.connect_activate(clone!(@weak self as app => move |_, _| {
-            app.main_window().session_manager().add_new_session(true);
+            app.main_window().client_manager_view().add_new_client(true);
         }));
         self.add_action(&action_new_login_test_server);
     }
@@ -152,7 +148,7 @@ impl Application {
 
     fn load_color_scheme(&self) {
         let style_manager = adw::StyleManager::default();
-        let settings = gio::Settings::new(APP_ID);
+        let settings = gio::Settings::new(config::APP_ID);
         match settings.string("color-scheme").as_ref() {
             "light" => style_manager.set_color_scheme(adw::ColorScheme::ForceLight),
             "dark" => style_manager.set_color_scheme(adw::ColorScheme::ForceDark),
@@ -164,8 +160,8 @@ impl Application {
         let about = adw::AboutWindow::builder()
             .transient_for(&self.main_window())
             .application_name("Paper Plane")
-            .application_icon(APP_ID)
-            .version(VERSION)
+            .application_icon(config::APP_ID)
+            .version(config::VERSION)
             .website("https://github.com/paper-plane-developers/paper-plane")
             .issue_url("https://github.com/paper-plane-developers/paper-plane/issues")
             .support_url("https://t.me/paperplanechat")

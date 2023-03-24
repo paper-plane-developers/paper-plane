@@ -1,0 +1,18 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplAvatarWithSelection : Adw.Bin {
+  child: Overlay {
+    $PaplAvatar child_avatar {}
+
+    [overlay]
+    Image checkmark {
+      styles ["blue-checkmark"]
+
+      visible: false;
+      halign: end;
+      valign: end;
+      icon-name: "emblem-ok-symbolic";
+    }
+  };
+}

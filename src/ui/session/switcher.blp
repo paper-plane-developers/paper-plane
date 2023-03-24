@@ -1,0 +1,64 @@
+using Gtk 4.0;
+using Adw 1;
+
+menu menu {
+  section {
+    item {
+      label: _("_Production Server");
+      action: "app.new-login-production-server";
+    }
+
+    item {
+      label: _("_Test Server");
+      action: "app.new-login-test-server";
+    }
+  }
+}
+
+PopoverMenu popover_menu {
+  menu-model: menu;
+}
+
+template $PaplSessionSwitcher : Widget {
+  layout-manager: BinLayout {};
+
+  notify::client-manager => $on_notify_client_manager() swapped;
+
+  Adw.ToolbarView {
+
+    [top]
+    Adw.HeaderBar {
+
+      [end]
+      Button add_session_button {
+
+        GestureLongPress {
+          pressed => $on_add_session_button_long_pressed() swapped;
+        }
+
+        action-name: "app.new-login-production-server";
+        icon-name: "list-add-symbolic";
+        tooltip-text: _("New Session");
+      }
+    }
+
+    ScrolledWindow {
+
+      ListView {
+        styles [
+          "navigation-sidebar",
+        ]
+
+        activate => $on_list_view_activated() swapped;
+        single-click-activate: true;
+        factory: SignalListItemFactory signal_list_item_factory {
+          bind => $on_signal_list_item_factory_bind() swapped;
+          unbind => $on_signal_list_item_factory_unbind() swapped;
+        };
+        model: SingleSelection selection {
+          autoselect: false;
+        };
+      }
+    }
+  }
+}
