@@ -794,7 +794,9 @@ impl ChatActionBar {
                     }
                 },
                 ChatType::Supergroup(data) => match data.status().0 {
-                    ChatMemberStatus::Restricted(data) if !data.permissions.can_send_messages => {
+                    ChatMemberStatus::Restricted(data)
+                        if !data.permissions.can_send_basic_messages =>
+                    {
                         imp.action_bar_stack.set_visible_child_name("restricted");
                     }
                     ChatMemberStatus::Left => {

@@ -227,7 +227,7 @@ impl MessageIndicators {
             .map(|message| match message.sending_state() {
                 Some(state) => match state.0 {
                     MessageSendingState::Failed(_) => "message-failed-symbolic",
-                    MessageSendingState::Pending => "message-pending-symbolic",
+                    MessageSendingState::Pending(_) => "message-pending-symbolic",
                 },
                 None => {
                     if message.chat().is_own_chat()
