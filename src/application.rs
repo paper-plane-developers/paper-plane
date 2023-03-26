@@ -164,7 +164,7 @@ impl Application {
             .issue_url("https://github.com/melix99/telegrand/issues")
             .support_url("https://t.me/telegrandchat")
             .developer_name(gettext("Telegrand developers"))
-            .copyright("© 2021–2022 Marco Melorio")
+            .copyright("© 2021–2023 Marco Melorio")
             .license_type(gtk::License::Gpl30)
             .developers([
                 "Karol Lademan https://github.com/karl0d",
