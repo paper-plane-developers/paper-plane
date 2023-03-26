@@ -40,13 +40,14 @@
             "name": "rlottie",
             "buildsystem": "meson",
             "config-opts": [
+                "-Dexample=false",
                 "-Dwerror=false"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/melix99/rlottie",
-                    "branch": "fix-build"
+                    "branch": "main"
                 }
             ]
         },
