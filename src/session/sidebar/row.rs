@@ -364,7 +364,9 @@ impl Row {
                 let (icon_name, css_class) = match message.sending_state() {
                     Some(state) => match state.0 {
                         MessageSendingState::Failed(_) => ("message-failed-symbolic", "error"),
-                        MessageSendingState::Pending => ("message-pending-symbolic", "dim-label"),
+                        MessageSendingState::Pending(_) => {
+                            ("message-pending-symbolic", "dim-label")
+                        }
                     },
                     None => (
                         if message.id() == chat.last_read_outbox_message_id() {

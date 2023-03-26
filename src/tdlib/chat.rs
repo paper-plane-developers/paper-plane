@@ -575,8 +575,8 @@ impl Chat {
         if let Some(message) = self.last_message() {
             functions::view_messages(
                 self.id(),
-                0,
                 vec![message.id()],
+                None,
                 true,
                 self.session().client_id(),
             )

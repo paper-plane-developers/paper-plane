@@ -1057,7 +1057,9 @@ fn stringify_auth_code_type(code_type: AuthenticationCodeType) -> String {
         // Translators: This is an authentication method
         AuthenticationCodeType::TelegramMessage(_) => gettext("Telegram"),
         // Translators: This is an authentication method
-        AuthenticationCodeType::Sms(_) => gettext("SMS"),
+        AuthenticationCodeType::Sms(_)
+        | AuthenticationCodeType::FirebaseAndroid(_)
+        | AuthenticationCodeType::FirebaseIos(_) => gettext("SMS"),
         // Translators: This is an authentication method
         AuthenticationCodeType::Call(_) => gettext("Call"),
         // Translators: This is an authentication method

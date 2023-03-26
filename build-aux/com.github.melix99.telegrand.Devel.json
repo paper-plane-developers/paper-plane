@@ -61,7 +61,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "commit": "c823432eefdd57fe3f85c04d2dc57223ead98cca"
+                    "tag": "4.10.1"
                 },
                 {
                     "type": "patch",
@@ -105,8 +105,8 @@
                         "x86_64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.10/tdjson-x86_64.zip",
-                    "sha256": "5b46b76d090e544605970d1d7fb44609959be4992efff1d6afe2d7b6d24b6b9f",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.13/tdjson-x86_64.zip",
+                    "sha256": "c394abe51e08d49d3c032e07d278bc97ddd3e405fae6f3205ca9cfbef8ef7486",
                     "strip-components": 0
                 },
                 {
@@ -114,8 +114,8 @@
                         "aarch64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.10/tdjson-aarch64.zip",
-                    "sha256": "19efbcf8ed5b161427f4d04da02a50331b5f31b50d4b8e61f0af49a8f30f322e",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.13/tdjson-aarch64.zip",
+                    "sha256": "08c5e41078d2f683974030623c84d1463ffd3ea341c690206f3808e3038d6738",
                     "strip-components": 0
                 }
             ]
@@ -135,7 +135,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/tdlib/td.git",
-                    "commit": "93c42f6d7c1209937431469f80427d48907f1b8d"
+                    "commit": "eb664b4e9f71945ef3faa802af779e1630fedb8f"
                 }
             ]
         },

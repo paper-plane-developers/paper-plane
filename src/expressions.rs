@@ -85,9 +85,9 @@ fn restriction_label_expression<T: glib::StaticType, V: glib::ToValue>(
     gtk::ClosureExpression::new::<String>(
         &[member_status_expression, permissions_expression],
         closure!(|_: glib::Object, status: BoxedChatMemberStatus, chat_permissions: BoxedChatPermissions| {
-            if chat_permissions.0.can_send_messages {
+            if chat_permissions.0.can_send_basic_messages {
                 match status.0 {
-                    ChatMemberStatus::Restricted(status) if !status.permissions.can_send_messages => {
+                    ChatMemberStatus::Restricted(status) if !status.permissions.can_send_basic_messages => {
                         if status.restricted_until_date == 0 {
                             gettext("The admins of this group have restricted you from writing here")
                         } else {
