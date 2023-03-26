@@ -167,11 +167,15 @@ impl Application {
             .copyright("© 2021–2022 Marco Melorio")
             .license_type(gtk::License::Gpl30)
             .developers([
+                "Karol Lademan https://github.com/karl0d",
                 "Marco Melorio https://github.com/melix99",
                 "Marcus Behrendt https://github.com/marhkb",
-                "Carlod https://github.com/just-carlod",
+                "Yuri Izmer https://github.com/yuraiz",
             ])
-            .designers(["Marco Melorio https://github.com/melix99"])
+            .designers([
+                "Marco Melorio https://github.com/melix99",
+                "Yuri Izmer https://github.com/yuraiz",
+            ])
             .artists([
                 "Mateus Santos https://github.com/swyknox",
                 "noëlle https://github.com/jannuary",
