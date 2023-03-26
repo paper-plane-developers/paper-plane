@@ -22,7 +22,6 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-event-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-document.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-photo.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">ui/content-message-sticker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-text.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-send-photo-dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>

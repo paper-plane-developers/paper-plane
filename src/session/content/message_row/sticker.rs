@@ -1,19 +1,20 @@
 use adw::prelude::*;
-use glib::clone;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
-use tdlib::enums::MessageContent;
+use gtk::{glib, CompositeTemplate};
+use tdlib::enums::{MessageContent, StickerFullType};
 
+use crate::components::Sticker;
 use crate::session::content::message_row::{
-    MessageBase, MessageBaseImpl, MessageIndicators, MessageReply, StickerPicture,
+    MessageBase, MessageBaseImpl, MessageIndicators, MessageReply,
 };
 use crate::tdlib::Message;
-use crate::utils::{decode_image_from_path, spawn};
-use crate::Session;
 
 use super::base::MessageBaseExt;
 
 const MAX_REPLY_CHAR_WIDTH: i32 = 18;
+
+const STICKER_SIZE: i32 = 176;
+const EMOJI_SIZE: i32 = 112;
 
 mod imp {
     use super::*;
@@ -21,13 +22,35 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-sticker.ui")]
+    #[template(string = r#"
+    template MessageSticker : .MessageBase {
+        layout-manager: BoxLayout {};
+
+        Overlay overlay {
+            GestureClick click {
+                button: 1;
+
+                released => on_pressed() swapped;
+            }
+
+            .ComponentsSticker sticker {}
+
+            [overlay]
+            .MessageIndicators indicators {
+            halign: end;
+            valign: end;
+            }
+        }
+    }
+    "#)]
     pub(crate) struct MessageSticker {
         pub(super) message: RefCell<Option<Message>>,
         #[template_child]
-        pub(super) picture: TemplateChild<StickerPicture>,
+        pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
-        pub(super) sticker_overlay: TemplateChild<gtk::Overlay>,
+        pub(super) click: TemplateChild<gtk::GestureClick>,
+        #[template_child]
+        pub(super) sticker: TemplateChild<Sticker>,
         #[template_child]
         pub(super) indicators: TemplateChild<MessageIndicators>,
     }
@@ -40,6 +63,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
             klass.set_css_name("messagesticker");
         }
 
@@ -77,6 +101,16 @@ mod imp {
 
     impl WidgetImpl for MessageSticker {}
     impl MessageBaseImpl for MessageSticker {}
+
+    #[gtk::template_callbacks]
+    impl MessageSticker {
+        #[template_callback]
+        fn on_pressed(&self, _n_press: i32, _x: f64, _y: f64) {
+            // TODO: animated emoji needs to play
+            // effect when someone clicks on it
+            self.sticker.play_animation();
+        }
+    }
 }
 
 glib::wrapper! {
@@ -109,69 +143,45 @@ impl MessageBaseExt for MessageSticker {
             // FIXME: Do not show message reply when message is being deleted
             // Sticker and the reply should be at the opposite sides of the box
             if message.is_outgoing() {
-                reply.insert_before(self, Some(&imp.sticker_overlay.get()));
+                reply.insert_before(self, Some(&imp.overlay.get()));
             } else {
-                reply.insert_after(self, Some(&imp.sticker_overlay.get()));
+                reply.insert_after(self, Some(&imp.overlay.get()));
             }
         }
-        imp.picture.set_texture(None);
 
-        if let MessageContent::MessageSticker(data) = message.content().0 {
-            self.imp()
-                .picture
-                .set_aspect_ratio(data.sticker.width as f64 / data.sticker.height as f64);
-
-            if data.sticker.sticker.local.is_downloading_completed {
-                self.load_sticker(data.sticker.sticker.local.path);
-            } else {
-                let file_id = data.sticker.sticker.id;
-                let session = message.chat().session();
-
-                spawn(clone!(@weak self as obj, @weak session => async move {
-                    obj.download_sticker(file_id, &session).await;
-                }));
+        let (sticker, looped, is_emoji) = match message.content().0 {
+            MessageContent::MessageSticker(data) => {
+                let sticker = data.sticker;
+                (sticker, true, false)
             }
+            MessageContent::MessageAnimatedEmoji(data) => {
+                let sticker = data.animated_emoji.sticker.unwrap();
+                let looped = matches!(sticker.full_type, StickerFullType::CustomEmoji(_));
+                (sticker, looped, true)
+            }
+            _ => unreachable!(),
+        };
+
+        // TODO: that should be handled a bit better in the future
+        match &sticker.full_type {
+            StickerFullType::CustomEmoji(data) if data.needs_repainting => {
+                self.add_css_class("needs-repainting")
+            }
+            _ => self.remove_css_class("needs-repainting"),
         }
+
+        let (size, margin_bottom) = if is_emoji {
+            (EMOJI_SIZE, 8)
+        } else {
+            (STICKER_SIZE, 0)
+        };
+
+        imp.sticker.set_longer_side_size(size);
+        imp.sticker.set_margin_bottom(margin_bottom);
+
+        imp.sticker
+            .update_sticker(sticker, looped, message.chat().session());
 
         self.notify("message");
-    }
-}
-
-impl MessageSticker {
-    async fn download_sticker(&self, file_id: i32, session: &Session) {
-        match session.download_file(file_id).await {
-            Ok(file) => {
-                self.load_sticker(file.local.path);
-            }
-            Err(e) => {
-                log::warn!("Failed to download a sticker: {e:?}");
-            }
-        }
-    }
-
-    fn load_sticker(&self, path: String) {
-        let message_id = self.message().id();
-
-        spawn(clone!(@weak self as obj => async move {
-            let result = gio::spawn_blocking(move || decode_image_from_path(&path))
-                .await
-                .unwrap();
-
-            // Check if the current message id is the same as the one at
-            // the time of the request. It may be changed because of the
-            // ListView recycling while decoding the image.
-            if obj.message().id() != message_id {
-                return;
-            }
-
-            match result {
-                Ok(texture) => {
-                    obj.imp().picture.set_texture(Some(texture.upcast()));
-                }
-                Err(e) => {
-                    log::warn!("Error decoding a sticker: {e:?}");
-                }
-            }
-        }));
     }
 }

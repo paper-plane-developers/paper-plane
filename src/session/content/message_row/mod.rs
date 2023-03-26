@@ -7,7 +7,6 @@ mod media_picture;
 mod photo;
 mod reply;
 mod sticker;
-mod sticker_picture;
 mod text;
 mod video;
 
@@ -20,7 +19,6 @@ use self::media_picture::MediaPicture;
 use self::photo::MessagePhoto;
 use self::reply::MessageReply;
 use self::sticker::MessageSticker;
-use self::sticker_picture::StickerPicture;
 use self::text::MessageText;
 use self::video::MessageVideo;
 
@@ -333,11 +331,17 @@ impl MessageRow {
                 MessageContent::MessageAnimation(_) /*| MessageContent::MessageVideo(_)*/ => {
                     self.update_specific_content::<_, MessageVideo>(message_.clone());
                 }
+                MessageContent::MessageAnimatedEmoji(data)
+                    if data.animated_emoji.sticker.clone().map(
+                        |s| matches!(s.format, StickerFormat::Webp | StickerFormat::Tgs)
+                    ).unwrap_or_default() => {
+                    self.update_specific_content::<_, MessageSticker>(message_.clone());
+                }
                 MessageContent::MessagePhoto(_) => {
                     self.update_specific_content::<_, MessagePhoto>(message_.clone());
                 }
                 MessageContent::MessageSticker(data)
-                    if data.sticker.format == StickerFormat::Webp =>
+                    if matches!(data.sticker.format, StickerFormat::Webp | StickerFormat::Tgs) =>
                 {
                     self.update_specific_content::<_, MessageSticker>(message_.clone());
                 }

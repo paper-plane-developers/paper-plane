@@ -369,10 +369,9 @@ impl SessionManager {
         spawn(async move {
             send_log_level(client_id).await;
 
-            // TODO: Hopefully we'll support animated emoji at some point
-            let result = disable_animated_emoji(client_id, true).await;
+            let result = disable_animated_emoji(client_id, false).await;
             if let Err(e) = result {
-                log::warn!("Error disabling animated emoji: {:?}", e);
+                log::warn!("Error enabling animated emoji: {:?}", e);
             }
         });
     }
@@ -385,10 +384,9 @@ impl SessionManager {
         spawn(async move {
             send_log_level(client_id).await;
 
-            // TODO: Hopefully we'll support animated emoji at some point
-            let result = disable_animated_emoji(client_id, true).await;
+            let result = disable_animated_emoji(client_id, false).await;
             if let Err(e) = result {
-                log::warn!("Error disabling animated emoji: {:?}", e);
+                log::warn!("Error enabling animated emoji: {:?}", e);
             }
         });
     }
