@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use gettextrs::gettext;
 use gtk::gdk;
 use gtk::glib;
+use gtk::graphene;
 use image::io::Reader as ImageReader;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
@@ -282,4 +283,13 @@ pub(crate) fn decode_image_from_path(path: &str) -> Result<gdk::MemoryTexture, D
     );
 
     Ok(texture)
+}
+
+pub fn color_matrix_from_color(color: gdk::RGBA) -> (graphene::Matrix, graphene::Vec4) {
+    let color_offset = graphene::Vec4::new(color.red(), color.green(), color.blue(), 0.0);
+    let mut matrix = [0.0; 16];
+    matrix[15] = color.alpha();
+    let color_matrix = graphene::Matrix::from_float(matrix);
+
+    (color_matrix, color_offset)
 }

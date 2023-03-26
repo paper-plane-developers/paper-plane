@@ -27,6 +27,10 @@ messagebubble.document.outgoing .file > overlay > statusindicator {
   background-color: alpha(#404040, 0.8);
 }
 
+vectorpath {
+  color: alpha(#404040, 0.8);
+}
+
 .chat-list row .unread-count-muted {
   background-color: @dark_2;
 }
