@@ -7,6 +7,10 @@ messagesticker.needs-repainting > overlay > widget > widget {
   filter: invert(1);
 }
 
+vectorpath {
+  color: alpha(#404040, 0.8);
+}
+
 .chat-list row .unread-count-muted {
   background-color: @dark_2;
 }

@@ -6,6 +6,7 @@ use gtk::{gio, glib};
 use tdlib::enums::StickerFormat;
 use tdlib::types::Sticker as TdSticker;
 
+use super::VectorPath;
 use crate::session::Session;
 use crate::utils::{decode_image_from_path, spawn};
 
@@ -52,11 +53,15 @@ mod imp {
     }
 
     impl WidgetImpl for Sticker {
-        fn measure(&self, orientation: gtk::Orientation, _for_size: i32) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             let size = self.longer_side_size.get();
             let aspect_ratio = self.aspect_ratio.get();
 
-            let min_size = 1;
+            let min_size = if let Some(child) = &*self.child.borrow_mut() {
+                child.measure(orientation, for_size).0
+            } else {
+                1
+            };
 
             let size = if let gtk::Orientation::Horizontal = orientation {
                 if aspect_ratio >= 1.0 {
@@ -103,8 +108,7 @@ impl Sticker {
             return;
         }
 
-        // TODO: draw sticker outline with cairo
-        self.set_child(None);
+        self.set_child(Some(VectorPath::new(&sticker.outline).upcast()));
 
         let aspect_ratio = sticker.width as f64 / sticker.height as f64;
         imp.aspect_ratio.set(aspect_ratio);
