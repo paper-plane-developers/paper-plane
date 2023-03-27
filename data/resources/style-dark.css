@@ -2,11 +2,6 @@
   background-color: @dark_2;
 }
 
-/* sticker must be repainted to a text color in messages */
-messagesticker.needs-repainting > overlay > widget > widget {
-  filter: invert(1);
-}
-
 .chat-list row .unread-count-muted {
   background-color: @dark_2;
 }
