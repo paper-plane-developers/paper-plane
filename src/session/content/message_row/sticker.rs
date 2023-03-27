@@ -165,14 +165,6 @@ impl MessageBaseExt for MessageSticker {
             _ => unreachable!(),
         };
 
-        // TODO: that should be handled a bit better in the future
-        match &sticker.full_type {
-            StickerFullType::CustomEmoji(data) if data.needs_repainting => {
-                self.add_css_class("needs-repainting")
-            }
-            _ => self.remove_css_class("needs-repainting"),
-        }
-
         let (size, margin_bottom) = if is_emoji {
             (EMOJI_SIZE, 8)
         } else {
