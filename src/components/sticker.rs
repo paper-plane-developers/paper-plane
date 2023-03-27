@@ -8,7 +8,7 @@ use tdlib::types::Sticker as TdSticker;
 
 use super::VectorPath;
 use crate::session::Session;
-use crate::utils::{decode_image_from_path, spawn};
+use crate::utils::{color_matrix_from_color, decode_image_from_path, spawn};
 
 mod imp {
     use super::*;
@@ -19,6 +19,8 @@ mod imp {
     pub(crate) struct Sticker {
         pub(super) file_id: Cell<i32>,
         pub(super) aspect_ratio: Cell<f64>,
+        pub(super) recolor: Cell<bool>,
+        pub(super) is_loaded: Cell<bool>,
         pub(super) child: RefCell<Option<gtk::Widget>>,
 
         #[property(get, set = Self::set_longer_side_size)]
@@ -84,6 +86,17 @@ mod imp {
                 child.allocate(width, height, baseline, None);
             }
         }
+
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            if self.recolor.get() && self.is_loaded.get() {
+                let (color_matrix, color_offset) = color_matrix_from_color(self.obj().color());
+                snapshot.push_color_matrix(&color_matrix, &color_offset);
+                self.parent_snapshot(snapshot);
+                snapshot.pop();
+            } else {
+                self.parent_snapshot(snapshot);
+            }
+        }
     }
 
     impl Sticker {
@@ -108,10 +121,14 @@ impl Sticker {
             return;
         }
 
-        self.set_child(Some(VectorPath::new(&sticker.outline).upcast()));
+        self.set_child(VectorPath::new(&sticker.outline).upcast(), false);
 
         let aspect_ratio = sticker.width as f64 / sticker.height as f64;
         imp.aspect_ratio.set(aspect_ratio);
+
+        let recolor = matches!(&sticker.full_type,
+            tdlib::enums::StickerFullType::CustomEmoji(data) if data.needs_repainting);
+        imp.recolor.set(recolor);
 
         let format = sticker.format;
 
@@ -185,18 +202,17 @@ impl Sticker {
 
         // Skip if widget was recycled by ListView
         if self.imp().file_id.get() == file_id {
-            self.set_child(Some(widget));
+            self.set_child(widget, true);
         }
     }
 
-    fn set_child(&self, child: Option<gtk::Widget>) {
+    fn set_child(&self, child: gtk::Widget, is_loaded: bool) {
         let imp = self.imp();
+        imp.is_loaded.set(is_loaded);
 
-        if let Some(ref child) = child {
-            child.set_parent(self);
-        }
+        child.set_parent(self);
 
-        if let Some(old) = imp.child.replace(child) {
+        if let Some(old) = imp.child.replace(Some(child)) {
             old.unparent()
         }
     }
