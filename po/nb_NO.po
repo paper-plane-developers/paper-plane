@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-10-01 21:17+0000\n"
-"Last-Translator: Bror-Lauritz Størkersen <protonic_preconclusion@relaemail."
-"com>\n"
+"PO-Revision-Date: 2023-03-27 13:37+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "telegrand/telegrand/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -18,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.17-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -106,15 +105,15 @@ msgstr "Talemelding"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Avblokker"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Ta del"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Rull til bunnen"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
@@ -127,7 +126,7 @@ msgstr "Søk i sludringer"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
-msgstr ""
+msgstr "Undertekst"
 
 #: data/resources/ui/login.blp:25
 msgid "_Previous"
@@ -139,7 +138,7 @@ msgstr "_Neste"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "Velkommen"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
@@ -165,7 +164,7 @@ msgstr "Kode"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Koden har utløpt."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
@@ -241,11 +240,11 @@ msgstr "_Har du ikke tilgang til e-postkontoen?"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Svar"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Rediger"
 
 #: data/resources/ui/message-menu.blp:18
 #, fuzzy
@@ -259,7 +258,7 @@ msgstr "_Slett konto"
 
 #: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
@@ -275,7 +274,7 @@ msgstr "Mørk drakt"
 
 #: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
-msgstr ""
+msgstr "Lagring"
 
 #: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
@@ -283,7 +282,7 @@ msgstr ""
 
 #: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
-msgstr ""
+msgstr "Tøm hurtiglagring"
 
 #: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
@@ -319,7 +318,7 @@ msgstr "Sludreliste"
 #: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Send bilde fra utklippstavlen"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -327,7 +326,7 @@ msgstr "_Logg ut"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Kontakter"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -343,19 +342,19 @@ msgstr "_Om Telegrand"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Fest"
 
 #: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
-msgstr ""
+msgstr "_Løsne"
 
 #: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "_Marker som ulest"
 
 #: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
-msgstr ""
+msgstr "Marker som _lest"
 
 #: data/resources/ui/sidebar-search.ui:12
 #, fuzzy
@@ -369,7 +368,7 @@ msgstr "Søk i sludringer"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Prøv et annet søk."
 
 #: src/application.rs:166
 #, fuzzy
@@ -378,7 +377,7 @@ msgstr "Telegrand"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Sponsorer"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
 #: src/session/sidebar/search/mod.rs:205
@@ -393,7 +392,7 @@ msgstr "_Slett konto"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Administratorene i denne gruppen tillater deg ikke å skrive her"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -413,7 +412,7 @@ msgstr "%e %B %Y"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "Skriving av meldinger tillates ikke i denne gruppen."
 
 #: src/login.rs:372
 #, fuzzy
@@ -447,12 +446,12 @@ msgstr "Godtar du tjenestevilkårene?"
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_No"
-msgstr ""
+msgstr "_Nei"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
-msgstr ""
+msgstr "_Ja"
 
 #: src/login.rs:680
 msgid "Terms of Service"
@@ -460,7 +459,7 @@ msgstr "Tjenestevilkår"
 
 #: src/login.rs:681 src/login.rs:991
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: src/login.rs:903
 msgid "Warning"
@@ -480,7 +479,7 @@ msgstr ""
 
 #: src/login.rs:911
 msgid "_Cancel"
-msgstr ""
+msgstr "_Avbryt"
 
 #: src/login.rs:984
 msgid "Sorry"
@@ -504,17 +503,17 @@ msgstr "Telegrand"
 #. Translators: This is an authentication method
 #: src/login.rs:1060
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1062
 msgid "Call"
-msgstr ""
+msgstr "Oppringing"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1064
 msgid "Flash Call"
-msgstr ""
+msgstr "Hurtigoppringing"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -525,39 +524,41 @@ msgstr "Tapt anrop"
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Du har skrevet inn en ugyldig landskode."
 
 #: src/strings.rs:28
 msgid "{sender} is choosing a contact"
-msgstr ""
+msgstr "{sender} velger en kontakt"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} og {sender2} velger kontakter"
 
 #: src/strings.rs:39
 msgid "{num} people are choosing contacts"
-msgstr ""
+msgstr "{num} folk velger kontakter"
 
 #: src/strings.rs:44
+#, fuzzy
 msgid "choosing a contact"
-msgstr ""
+msgstr "velger en kontakt"
 
 #: src/strings.rs:51
 msgid "{sender} is choosing a location"
-msgstr ""
+msgstr "{sender} velger et sted"
 
 #: src/strings.rs:55
+#, fuzzy
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} og {sender2} velger steder"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
-msgstr ""
+msgstr "{num} folk velger steder"
 
 #: src/strings.rs:67
 msgid "choosing a location"
