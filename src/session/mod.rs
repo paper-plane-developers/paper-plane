@@ -72,7 +72,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
-            klass.install_action("content.go-back", None, move |widget, _, _| {
+            klass.install_action("session.go-back", None, move |widget, _, _| {
                 widget
                     .imp()
                     .leaflet
