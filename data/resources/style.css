@@ -359,7 +359,6 @@ messagesticker {
 
 .message-entry > overlay > entry {
   padding: 0 9px;
-  border-radius: 18px;
 }
 
 .message-entry > overlay > entry > scrolledwindow > scrollbar {
@@ -398,6 +397,6 @@ window.chat-info .main-page > list {
   margin-top: 12px;
 }
 
-.squared {
-  border-radius: 0;
+.small-pill {
+  border-radius: 18px;
 }
