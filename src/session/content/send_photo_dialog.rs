@@ -1,6 +1,6 @@
+use adw::subclass::prelude::*;
 use glib::clone;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::{InputFile, InputMessageContent};
 use tdlib::functions;
@@ -23,8 +23,6 @@ mod imp {
         pub(super) path: OnceCell<String>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         #[template_child]
-        pub(super) header_bar: TemplateChild<gtk::HeaderBar>,
-        #[template_child]
         pub(super) picture: TemplateChild<gtk::Picture>,
         #[template_child]
         pub(super) caption_entry: TemplateChild<MessageEntry>,
@@ -34,7 +32,7 @@ mod imp {
     impl ObjectSubclass for SendPhotoDialog {
         const NAME: &'static str = "ContentSendPhotoDialog";
         type Type = super::SendPhotoDialog;
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
@@ -102,11 +100,12 @@ mod imp {
 
     impl WidgetImpl for SendPhotoDialog {}
     impl WindowImpl for SendPhotoDialog {}
+    impl AdwWindowImpl for SendPhotoDialog {}
 }
 
 glib::wrapper! {
     pub(crate) struct SendPhotoDialog(ObjectSubclass<imp::SendPhotoDialog>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
 impl SendPhotoDialog {

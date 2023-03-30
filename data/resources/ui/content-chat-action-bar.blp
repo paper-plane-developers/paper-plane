@@ -1,4 +1,5 @@
 using Gtk 4.0;
+using Adw 1;
 
 template ContentChatActionBar  {
   Revealer top_bar_revealer {
@@ -88,32 +89,51 @@ template ContentChatActionBar  {
       };
     }
     StackPage {
-        name: "unblock";
-        child: Button {
-          styles ["error", "flat", "squared"]
+      name: "unblock";
+      child: Adw.Clamp {
+        maximum-size: 360;
+        tightening-threshold: 360;
 
+        styles ["toolbar"]
+
+        child: Button {
           action-name: "chat-action-bar.unblock-chat";
           label: _("Unblock");
+
+          styles ["error", "small-pill"]
         };
+      };
     }
     StackPage {
-        name: "mute";
+      name: "mute";
+      child: Adw.Clamp {
+        maximum-size: 360;
+        tightening-threshold: 360;
+
+        styles ["toolbar"]
+
         child: Button mute_button {
-          styles ["accent", "flat", "squared"]
-
           action-name: "chat-action-bar.toggle-mute";
+
+          styles ["accent", "small-pill"]
         };
+      };
     }
     StackPage {
-        name: "join";
-        child:  Button {
-          styles ["accent", "flat", "squared"]
+      name: "join";
+      child: Adw.Clamp {
+        maximum-size: 360;
+        tightening-threshold: 360;
 
+        styles ["toolbar"]
+
+        child: Button {
           action-name: "chat-action-bar.join-chat";
           label: _("Join");
+
+          styles ["accent", "small-pill"]
         };
+      };
     }
-
-
   }
 }

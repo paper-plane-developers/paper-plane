@@ -39,7 +39,7 @@ mod imp {
         #[template_child]
         pub(super) stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub(super) unselected_chat: TemplateChild<gtk::Box>,
+        pub(super) unselected_chat_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
         pub(super) chat_history: TemplateChild<ChatHistory>,
     }
@@ -137,7 +137,7 @@ impl Content {
         if chat.is_some() {
             imp.stack.set_visible_child(&imp.chat_history.get());
         } else {
-            imp.stack.set_visible_child(&imp.unselected_chat.get());
+            imp.stack.set_visible_child(&imp.unselected_chat_view.get());
         }
 
         imp.chat.replace(chat);

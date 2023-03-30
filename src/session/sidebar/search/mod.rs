@@ -32,7 +32,7 @@ mod imp {
         pub(super) session: RefCell<Option<Session>>,
         pub(super) compact: Cell<bool>,
         #[template_child]
-        pub(super) content: TemplateChild<gtk::Box>,
+        pub(super) toolbar_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
         pub(super) search_entry: TemplateChild<gtk::SearchEntry>,
         #[template_child]
@@ -121,7 +121,7 @@ mod imp {
         }
 
         fn dispose(&self) {
-            self.content.unparent();
+            self.dispose_template();
         }
     }
 

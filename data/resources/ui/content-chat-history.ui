@@ -2,9 +2,8 @@
 <interface>
   <template class="ContentChatHistory" parent="AdwBin">
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
+      <object class="AdwToolbarView">
+        <child type="top">
           <object class="GtkOverlay">
             <child>
               <object class="AdwHeaderBar">
@@ -34,7 +33,7 @@
             </child>
           </object>
         </child>
-        <child>
+        <property name="content">
           <object class="GtkOverlay">
             <child type="overlay">
               <object class="GtkRevealer">
@@ -88,9 +87,6 @@
               <object class="GtkScrolledWindow" id="scrolled_window">
                 <property name="vexpand">True</property>
                 <property name="hscrollbar-policy">never</property>
-                <style>
-                  <class name="view"/>
-                </style>
                 <property name="child">
                   <object class="AdwClampScrollable">
                     <property name="maximum-size">800</property>
@@ -128,11 +124,8 @@
               </object>
             </child>
           </object>
-        </child>
-        <child>
-          <object class="GtkSeparator"/>
-        </child>
-        <child>
+        </property>
+        <child type="bottom">
           <object class="AdwClamp">
             <property name="maximum-size">800</property>
             <property name="tightening-threshold">600</property>

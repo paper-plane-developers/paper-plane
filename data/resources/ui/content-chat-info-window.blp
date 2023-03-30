@@ -8,18 +8,15 @@ template ContentChatInfoWindow : Adw.Window {
   modal: true;
 
   content: Adw.ToastOverlay toast_overlay {
-    child: Box {
-      orientation: vertical;
-
+    child: Adw.ToolbarView {
+      [top]
       HeaderBar {
-        styles ["flat"]
-
         title-widget: Adw.WindowTitle {
           visible: false;
         };
       }
 
-      Adw.Clamp {
+      content: Adw.Clamp {
         child: Box {
           styles ["main-page"]
 
@@ -48,7 +45,7 @@ template ContentChatInfoWindow : Adw.Window {
             selection-mode: none;
           }
         };
-      }
+      };
     };
   };
 }
