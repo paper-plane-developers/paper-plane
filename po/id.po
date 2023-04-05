@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-06-15 04:19+0000\n"
-"Last-Translator: ᅟ <rmnscnce@ya.ru>\n"
+"PO-Revision-Date: 2023-04-06 20:48+0000\n"
+"Last-Translator: Reza Almanda <rezaalmanda27@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/id/>\n"
 "Language: id\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Weblate 4.17-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -58,6 +58,8 @@ msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
+"Daftar sesi yang paling baru digunakan, diurutkan berdasarkan nama direktori "
+"basis data mereka"
 
 #: data/com.github.melix99.telegrand.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
@@ -78,16 +80,15 @@ msgstr "Marco Melorio"
 
 #: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
-msgstr ""
+msgstr "_Server Produksi"
 
 #: data/resources/ui/add-account-row.blp:11
 msgid "_Test Server"
-msgstr ""
+msgstr "_Server Uji"
 
 #: data/resources/ui/add-account-row.blp:33
-#, fuzzy
 msgid "_Add Account"
-msgstr "_Hapus Akun"
+msgstr "_Tambah Akun"
 
 #: data/resources/ui/content.blp:29
 msgid "No Chat Selected"
@@ -99,32 +100,31 @@ msgstr "Pilih sebuah obrolan untuk mulai mengobrol."
 
 #: data/resources/ui/content-chat-action-bar.blp:68
 msgid "Message"
-msgstr ""
+msgstr "Pesan"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Buka blokir"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Bergabung"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "Gulir ke bawah"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Lihat Info"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Cari Obrolan"
+msgstr "Tinggalkan Obrolan"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
-msgstr ""
+msgstr "Keterangan"
 
 #: data/resources/ui/login.blp:25
 msgid "_Previous"
@@ -136,7 +136,7 @@ msgstr "S_esudah"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "Selamat Datang"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
@@ -144,7 +144,7 @@ msgstr "_Masuk dengan kode QR"
 
 #: data/resources/ui/login.blp:127
 msgid "Scan Code"
-msgstr ""
+msgstr "Pindai Kode"
 
 #: data/resources/ui/login.blp:128
 msgid "Scan this code with another Telegram app logged into your account."
@@ -160,7 +160,7 @@ msgstr "Kode"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Kode tidak dapat dikirim lagi."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
