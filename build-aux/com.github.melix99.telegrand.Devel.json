@@ -94,7 +94,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/ximion/appstream.git"
+                    "url": "https://github.com/ximion/appstream.git",
+                    "branch": "main"
                 }
             ],
             "modules": [
