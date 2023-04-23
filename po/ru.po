@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-04-23 14:46+0000\n"
+"PO-Revision-Date: 2023-04-23 14:47+0000\n"
 "Last-Translator: \"Кроватко Одеялкин (Кроватко)\" <krovatko228@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/ru/>\n"
@@ -519,7 +519,7 @@ msgstr "выбирает контакт"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} и {sender2} выбирают контакты"
 
 #: src/strings.rs:39
 #, fuzzy
