@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-02-27 18:38+0000\n"
+"PO-Revision-Date: 2023-04-23 14:46+0000\n"
 "Last-Translator: yuraiz <7516890@gmail.com>\n"
 "Language-Team: Belarusian <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/be/>\n"
@@ -16,9 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -318,7 +318,7 @@ msgstr "_Выйсці"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Кантакты"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -513,144 +513,128 @@ msgid "You entered an invalid country code."
 msgstr "Вы ўвялі памылковы код краіны."
 
 #: src/strings.rs:28
-#, fuzzy
 msgid "{sender} is choosing a contact"
-msgstr "выбірае кантакт"
+msgstr "{sender} выбірае кантакт"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} і {sender2} выбіраюць кантакты"
 
 #: src/strings.rs:39
-#, fuzzy
 msgid "{num} people are choosing contacts"
-msgstr "выбірае кантакт"
+msgstr "{num} чалавек выбіраюць кантакты"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
 msgstr "выбірае кантакт"
 
 #: src/strings.rs:51
-#, fuzzy
 msgid "{sender} is choosing a location"
-msgstr "выбірае лакацыю"
+msgstr "{sender} выбірае лакацыю"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} і {sender2} выбіраюць лакацыю"
 
 #: src/strings.rs:62
-#, fuzzy
 msgid "{num} people are choosing locations"
-msgstr "выбірае лакацыю"
+msgstr "{num} чалавек выбіраюць лакацыю"
 
 #: src/strings.rs:67
 msgid "choosing a location"
 msgstr "выбірае лакацыю"
 
 #: src/strings.rs:74
-#, fuzzy
 msgid "{sender} is choosing a sticker"
-msgstr "{sender} замацаваў(ла) стыкер"
+msgstr "{sender} выбірае стыкер"
 
 #: src/strings.rs:78
-#, fuzzy
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr "{sender} замацаваў(ла) стыкер"
+msgstr "{sender1} і {sender2} выбіраюць стыкеры"
 
 #: src/strings.rs:85
-#, fuzzy
 msgid "{num} people are choosing stickers"
-msgstr "выбірае стыкер"
+msgstr "{num} чалавек выбіраюць стыкеры"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
 msgstr "выбірае стыкер"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "{sender} замацаваў(ла) відэа"
+msgstr "{sender} запісвае відэа"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "{sender1} і {sender2} запісваюць відэа"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "запісвае відэа"
+msgstr "{num} чалавек запісваюць відэа"
 
 #: src/strings.rs:113
 msgid "recording a video"
 msgstr "запісвае відэа"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
-msgstr "запісвае відэапаведамленне"
+msgstr "{sender} запісвае відэапаведамленне"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "{sender1} і {sender2} запісваюць відэапаведамленні"
 
 #: src/strings.rs:131
-#, fuzzy
 msgid "{num} people are recording video notes"
-msgstr "запісвае відэапаведамленне"
+msgstr "{num} чалавек запісваюць відэапаведамленні"
 
 #: src/strings.rs:136
 msgid "recording a video note"
 msgstr "запісвае відэапаведамленне"
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
-msgstr "запісвае галасавое паведамленне"
+msgstr "{sender} запісвае галасавое паведамленне"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "{sender1} і {sender2} запісваюць галасавыя паведамленні"
 
 #: src/strings.rs:154
-#, fuzzy
 msgid "{num} people are recording voice notes"
-msgstr "запісвае галасавое паведамленне"
+msgstr "{num} чалавек запісваюць галасавыя паведамленні"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
 msgstr "запісвае галасавое паведамленне"
 
 #: src/strings.rs:166
-#, fuzzy
 msgid "{sender} is playing a game"
-msgstr "гуляе"
+msgstr "{sender} гуляе ў гульню"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "{sender1} і {sender2} гуляюць ў гульні"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{num} чалавек гуляюць ў гульні"
 
 #: src/strings.rs:182
 msgid "playing a game"
 msgstr "гуляе"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
-msgstr "{sender} набраў(-ла) {points}"
+msgstr "{sender} піша"
 
 #: src/strings.rs:193
-#, fuzzy
 msgid "{sender1} and {sender2} are typing"
-msgstr "{sender} дадаў(ла) {users}"
+msgstr "{sender1} і {sender2} пішуць"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} чалавек пішуць"
 
 #: src/strings.rs:202
 msgid "typing"
@@ -658,106 +642,95 @@ msgstr "пиша"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "{sender} адпраўляе файл ({progress}%)"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "{sender1} і {sender2} адпраўляюць файлы"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} чалавек адпраўляюць файлы"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "адпраўляе файл ({progress}%)"
 
 #: src/strings.rs:238
-#, fuzzy
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "{sender} замацаваў(ла) фота"
+msgstr "{sender} адпраўляе фота ({progress}%)"
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr "{sender} абнавіл(а) аватар суполкі"
+msgstr "{sender1} і {sender2} адпраўляюць фота"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} чалавек адпраўляюць фота"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "адпраўляе фота"
 
 #: src/strings.rs:267
-#, fuzzy
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr "{sender} замацаваў(ла) відэапаведамленне"
+msgstr "{sender} адпраўляе відэа ({progress}%)"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "{sender1} і {sender2} адпраўляюць відэа"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} чалавек адпраўляюць відэа"
 
 #: src/strings.rs:287
-#, fuzzy
 msgid "uploading a video ({progress}%)"
-msgstr "запісвае відэапаведамленне"
+msgstr "адпраўляе відэа ({progress}%)"
 
 #: src/strings.rs:296
-#, fuzzy
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} замацаваў(ла) відэапаведамленне"
+msgstr "{sender} адпраўляе відэапаведамленне ({progress}%)"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "{sender1} і {sender2} адпраўляюць відэапаведамленні"
 
 #: src/strings.rs:310
-#, fuzzy
 msgid "{num} people are uploading video notes"
-msgstr "запісвае відэапаведамленне"
+msgstr "{num} чалавек адпраўляюць відэапаведамленні"
 
 #: src/strings.rs:316
-#, fuzzy
 msgid "uploading a video note ({progress}%)"
-msgstr "запісвае відэапаведамленне"
+msgstr "адпраўляе відэапаведамленне ({progress}%)"
 
 #: src/strings.rs:325
-#, fuzzy
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr "{sender} замацаваў(ла) галасавое паведамленне"
+msgstr "{sender} адпраўляе галасавое паведамленне ({progress}%)"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "{sender1} і {sender2} адпраўляюць галасавыя паведамленні"
 
 #: src/strings.rs:339
-#, fuzzy
 msgid "{num} people are uploading voice notes"
-msgstr "запісвае галасавое паведамленне"
+msgstr "{num} чалавек адпраўляюць галасавыя паведамленні"
 
 #: src/strings.rs:345
-#, fuzzy
 msgid "uploading a voice note ({progress}%)"
-msgstr "запісвае галасавое паведамленне"
+msgstr "адпраўляе галасавое паведамленне ({progress}%)"
 
 #: src/strings.rs:354
-#, fuzzy
 msgid "{sender} is watching an animation {emoji}"
-msgstr "праглядае анімацыю"
+msgstr "{sender] праглядае анімацыю {emoji}"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1] і {sender2} праглядаюць анімацыi"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} чалавек праглядаюць анімацыi"
 
 #: src/strings.rs:374
 msgid "watching an animation"
@@ -1150,7 +1123,7 @@ msgstr "Пацвердзіць выдаленне паведамлення"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "Загрузка…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"

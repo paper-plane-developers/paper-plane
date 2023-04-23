@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: telegrand\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-03-19 11:37+0000\n"
+"PO-Revision-Date: 2023-04-23 14:46+0000\n"
 "Last-Translator: devlocalhost <lazarecobani@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/telegrand/"
 "telegrand/el/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.2-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:3
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
@@ -28,7 +28,7 @@ msgstr "Telegrand"
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr ""
+msgstr "Ένας πελάτης Telegram βελτιστοποιήθηκε για την επιφάνεια εργασίας GNOME"
 
 #: data/com.github.melix99.telegrand.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -76,7 +76,7 @@ msgstr "Κύριο παράθυρο"
 
 #: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
 msgid "Marco Melorio"
-msgstr "Marco Melorio"
+msgstr "Μάρκος Μελοριο"
 
 #: data/resources/ui/add-account-row.blp:6
 msgid "_Production Server"
@@ -243,7 +243,7 @@ msgstr "_Επεξεργασία"
 
 #: data/resources/ui/message-menu.blp:18
 msgid "Delete for Ever_yone"
-msgstr ""
+msgstr "Διαγραφή για _Ολους"
 
 #: data/resources/ui/message-menu.blp:24
 msgid "_Delete for Me"
@@ -508,7 +508,7 @@ msgstr "Αναπάντητη Κλήση"
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "Fragment"
-msgstr ""
+msgstr "Fragment"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
@@ -600,7 +600,7 @@ msgstr "Ο/Η {sender} ηχογραφεί μια φωνητική σημείωσ
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr "Ο/Η και Ο/Η ηχογραφούν μια φωνητική σημείωση"
+msgstr "Ο/Η {sender1} και Ο/Η {sender2} ηχογραφούν μια φωνητική σημείωση"
 
 #: src/strings.rs:154
 msgid "{num} people are recording voice notes"
@@ -620,7 +620,7 @@ msgstr "Ο/Η {sender1} και Ο/Η {sender2} παίζουν ένα παιχν�
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr "{} άτομα παίζουν ένα παιχνίδι"
+msgstr "{num} άτομα παίζουν ένα παιχνίδι"
 
 #: src/strings.rs:182
 msgid "playing a game"
@@ -660,7 +660,7 @@ msgstr "ανεβάζοντας ένα έγγραφο ({progress}%)"
 
 #: src/strings.rs:238
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "Ο/Η ανεβάζει μια φωτογραφία ({progress}%)"
+msgstr "Ο/Η {sender} ανεβάζει μια φωτογραφία ({progress}%)"
 
 #: src/strings.rs:245
 msgid "{sender1} and {sender2} are uploading photos"
@@ -684,371 +684,371 @@ msgstr "Ο/Η {sender1} και Ο/Η {sender2} ανεβάζουν βίντεο"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr "{num} άτομα ανεβάζουν βίντεο"
+msgstr "{num} χρήστες ανεβάζουν βίντεο"
 
 #: src/strings.rs:287
 msgid "uploading a video ({progress}%)"
-msgstr ""
+msgstr "ανεβάζοντας ένα βίντεο ({progress}%)"
 
 #: src/strings.rs:296
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr ""
+msgstr "Ο/Η {sender} ανεβάζει μια βίντεο σημείωση ({progress}%)"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "Όι χρήστες {sender1} και {sender2} ανεβάζουν μια βίντεο σημείωση"
 
 #: src/strings.rs:310
 msgid "{num} people are uploading video notes"
-msgstr ""
+msgstr "{num} άτομα ανεβάζουν μια βίντεο σημείωση"
 
 #: src/strings.rs:316
 msgid "uploading a video note ({progress}%)"
-msgstr ""
+msgstr "ανεβάζοντας μια βίντεο σημείωση ({progress}%)"
 
 #: src/strings.rs:325
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "Ο/Η {sender} ανεβάζει μια φωνητική σημείωση ({progress}%)"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "Όι χρήστες {sender1} και {sender2} ανεβάζουν μια φωνητική σημείωση"
 
 #: src/strings.rs:339
 msgid "{num} people are uploading voice notes"
-msgstr ""
+msgstr "{num} άτομα ανεβάζουν μια φωνητική σημείωση"
 
 #: src/strings.rs:345
 msgid "uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "ανεβάζοντας μία φωνητική σημείωση ({progress}%)"
 
 #: src/strings.rs:354
 msgid "{sender} is watching an animation {emoji}"
-msgstr ""
+msgstr "Ο/Η {sender} παρακολουθεί μια κινούμενη εικόνα {emoji}"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1} και {sender2} παρακολουθούν κινούμενα σχέδια {emoji}"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} άτομα παρακολουθούν κινούμενα σχέδια {emoji}"
 
 #: src/strings.rs:374
 msgid "watching an animation"
-msgstr ""
+msgstr "παρακολουθώντας ένα κινούμενο σχέδιο"
 
 #: src/strings.rs:395
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "τελευταία επίσκεψη πριν πολύ καιρό"
 
 #: src/strings.rs:396
 msgid "online"
-msgstr ""
+msgstr "Σε σύνδεση"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "τελευταία επίσκεψη %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "τελευταία επίσκεψη στις %l:%M %p"
 
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "τελευταία επίσκεψη πρίν {num} ώρα"
+msgstr[1] "τελευταία επίσκεψη πρίν {num} ώρες"
 
 #: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "τελευταία επίσκεψη πρίν {num} λεπτό"
+msgstr[1] "τελευταία επίσκεψη πρίν {num} λεπτά"
 
 #: src/strings.rs:427
 msgid "last seen just now"
-msgstr ""
+msgstr "τελευταία επίσκεψη πρίν λίγο"
 
 #: src/strings.rs:430
 msgid "last seen recently"
-msgstr ""
+msgstr "τελευταία επίσκεψη πρόσφατα"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
-msgstr ""
+msgstr "τελευταία επίσκεψη εντός εβδομάδας"
 
 #: src/strings.rs:432
 msgid "last seen within a month"
-msgstr ""
+msgstr "τελευταία επίσκεψη εντός μήνας"
 
 #: src/strings.rs:456
 msgid "Photo has expired"
-msgstr ""
+msgstr "Η φωτογραφία έχει λήξει"
 
 #: src/strings.rs:459
 msgid "Video has expired"
-msgstr ""
+msgstr "Το βίντεο έχει λήξει"
 
 #: src/strings.rs:460
 msgid "Video Message"
-msgstr ""
+msgstr "Βίντεο μήνυμα"
 
 #: src/strings.rs:491
 msgid "{sender} took a screenshot!"
-msgstr ""
+msgstr "Ο/Η {sender} έβγαλε έναν στιγμιότυπο οθόνης!"
 
 #: src/strings.rs:496
 msgid "Unsupported Message"
-msgstr ""
+msgstr "Μη υποστηριζόμενο Μήνυμα"
 
 #: src/strings.rs:502
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/strings.rs:504
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "GIF, {caption}"
 
 #: src/strings.rs:512
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:518
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:534
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:542
 msgid "Photo"
-msgstr ""
+msgstr "Φώτο"
 
 #: src/strings.rs:544
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "Φώτο, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:550
 msgid "{emoji} Sticker"
-msgstr ""
+msgstr "{emoji} Αυτοκόλλητο"
 
 #: src/strings.rs:555
 msgid "Video"
-msgstr ""
+msgstr "Βίντεο"
 
 #: src/strings.rs:557
 msgid "Video, {caption}"
-msgstr ""
+msgstr "Βίντεο, {caption}"
 
 #: src/strings.rs:563
 msgid "Voice Message"
-msgstr ""
+msgstr "Φωνητική σημείωση"
 
 #: src/strings.rs:565
 msgid "Voice Message, {caption}"
-msgstr ""
+msgstr "Φωνητικό μήνυμα, {caption}"
 
 #: src/strings.rs:582
 msgid "Declined outgoing video call"
-msgstr ""
+msgstr "Απορρίφθηκε η εξερχόμενη βιντεοκλήση"
 
 #: src/strings.rs:584
 msgid "Declined outgoing call"
-msgstr ""
+msgstr "Απορρίφθηκε η εξερχόμενη κλήση"
 
 #: src/strings.rs:590
 msgid "Declined incoming video call"
-msgstr ""
+msgstr "Απορρίφθηκε η εισερχόμενη βιντεοκλήση"
 
 #: src/strings.rs:592
 msgid "Declined incoming call"
-msgstr ""
+msgstr "Απορρίφθηκε η εισερχόμενη κλήση"
 
 #: src/strings.rs:600
 msgid "Canceled call"
-msgstr ""
+msgstr "Ακυρώθηκε η κλήση"
 
 #: src/strings.rs:602
 msgid "Missed call"
-msgstr ""
+msgstr "Αναπάντητη κλήση"
 
 #: src/strings.rs:615
 msgid "Outgoing video call ({duration})"
-msgstr ""
+msgstr "Εξερχόμενη βιντεοκλήση ({duration})"
 
 #: src/strings.rs:620
 msgid "Outgoing call ({duration})"
-msgstr ""
+msgstr "Εξερχόμενη κλήση ({duration})"
 
 #: src/strings.rs:625
 msgid "Outgoing video call"
-msgstr ""
+msgstr "Εξερχόμενη βιντεοκλήση"
 
 #: src/strings.rs:627
 msgid "Outgoing call"
-msgstr ""
+msgstr "Εξερχόμενη κλήση"
 
 #: src/strings.rs:632
 msgid "Incoming video call ({duration})"
-msgstr ""
+msgstr "Εισερχόμενη βιντεοκλήση ({duration})"
 
 #: src/strings.rs:637
 msgid "Incoming call ({duration})"
-msgstr ""
+msgstr "Εισερχόμενη κλήση ({duration})"
 
 #: src/strings.rs:642
 msgid "Incoming video call"
-msgstr ""
+msgstr "Εισερχόμενη βιντεοκλήση"
 
 #: src/strings.rs:644 src/window.rs:213
 msgid "Incoming call"
-msgstr ""
+msgstr "Εισερχόμενη κλήση"
 
 #: src/strings.rs:651 src/strings.rs:662
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "Ο/Η {sender} δημιούργησε την ομάδα \"{title}\""
 
 #: src/strings.rs:658
 msgid "Channel created"
-msgstr ""
+msgstr "Το κανάλι δημιουργήθηκε"
 
 #: src/strings.rs:672
 msgid "Channel renamed to \"{title}\""
-msgstr ""
+msgstr "Το κανάλι μετονομάστηκε σε \"{title}\""
 
 #: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "Ο/Η {sender} άλλαξε το όνομα της ομάδας σε \"{title}\""
 
 #: src/strings.rs:687
 msgid "Channel photo changed"
-msgstr ""
+msgstr "Η φωτογραφία καναλιού άλλαξε"
 
 #: src/strings.rs:691
 msgid "{sender} changed the group photo"
-msgstr ""
+msgstr "Ο/Η {sender} άλλαξε τη φωτογραφία της ομάδας"
 
 #: src/strings.rs:699
 msgid "Channel photo removed"
-msgstr ""
+msgstr "Η φωτογραφία καναλιού καταργήθηκε"
 
 #: src/strings.rs:703
 msgid "{sender} removed the group photo"
-msgstr ""
+msgstr "Ο/Η {sender} αφαίρεσε τη φωτογραφία της ομάδας"
 
 #: src/strings.rs:711 src/strings.rs:746
 msgid "{sender} joined the group"
-msgstr ""
+msgstr "Ο/Η {sender} έγινε μέλος"
 
 #: src/strings.rs:716
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "Ο/Η {sender} πρόσθεσε τους χρήστες {first_user} και {second_user}"
 
 #: src/strings.rs:730
 msgid "{sender} added {users}"
-msgstr ""
+msgstr "Ο/Η {sender} πρόσθεσε {users}"
 
 #: src/strings.rs:739
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "Ο {sender} έγινε μελος στην ομάδα μέσω συνδέσμου πρόσκλησης"
 
 #: src/strings.rs:753
 msgid "{sender} left the group"
-msgstr ""
+msgstr "Ο/Η αποχώρησε από την ομάδα"
 
 #: src/strings.rs:758
 msgid "{sender} removed {user}"
-msgstr ""
+msgstr "{sender} αφαίρεσε {user}"
 
 #: src/strings.rs:777
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "Ο/Η {sender} σκόραρε {points} στο {game}"
 
 #: src/strings.rs:786
 msgid "{sender} scored {points}"
-msgstr ""
+msgstr "Ο/Η {sender} σκόραρε {points}"
 
 #: src/strings.rs:810
 msgid "{sender} pinned \"{text}\""
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε \"{text}\""
 
 #: src/strings.rs:812
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα GIF"
 
 #: src/strings.rs:813
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα αρχείο ήχου"
 
 #: src/strings.rs:814
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα αρχείο"
 
 #: src/strings.rs:815
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε μια φωτογραφία"
 
 #: src/strings.rs:816
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα αυτοκόλλητο"
 
 #: src/strings.rs:817
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα βίντεο"
 
 #: src/strings.rs:818
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα μήνυμα βίντεο"
 
 #: src/strings.rs:819
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα φωνητικό μήνυμα"
 
 #: src/strings.rs:820 src/strings.rs:822
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "Ο/Η {sender} καρφίτσωσε ένα μήνυμα"
 
 #: src/strings.rs:831
 msgid "{sender} joined Telegram"
-msgstr ""
+msgstr "Ο/Η {sender} έγινε μέλος στο Telegram"
 
 #: src/session/preferences_window.rs:208
 msgid "Cache cleared"
-msgstr ""
+msgstr "Η προσωρινή μνήμη διαγράφηκε"
 
 #: src/session/content/chat_action_bar.rs:363
 #: src/session/content/chat_action_bar.rs:380
 msgid "Unknown"
-msgstr ""
+msgstr "Αγνωστος"
 
 #: src/session/content/chat_action_bar.rs:365
 #: src/session/content/chat_action_bar.rs:382
 msgid "Deleted Message"
-msgstr ""
+msgstr "Διαγραμμένο μήνυμα"
 
 #: src/session/content/chat_action_bar.rs:376
 msgid "Edit Message"
-msgstr ""
+msgstr "Επεξεργασία μηνύματος"
 
 #: src/session/content/chat_action_bar.rs:471
 msgid "Images"
-msgstr ""
+msgstr "Εικόνες"
 
 #: src/session/content/chat_action_bar.rs:790
 msgid "Unmute"
-msgstr ""
+msgstr "Κατάργηση σίγασης"
 
 #: src/session/content/chat_action_bar.rs:792
 msgid "Mute"
-msgstr ""
+msgstr "Σίγαση"
 
 #: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
@@ -1056,61 +1056,61 @@ msgstr "Αποχώρηση από την συνομιλία;"
 
 #: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
-msgstr ""
+msgstr "Θέλετε να αποχωρησετε από την συνομιλία;"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/chat_history_row.rs:121
 msgid "%B %e"
-msgstr ""
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/chat_history_row.rs:124
 msgid "%B %e, %Y"
-msgstr ""
+msgstr "%B %e, %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
-msgstr ""
+msgstr "Κινητό"
 
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
-msgstr ""
+msgstr "Όνομα χρήστη"
 
 #: src/session/content/chat_info_window.rs:174
 #: src/session/content/chat_info_window.rs:223
 msgid "{num} member"
 msgid_plural "{num} members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num} χρήστη"
+msgstr[1] "{num} χρήστες"
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Περιγραφή"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Σύνδεσμό"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Αντιγράφηκε στο πρόχειρο"
 
 #: src/session/content/message_row/indicators.rs:266
 msgid "edited"
-msgstr ""
+msgstr "επεξεργασμένο"
 
 #: src/session/content/message_row/indicators.rs:271
 msgid "sponsored"
-msgstr ""
+msgstr "χορηγούμενο"
 
 #: src/session/content/message_row/mod.rs:171
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Θέλετε να διαγράψετε αυτό το μήνυμα για <b>όλους</b>;"
 
 #: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
@@ -1118,19 +1118,19 @@ msgstr "Θέλετε να διαγράψετε αυτό το μήνυμα;"
 
 #: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "Επιβεβαίωση διαγραφής μηνύματος"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "Φόρτωση…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
-msgstr ""
+msgstr "Αυτό το μήνυμα δεν υποστηρίζεται"
 
 #: src/session/sidebar/row.rs:417
 msgid "Draft:"
-msgstr ""
+msgstr "Σχέδιο:"
 
 #: src/session/sidebar/row.rs:597
 msgid "You"
@@ -1142,7 +1142,7 @@ msgstr "Συνομιλίες"
 
 #: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
-msgstr ""
+msgstr "Παγκόσμια αναζήτηση"
 
 #: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
@@ -1154,4 +1154,4 @@ msgstr "Μη έγκυρος κωδικός χώρας"
 
 #: src/tdlib/country_info.rs:124
 msgid "Test Account"
-msgstr ""
+msgstr "Δοκιμαστικό λογαριασμό"
