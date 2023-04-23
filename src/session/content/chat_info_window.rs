@@ -141,20 +141,14 @@ impl ChatInfoWindow {
 
         // Phone number
         if !user.phone_number().is_empty() {
-            let row = adw::ActionRow::builder()
-                .title(format!("+{}", &user.phone_number()))
-                .subtitle(gettext("Mobile"))
-                .build();
+            let row = new_property_row(&gettext("Mobile"), &format!("+{}", &user.phone_number()));
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
 
         // Username
         if !user.username().is_empty() {
-            let row = adw::ActionRow::builder()
-                .title(format!("@{}", &user.username()))
-                .subtitle(gettext("Username"))
-                .build();
+            let row = new_property_row(&gettext("Username"), &format!("@{}", &user.username()));
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
@@ -200,10 +194,7 @@ impl ChatInfoWindow {
 
         // Description
         if !basic_group_full_info.description.is_empty() {
-            let row = adw::ActionRow::builder()
-                .title(&basic_group_full_info.description)
-                .subtitle(gettext("Description"))
-                .build();
+            let row = new_property_row(&gettext("Description"), &basic_group_full_info.description);
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
@@ -230,10 +221,10 @@ impl ChatInfoWindow {
 
         // Link
         if !supergroup.username().is_empty() {
-            let row = adw::ActionRow::builder()
-                .title(format!("https://t.me/{}", &supergroup.username()))
-                .subtitle(gettext("Link"))
-                .build();
+            let row = new_property_row(
+                &gettext("Link"),
+                &format!("https://t.me/{}", &supergroup.username()),
+            );
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
@@ -259,10 +250,7 @@ impl ChatInfoWindow {
 
         // Description
         if !supergroup_full_info.description.is_empty() {
-            let row = adw::ActionRow::builder()
-                .title(&supergroup_full_info.description)
-                .subtitle(gettext("Description"))
-                .build();
+            let row = new_property_row(&gettext("Description"), &supergroup_full_info.description);
             self.make_row_copyable(&row);
             imp.info_list.append(&row);
         }
@@ -288,4 +276,13 @@ impl ChatInfoWindow {
     pub(crate) fn chat(&self) -> Option<&Chat> {
         self.imp().chat.get()
     }
+}
+
+fn new_property_row(title: &str, subtitle: &str) -> adw::ActionRow {
+    let row = adw::ActionRow::builder()
+        .title(title)
+        .subtitle(subtitle)
+        .build();
+    row.add_css_class("property");
+    row
 }
