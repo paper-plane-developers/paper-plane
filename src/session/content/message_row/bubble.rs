@@ -1,3 +1,4 @@
+use glib::clone;
 use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hash;
@@ -9,16 +10,18 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
+use crate::components::LabelWithWidgets;
 use crate::session::content::message_row::MessageIndicators;
-use crate::session::content::message_row::MessageLabel;
 use crate::session::content::message_row::MessageReply;
 use crate::tdlib::Chat;
 use crate::tdlib::ChatType;
 use crate::tdlib::Message;
 use crate::tdlib::MessageSender;
 use crate::tdlib::SponsoredMessage;
+use crate::utils::spawn;
 
 const MAX_WIDTH: i32 = 400;
+const INDICATORS_SPACING: i32 = 6;
 const SENDER_COLOR_CLASSES: &[&str] = &[
     "sender-text-red",
     "sender-text-orange",
@@ -53,7 +56,7 @@ mod imp {
 
                 Adw.Bin prefix_bin {}
 
-                $MessageLabel message_label {
+                $LabelWithWidgets message_label {
                     visible: false;
                 }
             }
@@ -78,7 +81,7 @@ mod imp {
         #[template_child]
         pub(super) prefix_bin: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) message_label: TemplateChild<MessageLabel>,
+        pub(super) message_label: TemplateChild<LabelWithWidgets>,
         #[template_child]
         pub(super) indicators: TemplateChild<MessageIndicators>,
     }
@@ -238,6 +241,15 @@ impl MessageBubble {
             imp.sender_label.set_label("");
             imp.sender_label.set_visible(false);
         }
+
+        // Set custom emojis
+        let session = message.chat().session();
+        use tdlib::enums::MessageContent;
+        let entities = match message.content().0 {
+            MessageContent::MessageText(content) => content.text.entities,
+            _ => vec![],
+        };
+        self.set_emojis(session, &entities);
     }
 
     pub(crate) fn update_from_sponsored_message(&self, sponsored_message: &SponsoredMessage) {
@@ -286,6 +298,19 @@ impl MessageBubble {
         self.update_indicators_position();
     }
 
+    pub(crate) fn set_emojis(
+        &self,
+        session: crate::Session,
+        entities: &[tdlib::types::TextEntity],
+    ) {
+        let ids = crate::utils::custom_emoji_ids(entities);
+        spawn(clone!(@weak self as obj => async move {
+            let widgets = crate::utils::custom_emojis(session, ids).await;
+            obj.imp().message_label.set_widgets(widgets);
+            obj.update_indicators_position();
+        }));
+    }
+
     fn update_sender_color(&self, sender_id: Option<i64>) {
         let imp = self.imp();
 
@@ -306,15 +331,8 @@ impl MessageBubble {
 
     fn update_indicators_position(&self) {
         let imp = self.imp();
-
-        if imp.message_label.label().is_empty() && imp.message_label.indicators().is_some() {
-            imp.message_label.set_indicators(None);
-            imp.overlay.add_overlay(&*imp.indicators);
-        } else if !imp.message_label.label().is_empty() && imp.message_label.indicators().is_none()
-        {
-            imp.overlay.remove_overlay(&*imp.indicators);
-            imp.message_label
-                .set_indicators(Some(imp.indicators.clone()));
-        }
+        let size = imp.indicators.preferred_size().1;
+        imp.message_label
+            .reserve_space(size.width() + INDICATORS_SPACING, size.height());
     }
 }

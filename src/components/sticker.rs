@@ -117,6 +117,10 @@ glib::wrapper! {
 }
 
 impl Sticker {
+    pub(crate) fn new() -> Self {
+        glib::Object::new()
+    }
+
     pub(crate) fn update_sticker(&self, sticker: TdSticker, looped: bool, session: Session) {
         let imp = self.imp();
 
