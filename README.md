@@ -24,7 +24,7 @@
 
 ## Installation Instructions
 
-Telegrand is an in-development project and it isn't considered stable software yet. Also, the included API credentials are very limited and, in some cases, your account may end up banned by Telegram (check the `Telegram API Credentials` section below). You can avoid that by using a custom built version of Telegrand with provided API credentials via meson options, like [this AUR package](https://aur.archlinux.org/packages/telegrand-git) which you may prefer using if you use Arch Linux. But, if you still feel brave enough, there's a CI that automatically generates the latest flatpak build with the test API credentials: just download the [latest artifact](https://nightly.link/melix99/telegrand/workflows/ci/main) and install it locally using `flatpak install telegrand.flatpak`.
+Telegrand is an in-development project and it isn't considered stable software yet. Also, the included API credentials are very limited and, in some cases, your account may end up banned by Telegram (check the `Telegram API Credentials` section below). You can avoid that by using a custom built version of Telegrand with provided API credentials via meson options, like [this AUR package](https://aur.archlinux.org/packages/telegrand-git) which you may prefer using if you use Arch Linux. But, if you still feel brave enough, there's a CI that automatically generates the latest flatpak build with the test API credentials: just download the [latest artifact](https://nightly.link/marhkb/telegrand/workflows/ci/main) and install it locally using `flatpak install telegrand.flatpak`.
 
 ## Telegram API Credentials
 
