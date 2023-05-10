@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=@application_id@
+Exec=@bindir@/telegrand --gapplication-service
