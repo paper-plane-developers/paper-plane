@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="MessageListView" parent="GtkWidget">
+    <child>
+      <object class="GtkOverlay">
+        <child type="overlay">
+          <object class="GtkRevealer" id="scroll_to_bottom_revealer">
+            <property name="transition-type">slide-up</property>
+            <property name="valign">end</property>
+            <property name="halign">end</property>
+            <child>
+              <object class="GtkOverlay">
+                <child type="overlay">
+                  <object class="GtkLabel">
+                    <property name="halign">center</property>
+                    <property name="valign">start</property>
+                    <property name="ellipsize">middle</property>
+                    <!-- <binding name="label"> -->
+                    <!--   <lookup name="unread-count" type="Chat"> -->
+                    <!--     <lookup name="chat">ContentChatHistory</lookup> -->
+                    <!--   </lookup> -->
+                    <!-- </binding> -->
+                    <!-- <binding name="visible"> -->
+                    <!--   <lookup name="unread-count" type="Chat"> -->
+                    <!--     <lookup name="chat">ContentChatHistory</lookup> -->
+                    <!--   </lookup> -->
+                    <!-- </binding> -->
+                    <style>
+                      <class name="unread-count"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="halign">center</property>
+                    <property name="valign">end</property>
+                    <property name="icon-name">go-down-symbolic</property>
+                    <property name="action-name">message-list-view.scroll-to-bottom</property>
+                    <accessibility>
+                      <property name="label" translatable="yes">Scroll to bottom</property>
+                    </accessibility>
+                    <style>
+                      <class name="circular"/>
+                      <class name="opaque"/>
+                      <class name="scroll-to-bottom"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolled_window">
+            <property name="hscrollbar-policy">never</property>
+            <property name="child">
+              <object class="AdwClampScrollable">
+                <property name="maximum-size">800</property>
+                <property name="tightening-threshold">600</property>
+                <property name="vscroll-policy">natural</property>
+                <property name="child">
+                  <object class="GtkListView" id="list_view">
+                    <property name="reversed">True</property>
+                    <style>
+                      <class name="message"/>
+                    </style>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="activatable">False</property>
+    <property name="child">
+      <object class="MessageListViewRow">
+        <binding name="item">
+          <lookup name="item">GtkListItem</lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+                        ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

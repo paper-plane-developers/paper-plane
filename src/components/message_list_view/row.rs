@@ -6,7 +6,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::{ChatHistoryItem, ChatHistoryItemType, EventRow, MessageRow};
+use super::{MessageListViewEventRow, MessageListViewItem, MessageListViewItemType, MessageRow};
 use crate::strings;
 use crate::tdlib::SponsoredMessage;
 
@@ -16,19 +16,19 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default)]
-    pub(crate) struct ChatHistoryRow {
+    pub(crate) struct MessageListViewRow {
         /// An `ChatHistoryItem` or `SponsoredMessage`
         pub(super) item: RefCell<Option<glib::Object>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatHistoryRow {
-        const NAME: &'static str = "ContentChatHistoryRow";
-        type Type = super::ChatHistoryRow;
+    impl ObjectSubclass for MessageListViewRow {
+        const NAME: &'static str = "MessageListViewRow";
+        type Type = super::MessageListViewRow;
         type ParentType = adw::Bin;
     }
 
-    impl ObjectImpl for ChatHistoryRow {
+    impl ObjectImpl for MessageListViewRow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<glib::Object>("item")
@@ -57,22 +57,22 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ChatHistoryRow {}
-    impl BinImpl for ChatHistoryRow {}
+    impl WidgetImpl for MessageListViewRow {}
+    impl BinImpl for MessageListViewRow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct ChatHistoryRow(ObjectSubclass<imp::ChatHistoryRow>)
+    pub(crate) struct MessageListViewRow(ObjectSubclass<imp::MessageListViewRow>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for ChatHistoryRow {
+impl Default for MessageListViewRow {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl ChatHistoryRow {
+impl MessageListViewRow {
     pub(crate) fn new() -> Self {
         glib::Object::new()
     }
@@ -87,9 +87,9 @@ impl ChatHistoryRow {
         }
 
         if let Some(ref item) = item {
-            if let Some(item) = item.downcast_ref::<ChatHistoryItem>() {
+            if let Some(item) = item.downcast_ref::<MessageListViewItem>() {
                 match item.type_() {
-                    ChatHistoryItemType::Message(message) => {
+                    MessageListViewItemType::Message(message) => {
                         use tdlib::enums::MessageContent::*;
 
                         match message.content().0 {
@@ -115,7 +115,7 @@ impl ChatHistoryRow {
                             _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
                     }
-                    ChatHistoryItemType::DayDivider(date) => {
+                    MessageListViewItemType::DayDivider(date) => {
                         let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
                             // Translators: This is a date format in the day divider without the year
                             gettext("%B %e")
@@ -155,11 +155,14 @@ impl ChatHistoryRow {
         }
     }
 
-    fn get_or_create_event_row(&self) -> EventRow {
-        if let Some(Ok(child)) = self.child().map(|w| w.downcast::<EventRow>()) {
+    fn get_or_create_event_row(&self) -> MessageListViewEventRow {
+        if let Some(Ok(child)) = self
+            .child()
+            .map(|w| w.downcast::<MessageListViewEventRow>())
+        {
             child
         } else {
-            let child = EventRow::new();
+            let child = MessageListViewEventRow::new();
             self.set_child(Some(&child));
             child
         }

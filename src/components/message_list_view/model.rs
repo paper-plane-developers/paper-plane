@@ -3,13 +3,14 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use std::cmp::Ordering;
+use tdlib::enums::SearchMessagesFilter;
 use thiserror::Error;
 
-use crate::session::content::{ChatHistoryItem, ChatHistoryItemType};
+use super::{MessageListViewItem, MessageListViewItemType, MessageListViewType};
 use crate::tdlib::{Chat, Message};
 
 #[derive(Error, Debug)]
-pub(crate) enum ChatHistoryError {
+pub(crate) enum MessageListViewModelError {
     #[error("The chat history is already loading messages")]
     AlreadyLoading,
     #[error("TDLib error: {0:?}")]
@@ -24,20 +25,21 @@ mod imp {
     use std::collections::VecDeque;
 
     #[derive(Debug, Default)]
-    pub(crate) struct ChatHistoryModel {
+    pub(crate) struct MessageListViewModel {
+        pub(super) type_: Cell<MessageListViewType>,
         pub(super) chat: WeakRef<Chat>,
         pub(super) is_loading: Cell<bool>,
-        pub(super) list: RefCell<VecDeque<ChatHistoryItem>>,
+        pub(super) list: RefCell<VecDeque<MessageListViewItem>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ChatHistoryModel {
-        const NAME: &'static str = "ContentChatHistoryModel";
-        type Type = super::ChatHistoryModel;
+    impl ObjectSubclass for MessageListViewModel {
+        const NAME: &'static str = "MessageListViewModel";
+        type Type = super::MessageListViewModel;
         type Interfaces = (gio::ListModel,);
     }
 
-    impl ObjectImpl for ChatHistoryModel {
+    impl ObjectImpl for MessageListViewModel {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<Chat>("chat")
@@ -57,9 +59,9 @@ mod imp {
         }
     }
 
-    impl ListModelImpl for ChatHistoryModel {
+    impl ListModelImpl for MessageListViewModel {
         fn item_type(&self) -> glib::Type {
-            ChatHistoryItem::static_type()
+            MessageListViewItem::static_type()
         }
 
         fn n_items(&self) -> u32 {
@@ -77,14 +79,15 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub(crate) struct ChatHistoryModel(ObjectSubclass<imp::ChatHistoryModel>)
+    pub(crate) struct MessageListViewModel(ObjectSubclass<imp::MessageListViewModel>)
         @implements gio::ListModel;
 }
 
-impl ChatHistoryModel {
-    pub(crate) fn new(chat: &Chat) -> Self {
-        let obj: ChatHistoryModel = glib::Object::new();
+impl MessageListViewModel {
+    pub(crate) fn new(type_: MessageListViewType, chat: &Chat) -> Self {
+        let obj: MessageListViewModel = glib::Object::new();
 
+        obj.imp().type_.set(type_);
         obj.imp().chat.set(Some(chat));
 
         chat.connect_new_message(clone!(@weak obj => move |_, message| {
@@ -100,11 +103,14 @@ impl ChatHistoryModel {
     /// Loads older messages from this chat history.
     ///
     /// Returns `true` when more messages can be loaded.
-    pub(crate) async fn load_older_messages(&self, limit: i32) -> Result<bool, ChatHistoryError> {
+    pub(crate) async fn load_older_messages(
+        &self,
+        limit: i32,
+    ) -> Result<bool, MessageListViewModelError> {
         let imp = self.imp();
 
         if imp.is_loading.get() {
-            return Err(ChatHistoryError::AlreadyLoading);
+            return Err(MessageListViewModelError::AlreadyLoading);
         }
 
         let oldest_message_id = imp
@@ -118,11 +124,25 @@ impl ChatHistoryModel {
 
         imp.is_loading.set(true);
 
-        let result = self.chat().get_chat_history(oldest_message_id, limit).await;
+        let result = match imp.type_.get() {
+            MessageListViewType::ChatHistory => {
+                self.chat().get_chat_history(oldest_message_id, limit).await
+            }
+            MessageListViewType::PinnedMessages => {
+                self.chat()
+                    .search_messages(
+                        String::new(),
+                        oldest_message_id,
+                        limit,
+                        Some(SearchMessagesFilter::Pinned),
+                    )
+                    .await
+            }
+        };
 
         imp.is_loading.set(false);
 
-        let messages = result.map_err(ChatHistoryError::Tdlib)?;
+        let messages = result.map_err(MessageListViewModelError::Tdlib)?;
 
         if messages.is_empty() {
             return Ok(false);
@@ -147,7 +167,7 @@ impl ChatHistoryModel {
             } else {
                 None
             };
-            let mut dividers: Vec<(usize, ChatHistoryItem)> = vec![];
+            let mut dividers: Vec<(usize, MessageListViewItem)> = vec![];
 
             for (index, current) in list.range(position..position + added).enumerate().rev() {
                 if let Some(current_timestamp) = current.message_timestamp() {
@@ -156,7 +176,7 @@ impl ChatHistoryModel {
                         let divider_pos = position + index + 1;
                         dividers.push((
                             divider_pos,
-                            ChatHistoryItem::for_day_divider(current_timestamp.clone()),
+                            MessageListViewItem::for_day_divider(current_timestamp.clone()),
                         ));
                         previous_timestamp = Some(current_timestamp);
                     }
@@ -180,7 +200,7 @@ impl ChatHistoryModel {
                 let position = position as usize;
                 let item_before_removed = list.get(position);
 
-                if let Some(ChatHistoryItemType::DayDivider(_)) =
+                if let Some(MessageListViewItemType::DayDivider(_)) =
                     item_before_removed.map(|i| i.type_())
                 {
                     let item_after_removed = if position > 0 {
@@ -190,7 +210,7 @@ impl ChatHistoryModel {
                     };
 
                     match item_after_removed.map(|item| item.type_()) {
-                        None | Some(ChatHistoryItemType::DayDivider(_)) => {
+                        None | Some(MessageListViewItemType::DayDivider(_)) => {
                             list.remove(position + removed);
 
                             removed += 1;
@@ -213,7 +233,7 @@ impl ChatHistoryModel {
                 let last_added_timestamp = list.get(position).unwrap().message_timestamp().unwrap();
                 let next_item = list.get(position - 1);
 
-                if let Some(ChatHistoryItemType::DayDivider(date)) =
+                if let Some(MessageListViewItemType::DayDivider(date)) =
                     next_item.map(|item| item.type_())
                 {
                     if date.ymd() == last_added_timestamp.ymd() {
@@ -236,7 +256,7 @@ impl ChatHistoryModel {
         self.imp()
             .list
             .borrow_mut()
-            .push_front(ChatHistoryItem::for_message(message));
+            .push_front(MessageListViewItem::for_message(message));
 
         self.items_changed(0, 0, 1);
     }
@@ -250,7 +270,7 @@ impl ChatHistoryModel {
         for message in messages {
             imp.list
                 .borrow_mut()
-                .push_back(ChatHistoryItem::for_message(message));
+                .push_back(MessageListViewItem::for_message(message));
         }
 
         let index = imp.list.borrow().len() - added;
@@ -270,10 +290,10 @@ impl ChatHistoryModel {
             // can exploit this by applying a binary search.
             let index = list
                 .binary_search_by(|m| match m.type_() {
-                    ChatHistoryItemType::Message(other_message) => {
+                    MessageListViewItemType::Message(other_message) => {
                         message.id().cmp(&other_message.id())
                     }
-                    ChatHistoryItemType::DayDivider(date_time) => {
+                    MessageListViewItemType::DayDivider(date_time) => {
                         let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
                             .unwrap()
                             .cmp(date_time);

@@ -1,7 +1,7 @@
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{ChatType as TdChatType, Update};
+use tdlib::enums::{ChatType as TdChatType, SearchMessagesFilter, Update};
 use tdlib::types::Chat as TelegramChat;
 use tdlib::{functions, types};
 
@@ -561,6 +561,43 @@ impl Chat {
             .messages
             .into_iter()
             .flatten()
+            .map(|m| Message::new(m, self))
+            .collect();
+
+        for message in &loaded_messages {
+            messages.insert(message.id(), message.clone());
+        }
+
+        Ok(loaded_messages)
+    }
+
+    pub(crate) async fn search_messages(
+        &self,
+        query: String,
+        from_message_id: i64,
+        limit: i32,
+        filter: Option<SearchMessagesFilter>,
+    ) -> Result<Vec<Message>, types::Error> {
+        let client_id = self.session().client_id();
+        let result = functions::search_chat_messages(
+            self.id(),
+            query,
+            None,
+            from_message_id,
+            0,
+            limit,
+            filter,
+            0,
+            client_id,
+        )
+        .await;
+
+        let tdlib::enums::FoundChatMessages::FoundChatMessages(data) = result?;
+
+        let mut messages = self.imp().messages.borrow_mut();
+        let loaded_messages: Vec<Message> = data
+            .messages
+            .into_iter()
             .map(|m| Message::new(m, self))
             .collect();
 

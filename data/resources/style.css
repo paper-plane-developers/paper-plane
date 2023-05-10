@@ -115,12 +115,12 @@ sidebarsearchitemrow {
   border-spacing: 12px;
 }
 
-listview.chat-history {
+messagelistview listview.message {
   background: transparent;
   padding: 3px 0;
 }
 
-listview.chat-history > row {
+messagelistview listview.message > row {
   margin: 2px 4px;
   border-radius: 9px;
 }

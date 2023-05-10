@@ -5,11 +5,10 @@ use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{MessageBase, MessageBaseImpl, MessageBubble};
+use super::base::MessageBaseExt;
+use super::{MessageBase, MessageBaseImpl, MessageBubble};
 use crate::tdlib::{BoxedMessageContent, Message, SponsoredMessage};
 use crate::utils::parse_formatted_text;
-
-use super::base::MessageBaseExt;
 
 mod imp {
     use super::*;
