@@ -27,7 +27,7 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-search.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/sidebar-search.ui")]
     pub(crate) struct Search {
         pub(super) session: RefCell<Option<Session>>,
         pub(super) compact: Cell<bool>,

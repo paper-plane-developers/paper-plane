@@ -17,7 +17,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-send-photo-dialog.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-send-photo-dialog.ui")]
     pub(crate) struct SendPhotoDialog {
         pub(super) chat: OnceCell<Chat>,
         pub(super) path: OnceCell<String>,

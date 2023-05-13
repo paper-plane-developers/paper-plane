@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Telegrand
+Name=Paper Plane
 Comment=A Telegram client optimized for the GNOME desktop
 Type=Application
-Exec=telegrand
+Exec=paper-plane
 Terminal=false
 Categories=GNOME;GTK;
 Keywords=Gnome;GTK;

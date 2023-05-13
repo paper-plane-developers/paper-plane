@@ -1,7 +1,7 @@
 [package]
-name = "telegrand"
+name = "paper-plane"
 version = "0.1.0"
-authors = ["Marco Melorio <marco.melorio@protonmail.com>"]
+authors = ["Marco Melorio <marco.melorio@protonmail.com>", "Marcus Behrendt <marcus.behrendt.86@gmail.com>"]
 edition = "2021"
 
 [dependencies]

@@ -22,7 +22,7 @@ mod imp {
     use crate::phone_number_input::PhoneNumberInput;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/login.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/login.ui")]
     pub(crate) struct Login {
         pub(super) session_manager: OnceCell<SessionManager>,
         pub(super) client_id: Cell<i32>,

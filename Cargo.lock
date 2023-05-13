@@ -1029,6 +1029,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "paper-plane"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ellipse",
+ "futures",
+ "gettext-rs",
+ "gtk-rlottie",
+ "gtk4",
+ "image",
+ "indexmap",
+ "libadwaita",
+ "locale_config",
+ "log",
+ "once_cell",
+ "pretty_env_logger",
+ "qrcode-generator",
+ "regex",
+ "tdlib",
+ "temp-dir",
+ "thiserror",
+]
+
+[[package]]
 name = "peeking_take_while"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1402,30 +1426,6 @@ name = "tdlib-tl-parser"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32326b5315ed2b469f6dc688dc58e7e13a3adef9be08ed20f6e1135a6540bec1"
-
-[[package]]
-name = "telegrand"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "ellipse",
- "futures",
- "gettext-rs",
- "gtk-rlottie",
- "gtk4",
- "image",
- "indexmap",
- "libadwaita",
- "locale_config",
- "log",
- "once_cell",
- "pretty_env_logger",
- "qrcode-generator",
- "regex",
- "tdlib",
- "temp-dir",
- "thiserror",
-]
 
 [[package]]
 name = "temp-dir"

@@ -35,7 +35,7 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/session.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session.ui")]
     pub(crate) struct Session {
         pub(super) client_id: Cell<i32>,
         pub(super) database_info: OnceCell<BoxedDatabaseInfo>,

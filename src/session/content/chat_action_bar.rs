@@ -35,7 +35,7 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-action-bar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-chat-action-bar.ui")]
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,

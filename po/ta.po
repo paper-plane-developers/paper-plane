@@ -1,11 +1,11 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the telegrand package.
+# This file is distributed under the same license as the paper-plane package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: telegrand\n"
+"Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -16,60 +16,60 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:3
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
-msgid "Telegrand"
+#: data/app.drey.PaperPlane.desktop.in.in:3
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:7
+msgid "Paper Plane"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.desktop.in.in:4
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#: data/app.drey.PaperPlane.desktop.in.in:4
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:8
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.desktop.in.in:9
+#: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:6
-#: data/com.github.melix99.telegrand.gschema.xml.in:7
+#: data/app.drey.PaperPlane.gschema.xml.in:6
+#: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:11
-#: data/com.github.melix99.telegrand.gschema.xml.in:12
+#: data/app.drey.PaperPlane.gschema.xml.in:11
+#: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:16
-#: data/com.github.melix99.telegrand.gschema.xml.in:17
+#: data/app.drey.PaperPlane.gschema.xml.in:16
+#: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:22
+#: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:32
+#: data/app.drey.PaperPlane.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
 msgid "Main window"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr ""
 
@@ -317,7 +317,7 @@ msgid "_Keyboard Shortcuts"
 msgstr ""
 
 #: data/resources/ui/sidebar.ui:26
-msgid "_About Telegrand"
+msgid "_About Paper Plane"
 msgstr ""
 
 #: data/resources/ui/sidebar-row-menu.blp:6
@@ -349,7 +349,7 @@ msgid "Try a different search."
 msgstr ""
 
 #: src/application.rs:166
-msgid "Telegrand developers"
+msgid "Paper Plane developers"
 msgstr ""
 
 #: src/application.rs:182

@@ -21,7 +21,7 @@ mod imp {
     use crate::session_manager::SessionManager;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/window.ui")]
     pub(crate) struct Window {
         pub(super) settings: gio::Settings,
         #[template_child]

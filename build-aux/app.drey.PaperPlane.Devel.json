@@ -1,5 +1,5 @@
 {
-    "id": "com.github.melix99.telegrand.Devel",
+    "id": "app.drey.PaperPlane.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "44",
     "sdk": "org.gnome.Sdk",
@@ -7,7 +7,7 @@
         "org.freedesktop.Sdk.Extension.rust-stable",
         "org.freedesktop.Sdk.Extension.llvm15"
     ],
-    "command": "telegrand",
+    "command": "paper-plane",
     "finish-args": [
         "--socket=fallback-x11",
         "--socket=wayland",
@@ -46,7 +46,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/melix99/rlottie",
+                    "url": "https://github.com/paper-plane-developers/rlottie",
                     "branch": "main"
                 }
             ]
@@ -195,7 +195,7 @@
             ]
         },
         {
-            "name": "telegrand",
+            "name": "paper-plane",
             "buildsystem": "meson",
             "run-tests": true,
             "config-opts": [

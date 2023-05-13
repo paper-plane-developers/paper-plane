@@ -17,7 +17,7 @@ mod imp {
     use crate::components::Avatar as ComponentsAvatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-avatar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/sidebar-avatar.ui")]
     pub(crate) struct Avatar {
         /// A `Chat` or `User`
         pub(super) item: RefCell<Option<glib::Object>>,

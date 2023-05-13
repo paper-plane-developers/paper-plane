@@ -4,14 +4,14 @@
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
-  <name>Telegrand</name>
+  <name>Paper Plane</name>
   <summary>A Telegram client optimized for the GNOME desktop</summary>
   <description>
     <p>A Telegram client optimized for the GNOME desktop</p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/melix99/telegrand/raw/main/data/resources/screenshots/screenshot1.png</image>
+      <image>https://github.com/paper-plane-developers/paper-plane/raw/main/data/resources/screenshots/screenshot1.png</image>
       <caption>Main window</caption>
     </screenshot>
   </screenshots>
@@ -23,9 +23,8 @@
   <requires>
     <display_length compare="ge">360</display_length>
   </requires>
-  <url type="homepage">https://github.com/melix99/telegrand</url>
-  <url type="bugtracker">https://github.com/melix99/telegrand/issues</url>
-  <url type="donation">https://github.com/sponsors/melix99</url>
+  <url type="homepage">https://github.com/paper-plane-developers/paper-plane</url>
+  <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
     <release version="0.0.1" date="2019-07-11" />
@@ -43,4 +42,3 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
 </component>
-

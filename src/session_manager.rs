@@ -14,7 +14,7 @@
 //! ids and pass them to tdlib.
 //!
 //! # Adding existing sessions
-//! The `SessionManager` analyzes the individual database directories in the Telegrand data
+//! The `SessionManager` analyzes the individual database directories in the Paper Plane data
 //! directory to see which sessions can be logged in directly using
 //! [`SessionManager::add_existing_session()`]. To do this, it checks the presence of a `td.binlog`
 //! or a `td_test.binlog` file.
@@ -91,7 +91,7 @@ mod imp {
     use crate::Login;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/session-manager.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session-manager.ui")]
     pub(crate) struct SessionManager {
         /// The order of the recently used sessions. The string stored in the `Vec` represents the
         /// session's database directory name.
@@ -771,7 +771,7 @@ pub(crate) enum DatadirState {
 /// recently used sessions file and checking the individual session's database directory.
 fn analyze_data_dir() -> Result<DatadirState, anyhow::Error> {
     if !data_dir().exists() {
-        // Create the Telegrand data directory if it does not exist and return.
+        // Create the Paper Plane data directory if it does not exist and return.
         fs::create_dir_all(data_dir())?;
         return Ok(DatadirState::Empty);
     }

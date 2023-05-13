@@ -1,17 +1,17 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the telegrand package.
+# This file is distributed under the same license as the paper-plane package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: telegrand\n"
+"Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2022-01-24 14:54+0000\n"
 "Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"telegrand/telegrand/zh_Hans/>\n"
+"paper-plane/paper-plane/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,61 +19,61 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.11-dev\n"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:3
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
-msgid "Telegrand"
-msgstr "Telegrand"
+#: data/app.drey.PaperPlane.desktop.in.in:3
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:7
+msgid "Paper Plane"
+msgstr "Paper Plane"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:4
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#: data/app.drey.PaperPlane.desktop.in.in:4
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:8
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr "为 GNOME 桌面优化的 Telegram 客户端"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:9
+#: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
 msgstr "Gnome;GTK;"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:6
-#: data/com.github.melix99.telegrand.gschema.xml.in:7
+#: data/app.drey.PaperPlane.gschema.xml.in:6
+#: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
 msgstr "默认窗口宽度"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:11
-#: data/com.github.melix99.telegrand.gschema.xml.in:12
+#: data/app.drey.PaperPlane.gschema.xml.in:11
+#: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
 msgstr "默认窗口宽度"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:16
-#: data/com.github.melix99.telegrand.gschema.xml.in:17
+#: data/app.drey.PaperPlane.gschema.xml.in:16
+#: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
 msgstr "默认窗口最大化行为"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr "最近使用的会话"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:22
+#: data/app.drey.PaperPlane.gschema.xml.in:22
 #, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr "按其数据库目录名称排序的最近使用的会话列表"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr "配色方案"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:32
+#: data/app.drey.PaperPlane.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
 msgstr "在应用内使用的配色方案"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
 msgid "Main window"
 msgstr "主窗口"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
@@ -333,7 +333,7 @@ msgid "_Keyboard Shortcuts"
 msgstr "快捷键(_K)"
 
 #: data/resources/ui/sidebar.ui:26
-msgid "_About Telegrand"
+msgid "_About Paper Plane"
 msgstr "关于 Telgrand(_A)"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
@@ -368,8 +368,8 @@ msgstr ""
 
 #: src/application.rs:166
 #, fuzzy
-msgid "Telegrand developers"
-msgstr "Telegrand"
+msgid "Paper Plane developers"
+msgstr "Paper Plane"
 
 #: src/application.rs:182
 msgid "Sponsors"
@@ -490,7 +490,7 @@ msgstr ""
 #: src/login.rs:1058
 #, fuzzy
 msgid "Telegram"
-msgstr "Telegrand"
+msgstr "Paper Plane"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1060
@@ -1191,8 +1191,8 @@ msgstr ""
 msgid "Test Account"
 msgstr "删除帐户(_D)"
 
-#~ msgid "Welcome to Telegrand"
-#~ msgstr "欢迎使用 Telegrand"
+#~ msgid "Welcome to Paper Plane"
+#~ msgstr "欢迎使用 Paper Plane"
 
 #~ msgid "Appearance"
 #~ msgstr "外观"

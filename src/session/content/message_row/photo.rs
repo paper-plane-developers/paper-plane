@@ -19,7 +19,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-photo.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-message-photo.ui")]
     pub(crate) struct MessagePhoto {
         pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,

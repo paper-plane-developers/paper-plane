@@ -32,7 +32,7 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content.ui")]
     pub(crate) struct Content {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,

@@ -6,7 +6,7 @@ option(
     'development'
   ],
   value: 'default',
-  description: 'The build profile for Telegrand. One of "default" or "development".'
+  description: 'The build profile for Paper Plane. One of "default" or "development".'
 )
 
 option(

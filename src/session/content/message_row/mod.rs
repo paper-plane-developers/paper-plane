@@ -327,7 +327,7 @@ impl MessageRow {
 
             match message_.content().0 {
                 // FIXME: Re-enable MessageVideo when
-                // https://github.com/melix99/telegrand/issues/410 is fixed
+                // https://github.com/paper-plane-developers/paper-plane/issues/410 is fixed
                 MessageContent::MessageAnimation(_) /*| MessageContent::MessageVideo(_)*/ => {
                     self.update_specific_content::<_, MessageVideo>(message_.clone());
                 }

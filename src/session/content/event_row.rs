@@ -8,7 +8,7 @@ mod imp {
     use once_cell::sync::Lazy;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-event-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-event-row.ui")]
     pub(crate) struct EventRow {
         #[template_child]
         pub(super) label: TemplateChild<gtk::Label>,

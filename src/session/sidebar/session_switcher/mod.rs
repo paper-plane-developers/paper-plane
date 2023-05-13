@@ -20,7 +20,7 @@ mod imp {
     use glib::subclass::InitializingObject;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-session-switcher.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/sidebar-session-switcher.ui")]
     pub(crate) struct SessionSwitcher {
         #[template_child]
         pub(super) entries: TemplateChild<gtk::ListView>,
