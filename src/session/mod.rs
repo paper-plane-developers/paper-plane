@@ -42,7 +42,7 @@ mod imp {
         pub(super) me: WeakRef<User>,
         pub(super) main_chat_list: OnceCell<ChatList>,
         pub(super) archive_chat_list: OnceCell<ChatList>,
-        pub(super) filter_chat_lists: RefCell<HashMap<i32, ChatList>>,
+        pub(super) folder_chat_lists: RefCell<HashMap<i32, ChatList>>,
         pub(super) chats: RefCell<HashMap<i64, Chat>>,
         pub(super) users: RefCell<HashMap<i64, User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, BasicGroup>>,
@@ -307,7 +307,7 @@ impl Session {
                         .update_unread_message_count(data.unread_count);
                 }
                 TdChatList::Folder(data_) => {
-                    self.filter_chat_list(data_.chat_folder_id)
+                    self.folder_chat_list(data_.chat_folder_id)
                         .update_unread_message_count(data.unread_count);
                 }
             },
@@ -407,12 +407,12 @@ impl Session {
         self.imp().archive_chat_list.get_or_init(ChatList::new)
     }
 
-    /// Returns the filter chat list of the specified id.
-    pub(crate) fn filter_chat_list(&self, chat_filter_id: i32) -> ChatList {
+    /// Returns the folder chat list of the specified id.
+    pub(crate) fn folder_chat_list(&self, chat_folder_id: i32) -> ChatList {
         self.imp()
-            .filter_chat_lists
+            .folder_chat_lists
             .borrow_mut()
-            .entry(chat_filter_id)
+            .entry(chat_folder_id)
             .or_insert_with(ChatList::new)
             .clone()
     }
@@ -509,7 +509,7 @@ impl Session {
                     .update_chat_position(chat, position);
             }
             TdChatList::Folder(data) => {
-                self.filter_chat_list(data.chat_folder_id)
+                self.folder_chat_list(data.chat_folder_id)
                     .update_chat_position(chat, position);
             }
         }
