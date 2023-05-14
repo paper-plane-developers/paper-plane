@@ -1452,9 +1452,9 @@ checksum = "8ae9980cab1db3fceee2f6c6f643d5d8de2997c58ee8d25fb0cc8a9e9e7348e5"
 
 [[package]]
 name = "tdlib"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5a76b9b6a220aae253aa05504af75e3a5b211cc84e156ce004272c88d84dd54"
+checksum = "c5c8c6fb27a718557d8c3fd9afe01d5a293b7c159de6717526183b31eadf94d8"
 dependencies = [
  "futures-channel",
  "log",
@@ -1469,9 +1469,9 @@ dependencies = [
 
 [[package]]
 name = "tdlib-tl-gen"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3aa1e076e4df4a607089c9d2b1b286e103eec34f06e5f2b1d699e5a31b30b47"
+checksum = "0493ac346fff2be6dae12c7a48d6ff53268d44dec89ca290c7ab419efc121fab"
 dependencies = [
  "tdlib-tl-parser",
 ]

@@ -306,8 +306,8 @@ impl Session {
                     self.archive_chat_list()
                         .update_unread_message_count(data.unread_count);
                 }
-                TdChatList::Filter(data_) => {
-                    self.filter_chat_list(data_.chat_filter_id)
+                TdChatList::Folder(data_) => {
+                    self.filter_chat_list(data_.chat_folder_id)
                         .update_unread_message_count(data.unread_count);
                 }
             },
@@ -508,8 +508,8 @@ impl Session {
                 self.archive_chat_list()
                     .update_chat_position(chat, position);
             }
-            TdChatList::Filter(data) => {
-                self.filter_chat_list(data.chat_filter_id)
+            TdChatList::Folder(data) => {
+                self.filter_chat_list(data.chat_folder_id)
                     .update_chat_position(chat, position);
             }
         }
