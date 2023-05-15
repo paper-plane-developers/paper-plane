@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Paper Plane
-Comment=A Telegram client optimized for the GNOME desktop
+Comment=Chat over Telegram on a modern and elegant client
 Type=Application
 Exec=paper-plane
 Terminal=false
