@@ -5,9 +5,23 @@
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>Paper Plane</name>
-  <summary>A Telegram client optimized for the GNOME desktop</summary>
+  <summary>Chat over Telegram on a modern and elegant client</summary>
   <description>
-    <p>A Telegram client optimized for the GNOME desktop</p>
+    <p>
+      Paper Plane is an alternative Telegram client.
+      It uses libadwaita for its user interface and strives to meet the design principles of the GNOME desktop.
+    </p>
+    <p>
+      Paper Plane is still under development and not yet feature-complete.
+      However, the following things are already working:
+    </p>
+    <ul>
+      <li>The use of multiple accounts at the same time.</li>
+      <li>Viewing text messages, images, stickers and files.</li>
+      <li>Sending text messages and images.</li>
+      <li>Replying to messages.</li>
+      <li>Searching for groups and persons.</li>
+    </ul>
   </description>
   <screenshots>
     <screenshot type="default">
