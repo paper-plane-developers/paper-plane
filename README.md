@@ -4,7 +4,7 @@
   Paper Plane
 </h1>
 
-<p align="center"><strong>A Telegram client optimized for the GNOME desktop</strong></p>
+<p align="center"><strong>Chat over Telegram on a modern and elegant client</strong></p>
 
 <p align="center">
   <a href="https://hosted.weblate.org/engage/paper-plane/">
