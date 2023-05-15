@@ -1,17 +1,17 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the telegrand package.
+# This file is distributed under the same license as the paper-plane package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: telegrand\n"
+"Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2023-04-23 14:46+0000\n"
 "Last-Translator: devlocalhost <lazarecobani@gmail.com>\n"
-"Language-Team: Greek <https://hosted.weblate.org/projects/telegrand/"
-"telegrand/el/>\n"
+"Language-Team: Greek <https://hosted.weblate.org/projects/paper-plane/"
+"paper-plane/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,41 +19,41 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.18-dev\n"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:3
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
-msgid "Telegrand"
-msgstr "Telegrand"
+#: data/app.drey.PaperPlane.desktop.in.in:3
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:7
+msgid "Paper Plane"
+msgstr "Paper Plane"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:4
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#: data/app.drey.PaperPlane.desktop.in.in:4
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:8
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr "Ένας πελάτης Telegram βελτιστοποιήθηκε για την επιφάνεια εργασίας GNOME"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:9
+#: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
 msgstr "Gnome;GTK;"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:6
-#: data/com.github.melix99.telegrand.gschema.xml.in:7
+#: data/app.drey.PaperPlane.gschema.xml.in:6
+#: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
 msgstr "Προκαθορισμένο πλάτος παραθύρου"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:11
-#: data/com.github.melix99.telegrand.gschema.xml.in:12
+#: data/app.drey.PaperPlane.gschema.xml.in:11
+#: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
 msgstr "Προκαθορισμένο ύψος παραθύρου"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:16
-#: data/com.github.melix99.telegrand.gschema.xml.in:17
+#: data/app.drey.PaperPlane.gschema.xml.in:16
+#: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
 msgstr "Προεπιλεγμένη συμπεριφορά μεγιστοποιημένης παραθύρου"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr "Πρόσφατα χρησιμοποιημένες συσκευές"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:22
+#: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
@@ -61,20 +61,20 @@ msgstr ""
 "Μια λίστα με τις πιο πρόσφατα χρησιμοποιημένες συσκευές, ταξινομημένες με "
 "βάση τα ονόματα της βάσης δεδομένων τους"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr "Θέμα και χρώμα"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:32
+#: data/app.drey.PaperPlane.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
 msgstr "Το χρωματικό θέμα που θα χρησιμοποιηθεί στην εφαρμογή"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
 msgid "Main window"
 msgstr "Κύριο παράθυρο"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr "Μάρκος Μελοριο"
 
@@ -329,8 +329,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "_Συντομεύσεις πληκτρολογίου"
 
 #: data/resources/ui/sidebar.ui:26
-msgid "_About Telegrand"
-msgstr "_Σχετικά με την Telegrand"
+msgid "_About Paper Plane"
+msgstr "_Σχετικά με την Paper Plane"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
@@ -361,8 +361,8 @@ msgid "Try a different search."
 msgstr "Δοκιμάστε μια διαφορετική αναζήτηση."
 
 #: src/application.rs:166
-msgid "Telegrand developers"
-msgstr "Προγραμματιστές Telegrand"
+msgid "Paper Plane developers"
+msgstr "Προγραμματιστές Paper Plane"
 
 #: src/application.rs:182
 msgid "Sponsors"

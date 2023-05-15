@@ -18,7 +18,7 @@ mod imp {
     use std::rc::Rc;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/phone-number-input.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/phone-number-input.ui")]
     pub(crate) struct PhoneNumberInput {
         /// The system's country code
         pub(super) system_country_code: OnceCell<Option<String>>,

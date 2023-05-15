@@ -14,7 +14,7 @@ mod imp {
     use once_cell::unsync::OnceCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/preferences-window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/preferences-window.ui")]
     pub(crate) struct PreferencesWindow {
         pub(super) session: OnceCell<Session>,
         #[template_child]

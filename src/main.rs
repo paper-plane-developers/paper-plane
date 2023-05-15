@@ -41,7 +41,7 @@ fn main() -> glib::ExitCode {
     gettextrs::bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
     gettextrs::textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
-    glib::set_application_name("Telegrand");
+    glib::set_application_name("Paper Plane");
 
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
@@ -52,7 +52,7 @@ fn main() -> glib::ExitCode {
     app.connect_handle_local_options(|_, dict| {
         if dict.contains("version") {
             // Print version ...
-            println!("telegrand {}", config::VERSION);
+            println!("paper-plane {}", config::VERSION);
             // ... and exit application.
             1
         } else {
@@ -80,7 +80,7 @@ fn main() -> glib::ExitCode {
 
     // Create temp directory.
     // This value must live during the entire execution of the app.
-    let temp_dir = TempDir::with_prefix("telegrand");
+    let temp_dir = TempDir::with_prefix("paper-plane");
     match &temp_dir {
         Ok(temp_dir) => {
             TEMP_DIR.set(temp_dir.path().to_path_buf()).unwrap();
@@ -102,7 +102,7 @@ pub(crate) struct ApplicationOptions {
 impl Default for ApplicationOptions {
     fn default() -> Self {
         Self {
-            data_dir: PathBuf::from(glib::user_data_dir().to_str().unwrap()).join("telegrand"),
+            data_dir: PathBuf::from(glib::user_data_dir().to_str().unwrap()).join("paper-plane"),
             test_dc: Default::default(),
         }
     }

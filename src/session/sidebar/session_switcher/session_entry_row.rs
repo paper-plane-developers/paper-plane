@@ -16,7 +16,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/session-entry-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session-entry-row.ui")]
     pub(crate) struct SessionEntryRow {
         pub(super) session: RefCell<Option<Session>>,
         #[template_child]

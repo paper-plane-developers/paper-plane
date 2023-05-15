@@ -1,17 +1,17 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the telegrand package.
+# This file is distributed under the same license as the paper-plane package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: telegrand\n"
+"Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2022-04-05 23:06+0000\n"
 "Last-Translator: abidin toumi <abidin24@disroot.org>\n"
-"Language-Team: Arabic <https://hosted.weblate.org/projects/telegrand/"
-"telegrand/ar/>\n"
+"Language-Team: Arabic <https://hosted.weblate.org/projects/paper-plane/"
+"paper-plane/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,60 +20,60 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 4.12-dev\n"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:3
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:7
-msgid "Telegrand"
+#: data/app.drey.PaperPlane.desktop.in.in:3
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:7
+msgid "Paper Plane"
 msgstr "تليغراند"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:4
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:8
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:10
+#: data/app.drey.PaperPlane.desktop.in.in:4
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:8
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
 msgstr "عميل تليغرام محسن ليلائم غنوم"
 
-#: data/com.github.melix99.telegrand.desktop.in.in:9
+#: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
 msgstr "Gnome;GTK;غنوم؛"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:6
-#: data/com.github.melix99.telegrand.gschema.xml.in:7
+#: data/app.drey.PaperPlane.gschema.xml.in:6
+#: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
 msgstr "العرض الافتراضي للنافذة"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:11
-#: data/com.github.melix99.telegrand.gschema.xml.in:12
+#: data/app.drey.PaperPlane.gschema.xml.in:11
+#: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
 msgstr "الارتفاع الافتراضي للنافذة"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:16
-#: data/com.github.melix99.telegrand.gschema.xml.in:17
+#: data/app.drey.PaperPlane.gschema.xml.in:16
+#: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
 msgstr "سلوكة التكبير الافتراضي للنافذة"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:21
+#: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr "آخر الجلسات المستخدمة"
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:22
+#: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:31
+#: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.gschema.xml.in:32
+#: data/app.drey.PaperPlane.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
 msgstr ""
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
 msgid "Main window"
 msgstr "النافذة الرئيسية"
 
-#: data/com.github.melix99.telegrand.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
 msgid "Marco Melorio"
 msgstr ""
 
@@ -323,7 +323,7 @@ msgid "_Keyboard Shortcuts"
 msgstr "اختصارات _لوحة المفاتيح"
 
 #: data/resources/ui/sidebar.ui:26
-msgid "_About Telegrand"
+msgid "_About Paper Plane"
 msgstr "_حول تليغراند"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
@@ -356,7 +356,7 @@ msgstr ""
 
 #: src/application.rs:166
 #, fuzzy
-msgid "Telegrand developers"
+msgid "Paper Plane developers"
 msgstr "تليغراند"
 
 #: src/application.rs:182
@@ -1164,7 +1164,7 @@ msgstr ""
 msgid "Test Account"
 msgstr "إ_ضافة خادم"
 
-#~ msgid "Welcome to Telegrand"
+#~ msgid "Welcome to Paper Plane"
 #~ msgstr "مرحبًا في تليغراند"
 
 #~ msgid "Advanced"

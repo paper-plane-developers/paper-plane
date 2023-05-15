@@ -53,7 +53,7 @@ jobs:
           platforms: arm64
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v5
         with:
-          bundle: telegrand.flatpak
-          manifest-path: build-aux/com.github.melix99.telegrand.Devel.json
+          bundle: paper-plane.flatpak
+          manifest-path: build-aux/app.drey.PaperPlane.Devel.json
           arch: ${{ matrix.arch }}
           cache-key: flatpak-builder-${{ github.sha }}

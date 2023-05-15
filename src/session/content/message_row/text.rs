@@ -17,7 +17,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-text.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-message-text.ui")]
     pub(crate) struct MessageText {
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) message: RefCell<Option<glib::Object>>,

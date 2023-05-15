@@ -10,7 +10,7 @@ mod imp {
     use gtk::{self, CompositeTemplate};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/add-account-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/add-account-row.ui")]
     pub(crate) struct AddAccountRow {
         #[template_child]
         pub(super) image: TemplateChild<gtk::Image>,

@@ -50,7 +50,7 @@ mod imp {
         fn startup(&self) {
             debug!("GtkApplication<Application>::startup");
 
-            info!("Telegrand ({})", APP_ID);
+            info!("Paper Plane ({})", APP_ID);
             info!("Version: {} ({})", VERSION, PROFILE);
             info!("Datadir: {}", PKGDATADIR);
 
@@ -87,7 +87,7 @@ impl Application {
     pub(crate) fn new() -> Self {
         glib::Object::builder()
             .property("application-id", APP_ID)
-            .property("resource-base-path", "/com/github/melix99/telegrand/")
+            .property("resource-base-path", "/app/drey/paper-plane/")
             .build()
     }
 
@@ -157,18 +157,18 @@ impl Application {
     fn show_about_dialog(&self) {
         let about = adw::AboutWindow::builder()
             .transient_for(&self.main_window())
-            .application_name("Telegrand")
+            .application_name("Paper Plane")
             .application_icon(APP_ID)
             .version(VERSION)
-            .website("https://github.com/melix99/telegrand")
-            .issue_url("https://github.com/melix99/telegrand/issues")
-            .support_url("https://t.me/telegrandchat")
-            .developer_name(gettext("Telegrand developers"))
+            .website("https://github.com/paper-plane-developers/paper-plane")
+            .issue_url("https://github.com/paper-plane-developers/paper-plane/issues")
+            .support_url("https://t.me/paperplanechat")
+            .developer_name(gettext("Paper Plane developers"))
             .copyright("© 2021–2023 Marco Melorio")
             .license_type(gtk::License::Gpl30)
             .developers([
                 "Karol Lademan https://github.com/karl0d",
-                "Marco Melorio https://github.com/melix99",
+                "Marco Melorio (orig. author) https://github.com/melix99",
                 "Marcus Behrendt https://github.com/marhkb",
                 "Yuri Izmer https://github.com/yuraiz",
             ])

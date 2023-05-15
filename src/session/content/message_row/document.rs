@@ -18,7 +18,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-message-document.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-message-document.ui")]
     pub(crate) struct MessageDocument {
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
@@ -199,7 +199,7 @@ impl MessageDocument {
                 image.set_icon_name(Some("document-save-symbolic"));
                 click.connect_released(clone!(@weak self as obj, @weak session => move |click, _, _, _| {
                     // TODO: Fix bug mentioned here
-                    // https://github.com/melix99/telegrand/pull/372#discussion_r968841370
+                    // https://github.com/paper-plane-developers/paper-plane/pull/372#discussion_r968841370
                     session.download_file_with_updates(file_id, clone!(@weak obj, @weak session => move |file| {
                         obj.update_status(file, session);
                     }));

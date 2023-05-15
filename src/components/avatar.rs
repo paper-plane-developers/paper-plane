@@ -14,7 +14,7 @@ mod imp {
     use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/components-avatar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/components-avatar.ui")]
     pub(crate) struct Avatar {
         /// A `Chat` or `User`
         pub(super) item: RefCell<Option<glib::Object>>,

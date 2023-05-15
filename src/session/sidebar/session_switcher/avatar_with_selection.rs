@@ -11,7 +11,7 @@ mod imp {
     use once_cell::sync::Lazy;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/avatar-with-selection.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/avatar-with-selection.ui")]
     pub(crate) struct AvatarWithSelection {
         #[template_child]
         pub(super) child_avatar: TemplateChild<Avatar>,

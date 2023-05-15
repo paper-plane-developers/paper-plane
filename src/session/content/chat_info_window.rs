@@ -18,7 +18,7 @@ mod imp {
     use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-info-window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-chat-info-window.ui")]
     pub(crate) struct ChatInfoWindow {
         pub(super) chat: OnceCell<Chat>,
         #[template_child]

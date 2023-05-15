@@ -151,12 +151,12 @@ pub(crate) fn human_friendly_duration(mut seconds: i32) -> String {
     }
 }
 
-/// Returns the Telegrand data directory (e.g. /home/bob/.local/share/telegrand).
+/// Returns the Paper Plane data directory (e.g. /home/bob/.local/share/paper-plane).
 pub(crate) fn data_dir() -> &'static PathBuf {
     &APPLICATION_OPTS.get().unwrap().data_dir
 }
 
-/// Returns the Telegrand temp directory (e.g. /tmp/telegrand2-0).
+/// Returns the Paper Plane temp directory (e.g. /tmp/paper-plane2-0).
 pub(crate) fn temp_dir() -> Option<&'static PathBuf> {
     TEMP_DIR.get()
 }

@@ -1,5 +1,5 @@
 project(
-  'telegrand',
+  'paper-plane',
   'rust',
   version: '0.1.0',
   meson_version: '>= 0.59',
@@ -8,7 +8,7 @@ project(
 i18n = import('i18n')
 gnome = import('gnome')
 
-base_id = 'com.github.melix99.telegrand'
+base_id = 'app.drey.PaperPlane'
 
 dependency('glib-2.0', version: '>= 2.72')
 dependency('gio-2.0', version: '>= 2.72')

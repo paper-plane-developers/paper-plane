@@ -23,7 +23,7 @@ mod imp {
     use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/content-chat-history.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/content-chat-history.ui")]
     pub(crate) struct ChatHistory {
         pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
@@ -270,10 +270,9 @@ impl ChatHistory {
 
     pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
         self.imp().message_menu.get_or_init(|| {
-            let menu =
-                gtk::Builder::from_resource("/com/github/melix99/telegrand/ui/message-menu.ui")
-                    .object::<gtk::PopoverMenu>("menu")
-                    .unwrap();
+            let menu = gtk::Builder::from_resource("/app/drey/paper-plane/ui/message-menu.ui")
+                .object::<gtk::PopoverMenu>("menu")
+                .unwrap();
 
             menu.set_halign(if self.direction() == gtk::TextDirection::Rtl {
                 gtk::Align::End

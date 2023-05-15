@@ -22,7 +22,7 @@ mod imp {
     use crate::session::sidebar::{Avatar, Sidebar};
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/github/melix99/telegrand/ui/sidebar-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/sidebar-row.ui")]
     pub(crate) struct Row {
         pub(super) item: RefCell<Option<ChatListItem>>,
         pub(super) item_signal_group: OnceCell<glib::SignalGroup>,

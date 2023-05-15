@@ -1,6 +1,6 @@
-data/com.github.melix99.telegrand.desktop.in.in
-data/com.github.melix99.telegrand.gschema.xml.in
-data/com.github.melix99.telegrand.metainfo.xml.in.in
+data/app.drey.PaperPlane.desktop.in.in
+data/app.drey.PaperPlane.gschema.xml.in
+data/app.drey.PaperPlane.metainfo.xml.in.in
 
 data/resources/ui/add-account-row.blp
 data/resources/ui/content.blp
