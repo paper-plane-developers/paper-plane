@@ -1,4 +1,6 @@
 <h1 align="center">
+  <img src="data/icons/app.drey.PaperPlane.svg" alt="Paper Plane" width="192" height="192"/>
+  <br>
   Paper Plane
 </h1>
 
