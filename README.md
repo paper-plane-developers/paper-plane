@@ -24,6 +24,18 @@
   <img width=600 src="data/resources/screenshots/screenshot1.png" alt="Screenshot"/>
 </p>
 
+Paper Plane is an alternative Telegram client.
+It uses libadwaita for its user interface and strives to meet the design principles of the GNOME desktop.
+
+Paper Plane is still under development and not yet feature-complete.
+However, the following things are already working:
+
+- The use of multiple accounts at the same time.
+- Viewing text messages, images, stickers and files.
+- Sending text messages and images.
+- Replying to messages.
+- Searching for groups and persons.
+
 ## Installation Instructions
 
 Paper Plane is an in-development project and it isn't considered stable software yet. Also, the included API credentials are very limited and, in some cases, your account may end up banned by Telegram (check the `Telegram API Credentials` section below). You can avoid that by using a custom built version of Paper Plane with provided API credentials via meson options, like [this AUR package](https://aur.archlinux.org/packages/paper-plane-git) which you may prefer using if you use Arch Linux. But, if you still feel brave enough, there's a CI that automatically generates the latest flatpak build with the test API credentials: just download the [latest artifact](https://nightly.link/paper-plane-developers/paper-plane/workflows/ci/main) and install it locally using `flatpak install paper-plane.flatpak`.
