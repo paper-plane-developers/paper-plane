@@ -46,7 +46,7 @@ The following packages are required to build Telegrand:
 - cargo
 - GTK >= 4.10 (with the patch included in the build-aux directory)
 - libadwaita >= 1.4
-- [TDLib 1.8.13](https://github.com/tdlib/td/commit/eb664b4e9f71945ef3faa802af779e1630fedb8f)
+- [TDLib 1.8.14](https://github.com/tdlib/td/commit/8517026415e75a8eec567774072cbbbbb52376c1)
 - [Telegram API Credentials](https://my.telegram.org/) (optional, but recommended)
 
 Additionally, Telegrand requires the following GStreamer plugins installed in your system to correctly show all media files:
