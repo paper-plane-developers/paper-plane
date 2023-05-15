@@ -18,11 +18,11 @@
   </a>
 </p>
 
-<!--
+<br>
+
 <p align="center">
-  <img src="data/resources/screenshots/screenshot1.png" alt="Preview"/>
+  <img width=600 src="data/resources/screenshots/screenshot1.png" alt="Screenshot"/>
 </p>
--->
 
 ## Installation Instructions
 
