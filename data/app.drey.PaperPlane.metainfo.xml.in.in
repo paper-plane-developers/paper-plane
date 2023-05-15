@@ -39,7 +39,7 @@
   </requires>
   <url type="homepage">https://github.com/paper-plane-developers/paper-plane</url>
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
-  <content_rating type="oars-1.0" />
+  <content_rating type="oars-1.1" />
   <releases>
     <release version="0.0.1" date="2019-07-11" />
   </releases>
