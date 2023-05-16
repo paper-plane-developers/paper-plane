@@ -5,7 +5,7 @@ template $Session : Adw.Bin {
   Adw.Leaflet leaflet {
     can-navigate-back: true;
 
-    .Sidebar sidebar {
+    $Sidebar sidebar {
       compact: bind leaflet.folded;
       selected-chat: bind content.chat bidirectional;
       session: "Session";
@@ -16,7 +16,7 @@ template $Session : Adw.Bin {
       child: Separator {};
     }
 
-    .Content content {
+    $Content content {
       compact: bind leaflet.folded;
     }
   }
