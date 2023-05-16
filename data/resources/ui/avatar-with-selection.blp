@@ -1,9 +1,9 @@
 using Gtk 4.0;
 using Adw 1;
 
-template AvatarWithSelection : Adw.Bin {
+template $AvatarWithSelection : Adw.Bin {
   child: Overlay {
-    .ComponentsAvatar child_avatar {}
+    $ComponentsAvatar child_avatar {}
 
     [overlay]
     Image checkmark {

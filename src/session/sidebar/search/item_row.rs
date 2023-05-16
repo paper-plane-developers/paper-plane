@@ -14,8 +14,8 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template SidebarSearchItemRow {
-        .ComponentsAvatar avatar {
+    template $SidebarSearchItemRow {
+        $ComponentsAvatar avatar {
             size: 32;
             item: bind SidebarSearchItemRow.item;
         }

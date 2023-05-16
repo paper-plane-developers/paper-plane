@@ -9,15 +9,15 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageBase {
+    template $MessageBase {
         GestureClick {
             button: 3;
-            released => on_pressed() swapped;
+            released => $on_pressed() swapped;
         }
 
         GestureLongPress {
             touch-only: true;
-            pressed => on_long_pressed() swapped;
+            pressed => $on_long_pressed() swapped;
         }
     }
     "#)]

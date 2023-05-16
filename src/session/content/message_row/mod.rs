@@ -43,10 +43,10 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageRow {
+    template $MessageRow {
         GestureClick {
             button: 1;
-            released => on_released() swapped;
+            released => $on_released() swapped;
         }
     }
     "#)]

@@ -16,7 +16,7 @@ mod imp {
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::MessageReply)]
     #[template(string = r#"
-    template MessageReply : Widget {
+    template $MessageReply : Widget {
         Separator separator {
             width-request: 2;
         }

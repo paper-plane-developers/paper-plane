@@ -1,23 +1,23 @@
 using Gtk 4.0;
 using Adw 1;
 
-template SidebarRow {
+template $SidebarRow {
   layout-manager:   BoxLayout {
     spacing: 12;
   };
 
   GestureClick {
     button: 3;
-    released => on_pressed() swapped;
+    released => $on_pressed() swapped;
   }
 
   GestureLongPress {
     touch-only: true;
-    pressed => on_long_pressed() swapped;
+    pressed => $on_long_pressed() swapped;
   }
 
   .SidebarAvatar {
-    item: bind SidebarRow.item.chat;
+    item: bind SidebarRow.item as <$ChatListItem>.chat;
   }
 
   Box {

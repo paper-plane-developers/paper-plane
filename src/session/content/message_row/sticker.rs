@@ -23,22 +23,22 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageSticker : .MessageBase {
+    template $MessageSticker : $MessageBase {
         layout-manager: BoxLayout {};
 
         Overlay overlay {
             GestureClick click {
                 button: 1;
 
-                released => on_pressed() swapped;
+                released => $on_pressed() swapped;
             }
 
-            .ComponentsSticker sticker {}
+            $ComponentsSticker sticker {}
 
             [overlay]
-            .MessageIndicators indicators {
-            halign: end;
-            valign: end;
+            $MessageIndicators indicators {
+                halign: end;
+                valign: end;
             }
         }
     }

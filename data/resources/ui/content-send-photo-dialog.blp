@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template ContentSendPhotoDialog : Adw.Window {
+template $ContentSendPhotoDialog : Adw.Window {
   default-width: 500;
   default-height: 500;
   modal: true;
@@ -17,7 +17,7 @@ template ContentSendPhotoDialog : Adw.Window {
       child: Box {
         styles ["toolbar"]
 
-        .MessageEntry caption_entry {
+        $MessageEntry caption_entry {
           hexpand: "True";
           placeholder-text: _("Caption");
           chat: bind ContentSendPhotoDialog.chat;

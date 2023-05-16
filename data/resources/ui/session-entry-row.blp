@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template SessionEntryRow {
+template $SessionEntryRow {
   layout-manager: BoxLayout {
     spacing: 10;
   };
@@ -10,7 +10,7 @@ template SessionEntryRow {
 
   .AvatarWithSelection account_avatar {
     size: 40;
-    item: bind SessionEntryRow.session.me;
+    item: bind SessionEntryRow.session as <$Session>.me;
   }
 
   Box center_box {
@@ -39,7 +39,7 @@ template SessionEntryRow {
     halign: end;
     ellipsize: end;
     justify: center;
-    label: bind SessionEntryRow.session.main-chat-list.unread-count;
-    visible: bind SessionEntryRow.session.main-chat-list.unread-count;
+    label: bind SessionEntryRow.session as <$Session>.main-chat-list as <$ChatList>.unread-count;
+    visible: bind SessionEntryRow.session as <$Session>.main-chat-list as <$ChatList>.unread-count;
   }
 }
