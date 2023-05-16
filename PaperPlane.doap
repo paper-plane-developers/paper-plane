@@ -1,0 +1,54 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:gnome="http://api.gnome.org/doap-extensions#"
+  xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">Paper Plane</name>
+  <shortdesc xml:lang="en">Chat over Telegram on a modern and elegant client</shortdesc>
+  <homepage rdf:resource="https://github.com/paper-plane-developers/paper-plane"/>
+  <bug-database rdf:resource="https://github.com/paper-plane-developers/paper-plane/issues"/>
+  <programming-language>Rust</programming-language>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Karol Lademan</foaf:name>
+      <foaf:account>
+        <foaf:OnlineAccount>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+          <foaf:accountName>karl0d</foaf:accountName>
+        </foaf:OnlineAccount>
+      </foaf:account>
+    </foaf:Person>
+    <foaf:Person>
+      <foaf:name>Marco Melorio</foaf:name>
+      <foaf:mbox rdf:resource="mailto:marco.melorio@pm.me"/>
+      <foaf:account>
+        <foaf:OnlineAccount>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+          <foaf:accountName>melix99</foaf:accountName>
+        </foaf:OnlineAccount>
+      </foaf:account>
+    </foaf:Person>
+    <foaf:Person>
+      <foaf:name>Marcus Behrendt</foaf:name>
+      <foaf:mbox rdf:resource="mailto:marcus.behrendt.86@gmail.com"/>
+      <foaf:account>
+        <foaf:OnlineAccount>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+          <foaf:accountName>marhkb</foaf:accountName>
+        </foaf:OnlineAccount>
+      </foaf:account>
+    </foaf:Person>
+    <foaf:Person>
+      <foaf:name>Yuri Izmer</foaf:name>
+      <foaf:account>
+        <foaf:OnlineAccount>
+          <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+          <foaf:accountName>yuraiz</foaf:accountName>
+        </foaf:OnlineAccount>
+      </foaf:account>
+    </foaf:Person>
+  </maintainer>
+
+</Project>

@@ -1,8 +1,10 @@
 <h1 align="center">
+  <img src="data/icons/app.drey.PaperPlane.svg" alt="Paper Plane" width="192" height="192"/>
+  <br>
   Paper Plane
 </h1>
 
-<p align="center"><strong>A Telegram client optimized for the GNOME desktop</strong></p>
+<p align="center"><strong>Chat over Telegram on a modern and elegant client</strong></p>
 
 <p align="center">
   <a href="https://hosted.weblate.org/engage/paper-plane/">
@@ -16,11 +18,23 @@
   </a>
 </p>
 
-<!--
+<br>
+
 <p align="center">
-  <img src="data/resources/screenshots/screenshot1.png" alt="Preview"/>
+  <img width=600 src="data/resources/screenshots/screenshot1.png" alt="Screenshot"/>
 </p>
--->
+
+Paper Plane is an alternative Telegram client.
+It uses libadwaita for its user interface and strives to meet the design principles of the GNOME desktop.
+
+Paper Plane is still under development and not yet feature-complete.
+However, the following things are already working:
+
+- The use of multiple accounts at the same time.
+- Viewing text messages, images, stickers and files.
+- Sending text messages and images.
+- Replying to messages.
+- Searching for groups and persons.
 
 ## Installation Instructions
 
