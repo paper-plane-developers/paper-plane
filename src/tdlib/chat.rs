@@ -86,6 +86,7 @@ mod imp {
         pub(super) last_message: RefCell<Option<Message>>,
         pub(super) unread_mention_count: Cell<i32>,
         pub(super) unread_count: Cell<i32>,
+        pub(super) online_member_count: Cell<i32>,
         pub(super) draft_message: RefCell<Option<BoxedDraftMessage>>,
         pub(super) notification_settings: RefCell<Option<BoxedChatNotificationSettings>>,
         pub(super) actions: OnceCell<ChatActionList>,
@@ -127,6 +128,9 @@ mod imp {
                         .build(),
                     glib::ParamSpecString::builder("title").read_only().build(),
                     glib::ParamSpecBoxed::builder::<Avatar>("avatar")
+                        .read_only()
+                        .build(),
+                    glib::ParamSpecInt::builder("online-member-count")
                         .read_only()
                         .build(),
                     glib::ParamSpecInt64::builder("last-read-outbox-message-id")
@@ -180,6 +184,7 @@ mod imp {
                 "last-message" => obj.last_message().to_value(),
                 "unread-mention-count" => obj.unread_mention_count().to_value(),
                 "unread-count" => obj.unread_count().to_value(),
+                "online-member-count" => obj.online_member_count().to_value(),
                 "draft-message" => obj.draft_message().to_value(),
                 "notification-settings" => obj.notification_settings().to_value(),
                 "actions" => obj.actions().to_value(),
@@ -319,6 +324,7 @@ impl Chat {
             MessageMentionRead(update) => {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
+            ChatOnlineMemberCount(data) => self.set_online_member_count(data.online_member_count),
             _ => {}
         }
     }
@@ -434,6 +440,18 @@ impl Chat {
         }
         self.imp().unread_count.set(unread_count);
         self.notify("unread-count");
+    }
+
+    pub fn online_member_count(&self) -> i32 {
+        self.imp().online_member_count.get()
+    }
+
+    pub fn set_online_member_count(&self, online_member_count: i32) {
+        if self.online_member_count() == online_member_count {
+            return;
+        }
+        self.imp().online_member_count.set(online_member_count);
+        self.notify("online-member-count");
     }
 
     pub(crate) fn draft_message(&self) -> Option<BoxedDraftMessage> {
