@@ -1,11 +1,13 @@
+use crate::i18n::gettext_f;
+use crate::strings;
 use gettextrs::gettext;
 use gtk::glib;
 use gtk::glib::closure;
 use gtk::prelude::GObjectPropertyExpressionExt;
 
 use crate::tdlib::{
-    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedUserType, Chat, ChatType,
-    Supergroup, User,
+    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedUserStatus, BoxedUserType, Chat,
+    ChatActionList, ChatType, Supergroup, User,
 };
 use tdlib::enums::{ChatMemberStatus, UserType};
 
@@ -123,5 +125,95 @@ fn restriction_label_expression<T: glib::StaticType, V: glib::ToValue>(
             }
         }),
     )
+    .upcast()
+}
+
+pub(crate) fn subtitle_expression(chat: &Chat) -> gtk::Expression {
+    let actions_expression = gtk::ConstantExpression::new(chat)
+        .chain_property::<Chat>("actions")
+        .upcast();
+    let online_count_expression =
+        gtk::ConstantExpression::new(chat).chain_property::<Chat>("online-member-count");
+
+    let status_expression = if !chat.is_own_chat() {
+        match chat.type_() {
+            ChatType::Private(user) => {
+                if let UserType::Bot(_) = user.type_().0 {
+                    gtk::ConstantExpression::new(gettext("bot")).upcast()
+                } else {
+                    gtk::ConstantExpression::new(user)
+                        .chain_property::<User>("status")
+                        .chain_closure::<String>(closure!(
+                            |_: glib::Object, status: BoxedUserStatus| {
+                                strings::user_status(&status.0)
+                            }
+                        ))
+                        .upcast()
+                }
+            }
+            ChatType::Secret(data) => gtk::ConstantExpression::new(data.user())
+                .chain_property::<User>("status")
+                .chain_closure::<String>(closure!(|_: glib::Object, status: BoxedUserStatus| {
+                    strings::user_status(&status.0)
+                }))
+                .upcast(),
+            ChatType::Supergroup(data) => {
+                if data.is_channel() {
+                    gtk::ConstantExpression::new(data)
+                        .chain_property::<Supergroup>("member-count")
+                        .chain_closure::<String>(closure!(|_: glib::Object, sub_count: i32| {
+                            match sub_count {
+                                0 => gettext("channel"),
+                                1 => gettext("1 subscriber"),
+                                _ => gettext_f(
+                                    "{count} subscribers",
+                                    &[("count", &sub_count.to_string())],
+                                ),
+                            }
+                        }))
+                        .upcast()
+                } else {
+                    let member_count_expression = gtk::ConstantExpression::new(data)
+                        .chain_property::<Supergroup>("member-count");
+                    gtk::ClosureExpression::with_callback(
+                        &[member_count_expression, online_count_expression],
+                        |args| {
+                            strings::group_subtitle(
+                                args[1].get::<i32>().unwrap(),
+                                args[2].get::<i32>().unwrap(),
+                            )
+                        },
+                    )
+                    .upcast()
+                }
+            }
+            ChatType::BasicGroup(data) => {
+                let member_count_expression =
+                    gtk::ConstantExpression::new(data).chain_property::<BasicGroup>("member-count");
+                gtk::ClosureExpression::with_callback(
+                    &[member_count_expression, online_count_expression],
+                    |args| {
+                        strings::group_subtitle(
+                            args[1].get::<i32>().unwrap(),
+                            args[2].get::<i32>().unwrap(),
+                        )
+                    },
+                )
+                .upcast()
+            }
+        }
+    } else {
+        gtk::ConstantExpression::new(String::new()).upcast()
+    };
+
+    gtk::ClosureExpression::with_callback(&[actions_expression, status_expression], |args| {
+        let actions = args[1].get::<ChatActionList>().unwrap();
+        let status = args[2].get::<String>().unwrap();
+        if let Some(action) = actions.last() {
+            strings::chat_action(&action)
+        } else {
+            status
+        }
+    })
     .upcast()
 }

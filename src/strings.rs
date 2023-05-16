@@ -832,3 +832,18 @@ fn message_contact_registered(sender: &MessageSender) -> String {
     let sender = message_sender(sender, true);
     gettext_f("{sender} joined Telegram", &[("sender", &sender)])
 }
+
+pub(crate) fn group_subtitle(member_count: i32, online_count: i32) -> String {
+    format!(
+        "{}{}",
+        match member_count {
+            1 => gettext("1 member"),
+            _ => gettext!("{} members", member_count),
+        },
+        if online_count > 1 {
+            gettext!(", {} online", online_count)
+        } else {
+            String::new()
+        }
+    )
+}
