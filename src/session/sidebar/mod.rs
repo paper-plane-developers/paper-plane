@@ -15,6 +15,7 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 use once_cell::unsync::OnceCell;
+use tdlib::functions;
 
 pub(crate) use self::avatar::Avatar;
 use self::row::Row;
@@ -216,6 +217,14 @@ impl Sidebar {
             self.selected_chat().unwrap().disconnect(handler_id);
         }
 
+        if let Some(chat) = self.selected_chat() {
+            spawn(async move {
+                if let Err(e) = functions::close_chat(chat.id(), chat.session().client_id()).await {
+                    log::warn!("Failed to close the chat: {e:?}");
+                }
+            });
+        }
+
         if let Some(chat) = selected_chat.clone() {
             let handler_id = chat.connect_notify_local(
                 Some("is-marked-as-unread"),
@@ -229,6 +238,12 @@ impl Sidebar {
 
             let item = chat.session().main_chat_list().find_chat_item(chat.id());
             imp.selection.set_selected_item(item.map(|i| i.upcast()));
+
+            spawn(clone!(@weak chat => async move {
+                if let Err(e) = functions::open_chat(chat.id(), chat.session().client_id()).await {
+                    log::warn!("Failed to open the chat: {e:?}");
+                }
+            }));
 
             if chat.is_marked_as_unread() {
                 spawn(async move {
