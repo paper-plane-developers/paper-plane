@@ -41,7 +41,11 @@
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
   <content_rating type="oars-1.1" />
   <releases>
-    <release version="0.0.1" date="2019-07-11" />
+    <release version="0.1.0~beta.1" date="2023-05-16">
+      <description>
+        <p>Paper Plane 0.1.0-beta.1 is the first release for enthusiasts to try out and play around with.</p>
+      </description>
+    </release>
   </releases>
   <kudos>
      <!--
