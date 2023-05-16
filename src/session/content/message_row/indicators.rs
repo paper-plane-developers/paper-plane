@@ -15,7 +15,7 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageIndicators {
+    template $MessageIndicators {
         layout-manager: BoxLayout {
             spacing: 3;
         };

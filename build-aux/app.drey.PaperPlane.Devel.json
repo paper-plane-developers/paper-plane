@@ -57,8 +57,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://gitlab.gnome.org/jwestman/blueprint-compiler/-/archive/v0.6.0/blueprint-compiler-v0.6.0.tar.gz",
-                    "sha256": "c9e3652b66803c1de6a24b71f4fa4638b32260b4b04b93c2f3d958e1ce2a175e"
+                    "url": "https://gitlab.gnome.org/jwestman/blueprint-compiler/-/archive/v0.8.0/blueprint-compiler-v0.8.0.tar.gz",
+                    "sha256": "06157f62aa4354769a55adfcd6b2f9f6963aeb3b1c05697cb3be846d1d919109"
                 }
             ]
         },

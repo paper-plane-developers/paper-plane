@@ -12,7 +12,7 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageMediaPicture {
+    template $MessageMediaPicture {
         Picture picture {
             content-fit: cover;
         }

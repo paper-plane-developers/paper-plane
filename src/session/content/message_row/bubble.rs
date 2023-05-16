@@ -27,7 +27,7 @@ mod imp {
     #[template(string = r#"
     using Adw 1;
 
-    template MessageBubble {
+    template $MessageBubble {
         Overlay overlay {
             Box {
                 orientation: vertical;
@@ -44,13 +44,13 @@ mod imp {
 
                 Adw.Bin prefix_bin {}
 
-                .MessageLabel message_label {
+                $MessageLabel message_label {
                     visible: false;
                 }
             }
 
             [overlay]
-            .MessageIndicators indicators {
+            $MessageIndicators indicators {
                 halign: end;
                 valign: end;
             }

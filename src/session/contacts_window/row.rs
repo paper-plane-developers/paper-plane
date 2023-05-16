@@ -14,8 +14,8 @@ mod imp {
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::ContactRow)]
     #[template(string = r#"
-    template ContactRow {
-        .ComponentsAvatar avatar {
+    template $ContactRow {
+        $ComponentsAvatar avatar {
             size: 32;
             item: bind ContactRow.user;
         }

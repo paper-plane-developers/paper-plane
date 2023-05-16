@@ -14,7 +14,7 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageLabel {
+    template $MessageLabel {
         Label label {
             use-markup: true;
             wrap: true;

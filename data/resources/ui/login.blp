@@ -7,7 +7,7 @@ SizeGroup {
   mode: horizontal;
 }
 
-template Login : Adw.Bin {
+template $Login : Adw.Bin {
   Adw.ToolbarView toolbar_view {
     visible: false;
 
@@ -75,7 +75,7 @@ template Login : Adw.Bin {
               orientation: vertical;
               spacing: 12;
 
-              .PhoneNumberInput phone_number_input {}
+              $PhoneNumberInput phone_number_input {}
 
               ListBox {
                 styles ["boxed-list"]

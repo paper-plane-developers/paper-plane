@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template ContentChatActionBar  {
+template $ContentChatActionBar  {
   Revealer top_bar_revealer {
     child: Box {
       styles ["toolbar"]
@@ -65,7 +65,7 @@ template ContentChatActionBar  {
             icon-name: "mail-attachment-symbolic";
           }
 
-          .MessageEntry message_entry {
+          $MessageEntry message_entry {
             placeholder-text: _("Message");
             hexpand: true;
             chat: bind ContentChatActionBar.chat;

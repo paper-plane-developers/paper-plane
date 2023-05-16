@@ -12,7 +12,7 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template SidebarSearchSectionRow {
+    template $SidebarSearchSectionRow {
         Inscription label {
             styles ["heading"]
 

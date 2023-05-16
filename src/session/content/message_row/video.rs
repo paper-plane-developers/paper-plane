@@ -20,12 +20,12 @@ mod imp {
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"
-    template MessageVideo : .MessageBase {
-        .MessageBubble message_bubble {
+    template $MessageVideo : $MessageBase {
+        $MessageBubble message_bubble {
             styles ["media"]
 
             prefix: Overlay {
-                .MessageMediaPicture picture {}
+                $MessageMediaPicture picture {}
 
                 [overlay]
                 Label indicator {

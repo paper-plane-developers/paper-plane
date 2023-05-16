@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template Content : Adw.Bin {
+template $Content : Adw.Bin {
   hexpand: true;
   width-request: 300;
 
@@ -19,7 +19,7 @@ template Content : Adw.Bin {
         }
 
         [overlay]
-        .ComponentsSnow snow {
+        $ComponentsSnow snow {
           sensitive: false;
         }
       }
@@ -32,7 +32,7 @@ template Content : Adw.Bin {
       };
     }
 
-    .ContentChatHistory chat_history {
+    $ContentChatHistory chat_history {
       compact: bind Content.compact;
       chat: bind Content.chat;
     }
