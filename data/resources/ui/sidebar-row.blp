@@ -16,7 +16,7 @@ template $SidebarRow {
     pressed => $on_long_pressed() swapped;
   }
 
-  .SidebarAvatar {
+  $SidebarAvatar {
     item: bind SidebarRow.item as <$ChatListItem>.chat;
   }
 
@@ -63,7 +63,7 @@ template $SidebarRow {
           styles ["small-body"]
         }
 
-        .SidebarMiniThumbnail minithumbnail {
+        $SidebarMiniThumbnail minithumbnail {
           visible: "False";
           valign: "center";
         }
