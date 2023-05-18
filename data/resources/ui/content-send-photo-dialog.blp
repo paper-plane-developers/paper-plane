@@ -20,7 +20,7 @@ template $ContentSendPhotoDialog : Adw.Window {
         $MessageEntry caption_entry {
           hexpand: "True";
           placeholder-text: _("Caption");
-          chat: bind ContentSendPhotoDialog.chat;
+          chat: bind template.chat;
         }
 
         Button {

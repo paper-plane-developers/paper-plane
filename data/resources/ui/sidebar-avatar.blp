@@ -13,7 +13,7 @@ template $SidebarAvatar {
 
     halign: end;
     valign: end;
-    visible: bind SidebarAvatar.is-online;
+    visible: bind template.is-online;
   }
 
   Adw.Bin online_indicator_dot {
@@ -23,6 +23,6 @@ template $SidebarAvatar {
     valign: end;
     margin-bottom: 2;
     margin-end: 2;
-    visible: bind SidebarAvatar.is-online;
+    visible: bind template.is-online;
   }
 }

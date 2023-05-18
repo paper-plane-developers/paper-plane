@@ -17,7 +17,7 @@ mod imp {
     template $SidebarSearchItemRow {
         $ComponentsAvatar avatar {
             size: 32;
-            item: bind SidebarSearchItemRow.item;
+            item: bind template.item;
         }
 
         Inscription label {
