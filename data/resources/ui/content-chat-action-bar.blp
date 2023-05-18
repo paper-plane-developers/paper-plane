@@ -68,7 +68,7 @@ template $ContentChatActionBar  {
           $MessageEntry message_entry {
             placeholder-text: _("Message");
             hexpand: true;
-            chat: bind ContentChatActionBar.chat;
+            chat: bind template.chat;
           }
 
           Button send_message_button {

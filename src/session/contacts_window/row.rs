@@ -17,7 +17,7 @@ mod imp {
     template $ContactRow {
         $ComponentsAvatar avatar {
             size: 32;
-            item: bind ContactRow.user;
+            item: bind template.user;
         }
 
         Box labels_box {
