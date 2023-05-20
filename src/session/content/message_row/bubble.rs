@@ -1,13 +1,19 @@
-use adw::prelude::*;
-use glib::clone;
-use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, graphene, gsk, CompositeTemplate};
-use once_cell::sync::Lazy;
 use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hash;
 use std::hash::Hasher;
 
+use adw::prelude::*;
+use glib::clone;
+use gtk::gdk;
+use gtk::glib;
+use gtk::graphene;
+use gtk::gsk;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+
+use crate::session::content::background::Background;
 use crate::session::content::message_row::MessageIndicators;
 use crate::session::content::message_row::MessageLabel;
 use crate::session::content::message_row::MessageReply;
@@ -71,6 +77,7 @@ mod imp {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) sender_binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) parent_list_view: RefCell<glib::WeakRef<gtk::ListView>>,
+        pub(super) parent_background: RefCell<glib::WeakRef<Background>>,
         #[template_child]
         pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
@@ -143,27 +150,28 @@ mod imp {
                         widget.queue_draw();
                     }));
             }
+
+            if let Some(background) = widget.parent_background() {
+                self.parent_background.replace(background.downgrade());
+                background.subscribe_to_redraw(widget.upcast_ref());
+            }
         }
 
         fn snapshot(&self, snapshot: &gtk::Snapshot) {
             let widget = self.obj();
-            if widget.has_css_class("outgoing") {
-                let width = widget.width() as f32;
-                let height = widget.height() as f32;
 
-                let bounds = graphene::Rect::new(0.0, 0.0, width, height);
-                let gradient_bounds = widget.gradient_bounds();
-                let [first, second] = widget.linear_gradient_colors();
+            if let Some(background) = self.parent_background.borrow().upgrade() {
+                if !background.has_css_class("fallback") {
+                    let gradient_bounds = background.compute_bounds(self.obj().as_ref()).unwrap();
 
-                snapshot.append_linear_gradient(
-                    &bounds,
-                    &graphene::Point::new(0.0, gradient_bounds.y()),
-                    &graphene::Point::new(0.0, gradient_bounds.height()),
-                    &[
-                        gsk::ColorStop::new(0.0, first),
-                        gsk::ColorStop::new(1.0, second),
-                    ],
-                );
+                    if widget.has_css_class("outgoing") {
+                        snapshot.append_texture(&background.message_texture(), &gradient_bounds);
+                    } else {
+                        snapshot.push_opacity(0.1);
+                        snapshot.append_texture(&background.bg_texture(), &gradient_bounds);
+                        snapshot.pop();
+                    };
+                }
             }
 
             self.parent_snapshot(snapshot);
@@ -360,42 +368,10 @@ impl MessageBubble {
     }
 
     fn parent_list_view(&self) -> Option<gtk::ListView> {
-        let mut parent = self.parent()?;
-        loop {
-            match parent.downcast() {
-                Ok(list_view) => return Some(list_view),
-                Err(not_list_view) => parent = not_list_view.parent()?,
-            }
-        }
+        self.ancestor(gtk::ListView::static_type())?.downcast().ok()
     }
 
-    fn gradient_bounds(&self) -> graphene::Rect {
-        if let Some(view) = self.imp().parent_list_view.borrow().upgrade() {
-            let view_bounds = view.compute_bounds(self.imp().obj().as_ref()).unwrap();
-
-            graphene::Rect::new(
-                view_bounds.x(),
-                view_bounds.y(),
-                view_bounds.width() + view_bounds.x(),
-                view_bounds.height() + view_bounds.y(),
-            )
-        } else {
-            panic!("can't get parent ListView");
-        }
-    }
-
-    fn linear_gradient_colors(&self) -> [gdk::RGBA; 2] {
-        // default colors from iOS
-        if !adw::StyleManager::default().is_dark() {
-            [
-                gdk::RGBA::new(0.91764706, 0.9882353, 0.8235294, 1.0),
-                gdk::RGBA::new(0.91764706, 0.9882353, 0.8235294, 1.0),
-            ]
-        } else {
-            [
-                gdk::RGBA::new(0.21960784, 0.32156864, 0.89411765, 1.0),
-                gdk::RGBA::new(0.63529414, 0.3372549, 0.58431375, 1.0),
-            ]
-        }
+    fn parent_background(&self) -> Option<Background> {
+        self.ancestor(Background::static_type())?.downcast().ok()
     }
 }
