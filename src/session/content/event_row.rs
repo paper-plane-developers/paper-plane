@@ -1,11 +1,12 @@
+use adw::subclass::prelude::BinImpl;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use once_cell::sync::Lazy;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-event-row.ui")]

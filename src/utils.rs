@@ -1,18 +1,23 @@
+use std::future::Future;
+use std::path::PathBuf;
+
 use gettextrs::gettext;
-use gtk::{gdk, glib};
+use gtk::gdk;
+use gtk::glib;
 use image::io::Reader as ImageReader;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use std::future::Future;
-use std::path::PathBuf;
 use tdlib::enums::TextEntityType;
 use tdlib::functions;
-use tdlib::types::{self, FormattedText};
+use tdlib::types;
+use tdlib::types::FormattedText;
 use thiserror::Error;
 
+use crate::config;
 use crate::session_manager::DatabaseInfo;
-use crate::{config, APPLICATION_OPTS, TEMP_DIR};
+use crate::APPLICATION_OPTS;
+use crate::TEMP_DIR;
 
 static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
 

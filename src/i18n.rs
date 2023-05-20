@@ -1,4 +1,5 @@
-use gettextrs::{gettext, ngettext};
+use gettextrs::gettext;
+use gettextrs::ngettext;
 
 use crate::utils::freplace;
 

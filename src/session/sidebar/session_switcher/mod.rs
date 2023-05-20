@@ -3,21 +3,25 @@ mod avatar_with_selection;
 mod item;
 mod session_entry_row;
 
-use super::session_switcher::item::{ExtraItemObj, Item as SessionSwitcherItem};
-
-use gtk::gio::{self, ListModel, ListStore};
-use gtk::glib::{self, clone};
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{CompositeTemplate, SelectionModel};
 use std::convert::TryFrom;
 
+use glib::subclass::InitializingObject;
+use gtk::gio;
+use gtk::gio::ListModel;
+use gtk::gio::ListStore;
+use gtk::glib;
+use gtk::glib::clone;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use gtk::SelectionModel;
+
+use super::session_switcher::item::ExtraItemObj;
+use super::session_switcher::item::Item as SessionSwitcherItem;
 use crate::session::Session;
 
 mod imp {
     use super::*;
-
-    use glib::subclass::InitializingObject;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/sidebar-session-switcher.ui")]

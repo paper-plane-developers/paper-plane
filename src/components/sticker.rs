@@ -1,17 +1,20 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::clone;
-use gtk::{gio, glib};
-
+use gtk::gio;
+use gtk::glib;
 use tdlib::enums::StickerFormat;
 use tdlib::types::Sticker as TdSticker;
 
 use crate::session::Session;
-use crate::utils::{decode_image_from_path, spawn};
+use crate::utils::decode_image_from_path;
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, glib::Properties)]
     #[properties(wrapper_type = super::Sticker)]

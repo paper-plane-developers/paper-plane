@@ -9,29 +9,32 @@ mod event_row;
 mod message_row;
 mod send_photo_dialog;
 
+use std::cell::Cell;
+use std::cell::RefCell;
+
+use adw::subclass::prelude::BinImpl;
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+
 use self::background::Background;
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
-use self::chat_history_item::{ChatHistoryItem, ChatHistoryItemType};
-use self::chat_history_model::{ChatHistoryError, ChatHistoryModel};
+use self::chat_history_item::ChatHistoryItem;
+use self::chat_history_item::ChatHistoryItemType;
+use self::chat_history_model::ChatHistoryError;
+use self::chat_history_model::ChatHistoryModel;
 use self::chat_history_row::ChatHistoryRow;
 use self::chat_info_window::ChatInfoWindow;
 use self::event_row::EventRow;
 use self::message_row::MessageRow;
 use self::send_photo_dialog::SendPhotoDialog;
-
-use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-
 use crate::tdlib::Chat;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content.ui")]

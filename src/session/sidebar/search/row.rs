@@ -1,15 +1,20 @@
+use std::cell::RefCell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 
-use crate::session::sidebar::search::{ItemRow, Section, SectionRow, SectionType};
-use crate::tdlib::{Chat, User};
+use crate::session::sidebar::search::ItemRow;
+use crate::session::sidebar::search::Section;
+use crate::session::sidebar::search::SectionRow;
+use crate::session::sidebar::search::SectionType;
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct Row {

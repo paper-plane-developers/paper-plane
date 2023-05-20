@@ -1,15 +1,17 @@
+use std::iter::FromIterator;
+
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
 use indexmap::IndexMap;
-use std::iter::FromIterator;
+use once_cell::unsync::OnceCell;
 use tdlib::types;
 
 use crate::tdlib::CountryInfo;
 
 mod imp {
     use super::*;
-    use once_cell::unsync::OnceCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct CountryList(pub(super) OnceCell<IndexMap<String, CountryInfo>>);

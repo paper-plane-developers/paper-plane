@@ -1,9 +1,12 @@
+use std::collections::BTreeSet;
+use std::ops::Deref;
+
 use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use std::collections::BTreeSet;
-use std::ops::Deref;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::types;
 
 #[derive(Clone, Debug, Default, glib::Boxed)]
@@ -28,8 +31,6 @@ impl Deref for CallingCodes {
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct CountryInfo {

@@ -1,22 +1,30 @@
-use glib::{clone, closure};
+use std::cell::RefCell;
+
+use glib::clone;
+use glib::closure;
+use gtk::gdk;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{
-    MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
-};
-use crate::tdlib::{BoxedMessageContent, Message};
-use crate::utils::{decode_image_from_path, parse_formatted_text, spawn};
-use crate::Session;
-
 use super::base::MessageBaseExt;
+use crate::session::content::message_row::MediaPicture;
+use crate::session::content::message_row::MessageBase;
+use crate::session::content::message_row::MessageBaseImpl;
+use crate::session::content::message_row::MessageBubble;
+use crate::tdlib::BoxedMessageContent;
+use crate::tdlib::Message;
+use crate::utils::decode_image_from_path;
+use crate::utils::parse_formatted_text;
+use crate::utils::spawn;
+use crate::Session;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-message-photo.ui")]

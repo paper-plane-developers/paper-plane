@@ -1,6 +1,11 @@
+use std::cell::RefCell;
+
+use gtk::glib;
+use gtk::pango;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, pango, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
 use crate::session::content::message_row::MessageIndicators;
 
@@ -9,8 +14,6 @@ const INDICATORS_SPACING: i32 = 6;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

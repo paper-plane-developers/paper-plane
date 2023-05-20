@@ -1,6 +1,11 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
+use gtk::glib;
+use gtk::graphene;
+use gtk::gsk;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, gsk};
 
 const SNOW_SHADER: &[u8] = r#"
 uniform float u_time;
@@ -45,8 +50,6 @@ void mainImage(out vec4 fragColor,
 
 mod imp {
     use super::*;
-    use gtk::graphene;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Default)]
     pub struct Snow {

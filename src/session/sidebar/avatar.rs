@@ -1,20 +1,25 @@
-use super::Sidebar;
+use std::cell::Cell;
+use std::cell::RefCell;
 
 use glib::closure;
+use gtk::glib;
+use gtk::gsk;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, gsk, CompositeTemplate};
-use tdlib::enums::{UserStatus, UserType};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use tdlib::enums::UserStatus;
+use tdlib::enums::UserType;
 
-use crate::tdlib::{BoxedUserStatus, Chat, User};
+use super::Sidebar;
+use crate::components::Avatar as ComponentsAvatar;
+use crate::tdlib::BoxedUserStatus;
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
-
-    use crate::components::Avatar as ComponentsAvatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/sidebar-avatar.ui")]

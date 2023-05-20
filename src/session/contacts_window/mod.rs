@@ -1,23 +1,23 @@
 mod row;
 
-use row::ContactRow;
-
 use adw::subclass::prelude::*;
 use glib::clone;
+use glib::subclass::Signal;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use row::ContactRow;
 
+use crate::strings;
 use crate::tdlib::User;
 use crate::utils::spawn;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-
-    use crate::strings;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

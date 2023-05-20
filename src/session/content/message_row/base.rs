@@ -1,11 +1,13 @@
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+
+use crate::session::content::ChatHistory;
 
 mod imp {
     use super::*;
-
-    use crate::session::content::ChatHistory;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

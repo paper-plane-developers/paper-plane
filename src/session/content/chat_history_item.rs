@@ -2,6 +2,8 @@ use gtk::glib;
 use gtk::glib::DateTime;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
 
 use crate::tdlib::Message;
 
@@ -14,7 +16,6 @@ pub(crate) enum ChatHistoryItemType {
 
 mod imp {
     use super::*;
-    use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistoryItem {

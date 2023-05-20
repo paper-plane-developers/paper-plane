@@ -1,25 +1,34 @@
-use adw::prelude::*;
-use gettextrs::gettext;
-use gtk::glib::{self, clone};
-use gtk::subclass::prelude::*;
-use gtk::{gdk, gio};
-use tdlib::enums::{self, AuthenticationCodeType, AuthorizationState};
-use tdlib::{functions, types};
+use std::cell::Cell;
+use std::cell::RefCell;
 
+use adw::prelude::*;
+use adw::subclass::prelude::BinImpl;
+use gettextrs::gettext;
+use gtk::gdk;
+use gtk::gio;
+use gtk::glib;
+use gtk::glib::clone;
+use gtk::glib::SourceId;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::OnceCell;
+use tdlib::enums;
+use tdlib::enums::AuthenticationCodeType;
+use tdlib::enums::AuthorizationState;
+use tdlib::functions;
+use tdlib::types;
+
+use crate::phone_number_input::PhoneNumberInput;
 use crate::session::Session;
 use crate::session_manager::SessionManager;
 use crate::tdlib::CountryList;
-use crate::utils::{log_out, parse_formatted_text, send_tdlib_parameters, spawn};
+use crate::utils::log_out;
+use crate::utils::parse_formatted_text;
+use crate::utils::send_tdlib_parameters;
+use crate::utils::spawn;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use gtk::glib::SourceId;
-    use gtk::CompositeTemplate;
-    use once_cell::sync::OnceCell;
-    use std::cell::{Cell, RefCell};
-
-    use crate::phone_number_input::PhoneNumberInput;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/login.ui")]

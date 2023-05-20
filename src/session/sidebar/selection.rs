@@ -1,12 +1,15 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use glib::clone;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
+use once_cell::sync::Lazy;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct Selection {

@@ -1,19 +1,23 @@
+use std::cell::RefCell;
+
 use adw::prelude::BinExt;
 use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::{ChatHistoryItem, ChatHistoryItemType, EventRow, MessageRow};
+use crate::session::content::ChatHistoryItem;
+use crate::session::content::ChatHistoryItemType;
+use crate::session::content::EventRow;
+use crate::session::content::MessageRow;
 use crate::strings;
 use crate::tdlib::SponsoredMessage;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistoryRow {

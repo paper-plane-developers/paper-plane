@@ -1,15 +1,17 @@
+use std::cell::RefCell;
+
+use glib::Properties;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+
+use crate::components::Avatar;
+use crate::strings;
+use crate::tdlib::User;
 
 mod imp {
     use super::*;
-    use glib::Properties;
-    use std::cell::RefCell;
-
-    use crate::components::Avatar;
-    use crate::strings;
-    use crate::tdlib::User;
 
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::ContactRow)]

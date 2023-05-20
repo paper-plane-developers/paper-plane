@@ -1,12 +1,13 @@
+use std::cell::Cell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 use tdlib::types;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct MessageInteractionInfo {

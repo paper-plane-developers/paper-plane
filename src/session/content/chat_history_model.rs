@@ -1,12 +1,21 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::cmp::Ordering;
+use std::collections::VecDeque;
+
 use glib::clone;
+use glib::WeakRef;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
-use std::cmp::Ordering;
+use once_cell::sync::Lazy;
 use thiserror::Error;
 
-use crate::session::content::{ChatHistoryItem, ChatHistoryItemType};
-use crate::tdlib::{Chat, Message};
+use crate::session::content::ChatHistoryItem;
+use crate::session::content::ChatHistoryItemType;
+use crate::tdlib::Chat;
+use crate::tdlib::Message;
 
 #[derive(Error, Debug)]
 pub(crate) enum ChatHistoryError {
@@ -18,10 +27,6 @@ pub(crate) enum ChatHistoryError {
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
-    use std::collections::VecDeque;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistoryModel {

@@ -1,5 +1,7 @@
 use gtk::glib;
-use tdlib::types::{ChatPhotoInfo as TdChatPhotoInfo, File, ProfilePhoto as TdProfilePhoto};
+use tdlib::types::ChatPhotoInfo as TdChatPhotoInfo;
+use tdlib::types::File;
+use tdlib::types::ProfilePhoto as TdProfilePhoto;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "Avatar", nullable)]

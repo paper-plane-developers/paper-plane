@@ -1,15 +1,20 @@
-use adw::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
-use tdlib::enums::{MessageContent, StickerFullType};
+use std::cell::RefCell;
 
-use crate::components::Sticker;
-use crate::session::content::message_row::{
-    MessageBase, MessageBaseImpl, MessageIndicators, MessageReply,
-};
-use crate::tdlib::Message;
+use adw::prelude::*;
+use gtk::glib;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use tdlib::enums::MessageContent;
+use tdlib::enums::StickerFullType;
 
 use super::base::MessageBaseExt;
+use crate::components::Sticker;
+use crate::session::content::message_row::MessageBase;
+use crate::session::content::message_row::MessageBaseImpl;
+use crate::session::content::message_row::MessageIndicators;
+use crate::session::content::message_row::MessageReply;
+use crate::tdlib::Message;
 
 const MAX_REPLY_CHAR_WIDTH: i32 = 18;
 
@@ -18,8 +23,6 @@ const EMOJI_SIZE: i32 = 112;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

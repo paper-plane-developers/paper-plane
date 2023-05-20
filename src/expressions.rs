@@ -2,12 +2,17 @@ use gettextrs::gettext;
 use gtk::glib;
 use gtk::glib::closure;
 use gtk::prelude::GObjectPropertyExpressionExt;
+use tdlib::enums::ChatMemberStatus;
+use tdlib::enums::UserType;
 
-use crate::tdlib::{
-    BasicGroup, BoxedChatMemberStatus, BoxedChatPermissions, BoxedUserType, Chat, ChatType,
-    Supergroup, User,
-};
-use tdlib::enums::{ChatMemberStatus, UserType};
+use crate::tdlib::BasicGroup;
+use crate::tdlib::BoxedChatMemberStatus;
+use crate::tdlib::BoxedChatPermissions;
+use crate::tdlib::BoxedUserType;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::Supergroup;
+use crate::tdlib::User;
 
 /// Creates an expression that produces the display name of a chat. This will either produce the
 /// title of the chat or the translated "Saved Messages" string in the case of the own chat.

@@ -1,19 +1,23 @@
-use glib::clone;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
+use std::cell::Cell;
+use std::cell::RefCell;
 use std::cell::RefMut;
 use std::collections::BTreeMap;
+
+use glib::clone;
+use gtk::gio;
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 use tdlib::functions;
 use tdlib::types::ChatPosition as TdChatPosition;
 
-use crate::tdlib::{Chat, ChatListItem};
+use crate::tdlib::Chat;
+use crate::tdlib::ChatListItem;
 use crate::utils::spawn;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatList {

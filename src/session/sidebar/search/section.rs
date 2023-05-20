@@ -1,6 +1,9 @@
+use std::cell::Cell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, glib::Enum)]
 #[enum_type(name = "SidebarSearchSectionType")]
@@ -13,8 +16,6 @@ pub(crate) enum SectionType {
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct Section {

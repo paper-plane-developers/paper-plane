@@ -1,19 +1,20 @@
-use super::avatar_with_selection::AvatarWithSelection;
+use std::cell::RefCell;
 
 use glib::closure;
+use glib::subclass::InitializingObject;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
+use super::avatar_with_selection::AvatarWithSelection;
+use crate::expressions;
 use crate::tdlib::User;
-use crate::{expressions, Session};
+use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::subclass::InitializingObject;
-    use gtk::CompositeTemplate;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session-entry-row.ui")]

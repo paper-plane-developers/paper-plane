@@ -18,19 +18,26 @@ mod tdlib;
 mod utils;
 mod window;
 
+use std::path::PathBuf;
+use std::str::FromStr;
+
+use config::GETTEXT_PACKAGE;
+use config::LOCALEDIR;
+use config::RESOURCES_FILE;
+use gettextrs::gettext;
+use gettextrs::LocaleCategory;
+use gtk::gio;
+use gtk::glib;
+use gtk::prelude::ApplicationExt;
+use gtk::prelude::ApplicationExtManual;
+use gtk::prelude::IsA;
+use once_cell::sync::OnceCell;
+use temp_dir::TempDir;
+
 use self::application::Application;
 use self::login::Login;
 use self::session::Session;
 use self::window::Window;
-
-use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
-use gettextrs::{gettext, LocaleCategory};
-use gtk::prelude::{ApplicationExt, ApplicationExtManual, IsA};
-use gtk::{gio, glib};
-use once_cell::sync::OnceCell;
-use std::path::PathBuf;
-use std::str::FromStr;
-use temp_dir::TempDir;
 
 pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
 pub(crate) static TEMP_DIR: OnceCell<PathBuf> = OnceCell::new();

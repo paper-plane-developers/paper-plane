@@ -10,7 +10,22 @@ mod sticker;
 mod text;
 mod video;
 
-use self::base::{MessageBase, MessageBaseExt, MessageBaseImpl};
+use std::cell::RefCell;
+
+use adw::prelude::*;
+use gettextrs::gettext;
+use glib::clone;
+use gtk::gio;
+use gtk::glib;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use tdlib::enums::MessageContent;
+use tdlib::enums::StickerFormat;
+
+use self::base::MessageBase;
+use self::base::MessageBaseExt;
+use self::base::MessageBaseImpl;
 use self::bubble::MessageBubble;
 use self::document::MessageDocument;
 use self::indicators::MessageIndicators;
@@ -21,16 +36,12 @@ use self::reply::MessageReply;
 use self::sticker::MessageSticker;
 use self::text::MessageText;
 use self::video::MessageVideo;
-
-use adw::prelude::*;
-use gettextrs::gettext;
-use glib::clone;
-use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
-use tdlib::enums::{MessageContent, StickerFormat};
-
 use crate::components::Avatar;
-use crate::tdlib::{Chat, ChatType, Message, MessageForwardOrigin, MessageSender};
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageForwardOrigin;
+use crate::tdlib::MessageSender;
 use crate::utils::spawn;
 
 const AVATAR_SIZE: i32 = 32;
@@ -38,8 +49,6 @@ const SPACING: i32 = 6;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

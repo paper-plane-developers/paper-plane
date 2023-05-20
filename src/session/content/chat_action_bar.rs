@@ -1,22 +1,40 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use anyhow::anyhow;
 use gettextrs::gettext;
 use glib::clone;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
-use tdlib::enums::{
-    ChatAction, ChatMemberStatus, FormattedText, InputMessageContent, MessageContent,
-    MessageSender as TdMessageSender, UserType,
-};
-use tdlib::{functions, types};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use tdlib::enums::ChatAction;
+use tdlib::enums::ChatMemberStatus;
+use tdlib::enums::FormattedText;
+use tdlib::enums::InputMessageContent;
+use tdlib::enums::MessageContent;
+use tdlib::enums::MessageSender as TdMessageSender;
+use tdlib::enums::UserType;
+use tdlib::functions;
+use tdlib::types;
 
 use crate::components::MessageEntry;
+use crate::expressions;
 use crate::session::content::SendPhotoDialog;
-use crate::tdlib::{
-    BasicGroup, BoxedDraftMessage, BoxedFormattedText, Chat, ChatType, SecretChatState, Supergroup,
-};
-use crate::utils::{block_on, spawn, temp_dir};
-use crate::{expressions, strings};
+use crate::strings;
+use crate::tdlib::BasicGroup;
+use crate::tdlib::BoxedDraftMessage;
+use crate::tdlib::BoxedFormattedText;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::SecretChatState;
+use crate::tdlib::Supergroup;
+use crate::utils::block_on;
+use crate::utils::spawn;
+use crate::utils::temp_dir;
 
 const PHOTO_MIME_TYPES: &[&str] = &["image/png", "image/jpeg"];
 
@@ -30,9 +48,6 @@ enum ChatActionBarState {
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-chat-action-bar.ui")]
