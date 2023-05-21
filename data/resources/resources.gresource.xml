@@ -26,7 +26,7 @@
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-document.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-photo.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/content-message-text.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">ui/content-send-photo-dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/content-send-media-window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/login.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/message-menu.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/phone-number-input.ui</file>

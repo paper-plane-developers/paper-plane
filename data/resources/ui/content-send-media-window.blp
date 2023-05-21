@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $ContentSendPhotoDialog : Adw.Window {
+template $ContentSendMediaWindow : Adw.Window {
   default-width: 500;
   default-height: 500;
   modal: true;
@@ -26,7 +26,7 @@ template $ContentSendPhotoDialog : Adw.Window {
         Button {
           styles ["circular", "suggested-action"]
 
-          action-name: "send-photo-dialog.send-message";
+          action-name: "send-media-window.send-message";
           icon-name: "go-up-symbolic";
           valign: end;
         }
