@@ -5,6 +5,7 @@ template $ContentSendMediaWindow : Adw.Window {
   default-width: 500;
   default-height: 500;
   modal: true;
+  title: _("Send Image");
 
   content: Adw.ToolbarView {
     [top]
@@ -23,10 +24,10 @@ template $ContentSendMediaWindow : Adw.Window {
         }
 
         Button {
-          styles ["circular", "suggested-action"]
+          styles ["small-pill", "suggested-action"]
 
           action-name: "send-media-window.send-message";
-          icon-name: "go-up-symbolic";
+          label: _("Send");
           valign: end;
         }
       };

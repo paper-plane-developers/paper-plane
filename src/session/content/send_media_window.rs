@@ -8,7 +8,6 @@ use gtk::CompositeTemplate;
 use once_cell::unsync::OnceCell;
 
 use crate::components::MessageEntry;
-use crate::expressions;
 use crate::tdlib::Chat;
 
 mod imp {
@@ -89,9 +88,6 @@ impl SendMediaWindow {
             .property("transient-for", parent)
             .build();
         let imp = obj.imp();
-
-        let chat_expression = gtk::ConstantExpression::new(&chat);
-        expressions::chat_display_name(&chat_expression).bind(&obj, "title", glib::Object::NONE);
 
         imp.picture.set_filename(Some(&path));
         imp.caption_entry.set_chat(Some(chat.clone()));
