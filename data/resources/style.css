@@ -407,3 +407,15 @@ window.chat-info .main-page > list {
 .small-pill {
   border-radius: 18px;
 }
+
+splitbutton.small-pill:dir(ltr) > button,
+splitbutton.small-pill:dir(rtl) > menubutton > button {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+
+splitbutton.small-pill:dir(rtl) > button,
+splitbutton.small-pill:dir(ltr) > menubutton > button {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+}

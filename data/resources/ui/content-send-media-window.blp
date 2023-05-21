@@ -23,14 +23,22 @@ template $ContentSendMediaWindow : Adw.Window {
           placeholder-text: _("Caption");
         }
 
-        Button {
+        Adw.SplitButton {
           styles ["small-pill", "suggested-action"]
 
           action-name: "send-media-window.send-message";
           label: _("Send");
+          menu-model: more_options_menu;
           valign: end;
         }
       };
     }
   };
+}
+
+menu more_options_menu {
+  item {
+    label: _("Send as _File");
+    action: "send-media-window.send-as-file";
+  }
 }
