@@ -5,13 +5,7 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 use once_cell::unsync::OnceCell;
-use tdlib::enums::InputFile;
-use tdlib::enums::InputMessageContent;
-use tdlib::functions;
-use tdlib::types::InputFileLocal;
-use tdlib::types::InputMessagePhoto;
 
 use crate::components::MessageEntry;
 use crate::expressions;
@@ -56,29 +50,6 @@ mod imp {
     }
 
     impl ObjectImpl for SendMediaWindow {
-        fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::builder::<Chat>("chat")
-                    .construct_only()
-                    .build()]
-            });
-            PROPERTIES.as_ref()
-        }
-
-        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
-            match pspec.name() {
-                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
-                _ => unimplemented!(),
-            }
-        }
-
-        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            match pspec.name() {
-                "chat" => self.chat.get().to_value(),
-                _ => unimplemented!(),
-            }
-        }
-
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -113,10 +84,9 @@ glib::wrapper! {
 }
 
 impl SendMediaWindow {
-    pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: Chat, path: String) -> Self {
+    pub(crate) fn new(parent: &gtk::Window, chat: Chat, path: String) -> Self {
         let obj: Self = glib::Object::builder()
-            .property("transient-for", parent_window)
-            .property("chat", &chat)
+            .property("transient-for", parent)
             .build();
         let imp = obj.imp();
 
@@ -124,6 +94,9 @@ impl SendMediaWindow {
         expressions::chat_display_name(&chat_expression).bind(&obj, "title", glib::Object::NONE);
 
         imp.picture.set_filename(Some(&path));
+        imp.caption_entry.set_chat(Some(chat.clone()));
+
+        imp.chat.set(chat).unwrap();
         imp.path.set(path).unwrap();
 
         obj
@@ -147,6 +120,9 @@ impl SendMediaWindow {
     }
 
     async fn send_message(&self) {
+        use tdlib::enums::*;
+        use tdlib::types::*;
+
         let imp = self.imp();
 
         let chat = imp.chat.get().unwrap();
@@ -172,7 +148,7 @@ impl SendMediaWindow {
         });
 
         // TODO: maybe show an error dialog when this fails?
-        if functions::send_message(chat_id, 0, 0, None, content, client_id)
+        if tdlib::functions::send_message(chat_id, 0, 0, None, content, client_id)
             .await
             .is_ok()
         {
