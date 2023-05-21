@@ -38,7 +38,14 @@ mod imp {
                 "send-media-window.send-message",
                 None,
                 |widget, _, _| async move {
-                    widget.send_message().await;
+                    widget.send_message(false).await;
+                },
+            );
+            klass.install_action_async(
+                "send-media-window.send-as-file",
+                None,
+                |widget, _, _| async move {
+                    widget.send_message(true).await;
                 },
             );
         }
@@ -115,7 +122,7 @@ impl SendMediaWindow {
         emoji_chooser.as_ref().unwrap().popup();
     }
 
-    async fn send_message(&self) {
+    async fn send_message(&self, send_as_file: bool) {
         use tdlib::enums::*;
         use tdlib::types::*;
 
@@ -132,16 +139,25 @@ impl SendMediaWindow {
         let caption = imp.caption_entry.as_markdown().await;
 
         let file = InputFile::Local(InputFileLocal { path });
-        let content = InputMessageContent::InputMessagePhoto(InputMessagePhoto {
-            photo: file,
-            thumbnail: None,
-            added_sticker_file_ids: vec![],
-            width,
-            height,
-            caption,
-            self_destruct_time: 0,
-            has_spoiler: false,
-        });
+        let content = if send_as_file {
+            InputMessageContent::InputMessageDocument(InputMessageDocument {
+                document: file,
+                thumbnail: None,
+                disable_content_type_detection: true,
+                caption,
+            })
+        } else {
+            InputMessageContent::InputMessagePhoto(InputMessagePhoto {
+                photo: file,
+                thumbnail: None,
+                added_sticker_file_ids: vec![],
+                width,
+                height,
+                caption,
+                self_destruct_time: 0,
+                has_spoiler: false,
+            })
+        };
 
         // TODO: maybe show an error dialog when this fails?
         if tdlib::functions::send_message(chat_id, 0, 0, None, content, client_id)
