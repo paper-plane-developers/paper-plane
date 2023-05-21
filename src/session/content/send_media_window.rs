@@ -21,8 +21,8 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-send-photo-dialog.ui")]
-    pub(crate) struct SendPhotoDialog {
+    #[template(resource = "/app/drey/paper-plane/ui/content-send-media-window.ui")]
+    pub(crate) struct SendMediaWindow {
         pub(super) chat: OnceCell<Chat>,
         pub(super) path: OnceCell<String>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
@@ -33,16 +33,16 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SendPhotoDialog {
-        const NAME: &'static str = "ContentSendPhotoDialog";
-        type Type = super::SendPhotoDialog;
+    impl ObjectSubclass for SendMediaWindow {
+        const NAME: &'static str = "ContentSendMediaWindow";
+        type Type = super::SendMediaWindow;
         type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
             klass.install_action_async(
-                "send-photo-dialog.send-message",
+                "send-media-window.send-message",
                 None,
                 |widget, _, _| async move {
                     widget.send_message().await;
@@ -55,7 +55,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for SendPhotoDialog {
+    impl ObjectImpl for SendMediaWindow {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<Chat>("chat")
@@ -86,7 +86,7 @@ mod imp {
 
             self.caption_entry
                 .connect_activate(clone!(@weak obj => move |_| {
-                    obj.activate_action("send-photo-dialog.send-message", None).unwrap()
+                    obj.activate_action("send-media-window.send-message", None).unwrap()
                 }));
 
             self.caption_entry
@@ -102,35 +102,31 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for SendPhotoDialog {}
-    impl WindowImpl for SendPhotoDialog {}
-    impl AdwWindowImpl for SendPhotoDialog {}
+    impl WidgetImpl for SendMediaWindow {}
+    impl WindowImpl for SendMediaWindow {}
+    impl AdwWindowImpl for SendMediaWindow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct SendPhotoDialog(ObjectSubclass<imp::SendPhotoDialog>)
+    pub(crate) struct SendMediaWindow(ObjectSubclass<imp::SendMediaWindow>)
         @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
-impl SendPhotoDialog {
+impl SendMediaWindow {
     pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: Chat, path: String) -> Self {
-        let send_photo_dialog: Self = glib::Object::builder()
+        let obj: Self = glib::Object::builder()
             .property("transient-for", parent_window)
             .property("chat", &chat)
             .build();
-        let imp = send_photo_dialog.imp();
+        let imp = obj.imp();
 
         let chat_expression = gtk::ConstantExpression::new(&chat);
-        expressions::chat_display_name(&chat_expression).bind(
-            &send_photo_dialog,
-            "title",
-            glib::Object::NONE,
-        );
+        expressions::chat_display_name(&chat_expression).bind(&obj, "title", glib::Object::NONE);
 
         imp.picture.set_filename(Some(&path));
         imp.path.set(path).unwrap();
 
-        send_photo_dialog
+        obj
     }
 
     fn show_emoji_chooser(&self, parent: &impl IsA<gtk::Widget>) {
