@@ -1,10 +1,17 @@
+use std::cell::RefCell;
+
 use adw::subclass::prelude::*;
 use glib::clone;
+use gtk::glib;
 use gtk::prelude::*;
-use gtk::{glib, CompositeTemplate};
-use tdlib::enums::{InputFile, InputMessageContent};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use tdlib::enums::InputFile;
+use tdlib::enums::InputMessageContent;
 use tdlib::functions;
-use tdlib::types::{InputFileLocal, InputMessagePhoto};
+use tdlib::types::InputFileLocal;
+use tdlib::types::InputMessagePhoto;
 
 use crate::components::MessageEntry;
 use crate::expressions;
@@ -12,9 +19,6 @@ use crate::tdlib::Chat;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-send-photo-dialog.ui")]

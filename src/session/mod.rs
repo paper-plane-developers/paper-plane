@@ -3,26 +3,44 @@ mod content;
 mod preferences_window;
 mod sidebar;
 
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::collections::hash_map::Entry;
+use std::collections::hash_map::HashMap;
+
+use adw::subclass::prelude::BinImpl;
+use glib::clone;
+use glib::Sender;
+use gtk::glib;
+use gtk::glib::WeakRef;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
+use tdlib::enums;
+use tdlib::enums::ChatList as TdChatList;
+use tdlib::enums::NotificationSettingsScope;
+use tdlib::enums::Update;
+use tdlib::functions;
+use tdlib::types::ChatPosition as TdChatPosition;
+use tdlib::types::Error as TdError;
+use tdlib::types::File;
+
 use self::contacts_window::ContactsWindow;
 use self::content::Content;
 use self::preferences_window::PreferencesWindow;
 use self::sidebar::Sidebar;
-
-use glib::{clone, Sender};
-use gtk::glib::WeakRef;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
-use std::collections::hash_map::{Entry, HashMap};
-use tdlib::enums::{self, ChatList as TdChatList, NotificationSettingsScope, Update};
-use tdlib::functions;
-use tdlib::types::{ChatPosition as TdChatPosition, Error as TdError, File};
-
 use crate::session_manager::DatabaseInfo;
-use crate::tdlib::{
-    BasicGroup, BoxedScopeNotificationSettings, Chat, ChatList, SecretChat, Supergroup, User,
-};
-use crate::utils::{log_out, spawn};
+use crate::tdlib::BasicGroup;
+use crate::tdlib::BoxedScopeNotificationSettings;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatList;
+use crate::tdlib::SecretChat;
+use crate::tdlib::Supergroup;
+use crate::tdlib::User;
+use crate::utils::log_out;
+use crate::utils::spawn;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedDatabaseInfo")]
@@ -30,9 +48,6 @@ pub(crate) struct BoxedDatabaseInfo(pub(crate) DatabaseInfo);
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session.ui")]

@@ -1,13 +1,12 @@
+use glib::subclass::InitializingObject;
 use gtk::glib;
+use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
 
 mod imp {
     use super::*;
-
-    use glib::subclass::InitializingObject;
-    use gtk::glib::clone;
-    use gtk::{self, CompositeTemplate};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/add-account-row.ui")]

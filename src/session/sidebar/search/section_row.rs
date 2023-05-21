@@ -1,14 +1,17 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use gettextrs::gettext;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
 use crate::session::sidebar::search::SectionType;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

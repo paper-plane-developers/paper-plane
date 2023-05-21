@@ -1,17 +1,21 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
+use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 use tdlib::enums::UserStatus as TdUserStatus;
 use tdlib::types::User as TdUser;
 
-use crate::tdlib::{Avatar, BoxedUserStatus, BoxedUserType};
+use crate::tdlib::Avatar;
+use crate::tdlib::BoxedUserStatus;
+use crate::tdlib::BoxedUserType;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct User {

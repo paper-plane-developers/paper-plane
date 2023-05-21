@@ -3,28 +3,34 @@ mod row;
 mod section;
 mod section_row;
 
-use self::item_row::ItemRow;
-use self::row::Row;
-use self::section::{Section, SectionType};
-use self::section_row::SectionRow;
+use std::cell::Cell;
+use std::cell::RefCell;
 
 use gettextrs::gettext;
 use glib::clone;
+use glib::subclass::Signal;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
-use tdlib::{enums, functions};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use tdlib::enums;
+use tdlib::functions;
 
+use self::item_row::ItemRow;
+use self::row::Row;
+use self::section::Section;
+use self::section::SectionType;
+use self::section_row::SectionRow;
 use crate::session::Sidebar;
-use crate::tdlib::{Chat, User};
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 use crate::utils::spawn;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/sidebar-search.ui")]

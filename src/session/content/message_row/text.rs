@@ -1,20 +1,25 @@
+use std::cell::RefCell;
+
 use gettextrs::gettext;
 use glib::closure;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{MessageBase, MessageBaseImpl, MessageBubble};
-use crate::tdlib::{BoxedMessageContent, Message, SponsoredMessage};
-use crate::utils::parse_formatted_text;
-
 use super::base::MessageBaseExt;
+use crate::session::content::message_row::MessageBase;
+use crate::session::content::message_row::MessageBaseImpl;
+use crate::session::content::message_row::MessageBubble;
+use crate::tdlib::BoxedMessageContent;
+use crate::tdlib::Message;
+use crate::tdlib::SponsoredMessage;
+use crate::utils::parse_formatted_text;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-message-text.ui")]

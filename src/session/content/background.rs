@@ -1,7 +1,15 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use gtk::{gdk, gio, glib, graphene, gsk};
-use std::cell::{Cell, RefCell};
+use glib::clone;
+use glib::once_cell::unsync::OnceCell;
+use gtk::gdk;
+use gtk::gio;
+use gtk::glib;
+use gtk::graphene;
+use gtk::gsk;
 
 const GRADIENT_SHADER: &[u8] = r#"
 // That shader was taken from Telegram for android source
@@ -44,8 +52,6 @@ void mainImage(out vec4 fragColor,
 
 mod imp {
     use super::*;
-    use glib::clone;
-    use glib::once_cell::unsync::OnceCell;
 
     #[derive(Default)]
     pub(crate) struct Background {

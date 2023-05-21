@@ -1,21 +1,31 @@
 use adw::prelude::*;
+use adw::subclass::prelude::AdwWindowImpl;
 use gettextrs::gettext;
-use glib::{clone, closure};
+use glib::clone;
+use glib::closure;
+use gtk::glib;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
 use tdlib::enums::UserType;
 use tdlib::functions;
-use tdlib::types::{BasicGroupFullInfo, SupergroupFullInfo};
+use tdlib::types::BasicGroupFullInfo;
+use tdlib::types::SupergroupFullInfo;
 
+use crate::expressions;
 use crate::i18n::ngettext_f;
-use crate::tdlib::{BasicGroup, BoxedUserStatus, Chat, ChatType, Supergroup, User};
+use crate::strings;
+use crate::tdlib::BasicGroup;
+use crate::tdlib::BoxedUserStatus;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::Supergroup;
+use crate::tdlib::User;
 use crate::utils::spawn;
-use crate::{expressions, strings};
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::AdwWindowImpl;
-    use once_cell::sync::{Lazy, OnceCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-chat-info-window.ui")]

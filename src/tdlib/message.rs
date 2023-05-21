@@ -1,15 +1,27 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
+use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{MessageSender as TdMessageSender, Update};
+use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
+use tdlib::enums::MessageSender as TdMessageSender;
+use tdlib::enums::Update;
 use tdlib::functions;
-use tdlib::types::{Error as TdError, Message as TdMessage};
+use tdlib::types::Error as TdError;
+use tdlib::types::Message as TdMessage;
 
-use crate::tdlib::{
-    BoxedMessageContent, BoxedMessageSendingState, Chat, MessageForwardInfo, MessageForwardOrigin,
-    MessageInteractionInfo, User,
-};
-use crate::{expressions, Session};
+use crate::expressions;
+use crate::tdlib::BoxedMessageContent;
+use crate::tdlib::BoxedMessageSendingState;
+use crate::tdlib::Chat;
+use crate::tdlib::MessageForwardInfo;
+use crate::tdlib::MessageForwardOrigin;
+use crate::tdlib::MessageInteractionInfo;
+use crate::tdlib::User;
+use crate::Session;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageSender")]
@@ -49,9 +61,6 @@ impl MessageSender {
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
-    use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct Message {

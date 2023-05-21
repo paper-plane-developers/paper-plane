@@ -1,20 +1,23 @@
+use std::cell::RefCell;
+
 use glib::clone;
+use glib::subclass::Signal;
+use glib::WeakRef;
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 use tdlib::enums::FormattedText as EnumFormattedText;
 use tdlib::functions;
 use tdlib::types::FormattedText;
 
-use crate::tdlib::{BoxedFormattedText, Chat};
+use crate::tdlib::BoxedFormattedText;
+use crate::tdlib::Chat;
 
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
-    use glib::WeakRef;
-    use gtk::gdk;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/components-message-entry.ui")]

@@ -1,17 +1,23 @@
+use std::cell::RefCell;
+
 use gettextrs::gettext;
 use glib::clone;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::enums::MessageSendingState;
 
-use crate::tdlib::{Chat, ChatType, Message, MessageInteractionInfo, SponsoredMessage};
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageInteractionInfo;
+use crate::tdlib::SponsoredMessage;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

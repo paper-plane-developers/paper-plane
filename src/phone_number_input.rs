@@ -1,21 +1,25 @@
-use adw::prelude::*;
-use gtk::glib::clone;
-use gtk::subclass::prelude::*;
-use gtk::{glib, pango};
-use locale_config::Locale;
 use std::borrow::Cow;
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use crate::tdlib::{CountryInfo, CountryList};
+use adw::prelude::*;
+use adw::traits::ActionRowExt;
+use gettextrs::gettext;
+use gtk::glib;
+use gtk::glib::clone;
+use gtk::pango;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use locale_config::Locale;
+use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
+
+use crate::tdlib::CountryInfo;
+use crate::tdlib::CountryList;
 
 mod imp {
     use super::*;
-
-    use adw::traits::ActionRowExt;
-    use gettextrs::gettext;
-    use gtk::CompositeTemplate;
-    use once_cell::sync::{Lazy, OnceCell};
-    use std::cell::{Cell, RefCell};
-    use std::rc::Rc;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/phone-number-input.ui")]

@@ -1,14 +1,17 @@
+use std::cell::Cell;
+
 use glib::clone;
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
 const MAX_HEIGHT: i32 = 350;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::Cell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

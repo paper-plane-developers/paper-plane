@@ -1,14 +1,30 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::collections::HashMap;
+
+use glib::subclass::Signal;
+use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use tdlib::enums::{ChatType as TdChatType, Update};
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use tdlib::enums::ChatType as TdChatType;
+use tdlib::enums::Update;
+use tdlib::functions;
+use tdlib::types;
 use tdlib::types::Chat as TelegramChat;
-use tdlib::{functions, types};
 
-use crate::tdlib::{
-    Avatar, BasicGroup, BoxedChatNotificationSettings, BoxedChatPermissions, BoxedDraftMessage,
-    ChatActionList, Message, SecretChat, Supergroup, User,
-};
+use crate::tdlib::Avatar;
+use crate::tdlib::BasicGroup;
+use crate::tdlib::BoxedChatNotificationSettings;
+use crate::tdlib::BoxedChatPermissions;
+use crate::tdlib::BoxedDraftMessage;
+use crate::tdlib::ChatActionList;
+use crate::tdlib::Message;
+use crate::tdlib::SecretChat;
+use crate::tdlib::Supergroup;
+use crate::tdlib::User;
 use crate::Session;
 
 #[derive(Clone, Debug, glib::Boxed)]
@@ -67,12 +83,6 @@ impl ChatType {
 
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
-    use glib::WeakRef;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::{Cell, RefCell};
-    use std::collections::HashMap;
 
     #[derive(Debug, Default)]
     pub(crate) struct Chat {

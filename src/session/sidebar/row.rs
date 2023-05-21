@@ -1,25 +1,36 @@
+use std::cell::RefCell;
+
 use gettextrs::gettext;
-use glib::{clone, closure};
+use glib::clone;
+use glib::closure;
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
-use tdlib::enums::{InputMessageContent, MessageContent, MessageSendingState};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use tdlib::enums::InputMessageContent;
+use tdlib::enums::MessageContent;
+use tdlib::enums::MessageSendingState;
 use tdlib::types::DraftMessage;
 
-use crate::tdlib::{
-    Chat, ChatListItem, ChatType, Message, MessageForwardInfo, MessageForwardOrigin,
-};
+use crate::expressions;
+use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
+use crate::session::sidebar::Avatar;
+use crate::session::sidebar::Sidebar;
+use crate::strings;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatListItem;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageForwardInfo;
+use crate::tdlib::MessageForwardOrigin;
 use crate::utils::spawn;
-use crate::{expressions, strings, Session};
+use crate::Session;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::RefCell;
-
-    use crate::session::sidebar::mini_thumbnail::MiniThumbnail;
-    use crate::session::sidebar::{Avatar, Sidebar};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/sidebar-row.ui")]

@@ -1,18 +1,21 @@
+use std::cell::RefCell;
+use std::mem;
+
+use gtk::gio;
+use gtk::glib;
+use gtk::glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
-use std::mem;
-use tdlib::{enums, types};
+use indexmap::IndexMap;
+use once_cell::sync::Lazy;
+use tdlib::enums;
+use tdlib::types;
 
-use crate::tdlib::{Chat, ChatAction};
+use crate::tdlib::Chat;
+use crate::tdlib::ChatAction;
 
 mod imp {
     use super::*;
-
-    use gtk::glib::WeakRef;
-    use indexmap::IndexMap;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatActionList {

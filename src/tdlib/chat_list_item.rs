@@ -1,18 +1,20 @@
+use std::cell::Cell;
+
+use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatList as TdChatList;
 use tdlib::functions;
-use tdlib::types::{ChatPosition as TdChatPosition, Error as TdError};
+use tdlib::types::ChatPosition as TdChatPosition;
+use tdlib::types::Error as TdError;
 
 use crate::tdlib::Chat;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatListItem {

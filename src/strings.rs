@@ -1,12 +1,22 @@
 use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
-use tdlib::enums::{CallDiscardReason, UserStatus, UserType};
-use tdlib::types::{MessageGame, MessageGameScore};
+use tdlib::enums::CallDiscardReason;
+use tdlib::enums::UserStatus;
+use tdlib::enums::UserType;
+use tdlib::types::MessageGame;
+use tdlib::types::MessageGameScore;
 
-use crate::i18n::{gettext_f, ngettext_f};
-use crate::tdlib::{Chat, ChatAction, ChatType, Message, MessageSender, User};
-use crate::utils::{freplace, human_friendly_duration};
+use crate::i18n::gettext_f;
+use crate::i18n::ngettext_f;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatAction;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageSender;
+use crate::tdlib::User;
+use crate::utils::freplace;
+use crate::utils::human_friendly_duration;
 
 pub(crate) fn chat_action(action: &ChatAction) -> String {
     use tdlib::enums::ChatAction::*;

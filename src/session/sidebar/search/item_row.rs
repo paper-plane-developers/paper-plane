@@ -1,16 +1,18 @@
+use std::cell::RefCell;
+
 use gettextrs::gettext;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
-use crate::tdlib::{Chat, User};
+use crate::components::Avatar;
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
-
-    use crate::components::Avatar;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

@@ -5,30 +5,32 @@ mod search;
 mod selection;
 mod session_switcher;
 
+use std::cell::Cell;
+use std::cell::RefCell;
+
+use glib::clone;
+use glib::subclass::Signal;
+use gtk::glib;
+use gtk::prelude::*;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+
+pub(crate) use self::avatar::Avatar;
 use self::row::Row;
 use self::search::Search;
 use self::selection::Selection;
 use self::session_switcher::SessionSwitcher;
-
-use glib::clone;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
-
-use crate::tdlib::{Chat, ChatListItem};
+use crate::components::Avatar as ComponentsAvatar;
+use crate::components::Snow as ComponentsSnow;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatListItem;
 use crate::utils::spawn;
 use crate::Session;
 
-pub(crate) use self::avatar::Avatar;
-
 mod imp {
     use super::*;
-    use glib::subclass::Signal;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::{Cell, RefCell};
-
-    use crate::components::{Avatar as ComponentsAvatar, Snow as ComponentsSnow};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/sidebar.ui")]

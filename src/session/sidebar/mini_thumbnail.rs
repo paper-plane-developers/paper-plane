@@ -1,11 +1,14 @@
+use std::cell::RefCell;
+
+use gtk::gdk;
+use gtk::glib;
+use gtk::graphene;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, graphene};
+use once_cell::sync::Lazy;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct MiniThumbnail(pub(super) RefCell<Option<gdk::Paintable>>);

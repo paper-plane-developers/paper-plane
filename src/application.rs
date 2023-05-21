@@ -1,18 +1,23 @@
+use adw::subclass::prelude::AdwApplicationImpl;
 use gettextrs::gettext;
 use glib::clone;
+use glib::WeakRef;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib};
-use log::{debug, info};
+use log::debug;
+use log::info;
+use once_cell::sync::OnceCell;
 
-use crate::config::{APP_ID, PKGDATADIR, PROFILE, VERSION};
+use crate::config::APP_ID;
+use crate::config::PKGDATADIR;
+use crate::config::PROFILE;
+use crate::config::VERSION;
 use crate::Window;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::AdwApplicationImpl;
-    use glib::WeakRef;
-    use once_cell::sync::OnceCell;
 
     #[derive(Debug, Default)]
     pub(crate) struct Application {

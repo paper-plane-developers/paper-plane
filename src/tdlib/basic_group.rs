@@ -1,14 +1,16 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
 use tdlib::types::BasicGroup as TdBasicGroup;
 
 use crate::tdlib::BoxedChatMemberStatus;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default)]
     pub(crate) struct BasicGroup {

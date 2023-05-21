@@ -1,10 +1,15 @@
+use std::cell::Cell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::enums::MessageForwardOrigin as TelegramMessageForwardOrigin;
 use tdlib::types::MessageForwardInfo as TelegramForwardInfo;
 
-use crate::tdlib::{Chat, User};
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageForwardOrigin")]
@@ -40,10 +45,6 @@ impl MessageForwardOrigin {
 
 mod imp {
     use super::*;
-
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct MessageForwardInfo {

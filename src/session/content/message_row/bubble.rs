@@ -1,11 +1,22 @@
-use adw::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
+use std::hash::Hasher;
 
-use crate::session::content::message_row::{MessageIndicators, MessageLabel, MessageReply};
-use crate::tdlib::{Chat, ChatType, Message, MessageSender, SponsoredMessage};
+use adw::prelude::*;
+use gtk::glib;
+use gtk::subclass::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+
+use crate::session::content::message_row::MessageIndicators;
+use crate::session::content::message_row::MessageLabel;
+use crate::session::content::message_row::MessageReply;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageSender;
+use crate::tdlib::SponsoredMessage;
 
 const MAX_WIDTH: i32 = 400;
 const SENDER_COLOR_CLASSES: &[&str] = &[
@@ -20,8 +31,6 @@ const SENDER_COLOR_CLASSES: &[&str] = &[
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

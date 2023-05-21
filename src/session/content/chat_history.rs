@@ -1,26 +1,36 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use adw::prelude::*;
+use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
 use glib::clone;
+use gtk::gio;
+use gtk::glib;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
-use crate::session::content::{
-    Background, ChatActionBar, ChatHistoryError, ChatHistoryModel, ChatHistoryRow, ChatInfoWindow,
-};
-use crate::tdlib::{Chat, ChatType, SponsoredMessage};
+use crate::expressions;
+use crate::session::content::Background;
+use crate::session::content::ChatActionBar;
+use crate::session::content::ChatHistoryError;
+use crate::session::content::ChatHistoryModel;
+use crate::session::content::ChatHistoryRow;
+use crate::session::content::ChatInfoWindow;
+use crate::tdlib::Chat;
+use crate::tdlib::ChatType;
+use crate::tdlib::SponsoredMessage;
 use crate::utils::spawn;
-use crate::{expressions, Session};
+use crate::Session;
 
 const MIN_N_ITEMS: u32 = 20;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-chat-history.ui")]

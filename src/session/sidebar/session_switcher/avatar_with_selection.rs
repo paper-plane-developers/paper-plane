@@ -1,14 +1,14 @@
 use adw::subclass::prelude::*;
+use glib::subclass::InitializingObject;
 use gtk::glib;
 use gtk::prelude::*;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 
 use crate::components::Avatar;
 
 mod imp {
     use super::*;
-    use glib::subclass::InitializingObject;
-    use gtk::CompositeTemplate;
-    use once_cell::sync::Lazy;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/avatar-with-selection.ui")]

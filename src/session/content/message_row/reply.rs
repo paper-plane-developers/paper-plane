@@ -1,17 +1,22 @@
-use gtk::glib::{self, clone};
+use std::cell::RefCell;
+
+use gtk::glib;
+use gtk::glib::clone;
+use gtk::glib::ParamSpec;
+use gtk::glib::Properties;
+use gtk::glib::Value;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
 use crate::strings;
-use crate::tdlib::{ChatType, Message, MessageSender};
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
+use crate::tdlib::MessageSender;
 use crate::utils::spawn;
 
 mod imp {
-    use gtk::glib::{ParamSpec, Properties, Value};
-
     use super::*;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, Properties, CompositeTemplate)]
     #[properties(wrapper_type = super::MessageReply)]

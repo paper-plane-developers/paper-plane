@@ -1,22 +1,27 @@
+use std::cell::Cell;
+use std::cell::RefCell;
+
 use glib::clone;
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib, CompositeTemplate};
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 use tdlib::enums::MessageContent;
 
-use crate::session::content::message_row::{
-    MediaPicture, MessageBase, MessageBaseImpl, MessageBubble,
-};
-use crate::tdlib::Message;
-use crate::utils::{parse_formatted_text, spawn};
-use crate::Session;
-
 use super::base::MessageBaseExt;
+use crate::session::content::message_row::MediaPicture;
+use crate::session::content::message_row::MessageBase;
+use crate::session::content::message_row::MessageBaseImpl;
+use crate::session::content::message_row::MessageBubble;
+use crate::tdlib::Message;
+use crate::utils::parse_formatted_text;
+use crate::utils::spawn;
+use crate::Session;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use std::cell::{Cell, RefCell};
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(string = r#"

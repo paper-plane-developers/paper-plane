@@ -1,24 +1,30 @@
+use std::thread;
+
+use adw::subclass::prelude::AdwApplicationWindowImpl;
 use gettextrs::gettext;
+use gtk::gdk;
+use gtk::gio;
+use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib, CompositeTemplate};
-use std::thread;
-use tdlib::enums::{self, Update};
+use gtk::CompositeTemplate;
+use tdlib::enums;
+use tdlib::enums::Update;
 use tdlib::types;
 
-use crate::config::{APP_ID, PROFILE};
-use crate::session_manager::{ClientState, SessionManager};
-use crate::tdlib::{ChatType, Message};
+use crate::config::APP_ID;
+use crate::config::PROFILE;
+use crate::session_manager::ClientState;
+use crate::session_manager::SessionManager;
+use crate::strings;
+use crate::tdlib::ChatType;
+use crate::tdlib::Message;
 use crate::utils::spawn;
-use crate::{strings, Application};
+use crate::Application;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::AdwApplicationWindowImpl;
-    use gtk::gdk;
-
-    use crate::session_manager::SessionManager;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/window.ui")]

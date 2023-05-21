@@ -1,17 +1,23 @@
-use glib::{clone, closure};
+use std::cell::RefCell;
+
+use adw::subclass::prelude::BinImpl;
+use glib::clone;
+use glib::closure;
+use gtk::gdk;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, glib};
+use gtk::CompositeTemplate;
 
-use crate::tdlib::{Avatar as AvatarItem, Chat, User};
+use crate::expressions;
+use crate::tdlib::Avatar as AvatarItem;
+use crate::tdlib::Chat;
+use crate::tdlib::User;
 use crate::utils::spawn;
-use crate::{expressions, Session};
+use crate::Session;
 
 mod imp {
     use super::*;
-    use adw::subclass::prelude::BinImpl;
-    use gtk::CompositeTemplate;
-    use std::cell::RefCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/components-avatar.ui")]

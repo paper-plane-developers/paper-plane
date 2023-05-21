@@ -1,6 +1,10 @@
+use std::cell::Cell;
+
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 use tdlib::enums::SecretChatState as TdSecretChatState;
 use tdlib::types::SecretChat as TdSecretChat;
 
@@ -32,9 +36,6 @@ impl SecretChatState {
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct SecretChat {

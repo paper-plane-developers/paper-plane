@@ -1,18 +1,21 @@
+use std::cell::Cell;
+
+use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
+use tdlib::enums;
+use tdlib::functions;
 use tdlib::types::Error as TdError;
-use tdlib::{enums, functions};
 
-use crate::tdlib::{BoxedMessageContent, Chat};
+use crate::tdlib::BoxedMessageContent;
+use crate::tdlib::Chat;
 use crate::Session;
 
 mod imp {
     use super::*;
-    use glib::WeakRef;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
-    use std::cell::Cell;
 
     #[derive(Debug, Default)]
     pub(crate) struct SponsoredMessage {

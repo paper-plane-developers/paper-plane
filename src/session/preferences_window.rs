@@ -2,7 +2,11 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::gio;
+use gtk::glib;
+use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
+use once_cell::unsync::OnceCell;
 
 use crate::config::APP_ID;
 use crate::utils::spawn;
@@ -10,8 +14,6 @@ use crate::Session;
 
 mod imp {
     use super::*;
-    use once_cell::sync::Lazy;
-    use once_cell::unsync::OnceCell;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/preferences-window.ui")]

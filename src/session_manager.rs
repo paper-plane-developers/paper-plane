@@ -30,21 +30,37 @@
 //! In order to remember the order in which the user selected the sessions, the `SessionManager`
 //! uses a gsettings key value pair.
 
+use std::borrow::Borrow;
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::fs;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
+
 use futures::TryFutureExt;
 use glib::clone;
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate};
-use std::borrow::Borrow;
-use std::fs;
-use std::time::{SystemTime, UNIX_EPOCH};
-use tdlib::enums::{self, AuthorizationState, Update};
+use gtk::CompositeTemplate;
+use tdlib::enums;
+use tdlib::enums::AuthorizationState;
+use tdlib::enums::Update;
 use tdlib::functions;
-use tdlib::types::{self, UpdateAuthorizationState};
+use tdlib::types;
+use tdlib::types::UpdateAuthorizationState;
 
 use crate::tdlib::User;
-use crate::utils::{block_on, data_dir, log_out, send_tdlib_parameters, spawn};
-use crate::{Session, APPLICATION_OPTS};
+use crate::utils::block_on;
+use crate::utils::data_dir;
+use crate::utils::log_out;
+use crate::utils::send_tdlib_parameters;
+use crate::utils::spawn;
+use crate::Login;
+use crate::Session;
+use crate::APPLICATION_OPTS;
 
 /// Struct for representing a TDLib client.
 #[derive(Clone, Debug)]
@@ -84,11 +100,6 @@ pub(crate) enum ClientState {
 
 mod imp {
     use super::*;
-
-    use std::cell::{Cell, RefCell};
-    use std::collections::HashMap;
-
-    use crate::Login;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session-manager.ui")]
