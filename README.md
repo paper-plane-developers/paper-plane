@@ -38,7 +38,32 @@ However, the following things are already working:
 
 ## Installation Instructions
 
-Paper Plane is an in-development project and it isn't considered stable software yet. Also, the included API credentials are very limited and, in some cases, your account may end up banned by Telegram (check the `Telegram API Credentials` section below). You can avoid that by using a custom built version of Paper Plane with provided API credentials via meson options, like [this AUR package](https://aur.archlinux.org/packages/paper-plane-git) which you may prefer using if you use Arch Linux. But, if you still feel brave enough, there's a CI that automatically generates the latest flatpak build with the test API credentials: just download the [latest artifact](https://nightly.link/paper-plane-developers/paper-plane/workflows/ci/main) and install it locally using `flatpak install paper-plane.flatpak`.
+Paper Plane is an in-development project and it isn't considered stable software yet.
+
+Also, the included API credentials in the Flathub release are still very new and untested. In some cases, your account may end up banned by Telegram (check the `Telegram API Credentials` section below).
+
+You can avoid that by using a custom built version of Paper Plane with provided API credentials via meson options, like [this AUR package](https://aur.archlinux.org/packages/paper-plane-git) which you may prefer using if you use Arch Linux. These API credentials
+are much older and thus the risk of getting banned is reduced.
+
+### Flathub Beta
+
+But, if you still feel brave enough, you can install the latest release from `Flathub Beta`. To do this, you need to add the the Flathub Beta remote first
+```shell
+$ flatpak remote-add --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+```
+Then you can install the application by issuing
+```shell
+$ flatpak install flathub-beta app.drey.PaperPlane
+```
+Paper Plane can be kept up to date by issuing flatpak's update command like
+```shell
+$ flatpak update
+```
+
+### CI Build (Not Recommended)
+
+You can also grab the latest CI build with test API credentials from [here](https://nightly.link/paper-plane-developers/paper-plane/workflows/ci/main).
+Then you need to unzip the archive's content and install the application with the command `flatpak install paper-plane.flatpak`. Keep in mind that these test credentials are even more riskier than those from the Flathub release. Also, you need to manually keep it updated.
 
 ## Telegram API Credentials
 
