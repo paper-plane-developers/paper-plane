@@ -23,3 +23,7 @@ rlt = { package = "gtk-rlottie", git = "https://github.com/YuraIz/gtk-rlottie-rs
 tdlib = { version = "0.7", default-features = false }
 temp-dir = "0.1"
 thiserror = "1.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
