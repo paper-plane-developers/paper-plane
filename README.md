@@ -101,6 +101,13 @@ ninja -C _build
 sudo ninja -C _build install
 ```
 
+## Contribution
+
+Any type of participation is encouraged. If you want to translate, you can refer to [our weblate project](https://hosted.weblate.org/engage/paper-plane). But also design and art contributions are welcome. For this [our design repository](https://github.com/paper-plane-developers/paper-plane-designs) is the first place to go.
+
+If you want to contribute code, please keep your commits in the style of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0). The only difference we make is that we capitalize the actual description after the colon ":" at the beginning of the sentence.
+
+
 ## Acknowledgment
 
 The general code architecture was heavily inspired by [Fractal](https://gitlab.gnome.org/GNOME/fractal).
