@@ -375,19 +375,7 @@ impl Search {
                 log::warn!("Failed to add recently found chat: {:?}", e);
             }
         } else if let Some(user) = item.downcast_ref::<User>() {
-            // Check if a private chat with this user already exists
-            if let Some(chat) = session.try_chat(user.id()) {
-                sidebar.select_chat(chat);
-            } else {
-                match functions::create_private_chat(user.id(), true, session.client_id()).await {
-                    Ok(enums::Chat::Chat(data)) => {
-                        sidebar.select_chat(session.chat(data.id));
-                    }
-                    Err(e) => {
-                        log::warn!("Failed to create private chat: {:?}", e);
-                    }
-                }
-            }
+            session.select_chat(user.id());
 
             if let Err(e) = functions::add_recently_found_chat(user.id(), session.client_id()).await
             {
