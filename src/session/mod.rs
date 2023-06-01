@@ -499,9 +499,15 @@ impl Session {
     }
 
     pub(crate) fn select_chat(&self, chat_id: i64) {
-        let imp = self.imp();
-        imp.sidebar.set_selected_chat(Some(self.chat(chat_id)));
-        imp.leaflet.navigate(adw::NavigationDirection::Forward);
+        match self.try_chat(chat_id) {
+            Some(chat) => self.imp().sidebar.select_chat(chat),
+            None => spawn(clone!(@weak self as obj => async move {
+                match functions::create_private_chat(chat_id, true, obj.client_id()).await {
+                    Ok(enums::Chat::Chat(data)) => obj.imp().sidebar.select_chat(obj.chat(data.id)),
+                    Err(e) => log::warn!("Failed to create private chat: {:?}", e),
+                }
+            })),
+        }
     }
 
     pub(crate) fn handle_paste_action(&self) {
