@@ -35,7 +35,6 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content-chat-history.ui")]
     pub(crate) struct ChatHistory {
-        pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_handler: RefCell<Option<glib::SignalHandlerId>>,
         pub(super) model: RefCell<Option<ChatHistoryModel>>,
@@ -100,7 +99,6 @@ mod imp {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
-                    glib::ParamSpecBoolean::builder("compact").build(),
                     glib::ParamSpecObject::builder::<Chat>("chat")
                         .explicit_notify()
                         .build(),
@@ -116,10 +114,6 @@ mod imp {
             let obj = self.obj();
 
             match pspec.name() {
-                "compact" => {
-                    let compact = value.get().unwrap();
-                    self.compact.set(compact);
-                }
                 "chat" => {
                     let chat = value.get().unwrap();
                     obj.set_chat(chat);
@@ -133,7 +127,6 @@ mod imp {
             let obj = self.obj();
 
             match pspec.name() {
-                "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
                 "sticky" => obj.sticky().to_value(),
                 _ => unimplemented!(),

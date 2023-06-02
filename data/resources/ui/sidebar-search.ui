@@ -5,7 +5,6 @@
       <object class="AdwToolbarView" id="toolbar_view">
         <child type="top">
           <object class="AdwHeaderBar">
-            <property name="show-end-title-buttons" bind-source="SidebarSearch" bind-property="compact" bind-flags="sync-create"/>
             <property name="title-widget">
               <object class="GtkSearchEntry" id="search_entry">
                 <property name="placeholder-text" translatable="yes">Search</property>

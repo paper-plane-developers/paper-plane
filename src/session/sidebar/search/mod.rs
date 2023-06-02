@@ -3,7 +3,6 @@ mod row;
 mod section;
 mod section_row;
 
-use std::cell::Cell;
 use std::cell::RefCell;
 
 use gettextrs::gettext;
@@ -36,7 +35,6 @@ mod imp {
     #[template(resource = "/app/drey/paper-plane/ui/sidebar-search.ui")]
     pub(crate) struct Search {
         pub(super) session: RefCell<Option<Session>>,
-        pub(super) compact: Cell<bool>,
         #[template_child]
         pub(super) toolbar_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
@@ -94,14 +92,9 @@ mod imp {
 
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecObject::builder::<Session>("session")
-                        .explicit_notify()
-                        .build(),
-                    glib::ParamSpecBoolean::builder("compact")
-                        .explicit_notify()
-                        .build(),
-                ]
+                vec![glib::ParamSpecObject::builder::<Session>("session")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }
@@ -111,7 +104,6 @@ mod imp {
 
             match pspec.name() {
                 "session" => obj.set_session(value.get().unwrap()),
-                "compact" => obj.set_compact(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -121,7 +113,6 @@ mod imp {
 
             match pspec.name() {
                 "session" => obj.session().to_value(),
-                "compact" => obj.compact().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -170,18 +161,6 @@ impl Search {
         }
         self.imp().session.replace(session);
         self.notify("session");
-    }
-
-    pub(crate) fn compact(&self) -> bool {
-        self.imp().compact.get()
-    }
-
-    pub(crate) fn set_compact(&self, compact: bool) {
-        if self.compact() == compact {
-            return;
-        }
-        self.imp().compact.set(compact);
-        self.notify("compact");
     }
 
     #[template_callback]
@@ -368,7 +347,7 @@ impl Search {
             .unwrap();
 
         if let Some(chat) = item.downcast_ref::<Chat>() {
-            sidebar.select_chat(chat.clone());
+            sidebar.set_selected_chat(Some(chat.clone()));
 
             if let Err(e) = functions::add_recently_found_chat(chat.id(), session.client_id()).await
             {
