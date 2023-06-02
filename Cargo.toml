@@ -5,7 +5,7 @@ authors = ["Marco Melorio <marco.melorio@protonmail.com>", "Marcus Behrendt <mar
 edition = "2021"
 
 [dependencies]
-adw = { git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs", branch = "v0.3-adaptive-states-and-more", package = "libadwaita", features = ["v1_3"] }
+adw = { version = "0.4", package = "libadwaita", features = ["v1_4"] }
 anyhow = "1"
 ellipse = "0.2"
 futures = { version = "0.3", default-features = false }

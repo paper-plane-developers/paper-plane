@@ -2,22 +2,36 @@ using Gtk 4.0;
 using Adw 1;
 
 template $Session : Adw.Bin {
-  Adw.Leaflet leaflet {
-    can-navigate-back: true;
+  child: Adw.BreakpointBin {
+    width-request: 360;
+    height-request: 200;
 
-    $Sidebar sidebar {
-      compact: bind leaflet.folded;
-      selected-chat: bind-property content.chat bidirectional;
-      session: "Session";
-    }
+    child: Adw.NavigationSplitView split_view {
+      min-sidebar-width: 200;
+      max-sidebar-width: 300;
+      sidebar-width-fraction: 0.4;
 
-    Adw.LeafletPage {
-      navigatable: false;
-      child: Separator {};
-    }
+      sidebar: Adw.NavigationPage {
+        title: _("Chats");
 
-    $Content content {
-      compact: bind leaflet.folded;
+        child: $Sidebar sidebar {
+          compact: bind split_view.collapsed;
+          selected-chat: bind-property content.chat bidirectional;
+          session: "Session";
+        };
+      };
+
+      content: Adw.NavigationPage {
+        tag: "content";
+        child: $Content content {};
+      };
+    };
+
+    Adw.Breakpoint {
+      condition ("max-width: 560sp")
+      setters {
+        split_view.collapsed: true;
+      }
     }
-  }
+  };
 }

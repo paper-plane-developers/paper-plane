@@ -10,10 +10,8 @@ template $ContentChatInfoWindow : Adw.Window {
   content: Adw.ToastOverlay toast_overlay {
     child: Adw.ToolbarView {
       [top]
-      HeaderBar {
-        title-widget: Adw.WindowTitle {
-          visible: false;
-        };
+      Adw.HeaderBar {
+        show-title: false;
       }
 
       content: Adw.Clamp {
