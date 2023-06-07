@@ -1,4 +1,3 @@
-use once_cell::unsync::OnceCell;
 use std::cell::RefCell;
 
 use adw::subclass::prelude::BinImpl;
@@ -8,6 +7,8 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
+use once_cell::unsync::OnceCell;
+use tdlib::enums::UserType;
 
 use crate::strings;
 use crate::tdlib::Avatar as AvatarItem;
@@ -188,7 +189,12 @@ impl Avatar {
 
         if let Some(item) = self.item() {
             if let Some(user) = item.downcast_ref::<User>() {
-                self.load_image(user.avatar(), user.session());
+                if user.type_().0 == UserType::Deleted {
+                    imp.avatar.set_icon_name(Some("ghost-symbolic"));
+                    imp.avatar.set_show_initials(false);
+                } else {
+                    self.load_image(user.avatar(), user.session());
+                }
             } else if let Some(chat) = item.downcast_ref::<Chat>() {
                 if chat.is_own_chat() {
                     imp.avatar.set_icon_name(Some("user-bookmarks-symbolic"));
