@@ -41,6 +41,20 @@
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="0.1.0~beta.2" date="2023-06-08">
+      <description>
+        <p>The second beta release of Paper Plane 0.1.0 contains the following features, fixes and chores:</p>
+        <ul>
+          <li>Blueprint compiler has been updated to version 0.8.1, thanks to @alissonlauffer.</li>
+          <li>The chat history now has a background image, which is animated when new messages arrive, thanks to @yuraiz.</li>
+          <li>A bug was fixed that lead to an application crash if selecting non-existing chats from the contacts window, thank to @alissonlauffer.</li>
+          <li>Avatars of deleted accounts now have a ghost icon set, thanks to @karl0d.</li>
+          <li>The application will now be built with more aggressive compiler options, which should result in a smaller and maybe faster binary.</li>
+          <li>Dependencies have been updated.</li>
+          <li>Portuguese and Polish translation have been updated, thanks to @jvlianodorneles and @karl0d.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0~beta.1" date="2023-05-16">
       <description>
         <p>Paper Plane 0.1.0-beta.1 is the first release for enthusiasts to try out and play around with.</p>
