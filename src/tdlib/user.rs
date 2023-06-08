@@ -214,13 +214,6 @@ impl User {
         self.notify("avatar");
     }
 
-    pub(crate) fn connect_avatar_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_notify_local(Some("avatar"), f)
-    }
-
     pub(crate) fn status(&self) -> BoxedUserStatus {
         self.imp().status.borrow().as_ref().unwrap().to_owned()
     }

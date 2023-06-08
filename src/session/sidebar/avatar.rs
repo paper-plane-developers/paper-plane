@@ -176,16 +176,25 @@ impl Avatar {
             binding.unwatch();
         }
 
-        self.imp().avatar.set_item(item.clone());
-
         if let Some(ref item) = item {
             if let Some(chat) = item.downcast_ref::<Chat>() {
-                match chat.type_().user() {
-                    Some(user) => self.setup_is_online_binding(user),
-                    None => self.set_is_online(false),
+                if chat.is_own_chat() {
+                    imp.avatar.set_item(Some(item.clone()));
+                } else {
+                    match chat.type_().user() {
+                        Some(user) => {
+                            self.setup_is_online_binding(user);
+                            imp.avatar.set_item(Some(user.clone().upcast()));
+                        }
+                        None => {
+                            self.set_is_online(false);
+                            imp.avatar.set_item(Some(item.clone()));
+                        }
+                    }
                 }
             } else if let Some(user) = item.downcast_ref::<User>() {
                 self.setup_is_online_binding(user);
+                imp.avatar.set_item(Some(user.clone().upcast()));
             } else {
                 unreachable!("Unexpected item type: {:?}", item);
             }

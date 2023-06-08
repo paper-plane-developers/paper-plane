@@ -377,13 +377,6 @@ impl Chat {
         self.notify("avatar");
     }
 
-    pub(crate) fn connect_avatar_notify<F: Fn(&Self, &glib::ParamSpec) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_notify_local(Some("avatar"), f)
-    }
-
     pub(crate) fn last_read_outbox_message_id(&self) -> i64 {
         self.imp().last_read_outbox_message_id.get()
     }
