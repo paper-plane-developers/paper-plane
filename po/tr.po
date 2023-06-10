@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-06-10 19:01+0000\n"
+"PO-Revision-Date: 2023-06-11 06:14+0000\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/paper-plane/main/"
 "tr/>\n"
@@ -37,17 +37,17 @@ msgstr "Gnome;GTK;"
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
-msgstr "Varsayılan pencere genişliği"
+msgstr "Öntanımlı pencere genişliği"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:11
 #: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
-msgstr "Varsayılan pencere yüksekliği"
+msgstr "Öntanımlı pencere yüksekliği"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Varsayılan pencere büyütülmüş davranış"
+msgstr "Öntanımlı pencere büyütülme davranışı"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
@@ -140,7 +140,7 @@ msgstr "Hoş Geldiniz"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
-msgstr "_Karekod kullanarak giriş yapın"
+msgstr "_Karekod kullanarak giriş yap"
 
 #: data/resources/ui/login.blp:127
 msgid "Scan Code"
@@ -165,7 +165,7 @@ msgstr "Kod artık gönderilemez."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
-msgstr "Yeni Hesap Açın"
+msgstr "Yeni Hesap Aç"
 
 #: data/resources/ui/login.blp:233
 msgid "First Name"
@@ -173,7 +173,7 @@ msgstr "İsim"
 
 #: data/resources/ui/login.blp:237
 msgid "Last Name"
-msgstr "Soyisim"
+msgstr "Soyadı"
 
 #: data/resources/ui/login.blp:259
 msgid ""
@@ -201,7 +201,7 @@ msgstr "_Parolanızı mı unuttunuz?"
 
 #: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
-msgstr "Kurtarma Kodunu Kullanın"
+msgstr "Kurtarma Kodunu Kullan"
 
 #: data/resources/ui/login.blp:363
 msgid ""
@@ -352,7 +352,7 @@ msgstr "Ara"
 
 #: data/resources/ui/sidebar-search.ui:75
 msgid "No Search Results"
-msgstr "Arama Sonucu Bulunamadı"
+msgstr "Arama Sonucu Yok"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
@@ -385,7 +385,7 @@ msgstr "Bu grubun yöneticileri buraya yazmanızı kısıtladı"
 #: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
 #: src/session/sidebar/row.rs:646
 msgid "%l:%M %p"
-msgstr "%H:%M"
+msgstr "%l:%M %p"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
@@ -487,7 +487,7 @@ msgstr "SMS"
 #. Translators: This is an authentication method
 #: src/login.rs:1062
 msgid "Call"
-msgstr "Çağrı"
+msgstr "Arama"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1064
@@ -574,19 +574,19 @@ msgstr "video kaydetme"
 
 #: src/strings.rs:120
 msgid "{sender} is recording a video note"
-msgstr "{sender} bir video notu kaydediyor"
+msgstr "{sender} video not kaydediyor"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr "{sender1} ve {sender2} video notu kaydediyor"
+msgstr "{sender1} ve {sender2} video not kaydediyor"
 
 #: src/strings.rs:131
 msgid "{num} people are recording video notes"
-msgstr "{num} kişi video notu kaydediyor"
+msgstr "{num} kişi video not kaydediyor"
 
 #: src/strings.rs:136
 msgid "recording a video note"
-msgstr "video notu kaydetme"
+msgstr "video not kaydetme"
 
 #: src/strings.rs:143
 msgid "{sender} is recording a voice note"
@@ -650,7 +650,7 @@ msgstr "{num} kişi belge yüklüyor"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr "belge yükleme (%{progress})"
+msgstr "belge yükleniyor (%{progress})"
 
 #: src/strings.rs:238
 msgid "{sender} is uploading a photo ({progress}%)"
@@ -666,7 +666,7 @@ msgstr "{num} kişi fotoğraf yüklüyor"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr "fotoğraf yükleme (%{progress})"
+msgstr "fotoğraf yükleniyor (%{progress})"
 
 #: src/strings.rs:267
 msgid "{sender} is uploading a video ({progress}%)"
@@ -686,19 +686,19 @@ msgstr "video yükleniyor (%{progress})"
 
 #: src/strings.rs:296
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} video notu yüklüyor (%{progress})"
+msgstr "{sender} video not yüklüyor (%{progress})"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr "{sender1} ve {sender2} video notu yüklüyor"
+msgstr "{sender1} ve {sender2} video not yüklüyor"
 
 #: src/strings.rs:310
 msgid "{num} people are uploading video notes"
-msgstr "{num} kişi video notu yüklüyor"
+msgstr "{num} kişi video not yüklüyor"
 
 #: src/strings.rs:316
 msgid "uploading a video note ({progress}%)"
-msgstr "video notu yükleniyor (%{progress})"
+msgstr "video not yükleniyor (%{progress})"
 
 #: src/strings.rs:325
 msgid "{sender} is uploading a voice note ({progress}%)"
@@ -734,7 +734,7 @@ msgstr "animasyon izleme"
 
 #: src/strings.rs:395
 msgid "last seen a long time ago"
-msgstr "en son uzun zaman önce görüldü"
+msgstr "son görülme: uzun zaman önce"
 
 #: src/strings.rs:396
 msgid "online"
@@ -744,42 +744,42 @@ msgstr "çevrim içi"
 #: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
-msgstr "son görülme %x"
+msgstr "son görülme: %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
-msgstr "son görülme, dün %l:%M %p"
+msgstr "son görülme: dün %l:%M %p"
 
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] "son görülme, {num} saat önce"
+msgstr[0] "son görülme: {num} saat önce"
 msgstr[1] "son görülme, {num} saat önce"
 
 #: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] "son görülme, {num} dakika önce"
+msgstr[0] "son görülme: {num} dakika önce"
 msgstr[1] "son görülme, {num} dakika önce"
 
 #: src/strings.rs:427
 msgid "last seen just now"
-msgstr "son görülme, şimdi"
+msgstr "son görülme: şimdi"
 
 #: src/strings.rs:430
 msgid "last seen recently"
-msgstr "son görülme, yakın zamanda"
+msgstr "son görülme: yakın zamanda"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
-msgstr "son görülme, bir hafta içinde"
+msgstr "son görülme: bir hafta içinde"
 
 #: src/strings.rs:432
 msgid "last seen within a month"
-msgstr "son görülme, bir ay içinde"
+msgstr "son görülme: bir ay içinde"
 
 #: src/strings.rs:456
 msgid "Photo has expired"
@@ -900,7 +900,7 @@ msgstr "Gelen arama ({duration})"
 
 #: src/strings.rs:642
 msgid "Incoming video call"
-msgstr "Gelen görüntülü arama"
+msgstr "Gelen video arama"
 
 #: src/strings.rs:644 src/window.rs:213
 msgid "Incoming call"
@@ -916,7 +916,7 @@ msgstr "Kanal oluşturuldu"
 
 #: src/strings.rs:672
 msgid "Channel renamed to \"{title}\""
-msgstr "Kanalın adı \"{title}\" olarak değiştirildi"
+msgstr "Kanal, \"{title}\" olarak yeniden adlandırıldı"
 
 #: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
@@ -1012,7 +1012,7 @@ msgstr "{sender} bir iletiyi sabitledi"
 
 #: src/strings.rs:831
 msgid "{sender} joined Telegram"
-msgstr "{sender} Telegram'a katıldı"
+msgstr "{sender} Telegramʼa katıldı"
 
 #: src/session/preferences_window.rs:208
 msgid "Cache cleared"
@@ -1055,12 +1055,12 @@ msgstr "Bu sohbetten ayrılmak istiyor musunuz?"
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/chat_history_row.rs:121
 msgid "%B %e"
-msgstr "%e %B"
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/chat_history_row.rs:124
 msgid "%B %e, %Y"
-msgstr "%e %B %Y"
+msgstr "%B %e, %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
@@ -1068,7 +1068,7 @@ msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
-msgstr "Mobil"
+msgstr "Cep Telefonu"
 
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
