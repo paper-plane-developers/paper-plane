@@ -4,7 +4,7 @@ Comment=Chat over Telegram on a modern and elegant client
 Type=Application
 Exec=paper-plane
 Terminal=false
-Categories=GNOME;GTK;
+Categories=GNOME;GTK;Chat;Network;InstantMessaging;
 Keywords=Gnome;GTK;
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=@icon@
