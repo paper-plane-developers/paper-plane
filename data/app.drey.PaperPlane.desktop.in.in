@@ -5,7 +5,7 @@ Type=Application
 Exec=paper-plane
 Terminal=false
 Categories=GNOME;GTK;Chat;Network;InstantMessaging;
-Keywords=Gnome;GTK;
+Keywords=Gnome;GTK;telegram;tg;chat;im;messaging;messenger;
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=@icon@
 StartupNotify=true
