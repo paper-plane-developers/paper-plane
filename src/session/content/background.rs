@@ -452,13 +452,13 @@ fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {
         theme(
             dark,
             vec![0xd6932e, 0xbc40db, 0x4280d7, 0x614ed5],
-            vec![0xfc27a6, 0xff9201, 0x7827ff, 0x554efe],
+            vec![0x2d52ab, 0x4036a1, 0x9f388d, 0x9d3941],
         )
     } else {
         theme(
             dark,
             vec![0x94dae9, 0x9aeddb, 0x94c3f6, 0xac96f7],
-            vec![0xddffdf, 0xfff0dd, 0xffddfc, 0xddecff],
+            vec![0xddecff, 0xe0ddfd, 0xdbffff, 0xddffdf],
         )
     }
 }
