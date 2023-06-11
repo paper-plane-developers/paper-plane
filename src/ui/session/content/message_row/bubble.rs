@@ -5,10 +5,7 @@ use std::hash::Hasher;
 
 use adw::prelude::*;
 use glib::clone;
-use gtk::gdk;
 use gtk::glib;
-use gtk::graphene;
-use gtk::gsk;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
@@ -130,13 +127,21 @@ mod imp {
 
             if let Some(background) = self.parent_background.borrow().upgrade() {
                 if !background.has_css_class("fallback") {
+                    let bounds = {
+                        let width = widget.width() as f32;
+                        let height = widget.height() as f32;
+
+                        gtk::graphene::Rect::new(0.0, 0.0, width, height)
+                    };
+
                     let gradient_bounds = background.compute_bounds(self.obj().as_ref()).unwrap();
 
                     if widget.has_css_class("outgoing") {
-                        snapshot.append_texture(&background.message_texture(), &gradient_bounds);
+                        snapshot
+                            .append_node(&background.message_bg_node(&bounds, &gradient_bounds));
                     } else {
                         snapshot.push_opacity(0.1);
-                        snapshot.append_texture(&background.bg_texture(), &gradient_bounds);
+                        snapshot.append_node(&background.bg_node(&bounds, &gradient_bounds));
                         snapshot.pop();
                     };
                 }
