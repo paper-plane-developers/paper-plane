@@ -8,41 +8,41 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-02-06 15:56+0000\n"
-"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
-"Language-Team: Persian <https://hosted.weblate.org/projects/paper-plane/"
-"paper-plane/fa/>\n"
+"PO-Revision-Date: 2023-06-13 03:54+0000\n"
+"Last-Translator: shortcircuit <barfin@protonmail.com>\n"
+"Language-Team: Persian <https://hosted.weblate.org/projects/paper-plane/main/"
+"fa/>\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
 msgid "Paper Plane"
-msgstr "تلگراند"
+msgstr "هواپیمای کاغذی"
 
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "یک کارخواه تلگرام بهینه شده برای میزکار گنوم"
+msgstr "یک کلاینت تلگرام بهینه شده برای میزکار گنوم"
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
-msgstr "Gnome;GTK;گنوم;جی‌تی‌کی;"
+msgstr "گنوم;جی‌تی‌کی;"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
-msgstr "پهنای پیش‌گزیدهٔ پنجره"
+msgstr "عرض پیش فرض پنجره"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:11
 #: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
-msgstr "بلندای پیش‌گزیدهٔ پنجره"
+msgstr "ارتفاع پیشفرض پنجره"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
@@ -51,7 +51,7 @@ msgstr "رفتار بیشینه شدن پنجرهٔ پیش‌گزیده"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr "نشست‌های به تازگی استفاده شده"
+msgstr "نشست های به تازگی استفاده شده"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 #, fuzzy
@@ -63,15 +63,15 @@ msgstr "سیاههٔ ترتیبی نشست‌های به تازگی استفاد
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
 msgid "Color Scheme"
-msgstr "شمای رنگی"
+msgstr "پوسته رنگی"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:32
 msgid "The color scheme to be used in the app"
-msgstr "شمای رنگی برای استفاده در کاره"
+msgstr "پوسته رنگی برای استفاده در برنامه"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:15
 msgid "Main window"
-msgstr "پنجرهٔ اصلی"
+msgstr "پنجره اصلی"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:41
 msgid "Marco Melorio"
@@ -83,53 +83,51 @@ msgstr "کارساز _محصول"
 
 #: data/resources/ui/add-account-row.blp:11
 msgid "_Test Server"
-msgstr "کارساز _آزمون"
+msgstr "_سرور آزمایشی"
 
 #: data/resources/ui/add-account-row.blp:33
 msgid "_Add Account"
-msgstr "_افزودن حساب"
+msgstr "_افزودن حساب کاربری"
 
 #: data/resources/ui/content.blp:29
 msgid "No Chat Selected"
-msgstr "هیچ گپی گزیده نشده"
+msgstr "گفتگویی انتخاب نشده است"
 
 #: data/resources/ui/content.blp:30
 msgid "Select a chat to start messaging."
-msgstr "برای آغاز پیام‌رسانی، گپی را برگزینید."
+msgstr "برای شروع پیام‌رسانی، گفتگویی را انتخاب کنید."
 
 #: data/resources/ui/content-chat-action-bar.blp:68
-#, fuzzy
 msgid "Message"
-msgstr "پیام صوتی"
+msgstr "پیام"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "رفع مسدودیت"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "پیوستن"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "پیمایش به پایین"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
-msgstr "مشاهدهٔ اطَلاعات"
+msgstr "مشاهده اطلاعات"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "جست‌وجوی گپ‌ها"
+msgstr "ترک گفتگو"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
-msgstr ""
+msgstr "عنوان"
 
 #: data/resources/ui/login.blp:25
 msgid "_Previous"
-msgstr "_پیشین"
+msgstr "_قبلی"
 
 #: data/resources/ui/login.blp:48
 msgid "_Next"
@@ -137,19 +135,21 @@ msgstr "_بعدی"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "خوش آمدید"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
-msgstr "_ورود با استفاده از رمز QR"
+msgstr "_ورود به حساب کاربری با استفاده از کد QR"
 
 #: data/resources/ui/login.blp:127
 msgid "Scan Code"
-msgstr "پویش رمز"
+msgstr "اسکن کد"
 
 #: data/resources/ui/login.blp:128
 msgid "Scan this code with another Telegram app logged into your account."
-msgstr "این رمز را با کارهٔ تلگرام دیگری که به حسابتان وارد شده، بپویید."
+msgstr ""
+"این کد را با یک برنامه تلگرام دیگر که به حساب کاربریتان وارد شده است اسکن "
+"کنید."
 
 #: data/resources/ui/login.blp:144
 msgid "Enter the Verification Code"
@@ -161,11 +161,11 @@ msgstr "کد"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "ارسال کد دیگر امکان پذیر نیست."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
-msgstr "ثبت‌نام حساب جدید"
+msgstr "ساخت حساب کاربری جدید"
 
 #: data/resources/ui/login.blp:233
 msgid "First Name"
@@ -180,8 +180,8 @@ msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
-"با ثبت نام،\n"
-"با <a href=\"\">شرایط خدمت</a> موافقت می‌کنید."
+"در صورت ثبت نام،\n"
+"شما با <a href=\"\">شرایط و ضوابط خدمات</a> موافقت می‌کنید."
 
 #: data/resources/ui/login.blp:271
 msgid "Enter Your Password"
@@ -193,68 +193,63 @@ msgstr "گذرواژه"
 
 #: data/resources/ui/login.blp:292
 msgid "Hint"
-msgstr "ایما"
+msgstr "راهنما"
 
 #: data/resources/ui/login.blp:308
 msgid "_Forgot password?"
-msgstr "_فراموشی گذرواژه؟"
+msgstr "_گذرواژه خود را فراموش کرده اید؟"
 
 #: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
 msgstr "استفاده از رمز بازیابی"
 
 #: data/resources/ui/login.blp:363
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
-"هنگام تنظیم گذرواژهٔ ابریتان، نشانی رایانامهٔ بازیابی‌ای فراهم کردید. می‌توانیم "
-"رمزی برای بازنشانی گذرواژه‌تان به این رایانه بفرستیم."
+"شما هنگام تنظیم گذرواژهٔ ابریتان، یک ایمیل بازیابی هم وارد کردید. میتوان به "
+"آن ایمیل یک کد برای بازنشانی گذرواژه ارسال کرد."
 
 #: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
-msgstr "_فرستادن رمز بازیابی"
+msgstr "_ارسال رمز بازیابی"
 
 #: data/resources/ui/login.blp:425
 msgid "Account Deletion"
-msgstr "حذف حساب"
+msgstr "حذف حساب کاربری"
 
 #: data/resources/ui/login.blp:445 src/login.rs:912
 msgid "_Delete Account"
-msgstr "_حذف حساب"
+msgstr "_حذف حساب کاربری"
 
 #: data/resources/ui/login.blp:460
-#, fuzzy
 msgid "Enter the code e-mailed to you"
-msgstr "ورود رمز فرستاده شده با رایانامه"
+msgstr "کدی که با ایمیل به شما ارسال شده است را وارد کنید"
 
 #: data/resources/ui/login.blp:493
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_ناتوانی در دسترسی به رایانامه؟"
+msgstr "_به ایمیل خود دسترسی ندارید؟"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
-msgstr ""
+msgstr "پاسخ"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "‎_ویرایش"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
-msgstr "_حذف حساب"
+msgstr "_حذف برای همه"
 
 #: data/resources/ui/message-menu.blp:24
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_حذف حساب"
+msgstr "_حذف برای من"
 
 #: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
-msgstr ""
+msgstr "کشور"
 
 #: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
@@ -262,23 +257,23 @@ msgstr "شماره تلفن"
 
 #: data/resources/ui/preferences-window.blp:10
 msgid "Follow System Colors"
-msgstr "پیروی از رنگ‌های سامانه"
+msgstr "استفاده از پوسته رنگی سیستم"
 
 #: data/resources/ui/preferences-window.blp:19
 msgid "Dark Theme"
-msgstr "زمینهٔ تاریک"
+msgstr "پوسته تیره"
 
 #: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
-msgstr ""
+msgstr "حافظه"
 
 #: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
-msgstr ""
+msgstr "حجم حافظه نهان"
 
 #: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
-msgstr ""
+msgstr "پاک کردن حافظه نهان"
 
 #: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
@@ -293,110 +288,105 @@ msgstr "نمایش میانبرها"
 #: data/resources/ui/shortcuts.blp:19
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr "ترک کردن"
+msgstr "خروج"
 
 #: data/resources/ui/shortcuts.blp:25
 msgctxt "shortcut window"
 msgid "Chat List"
-msgstr "سیاههٔ گپ"
+msgstr "فهرست گفتگوها"
 
 #: data/resources/ui/shortcuts.blp:28
 msgctxt "shortcut window"
 msgid "Search Chats"
-msgstr "جست‌وجوی گپ‌ها"
+msgstr "جستجوی گفتگوها"
 
 #: data/resources/ui/shortcuts.blp:34
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "سیاههٔ گپ"
+msgstr "تاریخچه گفتگو"
 
 #: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "ارسال عکس از حافظه کپی"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
-msgstr "_خروج"
+msgstr "_خروج از حساب کاربری"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_مخاطبین"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
-msgstr "_ترجیحات"
+msgstr "_تنظیمات"
 
 #: data/resources/ui/sidebar.ui:22
 msgid "_Keyboard Shortcuts"
-msgstr "_میانبرهای صفحه‌کلید"
+msgstr "_میانبرهای صفحه‌ کلید"
 
 #: data/resources/ui/sidebar.ui:26
 msgid "_About Paper Plane"
-msgstr "_درباره تلگراند"
+msgstr "_درباره هواپیمای کاغذی"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
-msgstr ""
+msgstr "_سنجاق کردن"
 
 #: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
-msgstr ""
+msgstr "_برداشتن سنجاق"
 
 #: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "_علامت زدن به عنوان خوانده نشده"
 
 #: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
-msgstr ""
+msgstr "علامت زدن به عنوان خوانده شده"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "جست‌وجوی گپ‌ها"
+msgstr "جستجو"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "جست‌وجوی گپ‌ها"
+msgstr "بدون نتیجه"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "جستجوی دیگری انجام دهید."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Paper Plane developers"
-msgstr "تلگراند"
+msgstr "توسعه دهندگان هواپیمای کاغذی"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "اسپانسر ها"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
 #: src/session/sidebar/search/mod.rs:205
-#, fuzzy
 msgid "Saved Messages"
-msgstr "پیام صوتی"
+msgstr "پیام‌های ذخیره شده"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_حذف حساب"
+msgstr "حساب کاربری حذف شده"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "مدیران این گروه، امکان ارسال پیام را برای شما محدود کرده‌اند"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
 #: src/session/sidebar/row.rs:646
+#, fuzzy
 msgid "%l:%M %p"
-msgstr "%OH:%OM"
+msgstr "%l:%M %p"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
@@ -408,53 +398,52 @@ msgstr "%Oe %OB %Oy"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "ارسال پیام در این گروه مجاز نیست."
 
 #: src/login.rs:372
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
-msgstr "یک راه برای ادامهٔ استفاده از حسابتان، حذف و ساخت دوباره‌اش است"
+msgstr ""
+"حذف حساب کاربری و ساخت دوباره آن یک راه برای ادامه دادن برای استفاده از آن "
+"است"
 
 #: src/login.rs:377
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
 msgstr ""
-"از آن‌جا که نشانی رایانامهٔ بازیابی‌ای فراهم نکرده‌اید، تنها راه ادامهٔ استفاده "
-"از حسابتان، حذف حساب و ساخت دوباره‌اش است"
+"از آن‌جا که ایمیل بازیابی‌ای فراهم نکرده‌اید، تنها راه ادامهٔ استفاده از "
+"حساب کاربریتان، حذف آن و ساخت دوباره‌اش است"
 
 #: src/login.rs:385
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
-"به خاطر داشته باشید که تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و "
-"پرونده‌ای که هم‌رسانده‌اید از دست خواهید داد!"
+"به خاطر داشته باشید که تمامی گفتگو ها و پیام‌هایتان به همراه هر رسانه و "
+"پرونده‌ای که ارسال کرده اید را از دست خواهید داد!"
 
 #: src/login.rs:676
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
-msgstr "شرایط خدمت را می‌پذیرید؟"
+msgstr "آیا شرایط و ضوابط خدمات را میپذیرید؟"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_No"
-msgstr ""
+msgstr "_خیر"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
-msgstr ""
+msgstr "_بله"
 
 #: src/login.rs:680
 msgid "Terms of Service"
-msgstr "شرایط خدمت"
+msgstr "شرایط و ضوابط خدمات"
 
 #: src/login.rs:681 src/login.rs:991
 msgid "_OK"
-msgstr ""
+msgstr "_باشه"
 
 #: src/login.rs:903
 msgid "Warning"
@@ -467,43 +456,42 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
-"تمامی گپ‌ها و پیام‌هایتان را به همراه هر رسانه و پرونده‌ای که هم‌رسانده‌اید از "
-"دست خواهید داد!\n"
+"تمامی گفتگو ها و پیام‌هایتان به همراه هر رسانه و پرونده‌ای که ارسال کرده اید "
+"را از دست خواهید داد!\n"
 "\n"
-"می‌خواهید حسابتان را حذف کنید؟"
+"آیا می‌خواهید حساب کاربری خود را حذف کنید؟"
 
 #: src/login.rs:911
 msgid "_Cancel"
-msgstr ""
+msgstr "_لغو"
 
 #: src/login.rs:984
 msgid "Sorry"
-msgstr "ببخشید"
+msgstr "متأسفیم"
 
 #: src/login.rs:986
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
 msgstr ""
-"اگر نتوانستید دسترسی به رایانامه را بازیابید، تنها گزینه‌های پیش رویتان به "
-"خاطر آوردن گذرواژه‌تان یا حذف و ساخت دوبارهٔ حسابتان است."
+"اگر نمیتوانید به ایمیل خود دسترسی پیدا کنید، تنها راه شما این است که یا "
+"گذرواژه خود را به خاطر بیاورید و یا حساب کاربریتان را حذف کنید و دوباره ثبت "
+"نام کنید."
 
 #. Translators: This is an authentication method
 #: src/login.rs:1058
-#, fuzzy
 msgid "Telegram"
-msgstr "تلگراند"
+msgstr "تلگرام"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1060
 msgid "SMS"
-msgstr ""
+msgstr "پیامک"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1062
 msgid "Call"
-msgstr ""
+msgstr "تماس"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1064
@@ -512,7 +500,6 @@ msgstr ""
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
-#, fuzzy
 msgid "Missed Call"
 msgstr "تماس بی‌پاسخ"
 
@@ -523,252 +510,245 @@ msgstr ""
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "کد کشور نامعتبر است."
 
 #: src/strings.rs:28
 msgid "{sender} is choosing a contact"
-msgstr ""
+msgstr "{sender} در حال انتخاب یک مخاطب است"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال انتخاب مخاطبین هستند"
 
 #: src/strings.rs:39
 msgid "{num} people are choosing contacts"
-msgstr ""
+msgstr "{num} نفر در حال انتخاب مخاطبین هستند"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
-msgstr ""
+msgstr "در حال انتخاب یک مخاطب"
 
 #: src/strings.rs:51
 msgid "{sender} is choosing a location"
-msgstr ""
+msgstr "{sender} در حال انتخاب یک موقعیت مکانی است"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال انتخاب موقعیت های مکانی هستند"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
-msgstr ""
+msgstr "{num} نفر در حال انتخاب موقعیت های مکانی هستند"
 
 #: src/strings.rs:67
 msgid "choosing a location"
-msgstr ""
+msgstr "در حال انتخاب موقعیت مکانی"
 
 #: src/strings.rs:74
 msgid "{sender} is choosing a sticker"
-msgstr ""
+msgstr "{sender} در حال انتخاب یک استیکر است"
 
 #: src/strings.rs:78
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال انتخاب استیکر هستند"
 
 #: src/strings.rs:85
 msgid "{num} people are choosing stickers"
-msgstr ""
+msgstr "{num} نفر در حال انتخاب استیکر هستند"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
-msgstr ""
+msgstr "در حال انتخاب استیکر"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "تماس تصویری ورودی"
+msgstr "{sender} در حال ضبط ویدیو است"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ضبط ویدیو هستند"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "تماس تصویری ورودی"
+msgstr "{num} نفر در حال ضبط ویدیو هستند"
 
 #: src/strings.rs:113
-#, fuzzy
 msgid "recording a video"
-msgstr "تماس تصویری ورودی"
+msgstr "در حال ضبط ویدیو"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
-msgstr "تماس تصویری ورودی"
+msgstr "{sender} در حال ضبط یک پیام ویدیویی است"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ضبط پیام های ویدویی هستند"
 
 #: src/strings.rs:131
 msgid "{num} people are recording video notes"
-msgstr ""
+msgstr "{num} نفر در حال ضبط پیام های ویدیویی هستند"
 
 #: src/strings.rs:136
 msgid "recording a video note"
-msgstr ""
+msgstr "در حال ضبط یک پیام ویدیویی"
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
-msgstr "تماس تصویری ورودی"
+msgstr "{sender} در حال ضبط یک پیام صوتی است"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ضبط پیام های صوتی هستند"
 
 #: src/strings.rs:154
 msgid "{num} people are recording voice notes"
-msgstr ""
+msgstr "{num} نفر در حال ضبط پیام های صوتی هستند"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
-msgstr ""
+msgstr "در حال ضبط یک پیام صوتی"
 
 #: src/strings.rs:166
 msgid "{sender} is playing a game"
-msgstr ""
+msgstr "{sender} در حال بازی کردن است"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال بازی کردن هستند"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{num} نفر در حال بازی کردن هستند"
 
 #: src/strings.rs:182
 msgid "playing a game"
-msgstr ""
+msgstr "در حال بازی کردن"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
-msgstr "به گروه پیوستید"
+msgstr "{sender} در حال نوشتن است"
 
 #: src/strings.rs:193
 msgid "{sender1} and {sender2} are typing"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال نوشتن هستند"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} نفر در حال نوشتن هستند"
 
 #: src/strings.rs:202
 msgid "typing"
-msgstr ""
+msgstr "در حال نوشتن"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "{sender} در حال ارسال یک سند است ({progress}%)"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ارسال اسناد هستند"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} نفر در حال ارسال اسناد هستند"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "در حال ارسال سند ({progress}%)"
 
 #: src/strings.rs:238
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr ""
+msgstr "{sender} در حال ارسال عکس است ({progress}%)"
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr "عکس گروه را برداشتید"
+msgstr "{sender1} و {sender2} در حال ارسال عکس هستند"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} نفر در حال ارسال عکس هستند"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "در حال ارسال عکس ({progress}%)"
 
 #: src/strings.rs:267
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr ""
+msgstr "{sender} در حال ارسال ویدیو است ({progress}%)"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ارسال ویدیو هستند"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} نفر در حال ارسال ویدیو هستند"
 
 #: src/strings.rs:287
 msgid "uploading a video ({progress}%)"
-msgstr ""
+msgstr "در حال ارسال ویدیو ({progress}%)"
 
 #: src/strings.rs:296
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr ""
+msgstr "{sender} در حال ارسال پیام ویدیویی است ({progress}%)"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ارسال پیام ویدیویی هستند"
 
 #: src/strings.rs:310
 msgid "{num} people are uploading video notes"
-msgstr ""
+msgstr "{num} نفر در حال ارسال پیام ویدیویی هستند"
 
 #: src/strings.rs:316
 msgid "uploading a video note ({progress}%)"
-msgstr ""
+msgstr "در حال ارسال پیام ویدیویی ({progress}%)"
 
 #: src/strings.rs:325
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "{sender} در حال ارسال یک پیام صوتی است ({progress}%)"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال ارسال پیام صوتی هستند"
 
 #: src/strings.rs:339
 msgid "{num} people are uploading voice notes"
-msgstr ""
+msgstr "{num} نفر در حال ارسال پیام صوتی هستند"
 
 #: src/strings.rs:345
 msgid "uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "در حال ارسال پیام صوتی ({progress}%)"
 
 #: src/strings.rs:354
 msgid "{sender} is watching an animation {emoji}"
-msgstr ""
+msgstr "{sender} در حال مشاهده انیمیشن {emoji} است"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1} و {sender2} در حال مشاهده انیمیشن {emoji} هستند"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} نفر در حال مشاهده انیمیشن {emoji} هستند"
 
 #: src/strings.rs:374
 msgid "watching an animation"
-msgstr ""
+msgstr "در حال مشاهده انیمیشن"
 
 #: src/strings.rs:395
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "آخرین بازدید خیلی وقت پیش"
 
 #: src/strings.rs:396
 msgid "online"
-msgstr ""
+msgstr "آنلاین"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "آخرین بازدید %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -780,8 +760,8 @@ msgstr ""
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "آخرین بازدید {num} ساعت پیش"
+msgstr[1] "آخرین بازدید {num} ساعت پیش"
 
 #: src/strings.rs:421
 msgid "last seen {num} minute ago"
