@@ -19,6 +19,10 @@ messagebubble.outgoing {
   background-color: #2c52ac;
 }
 
+messagebubble.document.outgoing .file > overlay > statusindicator {
+  color: white;
+}
+
 .event-row {
   background-color: alpha(#404040, 0.8);
 }
