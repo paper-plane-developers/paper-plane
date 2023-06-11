@@ -21,15 +21,20 @@ uniform vec3 color1;
 uniform vec3 color2;
 uniform vec3 color3;
 uniform vec3 color4;
-uniform vec2 p1;
-uniform vec2 p2;
-uniform vec2 p3;
-uniform vec2 p4;
+uniform vec4 p12;
+uniform vec4 p34;
+uniform vec4 gradient_bounds;
 
 void mainImage(out vec4 fragColor,
                in vec2 fragCoord,
                in vec2 resolution,
                in vec2 uv) {
+    vec2 p1 = p12.xy;
+    vec2 p2 = p12.zw;
+    vec2 p3 = p34.xy;
+    vec2 p4 = p34.zw;
+
+    uv = (fragCoord - gradient_bounds.xy) / gradient_bounds.zw;
     uv.y = 1.0 - uv.y;
 
     float dp1 = distance(uv, p1);
@@ -56,7 +61,6 @@ mod imp {
     #[derive(Default)]
     pub(crate) struct Background {
         pub(super) background_texture: RefCell<Option<gdk::Texture>>,
-        pub(super) message_texture: RefCell<Option<gdk::Texture>>,
 
         pub(super) last_size: Cell<(f32, f32)>,
 
@@ -183,17 +187,16 @@ mod imp {
                 let texture = match self.background_texture.take() {
                     Some(texture) if !size_changed => texture,
                     _ => {
-                        self.render_textures(bounds);
-                        self.background_texture.take().unwrap()
+                        let renderer = self.obj().native().unwrap().renderer();
+
+                        renderer.render_texture(self.obj().bg_node(bounds, bounds), Some(bounds))
                     }
                 };
 
                 snapshot.append_texture(&texture, bounds);
                 self.background_texture.replace(Some(texture));
             } else {
-                self.render_textures(bounds);
-                let texture = self.background_texture.borrow().as_ref().unwrap().clone();
-                snapshot.append_texture(&texture, bounds);
+                snapshot.append_node(&self.obj().bg_node(bounds, bounds));
             }
         }
 
@@ -231,22 +234,10 @@ mod imp {
             }
         }
 
-        fn render_textures(&self, bounds: &graphene::Rect) {
-            let colors = [self.bg_colors.borrow(), self.message_colors.borrow()];
-
-            let renderer = self.obj().native().unwrap().renderer();
-
-            let mut textures = colors.into_iter().map(|colors| {
-                renderer.render_texture(self.gradient_shader_node(bounds, &colors), Some(bounds))
-            });
-
-            self.background_texture.replace(textures.next());
-            self.message_texture.replace(textures.next());
-        }
-
-        fn gradient_shader_node(
+        pub(super) fn gradient_shader_node(
             &self,
             bounds: &graphene::Rect,
+            gradient_bounds: &graphene::Rect,
             colors: &[graphene::Vec3],
         ) -> gsk::GLShaderNode {
             let Some(gradient_shader) = &*self.shader.borrow() else {
@@ -267,16 +258,25 @@ mod imp {
             args_builder.set_vec3(2, &c3);
             args_builder.set_vec3(3, &c4);
 
-            let [p1, p2, p3, p4] = Self::calculate_positions(progress, phase);
-            args_builder.set_vec2(4, &p1);
-            args_builder.set_vec2(5, &p2);
-            args_builder.set_vec2(6, &p3);
-            args_builder.set_vec2(7, &p4);
+            let [p12, p34] = Self::calculate_positions(progress, phase);
+            args_builder.set_vec4(4, &p12);
+            args_builder.set_vec4(5, &p34);
+
+            let gradient_bounds = {
+                graphene::Vec4::new(
+                    gradient_bounds.x(),
+                    gradient_bounds.y(),
+                    gradient_bounds.width(),
+                    gradient_bounds.height(),
+                )
+            };
+
+            args_builder.set_vec4(6, &gradient_bounds);
 
             gsk::GLShaderNode::new(gradient_shader, bounds, &args_builder.to_args(), &[])
         }
 
-        fn calculate_positions(progress: f32, phase: usize) -> [graphene::Vec2; 4] {
+        fn calculate_positions(progress: f32, phase: usize) -> [graphene::Vec4; 2] {
             static POSITIONS: [(f32, f32); 8] = [
                 (0.80, 0.10),
                 (0.60, 0.20),
@@ -288,7 +288,7 @@ mod imp {
                 (0.75, 0.40),
             ];
 
-            let mut points = [graphene::Vec2::new(0.0, 0.0); 4];
+            let mut points = [(0.0, 0.0); 4];
 
             for i in 0..4 {
                 let start = POSITIONS[(i * 2 + phase) % 8];
@@ -301,10 +301,18 @@ mod imp {
                 let x = interpolate(start.0, end.0, progress);
                 let y = interpolate(start.1, end.1, progress);
 
-                points[i] = graphene::Vec2::new(x, y);
+                points[i] = (x, y);
             }
 
-            points
+            let points: Vec<_> = points
+                .chunks(2)
+                .map(|p| {
+                    let [(x1, y1), (x2, y2)]: [(f32, f32); 2] = p.try_into().unwrap();
+                    graphene::Vec4::from_float([x1, y1, x2, y2])
+                })
+                .collect();
+
+            points.try_into().unwrap()
         }
     }
 }
@@ -355,22 +363,25 @@ impl Background {
         animation.connect_value_notify(clone!(@weak child => move |_| child.queue_draw()));
     }
 
-    pub fn bg_texture(&self) -> gdk::Texture {
+    pub fn bg_node(
+        &self,
+        bounds: &graphene::Rect,
+        gradient_bounds: &graphene::Rect,
+    ) -> gsk::GLShaderNode {
         self.imp()
-            .background_texture
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone()
+            .gradient_shader_node(bounds, gradient_bounds, &self.imp().bg_colors.borrow())
     }
 
-    pub fn message_texture(&self) -> gdk::Texture {
-        self.imp()
-            .message_texture
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone()
+    pub fn message_bg_node(
+        &self,
+        bounds: &graphene::Rect,
+        gradient_bounds: &graphene::Rect,
+    ) -> gsk::GLShaderNode {
+        self.imp().gradient_shader_node(
+            bounds,
+            gradient_bounds,
+            &self.imp().message_colors.borrow(),
+        )
     }
 
     fn ensure_shader(&self) {
