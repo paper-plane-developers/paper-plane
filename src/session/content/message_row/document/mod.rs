@@ -1,5 +1,9 @@
 use std::cell::RefCell;
+mod file_status;
+mod status_indicator;
 
+use file_status::FileStatus;
+use file_status::FileStatus::*;
 use glib::clone;
 use gtk::gdk;
 use gtk::gio;
@@ -8,6 +12,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
+use status_indicator::StatusIndicator;
 use tdlib::enums::MessageContent;
 use tdlib::types::File;
 
@@ -39,7 +44,7 @@ mod imp {
         #[template_child]
         pub(super) file_thumbnail_picture: TemplateChild<gtk::Picture>,
         #[template_child]
-        pub(super) file_status_image: TemplateChild<gtk::Image>,
+        pub(super) status_indicator: TemplateChild<StatusIndicator>,
         #[template_child]
         pub(super) file_name_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -128,39 +133,6 @@ impl MessageBaseExt for MessageDocument {
     }
 }
 
-#[derive(PartialEq)]
-enum FileStatus {
-    Downloading(f64),
-    Uploading(f64),
-    CanBeDownloaded,
-    Downloaded,
-}
-use FileStatus::*;
-
-impl From<&File> for FileStatus {
-    fn from(file: &File) -> Self {
-        let local = &file.local;
-        let remote = &file.remote;
-
-        let size = file.size.max(file.expected_size) as u64;
-
-        if local.is_downloading_active {
-            let progress = local.downloaded_size as f64 / size as f64;
-            Downloading(progress)
-        } else if remote.is_uploading_active {
-            let progress = remote.uploaded_size as f64 / size as f64;
-            Uploading(progress)
-        } else if local.is_downloading_completed {
-            Downloaded
-        } else if local.can_be_downloaded {
-            CanBeDownloaded
-        } else {
-            dbg!(file);
-            unimplemented!("unknown file status");
-        }
-    }
-}
-
 impl MessageDocument {
     fn update_document(&self, message: &Message) {
         if let MessageContent::MessageDocument(data) = message.content().0 {
@@ -183,26 +155,26 @@ impl MessageDocument {
 
         let size = file.size.max(file.expected_size) as u64;
 
-        self.update_size_label(&status, size);
-        self.update_button(file, session, &status);
+        self.update_size_label(status, size);
+        self.update_button(file, session, status);
 
         status
     }
 
-    fn update_button(&self, file: File, session: Session, status: &FileStatus) {
+    fn update_button(&self, file: File, session: Session, status: FileStatus) {
         let imp = self.imp();
         let click = &*imp.click;
-        let image = &*imp.file_status_image;
+        let indicator = &*imp.status_indicator;
         let file_id = file.id;
 
-        let handler_id = match *status {
+        let handler_id = match status {
             Downloading(_progress) | Uploading(_progress) => {
                 return;
                 // Show loading indicator
             }
             CanBeDownloaded => {
                 // Download file
-                image.set_icon_name(Some("document-save-symbolic"));
+                indicator.set_status(CanBeDownloaded);
                 click.connect_released(clone!(@weak self as obj, @weak session => move |click, _, _, _| {
                     // TODO: Fix bug mentioned here
                     // https://github.com/paper-plane-developers/paper-plane/pull/372#discussion_r968841370
@@ -210,7 +182,7 @@ impl MessageDocument {
                         obj.update_status(file, session);
                     }));
 
-                    obj.imp().file_status_image.set_icon_name(Some("media-playback-stop-symbolic"));
+                    obj.imp().status_indicator.set_status(Downloading(0.0));
                     let handler_id = click.connect_released(clone!(@weak session => move |_, _, _, _| {
                         session.cancel_download_file(file_id);
                     }));
@@ -221,9 +193,9 @@ impl MessageDocument {
             }
             Downloaded => {
                 // Open file
-                image.set_icon_name(Some("folder-documents-symbolic"));
+                indicator.set_status(Downloaded);
                 if imp.file_thumbnail_picture.file().is_some() {
-                    image.set_visible(false);
+                    indicator.set_visible(false);
                 }
                 let gio_file = gio::File::for_path(&file.local.path);
                 click.connect_released(move |_, _, _, _| {
@@ -242,7 +214,7 @@ impl MessageDocument {
         }
     }
 
-    fn update_size_label(&self, status: &FileStatus, size: u64) {
+    fn update_size_label(&self, status: FileStatus, size: u64) {
         let size_label = &self.imp().file_size_label;
 
         match status {
@@ -262,6 +234,7 @@ impl MessageDocument {
         if let MessageContent::MessageDocument(data) = message.content().0 {
             let imp = self.imp();
             if let Some(thumbnail) = data.document.thumbnail {
+                imp.status_indicator.set_masked(false);
                 imp.file_thumbnail_picture.set_visible(true);
                 imp.file_box.add_css_class("with-thumbnail");
                 if thumbnail.file.local.is_downloading_completed {
@@ -288,7 +261,8 @@ impl MessageDocument {
                     }));
                 }
             } else {
-                imp.file_thumbnail_picture.set_visible(true);
+                imp.status_indicator.set_masked(true);
+                imp.file_thumbnail_picture.set_visible(false);
                 imp.file_thumbnail_picture
                     .set_paintable(gdk::Paintable::NONE);
             }

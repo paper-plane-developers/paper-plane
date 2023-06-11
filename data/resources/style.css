@@ -196,32 +196,30 @@ messagebubble.document .file > overlay {
   min-height: 40px;
 }
 
-messagebubble.document .file > overlay > image {
-  background: @accent_color;
-  color: @window_bg_color;
-  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+messagebubble.document .file > overlay > statusindicator > image {
   padding: 12px;
+}
+
+messagebubble.document .file > overlay > statusindicator {
+  color: @accent_color;
+  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border-radius: 9999px;
 }
 
-messagebubble.document.outgoing .file > overlay > image {
-  background: @accent_fg_color;
-  color: @accent_bg_color;
+messagebubble.document.outgoing .file > overlay > statusindicator {
+  /* depends on bubble color */
+  color: #79c271;
 }
 
-messagebubble.document .file:hover > overlay > image {
+messagebubble.document .file:hover > overlay > statusindicator {
   opacity: 0.85;
 }
 
-messagebubble.document .file:active > overlay > image {
+messagebubble.document .file:active > overlay > statusindicator {
   opacity: 0.7;
 }
-messagebubble.document .file.with-thumbnail > overlay > image {
-  background-color: alpha(black, 0.6);
-  color: white;
-}
 
-messagebubble.document .file.with-thumbnail > overlay > image {
+messagebubble.document .file.with-thumbnail > overlay > statusindicator {
   background-color: alpha(black, 0.6);
   color: white;
 }
@@ -249,16 +247,6 @@ messagebubble.media.with-reply mediapicture {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
   margin-top: 3px;
-}
-
-messagebubble.document .file.with-thumbnail > overlay > image {
-  background-color: alpha(black, 0.6);
-  color: white;
-}
-
-messagebubble.document .file.with-thumbnail > overlay {
-  min-width: 60px;
-  min-height: 60px;
 }
 
 messagebubble.document .file.with-thumbnail > overlay > picture {
