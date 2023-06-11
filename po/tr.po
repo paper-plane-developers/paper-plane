@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-09-23 23:26+0000\n"
+"PO-Revision-Date: 2023-06-11 06:14+0000\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
-"Language-Team: Turkish <https://hosted.weblate.org/projects/paper-plane/"
-"paper-plane/tr/>\n"
+"Language-Team: Turkish <https://hosted.weblate.org/projects/paper-plane/main/"
+"tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -37,29 +37,29 @@ msgstr "Gnome;GTK;"
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
-msgstr "Varsayılan pencere genişliği"
+msgstr "Öntanımlı pencere genişliği"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:11
 #: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
-msgstr "Varsayılan pencere yüksekliği"
+msgstr "Öntanımlı pencere yüksekliği"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Varsayılan pencere büyütülmüş davranış"
+msgstr "Öntanımlı pencere büyütülme davranışı"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
 msgstr "Son kullanılan oturumlar"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
-"Veritabanı dizin adlarına göre son kullanılan oturumların sıralı listesi"
+"En son kullanılan oturumların veri tabanı dizin adlarına göre sıralanmış bir "
+"listesi"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
@@ -99,34 +99,32 @@ msgid "Select a chat to start messaging."
 msgstr "Mesajlaşmaya başlamak için bir sohbet seçin."
 
 #: data/resources/ui/content-chat-action-bar.blp:68
-#, fuzzy
 msgid "Message"
-msgstr "Sesli mesaj"
+msgstr "İleti"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "Engellemeyi Kaldır"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "Katıl"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "En alta kaydır"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "Bilgileri Görüntüle"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "Sohbetlerde Ara"
+msgstr "Konuşmadan Ayrıl"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
-msgstr ""
+msgstr "Başlık"
 
 #: data/resources/ui/login.blp:25
 msgid "_Previous"
@@ -138,11 +136,11 @@ msgstr "_Sonraki"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "Hoş Geldiniz"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
-msgstr "_Karekod kullanarak giriş yapın"
+msgstr "_Karekod kullanarak giriş yap"
 
 #: data/resources/ui/login.blp:127
 msgid "Scan Code"
@@ -163,11 +161,11 @@ msgstr "Kod"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "Kod artık gönderilemez."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
-msgstr "Yeni Hesap Açın"
+msgstr "Yeni Hesap Aç"
 
 #: data/resources/ui/login.blp:233
 msgid "First Name"
@@ -175,7 +173,7 @@ msgstr "İsim"
 
 #: data/resources/ui/login.blp:237
 msgid "Last Name"
-msgstr "Soyisim"
+msgstr "Soyadı"
 
 #: data/resources/ui/login.blp:259
 msgid ""
@@ -203,17 +201,15 @@ msgstr "_Parolanızı mı unuttunuz?"
 
 #: data/resources/ui/login.blp:355
 msgid "Use Recovery Code"
-msgstr "Kurtarma Kodunu Kullanın"
+msgstr "Kurtarma Kodunu Kullan"
 
 #: data/resources/ui/login.blp:363
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
 msgstr ""
-"Bulut parolalarınızı ayarlarken bir kurtarma e-posta adresi verdiniz. Bu e-"
-"posta adresine parolanızı sıfırlamak için kullanabileceğiniz bir kod "
-"gönderebiliriz."
+"Bulut parolanızı ayarladığınızda, bir kurtarma e-posta adresi sağladınız. "
+"Parolanızı sıfırlamak için oraya bir kod gönderilebilir."
 
 #: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
@@ -228,36 +224,32 @@ msgid "_Delete Account"
 msgstr "_Hesabı Sil"
 
 #: data/resources/ui/login.blp:460
-#, fuzzy
 msgid "Enter the code e-mailed to you"
-msgstr "E-Posta ile Gönderilen Kodu Girin"
+msgstr "Size e-posta ile gönderilen kodu girin"
 
 #: data/resources/ui/login.blp:493
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_E-postanıza erişemiyor musunuz?"
+msgstr "E-postanıza erişemiyor musunuz?"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
-msgstr ""
+msgstr "_Yanıtla"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_Düzenle"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
-msgstr "_Hesabı Sil"
+msgstr "_Herkes İçin Sil"
 
 #: data/resources/ui/message-menu.blp:24
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_Hesabı Sil"
+msgstr "_Benim İçin Sil"
 
 #: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
-msgstr ""
+msgstr "Ülke"
 
 #: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
@@ -273,15 +265,15 @@ msgstr "Koyu Tema"
 
 #: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
-msgstr ""
+msgstr "Depolama"
 
 #: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
-msgstr ""
+msgstr "Önbellek Boyutu"
 
 #: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
-msgstr ""
+msgstr "Önbelleği Temizle"
 
 #: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
@@ -309,15 +301,14 @@ msgid "Search Chats"
 msgstr "Sohbetlerde Ara"
 
 #: data/resources/ui/shortcuts.blp:34
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "Sohbet Listesi"
+msgstr "Sohbet Geçmişi"
 
 #: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "Panodan Fotoğraf Gönder"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -325,7 +316,7 @@ msgstr "_Oturumu Kapat"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_Kişiler"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -341,57 +332,52 @@ msgstr "Paper Plane _Hakkında"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
-msgstr ""
+msgstr "_Sabitle"
 
 #: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
-msgstr ""
+msgstr "_Sabitlemeyi Kaldır"
 
 #: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "Okunmadı Olarak _İmle"
 
 #: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
-msgstr ""
+msgstr "_Okundu Olarak İmle"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "Sohbetlerde Ara"
+msgstr "Ara"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "Sohbetlerde Ara"
+msgstr "Arama Sonucu Yok"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "Farklı bir arama deneyin."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Paper Plane developers"
-msgstr "Paper Plane"
+msgstr "Paper Plane geliştiricileri"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "Sponsorlar"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
 #: src/session/sidebar/search/mod.rs:205
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Sesli mesaj"
+msgstr "Kayıtlı İletiler"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_Hesabı Sil"
+msgstr "Silinmiş Hesap"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "Bu grubun yöneticileri buraya yazmanızı kısıtladı"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -399,59 +385,54 @@ msgstr ""
 #: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
 #: src/session/sidebar/row.rs:646
 msgid "%l:%M %p"
-msgstr "%H:%M"
+msgstr "%l:%M %p"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e %B %Y"
+msgstr "%B %e, %Y %l:%M %p"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "Bu grupta ileti yazmaya izin verilmemektedir."
 
 #: src/login.rs:372
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
-"Hesabınızı kullanmaya devam etmenin bir yolu, hesabınızı silip yeniden "
-"oluşturmaktır"
+"Hesabınızı kullanmaya devam etmenin bir yolu onu silip yeniden oluşturmaktır"
 
 #: src/login.rs:377
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
 msgstr ""
-"Bir kurtarma e-posta adresi vermediğiniz için hesabınızı kullanmaya devam "
-"etmenin tek yolu hesabınızı silip yeniden oluşturmaktır"
+"Bir kurtarma e-posta adresi sağlamadığınız için, hesabınızı kullanmaya devam "
+"etmenin tek yolu hesabınızı silmek ve ardından yeniden oluşturmaktır"
 
 #: src/login.rs:385
 msgid ""
 "Please note, you will lose all your chats and messages, along with any media "
 "and files you shared!"
 msgstr ""
-"Lütfen tüm sohbetlerinizi ve mesajlarınızı, paylaştığınız medya ve "
+"Lütfen tüm sohbetlerinizi ve iletilerinizi, paylaştığınız ortam ve "
 "dosyalarla birlikte kaybedeceğinizi unutmayın!"
 
 #: src/login.rs:676
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
-msgstr "Hizmet Koşullarını Kabul Ediyor musunuz?"
+msgstr "Hizmet Koşullarını kabul ediyor musunuz?"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_No"
-msgstr ""
+msgstr "_ Hayır"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
-msgstr ""
+msgstr "_Evet"
 
 #: src/login.rs:680
 msgid "Terms of Service"
@@ -459,7 +440,7 @@ msgstr "Hizmet Koşulları"
 
 #: src/login.rs:681 src/login.rs:991
 msgid "_OK"
-msgstr ""
+msgstr "_Tamam"
 
 #: src/login.rs:903
 msgid "Warning"
@@ -472,365 +453,353 @@ msgid ""
 "\n"
 "Do you want to delete your account?"
 msgstr ""
-"Paylaştığınız tüm medya ve dosyalarla birlikte tüm sohbetlerinizi ve "
-"mesajlarınızı kaybedeceksiniz!\n"
+"Paylaştığınız tüm ortam ve dosyalarla birlikte tüm sohbetlerinizi ve "
+"iletilerinizi kaybedeceksiniz!\n"
 "\n"
 "Hesabınızı silmek istiyor musunuz?"
 
 #: src/login.rs:911
 msgid "_Cancel"
-msgstr ""
+msgstr "İ_ptal"
 
 #: src/login.rs:984
 msgid "Sorry"
 msgstr "Üzgünüm"
 
 #: src/login.rs:986
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
 msgstr ""
-"E-postaya erişim sağlayamıyoranız, geriye kalan seçenekleriniz ya parolanızı "
-"hatırlamak ya da hesabınızı silip yeniden oluşturmaktır."
+"E-postaya erişimi geri getiremiyorsanız, geriye kalan seçenekleriniz ya "
+"parolanızı hatırlamak ya da hesabınızı silip yeniden oluşturmaktır."
 
 #. Translators: This is an authentication method
 #: src/login.rs:1058
-#, fuzzy
 msgid "Telegram"
-msgstr "Paper Plane"
+msgstr "Telegram"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1060
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1062
 msgid "Call"
-msgstr ""
+msgstr "Arama"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1064
 msgid "Flash Call"
-msgstr ""
+msgstr "Hızlı Çağrı"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
-#, fuzzy
 msgid "Missed Call"
-msgstr "Cevapsız arama"
+msgstr "Cevapsız Arama"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "Fragment"
-msgstr ""
+msgstr "Parça"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "Geçersiz bir ülke kodu girdiniz."
 
 #: src/strings.rs:28
 msgid "{sender} is choosing a contact"
-msgstr ""
+msgstr "{sender} kişi seçiyor"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "{sender1} ve {sender2} kişi seçiyor"
 
 #: src/strings.rs:39
 msgid "{num} people are choosing contacts"
-msgstr ""
+msgstr "{num} kişi, kişi seçiyor"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
-msgstr ""
+msgstr "kişi seçme"
 
 #: src/strings.rs:51
 msgid "{sender} is choosing a location"
-msgstr ""
+msgstr "{sender} konum seçiyor"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} ve {sender2} konum seçiyor"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
-msgstr ""
+msgstr "{num} kişi konum seçiyor"
 
 #: src/strings.rs:67
 msgid "choosing a location"
-msgstr ""
+msgstr "konum seçme"
 
 #: src/strings.rs:74
 msgid "{sender} is choosing a sticker"
-msgstr ""
+msgstr "{sender} çıkartma seçiyor"
 
 #: src/strings.rs:78
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr ""
+msgstr "{sender1} ve {sender2} çıkartma seçiyor"
 
 #: src/strings.rs:85
 msgid "{num} people are choosing stickers"
-msgstr ""
+msgstr "{num} kişi çıkartma seçiyor"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
-msgstr ""
+msgstr "çıkartma seçme"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "Gelen görüntülü arama"
+msgstr "{sender} video kaydediyor"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "{sender1} ve {sender2} video kaydediyor"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "Gelen görüntülü arama"
+msgstr "{num} kişi video kaydediyor"
 
 #: src/strings.rs:113
-#, fuzzy
 msgid "recording a video"
-msgstr "Gelen görüntülü arama"
+msgstr "video kaydetme"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
-msgstr "Gelen görüntülü arama"
+msgstr "{sender} video not kaydediyor"
 
 #: src/strings.rs:124
 msgid "{sender1} and {sender2} are recording video notes"
-msgstr ""
+msgstr "{sender1} ve {sender2} video not kaydediyor"
 
 #: src/strings.rs:131
 msgid "{num} people are recording video notes"
-msgstr ""
+msgstr "{num} kişi video not kaydediyor"
 
 #: src/strings.rs:136
 msgid "recording a video note"
-msgstr ""
+msgstr "video not kaydetme"
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
-msgstr "Gelen görüntülü arama"
+msgstr "{sender} sesli not kaydediyor"
 
 #: src/strings.rs:147
 msgid "{sender1} and {sender2} are recording voice notes"
-msgstr ""
+msgstr "{sender1} ve {sender2} sesli not kaydediyor"
 
 #: src/strings.rs:154
 msgid "{num} people are recording voice notes"
-msgstr ""
+msgstr "{num} kişi sesli not kaydediyor"
 
 #: src/strings.rs:159
 msgid "recording a voice note"
-msgstr ""
+msgstr "sesli not kaydetme"
 
 #: src/strings.rs:166
 msgid "{sender} is playing a game"
-msgstr ""
+msgstr "{sender} oyun oynuyor"
 
 #: src/strings.rs:170
 msgid "{sender1} and {sender2} are playing games"
-msgstr ""
+msgstr "{sender1} ve {sender2} oyun oynuyor"
 
 #: src/strings.rs:177
 msgid "{num} people are playing games"
-msgstr ""
+msgstr "{num} kişi oyun oynuyor"
 
 #: src/strings.rs:182
 msgid "playing a game"
-msgstr ""
+msgstr "oyun oynama"
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
-msgstr "Gruba katıldınız"
+msgstr "{sender} yazıyor"
 
 #: src/strings.rs:193
 msgid "{sender1} and {sender2} are typing"
-msgstr ""
+msgstr "{sender1} ve {sender2} yazıyor"
 
 #: src/strings.rs:199
 msgid "{num} people are typing"
-msgstr ""
+msgstr "{num} kişi yazıyor"
 
 #: src/strings.rs:202
 msgid "typing"
-msgstr ""
+msgstr "yazma"
 
 #: src/strings.rs:209
 msgid "{sender} is uploading a document ({progress}%)"
-msgstr ""
+msgstr "{sender} belge yüklüyor (%{progress})"
 
 #: src/strings.rs:216
 msgid "{sender1} and {sender2} are uploading documents"
-msgstr ""
+msgstr "{sender1} ve {sender2} belge yüklüyor"
 
 #: src/strings.rs:223
 msgid "{num} people are uploading documents"
-msgstr ""
+msgstr "{num} kişi belge yüklüyor"
 
 #: src/strings.rs:229
 msgid "uploading a document ({progress}%)"
-msgstr ""
+msgstr "belge yükleniyor (%{progress})"
 
 #: src/strings.rs:238
 msgid "{sender} is uploading a photo ({progress}%)"
-msgstr ""
+msgstr "{sender} fotoğraf yüklüyor (%{progress})"
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
-msgstr "Grup fotoğrafını kaldırdınız"
+msgstr "{sender1} ve {sender2} fotoğraf yüklüyor"
 
 #: src/strings.rs:252
 msgid "{num} people are uploading photos"
-msgstr ""
+msgstr "{num} kişi fotoğraf yüklüyor"
 
 #: src/strings.rs:258
 msgid "uploading a photo ({progress}%)"
-msgstr ""
+msgstr "fotoğraf yükleniyor (%{progress})"
 
 #: src/strings.rs:267
 msgid "{sender} is uploading a video ({progress}%)"
-msgstr ""
+msgstr "{sender} video yüklüyor (%{progress})"
 
 #: src/strings.rs:274
 msgid "{sender1} and {sender2} are uploading videos"
-msgstr ""
+msgstr "{sender1} ve {sender2} video yüklüyor"
 
 #: src/strings.rs:281
 msgid "{num} people are uploading videos"
-msgstr ""
+msgstr "{num} kişi video yüklüyor"
 
 #: src/strings.rs:287
 msgid "uploading a video ({progress}%)"
-msgstr ""
+msgstr "video yükleniyor (%{progress})"
 
 #: src/strings.rs:296
 msgid "{sender} is uploading a video note ({progress}%)"
-msgstr ""
+msgstr "{sender} video not yüklüyor (%{progress})"
 
 #: src/strings.rs:303
 msgid "{sender1} and {sender2} are uploading video notes"
-msgstr ""
+msgstr "{sender1} ve {sender2} video not yüklüyor"
 
 #: src/strings.rs:310
 msgid "{num} people are uploading video notes"
-msgstr ""
+msgstr "{num} kişi video not yüklüyor"
 
 #: src/strings.rs:316
 msgid "uploading a video note ({progress}%)"
-msgstr ""
+msgstr "video not yükleniyor (%{progress})"
 
 #: src/strings.rs:325
 msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "{sender} sesli not yüklüyor (%{progress})"
 
 #: src/strings.rs:332
 msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr ""
+msgstr "{sender1} ve {sender2} sesli not yüklüyor"
 
 #: src/strings.rs:339
 msgid "{num} people are uploading voice notes"
-msgstr ""
+msgstr "{num} kişi sesli not yüklüyor"
 
 #: src/strings.rs:345
 msgid "uploading a voice note ({progress}%)"
-msgstr ""
+msgstr "sesli not yükleniyor (%{progress})"
 
 #: src/strings.rs:354
 msgid "{sender} is watching an animation {emoji}"
-msgstr ""
+msgstr "{sender} animasyon izliyor {emoji}"
 
 #: src/strings.rs:361
 msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr ""
+msgstr "{sender1} ve {sender2} animasyon izliyor {emoji}"
 
 #: src/strings.rs:369
 msgid "{num} people are watching animations {emoji}"
-msgstr ""
+msgstr "{num} kişi animasyon izliyor {emoji}"
 
 #: src/strings.rs:374
 msgid "watching an animation"
-msgstr ""
+msgstr "animasyon izleme"
 
 #: src/strings.rs:395
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "son görülme: uzun zaman önce"
 
 #: src/strings.rs:396
 msgid "online"
-msgstr ""
+msgstr "çevrim içi"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "son görülme: %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "son görülme: dün %l:%M %p"
 
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "son görülme: {num} saat önce"
+msgstr[1] "son görülme, {num} saat önce"
 
 #: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "son görülme: {num} dakika önce"
+msgstr[1] "son görülme, {num} dakika önce"
 
 #: src/strings.rs:427
 msgid "last seen just now"
-msgstr ""
+msgstr "son görülme: şimdi"
 
 #: src/strings.rs:430
 msgid "last seen recently"
-msgstr ""
+msgstr "son görülme: yakın zamanda"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
-msgstr ""
+msgstr "son görülme: bir hafta içinde"
 
 #: src/strings.rs:432
 msgid "last seen within a month"
-msgstr ""
+msgstr "son görülme: bir ay içinde"
 
 #: src/strings.rs:456
 msgid "Photo has expired"
-msgstr ""
+msgstr "Fotoğrafın süresi doldu"
 
 #: src/strings.rs:459
 msgid "Video has expired"
-msgstr ""
+msgstr "Videonun süresi doldu"
 
 #: src/strings.rs:460
-#, fuzzy
 msgid "Video Message"
-msgstr "Sesli mesaj"
+msgstr "Video İleti"
 
 #: src/strings.rs:491
 msgid "{sender} took a screenshot!"
-msgstr ""
+msgstr "{sender} ekran görüntüsü aldı!"
 
 #: src/strings.rs:496
-#, fuzzy
 msgid "Unsupported Message"
-msgstr "Desteklenmeyen mesaj"
+msgstr "Desteklenmeyen İleti"
 
 #: src/strings.rs:502
 msgid "GIF"
@@ -838,19 +807,19 @@ msgstr "GIF"
 
 #: src/strings.rs:504
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "GIF, {caption}"
 
 #: src/strings.rs:512
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:518
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:534
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:542
 msgid "Photo"
@@ -858,13 +827,12 @@ msgstr "Fotoğraf"
 
 #: src/strings.rs:544
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "Fotoğraf, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:550
-#, fuzzy
 msgid "{emoji} Sticker"
-msgstr "Çıkartma"
+msgstr "{emoji} Çıkartma"
 
 #: src/strings.rs:555
 msgid "Video"
@@ -872,17 +840,15 @@ msgstr "Video"
 
 #: src/strings.rs:557
 msgid "Video, {caption}"
-msgstr ""
+msgstr "Video, {caption}"
 
 #: src/strings.rs:563
-#, fuzzy
 msgid "Voice Message"
-msgstr "Sesli mesaj"
+msgstr "Sesli İleti"
 
 #: src/strings.rs:565
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "Sesli mesaj"
+msgstr "Sesli İleti, {caption}"
 
 #: src/strings.rs:582
 msgid "Declined outgoing video call"
@@ -901,7 +867,6 @@ msgid "Declined incoming call"
 msgstr "Reddedilen gelen arama"
 
 #: src/strings.rs:600
-#, fuzzy
 msgid "Canceled call"
 msgstr "İptal edilen arama"
 
@@ -910,14 +875,12 @@ msgid "Missed call"
 msgstr "Cevapsız arama"
 
 #: src/strings.rs:615
-#, fuzzy
 msgid "Outgoing video call ({duration})"
-msgstr "Giden görüntülü arama"
+msgstr "Giden görüntülü arama ({duration})"
 
 #: src/strings.rs:620
-#, fuzzy
 msgid "Outgoing call ({duration})"
-msgstr "Giden arama"
+msgstr "Giden arama ({duration})"
 
 #: src/strings.rs:625
 msgid "Outgoing video call"
@@ -928,18 +891,16 @@ msgid "Outgoing call"
 msgstr "Giden arama"
 
 #: src/strings.rs:632
-#, fuzzy
 msgid "Incoming video call ({duration})"
-msgstr "Gelen görüntülü arama"
+msgstr "Gelen video arama ({duration})"
 
 #: src/strings.rs:637
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "Gelen arama"
+msgstr "Gelen arama ({duration})"
 
 #: src/strings.rs:642
 msgid "Incoming video call"
-msgstr "Gelen görüntülü arama"
+msgstr "Gelen video arama"
 
 #: src/strings.rs:644 src/window.rs:213
 msgid "Incoming call"
@@ -947,175 +908,167 @@ msgstr "Gelen arama"
 
 #: src/strings.rs:651 src/strings.rs:662
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "{sender}, \"{title}\" grubunu oluşturdu"
 
 #: src/strings.rs:658
-#, fuzzy
 msgid "Channel created"
-msgstr "Kanal fotoğrafı kaldırıldı"
+msgstr "Kanal oluşturuldu"
 
 #: src/strings.rs:672
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
-msgstr "Kanal fotoğrafı kaldırıldı"
+msgstr "Kanal, \"{title}\" olarak yeniden adlandırıldı"
 
 #: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "{sender}, grup adını \"{title}\" olarak değiştirdi"
 
 #: src/strings.rs:687
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "Kanal fotoğrafı kaldırıldı"
+msgstr "Kanal fotoğrafı değiştirildi"
 
 #: src/strings.rs:691
-#, fuzzy
 msgid "{sender} changed the group photo"
-msgstr "Grup fotoğrafını kaldırdınız"
+msgstr "{sender}, grup fotoğrafını değiştirdi"
 
 #: src/strings.rs:699
 msgid "Channel photo removed"
 msgstr "Kanal fotoğrafı kaldırıldı"
 
 #: src/strings.rs:703
-#, fuzzy
 msgid "{sender} removed the group photo"
-msgstr "Grup fotoğrafını kaldırdınız"
+msgstr "{sender}, grup fotoğrafını kaldırdı"
 
 #: src/strings.rs:711 src/strings.rs:746
-#, fuzzy
 msgid "{sender} joined the group"
-msgstr "Gruba katıldınız"
+msgstr "{sender} gruba katıldı"
 
 #: src/strings.rs:716
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "{sender}, {first_user} ve {second_user} kullanıcılarını ekledi"
 
 #: src/strings.rs:730
 msgid "{sender} added {users}"
-msgstr ""
+msgstr "{sender}, {users} kullanıcılarını ekledi"
 
 #: src/strings.rs:739
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "{sender} davet linki ile grubuna katıldı"
 
 #: src/strings.rs:753
-#, fuzzy
 msgid "{sender} left the group"
-msgstr "Gruptan ayrıldınız"
+msgstr "{sender} gruptan ayrıldı"
 
 #: src/strings.rs:758
 msgid "{sender} removed {user}"
-msgstr ""
+msgstr "{sender}, {user} kullanıcısını kaldırdı"
 
 #: src/strings.rs:777
 msgid "{sender} scored {points} in {game}"
-msgstr ""
+msgstr "{sender}, {game} oyununda {points} yaptı"
 
 #: src/strings.rs:786
 msgid "{sender} scored {points}"
-msgstr ""
+msgstr "{sender}, {points} puan yaptı"
 
 #: src/strings.rs:810
 msgid "{sender} pinned \"{text}\""
-msgstr ""
+msgstr "{sender}, \"{text}\" iletisini sabitledi"
 
 #: src/strings.rs:812
 msgid "{sender} pinned a GIF"
-msgstr ""
+msgstr "{sender} bir GIF'i sabitledi"
 
 #: src/strings.rs:813
 msgid "{sender} pinned an audio file"
-msgstr ""
+msgstr "{sender} bir ses dosyasını sabitledi"
 
 #: src/strings.rs:814
 msgid "{sender} pinned a file"
-msgstr ""
+msgstr "{sender} bir dosyayı sabitledi"
 
 #: src/strings.rs:815
 msgid "{sender} pinned a photo"
-msgstr ""
+msgstr "{sender} bir fotoğrafı sabitledi"
 
 #: src/strings.rs:816
 msgid "{sender} pinned a sticker"
-msgstr ""
+msgstr "{sender} bir çıkartmayı sabitledi"
 
 #: src/strings.rs:817
 msgid "{sender} pinned a video"
-msgstr ""
+msgstr "{sender} bir videoyu sabitledi"
 
 #: src/strings.rs:818
 msgid "{sender} pinned a video message"
-msgstr ""
+msgstr "{sender} bir video iletiyi sabitledi"
 
 #: src/strings.rs:819
 msgid "{sender} pinned a voice message"
-msgstr ""
+msgstr "{sender} bir sesli iletiyi sabitledi"
 
 #: src/strings.rs:820 src/strings.rs:822
 msgid "{sender} pinned a message"
-msgstr ""
+msgstr "{sender} bir iletiyi sabitledi"
 
 #: src/strings.rs:831
 msgid "{sender} joined Telegram"
-msgstr ""
+msgstr "{sender} Telegramʼa katıldı"
 
 #: src/session/preferences_window.rs:208
 msgid "Cache cleared"
-msgstr ""
+msgstr "Önbellek temizlendi"
 
 #: src/session/content/chat_action_bar.rs:363
 #: src/session/content/chat_action_bar.rs:380
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmiyor"
 
 #: src/session/content/chat_action_bar.rs:365
 #: src/session/content/chat_action_bar.rs:382
 msgid "Deleted Message"
-msgstr ""
+msgstr "Silinmiş İleti"
 
 #: src/session/content/chat_action_bar.rs:376
-#, fuzzy
 msgid "Edit Message"
-msgstr "Sesli mesaj"
+msgstr "İletiyi Düzenle"
 
 #: src/session/content/chat_action_bar.rs:471
 msgid "Images"
-msgstr ""
+msgstr "Görüntüler"
 
 #: src/session/content/chat_action_bar.rs:790
 msgid "Unmute"
-msgstr ""
+msgstr "Sesi aç"
 
 #: src/session/content/chat_action_bar.rs:792
 msgid "Mute"
-msgstr ""
+msgstr "Sessiz"
 
 #: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
-msgstr ""
+msgstr "Sohbetten ayrılıyor musunuz?"
 
 #: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
-msgstr ""
+msgstr "Bu sohbetten ayrılmak istiyor musunuz?"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/chat_history_row.rs:121
 msgid "%B %e"
-msgstr "%e %B"
+msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
 #: src/session/content/chat_history_row.rs:124
 msgid "%B %e, %Y"
-msgstr "%e %B %Y"
+msgstr "%B %e, %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "bot"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
-msgstr "Mobil"
+msgstr "Cep Telefonu"
 
 #: src/session/content/chat_info_window.rs:156
 msgid "Username"
@@ -1125,80 +1078,77 @@ msgstr "Kullanıcı Adı"
 #: src/session/content/chat_info_window.rs:223
 msgid "{num} member"
 msgid_plural "{num} members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num} üye"
+msgstr[1] "{num} üye"
 
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "Açıklama"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "Bağlantı"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "Panoya kopyalandı"
 
 #: src/session/content/message_row/indicators.rs:266
 msgid "edited"
-msgstr ""
+msgstr "düzenlendi"
 
 #: src/session/content/message_row/indicators.rs:271
 msgid "sponsored"
-msgstr ""
+msgstr "sponsorlu"
 
 #: src/session/content/message_row/mod.rs:171
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "Bu iletiyi <b>herkes</b> için silmek istiyor musunuz?"
 
 #: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "Bu iletiyi silmek istiyor musunuz?"
 
 #: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "İleti Silmeyi Onayla"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "Yükleniyor…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
-msgstr "Bu mesaj desteklenmiyor"
+msgstr "Bu ileti desteklenmiyor"
 
 #: src/session/sidebar/row.rs:417
-#, fuzzy
 msgid "Draft:"
-msgstr "Taslak"
+msgstr "Taslak:"
 
 #: src/session/sidebar/row.rs:597
 msgid "You"
 msgstr "Siz"
 
 #: src/session/sidebar/search/section_row.rs:130
-#, fuzzy
 msgid "Chats"
-msgstr "Sohbet Listesi"
+msgstr "Sohbetler"
 
 #: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
-msgstr ""
+msgstr "Genel Arama"
 
 #: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
-msgstr ""
+msgstr "Son"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "Geçersiz Ülke Kodu"
 
 #: src/tdlib/country_info.rs:124
-#, fuzzy
 msgid "Test Account"
-msgstr "_Hesabı Sil"
+msgstr "Test Hesabı"
 
 #~ msgid "Welcome to Paper Plane"
 #~ msgstr "Paper Plane'a Hoş Geldiniz"
