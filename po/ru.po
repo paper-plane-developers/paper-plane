@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2023-06-13 03:54+0000\n"
-"Last-Translator: Геннадий Румянцев <gennadiys1906@gmail.com>\n"
+"Last-Translator: \"Кроватко Одеялкин (Кроватко)\" <krovatko228@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/paper-plane/main/"
 "ru/>\n"
 "Language: ru\n"
@@ -537,9 +537,8 @@ msgid "{sender1} and {sender2} are choosing locations"
 msgstr "{sender1} и {sender2} выбирают локации"
 
 #: src/strings.rs:62
-#, fuzzy
 msgid "{num} people are choosing locations"
-msgstr "выбирает локацию"
+msgstr "{num} человек выбирают локацию"
 
 #: src/strings.rs:67
 msgid "choosing a location"
