@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-06-04 01:48+0000\n"
-"Last-Translator: JULIANE LEITE <jujungles22@gmail.com>\n"
+"PO-Revision-Date: 2023-06-13 03:54+0000\n"
+"Last-Translator: Геннадий Румянцев <gennadiys1906@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/paper-plane/main/"
 "ru/>\n"
 "Language: ru\n"
@@ -513,31 +513,28 @@ msgid "You entered an invalid country code."
 msgstr "Вы ввели недействительный код страны."
 
 #: src/strings.rs:28
-#, fuzzy
 msgid "{sender} is choosing a contact"
-msgstr "выбирает контакт"
+msgstr "{sender} выбирает контакт"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
 msgstr "{sender1} и {sender2} выбирают контакты"
 
 #: src/strings.rs:39
-#, fuzzy
 msgid "{num} people are choosing contacts"
-msgstr "выбирает контакт"
+msgstr "{num} человек выбирают контакты"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
 msgstr "выбирает контакт"
 
 #: src/strings.rs:51
-#, fuzzy
 msgid "{sender} is choosing a location"
-msgstr "выбирает локацию"
+msgstr "{sender} выбирает локацию"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "{sender1} и {sender2} выбирают локации"
 
 #: src/strings.rs:62
 #, fuzzy
@@ -549,9 +546,8 @@ msgid "choosing a location"
 msgstr "выбирает локацию"
 
 #: src/strings.rs:74
-#, fuzzy
 msgid "{sender} is choosing a sticker"
-msgstr "{sender} закрепил(а) стикер"
+msgstr "{sender} выбирает стикер"
 
 #: src/strings.rs:78
 #, fuzzy
