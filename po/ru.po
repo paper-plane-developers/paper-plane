@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
 "PO-Revision-Date: 2023-06-13 04:12+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"Last-Translator: \"Кроватко Одеялкин (Кроватко)\" <krovatko228@gmail.com>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/paper-plane/main/"
 "ru/>\n"
 "Language: ru\n"
@@ -534,7 +534,7 @@ msgstr "{sender} выбирает локацию"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr "{sender1} и {sender2} выбирают локации"
+msgstr "{sender1} и {sender2} выбирают места"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
@@ -553,9 +553,8 @@ msgid "{sender1} and {sender2} are choosing stickers"
 msgstr "{sender1} и {sender2} выбирают стикер"
 
 #: src/strings.rs:85
-#, fuzzy
 msgid "{num} people are choosing stickers"
-msgstr "выбирает стикер"
+msgstr "{num} человек выбирают стикер"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
