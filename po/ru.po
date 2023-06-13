@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-06-13 04:12+0000\n"
-"Last-Translator: \"Кроватко Одеялкин (Кроватко)\" <krovatko228@gmail.com>\n"
+"PO-Revision-Date: 2023-06-14 04:52+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/paper-plane/main/"
 "ru/>\n"
 "Language: ru\n"
@@ -137,7 +137,7 @@ msgstr "_Далее"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr "Здравствуйте"
+msgstr "Добро пожаловать"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
@@ -182,12 +182,12 @@ msgid ""
 "By signing up,\n"
 "you agree to the <a href=\"\">Terms of Service</a>."
 msgstr ""
-"Регистрируясь,\n"
-"вы соглашаетесь с <a href=\"\">Условиями оказания услуг</a>."
+"Регистрация\n"
+"означает согласие с <a href=\"\">Условиями оказания услуг</a>."
 
 #: data/resources/ui/login.blp:271
 msgid "Enter Your Password"
-msgstr "Введите ваш пароль"
+msgstr "Введите пароль"
 
 #: data/resources/ui/login.blp:285
 msgid "Password"
@@ -231,7 +231,7 @@ msgstr "Введите код, отправленный вам на электр
 
 #: data/resources/ui/login.blp:493
 msgid "Unable to access your e-mail?"
-msgstr "Не можете получить доступ к своей электронной почте?"
+msgstr "Нет доступа к своей электронной почте?"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
@@ -460,7 +460,7 @@ msgstr ""
 "Вы потеряете все свои чаты и сообщения, а также все медиа и файлы, которыми "
 "вы делились!\n"
 "\n"
-"Вы хотите удалить свой аккаунт?"
+"Точно удалить аккаунт?"
 
 #: src/login.rs:911
 msgid "_Cancel"
