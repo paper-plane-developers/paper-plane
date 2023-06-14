@@ -134,24 +134,26 @@ mod imp {
                     .chain(Some('+'))
                     .collect::<String>();
 
-                let selected_country_info = obj.selected_country_info().unwrap();
-                let (number, pos_start, pos_end) = {
-                    let first_calling_code = selected_country_info.calling_codes().first_or_empty();
-                    (
-                        [
-                            number_prefix.as_str(),
-                            first_calling_code,
-                            obj.number()
-                                .chars()
-                                .skip(pos_end)
-                                .collect::<String>()
-                                .as_str(),
-                        ]
-                        .concat(),
-                        pos_start,
-                        pos_start + first_calling_code.chars().count() + 1,
-                    )
-                };
+                let (number, pos_start, pos_end) = obj
+                    .selected_country_info()
+                    .map(|selected_country_info| {
+                        let first_calling_code = selected_country_info.calling_codes().first_or_empty();
+                        (
+                            [
+                                number_prefix.as_str(),
+                                first_calling_code,
+                                obj.number()
+                                    .chars()
+                                    .skip(pos_end)
+                                    .collect::<String>()
+                                    .as_str(),
+                            ]
+                            .concat(),
+                            pos_start,
+                            pos_start + first_calling_code.chars().count() + 1,
+                        )
+                    })
+                    .unwrap_or((number_prefix, 0, 1));
 
                 imp.entry_row.block_signal(entry_handler);
                 obj.set_number(&number);
@@ -198,16 +200,7 @@ mod imp {
                     };
 
                     imp.combo_row.block_signal(combo_row_handler);
-                    match list_pos {
-                        Some(list_pos) => {
-                            imp.combo_row.set_selected(list_pos);
-                            imp.combo_row.set_subtitle("");
-                        }
-                        None => {
-                            imp.combo_row.set_selected(gtk::INVALID_LIST_POSITION);
-                            imp.combo_row.set_subtitle(&gettext("You entered an invalid country code."));
-                        }
-                    }
+                    obj.set_selected_country_code(list_pos);
                     imp.combo_row.unblock_signal(combo_row_handler);
 
                     imp.calling_code_bounds.set((text_pos_start, text_pos_end as usize));
@@ -293,6 +286,18 @@ impl PhoneNumberInput {
             .map(|item| item.downcast::<CountryInfo>().unwrap())
     }
 
+    fn set_selected_country_code(&self, position: Option<u32>) {
+        let combo_row = &self.imp().combo_row;
+
+        combo_row.set_selected(position.unwrap_or(gtk::INVALID_LIST_POSITION));
+
+        if position.is_some() {
+            combo_row.set_subtitle("");
+        } else {
+            combo_row.set_subtitle(&gettext("You entered an invalid country code."));
+        }
+    }
+
     /// Performs a text selection of the whole number but leaves out the calling code.
     pub(crate) fn select_number_without_calling_code(&self) {
         let imp = self.imp();
@@ -340,10 +345,9 @@ impl PhoneNumberInput {
                 .get()
                 .unwrap()
                 .as_deref()
-                .and_then(|country| model.country_code_pos(country))
-                .unwrap_or(gtk::INVALID_LIST_POSITION);
+                .and_then(|country| model.country_code_pos(country));
 
-            imp.combo_row.set_selected(position);
+            self.set_selected_country_code(position);
         }
     }
 
