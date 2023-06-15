@@ -40,7 +40,13 @@
   <url type="homepage">https://github.com/paper-plane-developers/paper-plane</url>
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
   <url type="translate">https://hosted.weblate.org/engage/paper-plane/</url>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-info">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+    <content_attribute id="social-location">intense</content_attribute>
+    <content_attribute id="social-contacts">intense</content_attribute>
+  </content_rating>
   sabriunal
   <releases>
     <release version="0.1.0~beta.3" date="2023-06-11">
