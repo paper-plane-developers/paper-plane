@@ -1,5 +1,7 @@
+mod chat_subtitle_string;
 mod user_status_string;
 
+pub(crate) use chat_subtitle_string::ChatSubtitleString;
 pub(crate) use user_status_string::UserStatusString;
 
 use ellipse::Ellipse;
