@@ -2,8 +2,6 @@ mod chat_subtitle_string;
 mod user_status_string;
 
 pub(crate) use chat_subtitle_string::ChatSubtitleString;
-pub(crate) use user_status_string::UserStatusString;
-
 use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
@@ -12,6 +10,7 @@ use tdlib::enums::UserStatus;
 use tdlib::enums::UserType;
 use tdlib::types::MessageGame;
 use tdlib::types::MessageGameScore;
+pub(crate) use user_status_string::UserStatusString;
 
 use crate::i18n::gettext_f;
 use crate::i18n::ngettext_f;
