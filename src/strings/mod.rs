@@ -1,3 +1,7 @@
+mod user_status_string;
+
+pub(crate) use user_status_string::UserStatusString;
+
 use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
@@ -409,7 +413,6 @@ pub(crate) fn user_status(status: &UserStatus) -> String {
             let was_online = glib::DateTime::from_unix_local(data.was_online as i64).unwrap();
             let time_span = now.difference(&was_online);
 
-            // TODO: Add a way to update the string when time passes
             if time_span.as_days() > 1 {
                 // Translators: This is an online status with the date
                 was_online.format(&gettext("last seen %x")).unwrap().into()
