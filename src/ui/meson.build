@@ -12,6 +12,8 @@ blueprints = custom_target('blueprints',
     'components/map.blp',
     'components/message_entry.blp',
     'components/phone_number_input.blp',
+    'components/style_selection_row.blp',
+    'components/style_variant_preview.blp',
 
     'login/code.blp',
     'login/mod.blp',

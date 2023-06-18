@@ -65,7 +65,7 @@ mod imp {
 
             obj.setup_gactions();
             obj.setup_accels();
-            obj.load_color_scheme();
+            obj.setup_theming();
         }
     }
 
@@ -141,19 +141,38 @@ impl Application {
         self.add_action(&action_new_login_test_server);
     }
 
+    fn setup_theming(&self) {
+        let style_manager = adw::StyleManager::default();
+
+        gio::Settings::new(config::APP_ID)
+            .bind("color-scheme", &style_manager, "color-scheme")
+            .get()
+            .set_mapping(|value, _| Some(color_scheme_to_str(value.get().unwrap()).to_variant()))
+            .set()
+            .mapping(|variant, _| Some(str_to_color_scheme(variant.str().unwrap()).to_value()))
+            .build();
+
+        let action = gio::SimpleAction::new_stateful(
+            "style-variant",
+            Some(glib::VariantTy::STRING),
+            &color_scheme_to_str(style_manager.color_scheme()).to_variant(),
+        );
+        action.connect_activate(clone!(@weak self as obj => move |_, param| {
+            adw::StyleManager::default()
+                .set_color_scheme(str_to_color_scheme(param.unwrap().str().unwrap()));
+        }));
+        self.add_action(&action);
+
+        adw::StyleManager::default().connect_color_scheme_notify(
+            clone!(@weak action => move |style_manager| {
+                action.set_state(&color_scheme_to_str(style_manager.color_scheme()).to_variant());
+            }),
+        );
+    }
+
     // Sets up keyboard shortcuts
     fn setup_accels(&self) {
         self.set_accels_for_action("app.quit", &["<primary>q"]);
-    }
-
-    fn load_color_scheme(&self) {
-        let style_manager = adw::StyleManager::default();
-        let settings = gio::Settings::new(config::APP_ID);
-        match settings.string("color-scheme").as_ref() {
-            "light" => style_manager.set_color_scheme(adw::ColorScheme::ForceLight),
-            "dark" => style_manager.set_color_scheme(adw::ColorScheme::ForceDark),
-            _ => style_manager.set_color_scheme(adw::ColorScheme::PreferLight),
-        }
     }
 
     fn show_about_dialog(&self) {
@@ -205,5 +224,21 @@ impl Application {
         );
 
         about.present();
+    }
+}
+
+fn color_scheme_to_str(scheme: adw::ColorScheme) -> &'static str {
+    match scheme {
+        adw::ColorScheme::ForceDark | adw::ColorScheme::PreferDark => "dark",
+        adw::ColorScheme::ForceLight | adw::ColorScheme::PreferLight => "light",
+        _ => "default",
+    }
+}
+
+fn str_to_color_scheme(scheme: &str) -> adw::ColorScheme {
+    match scheme {
+        "light" => adw::ColorScheme::ForceLight,
+        "dark" => adw::ColorScheme::ForceDark,
+        _ => adw::ColorScheme::Default,
     }
 }

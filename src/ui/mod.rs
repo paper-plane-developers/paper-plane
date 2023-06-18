@@ -20,6 +20,8 @@ pub(crate) use self::components::MessageEntry;
 pub(crate) use self::components::PhoneNumberInput;
 pub(crate) use self::components::Snow;
 pub(crate) use self::components::Sticker;
+pub(crate) use self::components::StyleSelectionRow;
+pub(crate) use self::components::StyleVariantPreview;
 pub(crate) use self::login::Code as LoginCode;
 pub(crate) use self::login::Login;
 pub(crate) use self::login::OtherDevice as LoginOtherDevice;
@@ -133,5 +135,7 @@ pub(crate) fn init() {
     SidebarSearchSectionType::static_type();
     Snow::static_type();
     Sticker::static_type();
+    StyleSelectionRow::static_type();
+    StyleVariantPreview::static_type();
     Window::static_type();
 }
