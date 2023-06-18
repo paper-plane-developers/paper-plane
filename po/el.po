@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-04-23 14:46+0000\n"
-"Last-Translator: devlocalhost <lazarecobani@gmail.com>\n"
-"Language-Team: Greek <https://hosted.weblate.org/projects/paper-plane/"
-"paper-plane/el/>\n"
+"PO-Revision-Date: 2023-06-19 15:48+0000\n"
+"Last-Translator: yiannis ioannides <sub@wai.ai>\n"
+"Language-Team: Greek <https://hosted.weblate.org/projects/paper-plane/main/"
+"el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"X-Generator: Weblate 4.18.1\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -28,7 +28,7 @@ msgstr "Paper Plane"
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "Ένας πελάτης Telegram βελτιστοποιήθηκε για την επιφάνεια εργασίας GNOME"
+msgstr "Ένας πελάτης Telegram με βάση την επιφάνεια εργασίας GNOME"
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -47,18 +47,18 @@ msgstr "Προκαθορισμένο ύψος παραθύρου"
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Προεπιλεγμένη συμπεριφορά μεγιστοποιημένης παραθύρου"
+msgstr "Προεπιλεγμένη συμπεριφορά μεγιστοποιημένου παραθύρου"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Recently used sessions"
-msgstr "Πρόσφατα χρησιμοποιημένες συσκευές"
+msgstr "Πρόσφατες χρησιμοποιημένες συσκευές"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
-"Μια λίστα με τις πιο πρόσφατα χρησιμοποιημένες συσκευές, ταξινομημένες με "
+"Μια λίστα με τις πιο πρόσφατες χρησιμοποιημένες συσκευές, ταξινομημένες με "
 "βάση τα ονόματα της βάσης δεδομένων τους"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
