@@ -117,6 +117,10 @@ impl PreferencesWindow {
     pub(crate) fn new(parent_window: Option<&gtk::Window>, session: &ui::Session) -> Self {
         glib::Object::builder()
             .property("transient-for", parent_window)
+            .property(
+                "application",
+                parent_window.and_then(gtk::Window::application),
+            )
             .property("session", session)
             .build()
     }
