@@ -60,6 +60,8 @@ mod imp {
 
     #[derive(Default)]
     pub(crate) struct Background {
+        pub(super) chat_theme: RefCell<Option<tdlib::types::ChatTheme>>,
+
         pub(super) background_texture: RefCell<Option<gdk::Texture>>,
 
         pub(super) last_size: Cell<(f32, f32)>,
@@ -95,10 +97,10 @@ mod imp {
             self.pattern.set(pattern).unwrap();
 
             let style_manager = adw::StyleManager::default();
-            obj.set_theme(hard_coded_themes(style_manager.is_dark()));
+            obj.refresh_theme(style_manager.is_dark());
 
             style_manager.connect_dark_notify(clone!(@weak obj => move |style_manager| {
-                obj.set_theme(hard_coded_themes(style_manager.is_dark()))
+                obj.refresh_theme(style_manager.is_dark());
             }));
 
             if style_manager.is_high_contrast() {
@@ -234,6 +236,40 @@ mod imp {
             }
         }
 
+        pub(super) fn fill_node(
+            &self,
+            bounds: &graphene::Rect,
+            gradient_bounds: &graphene::Rect,
+            colors: &[graphene::Vec3],
+        ) -> gsk::RenderNode {
+            match colors.len() {
+                1 => gsk::ColorNode::new(&vec3_to_rgba(&colors[0]), bounds).upcast(),
+                2 => gsk::LinearGradientNode::new(
+                    bounds,
+                    &gradient_bounds.top_left(),
+                    &gradient_bounds.bottom_left(),
+                    &[
+                        gsk::ColorStop::new(0.0, vec3_to_rgba(&colors[0])),
+                        gsk::ColorStop::new(1.0, vec3_to_rgba(&colors[1])),
+                    ],
+                )
+                .upcast(),
+                3 => {
+                    log::error!("Three color gradients aren't supported yet");
+
+                    let mut colors = colors.to_vec();
+                    colors.push(colors[2]);
+
+                    self.gradient_shader_node(bounds, gradient_bounds, &colors)
+                        .upcast()
+                }
+                4 => self
+                    .gradient_shader_node(bounds, gradient_bounds, colors)
+                    .upcast(),
+                _ => unreachable!("Unsupported color count"),
+            }
+        }
+
         pub(super) fn gradient_shader_node(
             &self,
             bounds: &graphene::Rect,
@@ -327,15 +363,20 @@ impl Background {
         glib::Object::new()
     }
 
-    pub(crate) fn set_theme(&self, theme: tdlib::types::ThemeSettings) {
-        let Some(background) = theme.background else { return; };
+    pub(crate) fn set_chat_theme(&self, theme: Option<tdlib::types::ChatTheme>) {
+        self.imp().chat_theme.replace(theme);
+        self.refresh_theme(adw::StyleManager::default().is_dark());
+    }
+
+    pub(crate) fn set_theme(&self, theme: &tdlib::types::ThemeSettings) {
+        let Some(background) = &theme.background else { return; };
         let imp = self.imp();
 
         imp.dark.set(background.is_dark);
 
-        let bg_fill = match background.r#type {
-            tdlib::enums::BackgroundType::Pattern(pattern) => pattern.fill,
-            tdlib::enums::BackgroundType::Fill(fill) => fill.fill,
+        let bg_fill = match &background.r#type {
+            tdlib::enums::BackgroundType::Pattern(pattern) => &pattern.fill,
+            tdlib::enums::BackgroundType::Fill(fill) => &fill.fill,
             tdlib::enums::BackgroundType::Wallpaper(_) => {
                 unimplemented!("Wallpaper chat background")
             }
@@ -343,13 +384,20 @@ impl Background {
 
         imp.bg_colors.replace(fill_colors(bg_fill));
         imp.message_colors
-            .replace(fill_colors(theme.outgoing_message_fill));
+            .replace(fill_colors(&theme.outgoing_message_fill));
 
         imp.background_texture.take();
         self.queue_draw();
     }
 
     pub(crate) fn animate(&self) {
+        let nothing_to_animate = self.imp().bg_colors.borrow().len() <= 2
+            && self.imp().message_colors.borrow().len() <= 2;
+
+        if nothing_to_animate {
+            return;
+        }
+
         let animation = self.imp().animation.get().unwrap();
 
         let val = animation.value();
@@ -367,21 +415,18 @@ impl Background {
         &self,
         bounds: &graphene::Rect,
         gradient_bounds: &graphene::Rect,
-    ) -> gsk::GLShaderNode {
+    ) -> gsk::RenderNode {
         self.imp()
-            .gradient_shader_node(bounds, gradient_bounds, &self.imp().bg_colors.borrow())
+            .fill_node(bounds, gradient_bounds, &self.imp().bg_colors.borrow())
     }
 
     pub fn message_bg_node(
         &self,
         bounds: &graphene::Rect,
         gradient_bounds: &graphene::Rect,
-    ) -> gsk::GLShaderNode {
-        self.imp().gradient_shader_node(
-            bounds,
-            gradient_bounds,
-            &self.imp().message_colors.borrow(),
-        )
+    ) -> gsk::RenderNode {
+        self.imp()
+            .fill_node(bounds, gradient_bounds, &self.imp().message_colors.borrow())
     }
 
     fn ensure_shader(&self) {
@@ -403,6 +448,23 @@ impl Background {
             }
         };
     }
+
+    fn refresh_theme(&self, dark: bool) {
+        if let Some(chat_theme) = &*self.imp().chat_theme.borrow() {
+            let theme = if dark {
+                &chat_theme.dark_settings
+            } else {
+                &chat_theme.light_settings
+            };
+
+            self.set_theme(theme);
+
+            // For some reason tdlib tells that light theme is dark
+            self.imp().dark.set(dark);
+        } else {
+            self.set_theme(&hard_coded_themes(dark));
+        }
+    }
 }
 
 impl Default for Background {
@@ -411,20 +473,28 @@ impl Default for Background {
     }
 }
 
-fn fill_colors(fill: tdlib::enums::BackgroundFill) -> Vec<graphene::Vec3> {
+fn fill_colors(fill: &tdlib::enums::BackgroundFill) -> Vec<graphene::Vec3> {
     match fill {
         tdlib::enums::BackgroundFill::FreeformGradient(gradient) if gradient.colors.len() == 4 => {
-            gradient
-                .colors
-                .into_iter()
-                .map(|int_color| {
-                    let [_, r, g, b] = int_color.to_be_bytes();
-                    graphene::Vec3::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
-                })
-                .collect()
+            gradient.colors.iter().map(int_color_to_vec3).collect()
         }
+        tdlib::enums::BackgroundFill::Solid(solid) => vec![int_color_to_vec3(&solid.color)],
+        tdlib::enums::BackgroundFill::Gradient(gradient) => vec![
+            int_color_to_vec3(&gradient.top_color),
+            int_color_to_vec3(&gradient.bottom_color),
+        ],
         _ => unimplemented!("Unsupported background fill: {fill:?}"),
     }
+}
+
+fn int_color_to_vec3(color: &i32) -> graphene::Vec3 {
+    let [_, r, g, b] = color.to_be_bytes();
+    graphene::Vec3::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
+}
+
+fn vec3_to_rgba(vec3: &graphene::Vec3) -> gdk::RGBA {
+    let [red, green, blue] = vec3.to_float();
+    gdk::RGBA::new(red, green, blue, 1.0)
 }
 
 fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {

@@ -10,6 +10,7 @@ use std::collections::hash_map::HashMap;
 
 use adw::subclass::prelude::BinImpl;
 use glib::clone;
+use glib::subclass::Signal;
 use glib::Sender;
 use gtk::glib;
 use gtk::glib::WeakRef;
@@ -59,6 +60,7 @@ mod imp {
         pub(super) archive_chat_list: OnceCell<ChatList>,
         pub(super) folder_chat_lists: RefCell<HashMap<i32, ChatList>>,
         pub(super) chats: RefCell<HashMap<i64, Chat>>,
+        pub(super) chat_themes: RefCell<Vec<tdlib::types::ChatTheme>>,
         pub(super) users: RefCell<HashMap<i64, User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, Supergroup>>,
@@ -154,6 +156,12 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("update-chat-themes").build()]);
+            SIGNALS.as_ref()
+        }
+
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "client-id" => {
@@ -227,6 +235,7 @@ impl Session {
             }
             Update::ChatTitle(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::ChatPhoto(ref data) => self.chat(data.chat_id).handle_update(update),
+            Update::ChatTheme(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::ChatPermissions(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::ChatLastMessage(ref data) => {
                 let chat = self.chat(data.chat_id);
@@ -337,6 +346,10 @@ impl Session {
             }
             Update::UserStatus(data) => {
                 self.user(data.user_id).update_status(data.status);
+            }
+            Update::ChatThemes(chat_themes) => {
+                self.imp().chat_themes.replace(chat_themes.chat_themes);
+                self.emit_by_name::<()>("update-chat-themes", &[]);
             }
             _ => {}
         }
@@ -508,6 +521,25 @@ impl Session {
                 }
             })),
         }
+    }
+
+    pub(crate) fn find_chat_theme(&self, name: &str) -> Option<tdlib::types::ChatTheme> {
+        self.imp()
+            .chat_themes
+            .borrow()
+            .iter()
+            .find(|theme| theme.name == name)
+            .cloned()
+    }
+
+    pub(crate) fn connect_update_chat_themes<F>(&self, callback: F) -> glib::SignalHandlerId
+    where
+        F: Fn() + 'static,
+    {
+        self.connect_local("update-chat-themes", true, move |_| {
+            callback();
+            None
+        })
     }
 
     pub(crate) fn handle_paste_action(&self) {
