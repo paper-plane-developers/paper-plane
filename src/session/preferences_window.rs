@@ -99,7 +99,9 @@ mod imp {
 
             let theme_name = settings.string("theme-name");
 
-            let preview = crate::components::ThemePreview::default();
+            let session = self.session.get();
+
+            let preview = crate::components::ThemePreview::new(session);
             let toggle_button = gtk::ToggleButton::builder()
                 .halign(gtk::Align::Center)
                 .valign(gtk::Align::Center)
@@ -120,8 +122,9 @@ mod imp {
 
             self.theme_variants_box.append(&toggle_button);
 
-            for chat_theme in &*self.session.get().unwrap().chat_themes() {
-                let preview = crate::components::ThemePreview::from_chat_theme(chat_theme.clone());
+            for chat_theme in &*session.unwrap().chat_themes() {
+                let preview =
+                    crate::components::ThemePreview::from_chat_theme(chat_theme.clone(), session);
 
                 let name = chat_theme.name.clone();
 

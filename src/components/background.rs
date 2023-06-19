@@ -12,6 +12,8 @@ use gtk::graphene;
 use gtk::gsk;
 use once_cell::sync::Lazy;
 
+use crate::utils::spawn;
+
 const GRADIENT_SHADER: &[u8] = r#"
 // That shader was taken from Telegram for android source
 // https://github.com/DrKLO/Telegram/commit/2112affb2e4941334f8fbc3944385806b3c4e3d6#diff-dfdd1e8c4691747fd30199b7a2f5041a126b23e1450b29afe441eb0ebed01c68
@@ -62,26 +64,40 @@ static DEFAULT_PATTERN: Lazy<gdk::Texture> =
 static mut SHADER: Option<gsk::GLShader> = None;
 
 mod imp {
+
     use super::*;
 
-    #[derive(Default)]
+    #[derive(Default, glib::Properties)]
+    #[properties(wrapper_type = super::Background)]
     pub(crate) struct Background {
+        #[property(get, set)]
+        pub(super) thumbnail_mode: Cell<bool>,
+
         pub(super) settings: OnceCell<gio::Settings>,
+        pub(super) session: RefCell<glib::WeakRef<crate::Session>>,
         pub(super) settings_handler: RefCell<Option<glib::SignalHandlerId>>,
 
         pub(super) chat_theme: RefCell<Option<tdlib::types::ChatTheme>>,
 
-        pub(super) background_texture: RefCell<Option<gdk::Texture>>,
+        pub(super) background_cache: RefCell<Option<gdk::Texture>>,
+
+        pub(super) document: RefCell<Option<tdlib::types::Document>>,
+        pub(super) document_target_file_id: Cell<i32>,
+        pub(super) document_texture: RefCell<Option<gdk::Texture>>,
+
+        pub(super) loaded_documents: RefCell<Vec<(i32, gdk::Texture)>>,
 
         pub(super) last_size: Cell<(f32, f32)>,
 
         pub(super) pattern: OnceCell<gdk::Texture>,
 
-        pub(super) animation: OnceCell<adw::Animation>,
+        pub(super) gradient_animation: OnceCell<adw::Animation>,
         pub(super) progress: Cell<f32>,
         pub(super) phase: Cell<u32>,
 
         pub(super) dark: Cell<bool>,
+        pub(super) pattern_intensity: Cell<f32>,
+        pub(super) pattern_is_inverted: Cell<bool>,
 
         pub(super) bg_colors: RefCell<Vec<graphene::Vec3>>,
         pub(super) message_colors: RefCell<Vec<graphene::Vec3>>,
@@ -95,6 +111,18 @@ mod imp {
     }
 
     impl ObjectImpl for Background {
+        fn properties() -> &'static [glib::ParamSpec] {
+            Self::derived_properties()
+        }
+
+        fn set_property(&self, id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            self.derived_set_property(id, value, pspec)
+        }
+
+        fn property(&self, id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            self.derived_property(id, pspec)
+        }
+
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -117,8 +145,9 @@ mod imp {
 
             self.pattern.set(DEFAULT_PATTERN.to_owned()).unwrap();
 
+            // Dark / light style
             let style_manager = adw::StyleManager::default();
-            obj.refresh_theme(style_manager.is_dark());
+            self.dark.set(style_manager.is_dark());
 
             style_manager.connect_dark_notify(clone!(@weak obj => move |style_manager| {
                 obj.refresh_theme(style_manager.is_dark());
@@ -136,9 +165,10 @@ mod imp {
                 }
             }));
 
+            // Gradient animation
             let target = adw::CallbackAnimationTarget::new(clone!(@weak obj => move |progress| {
                 let imp = obj.imp();
-                imp.background_texture.take();
+                imp.background_cache.take();
                 let progress = progress as f32;
                 if progress >= 1.0 {
                     imp.progress.set(0.0);
@@ -159,7 +189,7 @@ mod imp {
                 .build()
                 .upcast();
 
-            self.animation.set(animation).unwrap();
+            self.gradient_animation.set(animation).unwrap();
         }
 
         fn dispose(&self) {
@@ -173,6 +203,7 @@ mod imp {
         fn realize(&self) {
             self.parent_realize();
             self.obj().ensure_shader();
+            self.obj().refresh_theme(self.dark.get());
         }
 
         fn snapshot(&self, snapshot: &gtk::Snapshot) {
@@ -185,6 +216,20 @@ mod imp {
                 }
                 return;
             };
+
+            self.snapshot_background(snapshot);
+
+            if let Some(child) = widget.child() {
+                widget.snapshot_child(&child, snapshot);
+            }
+        }
+    }
+
+    impl BinImpl for Background {}
+
+    impl Background {
+        fn snapshot_background(&self, snapshot: &gtk::Snapshot) {
+            let widget = self.obj();
 
             let width = widget.width() as f32;
             let height = widget.height() as f32;
@@ -201,11 +246,7 @@ mod imp {
 
             self.snapshot_pattern(snapshot, &bounds);
         }
-    }
 
-    impl BinImpl for Background {}
-
-    impl Background {
         fn snapshot_gradient(
             &self,
             snapshot: &gtk::Snapshot,
@@ -213,7 +254,7 @@ mod imp {
             size_changed: bool,
         ) {
             if self.progress.get() == 0.0 {
-                let texture = match self.background_texture.take() {
+                let texture = match self.background_cache.take() {
                     Some(texture) if !size_changed => texture,
                     _ => {
                         let renderer = self.obj().native().unwrap().renderer();
@@ -223,44 +264,59 @@ mod imp {
                 };
 
                 snapshot.append_texture(&texture, bounds);
-                self.background_texture.replace(Some(texture));
+                self.background_cache.replace(Some(texture));
             } else {
                 snapshot.append_node(&self.obj().bg_node(bounds, bounds));
             }
         }
 
         fn snapshot_pattern(&self, snapshot: &gtk::Snapshot, bounds: &graphene::Rect) {
-            let widget = self.obj();
-            let pattern = self.pattern.get().unwrap();
+            let pattern_intensity = self.pattern_intensity.get();
+
+            if pattern_intensity == 0.0 {
+                return;
+            }
+
+            let texture = self.document_texture.borrow();
+
+            let pattern = texture.as_ref().unwrap_or(&DEFAULT_PATTERN);
+
+            let pattern_scale = if self.thumbnail_mode.get() {
+                if texture.is_some() {
+                    0.5
+                } else {
+                    0.2
+                }
+            } else {
+                0.3
+            };
 
             let pattern_bounds = graphene::Rect::new(
                 0.0,
                 0.0,
-                pattern.width() as f32 * 0.3,
-                pattern.height() as f32 * 0.3,
+                pattern.width() as f32 * pattern_scale,
+                pattern.height() as f32 * pattern_scale,
             );
 
             let mut matrix = [0.0; 16];
             let mut offset = [0.0; 4];
-            if self.dark.get() {
-                matrix[15] = -0.3;
+
+            if self.pattern_is_inverted.get() {
+                matrix[15] = -pattern_intensity;
                 offset = [0.08; 4];
                 offset[3] = 1.0;
             } else {
-                matrix[15] = 0.1;
+                matrix[15] = pattern_intensity * 0.3;
             }
+
             let color_matrix = graphene::Matrix::from_float(matrix);
             let color_offset = graphene::Vec4::from_float(offset);
 
             snapshot.push_color_matrix(&color_matrix, &color_offset);
             snapshot.push_repeat(bounds, Some(&pattern_bounds));
-            snapshot.append_texture(pattern, &pattern_bounds);
+            snapshot.append_scaled_texture(pattern, gsk::ScalingFilter::Trilinear, &pattern_bounds); // .append_texture(pattern, &pattern_bounds);
             snapshot.pop();
             snapshot.pop();
-
-            if let Some(child) = widget.child() {
-                widget.snapshot_child(&child, snapshot);
-            }
         }
 
         pub(super) fn fill_node(
@@ -391,8 +447,12 @@ impl Background {
     }
 
     pub(crate) fn set_chat_theme(&self, theme: Option<tdlib::types::ChatTheme>) {
-        self.imp().chat_theme.replace(theme);
-        self.refresh_theme(adw::StyleManager::default().is_dark());
+        let old_theme = &self.imp().chat_theme;
+
+        if *old_theme.borrow() != theme {
+            old_theme.replace(theme);
+            self.refresh_theme(adw::StyleManager::default().is_dark());
+        }
     }
 
     pub(crate) fn set_theme(&self, theme: &tdlib::types::ThemeSettings) {
@@ -401,20 +461,38 @@ impl Background {
 
         imp.dark.set(background.is_dark);
 
+        imp.pattern_intensity.take();
+
         let bg_fill = match &background.r#type {
-            tdlib::enums::BackgroundType::Pattern(pattern) => &pattern.fill,
+            tdlib::enums::BackgroundType::Pattern(pattern) => {
+                imp.pattern_is_inverted.set(pattern.is_inverted);
+                imp.pattern_intensity.set(pattern.intensity as f32 / 100.0);
+                &pattern.fill
+            }
             tdlib::enums::BackgroundType::Fill(fill) => &fill.fill,
             tdlib::enums::BackgroundType::Wallpaper(_) => {
                 unimplemented!("Wallpaper chat background")
             }
         };
 
+        imp.document.replace(background.document.clone());
+
         imp.bg_colors.replace(fill_colors(bg_fill));
         imp.message_colors
             .replace(fill_colors(&theme.outgoing_message_fill));
 
-        imp.background_texture.take();
-        self.queue_draw();
+        imp.background_cache.take();
+
+        imp.document_texture.take();
+
+        match &background.document {
+            Some(doc) if doc.document.local.is_downloading_completed => {
+                // load_document will call queue_draw fast enough
+            }
+            _ => self.queue_draw(),
+        }
+
+        self.load_document();
     }
 
     pub(crate) fn animate(&self) {
@@ -425,7 +503,7 @@ impl Background {
             return;
         }
 
-        let animation = self.imp().animation.get().unwrap();
+        let animation = self.imp().gradient_animation.get().unwrap();
 
         let val = animation.value();
         if val == 0.0 || val == 1.0 {
@@ -434,7 +512,7 @@ impl Background {
     }
 
     pub fn subscribe_to_redraw(&self, child: &gtk::Widget) {
-        let animation = self.imp().animation.get().unwrap();
+        let animation = self.imp().gradient_animation.get().unwrap();
         animation.connect_value_notify(clone!(@weak child => move |_| child.queue_draw()));
     }
 
@@ -479,6 +557,149 @@ impl Background {
         };
     }
 
+    pub(crate) fn set_session(&self, session: &crate::Session) {
+        self.imp().session.replace(session.downgrade());
+    }
+
+    fn session(&self) -> Option<crate::Session> {
+        self.ancestor(crate::Session::static_type())
+            .and_downcast::<crate::Session>()
+            .or(self.imp().session.borrow().upgrade())
+    }
+
+    fn load_document(&self) {
+        let imp = self.imp();
+
+        if let Some(document) = &*imp.document.borrow() {
+            if let Some(session) = self.session() {
+                let file = if !imp.thumbnail_mode.get() {
+                    &document.document
+                } else if let Some(thumbnail) = &document.thumbnail {
+                    &thumbnail.file
+                } else {
+                    return;
+                };
+
+                imp.document_target_file_id.set(file.id);
+
+                if file.local.is_downloading_completed {
+                    self.set_downloaded_file(file);
+                } else {
+                    let file_id = file.id;
+
+                    spawn(clone!(@weak self as obj => async move {
+                        match session.download_file(file_id).await {
+                            Ok(file) => {
+                                obj.set_downloaded_file(&file);
+                            }
+                            Err(e) => log::error!("Can't download background: {e:?}")
+                        }
+                    }))
+                }
+            }
+        }
+    }
+
+    fn set_downloaded_file(&self, file: &tdlib::types::File) {
+        let imp = self.imp();
+
+        assert!(file.local.is_downloading_completed);
+
+        let file_id = file.id;
+
+        if imp.document_target_file_id.get() != file_id {
+            return;
+        }
+
+        if let Some((_, texture)) = imp
+            .loaded_documents
+            .borrow()
+            .iter()
+            .find(|(id, _)| *id == file_id)
+        {
+            imp.document_texture.replace(Some(texture.to_owned()));
+            self.queue_draw();
+            return;
+        }
+
+        let path = file.local.path.clone();
+
+        let cache_path = path.replace(".tgv", "cache.png");
+
+        if let Ok(texture) = gdk::Texture::from_filename(&cache_path) {
+            self.imp()
+                .loaded_documents
+                .borrow_mut()
+                .push((file_id, texture.clone()));
+            self.imp().document_texture.replace(Some(texture));
+            self.queue_draw();
+            return;
+        }
+
+        let (sender, receiver) =
+            glib::MainContext::channel::<(i32, gdk::Texture)>(glib::PRIORITY_DEFAULT);
+
+        std::thread::spawn(move || {
+            if path.ends_with(".tgv") {
+                if let Ok(data) = std::fs::read(&path) {
+                    let decompressor = gio::ZlibDecompressor::new(gio::ZlibCompressorFormat::Gzip);
+
+                    let mut bytes_read = 0;
+
+                    let mut accumulator = Vec::<u8>::new();
+
+                    let mut buffer = [0; 262144];
+
+                    loop {
+                        let Ok((result, br, bw)) = decompressor.convert(
+                            &data[bytes_read..],
+                            &mut buffer,
+                            gio::ConverterFlags::NONE,
+                        ) else {
+                            log::error!("Decompression error");
+                            return;
+                        };
+
+                        accumulator.extend_from_slice(&buffer[..bw]);
+
+                        bytes_read += br;
+
+                        if result == gio::ConverterResult::Finished {
+                            break;
+                        }
+                    }
+
+                    match gdk::Texture::from_bytes(&glib::Bytes::from_owned(accumulator)) {
+                        Ok(texture) => {
+                            texture.save_to_png(&cache_path).unwrap();
+                            sender.send((file_id, texture)).unwrap();
+                        }
+                        Err(e) => {
+                            log::error!("Failed to create texture from decompressed data {e}")
+                        }
+                    }
+                }
+            } else {
+                match gdk::Texture::from_filename(&path) {
+                    Ok(texture) => sender.send((file_id, texture)).unwrap(),
+                    Err(e) => log::error!("Failed to create texture from filename {e}"),
+                };
+            }
+        });
+
+        receiver.attach(
+            None,
+            clone!(@weak self as obj => @default-return glib::Continue(false),
+                move |(id, texture)| {
+                    obj.imp().loaded_documents.borrow_mut().push((id, texture.clone()));
+                    obj.imp().document_texture.replace(Some(texture));
+                    obj.queue_draw();
+                    glib::Continue(false)
+                }
+            ),
+        );
+    }
+
     fn refresh_theme(&self, dark: bool) {
         if let Some(chat_theme) = &*self.imp().chat_theme.borrow() {
             let theme = if dark {
@@ -490,8 +711,7 @@ impl Background {
             self.set_theme(theme);
         } else {
             let chat_theme = self
-                .ancestor(crate::Session::static_type())
-                .and_downcast::<crate::Session>()
+                .session()
                 .map(|s| s.default_chat_theme())
                 .unwrap_or(crate::utils::default_theme());
 
@@ -505,7 +725,7 @@ impl Background {
         // For some reason tdlib tells that light theme is dark
         self.imp().dark.set(dark);
 
-        if let Some(animation) = self.imp().animation.get() {
+        if let Some(animation) = self.imp().gradient_animation.get() {
             animation.notify("value");
         }
     }

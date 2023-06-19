@@ -291,15 +291,18 @@ pub(crate) fn default_theme() -> tdlib::types::ChatTheme {
         message_colors: Vec<i32>,
     ) -> tdlib::types::ThemeSettings {
         use tdlib::enums::BackgroundFill::*;
-        use tdlib::enums::BackgroundType::Fill;
+        use tdlib::enums::BackgroundType::Pattern;
         use tdlib::types::*;
 
         ThemeSettings {
             background: Some(Background {
                 is_default: true,
                 is_dark: dark,
-                r#type: Fill(BackgroundTypeFill {
+                r#type: Pattern(BackgroundTypePattern {
                     fill: FreeformGradient(BackgroundFillFreeformGradient { colors: bg_colors }),
+                    intensity: 30,
+                    is_inverted: dark,
+                    is_moving: false,
                 }),
                 id: 0,
                 name: String::new(),

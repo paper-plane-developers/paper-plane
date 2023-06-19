@@ -46,8 +46,6 @@ mod imp {
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
-        pub(super) background: TemplateChild<Background>,
-        #[template_child]
         pub(super) scrolled_window: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub(super) list_view: TemplateChild<gtk::ListView>,
@@ -358,19 +356,19 @@ impl ChatHistory {
                 }
             }));
 
-            self.imp().background.set_chat_theme(chat.chat_theme());
+            self.background().set_chat_theme(chat.chat_theme());
 
             let new_message_handler =
                 chat.connect_new_message(clone!(@weak self as obj => move |_, msg| {
                     if msg.is_outgoing() {
-                        obj.imp().background.animate();
+                        obj.background().animate();
                     }
                 }));
 
             let chat_theme_handler = chat.connect_notify_local(
                 Some("theme-name"),
                 clone!(@weak self as obj => move |chat, _| {
-                    obj.imp().background.set_chat_theme(chat.chat_theme());
+                    obj.background().set_chat_theme(chat.chat_theme());
                 }),
             );
 
@@ -386,7 +384,7 @@ impl ChatHistory {
 
             let chat_themes_handler = chat.session().connect_update_chat_themes(
                 clone!(@weak self as obj, @weak chat => move || {
-                    obj.imp().background.set_chat_theme(chat.chat_theme());
+                    obj.background().set_chat_theme(chat.chat_theme());
                 }),
             );
 
@@ -396,7 +394,7 @@ impl ChatHistory {
                 .replace(vec![chat_themes_handler])
             {
                 if let Some(old_chat) = &*imp.chat.borrow() {
-                    old_chat.disconnect(old_handler);
+                    old_chat.session().disconnect(old_handler);
                 }
             }
 
@@ -430,5 +428,11 @@ impl ChatHistory {
 
         imp.scrolled_window
             .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
+    }
+
+    fn background(&self) -> Background {
+        self.ancestor(Background::static_type())
+            .and_downcast()
+            .unwrap()
     }
 }

@@ -29,6 +29,7 @@ use self::chat_info_window::ChatInfoWindow;
 use self::event_row::EventRow;
 use self::message_row::MessageRow;
 use self::send_photo_dialog::SendPhotoDialog;
+use crate::components::Background;
 use crate::tdlib::Chat;
 
 mod imp {
@@ -54,6 +55,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            Background::static_type();
             ChatHistory::static_type();
             klass.bind_template();
         }

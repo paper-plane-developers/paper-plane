@@ -15,6 +15,7 @@ mod imp {
             $ContentBackground background {
                 styles ["card"]
                 overflow: hidden;
+                thumbnail-mode: true;
             }
 
             Label label {
@@ -134,20 +135,20 @@ glib::wrapper! {
 }
 
 impl ThemePreview {
-    pub fn new() -> Self {
-        Self::default()
+    pub(crate) fn new(session: Option<&crate::Session>) -> Self {
+        Self::from_chat_theme(crate::utils::default_theme(), session)
     }
 
-    pub fn from_chat_theme(chat_theme: tdlib::types::ChatTheme) -> ThemePreview {
+    pub(crate) fn from_chat_theme(
+        chat_theme: tdlib::types::ChatTheme,
+        session: Option<&crate::Session>,
+    ) -> Self {
         let obj: Self = glib::Object::new();
         obj.imp().label.set_label(&chat_theme.name);
         obj.imp().background.set_chat_theme(Some(chat_theme));
+        if let Some(session) = session {
+            obj.imp().background.set_session(session);
+        }
         obj
-    }
-}
-
-impl Default for ThemePreview {
-    fn default() -> Self {
-        Self::from_chat_theme(crate::utils::default_theme())
     }
 }
