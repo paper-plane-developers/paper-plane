@@ -89,6 +89,8 @@ mod imp {
         #[property(get)]
         pub(super) title: RefCell<String>,
         #[property(get)]
+        pub(super) theme_name: RefCell<String>,
+        #[property(get)]
         pub(super) avatar: RefCell<Option<model::Avatar>>,
         #[property(get)]
         pub(super) last_read_outbox_message_id: Cell<i64>,
@@ -173,6 +175,7 @@ impl Chat {
         imp.block_list
             .replace(td_chat.block_list.map(model::BoxedBlockList));
         imp.title.replace(td_chat.title);
+        imp.theme_name.replace(td_chat.theme_name);
         imp.avatar.replace(td_chat.photo.map(model::Avatar::from));
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
@@ -232,6 +235,7 @@ impl Chat {
                 self.set_last_read_outbox_message_id(update.last_read_outbox_message_id);
             }
             ChatTitle(update) => self.set_title(update.title),
+            ChatTheme(update) => self.set_theme_name(update.theme_name),
             ChatUnreadMentionCount(update) => {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
@@ -320,6 +324,19 @@ impl Chat {
         }
         self.imp().title.replace(title);
         self.notify_title();
+    }
+
+    fn set_theme_name(&self, theme_name: String) {
+        if self.theme_name() == theme_name {
+            return;
+        }
+        self.imp().theme_name.replace(theme_name);
+        self.notify_theme_name();
+    }
+
+    pub(crate) fn chat_theme(&self) -> Option<tdlib::types::ChatTheme> {
+        self.session_()
+            .find_chat_theme(&self.imp().theme_name.borrow())
     }
 
     fn set_avatar(&self, avatar: Option<model::Avatar>) {

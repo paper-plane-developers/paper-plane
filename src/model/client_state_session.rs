@@ -8,6 +8,8 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use glib::Properties;
 use gtk::glib;
+use gtk::glib::subclass::Signal;
+use once_cell::sync::Lazy;
 
 use crate::model;
 use crate::utils;
@@ -20,6 +22,7 @@ mod imp {
     pub(crate) struct ClientStateSession {
         pub(super) filter_chat_lists: RefCell<HashMap<i32, model::ChatList>>,
         pub(super) chats: RefCell<HashMap<i64, model::Chat>>,
+        pub(super) chat_themes: RefCell<Vec<tdlib::types::ChatTheme>>,
         pub(super) users: RefCell<HashMap<i64, model::User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, model::BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, model::Supergroup>>,
@@ -52,6 +55,12 @@ mod imp {
     }
 
     impl ObjectImpl for ClientStateSession {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("update-chat-themes").build()]);
+            SIGNALS.as_ref()
+        }
+
         fn properties() -> &'static [glib::ParamSpec] {
             Self::derived_properties()
         }
@@ -388,6 +397,25 @@ impl ClientStateSession {
         }
     }
 
+    pub(crate) fn find_chat_theme(&self, name: &str) -> Option<tdlib::types::ChatTheme> {
+        self.imp()
+            .chat_themes
+            .borrow()
+            .iter()
+            .find(|theme| theme.name == name)
+            .cloned()
+    }
+
+    pub(crate) fn connect_update_chat_themes<F>(&self, callback: F) -> glib::SignalHandlerId
+    where
+        F: Fn() + 'static,
+    {
+        self.connect_local("update-chat-themes", true, move |_| {
+            callback();
+            None
+        })
+    }
+
     pub(crate) fn handle_update(&self, update: tdlib::enums::Update) {
         use tdlib::enums::Update::*;
 
@@ -400,6 +428,7 @@ impl ClientStateSession {
             }
             ChatTitle(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatPhoto(ref data) => self.chat(data.chat_id).handle_update(update),
+            ChatTheme(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatPermissions(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatLastMessage(ref data) => {
                 let chat = self.chat(data.chat_id);
@@ -501,6 +530,10 @@ impl ClientStateSession {
             }
             UserStatus(data) => {
                 self.user(data.user_id).update_status(data.status);
+            }
+            ChatThemes(chat_themes) => {
+                self.imp().chat_themes.replace(chat_themes.chat_themes);
+                self.emit_by_name::<()>("update-chat-themes", &[]);
             }
             _ => {}
         }
