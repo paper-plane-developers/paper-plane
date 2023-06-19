@@ -10,6 +10,7 @@ use gtk::gio;
 use gtk::glib;
 use gtk::graphene;
 use gtk::gsk;
+use once_cell::sync::Lazy;
 
 const GRADIENT_SHADER: &[u8] = r#"
 // That shader was taken from Telegram for android source
@@ -55,6 +56,9 @@ void mainImage(out vec4 fragColor,
 "#
 .as_bytes();
 
+static DEFAULT_PATTERN: Lazy<gdk::Texture> =
+    Lazy::new(|| gdk::Texture::from_resource("/app/drey/paper-plane/images/pattern.svg"));
+
 static mut SHADER: Option<gsk::GLShader> = None;
 
 mod imp {
@@ -71,7 +75,6 @@ mod imp {
 
         pub(super) last_size: Cell<(f32, f32)>,
 
-        pub(super) shader: RefCell<Option<gsk::GLShader>>,
         pub(super) pattern: OnceCell<gdk::Texture>,
 
         pub(super) animation: OnceCell<adw::Animation>,
@@ -112,9 +115,7 @@ mod imp {
             self.settings.set(settings).unwrap();
             self.settings_handler.replace(Some(settings_handler));
 
-            let pattern = gdk::Texture::from_resource("/app/drey/paper-plane/images/pattern.svg");
-
-            self.pattern.set(pattern).unwrap();
+            self.pattern.set(DEFAULT_PATTERN.to_owned()).unwrap();
 
             let style_manager = adw::StyleManager::default();
             obj.refresh_theme(style_manager.is_dark());
@@ -130,7 +131,7 @@ mod imp {
             style_manager.connect_high_contrast_notify(clone!(@weak obj => move |style_manager| {
                 if style_manager.is_high_contrast() {
                     obj.add_css_class("fallback");
-                } else if obj.imp().shader.borrow().is_some() {
+                } else if obj.shader().is_some() {
                     obj.remove_css_class("fallback");
                 }
             }));
@@ -302,7 +303,7 @@ mod imp {
             gradient_bounds: &graphene::Rect,
             colors: &[graphene::Vec3],
         ) -> gsk::GLShaderNode {
-            let Some(gradient_shader) = &*self.shader.borrow() else {
+            let Some(gradient_shader) = self.obj().shader() else {
                 unreachable!()
             };
 
@@ -455,15 +456,12 @@ impl Background {
             .fill_node(bounds, gradient_bounds, &self.imp().message_colors.borrow())
     }
 
-    fn ensure_shader(&self) {
-        let imp = self.imp();
-        if imp.shader.borrow().is_none() {
-            unsafe {
-                if SHADER.is_some() {
-                    imp.shader.replace(SHADER.clone());
-                }
-            }
+    fn shader(&self) -> Option<&'static gsk::GLShader> {
+        unsafe { SHADER.as_ref() }
+    }
 
+    fn ensure_shader(&self) {
+        if self.shader().is_none() {
             let renderer = self.native().unwrap().renderer();
 
             let shader = gsk::GLShader::from_bytes(&GRADIENT_SHADER.into());
@@ -474,13 +472,9 @@ impl Background {
                     }
                     self.add_css_class("fallback");
                 }
-                Ok(_) => {
-                    imp.shader.replace(Some(shader.clone()));
-
-                    unsafe {
-                        SHADER = Some(shader);
-                    }
-                }
+                Ok(_) => unsafe {
+                    SHADER = Some(shader);
+                },
             }
         };
     }
