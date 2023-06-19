@@ -1,4 +1,3 @@
-mod background;
 mod chat_action_bar;
 mod chat_history;
 mod chat_history_item;
@@ -19,7 +18,6 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
-use self::background::Background;
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
 use self::chat_history_item::ChatHistoryItem;

@@ -4,6 +4,17 @@ using Adw 1;
 template $PreferencesWindow : Adw.PreferencesWindow {
   Adw.PreferencesPage {
     Adw.PreferencesGroup {
+      title: _("Theme");
+
+      FlowBox theme_variants_box {
+        styles ["theme-variants", "card"]
+        overflow: hidden;
+
+        selection-mode: none;
+      }
+    }
+
+    Adw.PreferencesGroup {
       title: _("Color Scheme");
 
       Adw.ActionRow {

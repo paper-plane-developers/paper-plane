@@ -31,5 +31,10 @@
       <summary>Color Scheme</summary>
       <description>The color scheme to be used in the app</description>
     </key>
+    <key name="theme-name" type="s">
+      <default>'🏠'</default>
+      <summary>Theme Name</summary>
+      <description>The chat theme name to be used in the app</description>
+    </key>
   </schema>
 </schemalist>

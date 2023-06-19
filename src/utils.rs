@@ -283,3 +283,52 @@ pub(crate) fn decode_image_from_path(path: &str) -> Result<gdk::MemoryTexture, D
 
     Ok(texture)
 }
+
+pub(crate) fn default_theme() -> tdlib::types::ChatTheme {
+    fn theme(
+        dark: bool,
+        bg_colors: Vec<i32>,
+        message_colors: Vec<i32>,
+    ) -> tdlib::types::ThemeSettings {
+        use tdlib::enums::BackgroundFill::*;
+        use tdlib::enums::BackgroundType::Fill;
+        use tdlib::types::*;
+
+        ThemeSettings {
+            background: Some(Background {
+                is_default: true,
+                is_dark: dark,
+                r#type: Fill(BackgroundTypeFill {
+                    fill: FreeformGradient(BackgroundFillFreeformGradient { colors: bg_colors }),
+                }),
+                id: 0,
+                name: String::new(),
+                document: None,
+            }),
+            accent_color: 0,
+            animate_outgoing_message_fill: false,
+            outgoing_message_accent_color: 0,
+            outgoing_message_fill: FreeformGradient(BackgroundFillFreeformGradient {
+                colors: message_colors,
+            }),
+        }
+    }
+
+    let light_settings = theme(
+        false,
+        vec![0x94dae9, 0x9aeddb, 0x94c3f6, 0xac96f7],
+        vec![0xddecff, 0xe0ddfd, 0xdbffff, 0xddffdf],
+    );
+
+    let dark_settings = theme(
+        true,
+        vec![0xd6932e, 0xbc40db, 0x4280d7, 0x614ed5],
+        vec![0x2d52ab, 0x4036a1, 0x9f388d, 0x9d3941],
+    );
+
+    tdlib::types::ChatTheme {
+        name: "🏠".to_owned(),
+        light_settings,
+        dark_settings,
+    }
+}

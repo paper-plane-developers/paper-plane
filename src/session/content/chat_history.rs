@@ -14,8 +14,8 @@ use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
+use crate::components::Background;
 use crate::expressions;
-use crate::session::content::Background;
 use crate::session::content::ChatActionBar;
 use crate::session::content::ChatHistoryError;
 use crate::session::content::ChatHistoryModel;

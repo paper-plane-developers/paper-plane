@@ -12,6 +12,7 @@ use adw::subclass::prelude::BinImpl;
 use glib::clone;
 use glib::subclass::Signal;
 use glib::Sender;
+use gtk::gio;
 use gtk::glib;
 use gtk::glib::WeakRef;
 use gtk::prelude::*;
@@ -523,6 +524,19 @@ impl Session {
         }
     }
 
+    pub(crate) fn default_chat_theme(&self) -> tdlib::types::ChatTheme {
+        let theme_name = gio::Settings::new(crate::config::APP_ID).string("theme-name");
+
+        if theme_name == "🏠" {
+            crate::utils::default_theme()
+        } else if let Some(theme) = self.find_chat_theme(&theme_name) {
+            theme
+        } else {
+            log::error!("Chat theme not found: {theme_name}");
+            crate::utils::default_theme()
+        }
+    }
+
     pub(crate) fn find_chat_theme(&self, name: &str) -> Option<tdlib::types::ChatTheme> {
         self.imp()
             .chat_themes
@@ -530,6 +544,10 @@ impl Session {
             .iter()
             .find(|theme| theme.name == name)
             .cloned()
+    }
+
+    pub(crate) fn chat_themes(&self) -> std::cell::Ref<'_, Vec<tdlib::types::ChatTheme>> {
+        self.imp().chat_themes.borrow()
     }
 
     pub(crate) fn connect_update_chat_themes<F>(&self, callback: F) -> glib::SignalHandlerId

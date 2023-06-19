@@ -10,7 +10,7 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
-use crate::session::content::background::Background;
+use crate::components::Background;
 use crate::session::content::message_row::MessageIndicators;
 use crate::session::content::message_row::MessageLabel;
 use crate::session::content::message_row::MessageReply;

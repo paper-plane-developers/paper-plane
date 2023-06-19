@@ -55,11 +55,16 @@ void mainImage(out vec4 fragColor,
 "#
 .as_bytes();
 
+static mut SHADER: Option<gsk::GLShader> = None;
+
 mod imp {
     use super::*;
 
     #[derive(Default)]
     pub(crate) struct Background {
+        pub(super) settings: OnceCell<gio::Settings>,
+        pub(super) settings_handler: RefCell<Option<glib::SignalHandlerId>>,
+
         pub(super) chat_theme: RefCell<Option<tdlib::types::ChatTheme>>,
 
         pub(super) background_texture: RefCell<Option<gdk::Texture>>,
@@ -91,6 +96,21 @@ mod imp {
             self.parent_constructed();
 
             let obj = self.obj();
+
+            let settings = gio::Settings::new(crate::config::APP_ID);
+            let settings_handler = settings.connect_changed(
+                Some("theme-name"),
+                clone!(@weak obj => move |_, _| {
+                    let imp = obj.imp();
+
+                    if imp.chat_theme.borrow().is_none() {
+                        obj.refresh_theme(imp.dark.get());
+                    }
+                }),
+            );
+
+            self.settings.set(settings).unwrap();
+            self.settings_handler.replace(Some(settings_handler));
 
             let pattern = gdk::Texture::from_resource("/app/drey/paper-plane/images/pattern.svg");
 
@@ -139,6 +159,12 @@ mod imp {
                 .upcast();
 
             self.animation.set(animation).unwrap();
+        }
+
+        fn dispose(&self) {
+            if let Some(settings) = self.settings.get() {
+                settings.disconnect(self.settings_handler.take().unwrap());
+            }
         }
     }
 
@@ -432,6 +458,12 @@ impl Background {
     fn ensure_shader(&self) {
         let imp = self.imp();
         if imp.shader.borrow().is_none() {
+            unsafe {
+                if SHADER.is_some() {
+                    imp.shader.replace(SHADER.clone());
+                }
+            }
+
             let renderer = self.native().unwrap().renderer();
 
             let shader = gsk::GLShader::from_bytes(&GRADIENT_SHADER.into());
@@ -443,7 +475,11 @@ impl Background {
                     self.add_css_class("fallback");
                 }
                 Ok(_) => {
-                    imp.shader.replace(Some(shader));
+                    imp.shader.replace(Some(shader.clone()));
+
+                    unsafe {
+                        SHADER = Some(shader);
+                    }
                 }
             }
         };
@@ -458,11 +494,25 @@ impl Background {
             };
 
             self.set_theme(theme);
-
-            // For some reason tdlib tells that light theme is dark
-            self.imp().dark.set(dark);
         } else {
-            self.set_theme(&hard_coded_themes(dark));
+            let chat_theme = self
+                .ancestor(crate::Session::static_type())
+                .and_downcast::<crate::Session>()
+                .map(|s| s.default_chat_theme())
+                .unwrap_or(crate::utils::default_theme());
+
+            if dark {
+                self.set_theme(&chat_theme.dark_settings);
+            } else {
+                self.set_theme(&chat_theme.light_settings);
+            }
+        }
+
+        // For some reason tdlib tells that light theme is dark
+        self.imp().dark.set(dark);
+
+        if let Some(animation) = self.imp().animation.get() {
+            animation.notify("value");
         }
     }
 }
@@ -495,51 +545,4 @@ fn int_color_to_vec3(color: &i32) -> graphene::Vec3 {
 fn vec3_to_rgba(vec3: &graphene::Vec3) -> gdk::RGBA {
     let [red, green, blue] = vec3.to_float();
     gdk::RGBA::new(red, green, blue, 1.0)
-}
-
-fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {
-    fn theme(
-        dark: bool,
-        bg_colors: Vec<i32>,
-        message_colors: Vec<i32>,
-    ) -> tdlib::types::ThemeSettings {
-        use tdlib::enums::BackgroundFill::*;
-        use tdlib::enums::BackgroundType::Fill;
-        use tdlib::types::*;
-
-        ThemeSettings {
-            background: Some(Background {
-                is_default: true,
-                is_dark: dark,
-                r#type: Fill(BackgroundTypeFill {
-                    fill: FreeformGradient(BackgroundFillFreeformGradient { colors: bg_colors }),
-                }),
-                id: 0,
-                name: String::new(),
-                document: None,
-            }),
-            accent_color: 0,
-            animate_outgoing_message_fill: false,
-            outgoing_message_accent_color: 0,
-            outgoing_message_fill: FreeformGradient(BackgroundFillFreeformGradient {
-                colors: message_colors,
-            }),
-        }
-    }
-
-    // tr tl bl br
-
-    if dark {
-        theme(
-            dark,
-            vec![0xd6932e, 0xbc40db, 0x4280d7, 0x614ed5],
-            vec![0x2d52ab, 0x4036a1, 0x9f388d, 0x9d3941],
-        )
-    } else {
-        theme(
-            dark,
-            vec![0x94dae9, 0x9aeddb, 0x94c3f6, 0xac96f7],
-            vec![0xddecff, 0xe0ddfd, 0xdbffff, 0xddffdf],
-        )
-    }
 }

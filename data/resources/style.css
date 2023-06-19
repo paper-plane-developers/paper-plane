@@ -411,3 +411,41 @@ window.chat-info .main-page > list {
 .small-pill {
   border-radius: 18px;
 }
+
+themepreview {
+  color: white;
+}
+
+themepreview .card {
+  border-radius: 6px;
+}
+
+themepreview > label {
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.05), 1px 0 rgba(0, 0, 0, 0.1),
+    0 1px rgba(0, 0, 0, 0.3), -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.theme-variants {
+  padding: 4px;
+}
+
+.theme-variants button {
+  margin: 4px;
+  background: none;
+  border-radius: 9px;
+  padding: 3px;
+  box-shadow: none;
+  outline: none;
+}
+
+.theme-variants button:checked {
+  box-shadow: 0 0 0 3px @accent_color;
+}
+
+.theme-variants button:focus:focus-visible {
+  box-shadow: 0 0 0 3px alpha(@accent_color, 0.3);
+}
+
+.theme-variants button:checked:focus:focus-visible {
+  box-shadow: 0 0 0 3px @accent_color, 0 0 0 6px alpha(@accent_color, 0.3);
+}
