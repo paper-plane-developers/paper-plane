@@ -308,7 +308,7 @@ pub(crate) fn default_theme() -> tdlib::types::ChatTheme {
                 name: String::new(),
                 document: None,
             }),
-            accent_color: 0,
+            accent_color: -1,
             animate_outgoing_message_fill: false,
             outgoing_message_accent_color: 0,
             outgoing_message_fill: FreeformGradient(BackgroundFillFreeformGradient {

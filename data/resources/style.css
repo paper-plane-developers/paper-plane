@@ -1,3 +1,14 @@
+@define-color outgoing_message_accent_color #79c271;
+
+/* Gtk doesn't redraw links after their color changed, so it's better for it to be constant */
+label.link link {
+  color: @blue_4;
+}
+
+messagebubble.outgoing label.link link {
+  color: currentColor;
+}
+
 .bold {
   font-weight: bold;
 }
@@ -166,9 +177,13 @@ messagebubble:not(.outgoing):dir(rtl) {
   margin-left: 38px;
 }
 
-messagebubble.outgoing link,
 messagebubble.outgoing messagereply label.message {
   color: @window_fg_color;
+}
+
+messagebubble.outgoing messagereply label.caption-heading,
+messagebubble.outgoing messagereply separator {
+  color: @outgoing_message_accent_color;
 }
 
 messagebubble messageindicators {
@@ -208,7 +223,7 @@ messagebubble.document .file > overlay > statusindicator {
 
 messagebubble.document.outgoing .file > overlay > statusindicator {
   /* depends on bubble color */
-  color: #79c271;
+  color: @outgoing_message_accent_color;
 }
 
 messagebubble.document .file:hover > overlay > statusindicator {

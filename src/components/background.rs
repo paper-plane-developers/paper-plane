@@ -1,5 +1,6 @@
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::fmt::Write;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
@@ -101,6 +102,10 @@ mod imp {
 
         pub(super) bg_colors: RefCell<Vec<graphene::Vec3>>,
         pub(super) message_colors: RefCell<Vec<graphene::Vec3>>,
+
+        #[property(get, set = Self::setup_provider)]
+        pub(super) controls_accent: Cell<bool>,
+        pub(super) css_provider: OnceCell<gtk::CssProvider>,
     }
 
     #[glib::object_subclass]
@@ -433,6 +438,20 @@ mod imp {
 
             points.try_into().unwrap()
         }
+
+        fn setup_provider(&self, controls_accent: bool) {
+            self.controls_accent.set(controls_accent);
+
+            if let Some(display) = gdk::Display::default() {
+                let provider = self.css_provider.get_or_init(gtk::CssProvider::new);
+
+                if controls_accent {
+                    gtk::style_context_add_provider_for_display(&display, provider, 1000);
+                } else {
+                    gtk::style_context_remove_provider_for_display(&display, provider);
+                }
+            }
+        }
     }
 }
 
@@ -462,6 +481,8 @@ impl Background {
         imp.dark.set(background.is_dark);
 
         imp.pattern_intensity.take();
+
+        self.update_accent(theme.accent_color, theme.outgoing_message_accent_color);
 
         let bg_fill = match &background.r#type {
             tdlib::enums::BackgroundType::Pattern(pattern) => {
@@ -728,6 +749,32 @@ impl Background {
         if let Some(animation) = self.imp().gradient_animation.get() {
             animation.notify("value");
         }
+    }
+
+    fn update_accent(&self, accent: i32, outgoing_accent: i32) {
+        if !self.controls_accent() {
+            return;
+        }
+
+        let provider = self.imp().css_provider.get().unwrap();
+
+        let mut css = String::new();
+
+        if accent != -1 {
+            let accent = vec3_to_rgba(&int_color_to_vec3(&accent));
+            _ = write!(css, "@define-color accent_color {accent};");
+            _ = write!(css, "@define-color accent_bg_color {accent};");
+        }
+
+        if !adw::StyleManager::default().is_dark() {
+            let outgoing_accent = vec3_to_rgba(&int_color_to_vec3(&outgoing_accent));
+            _ = write!(
+                css,
+                "@define-color outgoing_message_accent_color {outgoing_accent};"
+            );
+        }
+
+        provider.load_from_data(&css);
     }
 }
 
