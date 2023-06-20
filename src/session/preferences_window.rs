@@ -120,7 +120,12 @@ mod imp {
                 settings.reset("theme-name");
             }));
 
-            self.theme_variants_box.append(&toggle_button);
+            let child = gtk::FlowBoxChild::builder()
+                .child(&toggle_button)
+                .focusable(false)
+                .build();
+
+            self.theme_variants_box.append(&child);
 
             for chat_theme in &*session.unwrap().chat_themes() {
                 let preview =
@@ -140,7 +145,12 @@ mod imp {
                     settings.set_string("theme-name", &name).unwrap();
                 }));
 
-                self.theme_variants_box.append(&button);
+                let child = gtk::FlowBoxChild::builder()
+                    .child(&button)
+                    .focusable(false)
+                    .build();
+
+                self.theme_variants_box.append(&child);
             }
 
             obj.setup_bindings();

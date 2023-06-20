@@ -6,11 +6,17 @@ template $PreferencesWindow : Adw.PreferencesWindow {
     Adw.PreferencesGroup {
       title: _("Theme");
 
-      FlowBox theme_variants_box {
-        styles ["theme-variants", "card"]
-        overflow: hidden;
+      Adw.PreferencesRow {
+        title: "Select Theme";
 
-        selection-mode: none;
+        activatable: false;
+
+        child: FlowBox theme_variants_box {
+          styles ["theme-variants"]
+          overflow: hidden;
+
+          selection-mode: none;
+        };
       }
     }
 
