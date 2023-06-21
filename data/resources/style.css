@@ -1,3 +1,14 @@
+@define-color outgoing_message_accent_color #79c271;
+
+/* Gtk doesn't redraw links after their color changed, so it's better for it to be constant */
+label.link link {
+  color: @blue_4;
+}
+
+messagebubble.outgoing label.link link {
+  color: currentColor;
+}
+
 .bold {
   font-weight: bold;
 }
@@ -166,9 +177,13 @@ messagebubble:not(.outgoing):dir(rtl) {
   margin-left: 38px;
 }
 
-messagebubble.outgoing link,
 messagebubble.outgoing messagereply label.message {
   color: @window_fg_color;
+}
+
+messagebubble.outgoing messagereply label.caption-heading,
+messagebubble.outgoing messagereply separator {
+  color: @outgoing_message_accent_color;
 }
 
 messagebubble messageindicators {
@@ -208,7 +223,7 @@ messagebubble.document .file > overlay > statusindicator {
 
 messagebubble.document.outgoing .file > overlay > statusindicator {
   /* depends on bubble color */
-  color: #79c271;
+  color: @outgoing_message_accent_color;
 }
 
 messagebubble.document .file:hover > overlay > statusindicator {
@@ -314,6 +329,10 @@ messagereply label.message {
   color: @window_fg_color;
 }
 
+messagebubble.outgoing messagereply label.message {
+  color: currentColor;
+}
+
 messagesticker {
   border-spacing: 6px;
 }
@@ -406,4 +425,42 @@ window.chat-info .main-page > list {
 
 .small-pill {
   border-radius: 18px;
+}
+
+themepreview {
+  color: white;
+}
+
+themepreview .card {
+  border-radius: 6px;
+}
+
+themepreview > label {
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.05), 1px 0 rgba(0, 0, 0, 0.1),
+    0 1px rgba(0, 0, 0, 0.3), -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.theme-variants {
+  padding: 4px;
+}
+
+.theme-variants button {
+  margin: 4px;
+  background: none;
+  border-radius: 9px;
+  padding: 3px;
+  box-shadow: none;
+  outline: none;
+}
+
+.theme-variants button:checked {
+  box-shadow: 0 0 0 3px @accent_color;
+}
+
+.theme-variants button:focus:focus-visible {
+  box-shadow: 0 0 0 3px alpha(@accent_color, 0.3);
+}
+
+.theme-variants button:checked:focus:focus-visible {
+  box-shadow: 0 0 0 3px @accent_color, 0 0 0 6px alpha(@accent_color, 0.3);
 }

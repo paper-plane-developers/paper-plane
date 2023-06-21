@@ -7,10 +7,14 @@ template $Content : Adw.Bin {
 
   styles ["view"]
 
-  Stack stack {
-    Adw.ToolbarView unselected_chat_view {
-      [top]
-      Overlay {
+  $ContentBackground {
+    controls-accent: true;
+
+    child: Stack stack {
+      Adw.ToolbarView unselected_chat_view {
+        extend-content-to-top-edge: true;
+
+        [top]
         Adw.HeaderBar {
           show-start-title-buttons: false;
 
@@ -18,23 +22,20 @@ template $Content : Adw.Bin {
           Adw.WindowTitle {}
         }
 
-        [overlay]
-        $ComponentsSnow snow {
-          sensitive: false;
-        }
+        content: Label {
+          styles ["event-row"]
+
+          halign: center;
+          valign: center;
+
+          label: _("Select a chat to start messaging.");
+        };
       }
 
-      content: Adw.StatusPage {
-        vexpand: true;
-        icon-name: "user-available-symbolic";
-        title: _("No Chat Selected");
-        description: _("Select a chat to start messaging.");
-      };
-    }
-
-    $ContentChatHistory chat_history {
-      compact: bind template.compact;
-      chat: bind template.chat;
-    }
+      $ContentChatHistory chat_history {
+        compact: bind template.compact;
+        chat: bind template.chat;
+      }
+    };
   }
 }

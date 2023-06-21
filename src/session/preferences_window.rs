@@ -18,7 +18,10 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/preferences-window.ui")]
     pub(crate) struct PreferencesWindow {
+        pub(super) settings: OnceCell<gio::Settings>,
         pub(super) session: OnceCell<Session>,
+        #[template_child]
+        pub(super) theme_variants_box: TemplateChild<gtk::FlowBox>,
         #[template_child]
         pub(super) follow_system_colors_switch: TemplateChild<gtk::Switch>,
         #[template_child]
@@ -81,16 +84,73 @@ mod imp {
 
             let obj = self.obj();
 
+            let settings = self.settings.get_or_init(|| gio::Settings::new(APP_ID));
+
             // If the system supports color schemes, load the 'Follow system colors'
             // switch state, otherwise make that switch insensitive
             let style_manager = adw::StyleManager::default();
             if style_manager.system_supports_color_schemes() {
-                let settings = gio::Settings::new(APP_ID);
                 let follow_system_colors = settings.string("color-scheme") == "default";
                 self.follow_system_colors_switch
                     .set_active(follow_system_colors);
             } else {
                 self.follow_system_colors_switch.set_sensitive(false);
+            }
+
+            let theme_name = settings.string("theme-name");
+
+            let session = self.session.get();
+
+            let preview = crate::components::ThemePreview::new(session);
+            let toggle_button = gtk::ToggleButton::builder()
+                .halign(gtk::Align::Center)
+                .valign(gtk::Align::Center)
+                .child(&preview)
+                .active(
+                    settings
+                        .default_value("theme-name")
+                        .unwrap()
+                        .get::<String>()
+                        .unwrap()
+                        == theme_name,
+                )
+                .build();
+
+            toggle_button.connect_clicked(clone!(@weak settings => move |_| {
+                settings.reset("theme-name");
+            }));
+
+            let child = gtk::FlowBoxChild::builder()
+                .child(&toggle_button)
+                .focusable(false)
+                .build();
+
+            self.theme_variants_box.append(&child);
+
+            for chat_theme in &*session.unwrap().chat_themes() {
+                let preview =
+                    crate::components::ThemePreview::from_chat_theme(chat_theme.clone(), session);
+
+                let name = chat_theme.name.clone();
+
+                let button = gtk::ToggleButton::builder()
+                    .group(&toggle_button)
+                    .halign(gtk::Align::Center)
+                    .valign(gtk::Align::Center)
+                    .child(&preview)
+                    .active(theme_name == name)
+                    .build();
+
+                button.connect_clicked(clone!(@weak settings => move |_| {
+                    settings.set_string("theme-name", &name).unwrap();
+                }));
+
+                let child = gtk::FlowBoxChild::builder()
+                    .child(&button)
+                    .focusable(false)
+                    .build();
+
+                self.theme_variants_box.append(&child);
             }
 
             obj.setup_bindings();

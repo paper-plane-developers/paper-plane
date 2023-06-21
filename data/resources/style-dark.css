@@ -1,3 +1,13 @@
+@define-color outgoing_message_accent_color white;
+
+label.link link {
+  color: #78aeed;
+}
+
+messagebubble.outgoing label.link link {
+  color: currentColor;
+}
+
 #new-login-icon {
   background-color: @dark_2;
 }
@@ -19,12 +29,8 @@ messagebubble.outgoing {
   background-color: #2c52ac;
 }
 
-messagebubble.document.outgoing .file > overlay > statusindicator {
-  color: white;
-}
-
 .event-row {
-  background-color: alpha(#404040, 0.8);
+  background-color: alpha(#404040, 0.8);style_context_remove_provider_for_display
 }
 
 .chat-list row .unread-count-muted {
@@ -64,3 +70,7 @@ messagebubble.document.outgoing .file > overlay > statusindicator {
   background: #303030;
 }
 /* End of values for cairo renderer */
+
+themepreview {
+  color: #303030;
+}

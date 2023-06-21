@@ -1,4 +1,3 @@
-mod background;
 mod chat_action_bar;
 mod chat_history;
 mod chat_history_item;
@@ -19,7 +18,6 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
-use self::background::Background;
 use self::chat_action_bar::ChatActionBar;
 use self::chat_history::ChatHistory;
 use self::chat_history_item::ChatHistoryItem;
@@ -31,6 +29,7 @@ use self::chat_info_window::ChatInfoWindow;
 use self::event_row::EventRow;
 use self::message_row::MessageRow;
 use self::send_photo_dialog::SendPhotoDialog;
+use crate::components::Background;
 use crate::tdlib::Chat;
 
 mod imp {
@@ -56,6 +55,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            Background::static_type();
             ChatHistory::static_type();
             klass.bind_template();
         }
