@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-06-13 03:54+0000\n"
-"Last-Translator: shortcircuit <barfin@protonmail.com>\n"
+"PO-Revision-Date: 2023-06-28 23:53+0000\n"
+"Last-Translator: arashe_023 <arashe22@proton.me>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/paper-plane/main/"
 "fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.18-dev\n"
+"X-Generator: Weblate 4.18.1\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -54,11 +54,10 @@ msgid "Recently used sessions"
 msgstr "نشست های به تازگی استفاده شده"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
-msgstr "سیاههٔ ترتیبی نشست‌های به تازگی استفاده شده با نام شاخهٔ پایگاه داده‌شان"
+msgstr "فهرست ترتیبی نشست‌های به تازگی استفاده شده با نام پوشه پایگاه داده‌شان"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
@@ -496,7 +495,7 @@ msgstr "تماس"
 #. Translators: This is an authentication method
 #: src/login.rs:1064
 msgid "Flash Call"
-msgstr ""
+msgstr "تماس فوری"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
@@ -506,7 +505,7 @@ msgstr "تماس بی‌پاسخ"
 #. Translators: This is an authentication method
 #: src/login.rs:1068
 msgid "Fragment"
-msgstr ""
+msgstr "تکه"
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
@@ -755,7 +754,7 @@ msgstr "آخرین بازدید %x"
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "آخرین بازدید دیروز در %l:%M %p"
 
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
@@ -764,18 +763,21 @@ msgstr[0] "آخرین بازدید {num} ساعت پیش"
 msgstr[1] "آخرین بازدید {num} ساعت پیش"
 
 #: src/strings.rs:421
+#, fuzzy
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "آخرین بار در  {num}  دقیقه قبل دیده شده است ."
+msgstr[1] "آخرین بار در  {num}  دقیقه قبل دیده شده است ."
 
 #: src/strings.rs:427
+#, fuzzy
 msgid "last seen just now"
-msgstr ""
+msgstr "هم این الان دیده شده است"
 
 #: src/strings.rs:430
+#, fuzzy
 msgid "last seen recently"
-msgstr ""
+msgstr "اخرین دیدن به تازگی"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
@@ -787,20 +789,19 @@ msgstr ""
 
 #: src/strings.rs:456
 msgid "Photo has expired"
-msgstr ""
+msgstr "نگاره منقضی شده است"
 
 #: src/strings.rs:459
 msgid "Video has expired"
-msgstr ""
+msgstr "فیلم منقضی شده است"
 
 #: src/strings.rs:460
-#, fuzzy
 msgid "Video Message"
-msgstr "پیام صوتی"
+msgstr "پیام تصویری"
 
 #: src/strings.rs:491
 msgid "{sender} took a screenshot!"
-msgstr ""
+msgstr "{sender}  نماگرفت ثبت شد!"
 
 #: src/strings.rs:496
 #, fuzzy
@@ -813,19 +814,19 @@ msgstr "جیف"
 
 #: src/strings.rs:504
 msgid "GIF, {caption}"
-msgstr ""
+msgstr "جیف , {caption}"
 
 #: src/strings.rs:512
 msgid "{title} – {performer}"
-msgstr ""
+msgstr "{title} – {performer}"
 
 #: src/strings.rs:518
 msgid "{title} – {performer}, {caption}"
-msgstr ""
+msgstr "{title} – {performer}, {caption}"
 
 #: src/strings.rs:534
 msgid "{file_name}, {caption}"
-msgstr ""
+msgstr "{file_name}, {caption}"
 
 #: src/strings.rs:542
 msgid "Photo"
@@ -833,7 +834,7 @@ msgstr "عکس"
 
 #: src/strings.rs:544
 msgid "Photo, {caption}"
-msgstr ""
+msgstr "نگاره, {caption}"
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:550
@@ -846,8 +847,9 @@ msgid "Video"
 msgstr "ویدیو"
 
 #: src/strings.rs:557
+#, fuzzy
 msgid "Video, {caption}"
-msgstr ""
+msgstr "فیلم, {caption}"
 
 #: src/strings.rs:563
 #, fuzzy
@@ -855,9 +857,8 @@ msgid "Voice Message"
 msgstr "پیام صوتی"
 
 #: src/strings.rs:565
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "پیام صوتی"
+msgstr "پیام صوتی, {caption}"
 
 #: src/strings.rs:582
 msgid "Declined outgoing video call"
@@ -885,14 +886,12 @@ msgid "Missed call"
 msgstr "تماس بی‌پاسخ"
 
 #: src/strings.rs:615
-#, fuzzy
 msgid "Outgoing video call ({duration})"
-msgstr "تماس تصویری خروجی"
+msgstr "تماس تصویری خروجی({duration})"
 
 #: src/strings.rs:620
-#, fuzzy
 msgid "Outgoing call ({duration})"
-msgstr "تماس خروجی"
+msgstr "تماس خروجی ({duration})"
 
 #: src/strings.rs:625
 msgid "Outgoing video call"
@@ -903,14 +902,12 @@ msgid "Outgoing call"
 msgstr "تماس خروجی"
 
 #: src/strings.rs:632
-#, fuzzy
 msgid "Incoming video call ({duration})"
-msgstr "تماس تصویری ورودی"
+msgstr "تماس تصویری ورودی({duration})"
 
 #: src/strings.rs:637
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "تماس دریافتی"
+msgstr "تماس دریافتی({duration})"
 
 #: src/strings.rs:642
 msgid "Incoming video call"
@@ -921,32 +918,29 @@ msgid "Incoming call"
 msgstr "تماس دریافتی"
 
 #: src/strings.rs:651 src/strings.rs:662
+#, fuzzy
 msgid "{sender} created the group \"{title}\""
-msgstr ""
+msgstr "{sender} گروه \"{title}\" را ایجاد کرد"
 
 #: src/strings.rs:658
-#, fuzzy
 msgid "Channel created"
-msgstr "عکس کانال برداشته شد"
+msgstr "کانال ایجاد شد"
 
 #: src/strings.rs:672
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
-msgstr "عکس کانال برداشته شد"
+msgstr "نام کانال به \"{title}\" تغییر کرد"
 
 #: src/strings.rs:677
 msgid "{sender} changed the group name to \"{title}\""
-msgstr ""
+msgstr "{sender} نام گروه را تغییر داد به \"{title}\""
 
 #: src/strings.rs:687
-#, fuzzy
 msgid "Channel photo changed"
-msgstr "عکس کانال برداشته شد"
+msgstr "عکس کانال عوض شد"
 
 #: src/strings.rs:691
-#, fuzzy
 msgid "{sender} changed the group photo"
-msgstr "عکس گروه را برداشتید"
+msgstr "{sender} نگاره گروه را عوض کرد"
 
 #: src/strings.rs:699
 msgid "Channel photo removed"
