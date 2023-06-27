@@ -5,24 +5,17 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 use once_cell::unsync::OnceCell;
-use tdlib::enums::InputFile;
-use tdlib::enums::InputMessageContent;
-use tdlib::functions;
-use tdlib::types::InputFileLocal;
-use tdlib::types::InputMessagePhoto;
 
 use crate::components::MessageEntry;
-use crate::expressions;
 use crate::tdlib::Chat;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-send-photo-dialog.ui")]
-    pub(crate) struct SendPhotoDialog {
+    #[template(resource = "/app/drey/paper-plane/ui/content-send-media-window.ui")]
+    pub(crate) struct SendMediaWindow {
         pub(super) chat: OnceCell<Chat>,
         pub(super) path: OnceCell<String>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
@@ -33,19 +26,26 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SendPhotoDialog {
-        const NAME: &'static str = "ContentSendPhotoDialog";
-        type Type = super::SendPhotoDialog;
+    impl ObjectSubclass for SendMediaWindow {
+        const NAME: &'static str = "ContentSendMediaWindow";
+        type Type = super::SendMediaWindow;
         type ParentType = adw::Window;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
             klass.install_action_async(
-                "send-photo-dialog.send-message",
+                "send-media-window.send-message",
                 None,
                 |widget, _, _| async move {
-                    widget.send_message().await;
+                    widget.send_message(false).await;
+                },
+            );
+            klass.install_action_async(
+                "send-media-window.send-as-file",
+                None,
+                |widget, _, _| async move {
+                    widget.send_message(true).await;
                 },
             );
         }
@@ -55,30 +55,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for SendPhotoDialog {
-        fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecObject::builder::<Chat>("chat")
-                    .construct_only()
-                    .build()]
-            });
-            PROPERTIES.as_ref()
-        }
-
-        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
-            match pspec.name() {
-                "chat" => self.chat.set(value.get().unwrap()).unwrap(),
-                _ => unimplemented!(),
-            }
-        }
-
-        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            match pspec.name() {
-                "chat" => self.chat.get().to_value(),
-                _ => unimplemented!(),
-            }
-        }
-
+    impl ObjectImpl for SendMediaWindow {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -86,7 +63,7 @@ mod imp {
 
             self.caption_entry
                 .connect_activate(clone!(@weak obj => move |_| {
-                    obj.activate_action("send-photo-dialog.send-message", None).unwrap()
+                    obj.activate_action("send-media-window.send-message", None).unwrap()
                 }));
 
             self.caption_entry
@@ -102,35 +79,30 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for SendPhotoDialog {}
-    impl WindowImpl for SendPhotoDialog {}
-    impl AdwWindowImpl for SendPhotoDialog {}
+    impl WidgetImpl for SendMediaWindow {}
+    impl WindowImpl for SendMediaWindow {}
+    impl AdwWindowImpl for SendMediaWindow {}
 }
 
 glib::wrapper! {
-    pub(crate) struct SendPhotoDialog(ObjectSubclass<imp::SendPhotoDialog>)
+    pub(crate) struct SendMediaWindow(ObjectSubclass<imp::SendMediaWindow>)
         @extends gtk::Widget, gtk::Window, adw::Window;
 }
 
-impl SendPhotoDialog {
-    pub(crate) fn new(parent_window: &Option<gtk::Window>, chat: Chat, path: String) -> Self {
-        let send_photo_dialog: Self = glib::Object::builder()
-            .property("transient-for", parent_window)
-            .property("chat", &chat)
+impl SendMediaWindow {
+    pub(crate) fn new(parent: &gtk::Window, chat: Chat, path: String) -> Self {
+        let obj: Self = glib::Object::builder()
+            .property("transient-for", parent)
             .build();
-        let imp = send_photo_dialog.imp();
-
-        let chat_expression = gtk::ConstantExpression::new(&chat);
-        expressions::chat_display_name(&chat_expression).bind(
-            &send_photo_dialog,
-            "title",
-            glib::Object::NONE,
-        );
+        let imp = obj.imp();
 
         imp.picture.set_filename(Some(&path));
+        imp.caption_entry.set_chat(Some(chat.clone()));
+
+        imp.chat.set(chat).unwrap();
         imp.path.set(path).unwrap();
 
-        send_photo_dialog
+        obj
     }
 
     fn show_emoji_chooser(&self, parent: &impl IsA<gtk::Widget>) {
@@ -150,7 +122,10 @@ impl SendPhotoDialog {
         emoji_chooser.as_ref().unwrap().popup();
     }
 
-    async fn send_message(&self) {
+    async fn send_message(&self, send_as_file: bool) {
+        use tdlib::enums::*;
+        use tdlib::types::*;
+
         let imp = self.imp();
 
         let chat = imp.chat.get().unwrap();
@@ -164,19 +139,28 @@ impl SendPhotoDialog {
         let caption = imp.caption_entry.as_markdown().await;
 
         let file = InputFile::Local(InputFileLocal { path });
-        let content = InputMessageContent::InputMessagePhoto(InputMessagePhoto {
-            photo: file,
-            thumbnail: None,
-            added_sticker_file_ids: vec![],
-            width,
-            height,
-            caption,
-            self_destruct_time: 0,
-            has_spoiler: false,
-        });
+        let content = if send_as_file {
+            InputMessageContent::InputMessageDocument(InputMessageDocument {
+                document: file,
+                thumbnail: None,
+                disable_content_type_detection: true,
+                caption,
+            })
+        } else {
+            InputMessageContent::InputMessagePhoto(InputMessagePhoto {
+                photo: file,
+                thumbnail: None,
+                added_sticker_file_ids: vec![],
+                width,
+                height,
+                caption,
+                self_destruct_time: 0,
+                has_spoiler: false,
+            })
+        };
 
         // TODO: maybe show an error dialog when this fails?
-        if functions::send_message(chat_id, 0, 0, None, content, client_id)
+        if tdlib::functions::send_message(chat_id, 0, 0, None, content, client_id)
             .await
             .is_ok()
         {

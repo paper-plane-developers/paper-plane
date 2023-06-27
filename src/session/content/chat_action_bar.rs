@@ -23,7 +23,7 @@ use tdlib::types;
 
 use crate::components::MessageEntry;
 use crate::expressions;
-use crate::session::content::SendPhotoDialog;
+use crate::session::content::SendMediaWindow;
 use crate::strings;
 use crate::tdlib::BasicGroup;
 use crate::tdlib::BoxedDraftMessage;
@@ -495,7 +495,7 @@ impl ChatActionBar {
             let path = file.path().unwrap().to_str().unwrap().to_string();
             let chat = self.chat().unwrap();
 
-            SendPhotoDialog::new(&Some(parent), chat, path).present();
+            SendMediaWindow::new(&parent, chat, path).present();
         }
     }
 
@@ -701,9 +701,9 @@ impl ChatActionBar {
 
             save_stream_to_file(stream, &path).await?;
 
-            let parent_window = self.root().unwrap().downcast().ok();
+            let parent = self.root().and_downcast().unwrap();
             let path = path.to_str().unwrap().to_string();
-            SendPhotoDialog::new(&parent_window, chat, path).present();
+            SendMediaWindow::new(&parent, chat, path).present();
         }
 
         Ok(())

@@ -7,7 +7,7 @@ mod chat_history_row;
 mod chat_info_window;
 mod event_row;
 mod message_row;
-mod send_photo_dialog;
+mod send_media_window;
 
 use std::cell::Cell;
 use std::cell::RefCell;
@@ -30,7 +30,7 @@ use self::chat_history_row::ChatHistoryRow;
 use self::chat_info_window::ChatInfoWindow;
 use self::event_row::EventRow;
 use self::message_row::MessageRow;
-use self::send_photo_dialog::SendPhotoDialog;
+use self::send_media_window::SendMediaWindow;
 use crate::tdlib::Chat;
 
 mod imp {
