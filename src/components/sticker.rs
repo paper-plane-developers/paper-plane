@@ -29,6 +29,8 @@ mod imp {
 
         #[property(get, set = Self::set_longer_side_size)]
         pub(super) longer_side_size: Cell<i32>,
+        #[property(get, set)]
+        pub(super) skip_odd_frames: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -183,8 +185,8 @@ impl Sticker {
         let widget: gtk::Widget = match format {
             StickerFormat::Tgs => {
                 let animation = rlt::Animation::from_filename(&path);
+                animation.set_skip_odd_frames(self.skip_odd_frames());
                 animation.set_loop(looped);
-                animation.use_cache(looped);
                 animation.play();
                 animation.upcast()
             }

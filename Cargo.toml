@@ -19,7 +19,7 @@ once_cell = "1"
 pretty_env_logger = "0.5"
 qrcode-generator = { version = "4", default-features = false }
 regex = "1"
-rlt = { package = "gtk-rlottie", git = "https://github.com/YuraIz/gtk-rlottie-rs" }
+rlt = { package = "gtk-rlottie", git = "https://github.com/YuraIz/gtk-rlottie-rs", branch = "cache-rework" }
 tdlib = { version = "0.7", default-features = false }
 temp-dir = "0.1"
 thiserror = "1"

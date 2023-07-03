@@ -42,7 +42,8 @@
             "buildsystem": "meson",
             "config-opts": [
                 "-Dexample=false",
-                "-Dwerror=false"
+                "-Dwerror=false",
+                "-Dcache=false"
             ],
             "sources": [
                 {

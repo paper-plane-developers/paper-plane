@@ -99,6 +99,7 @@ pub(crate) async fn custom_emojis(session: crate::Session, ids: Vec<i64>) -> Vec
                 let sticker = sticker_map[id].clone();
                 let widget = Sticker::new();
                 widget.set_longer_side_size(20);
+                widget.set_skip_odd_frames(true);
                 widget.update_sticker(sticker, true, session.clone());
                 widget.upcast()
             })
