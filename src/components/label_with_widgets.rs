@@ -129,23 +129,30 @@ mod imp {
             if self.widgets.borrow().is_empty() {
                 self.parent_snapshot(snapshot)
             } else {
-                let (texture, bounds) = {
-                    let snapshot = gtk::Snapshot::new();
+                let widget = self.obj();
 
+                let width = widget.width();
+                let heigth = widget.height();
+
+                let bounds = gtk::graphene::Rect::new(1.0, 0.0, width as f32, heigth as f32);
+
+                let texture = {
+                    let s = widget.scale_factor() as f32;
+
+                    let bounds = bounds.scale(s, s);
+
+                    let snapshot = gtk::Snapshot::new();
+                    snapshot.scale(s, s);
                     self.parent_snapshot(&snapshot);
 
                     let node = snapshot.to_node().unwrap();
-                    let bounds = node.bounds();
 
                     let renderer = gsk::CairoRenderer::new();
-
                     renderer.realize(None).unwrap();
-
                     let texture = renderer.render_texture(node, Some(&bounds));
-
                     renderer.unrealize();
 
-                    (texture, bounds)
+                    texture
                 };
 
                 snapshot.append_texture(&texture, &bounds)

@@ -636,7 +636,7 @@ dependencies = [
 [[package]]
 name = "gtk-rlottie"
 version = "0.1.0"
-source = "git+https://github.com/YuraIz/gtk-rlottie-rs?branch=cache-rework#94ef26622551f7a9e286d79e8cc9a77960a883ae"
+source = "git+https://github.com/YuraIz/gtk-rlottie-rs?branch=cache-rework#ca8a010e8d72c3ce81ca932760584367d2fe8ebb"
 dependencies = [
  "flate2",
  "gtk4",
