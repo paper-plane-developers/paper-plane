@@ -1,7 +1,7 @@
 // Based on LabelWithWidgets from Fractal
 // https://gitlab.gnome.org/GNOME/fractal/-/blob/main/src/components/label_with_widgets.rs
 
-use gtk::{glib, glib::clone, pango, prelude::*, subclass::prelude::*};
+use gtk::{glib, glib::clone, gsk, pango, prelude::*, subclass::prelude::*};
 
 pub const DEFAULT_PLACEHOLDER: &str = "<widget>";
 const OBJECT_REPLACEMENT_CHARACTER: &str = "\u{FFFC}";
@@ -123,6 +123,33 @@ mod imp {
 
         fn direction_changed(&self, _previous_direction: gtk::TextDirection) {
             self.obj().update_label();
+        }
+
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            if self.widgets.borrow().is_empty() {
+                self.parent_snapshot(snapshot)
+            } else {
+                let (texture, bounds) = {
+                    let snapshot = gtk::Snapshot::new();
+
+                    self.parent_snapshot(&snapshot);
+
+                    let node = snapshot.to_node().unwrap();
+                    let bounds = node.bounds();
+
+                    let renderer = gsk::CairoRenderer::new();
+
+                    renderer.realize(None).unwrap();
+
+                    let texture = renderer.render_texture(node, Some(&bounds));
+
+                    renderer.unrealize();
+
+                    (texture, bounds)
+                };
+
+                snapshot.append_texture(&texture, &bounds)
+            }
         }
     }
 

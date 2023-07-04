@@ -27,3 +27,6 @@ thiserror = "1"
 [profile.release]
 lto = true
 codegen-units = 1
+
+[profile.dev.package.gtk-rlottie]
+opt-level = 3
