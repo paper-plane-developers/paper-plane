@@ -2,7 +2,6 @@ use adw::prelude::*;
 use adw::subclass::prelude::AdwWindowImpl;
 use gettextrs::gettext;
 use glib::clone;
-use glib::closure;
 use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -14,10 +13,9 @@ use tdlib::types::BasicGroupFullInfo;
 use tdlib::types::SupergroupFullInfo;
 
 use crate::expressions;
-use crate::i18n::ngettext_f;
-use crate::strings;
+use crate::strings::ChatSubtitleString;
+use crate::strings::UserStatusString;
 use crate::tdlib::BasicGroup;
-use crate::tdlib::BoxedUserStatus;
 use crate::tdlib::Chat;
 use crate::tdlib::ChatType;
 use crate::tdlib::Supergroup;
@@ -117,9 +115,13 @@ impl ChatInfoWindow {
             Some(self),
         );
 
-        match self.chat().unwrap().type_() {
+        let chat = self.chat().unwrap();
+        match chat.type_() {
             ChatType::Private(user) => {
-                self.setup_user_info(user);
+                // TODO: Add handle own chat;
+                if !chat.is_own_chat() {
+                    self.setup_user_info(user);
+                }
             }
             ChatType::BasicGroup(basic_group) => {
                 self.setup_basic_group_info(basic_group);
@@ -140,12 +142,9 @@ impl ChatInfoWindow {
         if let UserType::Bot(_) = user.type_().0 {
             imp.subtitle_label.set_text(Some(&gettext("bot")));
         } else {
-            User::this_expression("status")
-                .chain_closure::<String>(closure!(
-                    |_: Option<glib::Object>, status: BoxedUserStatus| {
-                        strings::user_status(&status.0)
-                    }
-                ))
+            let status_string = gtk::ConstantExpression::new(UserStatusString::new(user.clone()));
+            status_string
+                .chain_property::<UserStatusString>("string")
                 .bind(&*imp.subtitle_label, "text", Some(user));
         }
 
@@ -166,24 +165,23 @@ impl ChatInfoWindow {
         self.update_info_list_visibility();
     }
 
+    fn setup_group_member_count(&self) {
+        let imp = self.imp();
+        let chat = self.chat().unwrap();
+        let subtitle_string =
+            gtk::ConstantExpression::new(ChatSubtitleString::new(chat.clone(), false));
+        subtitle_string
+            .chain_property::<ChatSubtitleString>("subtitle")
+            .bind(&*imp.subtitle_label, "text", Some(chat));
+        self.update_info_list_visibility();
+    }
+
     fn setup_basic_group_info(&self, basic_group: &BasicGroup) {
         let client_id = self.chat().unwrap().session().client_id();
         let basic_group_id = basic_group.id();
-        let imp = self.imp();
 
-        // Members number
-        BasicGroup::this_expression("member-count")
-            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
-                ngettext_f(
-                    "{num} member",
-                    "{num} members",
-                    member_count as u32,
-                    &[("num", &member_count.to_string())],
-                )
-            }))
-            .bind(&*imp.subtitle_label, "text", Some(basic_group));
-
-        self.update_info_list_visibility();
+        // Member count
+        self.setup_group_member_count();
 
         // Full info
         spawn(clone!(@weak self as obj => async move {
@@ -217,17 +215,8 @@ impl ChatInfoWindow {
         let supergroup_id = supergroup.id();
         let imp = self.imp();
 
-        // Members number
-        Supergroup::this_expression("member-count")
-            .chain_closure::<String>(closure!(|_: Option<glib::Object>, member_count: i32| {
-                ngettext_f(
-                    "{num} member",
-                    "{num} members",
-                    member_count as u32,
-                    &[("num", &member_count.to_string())],
-                )
-            }))
-            .bind(&*imp.subtitle_label, "text", Some(supergroup));
+        // Member count
+        self.setup_group_member_count();
 
         // Link
         if !supergroup.username().is_empty() {

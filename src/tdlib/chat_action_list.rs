@@ -116,10 +116,9 @@ impl ChatActionList {
     pub(crate) fn last(&self) -> Option<ChatAction> {
         self.imp()
             .list
-            .borrow()
-            .last()
-            .map(|(_, action)| action)
-            .cloned()
+            .try_borrow()
+            .ok()
+            .and_then(|l| l.last().map(|(_, action)| action.clone()))
     }
 
     pub(crate) fn group(&self, action: &enums::ChatAction) -> Vec<ChatAction> {

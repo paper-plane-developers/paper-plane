@@ -237,6 +237,9 @@ impl Session {
             Update::ChatUnreadMentionCount(ref data) => {
                 self.chat(data.chat_id).handle_update(update)
             }
+            Update::ChatOnlineMemberCount(ref data) => {
+                self.chat(data.chat_id).handle_update(update)
+            }
             Update::ChatIsBlocked(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::ChatIsMarkedAsUnread(ref data) => self.chat(data.chat_id).handle_update(update),
             Update::DeleteMessages(ref data) => self.chat(data.chat_id).handle_update(update),

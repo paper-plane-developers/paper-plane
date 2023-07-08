@@ -21,6 +21,7 @@ use crate::session::content::ChatHistoryError;
 use crate::session::content::ChatHistoryModel;
 use crate::session::content::ChatHistoryRow;
 use crate::session::content::ChatInfoWindow;
+use crate::strings::ChatSubtitleString;
 use crate::tdlib::Chat;
 use crate::tdlib::ChatType;
 use crate::tdlib::SponsoredMessage;
@@ -51,6 +52,7 @@ mod imp {
         pub(super) list_view: TemplateChild<gtk::ListView>,
         #[template_child]
         pub(super) chat_action_bar: TemplateChild<ChatActionBar>,
+        pub binding: RefCell<Option<gtk::ExpressionWatch>>,
     }
 
     #[glib::object_subclass]
@@ -366,6 +368,17 @@ impl ChatHistory {
             imp.list_view.set_model(Some(&selection));
 
             imp.model.replace(Some(model));
+            if let Some(binding) = imp.binding.take() {
+                binding.unwatch()
+            }
+
+            // TODO: Make the subtitle label using accent color when user is online or if there is a chat action
+            // Bind subtitle
+            imp.binding.replace(Some(
+                gtk::ConstantExpression::new(ChatSubtitleString::new(chat.clone(), true))
+                    .chain_property::<ChatSubtitleString>("subtitle")
+                    .bind(&*imp.window_title, "subtitle", Some(self)),
+            ));
         }
 
         imp.chat.replace(chat);
