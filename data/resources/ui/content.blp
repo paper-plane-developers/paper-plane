@@ -2,20 +2,12 @@ using Gtk 4.0;
 using Adw 1;
 
 template $Content : Adw.Bin {
-  hexpand: true;
-  width-request: 300;
-
-  styles ["view"]
-
   Stack stack {
     Adw.ToolbarView unselected_chat_view {
       [top]
       Overlay {
         Adw.HeaderBar {
-          show-start-title-buttons: false;
-
-          [title]
-          Adw.WindowTitle {}
+          show-title: false;
         }
 
         [overlay]
@@ -33,7 +25,6 @@ template $Content : Adw.Bin {
     }
 
     $ContentChatHistory chat_history {
-      compact: bind template.compact;
       chat: bind template.chat;
     }
   }

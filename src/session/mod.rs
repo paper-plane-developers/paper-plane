@@ -71,7 +71,7 @@ mod imp {
             RefCell<Option<BoxedScopeNotificationSettings>>,
         pub(super) downloading_files: RefCell<HashMap<i32, Vec<Sender<File>>>>,
         #[template_child]
-        pub(super) leaflet: TemplateChild<adw::Leaflet>,
+        pub(super) split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]
         pub(super) sidebar: TemplateChild<Sidebar>,
         #[template_child]
@@ -87,12 +87,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
 
-            klass.install_action("content.go-back", None, move |widget, _, _| {
-                widget
-                    .imp()
-                    .leaflet
-                    .navigate(adw::NavigationDirection::Back);
-            });
             klass.install_action_async("session.log-out", None, |widget, _, _| async move {
                 log_out(widget.client_id()).await;
             });
@@ -187,16 +181,6 @@ mod imp {
                 }
                 _ => unimplemented!(),
             }
-        }
-
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            let obj = self.obj();
-            self.sidebar
-                .connect_chat_selected(clone!(@weak obj => move |_| {
-                    obj.imp().leaflet.navigate(adw::NavigationDirection::Forward);
-                }));
         }
     }
 
@@ -500,10 +484,10 @@ impl Session {
 
     pub(crate) fn select_chat(&self, chat_id: i64) {
         match self.try_chat(chat_id) {
-            Some(chat) => self.imp().sidebar.select_chat(chat),
+            Some(chat) => self.imp().sidebar.set_selected_chat(Some(chat)),
             None => spawn(clone!(@weak self as obj => async move {
                 match functions::create_private_chat(chat_id, true, obj.client_id()).await {
-                    Ok(enums::Chat::Chat(data)) => obj.imp().sidebar.select_chat(obj.chat(data.id)),
+                    Ok(enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(Some(obj.chat(data.id))),
                     Err(e) => log::warn!("Failed to create private chat: {:?}", e),
                 }
             })),
@@ -516,7 +500,7 @@ impl Session {
 
     pub(crate) fn begin_chats_search(&self) {
         let imp = self.imp();
-        imp.leaflet.navigate(adw::NavigationDirection::Back);
+        imp.split_view.set_show_content(false);
         imp.sidebar.begin_chats_search();
     }
 

@@ -9,7 +9,6 @@ use std::cell::Cell;
 use std::cell::RefCell;
 
 use glib::clone;
-use glib::subclass::Signal;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -83,7 +82,7 @@ mod imp {
             self.selection.set_selected_position(pos);
 
             let item: ChatListItem = self.selection.selected_item().unwrap().downcast().unwrap();
-            self.obj().select_chat(item.chat());
+            self.obj().set_selected_chat(Some(item.chat()));
         }
 
         #[template_callback]
@@ -93,12 +92,6 @@ mod imp {
     }
 
     impl ObjectImpl for Sidebar {
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> =
-                Lazy::new(|| vec![Signal::builder("chat-selected").build()]);
-            SIGNALS.as_ref()
-        }
-
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
@@ -208,11 +201,6 @@ impl Sidebar {
         imp.stack.set_visible_child(&*imp.search);
     }
 
-    pub(crate) fn select_chat(&self, chat: Chat) {
-        self.set_selected_chat(Some(chat));
-        self.emit_by_name::<()>("chat-selected", &[]);
-    }
-
     pub(crate) fn selected_chat(&self) -> Option<Chat> {
         self.imp().selected_chat.borrow().clone()
     }
@@ -254,6 +242,10 @@ impl Sidebar {
         }
 
         imp.selected_chat.replace(selected_chat);
+
+        self.activate_action("navigation.push", Some(&"content".to_variant()))
+            .unwrap();
+
         self.notify("selected-chat");
     }
 
@@ -281,17 +273,5 @@ impl Sidebar {
         self.imp()
             .session_switcher
             .set_sessions(sessions, this_session);
-    }
-
-    pub(crate) fn connect_chat_selected<F: Fn(&Self) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_local("chat-selected", true, move |values| {
-            let obj = values[0].get::<Self>().unwrap();
-            f(&obj);
-
-            None
-        })
     }
 }

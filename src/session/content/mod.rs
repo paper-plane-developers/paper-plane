@@ -9,7 +9,6 @@ mod event_row;
 mod message_row;
 mod send_media_window;
 
-use std::cell::Cell;
 use std::cell::RefCell;
 
 use adw::subclass::prelude::BinImpl;
@@ -39,7 +38,6 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/content.ui")]
     pub(crate) struct Content {
-        pub(super) compact: Cell<bool>,
         pub(super) chat: RefCell<Option<Chat>>,
         #[template_child]
         pub(super) stack: TemplateChild<gtk::Stack>,
@@ -68,12 +66,9 @@ mod imp {
     impl ObjectImpl for Content {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecBoolean::builder("compact").build(),
-                    glib::ParamSpecObject::builder::<Chat>("chat")
-                        .explicit_notify()
-                        .build(),
-                ]
+                vec![glib::ParamSpecObject::builder::<Chat>("chat")
+                    .explicit_notify()
+                    .build()]
             });
             PROPERTIES.as_ref()
         }
@@ -82,10 +77,6 @@ mod imp {
             let obj = self.obj();
 
             match pspec.name() {
-                "compact" => {
-                    let compact = value.get().unwrap();
-                    self.compact.set(compact);
-                }
                 "chat" => {
                     let chat = value.get().unwrap();
                     obj.set_chat(chat);
@@ -98,7 +89,6 @@ mod imp {
             let obj = self.obj();
 
             match pspec.name() {
-                "compact" => self.compact.get().to_value(),
                 "chat" => obj.chat().to_value(),
                 _ => unimplemented!(),
             }
