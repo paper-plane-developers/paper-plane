@@ -90,6 +90,7 @@ mod imp {
         pub(super) type_: OnceCell<ChatType>,
         pub(super) is_blocked: Cell<bool>,
         pub(super) title: RefCell<String>,
+        pub(super) theme_name: RefCell<String>,
         pub(super) avatar: RefCell<Option<Avatar>>,
         pub(super) last_read_outbox_message_id: Cell<i64>,
         pub(super) is_marked_as_unread: Cell<bool>,
@@ -136,6 +137,9 @@ mod imp {
                         .read_only()
                         .build(),
                     glib::ParamSpecString::builder("title").read_only().build(),
+                    glib::ParamSpecString::builder("theme-name")
+                        .read_only()
+                        .build(),
                     glib::ParamSpecBoxed::builder::<Avatar>("avatar")
                         .read_only()
                         .build(),
@@ -184,6 +188,7 @@ mod imp {
                 "type" => obj.type_().to_value(),
                 "is-blocked" => obj.is_blocked().to_value(),
                 "title" => obj.title().to_value(),
+                "theme-name" => obj.theme_name().to_value(),
                 "avatar" => obj.avatar().to_value(),
                 "last-read-outbox-message-id" => obj.last_read_outbox_message_id().to_value(),
                 "is-marked-as-unread" => obj.is_marked_as_unread().to_value(),
@@ -221,6 +226,7 @@ impl Chat {
         imp.type_.set(type_).unwrap();
         imp.is_blocked.set(td_chat.is_blocked);
         imp.title.replace(td_chat.title);
+        imp.theme_name.replace(td_chat.theme_name);
         imp.avatar.replace(avatar);
         imp.last_read_outbox_message_id
             .set(td_chat.last_read_outbox_message_id);
@@ -270,6 +276,7 @@ impl Chat {
                 self.set_last_read_outbox_message_id(update.last_read_outbox_message_id);
             }
             ChatTitle(update) => self.set_title(update.title),
+            ChatTheme(update) => self.set_theme_name(update.theme_name),
             ChatUnreadMentionCount(update) => {
                 self.set_unread_mention_count(update.unread_mention_count)
             }
@@ -363,6 +370,23 @@ impl Chat {
         }
         self.imp().title.replace(title);
         self.notify("title");
+    }
+
+    pub(crate) fn theme_name(&self) -> String {
+        self.imp().theme_name.borrow().to_owned()
+    }
+
+    fn set_theme_name(&self, theme_name: String) {
+        if self.title() == theme_name {
+            return;
+        }
+        self.imp().theme_name.replace(theme_name);
+        self.notify("theme-name");
+    }
+
+    pub(crate) fn chat_theme(&self) -> Option<types::ChatTheme> {
+        self.session()
+            .find_chat_theme(&self.imp().theme_name.borrow())
     }
 
     pub(crate) fn avatar(&self) -> Option<Avatar> {
