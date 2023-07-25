@@ -318,6 +318,10 @@ messagesticker {
   border-spacing: 6px;
 }
 
+vectorpath {
+  color: alpha(black, 0.2);
+}
+
 .event-row {
   background-color: alpha(black, 0.2);
   font-size: smaller;

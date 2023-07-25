@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use gettextrs::gettext;
 use gtk::gdk;
 use gtk::glib;
+use gtk::graphene;
 use image::io::Reader as ImageReader;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
@@ -63,7 +64,51 @@ pub(crate) fn convert_to_markup(text: String, entity: &TextEntityType) -> String
             format!("<tt>{text}</tt>")
         }
         TextEntityType::TextUrl(data) => format!("<a href='{}'>{}</a>", escape(&data.url), text),
+        TextEntityType::CustomEmoji(_) => "<widget>\u{200B}".to_string(),
         _ => text,
+    }
+}
+
+pub(crate) fn custom_emoji_ids(entities: &[tdlib::types::TextEntity]) -> Vec<i64> {
+    entities
+        .iter()
+        .flat_map(|entity| match &entity.r#type {
+            TextEntityType::CustomEmoji(emoji) => Some(emoji.custom_emoji_id),
+            _ => None,
+        })
+        .collect()
+}
+
+pub(crate) async fn custom_emojis(session: crate::Session, ids: Vec<i64>) -> Vec<gtk::Widget> {
+    let client_id = session.client_id();
+
+    if let Ok(stickers) = tdlib::functions::get_custom_emoji_stickers(ids.clone(), client_id).await
+    {
+        let tdlib::enums::Stickers::Stickers(stickers) = stickers;
+        use crate::components::Sticker;
+        use gtk::prelude::*;
+
+        let mut sticker_map = std::collections::BTreeMap::new();
+        for sticker in stickers.stickers {
+            sticker_map.insert(sticker.id, sticker);
+        }
+
+        let widgets = ids
+            .iter()
+            .map(|id| {
+                let sticker = sticker_map[id].clone();
+                let widget = Sticker::new();
+                widget.set_longer_side_size(20);
+                widget.set_skip_odd_frames(true);
+                widget.update_sticker(sticker, true, session.clone());
+                widget.upcast()
+            })
+            .collect();
+
+        widgets
+    } else {
+        log::error!("Failed to get custom emojis");
+        vec![]
     }
 }
 
@@ -282,4 +327,13 @@ pub(crate) fn decode_image_from_path(path: &str) -> Result<gdk::MemoryTexture, D
     );
 
     Ok(texture)
+}
+
+pub fn color_matrix_from_color(color: gdk::RGBA) -> (graphene::Matrix, graphene::Vec4) {
+    let color_offset = graphene::Vec4::new(color.red(), color.green(), color.blue(), 0.0);
+    let mut matrix = [0.0; 16];
+    matrix[15] = color.alpha();
+    let color_matrix = graphene::Matrix::from_float(matrix);
+
+    (color_matrix, color_offset)
 }
