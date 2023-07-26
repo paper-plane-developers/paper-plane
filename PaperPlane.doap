@@ -20,6 +20,8 @@
         </foaf:OnlineAccount>
       </foaf:account>
     </foaf:Person>
+  </maintainer>
+  <maintainer>
     <foaf:Person>
       <foaf:name>Marco Melorio</foaf:name>
       <foaf:mbox rdf:resource="mailto:marco.melorio@pm.me"/>
@@ -30,6 +32,8 @@
         </foaf:OnlineAccount>
       </foaf:account>
     </foaf:Person>
+  </maintainer>
+  <maintainer>
     <foaf:Person>
       <foaf:name>Marcus Behrendt</foaf:name>
       <foaf:mbox rdf:resource="mailto:marcus.behrendt.86@gmail.com"/>
@@ -40,6 +44,8 @@
         </foaf:OnlineAccount>
       </foaf:account>
     </foaf:Person>
+  </maintainer>
+  <maintainer>
     <foaf:Person>
       <foaf:name>Yuri Izmer</foaf:name>
       <foaf:account>
