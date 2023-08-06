@@ -6,6 +6,7 @@ mod selection;
 mod session_switcher;
 
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use glib::clone;
@@ -14,7 +15,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 
 pub(crate) use self::avatar::Avatar;
 use self::row::Row;

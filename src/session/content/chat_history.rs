@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use adw::prelude::*;
@@ -10,7 +11,6 @@ use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::functions;
 
@@ -320,11 +320,11 @@ impl ChatHistory {
             // Request sponsored message, if needed
             let list_view_model: gio::ListModel = if matches!(chat.type_(), ChatType::Supergroup(supergroup) if supergroup.is_channel())
             {
-                let list = gio::ListStore::new(gio::ListModel::static_type());
+                let list = gio::ListStore::new::<gio::ListModel>();
 
                 // We need to create a list here so that we can append the sponsored message
                 // to the chat history in the GtkListView using a GtkFlattenListModel
-                let sponsored_message_list = gio::ListStore::new(SponsoredMessage::static_type());
+                let sponsored_message_list = gio::ListStore::new::<SponsoredMessage>();
                 list.append(&sponsored_message_list);
                 self.request_sponsored_message(&chat.session(), chat.id(), &sponsored_message_list);
 

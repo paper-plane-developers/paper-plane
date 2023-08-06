@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use gettextrs::gettext;
@@ -7,7 +8,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::MessageSendingState;
 
 use crate::tdlib::Chat;
@@ -126,7 +126,7 @@ impl MessageIndicators {
     fn create_signal_groups(&self) {
         let imp = self.imp();
 
-        let message_signal_group = glib::SignalGroup::new(Message::static_type());
+        let message_signal_group = glib::SignalGroup::new::<Message>();
         message_signal_group.connect_notify_local(
             Some("is-edited"),
             clone!(@weak self as obj => move |_, _| {
@@ -135,8 +135,7 @@ impl MessageIndicators {
         );
         imp.message_signal_group.set(message_signal_group).unwrap();
 
-        let interaction_info_signal_group =
-            glib::SignalGroup::new(MessageInteractionInfo::static_type());
+        let interaction_info_signal_group = glib::SignalGroup::new::<MessageInteractionInfo>();
         interaction_info_signal_group.connect_notify_local(
             Some("reply-count"),
             clone!(@weak self as obj => move |_, _| {
@@ -147,7 +146,7 @@ impl MessageIndicators {
             .set(interaction_info_signal_group)
             .unwrap();
 
-        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        let chat_signal_group = glib::SignalGroup::new::<Chat>();
         chat_signal_group.connect_notify_local(
             Some("last-read-outbox-message-id"),
             clone!(@weak self as obj => move |_, _| {

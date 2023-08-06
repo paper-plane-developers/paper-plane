@@ -1,3 +1,5 @@
+use std::cell::OnceCell;
+
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
@@ -6,7 +8,6 @@ use gtk::gio;
 use gtk::glib;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 
 use crate::config::APP_ID;
 use crate::utils::spawn;

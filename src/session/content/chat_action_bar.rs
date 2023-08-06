@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use anyhow::anyhow;
@@ -10,7 +11,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatAction;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::enums::FormattedText;
@@ -271,7 +271,7 @@ impl ChatActionBar {
     fn create_signal_groups(&self) {
         let imp = self.imp();
 
-        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        let chat_signal_group = glib::SignalGroup::new::<Chat>();
         chat_signal_group.connect_notify_local(
             Some("notification-settings"),
             clone!(@weak self as obj => move |_, _| {
@@ -286,7 +286,7 @@ impl ChatActionBar {
         );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
 
-        let basic_group_signal_group = glib::SignalGroup::new(BasicGroup::static_type());
+        let basic_group_signal_group = glib::SignalGroup::new::<BasicGroup>();
         basic_group_signal_group.connect_notify_local(
             Some("status"),
             clone!(@weak self as obj => move |_, _| {
@@ -297,7 +297,7 @@ impl ChatActionBar {
             .set(basic_group_signal_group)
             .unwrap();
 
-        let supergroup_signal_group = glib::SignalGroup::new(Supergroup::static_type());
+        let supergroup_signal_group = glib::SignalGroup::new::<Supergroup>();
         supergroup_signal_group.connect_notify_local(
             Some("status"),
             clone!(@weak self as obj => move |_, _| {
@@ -480,7 +480,7 @@ impl ChatActionBar {
     async fn select_file(&self) {
         let dialog = gtk::FileDialog::new();
         let filter = gtk::FileFilter::new();
-        let filters = gio::ListStore::new(gtk::FileFilter::static_type());
+        let filters = gio::ListStore::new::<gtk::FileFilter>();
         let parent = self.root().and_downcast::<gtk::Window>().unwrap();
 
         filter.set_name(Some(&gettext("Images")));
@@ -489,7 +489,7 @@ impl ChatActionBar {
         }
 
         filters.append(&filter);
-        dialog.set_filters(&filters);
+        dialog.set_filters(Some(&filters));
 
         if let Ok(file) = dialog.open_future(Some(&parent)).await {
             let path = file.path().unwrap().to_str().unwrap().to_string();
@@ -686,7 +686,7 @@ impl ChatActionBar {
     async fn handle_image_clipboard(&self, chat: Chat) -> Result<(), anyhow::Error> {
         if let Ok((stream, mime)) = self
             .clipboard()
-            .read_future(PHOTO_MIME_TYPES, glib::PRIORITY_DEFAULT)
+            .read_future(PHOTO_MIME_TYPES, glib::Priority::DEFAULT)
             .await
         {
             let extension = match mime.as_str() {
@@ -869,7 +869,7 @@ async fn save_stream_to_file(
             None,
             false,
             gio::FileCreateFlags::REPLACE_DESTINATION,
-            glib::PRIORITY_DEFAULT,
+            glib::Priority::DEFAULT,
         )
         .await?;
 
@@ -877,7 +877,7 @@ async fn save_stream_to_file(
         .splice_future(
             &stream,
             gio::OutputStreamSpliceFlags::CLOSE_SOURCE | gio::OutputStreamSpliceFlags::CLOSE_TARGET,
-            glib::PRIORITY_DEFAULT,
+            glib::Priority::DEFAULT,
         )
         .await?;
 

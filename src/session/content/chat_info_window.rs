@@ -1,3 +1,5 @@
+use std::cell::OnceCell;
+
 use adw::prelude::*;
 use adw::subclass::prelude::AdwWindowImpl;
 use gettextrs::gettext;
@@ -7,7 +9,6 @@ use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 use tdlib::enums::UserType;
 use tdlib::functions;
 use tdlib::types::BasicGroupFullInfo;

@@ -1,9 +1,10 @@
+use std::cell::OnceCell;
+
 use gtk::glib;
 use gtk::glib::DateTime;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 
 use crate::tdlib::Message;
 

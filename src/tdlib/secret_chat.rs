@@ -1,10 +1,10 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::SecretChatState as TdSecretChatState;
 use tdlib::types::SecretChat as TdSecretChat;
 

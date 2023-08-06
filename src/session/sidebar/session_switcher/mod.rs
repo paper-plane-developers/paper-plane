@@ -155,7 +155,7 @@ impl SessionSwitcher {
 
         let end_items = ExtraItemObj::list_store();
 
-        let items_split = ListStore::new(ListModel::static_type());
+        let items_split = ListStore::new::<ListModel>();
         items_split.append(&sessions_sort_model);
         items_split.append(&end_items);
 

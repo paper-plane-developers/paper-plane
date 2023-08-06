@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
@@ -5,7 +6,6 @@ use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::unsync::OnceCell;
 
 use crate::components::MessageEntry;
 use crate::tdlib::Chat;

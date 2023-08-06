@@ -82,7 +82,7 @@ impl From<&ExtraItem> for ExtraItemObj {
 impl ExtraItemObj {
     pub(crate) fn list_store() -> ListStore {
         ExtraItem::VALUES.iter().map(ExtraItemObj::from).fold(
-            ListStore::new(ExtraItemObj::static_type()),
+            ListStore::new::<ExtraItemObj>(),
             |list_items, item| {
                 list_items.append(&item);
                 list_items

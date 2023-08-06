@@ -300,7 +300,9 @@ impl Background {
     }
 
     pub(crate) fn set_theme(&self, theme: tdlib::types::ThemeSettings) {
-        let Some(background) = theme.background else { return; };
+        let Some(background) = theme.background else {
+            return;
+        };
         let imp = self.imp();
 
         imp.dark.set(background.is_dark);

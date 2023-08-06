@@ -69,7 +69,7 @@ mod imp {
             if super::Snow::correct_date() {
                 self.obj().add_tick_callback(|widget, _clock| {
                     widget.queue_draw();
-                    glib::Continue(true)
+                    glib::ControlFlow::Continue
                 });
             } else {
                 self.obj().set_visible(false);
