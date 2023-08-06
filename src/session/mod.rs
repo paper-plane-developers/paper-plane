@@ -4,6 +4,7 @@ mod preferences_window;
 mod sidebar;
 
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::hash_map::HashMap;
@@ -17,7 +18,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 use tdlib::enums;
 use tdlib::enums::ChatList as TdChatList;
 use tdlib::enums::NotificationSettingsScope;

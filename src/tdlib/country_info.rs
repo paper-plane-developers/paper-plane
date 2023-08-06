@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::collections::BTreeSet;
 use std::ops::Deref;
 
@@ -6,7 +7,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::types;
 
 #[derive(Clone, Debug, Default, glib::Boxed)]

@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use adw::prelude::*;
@@ -11,7 +12,6 @@ use gtk::glib::clone;
 use gtk::glib::SourceId;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::OnceCell;
 use tdlib::enums;
 use tdlib::enums::AuthenticationCodeType;
 use tdlib::enums::AuthorizationState;

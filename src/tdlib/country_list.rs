@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::iter::FromIterator;
 
 use gtk::gio;
@@ -5,7 +6,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use indexmap::IndexMap;
-use once_cell::unsync::OnceCell;
 use tdlib::types;
 
 use crate::tdlib::CountryInfo;

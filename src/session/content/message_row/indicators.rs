@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use gettextrs::gettext;
@@ -7,7 +8,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::MessageSendingState;
 
 use crate::tdlib::Chat;

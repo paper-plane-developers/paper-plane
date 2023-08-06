@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use anyhow::anyhow;
@@ -10,7 +11,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatAction;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::enums::FormattedText;

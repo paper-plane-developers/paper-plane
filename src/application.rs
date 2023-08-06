@@ -1,3 +1,5 @@
+use std::cell::OnceCell;
+
 use adw::subclass::prelude::AdwApplicationImpl;
 use gettextrs::gettext;
 use glib::clone;
@@ -8,7 +10,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use log::debug;
 use log::info;
-use once_cell::sync::OnceCell;
 
 use crate::config::APP_ID;
 use crate::config::PKGDATADIR;

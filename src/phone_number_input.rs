@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -13,7 +14,6 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use locale_config::Locale;
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 
 use crate::tdlib::CountryInfo;
 use crate::tdlib::CountryList;

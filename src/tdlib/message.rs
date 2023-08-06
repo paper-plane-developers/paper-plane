@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use glib::WeakRef;
@@ -6,7 +7,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::sync::OnceCell;
 use tdlib::enums::MessageSender as TdMessageSender;
 use tdlib::enums::Update;
 use tdlib::functions;

@@ -1,4 +1,5 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
@@ -8,7 +9,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::ChatType as TdChatType;
 use tdlib::enums::Update;
 use tdlib::functions;

@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use adw::subclass::prelude::BinImpl;
@@ -7,7 +8,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::UserType;
 
 use crate::strings;

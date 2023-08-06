@@ -1,5 +1,7 @@
 mod row;
 
+use std::cell::OnceCell;
+
 use adw::subclass::prelude::*;
 use glib::clone;
 use glib::subclass::Signal;
@@ -8,7 +10,6 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use row::ContactRow;
 
 use crate::strings;

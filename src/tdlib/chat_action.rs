@@ -1,9 +1,10 @@
+use std::cell::OnceCell;
+
 use gtk::glib;
 use gtk::glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums;
 
 use crate::tdlib::Chat;

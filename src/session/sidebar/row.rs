@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use gettextrs::gettext;
@@ -9,7 +10,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use once_cell::unsync::OnceCell;
 use tdlib::enums::InputMessageContent;
 use tdlib::enums::MessageContent;
 use tdlib::enums::MessageSendingState;

@@ -20,6 +20,7 @@ mod window;
 
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::sync::OnceLock;
 
 use config::GETTEXT_PACKAGE;
 use config::LOCALEDIR;
@@ -31,7 +32,6 @@ use gtk::glib;
 use gtk::prelude::ApplicationExt;
 use gtk::prelude::ApplicationExtManual;
 use gtk::prelude::IsA;
-use once_cell::sync::OnceCell;
 use temp_dir::TempDir;
 
 use self::application::Application;
@@ -39,8 +39,8 @@ use self::login::Login;
 use self::session::Session;
 use self::window::Window;
 
-pub(crate) static APPLICATION_OPTS: OnceCell<ApplicationOptions> = OnceCell::new();
-pub(crate) static TEMP_DIR: OnceCell<PathBuf> = OnceCell::new();
+pub(crate) static APPLICATION_OPTS: OnceLock<ApplicationOptions> = OnceLock::new();
+pub(crate) static TEMP_DIR: OnceLock<PathBuf> = OnceLock::new();
 
 fn main() -> glib::ExitCode {
     // Prepare i18n

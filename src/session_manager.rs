@@ -587,8 +587,7 @@ impl SessionManager {
                             .recently_used_sessions
                             .borrow()
                             .iter()
-                            .rev()
-                            .next()
+                            .next_back()
                             .map(|last| client.database_dir_base_name() == last)
                             .unwrap_or_default();
 
