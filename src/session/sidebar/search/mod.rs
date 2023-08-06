@@ -168,7 +168,7 @@ impl Search {
         let imp = self.imp();
         let session = self.session().unwrap();
         let query = imp.search_entry.text().to_string();
-        let list = gio::ListStore::new(glib::Object::static_type());
+        let list = gio::ListStore::new::<glib::Object>();
         let mut found_chat_ids: Vec<i64> = vec![];
 
         const MAX_KNOWN_CHATS: i32 = 50;

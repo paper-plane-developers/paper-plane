@@ -231,7 +231,7 @@ impl Row {
     fn create_signal_groups(&self) {
         let imp = self.imp();
 
-        let item_signal_group = glib::SignalGroup::new(ChatListItem::static_type());
+        let item_signal_group = glib::SignalGroup::new::<ChatListItem>();
         item_signal_group.connect_notify_local(
             Some("is-pinned"),
             clone!(@weak self as obj => move |_, _| {
@@ -241,7 +241,7 @@ impl Row {
         );
         imp.item_signal_group.set(item_signal_group).unwrap();
 
-        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        let chat_signal_group = glib::SignalGroup::new::<Chat>();
         chat_signal_group.connect_notify_local(
             Some("is-marked-as-unread"),
             clone!(@weak self as obj => move |_, _| {
@@ -303,7 +303,7 @@ impl Row {
         );
         imp.chat_signal_group.set(chat_signal_group).unwrap();
 
-        let session_signal_group = glib::SignalGroup::new(Session::static_type());
+        let session_signal_group = glib::SignalGroup::new::<Session>();
         session_signal_group.connect_notify_local(
             Some("private-chats-notification-settings"),
             clone!(@weak self as obj => move |_, _| {

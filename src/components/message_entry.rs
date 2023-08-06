@@ -114,18 +114,16 @@ mod imp {
             // "shift" modifier are pressed at the same time.
             let key_events = gtk::EventControllerKey::new();
             key_events.connect_key_pressed(
-                clone!(@weak obj => @default-return gtk::Inhibit(false), move |_, key, _, modifier| {
-                    gtk::Inhibit(
-                        if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
-                            && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
-                            && (key == gdk::Key::Return || key == gdk::Key::KP_Enter)
-                        {
-                            obj.emit_by_name::<()>("activate", &[]);
-                            true
-                        } else {
-                            false
-                        },
-                    )
+                clone!(@weak obj => @default-return glib::Propagation::Proceed, move |_, key, _, modifier| {
+                    if !modifier.contains(gdk::ModifierType::CONTROL_MASK)
+                        && !modifier.contains(gdk::ModifierType::SHIFT_MASK)
+                        && (key == gdk::Key::Return || key == gdk::Key::KP_Enter)
+                    {
+                        obj.emit_by_name::<()>("activate", &[]);
+                        glib::Propagation::Stop
+                    } else {
+                        glib::Propagation::Proceed
+                    }
                 }),
             );
             self.text_view.add_controller(key_events);

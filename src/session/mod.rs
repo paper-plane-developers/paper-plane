@@ -442,11 +442,11 @@ impl Session {
     /// Downloads a file of the specified id and calls a closure every time there's an update
     /// about the progress or when the download has completed.
     pub(crate) fn download_file_with_updates<F: Fn(File) + 'static>(&self, file_id: i32, f: F) {
-        let (sender, receiver) = glib::MainContext::channel::<File>(glib::PRIORITY_DEFAULT);
+        let (sender, receiver) = glib::MainContext::channel::<File>(glib::Priority::DEFAULT);
         receiver.attach(None, move |file| {
             let is_downloading_active = file.local.is_downloading_active;
             f(file);
-            glib::Continue(is_downloading_active)
+            glib::ControlFlow::from(is_downloading_active)
         });
 
         let mut downloading_files = self.imp().downloading_files.borrow_mut();

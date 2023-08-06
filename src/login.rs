@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+
 use std::cell::Cell;
 use std::cell::OnceCell;
 use std::cell::RefCell;
@@ -185,7 +187,7 @@ mod imp {
                 label
                     .activate_action("login.show-tos-dialog", None)
                     .unwrap();
-                gtk::Inhibit(true)
+                glib::Propagation::Stop
             });
 
             // Disable all actions by default.
@@ -467,19 +469,19 @@ impl Login {
 
                     let source_id = glib::timeout_add_seconds_local(
                         1,
-                        clone!(@weak self as obj => @default-return glib::Continue(false), move || {
-                            let imp = obj.imp();
+                        clone!(@weak self as obj => @default-return glib::ControlFlow::Break, move || {
                             countdown -= 1;
-                            glib::Continue(if countdown == 0 {
+
+                            if countdown == 0 {
                                 obj.stop_code_next_type_countdown();
-                                false
+                                glib::ControlFlow::Break
                             } else {
-                                imp.code_timeout_label.set_label(&gettext!(
+                                obj.imp().code_timeout_label.set_label(&gettext!(
                                     "Please still wait {} seconds",
                                     countdown
                                 ));
-                                true
-                            })
+                                glib::ControlFlow::Continue
+                            }
                         }),
                     );
                     imp.code_next_type_countdown_id.replace(Some(source_id));

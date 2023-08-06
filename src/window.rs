@@ -109,7 +109,7 @@ mod imp {
     impl WidgetImpl for Window {}
     impl WindowImpl for Window {
         // Save window state on delete event
-        fn close_request(&self) -> gtk::Inhibit {
+        fn close_request(&self) -> glib::Propagation {
             // Close all clients. This must be blocking, otherwise the app might
             // close before the clients are properly closed, which is bad.
             self.session_manager.close_clients();
@@ -155,13 +155,13 @@ impl Window {
     }
 
     fn create_update_channel(&self) -> glib::Sender<(Update, i32)> {
-        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        let (sender, receiver) = glib::MainContext::channel(glib::Priority::DEFAULT);
         receiver.attach(
             None,
-            clone!(@weak self as obj => @default-return glib::Continue(false),
+            clone!(@weak self as obj => @default-return glib::ControlFlow::Break,
                 move |(update, client_id)| {
                     obj.handle_update(update, client_id);
-                    glib::Continue(true)
+                    glib::ControlFlow::Continue
                 }
             ),
         );

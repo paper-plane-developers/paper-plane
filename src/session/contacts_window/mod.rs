@@ -177,7 +177,7 @@ impl ContactsWindow {
 
         match session.fetch_contacts().await {
             Ok(users) => {
-                let list = gio::ListStore::new(User::static_type());
+                let list = gio::ListStore::new::<User>();
                 list.splice(0, 0, &users);
 
                 self.imp().sort_model.set_model(Some(&list));

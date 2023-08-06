@@ -214,10 +214,9 @@ mod imp {
             let focus_events = gtk::EventControllerFocus::new();
             focus_events.connect_leave(clone!(@weak obj => move |_| {
                 // We need to set the cursor position at the end on the next idle.
-                glib::idle_add_local(clone!(
-                    @weak obj => @default-return glib::Continue(false), move || {
+                glib::idle_add_local_once(clone!(
+                    @weak obj => move || {
                         obj.imp().entry_row.set_position(i32::MAX);
-                        glib::Continue(false)
                     }
                 ));
             }));

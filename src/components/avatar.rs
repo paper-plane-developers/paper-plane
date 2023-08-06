@@ -117,7 +117,7 @@ impl Avatar {
     fn create_signal_groups(&self) {
         let imp = self.imp();
 
-        let user_signal_group = glib::SignalGroup::new(User::static_type());
+        let user_signal_group = glib::SignalGroup::new::<User>();
         user_signal_group.connect_notify_local(
             Some("type"),
             clone!(@weak self as obj => move |_, _| {
@@ -145,7 +145,7 @@ impl Avatar {
         );
         imp.user_signal_group.set(user_signal_group).unwrap();
 
-        let chat_signal_group = glib::SignalGroup::new(Chat::static_type());
+        let chat_signal_group = glib::SignalGroup::new::<Chat>();
         chat_signal_group.connect_notify_local(
             Some("title"),
             clone!(@weak self as obj => move |_, _| {

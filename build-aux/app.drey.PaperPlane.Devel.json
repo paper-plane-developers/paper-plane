@@ -77,7 +77,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.11.3"
+                    "tag": "4.12.0"
                 },
                 {
                     "type": "patch",
@@ -138,7 +138,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
-                    "tag": "1.4.alpha"
+                    "tag": "1.4.beta"
                 }
             ]
         },
