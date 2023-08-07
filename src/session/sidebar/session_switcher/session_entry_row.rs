@@ -17,7 +17,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/session-entry-row.ui")]
+    #[template(
+        resource = "/app/drey/paper-plane/ui/session/sidebar/session_switcher/session_entry_row.ui"
+    )]
     pub(crate) struct SessionEntryRow {
         pub(super) session: RefCell<Option<Session>>,
         #[template_child]

@@ -4,6 +4,7 @@ pub(crate) const LOCALEDIR: &str = @LOCALEDIR@;
 pub(crate) const PKGDATADIR: &str = @PKGDATADIR@;
 pub(crate) const PROFILE: &str = @PROFILE@;
 pub(crate) const RESOURCES_FILE: &str = concat!(@PKGDATADIR@, "/resources.gresource");
+pub(crate) const UI_RESOURCES_FILE: &str = concat!(@PKGDATADIR@, "/ui-resources.gresource");
 pub(crate) const TG_API_HASH: &str = @TG_API_HASH@;
 pub(crate) const TG_API_ID: i32 = @TG_API_ID@;
 pub(crate) const VERSION: &str = @VERSION@;

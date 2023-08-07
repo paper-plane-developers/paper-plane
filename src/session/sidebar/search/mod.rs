@@ -32,7 +32,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/sidebar-search.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/search/mod.ui")]
     pub(crate) struct Search {
         pub(super) session: RefCell<Option<Session>>,
         #[template_child]

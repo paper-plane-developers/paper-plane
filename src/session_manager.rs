@@ -102,7 +102,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/session-manager.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session_manager.ui")]
     pub(crate) struct SessionManager {
         /// The order of the recently used sessions. The string stored in the `Vec` represents the
         /// session's database directory name.

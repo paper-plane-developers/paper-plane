@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/app/drey/paper-plane/ui/">
+
+    <file compressed="true" preprocess="xml-stripblanks">login.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session_manager.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
+
+    <file compressed="true" preprocess="xml-stripblanks">components/avatar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">components/message_entry.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">phone_number_input.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/chat_action_bar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/chat_history.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/chat_info_window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/event_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/document/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/photo.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/text.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/message_menu.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/send_media_window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/preferences_window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/avatar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/search/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/row_menu.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/session_switcher/add_account_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/session_switcher/avatar_with_selection.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/session_switcher/mod.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/session_switcher/session_entry_row.ui</file>
+
+  </gresource>
+</gresources>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+
+
+
   <template class="ContentChatHistory" parent="AdwBin">
     <child>
       <object class="AdwToolbarView">

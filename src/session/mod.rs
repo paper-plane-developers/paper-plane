@@ -50,7 +50,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/session.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/mod.ui")]
     pub(crate) struct Session {
         pub(super) client_id: Cell<i32>,
         pub(super) database_info: OnceCell<BoxedDatabaseInfo>,

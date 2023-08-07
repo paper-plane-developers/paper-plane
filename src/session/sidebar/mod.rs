@@ -32,7 +32,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/sidebar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/mod.ui")]
     pub(crate) struct Sidebar {
         pub(super) compact: Cell<bool>,
         pub(super) selected_chat: RefCell<Option<Chat>>,
@@ -180,9 +180,10 @@ impl Sidebar {
 
     pub(crate) fn row_menu(&self) -> &gtk::PopoverMenu {
         self.imp().row_menu.get_or_init(|| {
-            let menu = gtk::Builder::from_resource("/app/drey/paper-plane/ui/sidebar-row-menu.ui")
-                .object::<gtk::PopoverMenu>("menu")
-                .unwrap();
+            let menu =
+                gtk::Builder::from_resource("/app/drey/paper-plane/ui/session/sidebar/row_menu.ui")
+                    .object::<gtk::PopoverMenu>("menu")
+                    .unwrap();
 
             menu.set_halign(if self.direction() == gtk::TextDirection::Rtl {
                 gtk::Align::End

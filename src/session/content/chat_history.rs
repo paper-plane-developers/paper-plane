@@ -33,7 +33,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-chat-history.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/chat_history.ui")]
     pub(crate) struct ChatHistory {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_handler: RefCell<Option<glib::SignalHandlerId>>,
@@ -276,9 +276,11 @@ impl ChatHistory {
 
     pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
         self.imp().message_menu.get_or_init(|| {
-            let menu = gtk::Builder::from_resource("/app/drey/paper-plane/ui/message-menu.ui")
-                .object::<gtk::PopoverMenu>("menu")
-                .unwrap();
+            let menu = gtk::Builder::from_resource(
+                "/app/drey/paper-plane/ui/session/content/message_menu.ui",
+            )
+            .object::<gtk::PopoverMenu>("menu")
+            .unwrap();
 
             menu.set_halign(if self.direction() == gtk::TextDirection::Rtl {
                 gtk::Align::End

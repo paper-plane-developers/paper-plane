@@ -50,7 +50,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-chat-action-bar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/chat_action_bar.ui")]
     pub(crate) struct ChatActionBar {
         pub(super) chat: RefCell<Option<Chat>>,
         pub(super) chat_action_in_cooldown: Cell<bool>,

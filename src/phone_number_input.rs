@@ -22,7 +22,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/phone-number-input.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/phone_number_input.ui")]
     pub(crate) struct PhoneNumberInput {
         /// The system's country code
         pub(super) system_country_code: OnceCell<Option<String>>,

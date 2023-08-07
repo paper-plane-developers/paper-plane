@@ -9,7 +9,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/add-account-row.ui")]
+    #[template(
+        resource = "/app/drey/paper-plane/ui/session/sidebar/session_switcher/add_account_row.ui"
+    )]
     pub(crate) struct AddAccountRow {
         #[template_child]
         pub(super) image: TemplateChild<gtk::Image>,

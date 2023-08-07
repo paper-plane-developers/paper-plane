@@ -1,4 +1,4 @@
-mod add_account;
+mod add_account_row;
 mod avatar_with_selection;
 mod item;
 mod session_entry_row;
@@ -24,7 +24,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/sidebar-session-switcher.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/session_switcher/mod.ui")]
     pub(crate) struct SessionSwitcher {
         #[template_child]
         pub(super) entries: TemplateChild<gtk::ListView>,
