@@ -9,7 +9,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-event-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/event_row.ui")]
     pub(crate) struct EventRow {
         #[template_child]
         pub(super) label: TemplateChild<gtk::Label>,

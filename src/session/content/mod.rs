@@ -36,7 +36,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/mod.ui")]
     pub(crate) struct Content {
         pub(super) chat: RefCell<Option<Chat>>,
         #[template_child]

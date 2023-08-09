@@ -7,7 +7,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 
-use super::add_account::AddAccountRow;
+use super::add_account_row::AddAccountRow;
 use super::session_entry_row::SessionEntryRow;
 use crate::session::Session;
 

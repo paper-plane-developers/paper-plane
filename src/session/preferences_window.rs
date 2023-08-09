@@ -17,7 +17,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/preferences-window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/preferences_window.ui")]
     pub(crate) struct PreferencesWindow {
         pub(super) session: OnceCell<Session>,
         #[template_child]

@@ -11,7 +11,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/avatar-with-selection.ui")]
+    #[template(
+        resource = "/app/drey/paper-plane/ui/session/sidebar/session_switcher/avatar_with_selection.ui"
+    )]
     pub(crate) struct AvatarWithSelection {
         #[template_child]
         pub(super) child_avatar: TemplateChild<Avatar>,

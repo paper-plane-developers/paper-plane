@@ -29,7 +29,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-chat-info-window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/chat_info_window.ui")]
     pub(crate) struct ChatInfoWindow {
         pub(super) chat: OnceCell<Chat>,
         #[template_child]

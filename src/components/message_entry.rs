@@ -20,7 +20,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/components-message-entry.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/components/message_entry.ui")]
     pub(crate) struct MessageEntry {
         pub(super) chat: WeakRef<Chat>,
         pub(super) formatted_text: RefCell<Option<BoxedFormattedText>>,

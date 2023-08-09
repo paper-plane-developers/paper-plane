@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-send-media-window.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/send_media_window.ui")]
     pub(crate) struct SendMediaWindow {
         pub(super) chat: OnceCell<Chat>,
         pub(super) path: OnceCell<String>,

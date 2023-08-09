@@ -33,7 +33,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/sidebar-row.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/row.ui")]
     pub(crate) struct Row {
         pub(super) item: RefCell<Option<ChatListItem>>,
         pub(super) item_signal_group: OnceCell<glib::SignalGroup>,

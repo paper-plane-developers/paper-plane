@@ -21,7 +21,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/components-avatar.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/components/avatar.ui")]
     pub(crate) struct Avatar {
         /// A `Chat` or `User`
         pub(super) item: RefCell<Option<glib::Object>>,

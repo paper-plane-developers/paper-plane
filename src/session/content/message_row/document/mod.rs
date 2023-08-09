@@ -29,7 +29,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-message-document.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/message_row/document/mod.ui")]
     pub(crate) struct MessageDocument {
         pub(super) bindings: RefCell<Vec<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,

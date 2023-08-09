@@ -27,7 +27,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/app/drey/paper-plane/ui/content-message-photo.ui")]
+    #[template(resource = "/app/drey/paper-plane/ui/session/content/message_row/photo.ui")]
     pub(crate) struct MessagePhoto {
         pub(super) binding: RefCell<Option<gtk::ExpressionWatch>>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
