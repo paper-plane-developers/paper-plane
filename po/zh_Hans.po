@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-01-24 14:54+0000\n"
-"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
+"PO-Revision-Date: 2023-08-26 11:54+0000\n"
+"Last-Translator: Jack77793 <jack77793@hotmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
-"paper-plane/paper-plane/zh_Hans/>\n"
+"paper-plane/main/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -54,7 +54,6 @@ msgid "Recently used sessions"
 msgstr "最近使用的会话"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
@@ -98,30 +97,28 @@ msgid "Select a chat to start messaging."
 msgstr "请选择一个对话开始聊天。"
 
 #: data/resources/ui/content-chat-action-bar.blp:68
-#, fuzzy
 msgid "Message"
-msgstr "语音消息"
+msgstr "消息"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "解锁"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "加入"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "滚动至底"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "查看信息"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "搜索聊天"
+msgstr "离开聊天"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
@@ -137,7 +134,7 @@ msgstr "下一个(_N)"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "欢迎"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
@@ -161,7 +158,7 @@ msgstr "代码"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "此代码不再能被发送。"
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
@@ -204,13 +201,11 @@ msgid "Use Recovery Code"
 msgstr "使用恢复代码"
 
 #: data/resources/ui/login.blp:363
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
-msgstr ""
-"当你设置云端密码时，你要提供一个恢复用的电子邮件地址。我们会发送代码到你的这"
-"个电子邮件地址上，使用它来重置你的密码。"
+msgstr "当你设置云端密码时，你应提供一个的电子邮件地址用于恢复。重置密码所用的代码将"
+"被发送至这个地址。"
 
 #: data/resources/ui/login.blp:379
 msgid "_Send recovery code"
@@ -225,22 +220,20 @@ msgid "_Delete Account"
 msgstr "删除帐户(_D)"
 
 #: data/resources/ui/login.blp:460
-#, fuzzy
 msgid "Enter the code e-mailed to you"
 msgstr "输入由电子邮件发送的代码"
 
 #: data/resources/ui/login.blp:493
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "无法访问你的电子邮件？(_U)"
+msgstr "无法访问你的电子邮件？"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
-msgstr ""
+msgstr "回复"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "编辑"
 
 #: data/resources/ui/message-menu.blp:18
 #, fuzzy
@@ -254,7 +247,7 @@ msgstr "删除帐户(_D)"
 
 #: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
-msgstr ""
+msgstr "国家"
 
 #: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
@@ -270,15 +263,15 @@ msgstr "暗色主题"
 
 #: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
-msgstr ""
+msgstr "储存空间"
 
 #: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
-msgstr ""
+msgstr "缓存大小"
 
 #: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
-msgstr ""
+msgstr "清理缓存"
 
 #: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
@@ -306,15 +299,14 @@ msgid "Search Chats"
 msgstr "搜索聊天"
 
 #: data/resources/ui/shortcuts.blp:34
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "聊天列表"
+msgstr "聊天历史"
 
 #: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "从剪贴板发送图片"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -346,30 +338,27 @@ msgstr ""
 
 #: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "标为未读"
 
 #: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
-msgstr ""
+msgstr "标为已读"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
 msgstr "搜索聊天"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "搜索聊天"
+msgstr "没有搜索结果"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "尝试不同的搜索。"
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Paper Plane developers"
-msgstr "Paper Plane"
+msgstr "Paper Plane 开发者"
 
 #: src/application.rs:182
 msgid "Sponsors"
