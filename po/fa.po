@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2023-06-28 23:53+0000\n"
-"Last-Translator: arashe_023 <arashe22@proton.me>\n"
+"PO-Revision-Date: 2023-09-07 09:56+0000\n"
+"Last-Translator: Endermancrop <amirenderman@tuta.io>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/paper-plane/main/"
 "fa/>\n"
 "Language: fa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.18.1\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -28,7 +28,7 @@ msgstr "هواپیمای کاغذی"
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:10
 msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "یک کلاینت تلگرام بهینه شده برای میزکار گنوم"
+msgstr "یک کارخواه تلگرام بهینه شده برای میزکار گنوم"
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;"
@@ -763,29 +763,26 @@ msgstr[0] "آخرین بازدید {num} ساعت پیش"
 msgstr[1] "آخرین بازدید {num} ساعت پیش"
 
 #: src/strings.rs:421
-#, fuzzy
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] "آخرین بار در  {num}  دقیقه قبل دیده شده است ."
-msgstr[1] "آخرین بار در  {num}  دقیقه قبل دیده شده است ."
+msgstr[0] "آخرین بار در {num} دقیقه قبل دیده شده است"
+msgstr[1] "آخرین بار در {num} دقیقه قبل دیده شده است"
 
 #: src/strings.rs:427
-#, fuzzy
 msgid "last seen just now"
-msgstr "هم این الان دیده شده است"
+msgstr "همین الان دیده شده است"
 
 #: src/strings.rs:430
-#, fuzzy
 msgid "last seen recently"
-msgstr "اخرین دیدن به تازگی"
+msgstr "آخرین بازدید اخیرا"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
-msgstr ""
+msgstr "آخرین بار دیده شده در یک هفته"
 
 #: src/strings.rs:432
 msgid "last seen within a month"
-msgstr ""
+msgstr "آخرین بار دیده شده در یک ماه"
 
 #: src/strings.rs:456
 msgid "Photo has expired"
@@ -801,10 +798,9 @@ msgstr "پیام تصویری"
 
 #: src/strings.rs:491
 msgid "{sender} took a screenshot!"
-msgstr "{sender}  نماگرفت ثبت شد!"
+msgstr "{sender} نماگرفت ثبت شد!"
 
 #: src/strings.rs:496
-#, fuzzy
 msgid "Unsupported Message"
 msgstr "پیام پشتیبانی نشده"
 
@@ -958,15 +954,15 @@ msgstr "به گروه پیوستید"
 
 #: src/strings.rs:716
 msgid "{sender} added {first_user} and {second_user}"
-msgstr ""
+msgstr "{sender} اضافه شده {first_user} و {second_user}"
 
 #: src/strings.rs:730
 msgid "{sender} added {users}"
-msgstr ""
+msgstr "{sender} اضافه کرد {users}"
 
 #: src/strings.rs:739
 msgid "{sender} joined the group via invite link"
-msgstr ""
+msgstr "{sender} به گروه از طریق پیوند دعوت پیوست"
 
 #: src/strings.rs:753
 #, fuzzy
@@ -975,7 +971,7 @@ msgstr "گروه را ترک کردید"
 
 #: src/strings.rs:758
 msgid "{sender} removed {user}"
-msgstr ""
+msgstr "{sender} حذف کرد {user}"
 
 #: src/strings.rs:777
 msgid "{sender} scored {points} in {game}"
@@ -1139,9 +1135,8 @@ msgid "This message is unsupported"
 msgstr "این پیام پشتیبانی نمی‌شود"
 
 #: src/session/sidebar/row.rs:417
-#, fuzzy
 msgid "Draft:"
-msgstr "پیش‌نویس"
+msgstr "پیش‌نویس:"
 
 #: src/session/sidebar/row.rs:597
 msgid "You"
