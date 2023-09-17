@@ -175,7 +175,7 @@ impl MessageReply {
             if !is_outgoing {
                 // Color sender label
                 if let MessageSender::User(user) = replied_message.sender() {
-                    let classes = vec![
+                    let classes = &[
                         "sender-text-red",
                         "sender-text-orange",
                         "sender-text-violet",
