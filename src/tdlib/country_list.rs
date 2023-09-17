@@ -69,14 +69,11 @@ impl CountryList {
                             CountryInfo::from(country_info),
                         )
                     })
-                    .chain(
-                        if use_test_dc {
-                            Some((String::new(), CountryInfo::test()))
-                        } else {
-                            None
-                        }
-                        .into_iter(),
-                    ),
+                    .chain(if use_test_dc {
+                        Some((String::new(), CountryInfo::test()))
+                    } else {
+                        None
+                    }),
             ))
             .unwrap();
 
