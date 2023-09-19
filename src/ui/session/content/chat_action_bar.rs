@@ -139,9 +139,9 @@ mod imp {
                             tdlib::enums::MessageSender::User(tdlib::types::MessageSenderUser {
                                 user_id: user.id(),
                             });
-                        let result = tdlib::functions::toggle_message_sender_is_blocked(
+                        let result = tdlib::functions::set_message_sender_block_list(
                             message_sender,
-                            !chat.is_blocked(),
+                            None,
                             chat.session_().client_().id(),
                         )
                         .await;
@@ -270,7 +270,7 @@ impl ChatActionBar {
             }),
         );
         chat_signal_group.connect_notify_local(
-            Some("is-blocked"),
+            Some("block-list"),
             clone!(@weak self as obj => move |_, _| {
                 obj.update_stack_page();
             }),
@@ -516,23 +516,21 @@ impl ChatActionBar {
             if let Some(message) = self.compose_text_message().await {
                 let client_id = chat.session_().client_().id();
                 let chat_id = chat.id();
-                let reply_to_message_id =
-                    if let ChatActionBarState::Replying(id) = self.imp().state.get() {
-                        id
-                    } else {
-                        0
-                    };
+                let message_id = match self.imp().state.get() {
+                    ChatActionBarState::Replying(id) => id,
+                    _ => 0,
+                };
+                let reply_to = Some(tdlib::enums::MessageReplyTo::Message(
+                    tdlib::types::MessageReplyToMessage {
+                        chat_id,
+                        message_id,
+                    },
+                ));
 
                 // Send the message
-                let result = tdlib::functions::send_message(
-                    chat_id,
-                    0,
-                    reply_to_message_id,
-                    None,
-                    message,
-                    client_id,
-                )
-                .await;
+                let result =
+                    tdlib::functions::send_message(chat_id, 0, reply_to, None, message, client_id)
+                        .await;
                 if let Err(e) = result {
                     log::warn!("Error sending a message: {:?}", e);
                 }

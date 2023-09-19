@@ -137,6 +137,9 @@ impl SendMediaWindow {
         let width = paintable.intrinsic_width();
         let height = paintable.intrinsic_height();
         let caption = imp.caption_entry.as_markdown().await;
+        let self_destruct_type = Some(MessageSelfDestructType::Timer(
+            MessageSelfDestructTypeTimer::default(),
+        ));
 
         let file = InputFile::Local(InputFileLocal { path });
         let content = if send_as_file {
@@ -154,13 +157,18 @@ impl SendMediaWindow {
                 width,
                 height,
                 caption,
-                self_destruct_time: 0,
+                self_destruct_type,
                 has_spoiler: false,
             })
         };
 
+        let reply_to = Some(MessageReplyTo::Message(MessageReplyToMessage {
+            chat_id,
+            message_id: 0,
+        }));
+
         // TODO: maybe show an error dialog when this fails?
-        if tdlib::functions::send_message(chat_id, 0, 0, None, content, client_id)
+        if tdlib::functions::send_message(chat_id, 0, reply_to, None, content, client_id)
             .await
             .is_ok()
         {

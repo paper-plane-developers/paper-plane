@@ -18,7 +18,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) content: OnceCell<model::BoxedMessageContent>,
         #[property(get, set, construct_only)]
-        pub(super) sponsor_chat: glib::WeakRef<model::Chat>,
+        pub(super) sponsor_label: OnceCell<String>,
     }
 
     #[glib::object_subclass]
@@ -47,14 +47,27 @@ glib::wrapper! {
 }
 
 impl SponsoredMessage {
-    fn new(sponsored_message: &tdlib::types::SponsoredMessage, sponsor_chat: &model::Chat) -> Self {
+    fn new(
+        sponsored_message: tdlib::types::SponsoredMessage,
+        session: &model::ClientStateSession,
+    ) -> Self {
+        use tdlib::enums::MessageSponsorType::*;
+
         glib::Object::builder()
             .property("message-id", sponsored_message.message_id)
             .property(
                 "content",
                 model::BoxedMessageContent(sponsored_message.clone().content),
             )
-            .property("sponsor-chat", sponsor_chat)
+            .property(
+                "sponsor-label",
+                match &sponsored_message.sponsor.r#type {
+                    Bot(sponsor) => session.user(sponsor.bot_user_id).first_name(),
+                    PublicChannel(sponsor) => session.chat(sponsor.chat_id).title(),
+                    PrivateChannel(sponsor) => sponsor.title.clone(),
+                    Website(sponsor) => sponsor.name.clone(),
+                },
+            )
             .build()
     }
 
@@ -62,21 +75,15 @@ impl SponsoredMessage {
         chat_id: i64,
         session: &model::ClientStateSession,
     ) -> Result<Option<Self>, tdlib::types::Error> {
-        let tdlib::enums::SponsoredMessages::SponsoredMessages(sponsored_messages) =
-            tdlib::functions::get_chat_sponsored_messages(chat_id, session.client_().id()).await?;
-
-        // TODO: Support multiple sponsored messages
-        if let Some(sponsored_message) = sponsored_messages.messages.first() {
-            Ok(Some(Self::new(
-                sponsored_message,
-                &session.chat(sponsored_message.sponsor_chat_id),
-            )))
-        } else {
-            Ok(None)
-        }
-    }
-
-    pub(crate) fn sponsor_chat_(&self) -> model::Chat {
-        self.sponsor_chat().unwrap()
+        tdlib::functions::get_chat_sponsored_messages(chat_id, session.client_().id())
+            .await
+            .map(
+                |tdlib::enums::SponsoredMessages::SponsoredMessages(mut sponsored_messages)| {
+                    sponsored_messages
+                        .messages
+                        .pop()
+                        .map(|sponsored_message| Self::new(sponsored_message, session))
+                },
+            )
     }
 }

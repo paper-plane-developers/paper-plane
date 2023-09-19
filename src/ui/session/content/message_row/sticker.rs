@@ -107,7 +107,12 @@ impl ui::MessageBaseExt for MessageSticker {
 
         imp.indicators.set_message(message.upcast_ref());
 
-        if message.reply_to_message_id() != 0 {
+        if matches!(
+            message.reply_to(),
+            Some(model::BoxedMessageReplyTo(
+                tdlib::enums::MessageReplyTo::Message(_)
+            ))
+        ) {
             let reply = ui::MessageReply::new(message);
             reply.set_valign(gtk::Align::Start);
             reply.set_max_char_width(MAX_REPLY_CHAR_WIDTH);

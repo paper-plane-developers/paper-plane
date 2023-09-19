@@ -85,7 +85,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) chat_type: OnceCell<ChatType>,
         #[property(get)]
-        pub(super) is_blocked: Cell<bool>,
+        pub(super) block_list: RefCell<Option<model::BoxedBlockList>>,
         #[property(get)]
         pub(super) title: RefCell<String>,
         #[property(get)]
@@ -170,7 +170,8 @@ impl Chat {
 
         let imp = obj.imp();
 
-        imp.is_blocked.set(td_chat.is_blocked);
+        imp.block_list
+            .replace(td_chat.block_list.map(model::BoxedBlockList));
         imp.title.replace(td_chat.title);
         imp.avatar.replace(td_chat.photo.map(model::Avatar::from));
         imp.last_read_outbox_message_id
@@ -210,7 +211,9 @@ impl Chat {
             ChatDraftMessage(update) => {
                 self.set_draft_message(update.draft_message.map(model::BoxedDraftMessage));
             }
-            ChatIsBlocked(update) => self.set_is_blocked(update.is_blocked),
+            ChatBlockList(update) => {
+                self.set_block_list(update.block_list.map(model::BoxedBlockList))
+            }
             ChatIsMarkedAsUnread(update) => self.set_marked_as_unread(update.is_marked_as_unread),
             ChatLastMessage(update) => {
                 self.set_last_message(update.last_message.map(|m| model::Message::new(self, m)));
@@ -296,12 +299,19 @@ impl Chat {
         self.session().unwrap()
     }
 
-    fn set_is_blocked(&self, is_blocked: bool) {
-        if self.is_blocked() == is_blocked {
+    pub(crate) fn is_blocked(&self) -> bool {
+        matches!(
+            self.block_list(),
+            Some(model::BoxedBlockList(tdlib::enums::BlockList::Main))
+        )
+    }
+
+    fn set_block_list(&self, block_list: Option<model::BoxedBlockList>) {
+        if self.block_list() == block_list {
             return;
         }
-        self.imp().is_blocked.replace(is_blocked);
-        self.notify_is_blocked();
+        self.imp().block_list.replace(block_list);
+        self.notify_block_list();
     }
 
     fn set_title(&self, title: String) {

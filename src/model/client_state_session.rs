@@ -422,7 +422,7 @@ impl ClientStateSession {
             }
             ChatNotificationSettings(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatUnreadMentionCount(ref data) => self.chat(data.chat_id).handle_update(update),
-            ChatIsBlocked(ref data) => self.chat(data.chat_id).handle_update(update),
+            ChatBlockList(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatIsMarkedAsUnread(ref data) => self.chat(data.chat_id).handle_update(update),
             DeleteMessages(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatAction(ref data) => self.chat(data.chat_id).handle_update(update),

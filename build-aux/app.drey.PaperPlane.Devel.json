@@ -104,8 +104,8 @@
                         "x86_64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.14/tdjson-x86_64.zip",
-                    "sha256": "7c630d2330c9736abcd11821f73a8d37245cfc0812ccb749d4180af7feb6d3fc",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.19/tdjson-x86_64.zip",
+                    "sha256": "55af3cb2cd5d9616c96d3fa6529c90cd66bebd9943f6b6c9aa41ec792067ccef",
                     "strip-components": 0
                 },
                 {
@@ -113,8 +113,8 @@
                         "aarch64"
                     ],
                     "type": "archive",
-                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.14/tdjson-aarch64.zip",
-                    "sha256": "229bab16ea249e883c2bad0d0f3da9bb4d1da172cc8b8a4a83b84c6a8b76661d",
+                    "url": "https://github.com/melix99/tdjson-ci/releases/download/1.8.19/tdjson-aarch64.zip",
+                    "sha256": "e5f5bfbae1c0617fe06ec7f9d74d65569d4a5a1ca4567f067e9d66d2292edb26",
                     "strip-components": 0
                 }
             ]
