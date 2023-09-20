@@ -129,6 +129,7 @@
         {
             "name": "libadwaita",
             "buildsystem": "meson",
+            "build-options" : { "cflags": "-O2 -g -Wno-incompatible-pointer-types" },
             "config-opts": [
                 "-Dvapi=false",
                 "-Dtests=false",
