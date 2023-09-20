@@ -21,15 +21,20 @@ uniform vec3 color1;
 uniform vec3 color2;
 uniform vec3 color3;
 uniform vec3 color4;
-uniform vec2 p1;
-uniform vec2 p2;
-uniform vec2 p3;
-uniform vec2 p4;
+uniform vec4 p12;
+uniform vec4 p34;
+uniform vec4 gradient_bounds;
 
 void mainImage(out vec4 fragColor,
                in vec2 fragCoord,
                in vec2 resolution,
                in vec2 uv) {
+    vec2 p1 = p12.xy;
+    vec2 p2 = p12.zw;
+    vec2 p3 = p34.xy;
+    vec2 p4 = p34.zw;
+
+    uv = (fragCoord - gradient_bounds.xy) / gradient_bounds.zw;
     uv.y = 1.0 - uv.y;
 
     float dp1 = distance(uv, p1);
@@ -55,7 +60,8 @@ mod imp {
 
     #[derive(Default)]
     pub(crate) struct Background {
-        pub(super) gradient_texture: RefCell<Option<gdk::Texture>>,
+        pub(super) background_texture: RefCell<Option<gdk::Texture>>,
+
         pub(super) last_size: Cell<(f32, f32)>,
 
         pub(super) shader: RefCell<Option<gsk::GLShader>>,
@@ -67,7 +73,8 @@ mod imp {
 
         pub(super) dark: Cell<bool>,
 
-        pub(super) colors: RefCell<Vec<graphene::Vec3>>,
+        pub(super) bg_colors: RefCell<Vec<graphene::Vec3>>,
+        pub(super) message_colors: RefCell<Vec<graphene::Vec3>>,
     }
 
     #[glib::object_subclass]
@@ -108,7 +115,7 @@ mod imp {
 
             let target = adw::CallbackAnimationTarget::new(clone!(@weak obj => move |progress| {
                 let imp = obj.imp();
-                imp.gradient_texture.take();
+                imp.background_texture.take();
                 let progress = progress as f32;
                 if progress >= 1.0 {
                     imp.progress.set(0.0);
@@ -177,18 +184,19 @@ mod imp {
             size_changed: bool,
         ) {
             if self.progress.get() == 0.0 {
-                let texture = match self.gradient_texture.take() {
+                let texture = match self.background_texture.take() {
                     Some(texture) if !size_changed => texture,
                     _ => {
                         let renderer = self.obj().native().unwrap().renderer();
-                        renderer.render_texture(self.gradient_shader_node(bounds), Some(bounds))
+
+                        renderer.render_texture(self.obj().bg_node(bounds, bounds), Some(bounds))
                     }
                 };
 
                 snapshot.append_texture(&texture, bounds);
-                self.gradient_texture.replace(Some(texture));
+                self.background_texture.replace(Some(texture));
             } else {
-                snapshot.append_node(self.gradient_shader_node(bounds));
+                snapshot.append_node(&self.obj().bg_node(bounds, bounds));
             }
         }
 
@@ -226,7 +234,12 @@ mod imp {
             }
         }
 
-        fn gradient_shader_node(&self, bounds: &graphene::Rect) -> gsk::GLShaderNode {
+        pub(super) fn gradient_shader_node(
+            &self,
+            bounds: &graphene::Rect,
+            gradient_bounds: &graphene::Rect,
+            colors: &[graphene::Vec3],
+        ) -> gsk::GLShaderNode {
             let Some(gradient_shader) = &*self.shader.borrow() else {
                 unreachable!()
             };
@@ -236,10 +249,8 @@ mod imp {
             let progress = self.progress.get();
             let phase = self.phase.get() as usize;
 
-            let colors = self.colors.borrow();
-
-            let &[c1, c2, c3, c4] = &colors[..] else {
-                unimplemented!("Unexpected color count");
+            let &[c1, c2, c3, c4] = colors else {
+                  unimplemented!("Unexpected color count")
             };
 
             args_builder.set_vec3(0, &c1);
@@ -247,16 +258,25 @@ mod imp {
             args_builder.set_vec3(2, &c3);
             args_builder.set_vec3(3, &c4);
 
-            let [p1, p2, p3, p4] = Self::calculate_positions(progress, phase);
-            args_builder.set_vec2(4, &p1);
-            args_builder.set_vec2(5, &p2);
-            args_builder.set_vec2(6, &p3);
-            args_builder.set_vec2(7, &p4);
+            let [p12, p34] = Self::calculate_positions(progress, phase);
+            args_builder.set_vec4(4, &p12);
+            args_builder.set_vec4(5, &p34);
+
+            let gradient_bounds = {
+                graphene::Vec4::new(
+                    gradient_bounds.x(),
+                    gradient_bounds.y(),
+                    gradient_bounds.width(),
+                    gradient_bounds.height(),
+                )
+            };
+
+            args_builder.set_vec4(6, &gradient_bounds);
 
             gsk::GLShaderNode::new(gradient_shader, bounds, &args_builder.to_args(), &[])
         }
 
-        fn calculate_positions(progress: f32, phase: usize) -> [graphene::Vec2; 4] {
+        fn calculate_positions(progress: f32, phase: usize) -> [graphene::Vec4; 2] {
             static POSITIONS: [(f32, f32); 8] = [
                 (0.80, 0.10),
                 (0.60, 0.20),
@@ -268,7 +288,7 @@ mod imp {
                 (0.75, 0.40),
             ];
 
-            let mut points = [graphene::Vec2::new(0.0, 0.0); 4];
+            let mut points = [(0.0, 0.0); 4];
 
             for i in 0..4 {
                 let start = POSITIONS[(i * 2 + phase) % 8];
@@ -281,10 +301,18 @@ mod imp {
                 let x = interpolate(start.0, end.0, progress);
                 let y = interpolate(start.1, end.1, progress);
 
-                points[i] = graphene::Vec2::new(x, y);
+                points[i] = (x, y);
             }
 
-            points
+            let points: Vec<_> = points
+                .chunks(2)
+                .map(|p| {
+                    let [(x1, y1), (x2, y2)]: [(f32, f32); 2] = p.try_into().unwrap();
+                    graphene::Vec4::from_float([x1, y1, x2, y2])
+                })
+                .collect();
+
+            points.try_into().unwrap()
         }
     }
 }
@@ -307,7 +335,7 @@ impl Background {
 
         imp.dark.set(background.is_dark);
 
-        let fill = match background.r#type {
+        let bg_fill = match background.r#type {
             tdlib::enums::BackgroundType::Pattern(pattern) => pattern.fill,
             tdlib::enums::BackgroundType::Fill(fill) => fill.fill,
             tdlib::enums::BackgroundType::Wallpaper(_) => {
@@ -315,30 +343,11 @@ impl Background {
             }
         };
 
-        match fill {
-            tdlib::enums::BackgroundFill::FreeformGradient(gradient) => {
-                if gradient.colors.len() != 4 {
-                    unimplemented!("Unsupported gradient colors count");
-                }
+        imp.bg_colors.replace(fill_colors(bg_fill));
+        imp.message_colors
+            .replace(fill_colors(theme.outgoing_message_fill));
 
-                let colors = gradient
-                    .colors
-                    .into_iter()
-                    .map(|int_color| {
-                        let r = (int_color >> 16) & 0xFF;
-                        let g = (int_color >> 8) & 0xFF;
-                        let b = int_color & 0xFF;
-
-                        graphene::Vec3::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
-                    })
-                    .collect();
-
-                imp.colors.replace(colors);
-            }
-            _ => unimplemented!("Background fill"),
-        }
-
-        imp.gradient_texture.take();
+        imp.background_texture.take();
         self.queue_draw();
     }
 
@@ -349,6 +358,32 @@ impl Background {
         if val == 0.0 || val == 1.0 {
             animation.play()
         }
+    }
+
+    pub(crate) fn subscribe_to_redraw(&self, child: &gtk::Widget) {
+        let animation = self.imp().animation.get().unwrap();
+        animation.connect_value_notify(clone!(@weak child => move |_| child.queue_draw()));
+    }
+
+    pub(crate) fn bg_node(
+        &self,
+        bounds: &graphene::Rect,
+        gradient_bounds: &graphene::Rect,
+    ) -> gsk::GLShaderNode {
+        self.imp()
+            .gradient_shader_node(bounds, gradient_bounds, &self.imp().bg_colors.borrow())
+    }
+
+    pub(crate) fn message_bg_node(
+        &self,
+        bounds: &graphene::Rect,
+        gradient_bounds: &graphene::Rect,
+    ) -> gsk::GLShaderNode {
+        self.imp().gradient_shader_node(
+            bounds,
+            gradient_bounds,
+            &self.imp().message_colors.borrow(),
+        )
     }
 
     fn ensure_shader(&self) {
@@ -378,8 +413,28 @@ impl Default for Background {
     }
 }
 
+fn fill_colors(fill: tdlib::enums::BackgroundFill) -> Vec<graphene::Vec3> {
+    match fill {
+        tdlib::enums::BackgroundFill::FreeformGradient(gradient) if gradient.colors.len() == 4 => {
+            gradient
+                .colors
+                .into_iter()
+                .map(|int_color| {
+                    let [_, r, g, b] = int_color.to_be_bytes();
+                    graphene::Vec3::new(r as f32 / 255.0, g as f32 / 255.0, b as f32 / 255.0)
+                })
+                .collect()
+        }
+        _ => unimplemented!("Unsupported background fill: {fill:?}"),
+    }
+}
+
 fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {
-    fn theme(dark: bool, colors: Vec<i32>) -> tdlib::types::ThemeSettings {
+    fn theme(
+        dark: bool,
+        bg_colors: Vec<i32>,
+        message_colors: Vec<i32>,
+    ) -> tdlib::types::ThemeSettings {
         use tdlib::enums::BackgroundFill::*;
         use tdlib::enums::BackgroundType::Fill;
         use tdlib::types::*;
@@ -389,7 +444,7 @@ fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {
                 is_default: true,
                 is_dark: dark,
                 r#type: Fill(BackgroundTypeFill {
-                    fill: FreeformGradient(BackgroundFillFreeformGradient { colors }),
+                    fill: FreeformGradient(BackgroundFillFreeformGradient { colors: bg_colors }),
                 }),
                 id: 0,
                 name: String::new(),
@@ -398,13 +453,25 @@ fn hard_coded_themes(dark: bool) -> tdlib::types::ThemeSettings {
             accent_color: 0,
             animate_outgoing_message_fill: false,
             outgoing_message_accent_color: 0,
-            outgoing_message_fill: Solid(BackgroundFillSolid { color: 0 }),
+            outgoing_message_fill: FreeformGradient(BackgroundFillFreeformGradient {
+                colors: message_colors,
+            }),
         }
     }
 
+    // tr tl bl br
+
     if dark {
-        theme(dark, vec![0xd6932e, 0xbc40db, 0x4280d7, 0x614ed5])
+        theme(
+            dark,
+            vec![0xd6932e, 0xbc40db, 0x4280d7, 0x614ed5],
+            vec![0x2d52ab, 0x4036a1, 0x9f388d, 0x9d3941],
+        )
     } else {
-        theme(dark, vec![0x94dae9, 0x9aeddb, 0x94c3f6, 0xac96f7])
+        theme(
+            dark,
+            vec![0x94dae9, 0x9aeddb, 0x94c3f6, 0xac96f7],
+            vec![0xddecff, 0xe0ddfd, 0xdbffff, 0xddffdf],
+        )
     }
 }
