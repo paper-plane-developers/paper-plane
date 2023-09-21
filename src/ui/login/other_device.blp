@@ -1,0 +1,47 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplLoginOtherDevice {
+  layout-manager: BinLayout { };
+  vexpand: true;
+
+  notify::model => $on_notify_model() swapped;
+
+  Adw.ToolbarView {
+
+    [top]
+    Adw.HeaderBar {
+
+      [start]
+      Button {
+        action-name: "login.other-device.use-phone-number";
+        icon-name: "go-previous-symbolic";
+        tooltip-text: _("Phone Number");
+      }
+    }
+
+    Adw.StatusPage {
+      title: _("Scan Code");
+      description: _("Scan this code with another Telegram app logged into your account.");
+      vexpand: true;
+
+      Box {
+        orientation: vertical;
+        spacing: 24;
+
+        Image image {
+          styles ["qr-code", "card"]
+
+          halign: center;
+          overflow: hidden;
+          pixel-size: 200;
+        }
+
+        LinkButton {
+          action-name: "login.other-device.use-phone-number";
+          label: _("Log in using your phone number");
+        }
+      }
+    }
+  }
+}

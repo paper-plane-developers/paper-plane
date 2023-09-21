@@ -1,0 +1,10 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplClientManagerView {
+    layout-manager: BinLayout {};
+
+    notify::active-client => $on_notify_active_client() swapped;
+
+    $PaplAnimatedBin animated_bin { }
+}

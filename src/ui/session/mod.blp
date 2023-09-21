@@ -1,0 +1,38 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $Session : Adw.Bin {
+  child: Adw.BreakpointBin {
+    width-request: 360;
+    height-request: 200;
+
+    child: Adw.NavigationSplitView split_view {
+      min-sidebar-width: 200;
+      max-sidebar-width: 300;
+      sidebar-width-fraction: 0.4;
+
+      sidebar: Adw.NavigationPage {
+        title: _("Chats");
+
+        child: $PaplSidebar sidebar {
+          compact: bind split_view.collapsed;
+          selected-chat: bind-property content.chat bidirectional;
+          session: bind template.model;
+        };
+      };
+
+      content: Adw.NavigationPage {
+        tag: "content";
+        title: _("Content");
+        child: $Content content {};
+      };
+    };
+
+    Adw.Breakpoint {
+      condition ("max-width: 560sp")
+      setters {
+        split_view.collapsed: true;
+      }
+    }
+  };
+}

@@ -1,0 +1,70 @@
+<interface>
+  <template class="PaplContactsWindow" parent="AdwWindow">
+    <property name="title" translatable="true">Contacts</property>
+    <property name="modal">true</property>
+    <property name="default-width">360</property>
+    <property name="default-height">600</property>
+
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="GtkHeaderBar"/>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hscrollbar-policy">never</property>
+
+            <child>
+              <object class="AdwClampScrollable">
+                <property name="child">
+                  <object class="GtkListView" id="list_view">
+                    <property name="single-click-activate">True</property>
+                    <signal name="activate" handler="list_activate" swapped="true"/>
+                    <style>
+                      <class name="navigation-sidebar"/>
+                    </style>
+                    <property name="model">
+                      <object class="GtkNoSelection">
+                        <property name="model">
+                          <object class="GtkSortListModel" id="sort_model">
+                            <property name="sorter">
+                              <object class="GtkStringSorter">
+                                <property name="expression">
+                                  <closure type="gchararray" function="user_display_name"/>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+                          <interface>
+                            <template class="GtkListItem">
+                              <property name="child">
+                                <object class="PaplContactRow">
+                                  <binding name="user">
+                                    <lookup name="item">GtkListItem</lookup>
+                                  </binding>
+                                </object>
+                              </property>
+                            </template>
+                          </interface>
+                        ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+          </object>
+        </property>
+      </object>
+    </property>
+
+  </template>
+</interface>

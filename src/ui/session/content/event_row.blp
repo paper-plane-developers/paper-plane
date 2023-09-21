@@ -1,0 +1,14 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplEventRow : Adw.Bin {
+  styles ["event-row"]
+
+  halign: center;
+
+  child: Label label {
+    justify: center;
+    wrap: true;
+    wrap-mode: word_char;
+  };
+}

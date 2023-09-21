@@ -1,0 +1,25 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplPhoneNumberInput {
+  layout-manager: BinLayout {};
+
+  ListBox list_box {
+    styles ["boxed-list"]
+
+    Adw.ComboRow combo_row {
+      enable-search: true;
+      selectable: false;
+      title: _("Country");
+    }
+
+    Adw.EntryRow entry_row {
+      styles ["numeric"]
+
+      entry-activated => $on_entry_row_activated() swapped;
+
+      title: _("Phone Number");
+      input-purpose: phone;
+    }
+  }
+}

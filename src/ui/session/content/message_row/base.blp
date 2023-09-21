@@ -1,0 +1,14 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplMessageBase {
+  GestureClick {
+    button: 3;
+    released => $on_pressed() swapped;
+  }
+
+  GestureLongPress {
+    touch-only: true;
+    pressed => $on_long_pressed() swapped;
+  }
+}

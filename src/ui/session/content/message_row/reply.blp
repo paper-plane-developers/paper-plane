@@ -1,0 +1,32 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplMessageReply : Widget {
+  layout-manager: BoxLayout {};
+
+  Separator separator {
+    width-request: 2;
+  }
+
+  Box labels_box {
+    orientation: vertical;
+
+    Label sender_label {
+      ellipsize: end;
+      xalign: 0;
+
+      styles ["caption-heading"]
+    }
+
+    Label message_label {
+      ellipsize: end;
+      xalign: 0;
+      single-line-mode: true;
+
+      styles [
+          "message",
+          "small-body",
+      ]
+    }
+  }
+}

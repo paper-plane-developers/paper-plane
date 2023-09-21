@@ -1,0 +1,49 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplChatInfoWindow : Adw.Window {
+  styles ["chat-info"]
+
+  default-width: 360;
+  modal: true;
+
+  content: Adw.ToastOverlay toast_overlay {
+    child: Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {
+        show-title: false;
+      }
+
+      content: Adw.Clamp {
+        child: Box {
+          styles ["main-page"]
+
+          orientation: vertical;
+
+          $PaplAvatar {
+            size: 128;
+            item: bind template.chat;
+          }
+
+          Label name_label {
+            styles ["title-1"]
+
+            wrap: true;
+            justify: center;
+          }
+
+          Inscription subtitle_label {
+            text-overflow: ellipsize_middle;
+            xalign: 0.5;
+          }
+
+          ListBox info_list {
+            styles ["boxed-list"]
+
+            selection-mode: none;
+          }
+        };
+      };
+    };
+  };
+}

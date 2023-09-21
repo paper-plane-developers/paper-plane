@@ -1,0 +1,22 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplMessageSticker : $PaplMessageBase {
+  layout-manager: BoxLayout {};
+
+  Overlay overlay {
+    GestureClick click {
+      button: 1;
+
+      released => $on_pressed() swapped;
+    }
+
+    $PaplSticker sticker {}
+
+    [overlay]
+    $PaplMessageIndicators indicators {
+      halign: end;
+      valign: end;
+    }
+  }
+}

@@ -1,0 +1,66 @@
+using Gtk 4.0;
+
+template $PaplSessionRow {
+  layout-manager: BoxLayout {
+    spacing: 9;
+  };
+
+  $PaplAvatarWithSelection {
+    size: 48;
+    item: bind template.session as <$ClientStateSession>.me;
+    selected: bind template.session as <$ClientStateSession>.client as <$Client>.active;
+  }
+
+  Box {
+    orientation: vertical;
+    spacing: 3;
+
+    Label display_name_label {
+      hexpand: true;
+      vexpand: true;
+      xalign: 0.0;
+    }
+
+    Label username_label {
+      styles ["dim-label", "user-id"]
+
+      hexpand: true;
+      vexpand: true;
+      xalign: 0.0;
+      yalign: 0.0;
+    }
+  }
+
+  Label unread_count_label {
+    styles ["unread-count"]
+
+    valign: center;
+    halign: end;
+    ellipsize: end;
+    justify: center;
+    label: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-count;
+    visible: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-count;
+  }
+
+  Stack stack {
+
+    StackPage {
+      name: "button";
+      child: Button {
+        styles ["circular"]
+
+        action-name: "session-row.log-out-client";
+        icon-name: "application-exit-symbolic";
+        tooltip-text: _("Logout");
+        valign: center;
+      };
+    }
+
+    Spinner spinner {
+      margin-top: 6;
+      margin-end: 6;
+      margin-bottom: 6;
+      margin-start: 6;
+    }
+  }
+}

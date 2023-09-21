@@ -1,0 +1,15 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplWindow : Adw.ApplicationWindow {
+  width-request: 360;
+  height-request: 200;
+  default-width: 900;
+  default-height: 600;
+
+  notify::is_active => $on_notify_is_active() swapped;
+
+  content: Adw.ToastOverlay {
+    $PaplClientManagerView client_manager_view {}
+  };
+}

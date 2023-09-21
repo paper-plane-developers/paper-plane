@@ -1,0 +1,11 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplAnimatedBin {
+    layout-manager: BinLayout { };
+
+    Stack stack {
+        notify::visible-child => $on_stack_notify_visible_child() swapped;
+        transition-type: crossfade;
+    }
+}
