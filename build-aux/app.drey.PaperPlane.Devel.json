@@ -1,11 +1,11 @@
 {
     "id": "app.drey.PaperPlane.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "44",
+    "runtime-version": "45",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable",
-        "org.freedesktop.Sdk.Extension.llvm15"
+        "org.freedesktop.Sdk.Extension.llvm16"
     ],
     "command": "paper-plane",
     "finish-args": [
@@ -18,7 +18,7 @@
         "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm15/bin:/app/bin",
+        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm16/bin:/app/bin",
         "env": {
             "CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse",
             "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": "clang",
@@ -77,69 +77,11 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.12.1"
+                    "tag": "4.12.2"
                 },
                 {
                     "type": "patch",
                     "path": "gtk-reversed-list.patch"
-                }
-            ]
-        },
-        {
-            "name": "appstream",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dstemming=false",
-                "-Dapidocs=false"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/ximion/appstream.git",
-                    "branch": "main"
-                }
-            ],
-            "modules": [
-                {
-                    "name": "libyaml",
-                    "buildsystem": "autotools",
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/yaml/libyaml.git"
-                        }
-                    ]
-                },
-                {
-                    "name": "libxmlb",
-                    "buildsystem": "meson",
-                    "config-opts": [
-                        "-Dgtkdoc=false"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/hughsie/libxmlb.git",
-                            "branch": "main"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "libadwaita",
-            "buildsystem": "meson",
-            "build-options" : { "cflags": "-O2 -g -Wno-incompatible-pointer-types" },
-            "config-opts": [
-                "-Dvapi=false",
-                "-Dtests=false",
-                "-Dexamples=false"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
-                    "tag": "1.4.0"
                 }
             ]
         },
