@@ -4,8 +4,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
-use crate::ui;
 use crate::model;
+use crate::ui;
 
 mod imp {
     use super::*;
