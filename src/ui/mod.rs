@@ -12,6 +12,7 @@ pub(crate) use self::client_view::ClientView;
 pub(crate) use self::components::AnimatedBin;
 pub(crate) use self::components::Avatar;
 pub(crate) use self::components::AvatarWithSelection;
+pub(crate) use self::components::CircularProgressBar;
 pub(crate) use self::components::MessageEntry;
 pub(crate) use self::components::PhoneNumberInput;
 pub(crate) use self::components::Snow;
@@ -79,8 +80,9 @@ pub(crate) fn init() {
     ChatHistoryModel::static_type();
     ChatHistoryRow::static_type();
     ChatInfoWindow::static_type();
-    ClientView::static_type();
+    CircularProgressBar::static_type();
     ClientManagerView::static_type();
+    ClientView::static_type();
     ContactRow::static_type();
     ContactsWindow::static_type();
     Content::static_type();
