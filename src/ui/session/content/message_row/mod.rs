@@ -343,6 +343,9 @@ impl Row {
                     ).unwrap_or_default() => {
                     self.update_specific_content::<_, ui::MessageSticker>(message_.clone());
                 }
+                MessageLocation(_) => {
+                    self.update_specific_content::<_, ui::MessageLocation>(message_.clone());
+                }
                 MessagePhoto(_) => {
                     self.update_specific_content::<_, ui::MessagePhoto>(message_.clone());
                 }
