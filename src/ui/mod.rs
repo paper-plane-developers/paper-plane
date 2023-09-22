@@ -13,6 +13,7 @@ pub(crate) use self::components::AnimatedBin;
 pub(crate) use self::components::Avatar;
 pub(crate) use self::components::AvatarWithSelection;
 pub(crate) use self::components::CircularProgressBar;
+pub(crate) use self::components::MapMarker;
 pub(crate) use self::components::MessageEntry;
 pub(crate) use self::components::PhoneNumberInput;
 pub(crate) use self::components::Snow;
@@ -93,6 +94,7 @@ pub(crate) fn init() {
     LoginPassword::static_type();
     LoginPhoneNumber::static_type();
     LoginRegistration::static_type();
+    MapMarker::static_type();
     MediaPicture::static_type();
     MessageBase::static_type();
     MessageBubble::static_type();
