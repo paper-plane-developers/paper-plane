@@ -7,6 +7,7 @@ blueprints = custom_target('blueprints',
 
     'components/animated_bin.blp',
     'components/avatar.blp',
+    'components/avatar_map_marker.blp',
     'components/avatar_with_selection.blp',
     'components/message_entry.blp',
     'components/phone_number_input.blp',

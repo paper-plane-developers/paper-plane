@@ -11,6 +11,7 @@ pub(crate) use self::client_manager_view::ClientManagerView;
 pub(crate) use self::client_view::ClientView;
 pub(crate) use self::components::AnimatedBin;
 pub(crate) use self::components::Avatar;
+pub(crate) use self::components::AvatarMapMarker;
 pub(crate) use self::components::AvatarWithSelection;
 pub(crate) use self::components::CircularProgressBar;
 pub(crate) use self::components::MapMarker;
@@ -72,6 +73,7 @@ pub(crate) use self::window::Window;
 pub(crate) fn init() {
     AnimatedBin::static_type();
     Avatar::static_type();
+    AvatarMapMarker::static_type();
     AvatarWithSelection::static_type();
     Background::static_type();
     ChatActionBar::static_type();

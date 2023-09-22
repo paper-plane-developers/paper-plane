@@ -1,0 +1,24 @@
+using Gtk 4.0;
+
+template $PaplAvatarMapMarker : Widget {
+  layout-manager: BinLayout {};
+
+  Overlay {
+    Image {
+      styles [
+        "hull",
+        "icon-dropshadow",
+      ]
+
+      icon-name: "avatar-map-marker-hull-symbolic";
+      pixel-size: 68;
+    }
+
+    [overlay]
+    $PaplAvatar avatar {
+      size: "48";
+      valign: "start";
+      margin-top: "4";
+    }
+  }
+}

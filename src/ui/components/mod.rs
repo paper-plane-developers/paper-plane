@@ -1,5 +1,6 @@
 mod animated_bin;
 mod avatar;
+mod avatar_map_marker;
 mod avatar_with_selection;
 mod circular_progress_bar;
 mod map_marker;
@@ -10,6 +11,7 @@ mod sticker;
 
 pub(crate) use self::animated_bin::AnimatedBin;
 pub(crate) use self::avatar::Avatar;
+pub(crate) use self::avatar_map_marker::AvatarMapMarker;
 pub(crate) use self::avatar_with_selection::AvatarWithSelection;
 pub(crate) use self::circular_progress_bar::CircularProgressBar;
 pub(crate) use self::map_marker::MapMarker;
