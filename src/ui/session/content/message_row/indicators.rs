@@ -244,7 +244,12 @@ impl MessageIndicators {
                 .and_then(|t| t.format(&gettext("%l:%M %p")))
                 .unwrap();
 
-            if message.is_edited() {
+            if message.is_edited()
+                && !matches!(
+                    message.content().0,
+                    tdlib::enums::MessageContent::MessageLocation(_)
+                )
+            {
                 format!("{} {}", gettext("edited"), datetime)
             } else {
                 datetime.into()

@@ -1,0 +1,67 @@
+using Gtk 4.0;
+
+template $PaplMessageLocation : $PaplMessageBase {
+  layout-manager: BinLayout {};
+
+  $PaplMessageBubble message_bubble {
+    styles ["location"]
+
+    prefix: Box {
+      orientation: vertical;
+
+        Overlay {
+
+          $PaplMap map {
+            name: "map";
+            overflow: "hidden";
+          }
+        }
+    };
+
+    suffix: Box caption_box {
+      styles [
+        "live-location-caption",
+      ]
+
+      spacing: 6;
+
+      Box {
+        orientation: vertical;
+        spacing: 3;
+
+        Label {
+          label: _("Live Location");
+          xalign: 0.0;
+
+          styles [
+            "heading",
+          ]
+        }
+
+        Label last_updated_label {
+          xalign: 0.0;
+
+          styles [
+            "caption",
+            "dim-label",
+          ]
+        }
+      }
+
+      Label expire_label {
+        hexpand: true;
+        xalign: 1.0;
+
+        styles [
+          "dim-label",
+          "numeric",
+        ]
+      }
+
+      $PaplCircularProgressBar progress_bar {
+        width-request: 22;
+        border-thickness: 12;
+      }
+    };
+  }
+}

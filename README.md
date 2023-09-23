@@ -85,6 +85,7 @@ The following packages are required to build Paper Plane:
 - cargo
 - GTK >= 4.10 (with the patch included in the build-aux directory)
 - libadwaita >= 1.4
+- libshumate >= 1.0.0
 - [TDLib 1.8.14](https://github.com/tdlib/td/commit/8517026415e75a8eec567774072cbbbbb52376c1)
 - [Telegram API Credentials](https://my.telegram.org/) (optional, but recommended)
 

@@ -188,6 +188,21 @@ impl Application {
             Some(&gettext("Sponsors")),
             &["Alisson Lauffer", "Jordan Maris"],
         );
+        about.add_legal_section(
+            "Maps",
+            Some(&gettext(
+                "<span size=\"small\">Map data by \
+                <a href=\"https://www.openstreetmap.org\">OpenStreetMap</a> \
+                and contributors</span>",
+            )),
+            gtk::License::Custom,
+            Some(&gettext(
+                "OpenStreetMap® is open data, licensed under the \
+                <a href=\"https://opendatacommons.org/licenses/odbl\">\
+                Open Data Commons Open Database License </a> (ODbL) by the \
+                <a href=\"https://osmfoundation.org\">aOpenStreetMap Foundation</a> (OSMF).",
+            )),
+        );
 
         about.present();
     }

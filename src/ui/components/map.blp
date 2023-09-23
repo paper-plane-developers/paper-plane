@@ -1,0 +1,36 @@
+using Gtk 4.0;
+
+Image marker_image {
+  styles [
+    "marker",
+    "icon-dropshadow",
+  ]
+
+  icon-name: "map-marker-symbolic";
+  pixel-size: 48;
+}
+
+template $PaplMap : Widget {
+
+  $ShumateMap map {
+    sensitive: "False";
+    hexpand: "True";
+    vexpand: "True";
+  }
+
+  Label {
+    styles [
+      "license",
+      "dim-label",
+      "caption",
+      "osd",
+    ]
+
+    label: _("Map data by OpenStreetMap");
+    xalign: 1.0;
+    halign: end;
+    valign: start;
+    wrap: true;
+    wrap-mode: char;
+  }
+}

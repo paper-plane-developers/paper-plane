@@ -154,8 +154,39 @@ messagebubble messageindicators {
   opacity: 0.7;
 }
 
-messagebubble > overlay {
+messagebubble > box {
   padding: 6px 9px;
+}
+
+messagebubble.location map {
+  margin: -4px -7px;
+  border-radius: 14px;
+}
+
+messagebubble.location.live-location map {
+  border-radius: 14px 14px 7px 7px;
+}
+
+messagebubble.location map .license {
+  border-radius: 9999px;
+  margin: 3px 6px 0 0;
+  padding: 1px 6px;
+}
+
+messagebubble.location map .marker {
+  color: @red_3;
+}
+
+messagebubble.location map avatarmapmarker .hull {
+  color: @accent_bg_color;
+}
+
+messagebubble.outgoing.location circularprogressbar {
+  color: @accent_bg_color;
+}
+
+messagebubble.location .live-location-caption {
+  margin-top: 9px;
 }
 
 messagebubble.document {
@@ -255,6 +286,7 @@ messageindicators image {
 }
 
 messagebubble.media:not(.with-label) messageindicators,
+messagebubble.location messageindicators,
 messagesticker messageindicators,
 .osd-indicator {
   background-color: alpha(black, 0.4);

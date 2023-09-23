@@ -34,6 +34,7 @@ pub(crate) use self::message_row::MessageDocument;
 pub(crate) use self::message_row::MessageDocumentStatusIndicator;
 pub(crate) use self::message_row::MessageIndicators;
 pub(crate) use self::message_row::MessageLabel;
+pub(crate) use self::message_row::MessageLocation;
 pub(crate) use self::message_row::MessagePhoto;
 pub(crate) use self::message_row::MessageReply;
 pub(crate) use self::message_row::MessageSticker;

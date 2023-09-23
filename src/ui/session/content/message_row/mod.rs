@@ -3,6 +3,7 @@ mod bubble;
 mod document;
 mod indicators;
 mod label;
+mod location;
 mod media_picture;
 mod photo;
 mod reply;
@@ -29,6 +30,7 @@ pub(crate) use self::document::MessageDocument;
 pub(crate) use self::document::StatusIndicator as MessageDocumentStatusIndicator;
 pub(crate) use self::indicators::MessageIndicators;
 pub(crate) use self::label::MessageLabel;
+pub(crate) use self::location::MessageLocation;
 pub(crate) use self::media_picture::MediaPicture;
 pub(crate) use self::photo::MessagePhoto;
 pub(crate) use self::reply::MessageReply;
@@ -340,6 +342,9 @@ impl Row {
                         |s| matches!(s.format, tdlib::enums::StickerFormat::Webp | tdlib::enums::StickerFormat::Tgs)
                     ).unwrap_or_default() => {
                     self.update_specific_content::<_, ui::MessageSticker>(message_.clone());
+                }
+                MessageLocation(_) => {
+                    self.update_specific_content::<_, ui::MessageLocation>(message_.clone());
                 }
                 MessagePhoto(_) => {
                     self.update_specific_content::<_, ui::MessagePhoto>(message_.clone());

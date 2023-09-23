@@ -11,6 +11,7 @@ use once_cell::sync::Lazy;
 
 use crate::model;
 use crate::ui;
+use crate::utils;
 
 const MAX_WIDTH: i32 = 400;
 const SENDER_COLOR_CLASSES: &[&str] = &[
@@ -32,6 +33,8 @@ mod imp {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) sender_binding: RefCell<Option<gtk::ExpressionWatch>>,
         #[template_child]
+        pub(super) box_: TemplateChild<gtk::Box>,
+        #[template_child]
         pub(super) overlay: TemplateChild<gtk::Overlay>,
         #[template_child]
         pub(super) sender_label: TemplateChild<gtk::Label>,
@@ -43,6 +46,8 @@ mod imp {
         pub(super) message_label: TemplateChild<ui::MessageLabel>,
         #[template_child]
         pub(super) indicators: TemplateChild<ui::MessageIndicators>,
+        #[template_child]
+        pub(super) suffix_bin: TemplateChild<adw::Bin>,
     }
 
     #[glib::object_subclass]
@@ -69,6 +74,9 @@ mod imp {
                         .write_only()
                         .build(),
                     glib::ParamSpecString::builder("label").write_only().build(),
+                    glib::ParamSpecObject::builder::<gtk::Widget>("suffix")
+                        .write_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()
@@ -80,12 +88,13 @@ mod imp {
             match pspec.name() {
                 "prefix" => obj.set_prefix(value.get().unwrap()),
                 "label" => obj.set_label(value.get().unwrap()),
+                "suffix" => obj.set_suffix(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
 
         fn dispose(&self) {
-            self.overlay.unparent();
+            utils::unparent_children(&*self.obj());
         }
     }
 
@@ -94,7 +103,7 @@ mod imp {
             // Limit the widget width
             if orientation == gtk::Orientation::Horizontal {
                 let (minimum, natural, minimum_baseline, natural_baseline) =
-                    self.overlay.measure(orientation, for_size);
+                    self.box_.measure(orientation, for_size);
 
                 (
                     minimum.min(MAX_WIDTH),
@@ -104,12 +113,12 @@ mod imp {
                 )
             } else {
                 let adjusted_for_size = for_size.min(MAX_WIDTH);
-                self.overlay.measure(orientation, adjusted_for_size)
+                self.box_.measure(orientation, adjusted_for_size)
             }
         }
 
         fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
-            self.overlay.allocate(width, height, baseline, None);
+            self.box_.allocate(width, height, baseline, None);
         }
 
         fn request_mode(&self) -> gtk::SizeRequestMode {
@@ -249,6 +258,10 @@ impl MessageBubble {
         }
 
         self.update_indicators_position();
+    }
+
+    pub(crate) fn set_suffix(&self, prefix: Option<&gtk::Widget>) {
+        self.imp().suffix_bin.set_child(prefix);
     }
 
     fn update_sender_color(&self, sender_id: Option<i64>) {

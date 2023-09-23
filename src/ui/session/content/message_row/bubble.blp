@@ -2,31 +2,40 @@ using Gtk 4.0;
 using Adw 1;
 
 template $PaplMessageBubble {
-  Overlay overlay {
-    Box {
-      orientation: vertical;
+  Box box_ {
+    orientation: vertical;
 
-      Label sender_label {
-        styles ["caption-heading"]
+    Overlay overlay {
 
-        ellipsize: end;
-        xalign: 0;
-        visible: false;
+      Box {
+        orientation: vertical;
+
+        Label sender_label {
+          styles ["caption-heading"]
+
+          ellipsize: end;
+          xalign: 0;
+          visible: false;
+        }
+
+        Adw.Bin message_reply_bin {}
+
+        Adw.Bin prefix_bin {}
+
+        $PaplMessageLabel message_label {
+          visible: false;
+        }
       }
 
-      Adw.Bin message_reply_bin {}
-
-      Adw.Bin prefix_bin {}
-
-      $PaplMessageLabel message_label {
-        visible: false;
+      [overlay]
+      $PaplMessageIndicators indicators {
+          halign: end;
+          valign: end;
       }
     }
 
-    [overlay]
-    $PaplMessageIndicators indicators {
-        halign: end;
-        valign: end;
+    Adw.Bin suffix_bin {
+      overflow: hidden;
     }
   }
 }
