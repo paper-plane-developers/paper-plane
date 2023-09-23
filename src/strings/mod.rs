@@ -1,3 +1,7 @@
+mod chat_subtitle_string;
+mod user_status_string;
+
+pub(crate) use chat_subtitle_string::ChatSubtitleString;
 use ellipse::Ellipse;
 use gettextrs::gettext;
 use gtk::glib;
@@ -6,6 +10,7 @@ use tdlib::enums::UserStatus;
 use tdlib::enums::UserType;
 use tdlib::types::MessageGame;
 use tdlib::types::MessageGameScore;
+pub(crate) use user_status_string::UserStatusString;
 
 use crate::i18n::gettext_f;
 use crate::i18n::ngettext_f;
@@ -409,7 +414,6 @@ pub(crate) fn user_status(status: &UserStatus) -> String {
             let was_online = glib::DateTime::from_unix_local(data.was_online as i64).unwrap();
             let time_span = now.difference(&was_online);
 
-            // TODO: Add a way to update the string when time passes
             if time_span.as_days() > 1 {
                 // Translators: This is an online status with the date
                 was_online.format(&gettext("last seen %x")).unwrap().into()
