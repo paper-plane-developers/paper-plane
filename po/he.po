@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-11 22:31+0100\n"
-"PO-Revision-Date: 2022-03-02 16:59+0000\n"
+"PO-Revision-Date: 2023-07-22 20:07+0000\n"
 "Last-Translator: Yosef Or Boczko <yoseforb@gnome.org>\n"
-"Language-Team: Hebrew <https://hosted.weblate.org/projects/paper-plane/"
-"paper-plane/he/>\n"
+"Language-Team: Hebrew <https://hosted.weblate.org/projects/paper-plane/main/"
+"he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.11.1-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -55,12 +55,12 @@ msgid "Recently used sessions"
 msgstr "הפעלה אחרונה בשימוש"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-#, fuzzy
 msgid ""
 "A list of most recently used sessions, sorted by their database directory "
 "names"
 msgstr ""
-"The ordered list of recently used sessions by their database directory name"
+"A list of most recently used sessions, sorted by their database directory "
+"names"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: data/resources/ui/preferences-window.blp:7
@@ -100,34 +100,32 @@ msgid "Select a chat to start messaging."
 msgstr "יש לבחור שיחה להתחלת התכתבות."
 
 #: data/resources/ui/content-chat-action-bar.blp:68
-#, fuzzy
 msgid "Message"
-msgstr "הודעה קולית"
+msgstr "הודעה"
 
 #: data/resources/ui/content-chat-action-bar.blp:96
 msgid "Unblock"
-msgstr ""
+msgstr "שחרור איש קשר"
 
 #: data/resources/ui/content-chat-action-bar.blp:113
 msgid "Join"
-msgstr ""
+msgstr "הצטרפות"
 
 #: data/resources/ui/content-chat-history.ui:74
 msgid "Scroll to bottom"
-msgstr ""
+msgstr "גלילה ללמטה"
 
 #: data/resources/ui/content-chat-history.ui:154
 msgid "View Info"
 msgstr "הצגת מידע"
 
 #: data/resources/ui/content-chat-history.ui:158
-#, fuzzy
 msgid "Leave Chat"
-msgstr "חיפוש שיחות"
+msgstr "לצאת מההתכתבות"
 
 #: data/resources/ui/content-send-photo-dialog.blp:29
 msgid "Caption"
-msgstr ""
+msgstr "כותרת"
 
 #: data/resources/ui/login.blp:25
 msgid "_Previous"
@@ -139,7 +137,7 @@ msgstr "_הבא"
 
 #: data/resources/ui/login.blp:68
 msgid "Welcome"
-msgstr ""
+msgstr "ברוך בואך"
 
 #: data/resources/ui/login.blp:88
 msgid "_Log in using QR code"
@@ -163,7 +161,7 @@ msgstr "קוד"
 
 #: data/resources/ui/login.blp:185
 msgid "The code cannot be sent anymore."
-msgstr ""
+msgstr "לא ניתן עוד לשלוח את הקוד."
 
 #: data/resources/ui/login.blp:218
 msgid "Register New Account"
@@ -206,7 +204,6 @@ msgid "Use Recovery Code"
 msgstr "שימוש בקוד אחזור"
 
 #: data/resources/ui/login.blp:363
-#, fuzzy
 msgid ""
 "When you set your cloud password, you provided a recovery e-mail address. A "
 "code can be sent there to reset your password."
@@ -227,36 +224,32 @@ msgid "_Delete Account"
 msgstr "_מחיקת חשבון"
 
 #: data/resources/ui/login.blp:460
-#, fuzzy
 msgid "Enter the code e-mailed to you"
-msgstr "יש להזין את הקוד שנשלח בדוא״ל"
+msgstr "יש להזין את הקוד שנשלח אליך בדוא״ל"
 
 #: data/resources/ui/login.blp:493
-#, fuzzy
 msgid "Unable to access your e-mail?"
-msgstr "_לא ניתן לגשת לדוא״ל שלך?"
+msgstr "_אין באפשרותך לגשת לדוא״ל שלך?"
 
 #: data/resources/ui/message-menu.blp:6
 msgid "_Reply"
-msgstr ""
+msgstr "לה_שיב"
 
 #: data/resources/ui/message-menu.blp:12
 msgid "_Edit"
-msgstr ""
+msgstr "_עריכה"
 
 #: data/resources/ui/message-menu.blp:18
-#, fuzzy
 msgid "Delete for Ever_yone"
-msgstr "_מחיקת חשבון"
+msgstr "מחיקה ל_כולם"
 
 #: data/resources/ui/message-menu.blp:24
-#, fuzzy
 msgid "_Delete for Me"
-msgstr "_מחיקת חשבון"
+msgstr "_מחיקה לי"
 
 #: data/resources/ui/phone-number-input.blp:12
 msgid "Country"
-msgstr ""
+msgstr "מדינה"
 
 #: data/resources/ui/phone-number-input.blp:18
 msgid "Phone Number"
@@ -272,15 +265,15 @@ msgstr "ערכת נושא כהה"
 
 #: data/resources/ui/preferences-window.blp:29
 msgid "Storage"
-msgstr ""
+msgstr "אחסון"
 
 #: data/resources/ui/preferences-window.blp:32
 msgid "Cache Size"
-msgstr ""
+msgstr "גודל מטמון"
 
 #: data/resources/ui/preferences-window.blp:42
 msgid "Clear Cache"
-msgstr ""
+msgstr "ניקוי מטמון"
 
 #: data/resources/ui/shortcuts.blp:11
 msgctxt "shortcut window"
@@ -308,15 +301,14 @@ msgid "Search Chats"
 msgstr "חיפוש שיחות"
 
 #: data/resources/ui/shortcuts.blp:34
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Chat History"
-msgstr "רשימת שיחות"
+msgstr "היסטוריית שיחות"
 
 #: data/resources/ui/shortcuts.blp:37
 msgctxt "shortcut window"
 msgid "Send Photo from Clipboard"
-msgstr ""
+msgstr "שליחת תמונה מלוח הגזירים"
 
 #: data/resources/ui/sidebar.ui:6
 msgid "_Log Out"
@@ -324,7 +316,7 @@ msgstr "_יציאה"
 
 #: data/resources/ui/sidebar.ui:12
 msgid "_Contacts"
-msgstr ""
+msgstr "_אנשי קשר"
 
 #: data/resources/ui/sidebar.ui:18
 msgid "_Preferences"
@@ -336,61 +328,56 @@ msgstr "_צירופי מקשים"
 
 #: data/resources/ui/sidebar.ui:26
 msgid "_About Paper Plane"
-msgstr "_על אותו Paper Plane"
+msgstr "_על אודות Paper Plane"
 
 #: data/resources/ui/sidebar-row-menu.blp:6
 msgid "_Pin"
-msgstr ""
+msgstr "ה_צמד"
 
 #: data/resources/ui/sidebar-row-menu.blp:12
 msgid "_Unpin"
-msgstr ""
+msgstr "_ביטול הצמדה"
 
 #: data/resources/ui/sidebar-row-menu.blp:18
 msgid "_Mark as Unread"
-msgstr ""
+msgstr "סימון כ_לא נקרא"
 
 #: data/resources/ui/sidebar-row-menu.blp:24
 msgid "Mark as _Read"
-msgstr ""
+msgstr "סימון כ_נקרא"
 
 #: data/resources/ui/sidebar-search.ui:12
-#, fuzzy
 msgid "Search"
-msgstr "חיפוש שיחות"
+msgstr "חיפוש"
 
 #: data/resources/ui/sidebar-search.ui:75
-#, fuzzy
 msgid "No Search Results"
-msgstr "חיפוש שיחות"
+msgstr "אין תוצאות לחיפוש"
 
 #: data/resources/ui/sidebar-search.ui:76
 msgid "Try a different search."
-msgstr ""
+msgstr "יש לנסות חיפוש שונה."
 
 #: src/application.rs:166
-#, fuzzy
 msgid "Paper Plane developers"
-msgstr "Paper Plane"
+msgstr "מפתחי Paper Plane"
 
 #: src/application.rs:182
 msgid "Sponsors"
-msgstr ""
+msgstr "נותני חסות"
 
 #: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
 #: src/session/sidebar/search/mod.rs:205
-#, fuzzy
 msgid "Saved Messages"
-msgstr "הודעה קולית"
+msgstr "הודעות שמורות"
 
 #: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
-#, fuzzy
 msgid "Deleted Account"
-msgstr "_מחיקת חשבון"
+msgstr "מחיקת חשבון"
 
 #: src/expressions.rs:92
 msgid "The admins of this group have restricted you from writing here"
-msgstr ""
+msgstr "מנהל הקבוצה הזאת מגביל אותך מלכתוב כאן"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
@@ -398,22 +385,20 @@ msgstr ""
 #: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
 #: src/session/sidebar/row.rs:646
 msgid "%l:%M %p"
-msgstr "%l∶%M %p"
+msgstr "%p ‎%l∶%M"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:110
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "‫%e ב%B, %Y"
+msgstr "%B %e, %Y %l:%M %p"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
-msgstr ""
+msgstr "לא ניתן לכתוב הודעות בקבוצה זו."
 
 #: src/login.rs:372
-#, fuzzy
 msgid ""
 "One way to continue using your account is to delete and then recreate it"
 msgstr ""
@@ -421,7 +406,6 @@ msgstr ""
 "אותו מחדש"
 
 #: src/login.rs:377
-#, fuzzy
 msgid ""
 "Since you have not provided a recovery e-mail address, the only way to "
 "continue using your account is to delete and then recreate it"
@@ -438,19 +422,18 @@ msgstr ""
 "ששיתפת!"
 
 #: src/login.rs:676
-#, fuzzy
 msgid "Do you accept the Terms of Service?"
-msgstr "האם אכן ברצונך לקבל את תנאי השימוש?"
+msgstr "האם ברצונך לקבל את תנאי השימוש?"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_No"
-msgstr ""
+msgstr "_לא"
 
 #: src/login.rs:677 src/session/content/chat_history.rs:233
 #: src/session/content/message_row/mod.rs:183
 msgid "_Yes"
-msgstr ""
+msgstr "_כן"
 
 #: src/login.rs:680
 msgid "Terms of Service"
@@ -458,7 +441,7 @@ msgstr "תנאי השימוש"
 
 #: src/login.rs:681 src/login.rs:991
 msgid "_OK"
-msgstr ""
+msgstr "_אישור"
 
 #: src/login.rs:903
 msgid "Warning"
@@ -477,14 +460,13 @@ msgstr ""
 
 #: src/login.rs:911
 msgid "_Cancel"
-msgstr ""
+msgstr "_ביטול"
 
 #: src/login.rs:984
 msgid "Sorry"
 msgstr "מצטערים"
 
 #: src/login.rs:986
-#, fuzzy
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -494,19 +476,18 @@ msgstr ""
 
 #. Translators: This is an authentication method
 #: src/login.rs:1058
-#, fuzzy
 msgid "Telegram"
-msgstr "Paper Plane"
+msgstr "טלגרם"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1060
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1062
 msgid "Call"
-msgstr ""
+msgstr "שיחה"
 
 #. Translators: This is an authentication method
 #: src/login.rs:1064
@@ -515,7 +496,6 @@ msgstr ""
 
 #. Translators: This is an authentication method
 #: src/login.rs:1066
-#, fuzzy
 msgid "Missed Call"
 msgstr "שיחה שלא נענתה"
 
@@ -526,77 +506,73 @@ msgstr ""
 
 #: src/phone_number_input.rs:204
 msgid "You entered an invalid country code."
-msgstr ""
+msgstr "הזנת קוד מדינה לא תקף."
 
 #: src/strings.rs:28
 msgid "{sender} is choosing a contact"
-msgstr ""
+msgstr "‏{sender} בוחר איש קשר"
 
 #: src/strings.rs:32
 msgid "{sender1} and {sender2} are choosing contacts"
-msgstr ""
+msgstr "‏{sender1} וכן {sender2} בוחרים אנשי קשר"
 
 #: src/strings.rs:39
 msgid "{num} people are choosing contacts"
-msgstr ""
+msgstr "‏{num} אנשים בוחרים אנשי קשר"
 
 #: src/strings.rs:44
 msgid "choosing a contact"
-msgstr ""
+msgstr "בוחר איש קשר"
 
 #: src/strings.rs:51
 msgid "{sender} is choosing a location"
-msgstr ""
+msgstr "‏{sender} בוחר מיקם"
 
 #: src/strings.rs:55
 msgid "{sender1} and {sender2} are choosing locations"
-msgstr ""
+msgstr "‏{sender1} וכן {sender2} בוחרים מקומות"
 
 #: src/strings.rs:62
 msgid "{num} people are choosing locations"
-msgstr ""
+msgstr "‏{num} אנשים בוחרים מקומות"
 
 #: src/strings.rs:67
 msgid "choosing a location"
-msgstr ""
+msgstr "בוחר מקומות"
 
 #: src/strings.rs:74
 msgid "{sender} is choosing a sticker"
-msgstr ""
+msgstr "‏{sender} בוחר מדבקה"
 
 #: src/strings.rs:78
 msgid "{sender1} and {sender2} are choosing stickers"
-msgstr ""
+msgstr "‏{sender1} וכן {sender2} בוחרים מדבקות"
 
 #: src/strings.rs:85
 msgid "{num} people are choosing stickers"
-msgstr ""
+msgstr "‏{num} אנשים בוחרים מדבקות"
 
 #: src/strings.rs:90
 msgid "choosing a sticker"
-msgstr ""
+msgstr "בוחר מדבקה"
 
 #: src/strings.rs:97
-#, fuzzy
 msgid "{sender} is recording a video"
-msgstr "שיחת וידאו נכנסת"
+msgstr "‏{sender} מצלם סרטון"
 
 #: src/strings.rs:101
 msgid "{sender1} and {sender2} are recording videos"
-msgstr ""
+msgstr "‏{sender1} וכן {sender2} מקליטים סרטונים"
 
 #: src/strings.rs:108
-#, fuzzy
 msgid "{num} people are recording videos"
-msgstr "שיחת וידאו נכנסת"
+msgstr "‏{num} אנשים מקליטים סרטונים"
 
 #: src/strings.rs:113
-#, fuzzy
 msgid "recording a video"
-msgstr "שיחת וידאו נכנסת"
+msgstr "מקליט סרטון"
 
 #: src/strings.rs:120
-#, fuzzy
 msgid "{sender} is recording a video note"
 msgstr "שיחת וידאו נכנסת"
 
@@ -613,7 +589,6 @@ msgid "recording a video note"
 msgstr ""
 
 #: src/strings.rs:143
-#, fuzzy
 msgid "{sender} is recording a voice note"
 msgstr "שיחת וידאו נכנסת"
 
@@ -646,7 +621,6 @@ msgid "playing a game"
 msgstr ""
 
 #: src/strings.rs:189
-#, fuzzy
 msgid "{sender} is typing"
 msgstr "הצטרפת לקבוצה"
 
@@ -683,7 +657,6 @@ msgid "{sender} is uploading a photo ({progress}%)"
 msgstr ""
 
 #: src/strings.rs:245
-#, fuzzy
 msgid "{sender1} and {sender2} are uploading photos"
 msgstr "מחקת את תמונת הקבוצה"
 
@@ -761,76 +734,74 @@ msgstr ""
 
 #: src/strings.rs:395
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "נראה לאחרונה לפני זמן רב"
 
 #: src/strings.rs:396
 msgid "online"
-msgstr ""
+msgstr "מחובר"
 
 #. Translators: This is an online status with the date
 #: src/strings.rs:405
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "נראה לאחרונה %x"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:410
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "נראה לאחרונה אתמול בשעה ‎%l:%M ‏%p"
 
 #: src/strings.rs:414
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "נראה לאחרונה לפני שעה"
+msgstr[1] "נראה לאחרונה לפני שעתיים"
+msgstr[2] "נראה לאחרונה לפני {num} שעות"
+msgstr[3] "נראה לאחרונה לפני {num} שעות"
 
 #: src/strings.rs:421
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "נראה לאחרונה לפני דקה"
+msgstr[1] "נראה לאחרונה לפני שתי דקות"
+msgstr[2] "נראה לאחרונה לפני {num} דקות"
+msgstr[3] "נראה לאחרונה לפני {num} דקות"
 
 #: src/strings.rs:427
 msgid "last seen just now"
-msgstr ""
+msgstr "נראה לאחרונה ממש עכשיו"
 
 #: src/strings.rs:430
 msgid "last seen recently"
-msgstr ""
+msgstr "נראה לאחרונה לא מזמן"
 
 #: src/strings.rs:431
 msgid "last seen within a week"
-msgstr ""
+msgstr "נראה לאחרונה בשבוע האחרון"
 
 #: src/strings.rs:432
 msgid "last seen within a month"
-msgstr ""
+msgstr "נראה לאחרונה בחודש האחרון"
 
 #: src/strings.rs:456
 msgid "Photo has expired"
-msgstr ""
+msgstr "התמונה פגת תוקף"
 
 #: src/strings.rs:459
 msgid "Video has expired"
-msgstr ""
+msgstr "הסרטון פג תוקף"
 
 #: src/strings.rs:460
-#, fuzzy
 msgid "Video Message"
-msgstr "הודעה קולית"
+msgstr "הודעה עם סרטון"
 
 #: src/strings.rs:491
 msgid "{sender} took a screenshot!"
-msgstr ""
+msgstr "‏{sender} צילם מסך!"
 
 #: src/strings.rs:496
-#, fuzzy
 msgid "Unsupported Message"
 msgstr "הודעה לא נתמכת"
 
@@ -864,9 +835,8 @@ msgstr ""
 
 #. Translators: This is a sticker with the associated emoji
 #: src/strings.rs:550
-#, fuzzy
 msgid "{emoji} Sticker"
-msgstr "מדבקה"
+msgstr "‏{emoji} מדבקה"
 
 #: src/strings.rs:555
 msgid "Video"
@@ -877,14 +847,12 @@ msgid "Video, {caption}"
 msgstr ""
 
 #: src/strings.rs:563
-#, fuzzy
 msgid "Voice Message"
 msgstr "הודעה קולית"
 
 #: src/strings.rs:565
-#, fuzzy
 msgid "Voice Message, {caption}"
-msgstr "הודעה קולית"
+msgstr "הודעה קולית, {caption}"
 
 #: src/strings.rs:582
 msgid "Declined outgoing video call"
@@ -903,7 +871,6 @@ msgid "Declined incoming call"
 msgstr "נדחתה שיחה נכנסת"
 
 #: src/strings.rs:600
-#, fuzzy
 msgid "Canceled call"
 msgstr "שיחה בוטלה"
 
@@ -912,12 +879,10 @@ msgid "Missed call"
 msgstr "שיחה שלא נענתה"
 
 #: src/strings.rs:615
-#, fuzzy
 msgid "Outgoing video call ({duration})"
 msgstr "שיחת וידאו יוצאת"
 
 #: src/strings.rs:620
-#, fuzzy
 msgid "Outgoing call ({duration})"
 msgstr "שיחה יוצאת"
 
@@ -930,12 +895,10 @@ msgid "Outgoing call"
 msgstr "שיחה יוצאת"
 
 #: src/strings.rs:632
-#, fuzzy
 msgid "Incoming video call ({duration})"
 msgstr "שיחת וידאו נכנסת"
 
 #: src/strings.rs:637
-#, fuzzy
 msgid "Incoming call ({duration})"
 msgstr "שיחה נכנסת"
 
@@ -952,12 +915,10 @@ msgid "{sender} created the group \"{title}\""
 msgstr ""
 
 #: src/strings.rs:658
-#, fuzzy
 msgid "Channel created"
 msgstr "תמונת הערוץ נמחקה"
 
 #: src/strings.rs:672
-#, fuzzy
 msgid "Channel renamed to \"{title}\""
 msgstr "תמונת הערוץ נמחקה"
 
@@ -966,12 +927,10 @@ msgid "{sender} changed the group name to \"{title}\""
 msgstr ""
 
 #: src/strings.rs:687
-#, fuzzy
 msgid "Channel photo changed"
 msgstr "תמונת הערוץ נמחקה"
 
 #: src/strings.rs:691
-#, fuzzy
 msgid "{sender} changed the group photo"
 msgstr "מחקת את תמונת הקבוצה"
 
@@ -980,12 +939,10 @@ msgid "Channel photo removed"
 msgstr "תמונת הערוץ נמחקה"
 
 #: src/strings.rs:703
-#, fuzzy
 msgid "{sender} removed the group photo"
 msgstr "מחקת את תמונת הקבוצה"
 
 #: src/strings.rs:711 src/strings.rs:746
-#, fuzzy
 msgid "{sender} joined the group"
 msgstr "הצטרפת לקבוצה"
 
@@ -1002,7 +959,6 @@ msgid "{sender} joined the group via invite link"
 msgstr ""
 
 #: src/strings.rs:753
-#, fuzzy
 msgid "{sender} left the group"
 msgstr "עזבת את הקבוצה"
 
@@ -1060,46 +1016,45 @@ msgstr ""
 
 #: src/strings.rs:831
 msgid "{sender} joined Telegram"
-msgstr ""
+msgstr "‏{sender} הצטרך לטלגרם"
 
 #: src/session/preferences_window.rs:208
 msgid "Cache cleared"
-msgstr ""
+msgstr "המטמון נוקה"
 
 #: src/session/content/chat_action_bar.rs:363
 #: src/session/content/chat_action_bar.rs:380
 msgid "Unknown"
-msgstr ""
+msgstr "לא ידוע"
 
 #: src/session/content/chat_action_bar.rs:365
 #: src/session/content/chat_action_bar.rs:382
 msgid "Deleted Message"
-msgstr ""
+msgstr "מחיקת הודע"
 
 #: src/session/content/chat_action_bar.rs:376
-#, fuzzy
 msgid "Edit Message"
-msgstr "הודעה קולית"
+msgstr "עריכת הודעה"
 
 #: src/session/content/chat_action_bar.rs:471
 msgid "Images"
-msgstr ""
+msgstr "תמונות"
 
 #: src/session/content/chat_action_bar.rs:790
 msgid "Unmute"
-msgstr ""
+msgstr "ביטול ההשתקה"
 
 #: src/session/content/chat_action_bar.rs:792
 msgid "Mute"
-msgstr ""
+msgstr "השתקה"
 
 #: src/session/content/chat_history.rs:230
 msgid "Leave chat?"
-msgstr ""
+msgstr "לעזוב את השיחה?"
 
 #: src/session/content/chat_history.rs:231
 msgid "Do you want to leave this chat?"
-msgstr ""
+msgstr "האם ברצונך לעזוב שיחה זאת?"
 
 #. Translators: This is a date format in the day divider without the year
 #: src/session/content/chat_history_row.rs:121
@@ -1113,7 +1068,7 @@ msgstr "‫%e ב%B, %Y"
 
 #: src/session/content/chat_info_window.rs:131
 msgid "bot"
-msgstr ""
+msgstr "בוט"
 
 #: src/session/content/chat_info_window.rs:146
 msgid "Mobile"
@@ -1135,74 +1090,71 @@ msgstr[3] ""
 #: src/session/content/chat_info_window.rs:205
 #: src/session/content/chat_info_window.rs:264
 msgid "Description"
-msgstr ""
+msgstr "תיאור"
 
 #: src/session/content/chat_info_window.rs:235
 msgid "Link"
-msgstr ""
+msgstr "קישור"
 
 #: src/session/content/chat_info_window.rs:283
 msgid "Copied to clipboard"
-msgstr ""
+msgstr "הועתק ללוח הגזירים"
 
 #: src/session/content/message_row/indicators.rs:266
 msgid "edited"
-msgstr ""
+msgstr "נערך"
 
 #: src/session/content/message_row/indicators.rs:271
 msgid "sponsored"
-msgstr ""
+msgstr "ממומן"
 
 #: src/session/content/message_row/mod.rs:171
 msgid "Do you want to delete this message for <b>everyone</b>?"
-msgstr ""
+msgstr "האם ברצונך למחוק הודעה זו <b>לכולם</b>?"
 
 #: src/session/content/message_row/mod.rs:173
 msgid "Do you want to delete this message?"
-msgstr ""
+msgstr "האם ברצונך למחוק הודעה זו?"
 
 #: src/session/content/message_row/mod.rs:177
 msgid "Confirm Message Deletion"
-msgstr ""
+msgstr "אימות מחיקת הודעה"
 
 #: src/session/content/message_row/reply.rs:96
 msgid "Loading…"
-msgstr ""
+msgstr "בטעינה…"
 
 #: src/session/content/message_row/text.rs:131
 msgid "This message is unsupported"
 msgstr "הודעה זו לא נתמכת"
 
 #: src/session/sidebar/row.rs:417
-#, fuzzy
 msgid "Draft:"
-msgstr "טיוטה"
+msgstr "טיוטה:"
 
 #: src/session/sidebar/row.rs:597
 msgid "You"
 msgstr "אני"
 
 #: src/session/sidebar/search/section_row.rs:130
-#, fuzzy
 msgid "Chats"
-msgstr "רשימת שיחות"
+msgstr "התכתבויות"
 
 #: src/session/sidebar/search/section_row.rs:133
 msgid "Global Search"
-msgstr ""
+msgstr "חיפוש כללי"
 
 #: src/session/sidebar/search/section_row.rs:136
 msgid "Recent"
-msgstr ""
+msgstr "אחרונים"
 
 #: src/tdlib/country_info.rs:115
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "קוד מדינה לא תקף"
 
 #: src/tdlib/country_info.rs:124
-#, fuzzy
 msgid "Test Account"
-msgstr "_מחיקת חשבון"
+msgstr "בדיקת חשבון"
 
 #~ msgid "Welcome to Paper Plane"
 #~ msgstr "ברוך בואך אל Paper Plane"
