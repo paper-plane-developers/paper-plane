@@ -1,7 +1,6 @@
-use adw::subclass::prelude::BinImpl;
+use adw::subclass::prelude::*;
 use gtk::glib;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 

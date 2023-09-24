@@ -1,11 +1,9 @@
 use std::cell::RefCell;
 
-use adw::prelude::BinExt;
-use adw::subclass::prelude::BinImpl;
+use adw::prelude::*;
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 
 use crate::model;

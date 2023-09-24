@@ -5,12 +5,11 @@ mod row;
 mod sidebar;
 mod switcher;
 
-use adw::subclass::prelude::BinImpl;
+use adw::subclass::prelude::*;
 use glib::clone;
 use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
