@@ -14,8 +14,6 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use tdlib::enums;
-use tdlib::functions;
 
 pub(crate) use self::contacts_window::ContactsWindow;
 pub(crate) use self::contacts_window::Row as ContactRow;
@@ -178,8 +176,8 @@ impl Session {
         match self.model().unwrap().try_chat(chat_id) {
             Some(chat) => self.imp().sidebar.set_selected_chat(Some(&chat)),
             None => utils::spawn(clone!(@weak self as obj => async move {
-                match functions::create_private_chat(chat_id, true, obj.model().unwrap().client_().id()).await {
-                    Ok(enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(obj.model().unwrap().try_chat(data.id).as_ref()),
+                match tdlib::functions::create_private_chat(chat_id, true, obj.model().unwrap().client_().id()).await {
+                    Ok(tdlib::enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(obj.model().unwrap().try_chat(data.id).as_ref()),
                     Err(e) => log::warn!("Failed to create private chat: {:?}", e),
                 }
             })),

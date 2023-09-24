@@ -7,9 +7,6 @@ use glib::ObjectExt;
 use glib::Properties;
 use glib::WeakRef;
 use gtk::glib;
-use tdlib::functions;
-use tdlib::types;
-use tdlib::types::AuthorizationStateWaitCode;
 
 use crate::model;
 
@@ -103,7 +100,10 @@ glib::wrapper! {
 }
 
 impl ClientStateAuthCode {
-    pub(crate) fn new(auth: &model::ClientStateAuth, data: AuthorizationStateWaitCode) -> Self {
+    pub(crate) fn new(
+        auth: &model::ClientStateAuth,
+        data: tdlib::types::AuthorizationStateWaitCode,
+    ) -> Self {
         glib::Object::builder()
             .property("auth", auth)
             .property("data", model::BoxedAuthorizationStateWaitCode(data))
@@ -114,8 +114,8 @@ impl ClientStateAuthCode {
         self.auth().unwrap()
     }
 
-    pub(crate) async fn send_code(&self, code: String) -> Result<(), types::Error> {
-        match functions::check_authentication_code(code, self.auth_().client_().id()).await {
+    pub(crate) async fn send_code(&self, code: String) -> Result<(), tdlib::types::Error> {
+        match tdlib::functions::check_authentication_code(code, self.auth_().client_().id()).await {
             Ok(_) => {
                 self.imp().stop_code_next_type_countdown();
                 Ok(())
@@ -127,8 +127,8 @@ impl ClientStateAuthCode {
         }
     }
 
-    pub(crate) async fn resend_auth_code(&self) -> Result<(), types::Error> {
-        match functions::resend_authentication_code(self.auth_().client_().id()).await {
+    pub(crate) async fn resend_auth_code(&self) -> Result<(), tdlib::types::Error> {
+        match tdlib::functions::resend_authentication_code(self.auth_().client_().id()).await {
             Ok(_) => Ok(()),
             Err(e) => {
                 log::error!("Failed to resend auth code: {e:?}");
