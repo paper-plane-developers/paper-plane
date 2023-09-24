@@ -105,7 +105,7 @@ impl ui::MessageBaseExt for MessageSticker {
 
         imp.message.set(Some(message));
 
-        imp.indicators.set_message(message.clone().upcast());
+        imp.indicators.set_message(message.upcast_ref());
 
         if message.reply_to_message_id() != 0 {
             let reply = ui::MessageReply::new(message);

@@ -136,7 +136,7 @@ impl MessageBubble {
     pub(crate) fn update_from_message(&self, message: &model::Message, force_hide_sender: bool) {
         let imp = self.imp();
 
-        imp.indicators.set_message(message.clone().upcast());
+        imp.indicators.set_message(message.upcast_ref());
 
         let is_channel = if let model::ChatType::Supergroup(data) = message.chat_().chat_type() {
             data.is_channel()
@@ -217,8 +217,7 @@ impl MessageBubble {
     ) {
         let imp = self.imp();
 
-        imp.indicators
-            .set_message(sponsored_message.clone().upcast());
+        imp.indicators.set_message(sponsored_message.upcast_ref());
 
         self.remove_css_class("outgoing");
 
