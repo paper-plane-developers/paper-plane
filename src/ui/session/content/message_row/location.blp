@@ -6,22 +6,15 @@ template $PaplMessageLocation : $PaplMessageBase {
   $PaplMessageBubble message_bubble {
     styles ["location"]
 
-    prefix: Box {
-      orientation: vertical;
-
-        Overlay {
-
-          $PaplMap map {
-            name: "map";
-            overflow: "hidden";
-          }
-        }
+    prefix: Overlay {
+      $PaplMap map {
+        name: "map";
+        overflow: "hidden";
+      }
     };
 
     suffix: Box caption_box {
-      styles [
-        "live-location-caption",
-      ]
+      styles ["suffix"]
 
       spacing: 6;
 

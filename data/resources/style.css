@@ -185,7 +185,7 @@ messagebubble.outgoing.location circularprogressbar {
   color: @accent_bg_color;
 }
 
-messagebubble.location .live-location-caption {
+messagebubble.location .suffix {
   margin-top: 9px;
 }
 
