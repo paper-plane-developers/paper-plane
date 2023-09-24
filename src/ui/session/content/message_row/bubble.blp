@@ -21,10 +21,6 @@ template $PaplMessageBubble {
         Adw.Bin message_reply_bin {}
 
         Adw.Bin prefix_bin {}
-
-        $PaplMessageLabel message_label {
-          visible: false;
-        }
       }
 
       [overlay]
@@ -36,6 +32,10 @@ template $PaplMessageBubble {
 
     Adw.Bin suffix_bin {
       overflow: hidden;
+    }
+
+    $PaplMessageLabel message_label {
+      visible: false;
     }
   }
 }
