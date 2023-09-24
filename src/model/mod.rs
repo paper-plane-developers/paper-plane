@@ -28,8 +28,10 @@ mod supergroup;
 mod user;
 
 use gtk::glib;
+use tdlib::enums::BlockList;
 use tdlib::enums::ChatMemberStatus;
 use tdlib::enums::MessageContent;
+use tdlib::enums::MessageReplyTo;
 use tdlib::enums::MessageSendingState;
 use tdlib::enums::UserStatus;
 use tdlib::enums::UserType;
@@ -136,6 +138,10 @@ pub(crate) struct BoxedChatPermissions(pub(crate) ChatPermissions);
 pub(crate) struct BoxedDraftMessage(pub(crate) DraftMessage);
 
 #[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedBlockList", nullable)]
+pub(crate) struct BoxedBlockList(pub(crate) BlockList);
+
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedFormattedText", nullable)]
 pub(crate) struct BoxedFormattedText(pub(crate) FormattedText);
 
@@ -147,6 +153,10 @@ impl Default for BoxedMessageContent {
         Self(MessageContent::MessageUnsupported)
     }
 }
+
+#[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[boxed_type(name = "BoxedMessageReplyTo", nullable)]
+pub(crate) struct BoxedMessageReplyTo(pub(crate) MessageReplyTo);
 
 #[derive(Clone, Debug, Default, PartialEq, glib::Boxed)]
 #[boxed_type(name = "BoxedScopeNotificationSettings", nullable)]

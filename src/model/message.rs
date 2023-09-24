@@ -74,9 +74,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) forward_info: OnceCell<Option<model::MessageForwardInfo>>,
         #[property(get, set, construct_only)]
-        pub(super) reply_in_chat_id: OnceCell<i64>,
-        #[property(get, set, construct_only)]
-        pub(super) reply_to_message_id: OnceCell<i64>,
+        pub(super) reply_to: OnceCell<Option<model::BoxedMessageReplyTo>>,
         #[property(get)]
         pub(super) content: RefCell<model::BoxedMessageContent>,
         #[property(get)]
@@ -144,8 +142,10 @@ impl Message {
                     .forward_info
                     .map(|forward_info| model::MessageForwardInfo::new(chat, forward_info)),
             )
-            .property("reply-in-chat-id", td_message.reply_in_chat_id)
-            .property("reply-to-message-id", td_message.reply_to_message_id)
+            .property(
+                "reply-to",
+                td_message.reply_to.map(model::BoxedMessageReplyTo),
+            )
             .build();
 
         let imp = obj.imp();

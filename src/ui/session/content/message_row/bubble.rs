@@ -178,7 +178,12 @@ impl MessageBubble {
         };
 
         // Handle MessageReply
-        if message.reply_to_message_id() != 0 {
+        if matches!(
+            message.reply_to(),
+            Some(model::BoxedMessageReplyTo(
+                tdlib::enums::MessageReplyTo::Message(_)
+            ))
+        ) {
             let reply = ui::MessageReply::new(message);
 
             // FIXME: Do not show message reply when message is being deleted
@@ -225,14 +230,12 @@ impl MessageBubble {
             binding.unwatch();
         }
 
-        let sender_binding = model::Chat::this_expression("title").bind(
-            &*imp.sender_label,
-            "label",
-            Some(&sponsored_message.sponsor_chat_()),
-        );
-        imp.sender_binding.replace(Some(sender_binding));
+        imp.sender_label
+            .set_label(&sponsored_message.sponsor_label());
 
-        self.update_sender_color(Some(sponsored_message.sponsor_chat_().id()));
+        let label_hash = hash_label(&sponsored_message.sponsor_label());
+
+        self.update_sender_color(Some(label_hash));
 
         imp.sender_label.set_visible(true);
     }
@@ -270,12 +273,10 @@ impl MessageBubble {
             imp.sender_label.remove_css_class(&old_class);
         }
 
-        let color_class =
-            SENDER_COLOR_CLASSES[sender_id.map(|id| id as usize).unwrap_or_else(|| {
-                let mut s = DefaultHasher::new();
-                imp.sender_label.label().hash(&mut s);
-                s.finish() as usize
-            }) % SENDER_COLOR_CLASSES.len()];
+        let color_class = SENDER_COLOR_CLASSES[sender_id
+            .map(|id| id as usize)
+            .unwrap_or_else(|| hash_label(&imp.sender_label.label()) as usize)
+            % SENDER_COLOR_CLASSES.len()];
 
         imp.sender_label.add_css_class(color_class);
         imp.sender_color_class.replace(Some(color_class.into()));
@@ -294,4 +295,10 @@ impl MessageBubble {
                 .set_indicators(Some(imp.indicators.clone()));
         }
     }
+}
+
+fn hash_label(label: &str) -> i64 {
+    let mut hasher = DefaultHasher::new();
+    label.hash(&mut hasher);
+    hasher.finish() as i64
 }

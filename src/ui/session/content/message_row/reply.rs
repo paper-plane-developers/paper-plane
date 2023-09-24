@@ -97,19 +97,26 @@ impl MessageReply {
         let imp = self.imp();
 
         let message = self.message().unwrap();
-        let reply_to_message_id = message.reply_to_message_id();
         let is_outgoing = message.is_outgoing();
-        let chat = if message.reply_in_chat_id() != 0 {
-            message.chat_().session_().chat(message.reply_in_chat_id())
-        } else {
-            message.chat_()
-        };
 
-        if let Ok(message) = chat.fetch_message(reply_to_message_id).await {
-            self.update_from_message(&message, is_outgoing);
-        } else {
-            imp.message_label.set_label("Deleted message");
-        }
+        match message.reply_to().unwrap().0 {
+            tdlib::enums::MessageReplyTo::Message(reply_to) => {
+                let chat = if reply_to.chat_id != 0 {
+                    message.chat_().session_().chat(reply_to.chat_id)
+                } else {
+                    message.chat_()
+                };
+
+                match chat.fetch_message(reply_to.message_id).await {
+                    Ok(message) => self.update_from_message(&message, is_outgoing),
+                    Err(_) => imp.message_label.set_label("Deleted message"),
+                };
+            }
+            tdlib::enums::MessageReplyTo::Story(_) => {
+                // TODO: Implement story replies
+                unimplemented!()
+            }
+        };
     }
 
     pub(crate) fn set_max_char_width(&self, n_chars: i32) {
