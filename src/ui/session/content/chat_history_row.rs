@@ -87,9 +87,9 @@ impl ChatHistoryRow {
         }
 
         if let Some(ref item) = item {
-            if let Some(item) = item.downcast_ref::<ui::ChatHistoryItem>() {
+            if let Some(item) = item.downcast_ref::<model::ChatHistoryItem>() {
                 match item.type_() {
-                    ui::ChatHistoryItemType::Message(message) => {
+                    model::ChatHistoryItemType::Message(message) => {
                         use tdlib::enums::MessageContent::*;
 
                         match message.content().0 {
@@ -115,7 +115,7 @@ impl ChatHistoryRow {
                             _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
                     }
-                    ui::ChatHistoryItemType::DayDivider(date) => {
+                    model::ChatHistoryItemType::DayDivider(date) => {
                         let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
                             // Translators: This is a date format in the day divider without the year
                             gettext("%B %e")

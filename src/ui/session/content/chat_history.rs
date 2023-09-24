@@ -26,7 +26,7 @@ mod imp {
     pub(crate) struct ChatHistory {
         pub(super) chat: glib::WeakRef<model::Chat>,
         pub(super) chat_handler: RefCell<Option<glib::SignalHandlerId>>,
-        pub(super) model: RefCell<Option<ui::ChatHistoryModel>>,
+        pub(super) model: RefCell<Option<model::ChatHistoryModel>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) sticky: Cell<bool>,
@@ -203,7 +203,7 @@ impl ChatHistory {
         if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
             if let Some(model) = self.imp().model.borrow().as_ref() {
                 utils::spawn(clone!(@weak model => async move {
-                    if let Err(ui::ChatHistoryError::Tdlib(e)) = model.load_older_messages(20).await {
+                    if let Err(model::ChatHistoryError::Tdlib(e)) = model.load_older_messages(20).await {
                         log::warn!("Couldn't load more chat messages: {:?}", e);
                     }
                 }));
@@ -315,7 +315,7 @@ impl ChatHistory {
                 },
             );
 
-            let model = ui::ChatHistoryModel::new(chat);
+            let model = model::ChatHistoryModel::new(chat);
 
             // Request sponsored message, if needed
             let list_view_model: gio::ListModel = if matches!(chat.chat_type(), model::ChatType::Supergroup(supergroup) if supergroup.is_channel())

@@ -3,16 +3,15 @@ use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
+use gio::prelude::*;
+use gio::subclass::prelude::*;
 use glib::clone;
 use gtk::gio;
 use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 use thiserror::Error;
 
 use crate::model;
-use crate::ui;
 
 #[derive(Error, Debug)]
 pub(crate) enum ChatHistoryError {
@@ -29,12 +28,12 @@ mod imp {
     pub(crate) struct ChatHistoryModel {
         pub(super) chat: glib::WeakRef<model::Chat>,
         pub(super) is_loading: Cell<bool>,
-        pub(super) list: RefCell<VecDeque<ui::ChatHistoryItem>>,
+        pub(super) list: RefCell<VecDeque<model::ChatHistoryItem>>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for ChatHistoryModel {
-        const NAME: &'static str = "PaplChatHistoryModel";
+        const NAME: &'static str = "ChatHistoryModel";
         type Type = super::ChatHistoryModel;
         type Interfaces = (gio::ListModel,);
     }
@@ -61,7 +60,7 @@ mod imp {
 
     impl ListModelImpl for ChatHistoryModel {
         fn item_type(&self) -> glib::Type {
-            ui::ChatHistoryItem::static_type()
+            model::ChatHistoryItem::static_type()
         }
 
         fn n_items(&self) -> u32 {
@@ -149,7 +148,7 @@ impl ChatHistoryModel {
             } else {
                 None
             };
-            let mut dividers: Vec<(usize, ui::ChatHistoryItem)> = vec![];
+            let mut dividers: Vec<(usize, model::ChatHistoryItem)> = vec![];
 
             for (index, current) in list.range(position..position + added).enumerate().rev() {
                 if let Some(current_timestamp) = current.message_timestamp() {
@@ -158,7 +157,7 @@ impl ChatHistoryModel {
                         let divider_pos = position + index + 1;
                         dividers.push((
                             divider_pos,
-                            ui::ChatHistoryItem::for_day_divider(current_timestamp.clone()),
+                            model::ChatHistoryItem::for_day_divider(current_timestamp.clone()),
                         ));
                         previous_timestamp = Some(current_timestamp);
                     }
@@ -182,7 +181,7 @@ impl ChatHistoryModel {
                 let position = position as usize;
                 let item_before_removed = list.get(position);
 
-                if let Some(ui::ChatHistoryItemType::DayDivider(_)) =
+                if let Some(model::ChatHistoryItemType::DayDivider(_)) =
                     item_before_removed.map(|i| i.type_())
                 {
                     let item_after_removed = if position > 0 {
@@ -192,7 +191,7 @@ impl ChatHistoryModel {
                     };
 
                     match item_after_removed.map(|item| item.type_()) {
-                        None | Some(ui::ChatHistoryItemType::DayDivider(_)) => {
+                        None | Some(model::ChatHistoryItemType::DayDivider(_)) => {
                             list.remove(position + removed);
 
                             removed += 1;
@@ -215,7 +214,7 @@ impl ChatHistoryModel {
                 let last_added_timestamp = list.get(position).unwrap().message_timestamp().unwrap();
                 let next_item = list.get(position - 1);
 
-                if let Some(ui::ChatHistoryItemType::DayDivider(date)) =
+                if let Some(model::ChatHistoryItemType::DayDivider(date)) =
                     next_item.map(|item| item.type_())
                 {
                     if date.ymd() == last_added_timestamp.ymd() {
@@ -238,7 +237,7 @@ impl ChatHistoryModel {
         self.imp()
             .list
             .borrow_mut()
-            .push_front(ui::ChatHistoryItem::for_message(message));
+            .push_front(model::ChatHistoryItem::for_message(message));
 
         self.items_changed(0, 0, 1);
     }
@@ -252,7 +251,7 @@ impl ChatHistoryModel {
         for message in messages {
             imp.list
                 .borrow_mut()
-                .push_back(ui::ChatHistoryItem::for_message(message));
+                .push_back(model::ChatHistoryItem::for_message(message));
         }
 
         let index = imp.list.borrow().len() - added;
@@ -272,10 +271,10 @@ impl ChatHistoryModel {
             // can exploit this by applying a binary search.
             let index = list
                 .binary_search_by(|m| match m.type_() {
-                    ui::ChatHistoryItemType::Message(other_message) => {
+                    model::ChatHistoryItemType::Message(other_message) => {
                         message.id().cmp(&other_message.id())
                     }
-                    ui::ChatHistoryItemType::DayDivider(date_time) => {
+                    model::ChatHistoryItemType::DayDivider(date_time) => {
                         let ordering = glib::DateTime::from_unix_utc(message.date() as i64)
                             .unwrap()
                             .cmp(date_time);
