@@ -9,6 +9,7 @@ mod photo;
 mod reply;
 mod sticker;
 mod text;
+mod venue;
 mod video;
 
 use std::cell::RefCell;
@@ -36,6 +37,7 @@ pub(crate) use self::photo::MessagePhoto;
 pub(crate) use self::reply::MessageReply;
 pub(crate) use self::sticker::MessageSticker;
 pub(crate) use self::text::MessageText;
+pub(crate) use self::venue::MessageVenue;
 pub(crate) use self::video::MessageVideo;
 use crate::model;
 use crate::ui;
