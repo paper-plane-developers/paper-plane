@@ -1,0 +1,30 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplIconMapMarker : Widget {
+  layout-manager: BinLayout {};
+
+  Overlay {
+    Image {
+      styles [
+        "hull",
+        "icon-dropshadow",
+      ]
+
+      icon-name: "avatar-map-marker-hull-symbolic";
+      pixel-size: 68;
+    }
+
+    [overlay]
+    Image icon {
+      styles ["icon"]
+
+      notify::icon-name => $on_icon_notify_icon_name() swapped;
+
+      // margin-top: 18;
+      // pixel-size: 24;
+      halign: center;
+      valign: start;
+    }
+  }
+}

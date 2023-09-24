@@ -14,6 +14,7 @@ pub(crate) use self::components::Avatar;
 pub(crate) use self::components::AvatarMapMarker;
 pub(crate) use self::components::AvatarWithSelection;
 pub(crate) use self::components::CircularProgressBar;
+pub(crate) use self::components::IconMapMarker;
 pub(crate) use self::components::Map;
 pub(crate) use self::components::MapMarker;
 pub(crate) use self::components::MessageEntry;
@@ -85,6 +86,7 @@ pub(crate) fn init() {
     ContactsWindow::static_type();
     Content::static_type();
     EventRow::static_type();
+    IconMapMarker::static_type();
     Login::static_type();
     LoginCode::static_type();
     LoginOtherDevice::static_type();
