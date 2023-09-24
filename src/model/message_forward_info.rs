@@ -89,7 +89,7 @@ impl MessageForwardInfo {
             Channel(data) => {
                 let chat = chat.session_().chat(data.chat_id);
                 // let message = {
-                //     let weak = WeakRef::new();
+                //     let weak = glib::WeakRef::new();
                 //     weak.set(chat.history().message_by_id(data.message_id).as_ref());
                 //     weak
                 // };

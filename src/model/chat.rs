@@ -5,7 +5,6 @@ use std::collections::HashMap;
 
 use glib::subclass::Signal;
 use glib::Properties;
-use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -80,7 +79,7 @@ mod imp {
     pub(crate) struct Chat {
         pub(super) messages: RefCell<HashMap<i64, model::Message>>,
         #[property(get, set, construct_only)]
-        pub(super) session: WeakRef<model::ClientStateSession>,
+        pub(super) session: glib::WeakRef<model::ClientStateSession>,
         #[property(get, set, construct_only)]
         pub(super) id: Cell<i64>,
         #[property(get, set, construct_only)]

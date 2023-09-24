@@ -9,7 +9,6 @@ use adw::subclass::prelude::BinImpl;
 use glib::clone;
 use gtk::gdk;
 use gtk::glib;
-use gtk::glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -64,7 +63,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session/mod.ui")]
     pub(crate) struct Session {
-        pub(super) model: WeakRef<model::ClientStateSession>,
+        pub(super) model: glib::WeakRef<model::ClientStateSession>,
         #[template_child]
         pub(super) split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]

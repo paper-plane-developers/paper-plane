@@ -5,7 +5,6 @@ use glib::clone;
 use glib::subclass::prelude::*;
 use glib::ObjectExt;
 use glib::Properties;
-use glib::WeakRef;
 use gtk::glib;
 
 use crate::model;
@@ -18,7 +17,7 @@ mod imp {
     pub(crate) struct ClientAuthStateCode {
         pub(super) countdown_source_id: RefCell<Option<glib::SourceId>>,
         #[property(get, set, construct_only)]
-        pub(super) auth: WeakRef<model::ClientStateAuth>,
+        pub(super) auth: glib::WeakRef<model::ClientStateAuth>,
         #[property(get, set, construct)]
         pub(super) data: RefCell<Option<model::BoxedAuthorizationStateWaitCode>>,
         #[property(get, explicit_notify)]
