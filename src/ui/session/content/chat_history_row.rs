@@ -1,11 +1,9 @@
 use std::cell::RefCell;
 
-use adw::prelude::BinExt;
-use adw::subclass::prelude::BinImpl;
+use adw::prelude::*;
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 
 use crate::model;
@@ -87,9 +85,9 @@ impl ChatHistoryRow {
         }
 
         if let Some(ref item) = item {
-            if let Some(item) = item.downcast_ref::<ui::ChatHistoryItem>() {
+            if let Some(item) = item.downcast_ref::<model::ChatHistoryItem>() {
                 match item.type_() {
-                    ui::ChatHistoryItemType::Message(message) => {
+                    model::ChatHistoryItemType::Message(message) => {
                         use tdlib::enums::MessageContent::*;
 
                         match message.content().0 {
@@ -115,7 +113,7 @@ impl ChatHistoryRow {
                             _ => self.update_or_create_message_row(message.to_owned().upcast()),
                         }
                     }
-                    ui::ChatHistoryItemType::DayDivider(date) => {
+                    model::ChatHistoryItemType::DayDivider(date) => {
                         let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
                             // Translators: This is a date format in the day divider without the year
                             gettext("%B %e")

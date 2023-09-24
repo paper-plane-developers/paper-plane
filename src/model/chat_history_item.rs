@@ -1,14 +1,14 @@
 use std::cell::OnceCell;
 
+use glib::prelude::*;
+use glib::subclass::prelude::*;
 use gtk::glib;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 
 use crate::model;
 
 #[derive(Clone, Debug, glib::Boxed)]
-#[boxed_type(name = "ContentChatHistoryItemType")]
+#[boxed_type(name = "ChatHistoryItemType")]
 pub(crate) enum ChatHistoryItemType {
     Message(model::Message),
     DayDivider(glib::DateTime),
@@ -24,7 +24,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for ChatHistoryItem {
-        const NAME: &'static str = "PaplChatHistoryItem";
+        const NAME: &'static str = "ChatHistoryItem";
         type Type = super::ChatHistoryItem;
     }
 

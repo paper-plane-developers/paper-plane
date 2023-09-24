@@ -2,7 +2,6 @@ use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use glib::Properties;
-use glib::WeakRef;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -16,7 +15,7 @@ mod imp {
     #[properties(wrapper_type = super::User)]
     pub(crate) struct User {
         #[property(get, set, construct_only)]
-        pub(super) session: WeakRef<model::ClientStateSession>,
+        pub(super) session: glib::WeakRef<model::ClientStateSession>,
         #[property(get, set, construct_only)]
         pub(super) id: OnceCell<i64>,
         #[property(get)]

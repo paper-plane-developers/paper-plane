@@ -1,12 +1,11 @@
 use std::cell::OnceCell;
 
 use adw::prelude::*;
-use adw::subclass::prelude::AdwWindowImpl;
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use glib::closure;
 use gtk::glib;
-use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 

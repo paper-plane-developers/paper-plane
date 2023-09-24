@@ -1,14 +1,11 @@
 use std::cell::OnceCell;
 
-use adw::subclass::prelude::AdwApplicationImpl;
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use log::debug;
-use log::info;
 
 use crate::config;
 use crate::ui;
@@ -32,7 +29,7 @@ mod imp {
 
     impl ApplicationImpl for Application {
         fn activate(&self) {
-            debug!("GtkApplication<Application>::activate");
+            log::debug!("GtkApplication<Application>::activate");
 
             let obj = self.obj();
 
@@ -50,11 +47,11 @@ mod imp {
         }
 
         fn startup(&self) {
-            debug!("GtkApplication<Application>::startup");
+            log::debug!("GtkApplication<Application>::startup");
 
-            info!("Paper Plane ({})", config::APP_ID);
-            info!("Version: {} ({})", config::VERSION, config::PROFILE);
-            info!("Datadir: {}", config::PKGDATADIR);
+            log::info!("Paper Plane ({})", config::APP_ID);
+            log::info!("Version: {} ({})", config::VERSION, config::PROFILE);
+            log::info!("Datadir: {}", config::PKGDATADIR);
 
             self.parent_startup();
 

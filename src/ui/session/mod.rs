@@ -5,27 +5,19 @@ mod row;
 mod sidebar;
 mod switcher;
 
-use adw::subclass::prelude::BinImpl;
+use adw::subclass::prelude::*;
 use glib::clone;
 use gtk::gdk;
 use gtk::glib;
-use gtk::glib::WeakRef;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
-use tdlib::enums;
-use tdlib::functions;
 
 pub(crate) use self::contacts_window::ContactsWindow;
 pub(crate) use self::contacts_window::Row as ContactRow;
 pub(crate) use self::content::Background;
 pub(crate) use self::content::ChatActionBar;
 pub(crate) use self::content::ChatHistory;
-pub(crate) use self::content::ChatHistoryError;
-pub(crate) use self::content::ChatHistoryItem;
-pub(crate) use self::content::ChatHistoryItemType;
-pub(crate) use self::content::ChatHistoryModel;
 pub(crate) use self::content::ChatHistoryRow;
 pub(crate) use self::content::ChatInfoWindow;
 pub(crate) use self::content::Content;
@@ -70,7 +62,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session/mod.ui")]
     pub(crate) struct Session {
-        pub(super) model: WeakRef<model::ClientStateSession>,
+        pub(super) model: glib::WeakRef<model::ClientStateSession>,
         #[template_child]
         pub(super) split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]
@@ -182,8 +174,8 @@ impl Session {
         match self.model().unwrap().try_chat(chat_id) {
             Some(chat) => self.imp().sidebar.set_selected_chat(Some(&chat)),
             None => utils::spawn(clone!(@weak self as obj => async move {
-                match functions::create_private_chat(chat_id, true, obj.model().unwrap().client_().id()).await {
-                    Ok(enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(obj.model().unwrap().try_chat(data.id).as_ref()),
+                match tdlib::functions::create_private_chat(chat_id, true, obj.model().unwrap().client_().id()).await {
+                    Ok(tdlib::enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(obj.model().unwrap().try_chat(data.id).as_ref()),
                     Err(e) => log::warn!("Failed to create private chat: {:?}", e),
                 }
             })),

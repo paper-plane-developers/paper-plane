@@ -1,5 +1,4 @@
 use std::cell::OnceCell;
-use std::cell::RefCell;
 
 use gettextrs::gettext;
 use glib::clone;
@@ -17,7 +16,7 @@ mod imp {
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/app/drey/paper-plane/ui/session/content/message_row/indicators.ui")]
     pub(crate) struct MessageIndicators {
-        pub(super) message: RefCell<Option<glib::Object>>,
+        pub(super) message: glib::WeakRef<glib::Object>,
         pub(super) message_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) interaction_info_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
@@ -133,33 +132,30 @@ impl MessageIndicators {
         imp.chat_signal_group.set(chat_signal_group).unwrap();
     }
 
-    pub(crate) fn message(&self) -> glib::Object {
-        self.imp().message.borrow().clone().unwrap()
+    pub(crate) fn message(&self) -> Option<glib::Object> {
+        self.imp().message.upgrade()
     }
 
-    pub(crate) fn set_message(&self, message: glib::Object) {
-        let imp = self.imp();
-        let old = imp.message.replace(Some(message));
-
-        if old == *imp.message.borrow() {
+    pub(crate) fn set_message(&self, message: &glib::Object) {
+        if self.message().as_ref() == Some(message) {
             return;
         }
 
-        let maybe_message_ref = imp.message.borrow();
-        let maybe_message = maybe_message_ref.and_downcast_ref::<model::Message>();
+        let imp = self.imp();
 
-        imp.message_signal_group
-            .get()
-            .unwrap()
-            .set_target(maybe_message);
+        imp.message.set(Some(message));
+
+        let message = message.downcast_ref::<model::Message>();
+
+        imp.message_signal_group.get().unwrap().set_target(message);
         imp.interaction_info_signal_group
             .get()
             .unwrap()
-            .set_target(maybe_message.map(|m| m.interaction_info()).as_ref());
+            .set_target(message.map(|message| message.interaction_info()).as_ref());
         imp.chat_signal_group
             .get()
             .unwrap()
-            .set_target(maybe_message.map(|m| m.chat_()).as_ref());
+            .set_target(message.map(|message| message.chat_()).as_ref());
 
         self.update_reply_count();
         self.update_sending_state();
@@ -171,10 +167,9 @@ impl MessageIndicators {
     fn update_reply_count(&self) {
         let imp = self.imp();
 
-        let maybe_message_ref = imp.message.borrow();
-        let maybe_message = maybe_message_ref.and_downcast_ref::<model::Message>();
+        let message = self.message().and_downcast::<model::Message>();
 
-        let is_channel_message = maybe_message
+        let is_channel_message = message.as_ref()
             .filter(|message| {
                 matches!(message.chat_().chat_type(), model::ChatType::Supergroup(data) if data.is_channel())
             })
@@ -184,7 +179,8 @@ impl MessageIndicators {
             imp.reply_count_label.set_label("");
             imp.reply_count_box.set_visible(false);
         } else {
-            let reply_count = maybe_message
+            let reply_count = message
+                .as_ref()
                 .map(model::Message::interaction_info)
                 .map(|interaction_info| interaction_info.reply_count())
                 .unwrap_or(0);
@@ -200,11 +196,9 @@ impl MessageIndicators {
     }
 
     fn update_sending_state(&self) {
-        let imp = self.imp();
-        let maybe_icon_name = imp
-            .message
-            .borrow()
-            .and_downcast_ref::<model::Message>()
+        let icon_name = self
+            .message()
+            .and_downcast::<model::Message>()
             .filter(|message| message.is_outgoing())
             .map(|message| match message.sending_state() {
                 Some(state) => match state.0 {
@@ -222,7 +216,9 @@ impl MessageIndicators {
                 }
             });
 
-        if let Some(icon_name) = maybe_icon_name {
+        let imp = self.imp();
+
+        if let Some(icon_name) = icon_name {
             imp.sending_state_icon.set_icon_name(Some(icon_name));
             imp.sending_state_icon.set_visible(true);
         } else {
@@ -232,8 +228,7 @@ impl MessageIndicators {
     }
 
     fn update_message_info(&self) {
-        let imp = self.imp();
-        let message = imp.message.borrow();
+        let message = self.message();
 
         let label = if let Some(message) = message.and_downcast_ref::<model::Message>() {
             let datetime = glib::DateTime::from_unix_utc(message.date() as i64)
@@ -263,6 +258,6 @@ impl MessageIndicators {
             unreachable!()
         };
 
-        imp.message_info_label.set_label(&label);
+        self.imp().message_info_label.set_label(&label);
     }
 }
