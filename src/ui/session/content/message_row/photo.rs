@@ -141,6 +141,10 @@ impl ui::MessageBaseExt for MessagePhoto {
 }
 
 impl MessagePhoto {
+    fn message_id(&self) -> Option<i64> {
+        self.imp().message.upgrade().map(|message| message.id())
+    }
+
     fn update_photo(&self, message: &model::Message) {
         if let tdlib::enums::MessageContent::MessagePhoto(mut data) = message.content().0 {
             let imp = self.imp();
@@ -197,28 +201,28 @@ impl MessagePhoto {
     }
 
     fn load_photo(&self, path: String) {
-        let message_id = self.message().id();
+        if let Some(message_id) = self.message_id() {
+            utils::spawn(clone!(@weak self as obj => async move {
+                let result = gio::spawn_blocking(move || utils::decode_image_from_path(&path))
+                    .await
+                    .unwrap();
 
-        utils::spawn(clone!(@weak self as obj => async move {
-            let result = gio::spawn_blocking(move || utils::decode_image_from_path(&path))
-                .await
-                .unwrap();
-
-            // Check if the current message id is the same as the one at
-            // the time of the request. It may be changed because of the
-            // ListView recycling while decoding the image.
-            if obj.message().id() != message_id {
-                return;
-            }
-
-            match result {
-                Ok(texture) => {
-                    obj.imp().picture.set_paintable(Some(&texture));
+                // Check if the current message id is the same as the one at
+                // the time of the request. It may be changed because of the
+                // ListView recycling while decoding the image. It may also
+                // that the message has been already removed from the history
+                // and the WeakRef is None (after successful sent)
+                if obj.message_id().filter(|id| *id == message_id).is_some() {
+                    match result {
+                        Ok(texture) => {
+                            obj.imp().picture.set_paintable(Some(&texture));
+                        }
+                        Err(e) => {
+                            log::warn!("Error decoding a photo: {e:?}");
+                        }
+                    }
                 }
-                Err(e) => {
-                    log::warn!("Error decoding a photo: {e:?}");
-                }
-            }
-        }));
+            }));
+        }
     }
 }
