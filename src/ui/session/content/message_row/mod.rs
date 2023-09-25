@@ -9,6 +9,7 @@ mod photo;
 mod reply;
 mod sticker;
 mod text;
+mod venue;
 mod video;
 
 use std::cell::RefCell;
@@ -36,6 +37,7 @@ pub(crate) use self::photo::MessagePhoto;
 pub(crate) use self::reply::MessageReply;
 pub(crate) use self::sticker::MessageSticker;
 pub(crate) use self::text::MessageText;
+pub(crate) use self::venue::MessageVenue;
 pub(crate) use self::video::MessageVideo;
 use crate::model;
 use crate::ui;
@@ -335,36 +337,39 @@ impl Row {
                 // FIXME: Re-enable MessageVideo when
                 // https://github.com/paper-plane-developers/paper-plane/issues/410 is fixed
                 MessageAnimation(_) /*| MessageContent::MessageVideo(_)*/ => {
-                    self.update_specific_content::<_, ui::MessageVideo>(message_.clone());
+                    self.update_specific_content::<_, ui::MessageVideo>(message_);
                 }
                 MessageAnimatedEmoji(data)
                     if data.animated_emoji.sticker.clone().map(
                         |s| matches!(s.format, tdlib::enums::StickerFormat::Webp | tdlib::enums::StickerFormat::Tgs)
                     ).unwrap_or_default() => {
-                    self.update_specific_content::<_, ui::MessageSticker>(message_.clone());
+                    self.update_specific_content::<_, ui::MessageSticker>(message_);
                 }
                 MessageLocation(_) => {
-                    self.update_specific_content::<_, ui::MessageLocation>(message_.clone());
+                    self.update_specific_content::<_, ui::MessageLocation>(message_);
                 }
                 MessagePhoto(_) => {
-                    self.update_specific_content::<_, ui::MessagePhoto>(message_.clone());
+                    self.update_specific_content::<_, ui::MessagePhoto>(message_);
                 }
                 MessageSticker(data)
                     if matches!(data.sticker.format, tdlib::enums::StickerFormat::Webp | tdlib::enums::StickerFormat::Tgs) =>
                 {
-                    self.update_specific_content::<_, ui::MessageSticker>(message_.clone());
+                    self.update_specific_content::<_, ui::MessageSticker>(message_);
                 }
                 MessageDocument(_) => {
-                    self.update_specific_content::<_, ui::MessageDocument>(message_.clone());
+                    self.update_specific_content::<_, ui::MessageDocument>(message_);
+                }
+                MessageVenue(_) => {
+                    self.update_specific_content::<_, ui::MessageVenue>(message_);
                 }
                 _ => {
-                    self.update_specific_content::<_, ui::MessageText>(message);
+                    self.update_specific_content::<_, ui::MessageText>(&message);
                 }
             }
 
             is_outgoing
         } else {
-            self.update_specific_content::<_, ui::MessageText>(message);
+            self.update_specific_content::<_, ui::MessageText>(&message);
             false
         };
 
@@ -378,21 +383,21 @@ impl Row {
         }
     }
 
-    fn update_specific_content<M, B>(&self, message: M)
+    fn update_specific_content<M, B>(&self, message: &M)
     where
         B: MessageBaseExt<Message = M>,
     {
         let mut content_ref = self.imp().content.borrow_mut();
         match content_ref.as_ref().and_then(|c| c.downcast_ref::<B>()) {
             Some(content) => {
-                content.set_message(&message);
+                content.set_message(message);
             }
             None => {
                 if let Some(old_content) = &*content_ref {
                     old_content.unparent();
                 }
 
-                let content = B::new(&message);
+                let content = B::new(message);
                 content.set_hexpand(true);
                 content.set_valign(gtk::Align::Start);
 

@@ -506,6 +506,7 @@ pub(crate) fn message_content(message: &model::Message) -> String {
         ),
         MessageGameScore(data) => message_game_score(&data, &chat, &sender),
         MessageContactRegistered => message_contact_registered(&sender),
+        MessageVenue(data) => gettext_f("Location, {venue}", &[("venue", &data.venue.title)]),
         _ => gettext("Unsupported Message"),
     }
 }

@@ -159,15 +159,21 @@ messagebubble > box {
 }
 
 messagebubble.location map {
-  margin: -4px -7px;
   border-radius: 14px;
 }
 
-messagebubble.location.live-location map {
+messagebubble.location map,
+messagebubble.venue map {
+  margin: -4px -7px;
+}
+
+messagebubble.location.live-location map,
+messagebubble.venue map {
   border-radius: 14px 14px 7px 7px;
 }
 
-messagebubble.location map .license {
+messagebubble.location map .license,
+messagebubble.venue map .license {
   border-radius: 9999px;
   margin: 3px 6px 0 0;
   padding: 1px 6px;
@@ -177,7 +183,18 @@ messagebubble.location map .marker {
   color: @red_3;
 }
 
-messagebubble.location map avatarmapmarker .hull {
+messagebubble.venue map iconmapmarker .icon {
+  border-radius: 9999px;
+  padding: 12px;
+  margin-top: 4px;
+  background-color: @light_2;
+  color: @dark_3;
+  -gtk-icon-size: 24px;
+}
+
+messagebubble.location map avatarmapmarker .hull,
+messagebubble.venue map iconmapmarker .hull,
+messagebubble.venue map .marker {
   color: @accent_bg_color;
 }
 
@@ -185,8 +202,13 @@ messagebubble.outgoing.location circularprogressbar {
   color: @accent_bg_color;
 }
 
-messagebubble.location .live-location-caption {
+messagebubble.location .suffix,
+messagebubble.venue .suffix {
   margin-top: 9px;
+}
+
+messagebubble.venue .suffix {
+  margin-bottom: 3px;
 }
 
 messagebubble.document {

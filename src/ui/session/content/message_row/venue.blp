@@ -1,0 +1,31 @@
+using Gtk 4.0;
+
+template $PaplMessageVenue : $PaplMessageBase {
+  layout-manager: BinLayout {};
+
+  $PaplMessageBubble message_bubble {
+    styles ["venue"]
+
+    prefix: Overlay {
+      $PaplMap map {
+        name: "map";
+        overflow: "hidden";
+      }
+    };
+
+    suffix: Box {
+      styles ["suffix"]
+
+      orientation: vertical;
+      spacing: 3;
+
+      Label title_label {
+        xalign: 0.0;
+
+        styles [
+          "heading",
+        ]
+      }
+    };
+  }
+}

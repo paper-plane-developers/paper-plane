@@ -10,6 +10,7 @@
     <file compressed="true" preprocess="xml-stripblanks">components/avatar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/avatar_map_marker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/avatar_with_selection.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">components/icon_map_marker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/map.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/message_entry.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/phone_number_input.ui</file>
@@ -41,6 +42,7 @@
     <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/reply.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/sticker.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/text.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/venue.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/content/message_row/video.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/content/mod.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/content/send_media_window.ui</file>
