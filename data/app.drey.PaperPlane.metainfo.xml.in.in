@@ -42,6 +42,24 @@
   <content_rating type="oars-1.1" />
   sabriunal
   <releases>
+    <release version="0.1.0~beta.4" date="2023-09-25">
+      <description>
+        <p>This is the fourth beta release of Paper Plane 0.1.0 with new features and bug fixes:</p>
+        <ul>
+          <li>Paper Plane now uses some new shiny widgets from libadwaita 1.4, thanks to @melix99. (#518)</li>
+          <li>The tdlib telegram client library has been updated to 1.8.19, thanks to @alissonlauffer. (#577)</li>
+          <li>The login flow has been completely redesigned and now looks more modern. (#510)</li>
+          <li>We have redesigned the session switcher. It has been moved to the sidebar and shows a confirmation dialog when logging out. (#510)</li>
+          <li>The message entry can now be clicked without effecting the state of the application window. (#510)</li>
+          <li>Displaying location and venue messages is now implemented. (#548, #582)</li>
+          <li>Fixed an application crash when trying to log in. (#559)</li>
+          <li>A mask is now used for the document message status indicator, thanks to @yuraiz. (#555)</li>
+          <li>The dialog for sending media files has been improved in function and appearance, thanks to @melix99. (#540)</li>
+          <li>Dependencies have been updated.</li>
+          <li>Translations have been updated.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0~beta.3" date="2023-06-11">
       <description>
         <p>The third beta release of Paper Plane 0.1.0 should in the first place fix a build error on Flathub:</p>
