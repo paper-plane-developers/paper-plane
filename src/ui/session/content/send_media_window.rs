@@ -20,6 +20,8 @@ mod imp {
         pub(super) path: OnceCell<String>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         #[template_child]
+        pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
         pub(super) picture: TemplateChild<gtk::Picture>,
         #[template_child]
         pub(super) caption_entry: TemplateChild<ui::MessageEntry>,
@@ -167,12 +169,15 @@ impl SendMediaWindow {
             message_id: 0,
         }));
 
-        // TODO: maybe show an error dialog when this fails?
-        if tdlib::functions::send_message(chat_id, 0, reply_to, None, content, client_id)
-            .await
-            .is_ok()
-        {
-            self.close();
+        match tdlib::functions::send_message(chat_id, 0, reply_to, None, content, client_id).await {
+            Ok(_) => self.close(),
+            Err(e) => imp.toast_overlay.add_toast(
+                adw::Toast::builder()
+                    .title(e.message)
+                    .timeout(3)
+                    .priority(adw::ToastPriority::High)
+                    .build(),
+            ),
         }
     }
 }

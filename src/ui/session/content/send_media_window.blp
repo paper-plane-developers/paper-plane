@@ -7,31 +7,36 @@ template $PaplSendMediaWindow : Adw.Window {
   modal: true;
   title: _("Send Image");
 
-  content: Adw.ToolbarView {
-    [top]
-    HeaderBar {}
+  content: Adw.ToastOverlay toast_overlay {
 
-    content: Picture picture {};
+     Adw.ToolbarView {
 
-    [bottom]
-    Adw.Clamp {
-      child: Box {
-        styles ["toolbar"]
+      [top]
+      HeaderBar {}
 
-        $PaplMessageEntry caption_entry {
-          hexpand: "True";
-          placeholder-text: _("Caption");
+      Picture picture {}
+
+      [bottom]
+      Adw.Clamp {
+
+        Box {
+          styles ["toolbar"]
+
+          $PaplMessageEntry caption_entry {
+            hexpand: "True";
+            placeholder-text: _("Caption");
+          }
+
+          Adw.SplitButton {
+            styles ["small-pill", "suggested-action"]
+
+            action-name: "send-media-window.send-message";
+            label: _("Send");
+            menu-model: more_options_menu;
+            valign: end;
+          }
         }
-
-        Adw.SplitButton {
-          styles ["small-pill", "suggested-action"]
-
-          action-name: "send-media-window.send-message";
-          label: _("Send");
-          menu-model: more_options_menu;
-          valign: end;
-        }
-      };
+      }
     }
   };
 }
