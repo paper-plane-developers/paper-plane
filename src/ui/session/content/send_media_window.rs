@@ -130,20 +130,10 @@ impl SendMediaWindow {
 
         let imp = self.imp();
 
-        let chat = imp.chat.upgrade().unwrap();
-        let chat_id = chat.id();
-        let client_id = chat.session_().client_().id();
         let path = imp.path.get().unwrap().clone();
-
-        let paintable = imp.picture.paintable().unwrap();
-        let width = paintable.intrinsic_width();
-        let height = paintable.intrinsic_height();
         let caption = imp.caption_entry.as_markdown().await;
-        let self_destruct_type = Some(MessageSelfDestructType::Timer(
-            MessageSelfDestructTypeTimer::default(),
-        ));
-
         let file = InputFile::Local(InputFileLocal { path });
+
         let content = if send_as_file {
             InputMessageContent::InputMessageDocument(InputMessageDocument {
                 document: file,
@@ -152,17 +142,23 @@ impl SendMediaWindow {
                 caption,
             })
         } else {
+            let paintable = imp.picture.paintable().unwrap();
+
             InputMessageContent::InputMessagePhoto(InputMessagePhoto {
                 photo: file,
                 thumbnail: None,
                 added_sticker_file_ids: vec![],
-                width,
-                height,
+                width: paintable.intrinsic_width(),
+                height: paintable.intrinsic_height(),
                 caption,
-                self_destruct_type,
+                self_destruct_type: None,
                 has_spoiler: false,
             })
         };
+
+        let chat = imp.chat.upgrade().unwrap();
+        let chat_id = chat.id();
+        let client_id = chat.session_().client_().id();
 
         let reply_to = Some(MessageReplyTo::Message(MessageReplyToMessage {
             chat_id,
