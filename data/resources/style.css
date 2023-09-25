@@ -275,7 +275,9 @@ messagebubble.media mediapicture {
   border-radius: 14px;
 }
 
-messagebubble.media.with-reply mediapicture {
+messagebubble.media.with-reply mediapicture,
+messagebubble.location.with-reply map,
+messagebubble.venue.with-reply map {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
   margin-top: 3px;
