@@ -3,24 +3,25 @@
 # This file is distributed under the same license as the paper-plane package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2021-09-18 23:07+0200\n"
-"Last-Translator: Quentin PAGÈS\n"
-"Language-Team: \n"
-"Language: oc\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
 msgid "Paper Plane"
-msgstr "Paper Plane"
+msgstr ""
 
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
@@ -34,17 +35,17 @@ msgstr ""
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
-msgstr "Largor per defaut de la fenèstra"
+msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:11
 #: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
-msgstr "Nautor per defaut de la fenèstra"
+msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
 msgid "Default window maximized behaviour"
-msgstr "Compòrtament per defaut de la fenèstra maximizada"
+msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Last used session"
@@ -98,7 +99,7 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:29
 msgid "Main window"
-msgstr "Fenèstra principala"
+msgstr ""
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:47
 msgid ""
@@ -170,12 +171,11 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:83
 msgid "Marco Melorio"
-msgstr "Marco Melorio"
+msgstr ""
 
 #: src/application.rs:165
-#, fuzzy
 msgid "Paper Plane developers"
-msgstr "Paper Plane"
+msgstr ""
 
 #: src/application.rs:185
 msgid "Sponsors"
@@ -197,9 +197,8 @@ msgstr ""
 
 #: src/expressions.rs:20 src/ui/session/sidebar/search/item_row.rs:97
 #: src/ui/session/sidebar/search/mod.rs:182
-#, fuzzy
 msgid "Saved Messages"
-msgstr "Messatge pas pres en carga"
+msgstr ""
 
 #: src/expressions.rs:22 src/expressions.rs:44 src/strings.rs:384
 msgid "Deleted Account"
@@ -215,15 +214,14 @@ msgstr ""
 #: src/expressions.rs:103 src/ui/session/content/message_row/indicators.rs:239
 #: src/ui/session/sidebar/row.rs:648
 msgid "%l:%M %p"
-msgstr "%H:%M"
+msgstr ""
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:108
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%e %B de %Y"
+msgstr ""
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
@@ -551,9 +549,8 @@ msgid "Location, {venue}"
 msgstr ""
 
 #: src/strings.rs:510
-#, fuzzy
 msgid "Unsupported Message"
-msgstr "Messatge pas pres en carga"
+msgstr ""
 
 #: src/strings.rs:516
 msgid "GIF"
@@ -649,9 +646,8 @@ msgid "Incoming video call ({duration})"
 msgstr ""
 
 #: src/strings.rs:651
-#, fuzzy
 msgid "Incoming call ({duration})"
-msgstr "Sonada entranta"
+msgstr ""
 
 #: src/strings.rs:656
 msgid "Incoming video call"
@@ -659,7 +655,7 @@ msgstr ""
 
 #: src/strings.rs:658 src/ui/window.rs:143
 msgid "Incoming call"
-msgstr "Sonada entranta"
+msgstr ""
 
 #: src/strings.rs:665 src/strings.rs:682
 msgid "{sender} created the group \"{title}\""
@@ -781,7 +777,7 @@ msgstr ""
 #: src/ui/login/other_device.blp:19 src/ui/login/password.blp:20
 #: src/ui/login/registration.blp:17
 msgid "Phone Number"
-msgstr "Numèro de telefòn"
+msgstr ""
 
 #: src/ui/components/phone_number_input.rs:310
 msgid "You entered an invalid country code."
@@ -789,17 +785,17 @@ msgstr ""
 
 #: src/ui/login/code.blp:22
 msgid "Enter the Verification Code"
-msgstr "Picatz lo còdi de verificacion"
+msgstr ""
 
 #: src/ui/login/code.blp:39 src/ui/login/password.blp:185
 msgid "Code"
-msgstr "Còdi"
+msgstr ""
 
 #: src/ui/login/code.blp:56 src/ui/login/password.blp:72
 #: src/ui/login/password.blp:202 src/ui/login/phone_number.blp:49
 #: src/ui/login/registration.blp:64
 msgid "_Next"
-msgstr "_Seguenta"
+msgstr ""
 
 #: src/ui/login/code.rs:117
 msgid "Send code via {type} (may still arrive within {countdown} seconds)"
@@ -823,9 +819,8 @@ msgstr ""
 
 #. Translators: This is an authentication method
 #: src/ui/login/code.rs:228
-#, fuzzy
 msgid "Telegram"
-msgstr "Paper Plane"
+msgstr ""
 
 #. Translators: This is an authentication method
 #: src/ui/login/code.rs:230
@@ -885,11 +880,11 @@ msgstr ""
 
 #: src/ui/login/password.blp:26
 msgid "Enter Your Password"
-msgstr "Picatz vòstre senhal"
+msgstr ""
 
 #: src/ui/login/password.blp:40
 msgid "Password"
-msgstr "Senhal"
+msgstr ""
 
 #: src/ui/login/password.blp:47
 msgid "Hint"
@@ -900,9 +895,8 @@ msgid "Forgot password?"
 msgstr ""
 
 #: src/ui/login/password.blp:107
-#, fuzzy
 msgid "Recover Password"
-msgstr "Picatz vòstre senhal"
+msgstr ""
 
 #: src/ui/login/password.blp:108
 msgid ""
@@ -1071,9 +1065,8 @@ msgid "Deleted Message"
 msgstr ""
 
 #: src/ui/session/content/chat_action_bar.rs:382
-#, fuzzy
 msgid "Edit Message"
-msgstr "Messatge pas pres en carga"
+msgstr ""
 
 #: src/ui/session/content/chat_action_bar.rs:477
 msgid "Images"
@@ -1110,12 +1103,12 @@ msgstr ""
 #. Translators: This is a date format in the day divider without the year
 #: src/ui/session/content/chat_history_row.rs:119
 msgid "%B %e"
-msgstr "%B %e"
+msgstr ""
 
 #. Translators: This is a date format in the day divider with the year
 #: src/ui/session/content/chat_history_row.rs:122
 msgid "%B %e, %Y"
-msgstr "%e %B de %Y"
+msgstr ""
 
 #: src/ui/session/content/chat_info_window.rs:132
 msgid "bot"
@@ -1204,15 +1197,15 @@ msgstr ""
 
 #: src/ui/session/content/message_row/text.rs:134
 msgid "This message is unsupported"
-msgstr "Aqueste messatge pas pres en carga"
+msgstr ""
 
 #: src/ui/session/content/mod.blp:22
 msgid "No Chat Selected"
-msgstr "Cap de discussion pas seleccionada"
+msgstr ""
 
 #: src/ui/session/content/mod.blp:23
 msgid "Select a chat to start messaging."
-msgstr "Seleccionatz una discussion per començar de charrar."
+msgstr ""
 
 #: src/ui/session/content/send_media_window.blp:8
 msgid "Send Image"
@@ -1276,9 +1269,8 @@ msgid "Are you sure you want to log out?"
 msgstr ""
 
 #: src/ui/session/row.rs:111
-#, fuzzy
 msgid "_Log out"
-msgstr "_Se desconnectar"
+msgstr ""
 
 #: src/ui/session/sidebar/mod.ui:7
 msgid "_Contacts"
@@ -1290,11 +1282,11 @@ msgstr ""
 
 #: src/ui/session/sidebar/mod.ui:17
 msgid "_Keyboard Shortcuts"
-msgstr "Acorchis de _clavièr"
+msgstr ""
 
 #: src/ui/session/sidebar/mod.ui:21
 msgid "_About Paper Plane"
-msgstr "_A prepaus de Paper Plane"
+msgstr ""
 
 #: src/ui/session/sidebar/mod.ui:148 src/ui/session/sidebar/search/mod.ui:16
 msgid "Search"
@@ -1310,7 +1302,7 @@ msgstr ""
 
 #: src/ui/session/sidebar/row.rs:597
 msgid "You"
-msgstr "Vos"
+msgstr ""
 
 #: src/ui/session/sidebar/row_menu.blp:6
 msgid "_Pin"
@@ -1355,45 +1347,3 @@ msgstr ""
 #: src/ui/session/switcher.blp:41
 msgid "New Session"
 msgstr ""
-
-#~ msgid "A Telegram client optimized for the GNOME desktop"
-#~ msgstr "Un client Telegram optimizat per l’environament de burèu GNOME"
-
-#~ msgid "Gnome;GTK;"
-#~ msgstr "Gnome;GTK;"
-
-#~ msgid "_Previous"
-#~ msgstr "_Precedenta"
-
-#~ msgctxt "shortcut window"
-#~ msgid "General"
-#~ msgstr "General"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Show Shortcuts"
-#~ msgstr "Afichar los acorchis"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Quit"
-#~ msgstr "Quitar"
-
-#~ msgid "Welcome to Paper Plane"
-#~ msgstr "La benvenguda a Paper Plane"
-
-#~ msgid "Use Telegram's test data center"
-#~ msgstr "Utilizar lo centre de donadas de pròva de Telegram"
-
-#~ msgid "Advanced"
-#~ msgstr "Avançat"
-
-#~ msgid "Use Test Data Center"
-#~ msgstr "Utilizar lo centre de donadas de pròva"
-
-#~ msgid "This requires a restart to apply"
-#~ msgstr "Aquò requerís una reaviada per s’aplicar"
-
-#~ msgid "Encryption Key"
-#~ msgstr "Clau de chiframent"
-
-#~ msgid "Enter the Encryption Key"
-#~ msgstr "Dintratz la clau de chiframent"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 22:31+0100\n"
+"POT-Creation-Date: 2023-09-25 16:58+0200\n"
 "PO-Revision-Date: 2023-05-26 16:48+0000\n"
 "Last-Translator: Karol Lademan <karol@lademan.dev>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/paper-plane/main/"
@@ -27,13 +27,12 @@ msgstr "Paper Plane"
 
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
-msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "Klient Telegrama dostosowany do środowiska GNOME"
+msgid "Chat over Telegram on a modern and elegant client"
+msgstr ""
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
-msgid "Gnome;GTK;"
-msgstr "Gnome;GTK;"
+msgid "Gnome;GTK;telegram;tg;chat;im;messaging;messenger;"
+msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
@@ -51,19 +50,16 @@ msgid "Default window maximized behaviour"
 msgstr "Domyślne zachowanie zmaksymalizowanego okna"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
-msgid "Recently used sessions"
+#, fuzzy
+msgid "Last used session"
 msgstr "Ostatnio używane sesje"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-msgid ""
-"A list of most recently used sessions, sorted by their database directory "
-"names"
+msgid "The directory name of the last used session"
 msgstr ""
-"Lista ostatnio używanych sesji uporządkowana względem nazwy katalogu bazy "
-"danych"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
-#: data/resources/ui/preferences-window.blp:7
+#: src/ui/session/preferences_window.blp:7
 msgid "Color Scheme"
 msgstr "Schemat kolorów"
 
@@ -71,327 +67,162 @@ msgstr "Schemat kolorów"
 msgid "The color scheme to be used in the app"
 msgstr "Schemat kolorów, który będzie używany w aplikacji"
 
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
+msgid ""
+"Paper Plane is an alternative Telegram client. It uses libadwaita for its "
+"user interface and strives to meet the design principles of the GNOME "
+"desktop."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:14
+msgid ""
+"Paper Plane is still under development and not yet feature-complete. "
+"However, the following things are already working:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:19
+msgid "The use of multiple accounts at the same time."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:20
+msgid "Viewing text messages, images, stickers and files."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:21
+msgid "Sending text messages and images."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:22
+msgid "Replying to messages."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:23
+msgid "Searching for groups and persons."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:29
 msgid "Main window"
 msgstr "Główne okno"
 
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:47
+msgid ""
+"The third beta release of Paper Plane 0.1.0 should in the first place fix a "
+"build error on Flathub:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:49
+msgid ""
+"Added registered categories to te desktop file to fix a build error on "
+"Flathub."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:50
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:64
+msgid "Dependencies have been updated."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:51
+msgid "Turkish translations have been updated, thanks to @sabriunal."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:57
+msgid ""
+"The second beta release of Paper Plane 0.1.0 contains the following "
+"features, fixes and chores:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:59
+msgid ""
+"Blueprint compiler has been updated to version 0.8.1, thanks to "
+"@alissonlauffer."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:60
+msgid ""
+"The chat history now has a background image, which is animated when new "
+"messages arrive, thanks to @yuraiz."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:61
+msgid ""
+"A bug was fixed that lead to an application crash if selecting non-existing "
+"chats from the contacts window, thank to @alissonlauffer."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:62
+msgid ""
+"Avatars of deleted accounts now have a ghost icon set, thanks to @karl0d."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:63
+msgid ""
+"The application will now be built with more aggressive compiler options, "
+"which should result in a smaller and maybe faster binary."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:65
+msgid ""
+"Portuguese and Polish translation have been updated, thanks to "
+"@jvlianodorneles and @karl0d."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:71
+msgid ""
+"Paper Plane 0.1.0-beta.1 is the first release for enthusiasts to try out and "
+"play around with."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:83
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
-#: data/resources/ui/add-account-row.blp:6
-msgid "_Production Server"
-msgstr "_Serwer Produkcyjny"
-
-#: data/resources/ui/add-account-row.blp:11
-msgid "_Test Server"
-msgstr "_Serwer Testowy"
-
-#: data/resources/ui/add-account-row.blp:33
-msgid "_Add Account"
-msgstr "_Dodaj Konto"
-
-#: data/resources/ui/content.blp:29
-msgid "No Chat Selected"
-msgstr "Nie wybrano czatu"
-
-#: data/resources/ui/content.blp:30
-msgid "Select a chat to start messaging."
-msgstr "Wybierz czat, aby rozpocząć rozmowę."
-
-#: data/resources/ui/content-chat-action-bar.blp:68
-msgid "Message"
-msgstr "Wiadomość"
-
-#: data/resources/ui/content-chat-action-bar.blp:96
-msgid "Unblock"
-msgstr "Odblokuj"
-
-#: data/resources/ui/content-chat-action-bar.blp:113
-msgid "Join"
-msgstr "Dołącz"
-
-#: data/resources/ui/content-chat-history.ui:74
-msgid "Scroll to bottom"
-msgstr "Przewiń do dołu"
-
-#: data/resources/ui/content-chat-history.ui:154
-msgid "View Info"
-msgstr "Zobacz informacje"
-
-#: data/resources/ui/content-chat-history.ui:158
-msgid "Leave Chat"
-msgstr "Opuść czat"
-
-#: data/resources/ui/content-send-photo-dialog.blp:29
-msgid "Caption"
-msgstr "Napis"
-
-#: data/resources/ui/login.blp:25
-msgid "_Previous"
-msgstr "_Wstecz"
-
-#: data/resources/ui/login.blp:48
-msgid "_Next"
-msgstr "_Naprzód"
-
-#: data/resources/ui/login.blp:68
-msgid "Welcome"
-msgstr "Witaj"
-
-#: data/resources/ui/login.blp:88
-msgid "_Log in using QR code"
-msgstr "_Zaloguj się używając kodu QR"
-
-#: data/resources/ui/login.blp:127
-msgid "Scan Code"
-msgstr "Zeskanuj Kod"
-
-#: data/resources/ui/login.blp:128
-msgid "Scan this code with another Telegram app logged into your account."
-msgstr ""
-"Zeskanuj ten kod w innej zalogowanej do twojego konta aplikacji Telegrama."
-
-#: data/resources/ui/login.blp:144
-msgid "Enter the Verification Code"
-msgstr "Wpisz kod weryfikacyjny"
-
-#: data/resources/ui/login.blp:160 data/resources/ui/login.blp:477
-msgid "Code"
-msgstr "Kod"
-
-#: data/resources/ui/login.blp:185
-msgid "The code cannot be sent anymore."
-msgstr "Wysłanie kodu nie jest już możliwe."
-
-#: data/resources/ui/login.blp:218
-msgid "Register New Account"
-msgstr "Zarejestruj nowe konto"
-
-#: data/resources/ui/login.blp:233
-msgid "First Name"
-msgstr "Imię"
-
-#: data/resources/ui/login.blp:237
-msgid "Last Name"
-msgstr "Nazwisko"
-
-#: data/resources/ui/login.blp:259
-msgid ""
-"By signing up,\n"
-"you agree to the <a href=\"\">Terms of Service</a>."
-msgstr ""
-"Poprzez założenie konta,\n"
-"akceptujesz <a href=\"\">Zasady korzystania z Usługi</a>."
-
-#: data/resources/ui/login.blp:271
-msgid "Enter Your Password"
-msgstr "Wpisz swoje hasło"
-
-#: data/resources/ui/login.blp:285
-msgid "Password"
-msgstr "Hasło"
-
-#: data/resources/ui/login.blp:292
-msgid "Hint"
-msgstr "Wskazówka"
-
-#: data/resources/ui/login.blp:308
-msgid "_Forgot password?"
-msgstr "_Nie pamiętasz hasła?"
-
-#: data/resources/ui/login.blp:355
-msgid "Use Recovery Code"
-msgstr "Użyj Kodu Odzyskiwania"
-
-#: data/resources/ui/login.blp:363
-msgid ""
-"When you set your cloud password, you provided a recovery e-mail address. A "
-"code can be sent there to reset your password."
-msgstr ""
-"Kiedy ustawiałeś hasło do chmury, podałeś nam pomocniczy adres email. Możemy "
-"wysłać ci kod na ten adres, który możesz użyć, żeby zresetować twoje hasło."
-
-#: data/resources/ui/login.blp:379
-msgid "_Send recovery code"
-msgstr "_Wyślij kod odzyskiwania"
-
-#: data/resources/ui/login.blp:425
-msgid "Account Deletion"
-msgstr "Usuwanie Konta"
-
-#: data/resources/ui/login.blp:445 src/login.rs:912
-msgid "_Delete Account"
-msgstr "_Usuń Konto"
-
-#: data/resources/ui/login.blp:460
-msgid "Enter the code e-mailed to you"
-msgstr "Wprowadź kod wysłany na e-mail"
-
-#: data/resources/ui/login.blp:493
-msgid "Unable to access your e-mail?"
-msgstr "Nie masz dostępu do swojego emaila?"
-
-#: data/resources/ui/message-menu.blp:6
-msgid "_Reply"
-msgstr "_Odpowiedz"
-
-#: data/resources/ui/message-menu.blp:12
-msgid "_Edit"
-msgstr "_Edytuj"
-
-#: data/resources/ui/message-menu.blp:18
-msgid "Delete for Ever_yone"
-msgstr "Usuń dla _wszystkich"
-
-#: data/resources/ui/message-menu.blp:24
-msgid "_Delete for Me"
-msgstr "Usuń dla _mnie"
-
-#: data/resources/ui/phone-number-input.blp:12
-msgid "Country"
-msgstr "Kraj"
-
-#: data/resources/ui/phone-number-input.blp:18
-msgid "Phone Number"
-msgstr "Numer telefonu"
-
-#: data/resources/ui/preferences-window.blp:10
-msgid "Follow System Colors"
-msgstr "Użyj kolorów systemowych"
-
-#: data/resources/ui/preferences-window.blp:19
-msgid "Dark Theme"
-msgstr "Ciemny motyw"
-
-#: data/resources/ui/preferences-window.blp:29
-msgid "Storage"
-msgstr "Przestrzeń dyskowa"
-
-#: data/resources/ui/preferences-window.blp:32
-msgid "Cache Size"
-msgstr "Pamięć cache"
-
-#: data/resources/ui/preferences-window.blp:42
-msgid "Clear Cache"
-msgstr "Wyczyść pamięć cache"
-
-#: data/resources/ui/shortcuts.blp:11
-msgctxt "shortcut window"
-msgid "General"
-msgstr "Ogólne"
-
-#: data/resources/ui/shortcuts.blp:14
-msgctxt "shortcut window"
-msgid "Show Shortcuts"
-msgstr "Pokaż skróty klawiszowe"
-
-#: data/resources/ui/shortcuts.blp:19
-msgctxt "shortcut window"
-msgid "Quit"
-msgstr "Wyjdź"
-
-#: data/resources/ui/shortcuts.blp:25
-msgctxt "shortcut window"
-msgid "Chat List"
-msgstr "Lista czatów"
-
-#: data/resources/ui/shortcuts.blp:28
-msgctxt "shortcut window"
-msgid "Search Chats"
-msgstr "Przeszukaj czaty"
-
-#: data/resources/ui/shortcuts.blp:34
-msgctxt "shortcut window"
-msgid "Chat History"
-msgstr "Historia chatu"
-
-#: data/resources/ui/shortcuts.blp:37
-msgctxt "shortcut window"
-msgid "Send Photo from Clipboard"
-msgstr "Wyślij zdjęcie ze schowka"
-
-#: data/resources/ui/sidebar.ui:6
-msgid "_Log Out"
-msgstr "_Wyloguj się"
-
-#: data/resources/ui/sidebar.ui:12
-msgid "_Contacts"
-msgstr "_Kontakty"
-
-#: data/resources/ui/sidebar.ui:18
-msgid "_Preferences"
-msgstr "_Preferencje"
-
-#: data/resources/ui/sidebar.ui:22
-msgid "_Keyboard Shortcuts"
-msgstr "_Skróty klawiszowe"
-
-#: data/resources/ui/sidebar.ui:26
-msgid "_About Paper Plane"
-msgstr "_O Paper Plane"
-
-#: data/resources/ui/sidebar-row-menu.blp:6
-msgid "_Pin"
-msgstr "_Przypnij"
-
-#: data/resources/ui/sidebar-row-menu.blp:12
-msgid "_Unpin"
-msgstr "_Odepnij"
-
-#: data/resources/ui/sidebar-row-menu.blp:18
-msgid "_Mark as Unread"
-msgstr "Oznacz jako nieprzeczytane"
-
-#: data/resources/ui/sidebar-row-menu.blp:24
-msgid "Mark as _Read"
-msgstr "Oznacz jako przeczytane"
-
-#: data/resources/ui/sidebar-search.ui:12
-msgid "Search"
-msgstr "Szukaj"
-
-#: data/resources/ui/sidebar-search.ui:75
-msgid "No Search Results"
-msgstr "Brak wyników wyszukiwania"
-
-#: data/resources/ui/sidebar-search.ui:76
-msgid "Try a different search."
-msgstr "Spróbuj inną frazę."
-
-#: src/application.rs:166
+#: src/application.rs:165
 msgid "Paper Plane developers"
 msgstr "Zespół programistów Telegranda"
 
-#: src/application.rs:182
+#: src/application.rs:185
 msgid "Sponsors"
 msgstr "Sponsorzy"
 
-#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
-#: src/session/sidebar/search/mod.rs:205
+#: src/application.rs:191
+msgid ""
+"<span size=\"small\">Map data by                 <a href=\"https://www."
+"openstreetmap.org\">OpenStreetMap</a>                 and contributors</span>"
+msgstr ""
+
+#: src/application.rs:197
+msgid ""
+"OpenStreetMap® is open data, licensed under the                 <a "
+"href=\"https://opendatacommons.org/licenses/odbl\">                Open Data "
+"Commons Open Database License </a> (ODbL) by the                 <a "
+"href=\"https://osmfoundation.org\">aOpenStreetMap Foundation</a> (OSMF)."
+msgstr ""
+
+#: src/expressions.rs:20 src/ui/session/sidebar/search/item_row.rs:97
+#: src/ui/session/sidebar/search/mod.rs:182
 msgid "Saved Messages"
 msgstr "Zapisane wiadomości"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
+#: src/expressions.rs:22 src/expressions.rs:44 src/strings.rs:384
 msgid "Deleted Account"
 msgstr "Usunięte konto"
 
-#: src/expressions.rs:92
+#: src/expressions.rs:90
 msgid "The admins of this group have restricted you from writing here"
 msgstr "Administratorzy tej grupy ograniczyli ci możliwość pisania tutaj"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
-#: src/session/sidebar/row.rs:646
+#: src/expressions.rs:103 src/ui/session/content/message_row/indicators.rs:239
+#: src/ui/session/sidebar/row.rs:648
 msgid "%l:%M %p"
 msgstr "%H:%M"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:110
+#: src/expressions.rs:108
 msgid "%B %e, %Y %l:%M %p"
 msgstr "%B %e, %Y %H:%M"
 
@@ -399,56 +230,724 @@ msgstr "%B %e, %Y %H:%M"
 msgid "Writing messages isn't allowed in this group."
 msgstr "Pisanie wiadomości nie jest dozwolone na tej grupie."
 
-#: src/login.rs:372
-msgid ""
-"One way to continue using your account is to delete and then recreate it"
+#: src/main.rs:121
+msgid "Prints application version"
 msgstr ""
-"Jednym ze sposobów aby móc dalej korzystać ze swojego konta jest jego "
-"usunięcie i ponowne stworzenie"
 
-#: src/login.rs:377
-msgid ""
-"Since you have not provided a recovery e-mail address, the only way to "
-"continue using your account is to delete and then recreate it"
+#: src/main.rs:130
+msgid "Specify the minimum log level"
 msgstr ""
-"Jako że nie podałeś pomocniczego adresu e-mail, jedynym sposobem, by "
-"kontynuować używanie twojego konta jest jego usunięcie i ponowne stworzenie"
 
-#: src/login.rs:385
-msgid ""
-"Please note, you will lose all your chats and messages, along with any media "
-"and files you shared!"
+#: src/main.rs:139
+msgid "Whether to use a test data center on first account"
 msgstr ""
-"Weź proszę pod uwagę, że stracisz wszystkie czaty i wiadomości wraz ze "
-"wszystkimi multimediami i plikami, które udostępniłeś!"
 
-#: src/login.rs:676
-msgid "Do you accept the Terms of Service?"
-msgstr "Czy akceptujesz Zasady korzystania z Usługi?"
+#: src/model/country_info.rs:99
+msgid "Invalid Country Code"
+msgstr "Niepoprawny kod kraju"
 
-#: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:183
-msgid "_No"
-msgstr "_Nie"
+#: src/model/country_info.rs:108
+msgid "Test Account"
+msgstr "Konto testowe"
 
-#: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:183
-msgid "_Yes"
-msgstr "_Tak"
+#: src/strings.rs:29
+msgid "{sender} is choosing a contact"
+msgstr "{sender} wybiera kontakt"
 
-#: src/login.rs:680
-msgid "Terms of Service"
-msgstr "Zasady Korzystania z Usługi"
+#: src/strings.rs:33
+msgid "{sender1} and {sender2} are choosing contacts"
+msgstr "{sender1} i {sender2} wybierają kontakty"
 
-#: src/login.rs:681 src/login.rs:991
-msgid "_OK"
-msgstr "_OK"
+#: src/strings.rs:40
+msgid "{num} people are choosing contacts"
+msgstr "{num} osób wybierają kontakty"
 
-#: src/login.rs:903
+#: src/strings.rs:45
+msgid "choosing a contact"
+msgstr "wybiera kontakt"
+
+#: src/strings.rs:52
+msgid "{sender} is choosing a location"
+msgstr "{sender} wybiera lokalizację"
+
+#: src/strings.rs:56
+msgid "{sender1} and {sender2} are choosing locations"
+msgstr "{sender1} i {sender2} wybierają lokalizacje"
+
+#: src/strings.rs:63
+msgid "{num} people are choosing locations"
+msgstr "{num} osób wybiera lokalizacje"
+
+#: src/strings.rs:68
+msgid "choosing a location"
+msgstr "wybiera lokalizację"
+
+#: src/strings.rs:75
+msgid "{sender} is choosing a sticker"
+msgstr "{sender} wybiera naklejkę"
+
+#: src/strings.rs:79
+msgid "{sender1} and {sender2} are choosing stickers"
+msgstr "{sender1} i {sender2} wybierają naklejki"
+
+#: src/strings.rs:86
+msgid "{num} people are choosing stickers"
+msgstr "{num} osób wybierają naklejki"
+
+#: src/strings.rs:91
+msgid "choosing a sticker"
+msgstr "wybiera naklejkę"
+
+#: src/strings.rs:98
+msgid "{sender} is recording a video"
+msgstr "{sender} nagrywa wideo"
+
+#: src/strings.rs:102
+msgid "{sender1} and {sender2} are recording videos"
+msgstr "{sender1} i {sender2} nagrywają wideo"
+
+#: src/strings.rs:109
+msgid "{num} people are recording videos"
+msgstr "{num} osób nagrywają wideo"
+
+#: src/strings.rs:114
+msgid "recording a video"
+msgstr "nagrywa wideo"
+
+#: src/strings.rs:121
+msgid "{sender} is recording a video note"
+msgstr "{sender} nagrywa wiadomość wideo"
+
+#: src/strings.rs:125
+msgid "{sender1} and {sender2} are recording video notes"
+msgstr "{sender1} i {sender2} nagrywają wiadomości wideo"
+
+#: src/strings.rs:132
+msgid "{num} people are recording video notes"
+msgstr "{num} osób nagrywają wiadomości wideo"
+
+#: src/strings.rs:137
+msgid "recording a video note"
+msgstr "nagrywa wiadomość wideo"
+
+#: src/strings.rs:144
+msgid "{sender} is recording a voice note"
+msgstr "{sender} nagrywa wiadomość głosową"
+
+#: src/strings.rs:148
+msgid "{sender1} and {sender2} are recording voice notes"
+msgstr "{sender1} i {sender2} nagrywają wiadomości głosowe"
+
+#: src/strings.rs:155
+msgid "{num} people are recording voice notes"
+msgstr "{num} osób nagrywa wiadomość głosową"
+
+#: src/strings.rs:160
+msgid "recording a voice note"
+msgstr "nagrywa wiadomość głosową"
+
+#: src/strings.rs:167
+msgid "{sender} is playing a game"
+msgstr "{sender} gra w grę"
+
+#: src/strings.rs:171
+msgid "{sender1} and {sender2} are playing games"
+msgstr "{sender1} i {sender2} grają w gry"
+
+#: src/strings.rs:178
+msgid "{num} people are playing games"
+msgstr "{num} osób gra w gry"
+
+#: src/strings.rs:183
+msgid "playing a game"
+msgstr "gra w grę"
+
+#: src/strings.rs:190
+msgid "{sender} is typing"
+msgstr "{sender} pisze"
+
+#: src/strings.rs:194
+msgid "{sender1} and {sender2} are typing"
+msgstr "{sender1} i {sender2} piszą"
+
+#: src/strings.rs:200
+msgid "{num} people are typing"
+msgstr "{num} osób pisze"
+
+#: src/strings.rs:203
+msgid "typing"
+msgstr "pisze"
+
+#: src/strings.rs:210
+msgid "{sender} is uploading a document ({progress}%)"
+msgstr "{sender} wysyła dokument ({progress}%)"
+
+#: src/strings.rs:217
+msgid "{sender1} and {sender2} are uploading documents"
+msgstr "{sender1} i {sender2} wysyłają dokumenty"
+
+#: src/strings.rs:224
+msgid "{num} people are uploading documents"
+msgstr "{num} osób wysyła dokumenty"
+
+#: src/strings.rs:230
+msgid "uploading a document ({progress}%)"
+msgstr "wysyłanie dokumentu ({progress}%)"
+
+#: src/strings.rs:239
+msgid "{sender} is uploading a photo ({progress}%)"
+msgstr "{sender} wysyła zdjęcie ({progress}%)"
+
+#: src/strings.rs:246
+msgid "{sender1} and {sender2} are uploading photos"
+msgstr "{sender1} i {sender2} wysyłają zdjęcia"
+
+#: src/strings.rs:253
+msgid "{num} people are uploading photos"
+msgstr "{num} osób wysyła zdjęcia"
+
+#: src/strings.rs:259
+msgid "uploading a photo ({progress}%)"
+msgstr "wysyłanie zdjęcia ({progress}%)"
+
+#: src/strings.rs:268
+msgid "{sender} is uploading a video ({progress}%)"
+msgstr "{sender} wysyła wideo ({progress}%)"
+
+#: src/strings.rs:275
+msgid "{sender1} and {sender2} are uploading videos"
+msgstr "{sender1} i {sender2} wysyłają wideo"
+
+#: src/strings.rs:282
+msgid "{num} people are uploading videos"
+msgstr "{num} osób wysyła wideo"
+
+#: src/strings.rs:288
+msgid "uploading a video ({progress}%)"
+msgstr "wysyłanie wideo ({progress}%)"
+
+#: src/strings.rs:297
+msgid "{sender} is uploading a video note ({progress}%)"
+msgstr "{sender} wysyła wiadomość wideo ({progress}%)"
+
+#: src/strings.rs:304
+msgid "{sender1} and {sender2} are uploading video notes"
+msgstr "{sender1} i {sender2} wysyłają wiadomości wideo"
+
+#: src/strings.rs:311
+msgid "{num} people are uploading video notes"
+msgstr "{num} osób nagrywa wiadomość wideo"
+
+#: src/strings.rs:317
+msgid "uploading a video note ({progress}%)"
+msgstr "wysyłanie wiadomości wideo ({progress}%)"
+
+#: src/strings.rs:326
+msgid "{sender} is uploading a voice note ({progress}%)"
+msgstr "{sender} wysyła wiadomość głosową ({progress}%)"
+
+#: src/strings.rs:333
+msgid "{sender1} and {sender2} are uploading voice notes"
+msgstr "{sender1} i {sender2} wysyłają wiadomości głosowe"
+
+#: src/strings.rs:340
+msgid "{num} people are uploading voice notes"
+msgstr "{num} osób wysyła wiadomości głosowe"
+
+#: src/strings.rs:346
+msgid "uploading a voice note ({progress}%)"
+msgstr "wysyłanie wiadomości głosowej ({progress}%)"
+
+#: src/strings.rs:355
+msgid "{sender} is watching an animation {emoji}"
+msgstr "{sender} ogląda animację {emoji}"
+
+#: src/strings.rs:362
+msgid "{sender1} and {sender2} are watching animations {emoji}"
+msgstr "{sender1} i {sender2} oglądają animacje {emoji}"
+
+#: src/strings.rs:370
+msgid "{num} people are watching animations {emoji}"
+msgstr "{num} osób ogląda animacje {emoji}"
+
+#: src/strings.rs:375
+msgid "watching an animation"
+msgstr "ogląda animacje"
+
+#: src/strings.rs:398
+msgid "last seen a long time ago"
+msgstr "widziano dawno temu"
+
+#: src/strings.rs:399
+msgid "online"
+msgstr "online"
+
+#. Translators: This is an online status with the date
+#: src/strings.rs:408
+#, c-format
+msgid "last seen %x"
+msgstr "ostatnio widziano %x"
+
+#. Translators: This is an online status with the last seen time, without seconds
+#. Here you may want to change to a 24-hours representation, based on your locale.
+#. You can use this site to learn more: https://www.strfti.me/
+#: src/strings.rs:413
+msgid "last seen yesterday at %l:%M %p"
+msgstr "ostatnio widziano %H:%M"
+
+#: src/strings.rs:417
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "widziano godzinę temu"
+msgstr[1] "widziano {num} godziny temu"
+msgstr[2] "widziano {num} godzin temu"
+
+#: src/strings.rs:424
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "widziano minutę temu"
+msgstr[1] "widziano {num} minuty temu"
+msgstr[2] "widziano {num} minut temu"
+
+#: src/strings.rs:430
+msgid "last seen just now"
+msgstr "ostatnio widziano przed chwilą"
+
+#: src/strings.rs:433
+msgid "last seen recently"
+msgstr "ostatnio widziano niedawno"
+
+#: src/strings.rs:434
+msgid "last seen within a week"
+msgstr "ostatnio widziano w ciągu tygodnia"
+
+#: src/strings.rs:435
+msgid "last seen within a month"
+msgstr "ostatnio widziano w ciągu miesiąca"
+
+#: src/strings.rs:456 src/ui/session/content/message_row/location.blp:26
+#, fuzzy
+msgid "Live Location"
+msgstr "Wideo, {caption}"
+
+#: src/strings.rs:458
+#, fuzzy
+msgid "Location"
+msgstr "Napis"
+
+#: src/strings.rs:467
+msgid "Photo has expired"
+msgstr "Zdjęcie wygasło"
+
+#: src/strings.rs:470
+msgid "Video has expired"
+msgstr "Wideo wygasło"
+
+#: src/strings.rs:471
+msgid "Video Message"
+msgstr "Wiadomość wideo"
+
+#: src/strings.rs:504
+msgid "{sender} took a screenshot!"
+msgstr "Użytkownik {sender} zrobił zrzut ekranu!"
+
+#: src/strings.rs:509
+msgid "Location, {venue}"
+msgstr ""
+
+#: src/strings.rs:510
+msgid "Unsupported Message"
+msgstr "Nieobsługiwana wiadomość"
+
+#: src/strings.rs:516
+msgid "GIF"
+msgstr "GIF"
+
+#: src/strings.rs:518
+msgid "GIF, {caption}"
+msgstr "GIF, {caption}"
+
+#: src/strings.rs:526
+msgid "{title} – {performer}"
+msgstr "{title} – {performer}"
+
+#: src/strings.rs:532
+msgid "{title} – {performer}, {caption}"
+msgstr "{title} – {performer}, {caption}"
+
+#: src/strings.rs:548
+msgid "{file_name}, {caption}"
+msgstr "{file_name}, {caption}"
+
+#: src/strings.rs:556
+msgid "Photo"
+msgstr "Zdjęcie"
+
+#: src/strings.rs:558
+msgid "Photo, {caption}"
+msgstr "Zdjęcie, {caption}"
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:564
+msgid "{emoji} Sticker"
+msgstr "Naklejka {emoji}"
+
+#: src/strings.rs:569
+msgid "Video"
+msgstr "Wideo"
+
+#: src/strings.rs:571
+msgid "Video, {caption}"
+msgstr "Wideo, {caption}"
+
+#: src/strings.rs:577
+msgid "Voice Message"
+msgstr "Wiadomość głosowa"
+
+#: src/strings.rs:579
+msgid "Voice Message, {caption}"
+msgstr "Wiadomość głosowa, {caption}"
+
+#: src/strings.rs:598
+msgid "Declined outgoing video call"
+msgstr "Odrzucono wychodzące połączenie wideo"
+
+#: src/strings.rs:600
+msgid "Declined outgoing call"
+msgstr "Odrzucono wychodzące połączenie"
+
+#: src/strings.rs:606
+msgid "Declined incoming video call"
+msgstr "Odrzucono przychodzące połączenie wideo"
+
+#: src/strings.rs:608
+msgid "Declined incoming call"
+msgstr "Odrzucono przychodzące połączenie"
+
+#: src/strings.rs:614
+msgid "Canceled call"
+msgstr "Anulowane połączenie"
+
+#: src/strings.rs:616
+msgid "Missed call"
+msgstr "Nieodebrane połączenie"
+
+#: src/strings.rs:629
+msgid "Outgoing video call ({duration})"
+msgstr "Wychodzące połączenie wideo ({duration})"
+
+#: src/strings.rs:634
+msgid "Outgoing call ({duration})"
+msgstr "Wychodzące połączenie ({duration})"
+
+#: src/strings.rs:639
+msgid "Outgoing video call"
+msgstr "Wychodzące połączenie wideo"
+
+#: src/strings.rs:641
+msgid "Outgoing call"
+msgstr "Wychodzące połączenie"
+
+#: src/strings.rs:646
+msgid "Incoming video call ({duration})"
+msgstr "Przychodzące połączenie wideo ({duration})"
+
+#: src/strings.rs:651
+msgid "Incoming call ({duration})"
+msgstr "Przychodzące połączenie ({duration})"
+
+#: src/strings.rs:656
+msgid "Incoming video call"
+msgstr "Przychodzące połączenie wideo"
+
+#: src/strings.rs:658 src/ui/window.rs:143
+msgid "Incoming call"
+msgstr "Przychodzące połączenie"
+
+#: src/strings.rs:665 src/strings.rs:682
+msgid "{sender} created the group \"{title}\""
+msgstr "Użytkownik {sender} stworzył grupę „{title}”"
+
+#: src/strings.rs:677
+msgid "Channel created"
+msgstr "Stworzono kanał"
+
+#: src/strings.rs:696
+msgid "Channel renamed to \"{title}\""
+msgstr "Zmieniono nazwę kanału na „{title}”"
+
+#: src/strings.rs:701
+msgid "{sender} changed the group name to \"{title}\""
+msgstr "Użytkownik {sender} zmienił nazwę na „{title}”"
+
+#: src/strings.rs:711
+msgid "Channel photo changed"
+msgstr "Zmieniono zdjęcie kanału"
+
+#: src/strings.rs:715
+msgid "{sender} changed the group photo"
+msgstr "Użytkownik {sender} zmienił zdjęcie grupy"
+
+#: src/strings.rs:723
+msgid "Channel photo removed"
+msgstr "Usunięto zdjęcie kanału"
+
+#: src/strings.rs:727
+msgid "{sender} removed the group photo"
+msgstr "Użytkownik {sender} usunął zdjęcie grupy"
+
+#: src/strings.rs:738 src/strings.rs:773
+msgid "{sender} joined the group"
+msgstr "Użytkownik {sender} dołączył do grupy"
+
+#: src/strings.rs:743
+msgid "{sender} added {first_user} and {second_user}"
+msgstr "Użytkownik {sender} dodał {first_user} i {second_user}"
+
+#: src/strings.rs:757
+msgid "{sender} added {users}"
+msgstr "Użytkownik {sender} dodał {users}"
+
+#: src/strings.rs:766
+msgid "{sender} joined the group via invite link"
+msgstr "Użytkownik {sender} dołączył do grupy poprzez link zaproszenia"
+
+#: src/strings.rs:780
+msgid "{sender} left the group"
+msgstr "Użytkownik {sender} opuścił grupę"
+
+#: src/strings.rs:785
+msgid "{sender} removed {user}"
+msgstr "Użytkownik {sender} usunął {user}"
+
+#: src/strings.rs:810
+msgid "{sender} scored {points} in {game}"
+msgstr "Użytkownik {sender} zdobył {points} punktów w {game}"
+
+#: src/strings.rs:819
+msgid "{sender} scored {points}"
+msgstr "Użytkownik {sender} zdobył {points} punktów"
+
+#: src/strings.rs:847
+msgid "{sender} pinned \"{text}\""
+msgstr "Użytkownik {sender} przypiął „{text}”"
+
+#: src/strings.rs:849
+msgid "{sender} pinned a GIF"
+msgstr "Użytkownik {sender} przypiął GIF"
+
+#: src/strings.rs:850
+msgid "{sender} pinned an audio file"
+msgstr "Użytkownik {sender} przypiął plik audio"
+
+#: src/strings.rs:851
+msgid "{sender} pinned a file"
+msgstr "Użytkownik {sender} przypiął plik"
+
+#: src/strings.rs:852
+msgid "{sender} pinned a photo"
+msgstr "Użytkownik {sender} przypiął zdjęcie"
+
+#: src/strings.rs:853
+msgid "{sender} pinned a sticker"
+msgstr "Użytkownik {sender} przypiął naklejkę"
+
+#: src/strings.rs:854
+msgid "{sender} pinned a video"
+msgstr "Użytkownik {sender} przypiął wideo"
+
+#: src/strings.rs:855
+msgid "{sender} pinned a video message"
+msgstr "Użytkownik {sender} przypiął wiadomość wideo"
+
+#: src/strings.rs:856
+msgid "{sender} pinned a voice message"
+msgstr "Użytkownik {sender} przypiął wiadomość głosową"
+
+#: src/strings.rs:857 src/strings.rs:859
+msgid "{sender} pinned a message"
+msgstr "Użytkownik {sender} przypiął wiadomość"
+
+#: src/strings.rs:868
+msgid "{sender} joined Telegram"
+msgstr "Użytkownik {sender} dołączył do Telegrama"
+
+#: src/ui/components/map.blp:29
+msgid "Map data by OpenStreetMap"
+msgstr ""
+
+#: src/ui/components/phone_number_input.blp:13
+msgid "Country"
+msgstr "Kraj"
+
+#: src/ui/components/phone_number_input.blp:21 src/ui/login/code.blp:16
+#: src/ui/login/other_device.blp:19 src/ui/login/password.blp:20
+#: src/ui/login/registration.blp:17
+msgid "Phone Number"
+msgstr "Numer telefonu"
+
+#: src/ui/components/phone_number_input.rs:310
+msgid "You entered an invalid country code."
+msgstr "Wprowadzono nieprawidłowy kod kraju."
+
+#: src/ui/login/code.blp:22
+msgid "Enter the Verification Code"
+msgstr "Wpisz kod weryfikacyjny"
+
+#: src/ui/login/code.blp:39 src/ui/login/password.blp:185
+msgid "Code"
+msgstr "Kod"
+
+#: src/ui/login/code.blp:56 src/ui/login/password.blp:72
+#: src/ui/login/password.blp:202 src/ui/login/phone_number.blp:49
+#: src/ui/login/registration.blp:64
+msgid "_Next"
+msgstr "_Naprzód"
+
+#: src/ui/login/code.rs:117
+msgid "Send code via {type} (may still arrive within {countdown} seconds)"
+msgstr ""
+
+#: src/ui/login/code.rs:122
+msgid "Send code via {type}"
+msgstr ""
+
+#: src/ui/login/code.rs:147
+msgid "The code will arrive to you via {type}."
+msgstr ""
+
+#: src/ui/login/code.rs:184
+msgid "Failed to authenticate: {error}"
+msgstr ""
+
+#: src/ui/login/code.rs:198
+msgid "Failed to resend auth code: {error}"
+msgstr ""
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:228
+msgid "Telegram"
+msgstr "Telegram"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:230
+msgid "SMS"
+msgstr "SMS"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:232
+msgid "Call"
+msgstr "Połączenie"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:234
+msgid "Flash Call"
+msgstr "Błyskawiczne połączenie"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:236
+msgid "Missed Call"
+msgstr "Nieodebrane połączenie"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:238
+msgid "Fragment"
+msgstr "Fragment"
+
+#: src/ui/login/mod.rs:116
+msgid "Reset Registration Process?"
+msgstr ""
+
+#: src/ui/login/mod.rs:117
+msgid ""
+"If you reset the registration process, the previous progress will be "
+"irrevocably lost."
+msgstr ""
+
+#: src/ui/login/mod.rs:128 src/ui/login/password.rs:242
+#: src/ui/session/row.rs:110
+msgid "_Cancel"
+msgstr "_Anuluj"
+
+#: src/ui/login/mod.rs:129
+msgid "_Reset"
+msgstr ""
+
+#: src/ui/login/other_device.blp:24
+msgid "Scan Code"
+msgstr "Zeskanuj Kod"
+
+#: src/ui/login/other_device.blp:25
+msgid "Scan this code with another Telegram app logged into your account."
+msgstr ""
+"Zeskanuj ten kod w innej zalogowanej do twojego konta aplikacji Telegrama."
+
+#: src/ui/login/other_device.blp:42
+#, fuzzy
+msgid "Log in using your phone number"
+msgstr "_Zaloguj się używając kodu QR"
+
+#: src/ui/login/password.blp:26
+msgid "Enter Your Password"
+msgstr "Wpisz swoje hasło"
+
+#: src/ui/login/password.blp:40
+msgid "Password"
+msgstr "Hasło"
+
+#: src/ui/login/password.blp:47
+msgid "Hint"
+msgstr "Wskazówka"
+
+#: src/ui/login/password.blp:88
+#, fuzzy
+msgid "Forgot password?"
+msgstr "_Nie pamiętasz hasła?"
+
+#: src/ui/login/password.blp:107
+#, fuzzy
+msgid "Recover Password"
+msgstr "Wpisz swoje hasło"
+
+#: src/ui/login/password.blp:108
+msgid ""
+"When you set your cloud password, you provided a recovery e-mail address. A "
+"code can be sent there to reset your password."
+msgstr ""
+"Kiedy ustawiałeś hasło do chmury, podałeś nam pomocniczy adres email. Możemy "
+"wysłać ci kod na ten adres, który możesz użyć, żeby zresetować twoje hasło."
+
+#: src/ui/login/password.blp:131
+#, fuzzy
+msgid "_Send Code"
+msgstr "Zeskanuj Kod"
+
+#: src/ui/login/password.blp:150 src/ui/login/password.rs:243
+msgid "_Delete Account"
+msgstr "_Usuń Konto"
+
+#: src/ui/login/password.blp:168
+#, fuzzy
+msgid "Enter the Code E-Mailed to You"
+msgstr "Wprowadź kod wysłany na e-mail"
+
+#: src/ui/login/password.blp:218
+msgid "Unable to access your e-mail?"
+msgstr "Nie masz dostępu do swojego emaila?"
+
+#: src/ui/login/password.rs:198
+msgid "Failed to verify password: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:222
+msgid "Failed to recover password: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:234
 msgid "Warning"
 msgstr "Ostrzeżenie"
 
-#: src/login.rs:905
+#: src/ui/login/password.rs:236
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -460,15 +959,27 @@ msgstr ""
 "\n"
 "Czy chcesz usunąć swoje konto?"
 
-#: src/login.rs:911
-msgid "_Cancel"
-msgstr "_Anuluj"
+#: src/ui/login/password.rs:269
+msgid "Failed to delete account: {error}"
+msgstr ""
 
-#: src/login.rs:984
+#: src/ui/login/password.rs:294
+msgid "Code expired. A new one has been sent you."
+msgstr ""
+
+#: src/ui/login/password.rs:299
+msgid "Code expired. Could not sent a new one: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:307
+msgid "Failed to send password code: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:316
 msgid "Sorry"
 msgstr "Przepraszamy"
 
-#: src/login.rs:986
+#: src/ui/login/password.rs:318
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -476,687 +987,479 @@ msgstr ""
 "Jeśli stracisz dostęp do emaila, twoimi pozostałymi opcjami będzie "
 "zapamiętanie hasła albo usunięcie i ponowne stworzenie konta."
 
-#. Translators: This is an authentication method
-#: src/login.rs:1058
-msgid "Telegram"
-msgstr "Telegram"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1060
-msgid "SMS"
-msgstr "SMS"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1062
-msgid "Call"
-msgstr "Połączenie"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1064
-msgid "Flash Call"
-msgstr "Błyskawiczne połączenie"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1066
-msgid "Missed Call"
-msgstr "Nieodebrane połączenie"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1068
-msgid "Fragment"
-msgstr "Fragment"
-
-#: src/phone_number_input.rs:204
-msgid "You entered an invalid country code."
-msgstr "Wprowadzono nieprawidłowy kod kraju."
-
-#: src/strings.rs:28
-msgid "{sender} is choosing a contact"
-msgstr "{sender} wybiera kontakt"
-
-#: src/strings.rs:32
-msgid "{sender1} and {sender2} are choosing contacts"
-msgstr "{sender1} i {sender2} wybierają kontakty"
-
-#: src/strings.rs:39
-msgid "{num} people are choosing contacts"
-msgstr "{num} osób wybierają kontakty"
-
-#: src/strings.rs:44
-msgid "choosing a contact"
-msgstr "wybiera kontakt"
-
-#: src/strings.rs:51
-msgid "{sender} is choosing a location"
-msgstr "{sender} wybiera lokalizację"
-
-#: src/strings.rs:55
-msgid "{sender1} and {sender2} are choosing locations"
-msgstr "{sender1} i {sender2} wybierają lokalizacje"
-
-#: src/strings.rs:62
-msgid "{num} people are choosing locations"
-msgstr "{num} osób wybiera lokalizacje"
-
-#: src/strings.rs:67
-msgid "choosing a location"
-msgstr "wybiera lokalizację"
-
-#: src/strings.rs:74
-msgid "{sender} is choosing a sticker"
-msgstr "{sender} wybiera naklejkę"
-
-#: src/strings.rs:78
-msgid "{sender1} and {sender2} are choosing stickers"
-msgstr "{sender1} i {sender2} wybierają naklejki"
-
-#: src/strings.rs:85
-msgid "{num} people are choosing stickers"
-msgstr "{num} osób wybierają naklejki"
-
-#: src/strings.rs:90
-msgid "choosing a sticker"
-msgstr "wybiera naklejkę"
-
-#: src/strings.rs:97
-msgid "{sender} is recording a video"
-msgstr "{sender} nagrywa wideo"
-
-#: src/strings.rs:101
-msgid "{sender1} and {sender2} are recording videos"
-msgstr "{sender1} i {sender2} nagrywają wideo"
-
-#: src/strings.rs:108
-msgid "{num} people are recording videos"
-msgstr "{num} osób nagrywają wideo"
-
-#: src/strings.rs:113
-msgid "recording a video"
-msgstr "nagrywa wideo"
-
-#: src/strings.rs:120
-msgid "{sender} is recording a video note"
-msgstr "{sender} nagrywa wiadomość wideo"
-
-#: src/strings.rs:124
-msgid "{sender1} and {sender2} are recording video notes"
-msgstr "{sender1} i {sender2} nagrywają wiadomości wideo"
-
-#: src/strings.rs:131
-msgid "{num} people are recording video notes"
-msgstr "{num} osób nagrywają wiadomości wideo"
-
-#: src/strings.rs:136
-msgid "recording a video note"
-msgstr "nagrywa wiadomość wideo"
-
-#: src/strings.rs:143
-msgid "{sender} is recording a voice note"
-msgstr "{sender} nagrywa wiadomość głosową"
-
-#: src/strings.rs:147
-msgid "{sender1} and {sender2} are recording voice notes"
-msgstr "{sender1} i {sender2} nagrywają wiadomości głosowe"
-
-#: src/strings.rs:154
-msgid "{num} people are recording voice notes"
-msgstr "{num} osób nagrywa wiadomość głosową"
-
-#: src/strings.rs:159
-msgid "recording a voice note"
-msgstr "nagrywa wiadomość głosową"
-
-#: src/strings.rs:166
-msgid "{sender} is playing a game"
-msgstr "{sender} gra w grę"
-
-#: src/strings.rs:170
-msgid "{sender1} and {sender2} are playing games"
-msgstr "{sender1} i {sender2} grają w gry"
-
-#: src/strings.rs:177
-msgid "{num} people are playing games"
-msgstr "{num} osób gra w gry"
-
-#: src/strings.rs:182
-msgid "playing a game"
-msgstr "gra w grę"
-
-#: src/strings.rs:189
-msgid "{sender} is typing"
-msgstr "{sender} pisze"
-
-#: src/strings.rs:193
-msgid "{sender1} and {sender2} are typing"
-msgstr "{sender1} i {sender2} piszą"
-
-#: src/strings.rs:199
-msgid "{num} people are typing"
-msgstr "{num} osób pisze"
-
-#: src/strings.rs:202
-msgid "typing"
-msgstr "pisze"
-
-#: src/strings.rs:209
-msgid "{sender} is uploading a document ({progress}%)"
-msgstr "{sender} wysyła dokument ({progress}%)"
-
-#: src/strings.rs:216
-msgid "{sender1} and {sender2} are uploading documents"
-msgstr "{sender1} i {sender2} wysyłają dokumenty"
-
-#: src/strings.rs:223
-msgid "{num} people are uploading documents"
-msgstr "{num} osób wysyła dokumenty"
-
-#: src/strings.rs:229
-msgid "uploading a document ({progress}%)"
-msgstr "wysyłanie dokumentu ({progress}%)"
-
-#: src/strings.rs:238
-msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "{sender} wysyła zdjęcie ({progress}%)"
-
-#: src/strings.rs:245
-msgid "{sender1} and {sender2} are uploading photos"
-msgstr "{sender1} i {sender2} wysyłają zdjęcia"
-
-#: src/strings.rs:252
-msgid "{num} people are uploading photos"
-msgstr "{num} osób wysyła zdjęcia"
-
-#: src/strings.rs:258
-msgid "uploading a photo ({progress}%)"
-msgstr "wysyłanie zdjęcia ({progress}%)"
-
-#: src/strings.rs:267
-msgid "{sender} is uploading a video ({progress}%)"
-msgstr "{sender} wysyła wideo ({progress}%)"
-
-#: src/strings.rs:274
-msgid "{sender1} and {sender2} are uploading videos"
-msgstr "{sender1} i {sender2} wysyłają wideo"
-
-#: src/strings.rs:281
-msgid "{num} people are uploading videos"
-msgstr "{num} osób wysyła wideo"
-
-#: src/strings.rs:287
-msgid "uploading a video ({progress}%)"
-msgstr "wysyłanie wideo ({progress}%)"
-
-#: src/strings.rs:296
-msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} wysyła wiadomość wideo ({progress}%)"
-
-#: src/strings.rs:303
-msgid "{sender1} and {sender2} are uploading video notes"
-msgstr "{sender1} i {sender2} wysyłają wiadomości wideo"
-
-#: src/strings.rs:310
-msgid "{num} people are uploading video notes"
-msgstr "{num} osób nagrywa wiadomość wideo"
-
-#: src/strings.rs:316
-msgid "uploading a video note ({progress}%)"
-msgstr "wysyłanie wiadomości wideo ({progress}%)"
-
-#: src/strings.rs:325
-msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr "{sender} wysyła wiadomość głosową ({progress}%)"
-
-#: src/strings.rs:332
-msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr "{sender1} i {sender2} wysyłają wiadomości głosowe"
-
-#: src/strings.rs:339
-msgid "{num} people are uploading voice notes"
-msgstr "{num} osób wysyła wiadomości głosowe"
-
-#: src/strings.rs:345
-msgid "uploading a voice note ({progress}%)"
-msgstr "wysyłanie wiadomości głosowej ({progress}%)"
-
-#: src/strings.rs:354
-msgid "{sender} is watching an animation {emoji}"
-msgstr "{sender} ogląda animację {emoji}"
-
-#: src/strings.rs:361
-msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr "{sender1} i {sender2} oglądają animacje {emoji}"
-
-#: src/strings.rs:369
-msgid "{num} people are watching animations {emoji}"
-msgstr "{num} osób ogląda animacje {emoji}"
-
-#: src/strings.rs:374
-msgid "watching an animation"
-msgstr "ogląda animacje"
-
-#: src/strings.rs:395
-msgid "last seen a long time ago"
-msgstr "widziano dawno temu"
-
-#: src/strings.rs:396
-msgid "online"
-msgstr "online"
-
-#. Translators: This is an online status with the date
-#: src/strings.rs:405
-#, c-format
-msgid "last seen %x"
-msgstr "ostatnio widziano %x"
-
-#. Translators: This is an online status with the last seen time, without seconds
-#. Here you may want to change to a 24-hours representation, based on your locale.
-#. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:410
-msgid "last seen yesterday at %l:%M %p"
-msgstr "ostatnio widziano %H:%M"
-
-#: src/strings.rs:414
-msgid "last seen {num} hour ago"
-msgid_plural "last seen {num} hours ago"
-msgstr[0] "widziano godzinę temu"
-msgstr[1] "widziano {num} godziny temu"
-msgstr[2] "widziano {num} godzin temu"
-
-#: src/strings.rs:421
-msgid "last seen {num} minute ago"
-msgid_plural "last seen {num} minutes ago"
-msgstr[0] "widziano minutę temu"
-msgstr[1] "widziano {num} minuty temu"
-msgstr[2] "widziano {num} minut temu"
-
-#: src/strings.rs:427
-msgid "last seen just now"
-msgstr "ostatnio widziano przed chwilą"
-
-#: src/strings.rs:430
-msgid "last seen recently"
-msgstr "ostatnio widziano niedawno"
-
-#: src/strings.rs:431
-msgid "last seen within a week"
-msgstr "ostatnio widziano w ciągu tygodnia"
-
-#: src/strings.rs:432
-msgid "last seen within a month"
-msgstr "ostatnio widziano w ciągu miesiąca"
-
-#: src/strings.rs:456
-msgid "Photo has expired"
-msgstr "Zdjęcie wygasło"
-
-#: src/strings.rs:459
-msgid "Video has expired"
-msgstr "Wideo wygasło"
-
-#: src/strings.rs:460
-msgid "Video Message"
-msgstr "Wiadomość wideo"
-
-#: src/strings.rs:491
-msgid "{sender} took a screenshot!"
-msgstr "Użytkownik {sender} zrobił zrzut ekranu!"
-
-#: src/strings.rs:496
-msgid "Unsupported Message"
-msgstr "Nieobsługiwana wiadomość"
-
-#: src/strings.rs:502
-msgid "GIF"
-msgstr "GIF"
-
-#: src/strings.rs:504
-msgid "GIF, {caption}"
-msgstr "GIF, {caption}"
-
-#: src/strings.rs:512
-msgid "{title} – {performer}"
-msgstr "{title} – {performer}"
-
-#: src/strings.rs:518
-msgid "{title} – {performer}, {caption}"
-msgstr "{title} – {performer}, {caption}"
-
-#: src/strings.rs:534
-msgid "{file_name}, {caption}"
-msgstr "{file_name}, {caption}"
-
-#: src/strings.rs:542
-msgid "Photo"
-msgstr "Zdjęcie"
-
-#: src/strings.rs:544
-msgid "Photo, {caption}"
-msgstr "Zdjęcie, {caption}"
-
-#. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:550
-msgid "{emoji} Sticker"
-msgstr "Naklejka {emoji}"
-
-#: src/strings.rs:555
-msgid "Video"
-msgstr "Wideo"
-
-#: src/strings.rs:557
-msgid "Video, {caption}"
-msgstr "Wideo, {caption}"
-
-#: src/strings.rs:563
-msgid "Voice Message"
-msgstr "Wiadomość głosowa"
-
-#: src/strings.rs:565
-msgid "Voice Message, {caption}"
-msgstr "Wiadomość głosowa, {caption}"
-
-#: src/strings.rs:582
-msgid "Declined outgoing video call"
-msgstr "Odrzucono wychodzące połączenie wideo"
-
-#: src/strings.rs:584
-msgid "Declined outgoing call"
-msgstr "Odrzucono wychodzące połączenie"
-
-#: src/strings.rs:590
-msgid "Declined incoming video call"
-msgstr "Odrzucono przychodzące połączenie wideo"
-
-#: src/strings.rs:592
-msgid "Declined incoming call"
-msgstr "Odrzucono przychodzące połączenie"
-
-#: src/strings.rs:600
-msgid "Canceled call"
-msgstr "Anulowane połączenie"
-
-#: src/strings.rs:602
-msgid "Missed call"
-msgstr "Nieodebrane połączenie"
-
-#: src/strings.rs:615
-msgid "Outgoing video call ({duration})"
-msgstr "Wychodzące połączenie wideo ({duration})"
-
-#: src/strings.rs:620
-msgid "Outgoing call ({duration})"
-msgstr "Wychodzące połączenie ({duration})"
-
-#: src/strings.rs:625
-msgid "Outgoing video call"
-msgstr "Wychodzące połączenie wideo"
-
-#: src/strings.rs:627
-msgid "Outgoing call"
-msgstr "Wychodzące połączenie"
-
-#: src/strings.rs:632
-msgid "Incoming video call ({duration})"
-msgstr "Przychodzące połączenie wideo ({duration})"
-
-#: src/strings.rs:637
-msgid "Incoming call ({duration})"
-msgstr "Przychodzące połączenie ({duration})"
-
-#: src/strings.rs:642
-msgid "Incoming video call"
-msgstr "Przychodzące połączenie wideo"
-
-#: src/strings.rs:644 src/window.rs:213
-msgid "Incoming call"
-msgstr "Przychodzące połączenie"
-
-#: src/strings.rs:651 src/strings.rs:662
-msgid "{sender} created the group \"{title}\""
-msgstr "Użytkownik {sender} stworzył grupę „{title}”"
-
-#: src/strings.rs:658
-msgid "Channel created"
-msgstr "Stworzono kanał"
-
-#: src/strings.rs:672
-msgid "Channel renamed to \"{title}\""
-msgstr "Zmieniono nazwę kanału na „{title}”"
-
-#: src/strings.rs:677
-msgid "{sender} changed the group name to \"{title}\""
-msgstr "Użytkownik {sender} zmienił nazwę na „{title}”"
-
-#: src/strings.rs:687
-msgid "Channel photo changed"
-msgstr "Zmieniono zdjęcie kanału"
-
-#: src/strings.rs:691
-msgid "{sender} changed the group photo"
-msgstr "Użytkownik {sender} zmienił zdjęcie grupy"
-
-#: src/strings.rs:699
-msgid "Channel photo removed"
-msgstr "Usunięto zdjęcie kanału"
-
-#: src/strings.rs:703
-msgid "{sender} removed the group photo"
-msgstr "Użytkownik {sender} usunął zdjęcie grupy"
-
-#: src/strings.rs:711 src/strings.rs:746
-msgid "{sender} joined the group"
-msgstr "Użytkownik {sender} dołączył do grupy"
-
-#: src/strings.rs:716
-msgid "{sender} added {first_user} and {second_user}"
-msgstr "Użytkownik {sender} dodał {first_user} i {second_user}"
-
-#: src/strings.rs:730
-msgid "{sender} added {users}"
-msgstr "Użytkownik {sender} dodał {users}"
-
-#: src/strings.rs:739
-msgid "{sender} joined the group via invite link"
-msgstr "Użytkownik {sender} dołączył do grupy poprzez link zaproszenia"
-
-#: src/strings.rs:753
-msgid "{sender} left the group"
-msgstr "Użytkownik {sender} opuścił grupę"
-
-#: src/strings.rs:758
-msgid "{sender} removed {user}"
-msgstr "Użytkownik {sender} usunął {user}"
-
-#: src/strings.rs:777
-msgid "{sender} scored {points} in {game}"
-msgstr "Użytkownik {sender} zdobył {points} punktów w {game}"
-
-#: src/strings.rs:786
-msgid "{sender} scored {points}"
-msgstr "Użytkownik {sender} zdobył {points} punktów"
-
-#: src/strings.rs:810
-msgid "{sender} pinned \"{text}\""
-msgstr "Użytkownik {sender} przypiął „{text}”"
-
-#: src/strings.rs:812
-msgid "{sender} pinned a GIF"
-msgstr "Użytkownik {sender} przypiął GIF"
-
-#: src/strings.rs:813
-msgid "{sender} pinned an audio file"
-msgstr "Użytkownik {sender} przypiął plik audio"
-
-#: src/strings.rs:814
-msgid "{sender} pinned a file"
-msgstr "Użytkownik {sender} przypiął plik"
-
-#: src/strings.rs:815
-msgid "{sender} pinned a photo"
-msgstr "Użytkownik {sender} przypiął zdjęcie"
-
-#: src/strings.rs:816
-msgid "{sender} pinned a sticker"
-msgstr "Użytkownik {sender} przypiął naklejkę"
-
-#: src/strings.rs:817
-msgid "{sender} pinned a video"
-msgstr "Użytkownik {sender} przypiął wideo"
-
-#: src/strings.rs:818
-msgid "{sender} pinned a video message"
-msgstr "Użytkownik {sender} przypiął wiadomość wideo"
-
-#: src/strings.rs:819
-msgid "{sender} pinned a voice message"
-msgstr "Użytkownik {sender} przypiął wiadomość głosową"
-
-#: src/strings.rs:820 src/strings.rs:822
-msgid "{sender} pinned a message"
-msgstr "Użytkownik {sender} przypiął wiadomość"
-
-#: src/strings.rs:831
-msgid "{sender} joined Telegram"
-msgstr "Użytkownik {sender} dołączył do Telegrama"
-
-#: src/session/preferences_window.rs:208
-msgid "Cache cleared"
-msgstr "Wyczyszczono pamięc podręczną"
-
-#: src/session/content/chat_action_bar.rs:363
-#: src/session/content/chat_action_bar.rs:380
+#: src/ui/login/password.rs:323 src/ui/login/registration.rs:173
+msgid "_OK"
+msgstr "_OK"
+
+#: src/ui/login/phone_number.blp:24
+msgid "Welcome"
+msgstr "Witaj"
+
+#: src/ui/login/phone_number.blp:66
+#, fuzzy
+msgid "Quick login using QR code"
+msgstr "_Zaloguj się używając kodu QR"
+
+#: src/ui/login/phone_number.rs:125
+msgid "Failed to load country codes: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:177 src/ui/session/row.rs:126
+msgid "Failed to log out: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:209
+msgid "Failed to use phone number: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:233
+msgid "Failed to request QR code: {error}"
+msgstr ""
+
+#: src/ui/login/registration.blp:23
+msgid "Register New Account"
+msgstr "Zarejestruj nowe konto"
+
+#: src/ui/login/registration.blp:43
+msgid "First Name"
+msgstr "Imię"
+
+#: src/ui/login/registration.blp:48
+msgid "Last Name"
+msgstr "Nazwisko"
+
+#: src/ui/login/registration.blp:87
+msgid ""
+"By signing up,\n"
+"you agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+"Poprzez założenie konta,\n"
+"akceptujesz <a href=\"\">Zasady korzystania z Usługi</a>."
+
+#: src/ui/login/registration.rs:145
+msgid "Failed to register account: {error}"
+msgstr ""
+
+#: src/ui/login/registration.rs:168
+msgid "Do you accept the Terms of Service?"
+msgstr "Czy akceptujesz Zasady korzystania z Usługi?"
+
+#: src/ui/login/registration.rs:169 src/ui/session/content/chat_history.rs:227
+#: src/ui/session/content/message_row/mod.rs:182
+msgid "_No"
+msgstr "_Nie"
+
+#: src/ui/login/registration.rs:169 src/ui/session/content/chat_history.rs:227
+#: src/ui/session/content/message_row/mod.rs:182
+msgid "_Yes"
+msgstr "_Tak"
+
+#: src/ui/login/registration.rs:172
+msgid "Terms of Service"
+msgstr "Zasady Korzystania z Usługi"
+
+#: src/ui/session/contacts_window/mod.ui:3
+#, fuzzy
+msgid "Contacts"
+msgstr "_Kontakty"
+
+#: src/ui/session/content/chat_action_bar.blp:71
+msgid "Message"
+msgstr "Wiadomość"
+
+#: src/ui/session/content/chat_action_bar.blp:103
+msgid "Unblock"
+msgstr "Odblokuj"
+
+#: src/ui/session/content/chat_action_bar.blp:134
+msgid "Join"
+msgstr "Dołącz"
+
+#: src/ui/session/content/chat_action_bar.rs:119
+msgid "Failed to join chat: {error}"
+msgstr ""
+
+#: src/ui/session/content/chat_action_bar.rs:369
+#: src/ui/session/content/chat_action_bar.rs:386
 msgid "Unknown"
 msgstr "Nieznane"
 
-#: src/session/content/chat_action_bar.rs:365
-#: src/session/content/chat_action_bar.rs:382
+#: src/ui/session/content/chat_action_bar.rs:371
+#: src/ui/session/content/chat_action_bar.rs:388
 msgid "Deleted Message"
 msgstr "Usunięta wiadomość"
 
-#: src/session/content/chat_action_bar.rs:376
+#: src/ui/session/content/chat_action_bar.rs:382
 msgid "Edit Message"
 msgstr "Edytuj wiadomość"
 
-#: src/session/content/chat_action_bar.rs:471
+#: src/ui/session/content/chat_action_bar.rs:477
 msgid "Images"
 msgstr "Obrazy"
 
-#: src/session/content/chat_action_bar.rs:790
+#: src/ui/session/content/chat_action_bar.rs:796
 msgid "Unmute"
 msgstr "Włącz powiadomienia"
 
-#: src/session/content/chat_action_bar.rs:792
+#: src/ui/session/content/chat_action_bar.rs:798
 msgid "Mute"
 msgstr "Wyłącz powiadomienia"
 
-#: src/session/content/chat_history.rs:230
+#: src/ui/session/content/chat_history.rs:224
 msgid "Leave chat?"
 msgstr "Opuścić czat?"
 
-#: src/session/content/chat_history.rs:231
+#: src/ui/session/content/chat_history.rs:225
 msgid "Do you want to leave this chat?"
 msgstr "Czy chcesz opuścić ten czat?"
 
+#: src/ui/session/content/chat_history.ui:67
+msgid "Scroll to bottom"
+msgstr "Przewiń do dołu"
+
+#: src/ui/session/content/chat_history.ui:145
+msgid "View Info"
+msgstr "Zobacz informacje"
+
+#: src/ui/session/content/chat_history.ui:149
+msgid "Leave Chat"
+msgstr "Opuść czat"
+
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/chat_history_row.rs:121
+#: src/ui/session/content/chat_history_row.rs:119
 msgid "%B %e"
 msgstr "%e %B"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/chat_history_row.rs:124
+#: src/ui/session/content/chat_history_row.rs:122
 msgid "%B %e, %Y"
 msgstr "%e %B, %Y"
 
-#: src/session/content/chat_info_window.rs:131
+#: src/ui/session/content/chat_info_window.rs:132
 msgid "bot"
 msgstr "bot"
 
-#: src/session/content/chat_info_window.rs:146
+#: src/ui/session/content/chat_info_window.rs:145
 msgid "Mobile"
 msgstr "Telefon"
 
-#: src/session/content/chat_info_window.rs:156
+#: src/ui/session/content/chat_info_window.rs:152
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-#: src/session/content/chat_info_window.rs:174
-#: src/session/content/chat_info_window.rs:223
+#: src/ui/session/content/chat_info_window.rs:169
+#: src/ui/session/content/chat_info_window.rs:215
 msgid "{num} member"
 msgid_plural "{num} members"
 msgstr[0] "{num} członek"
 msgstr[1] "{num} członków"
 msgstr[2] "{num} członków"
 
-#: src/session/content/chat_info_window.rs:205
-#: src/session/content/chat_info_window.rs:264
+#: src/ui/session/content/chat_info_window.rs:198
+#: src/ui/session/content/chat_info_window.rs:254
 msgid "Description"
 msgstr "Opis"
 
-#: src/session/content/chat_info_window.rs:235
+#: src/ui/session/content/chat_info_window.rs:226
 msgid "Link"
 msgstr "Link"
 
-#: src/session/content/chat_info_window.rs:283
+#: src/ui/session/content/chat_info_window.rs:272
 msgid "Copied to clipboard"
 msgstr "Skopiowano do schowka"
 
-#: src/session/content/message_row/indicators.rs:266
+#: src/ui/session/content/message_menu.blp:6
+msgid "_Reply"
+msgstr "_Odpowiedz"
+
+#: src/ui/session/content/message_menu.blp:12
+msgid "_Edit"
+msgstr "_Edytuj"
+
+#: src/ui/session/content/message_menu.blp:18
+msgid "Delete for Ever_yone"
+msgstr "Usuń dla _wszystkich"
+
+#: src/ui/session/content/message_menu.blp:24
+msgid "_Delete for Me"
+msgstr "Usuń dla _mnie"
+
+#: src/ui/session/content/message_row/indicators.rs:248
 msgid "edited"
 msgstr "edytowano"
 
-#: src/session/content/message_row/indicators.rs:271
+#: src/ui/session/content/message_row/indicators.rs:256
 msgid "sponsored"
 msgstr "sponsorowane"
 
-#: src/session/content/message_row/mod.rs:171
+#: src/ui/session/content/message_row/location.rs:139
+#: src/ui/session/content/message_row/location.rs:148
+#, fuzzy
+msgid "updated just now"
+msgstr "ostatnio widziano przed chwilą"
+
+#: src/ui/session/content/message_row/location.rs:152
+#, fuzzy
+msgid "updated an hour ago"
+msgstr "widziano godzinę temu"
+
+#: src/ui/session/content/message_row/location.rs:155
+msgid "updated {hours} hours and {minutes} minutes ago"
+msgstr ""
+
+#: src/ui/session/content/message_row/mod.rs:170
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr "Czy chcesz usunąć tą wiadomość <b>dla wszystkich</b>?"
 
-#: src/session/content/message_row/mod.rs:173
+#: src/ui/session/content/message_row/mod.rs:172
 msgid "Do you want to delete this message?"
 msgstr "Czy chcesz usunąć tą wiadomość?"
 
-#: src/session/content/message_row/mod.rs:177
-msgid "Confirm Message Deletion"
+#: src/ui/session/content/message_row/mod.rs:176
+#, fuzzy
+msgid "Confirm model::Message Deletion"
 msgstr "Potwierdź usunięcie wiadomości"
 
-#: src/session/content/message_row/reply.rs:96
+#: src/ui/session/content/message_row/reply.rs:70
 msgid "Loading…"
 msgstr "Ładowanie…"
 
-#: src/session/content/message_row/text.rs:131
+#: src/ui/session/content/message_row/text.rs:134
 msgid "This message is unsupported"
 msgstr "Ta wiadomość jest nieobsługiwana"
 
-#: src/session/sidebar/row.rs:417
-msgid "Draft:"
-msgstr "Szkic:"
+#: src/ui/session/content/mod.blp:22
+msgid "No Chat Selected"
+msgstr "Nie wybrano czatu"
 
-#: src/session/sidebar/row.rs:597
-msgid "You"
-msgstr "Ty"
+#: src/ui/session/content/mod.blp:23
+msgid "Select a chat to start messaging."
+msgstr "Wybierz czat, aby rozpocząć rozmowę."
 
-#: src/session/sidebar/search/section_row.rs:130
+#: src/ui/session/content/send_media_window.blp:8
+#, fuzzy
+msgid "Send Image"
+msgstr "Obrazy"
+
+#: src/ui/session/content/send_media_window.blp:23
+msgid "Caption"
+msgstr "Napis"
+
+#: src/ui/session/content/send_media_window.blp:30
+msgid "Send"
+msgstr ""
+
+#: src/ui/session/content/send_media_window.blp:41
+#, fuzzy
+msgid "Send as _File"
+msgstr "Otwórz plik"
+
+#: src/ui/session/mod.blp:15 src/ui/session/sidebar/mod.ui:38
+#: src/ui/session/sidebar/search/section_row.rs:124
 msgid "Chats"
 msgstr "Lista czatów"
 
-#: src/session/sidebar/search/section_row.rs:133
+#: src/ui/session/mod.blp:26
+#, fuzzy
+msgid "Content"
+msgstr "_Kontakty"
+
+#: src/ui/session/preferences_window.blp:10
+msgid "Follow System Colors"
+msgstr "Użyj kolorów systemowych"
+
+#: src/ui/session/preferences_window.blp:19
+msgid "Dark Theme"
+msgstr "Ciemny motyw"
+
+#: src/ui/session/preferences_window.blp:29
+msgid "Storage"
+msgstr "Przestrzeń dyskowa"
+
+#: src/ui/session/preferences_window.blp:32
+msgid "Cache Size"
+msgstr "Pamięć cache"
+
+#: src/ui/session/preferences_window.blp:42
+msgid "Clear Cache"
+msgstr "Wyczyść pamięć cache"
+
+#: src/ui/session/preferences_window.rs:211
+msgid "Cache cleared"
+msgstr "Wyczyszczono pamięc podręczną"
+
+#: src/ui/session/row.blp:54
+msgid "Logout"
+msgstr ""
+
+#: src/ui/session/row.rs:99
+msgid "Log out <i>{display_name}</i>"
+msgstr ""
+
+#: src/ui/session/row.rs:105
+msgid "Are you sure you want to log out?"
+msgstr ""
+
+#: src/ui/session/row.rs:111
+#, fuzzy
+msgid "_Log out"
+msgstr "_Wyloguj się"
+
+#: src/ui/session/sidebar/mod.ui:7
+msgid "_Contacts"
+msgstr "_Kontakty"
+
+#: src/ui/session/sidebar/mod.ui:13
+msgid "_Preferences"
+msgstr "_Preferencje"
+
+#: src/ui/session/sidebar/mod.ui:17
+msgid "_Keyboard Shortcuts"
+msgstr "_Skróty klawiszowe"
+
+#: src/ui/session/sidebar/mod.ui:21
+msgid "_About Paper Plane"
+msgstr "_O Paper Plane"
+
+#: src/ui/session/sidebar/mod.ui:148 src/ui/session/sidebar/search/mod.ui:16
+msgid "Search"
+msgstr "Szukaj"
+
+#: src/ui/session/sidebar/mod.ui:165
+msgid "Sessions"
+msgstr ""
+
+#: src/ui/session/sidebar/row.rs:414
+msgid "Draft:"
+msgstr "Szkic:"
+
+#: src/ui/session/sidebar/row.rs:597
+msgid "You"
+msgstr "Ty"
+
+#: src/ui/session/sidebar/row_menu.blp:6
+msgid "_Pin"
+msgstr "_Przypnij"
+
+#: src/ui/session/sidebar/row_menu.blp:12
+msgid "_Unpin"
+msgstr "_Odepnij"
+
+#: src/ui/session/sidebar/row_menu.blp:18
+msgid "_Mark as Unread"
+msgstr "Oznacz jako nieprzeczytane"
+
+#: src/ui/session/sidebar/row_menu.blp:24
+msgid "Mark as _Read"
+msgstr "Oznacz jako przeczytane"
+
+#: src/ui/session/sidebar/search/mod.ui:79
+msgid "No Search Results"
+msgstr "Brak wyników wyszukiwania"
+
+#: src/ui/session/sidebar/search/mod.ui:80
+msgid "Try a different search."
+msgstr "Spróbuj inną frazę."
+
+#: src/ui/session/sidebar/search/section_row.rs:127
 msgid "Global Search"
 msgstr "Globalne wyszukiwanie"
 
-#: src/session/sidebar/search/section_row.rs:136
+#: src/ui/session/sidebar/search/section_row.rs:130
 msgid "Recent"
 msgstr "Ostatnie"
 
-#: src/tdlib/country_info.rs:115
-msgid "Invalid Country Code"
-msgstr "Niepoprawny kod kraju"
+#: src/ui/session/switcher.blp:7
+msgid "_Production Server"
+msgstr "_Serwer Produkcyjny"
 
-#: src/tdlib/country_info.rs:124
-msgid "Test Account"
-msgstr "Konto testowe"
+#: src/ui/session/switcher.blp:12
+msgid "_Test Server"
+msgstr "_Serwer Testowy"
 
-#~ msgid "Open File"
-#~ msgstr "Otwórz plik"
+#: src/ui/session/switcher.blp:41
+msgid "New Session"
+msgstr ""
+
+#~ msgid "A Telegram client optimized for the GNOME desktop"
+#~ msgstr "Klient Telegrama dostosowany do środowiska GNOME"
+
+#~ msgid "Gnome;GTK;"
+#~ msgstr "Gnome;GTK;"
+
+#~ msgid ""
+#~ "A list of most recently used sessions, sorted by their database directory "
+#~ "names"
+#~ msgstr ""
+#~ "Lista ostatnio używanych sesji uporządkowana względem nazwy katalogu bazy "
+#~ "danych"
+
+#~ msgid "_Add Account"
+#~ msgstr "_Dodaj Konto"
+
+#~ msgid "_Previous"
+#~ msgstr "_Wstecz"
+
+#~ msgid "The code cannot be sent anymore."
+#~ msgstr "Wysłanie kodu nie jest już możliwe."
+
+#~ msgid "Use Recovery Code"
+#~ msgstr "Użyj Kodu Odzyskiwania"
+
+#~ msgid "_Send recovery code"
+#~ msgstr "_Wyślij kod odzyskiwania"
+
+#~ msgid "Account Deletion"
+#~ msgstr "Usuwanie Konta"
+
+#~ msgctxt "shortcut window"
+#~ msgid "General"
+#~ msgstr "Ogólne"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Show Shortcuts"
+#~ msgstr "Pokaż skróty klawiszowe"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Quit"
+#~ msgstr "Wyjdź"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Chat List"
+#~ msgstr "Lista czatów"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Search Chats"
+#~ msgstr "Przeszukaj czaty"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Chat History"
+#~ msgstr "Historia chatu"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Send Photo from Clipboard"
+#~ msgstr "Wyślij zdjęcie ze schowka"
+
+#~ msgid ""
+#~ "One way to continue using your account is to delete and then recreate it"
+#~ msgstr ""
+#~ "Jednym ze sposobów aby móc dalej korzystać ze swojego konta jest jego "
+#~ "usunięcie i ponowne stworzenie"
+
+#~ msgid ""
+#~ "Since you have not provided a recovery e-mail address, the only way to "
+#~ "continue using your account is to delete and then recreate it"
+#~ msgstr ""
+#~ "Jako że nie podałeś pomocniczego adresu e-mail, jedynym sposobem, by "
+#~ "kontynuować używanie twojego konta jest jego usunięcie i ponowne "
+#~ "stworzenie"
+
+#~ msgid ""
+#~ "Please note, you will lose all your chats and messages, along with any "
+#~ "media and files you shared!"
+#~ msgstr ""
+#~ "Weź proszę pod uwagę, że stracisz wszystkie czaty i wiadomości wraz ze "
+#~ "wszystkimi multimediami i plikami, które udostępniłeś!"
 
 #~ msgid "_Open"
 #~ msgstr "_Otwórz"

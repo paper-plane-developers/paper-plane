@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-11 22:31+0100\n"
+"POT-Creation-Date: 2023-09-25 16:58+0200\n"
 "PO-Revision-Date: 2023-06-11 06:14+0000\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/paper-plane/main/"
@@ -26,13 +26,12 @@ msgstr "Paper Plane"
 
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
-msgid "A Telegram client optimized for the GNOME desktop"
-msgstr "GNOME masaüstü için optimize edilmiş Telegram istemcisi"
+msgid "Chat over Telegram on a modern and elegant client"
+msgstr ""
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
-msgid "Gnome;GTK;"
-msgstr "Gnome;GTK;"
+msgid "Gnome;GTK;telegram;tg;chat;im;messaging;messenger;"
+msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
@@ -50,19 +49,16 @@ msgid "Default window maximized behaviour"
 msgstr "Öntanımlı pencere büyütülme davranışı"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
-msgid "Recently used sessions"
+#, fuzzy
+msgid "Last used session"
 msgstr "Son kullanılan oturumlar"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
-msgid ""
-"A list of most recently used sessions, sorted by their database directory "
-"names"
+msgid "The directory name of the last used session"
 msgstr ""
-"En son kullanılan oturumların veri tabanı dizin adlarına göre sıralanmış bir "
-"listesi"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
-#: data/resources/ui/preferences-window.blp:7
+#: src/ui/session/preferences_window.blp:7
 msgid "Color Scheme"
 msgstr "Renk Şeması"
 
@@ -70,327 +66,162 @@ msgstr "Renk Şeması"
 msgid "The color scheme to be used in the app"
 msgstr "Uygulamada kullanılacak renk şeması"
 
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:15
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:10
+msgid ""
+"Paper Plane is an alternative Telegram client. It uses libadwaita for its "
+"user interface and strives to meet the design principles of the GNOME "
+"desktop."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:14
+msgid ""
+"Paper Plane is still under development and not yet feature-complete. "
+"However, the following things are already working:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:19
+msgid "The use of multiple accounts at the same time."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:20
+msgid "Viewing text messages, images, stickers and files."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:21
+msgid "Sending text messages and images."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:22
+msgid "Replying to messages."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:23
+msgid "Searching for groups and persons."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:29
 msgid "Main window"
 msgstr "Ana pencere"
 
-#: data/app.drey.PaperPlane.metainfo.xml.in.in:41
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:47
+msgid ""
+"The third beta release of Paper Plane 0.1.0 should in the first place fix a "
+"build error on Flathub:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:49
+msgid ""
+"Added registered categories to te desktop file to fix a build error on "
+"Flathub."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:50
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:64
+msgid "Dependencies have been updated."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:51
+msgid "Turkish translations have been updated, thanks to @sabriunal."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:57
+msgid ""
+"The second beta release of Paper Plane 0.1.0 contains the following "
+"features, fixes and chores:"
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:59
+msgid ""
+"Blueprint compiler has been updated to version 0.8.1, thanks to "
+"@alissonlauffer."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:60
+msgid ""
+"The chat history now has a background image, which is animated when new "
+"messages arrive, thanks to @yuraiz."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:61
+msgid ""
+"A bug was fixed that lead to an application crash if selecting non-existing "
+"chats from the contacts window, thank to @alissonlauffer."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:62
+msgid ""
+"Avatars of deleted accounts now have a ghost icon set, thanks to @karl0d."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:63
+msgid ""
+"The application will now be built with more aggressive compiler options, "
+"which should result in a smaller and maybe faster binary."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:65
+msgid ""
+"Portuguese and Polish translation have been updated, thanks to "
+"@jvlianodorneles and @karl0d."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:71
+msgid ""
+"Paper Plane 0.1.0-beta.1 is the first release for enthusiasts to try out and "
+"play around with."
+msgstr ""
+
+#: data/app.drey.PaperPlane.metainfo.xml.in.in:83
 msgid "Marco Melorio"
 msgstr "Marco Melorio"
 
-#: data/resources/ui/add-account-row.blp:6
-msgid "_Production Server"
-msgstr "_Üretim Sunucusu"
-
-#: data/resources/ui/add-account-row.blp:11
-msgid "_Test Server"
-msgstr "_Test Sunucusu"
-
-#: data/resources/ui/add-account-row.blp:33
-msgid "_Add Account"
-msgstr "_Hesap Ekle"
-
-#: data/resources/ui/content.blp:29
-msgid "No Chat Selected"
-msgstr "Sohbet Seçilmedi"
-
-#: data/resources/ui/content.blp:30
-msgid "Select a chat to start messaging."
-msgstr "Mesajlaşmaya başlamak için bir sohbet seçin."
-
-#: data/resources/ui/content-chat-action-bar.blp:68
-msgid "Message"
-msgstr "İleti"
-
-#: data/resources/ui/content-chat-action-bar.blp:96
-msgid "Unblock"
-msgstr "Engellemeyi Kaldır"
-
-#: data/resources/ui/content-chat-action-bar.blp:113
-msgid "Join"
-msgstr "Katıl"
-
-#: data/resources/ui/content-chat-history.ui:74
-msgid "Scroll to bottom"
-msgstr "En alta kaydır"
-
-#: data/resources/ui/content-chat-history.ui:154
-msgid "View Info"
-msgstr "Bilgileri Görüntüle"
-
-#: data/resources/ui/content-chat-history.ui:158
-msgid "Leave Chat"
-msgstr "Konuşmadan Ayrıl"
-
-#: data/resources/ui/content-send-photo-dialog.blp:29
-msgid "Caption"
-msgstr "Başlık"
-
-#: data/resources/ui/login.blp:25
-msgid "_Previous"
-msgstr "_Önceki"
-
-#: data/resources/ui/login.blp:48
-msgid "_Next"
-msgstr "_Sonraki"
-
-#: data/resources/ui/login.blp:68
-msgid "Welcome"
-msgstr "Hoş Geldiniz"
-
-#: data/resources/ui/login.blp:88
-msgid "_Log in using QR code"
-msgstr "_Karekod kullanarak giriş yap"
-
-#: data/resources/ui/login.blp:127
-msgid "Scan Code"
-msgstr "Kodu Tara"
-
-#: data/resources/ui/login.blp:128
-msgid "Scan this code with another Telegram app logged into your account."
-msgstr ""
-"Hesabınızda oturum açmış başka bir Telegram uygulamasıyla bu kodu tarayın."
-
-#: data/resources/ui/login.blp:144
-msgid "Enter the Verification Code"
-msgstr "Doğrulama Kodunu Girin"
-
-#: data/resources/ui/login.blp:160 data/resources/ui/login.blp:477
-msgid "Code"
-msgstr "Kod"
-
-#: data/resources/ui/login.blp:185
-msgid "The code cannot be sent anymore."
-msgstr "Kod artık gönderilemez."
-
-#: data/resources/ui/login.blp:218
-msgid "Register New Account"
-msgstr "Yeni Hesap Aç"
-
-#: data/resources/ui/login.blp:233
-msgid "First Name"
-msgstr "İsim"
-
-#: data/resources/ui/login.blp:237
-msgid "Last Name"
-msgstr "Soyadı"
-
-#: data/resources/ui/login.blp:259
-msgid ""
-"By signing up,\n"
-"you agree to the <a href=\"\">Terms of Service</a>."
-msgstr ""
-"Kaydolarak,\n"
-"<a href=\"\">Hizmet Şartlarını</a> kabul etmiş olursunuz."
-
-#: data/resources/ui/login.blp:271
-msgid "Enter Your Password"
-msgstr "Parolanızı Girin"
-
-#: data/resources/ui/login.blp:285
-msgid "Password"
-msgstr "Parola"
-
-#: data/resources/ui/login.blp:292
-msgid "Hint"
-msgstr "İpucu"
-
-#: data/resources/ui/login.blp:308
-msgid "_Forgot password?"
-msgstr "_Parolanızı mı unuttunuz?"
-
-#: data/resources/ui/login.blp:355
-msgid "Use Recovery Code"
-msgstr "Kurtarma Kodunu Kullan"
-
-#: data/resources/ui/login.blp:363
-msgid ""
-"When you set your cloud password, you provided a recovery e-mail address. A "
-"code can be sent there to reset your password."
-msgstr ""
-"Bulut parolanızı ayarladığınızda, bir kurtarma e-posta adresi sağladınız. "
-"Parolanızı sıfırlamak için oraya bir kod gönderilebilir."
-
-#: data/resources/ui/login.blp:379
-msgid "_Send recovery code"
-msgstr "_Kurtarma kodu gönder"
-
-#: data/resources/ui/login.blp:425
-msgid "Account Deletion"
-msgstr "Hesap Silme"
-
-#: data/resources/ui/login.blp:445 src/login.rs:912
-msgid "_Delete Account"
-msgstr "_Hesabı Sil"
-
-#: data/resources/ui/login.blp:460
-msgid "Enter the code e-mailed to you"
-msgstr "Size e-posta ile gönderilen kodu girin"
-
-#: data/resources/ui/login.blp:493
-msgid "Unable to access your e-mail?"
-msgstr "E-postanıza erişemiyor musunuz?"
-
-#: data/resources/ui/message-menu.blp:6
-msgid "_Reply"
-msgstr "_Yanıtla"
-
-#: data/resources/ui/message-menu.blp:12
-msgid "_Edit"
-msgstr "_Düzenle"
-
-#: data/resources/ui/message-menu.blp:18
-msgid "Delete for Ever_yone"
-msgstr "_Herkes İçin Sil"
-
-#: data/resources/ui/message-menu.blp:24
-msgid "_Delete for Me"
-msgstr "_Benim İçin Sil"
-
-#: data/resources/ui/phone-number-input.blp:12
-msgid "Country"
-msgstr "Ülke"
-
-#: data/resources/ui/phone-number-input.blp:18
-msgid "Phone Number"
-msgstr "Telefon Numarası"
-
-#: data/resources/ui/preferences-window.blp:10
-msgid "Follow System Colors"
-msgstr "Sistem Renklerini Takip Et"
-
-#: data/resources/ui/preferences-window.blp:19
-msgid "Dark Theme"
-msgstr "Koyu Tema"
-
-#: data/resources/ui/preferences-window.blp:29
-msgid "Storage"
-msgstr "Depolama"
-
-#: data/resources/ui/preferences-window.blp:32
-msgid "Cache Size"
-msgstr "Önbellek Boyutu"
-
-#: data/resources/ui/preferences-window.blp:42
-msgid "Clear Cache"
-msgstr "Önbelleği Temizle"
-
-#: data/resources/ui/shortcuts.blp:11
-msgctxt "shortcut window"
-msgid "General"
-msgstr "Genel"
-
-#: data/resources/ui/shortcuts.blp:14
-msgctxt "shortcut window"
-msgid "Show Shortcuts"
-msgstr "Kısayolları Göster"
-
-#: data/resources/ui/shortcuts.blp:19
-msgctxt "shortcut window"
-msgid "Quit"
-msgstr "Çık"
-
-#: data/resources/ui/shortcuts.blp:25
-msgctxt "shortcut window"
-msgid "Chat List"
-msgstr "Sohbet Listesi"
-
-#: data/resources/ui/shortcuts.blp:28
-msgctxt "shortcut window"
-msgid "Search Chats"
-msgstr "Sohbetlerde Ara"
-
-#: data/resources/ui/shortcuts.blp:34
-msgctxt "shortcut window"
-msgid "Chat History"
-msgstr "Sohbet Geçmişi"
-
-#: data/resources/ui/shortcuts.blp:37
-msgctxt "shortcut window"
-msgid "Send Photo from Clipboard"
-msgstr "Panodan Fotoğraf Gönder"
-
-#: data/resources/ui/sidebar.ui:6
-msgid "_Log Out"
-msgstr "_Oturumu Kapat"
-
-#: data/resources/ui/sidebar.ui:12
-msgid "_Contacts"
-msgstr "_Kişiler"
-
-#: data/resources/ui/sidebar.ui:18
-msgid "_Preferences"
-msgstr "_Tercihler"
-
-#: data/resources/ui/sidebar.ui:22
-msgid "_Keyboard Shortcuts"
-msgstr "_Klavye Kısayolları"
-
-#: data/resources/ui/sidebar.ui:26
-msgid "_About Paper Plane"
-msgstr "Paper Plane _Hakkında"
-
-#: data/resources/ui/sidebar-row-menu.blp:6
-msgid "_Pin"
-msgstr "_Sabitle"
-
-#: data/resources/ui/sidebar-row-menu.blp:12
-msgid "_Unpin"
-msgstr "_Sabitlemeyi Kaldır"
-
-#: data/resources/ui/sidebar-row-menu.blp:18
-msgid "_Mark as Unread"
-msgstr "Okunmadı Olarak _İmle"
-
-#: data/resources/ui/sidebar-row-menu.blp:24
-msgid "Mark as _Read"
-msgstr "_Okundu Olarak İmle"
-
-#: data/resources/ui/sidebar-search.ui:12
-msgid "Search"
-msgstr "Ara"
-
-#: data/resources/ui/sidebar-search.ui:75
-msgid "No Search Results"
-msgstr "Arama Sonucu Yok"
-
-#: data/resources/ui/sidebar-search.ui:76
-msgid "Try a different search."
-msgstr "Farklı bir arama deneyin."
-
-#: src/application.rs:166
+#: src/application.rs:165
 msgid "Paper Plane developers"
 msgstr "Paper Plane geliştiricileri"
 
-#: src/application.rs:182
+#: src/application.rs:185
 msgid "Sponsors"
 msgstr "Sponsorlar"
 
-#: src/expressions.rs:24 src/session/sidebar/search/item_row.rs:112
-#: src/session/sidebar/search/mod.rs:205
+#: src/application.rs:191
+msgid ""
+"<span size=\"small\">Map data by                 <a href=\"https://www."
+"openstreetmap.org\">OpenStreetMap</a>                 and contributors</span>"
+msgstr ""
+
+#: src/application.rs:197
+msgid ""
+"OpenStreetMap® is open data, licensed under the                 <a "
+"href=\"https://opendatacommons.org/licenses/odbl\">                Open Data "
+"Commons Open Database License </a> (ODbL) by the                 <a "
+"href=\"https://osmfoundation.org\">aOpenStreetMap Foundation</a> (OSMF)."
+msgstr ""
+
+#: src/expressions.rs:20 src/ui/session/sidebar/search/item_row.rs:97
+#: src/ui/session/sidebar/search/mod.rs:182
 msgid "Saved Messages"
 msgstr "Kayıtlı İletiler"
 
-#: src/expressions.rs:26 src/expressions.rs:48 src/strings.rs:383
+#: src/expressions.rs:22 src/expressions.rs:44 src/strings.rs:384
 msgid "Deleted Account"
 msgstr "Silinmiş Hesap"
 
-#: src/expressions.rs:92
+#: src/expressions.rs:90
 msgid "The admins of this group have restricted you from writing here"
 msgstr "Bu grubun yöneticileri buraya yazmanızı kısıtladı"
 
 #. Translators: This is a time representation, without seconds.
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:105 src/session/content/message_row/indicators.rs:262
-#: src/session/sidebar/row.rs:646
+#: src/expressions.rs:103 src/ui/session/content/message_row/indicators.rs:239
+#: src/ui/session/sidebar/row.rs:648
 msgid "%l:%M %p"
 msgstr "%l:%M %p"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
-#: src/expressions.rs:110
+#: src/expressions.rs:108
 msgid "%B %e, %Y %l:%M %p"
 msgstr "%B %e, %Y %l:%M %p"
 
@@ -398,55 +229,722 @@ msgstr "%B %e, %Y %l:%M %p"
 msgid "Writing messages isn't allowed in this group."
 msgstr "Bu grupta ileti yazmaya izin verilmemektedir."
 
-#: src/login.rs:372
-msgid ""
-"One way to continue using your account is to delete and then recreate it"
+#: src/main.rs:121
+msgid "Prints application version"
 msgstr ""
-"Hesabınızı kullanmaya devam etmenin bir yolu onu silip yeniden oluşturmaktır"
 
-#: src/login.rs:377
-msgid ""
-"Since you have not provided a recovery e-mail address, the only way to "
-"continue using your account is to delete and then recreate it"
+#: src/main.rs:130
+msgid "Specify the minimum log level"
 msgstr ""
-"Bir kurtarma e-posta adresi sağlamadığınız için, hesabınızı kullanmaya devam "
-"etmenin tek yolu hesabınızı silmek ve ardından yeniden oluşturmaktır"
 
-#: src/login.rs:385
-msgid ""
-"Please note, you will lose all your chats and messages, along with any media "
-"and files you shared!"
+#: src/main.rs:139
+msgid "Whether to use a test data center on first account"
 msgstr ""
-"Lütfen tüm sohbetlerinizi ve iletilerinizi, paylaştığınız ortam ve "
-"dosyalarla birlikte kaybedeceğinizi unutmayın!"
 
-#: src/login.rs:676
-msgid "Do you accept the Terms of Service?"
-msgstr "Hizmet Koşullarını kabul ediyor musunuz?"
+#: src/model/country_info.rs:99
+msgid "Invalid Country Code"
+msgstr "Geçersiz Ülke Kodu"
 
-#: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:183
-msgid "_No"
-msgstr "_ Hayır"
+#: src/model/country_info.rs:108
+msgid "Test Account"
+msgstr "Test Hesabı"
 
-#: src/login.rs:677 src/session/content/chat_history.rs:233
-#: src/session/content/message_row/mod.rs:183
-msgid "_Yes"
-msgstr "_Evet"
+#: src/strings.rs:29
+msgid "{sender} is choosing a contact"
+msgstr "{sender} kişi seçiyor"
 
-#: src/login.rs:680
-msgid "Terms of Service"
-msgstr "Hizmet Koşulları"
+#: src/strings.rs:33
+msgid "{sender1} and {sender2} are choosing contacts"
+msgstr "{sender1} ve {sender2} kişi seçiyor"
 
-#: src/login.rs:681 src/login.rs:991
-msgid "_OK"
-msgstr "_Tamam"
+#: src/strings.rs:40
+msgid "{num} people are choosing contacts"
+msgstr "{num} kişi, kişi seçiyor"
 
-#: src/login.rs:903
+#: src/strings.rs:45
+msgid "choosing a contact"
+msgstr "kişi seçme"
+
+#: src/strings.rs:52
+msgid "{sender} is choosing a location"
+msgstr "{sender} konum seçiyor"
+
+#: src/strings.rs:56
+msgid "{sender1} and {sender2} are choosing locations"
+msgstr "{sender1} ve {sender2} konum seçiyor"
+
+#: src/strings.rs:63
+msgid "{num} people are choosing locations"
+msgstr "{num} kişi konum seçiyor"
+
+#: src/strings.rs:68
+msgid "choosing a location"
+msgstr "konum seçme"
+
+#: src/strings.rs:75
+msgid "{sender} is choosing a sticker"
+msgstr "{sender} çıkartma seçiyor"
+
+#: src/strings.rs:79
+msgid "{sender1} and {sender2} are choosing stickers"
+msgstr "{sender1} ve {sender2} çıkartma seçiyor"
+
+#: src/strings.rs:86
+msgid "{num} people are choosing stickers"
+msgstr "{num} kişi çıkartma seçiyor"
+
+#: src/strings.rs:91
+msgid "choosing a sticker"
+msgstr "çıkartma seçme"
+
+#: src/strings.rs:98
+msgid "{sender} is recording a video"
+msgstr "{sender} video kaydediyor"
+
+#: src/strings.rs:102
+msgid "{sender1} and {sender2} are recording videos"
+msgstr "{sender1} ve {sender2} video kaydediyor"
+
+#: src/strings.rs:109
+msgid "{num} people are recording videos"
+msgstr "{num} kişi video kaydediyor"
+
+#: src/strings.rs:114
+msgid "recording a video"
+msgstr "video kaydetme"
+
+#: src/strings.rs:121
+msgid "{sender} is recording a video note"
+msgstr "{sender} video not kaydediyor"
+
+#: src/strings.rs:125
+msgid "{sender1} and {sender2} are recording video notes"
+msgstr "{sender1} ve {sender2} video not kaydediyor"
+
+#: src/strings.rs:132
+msgid "{num} people are recording video notes"
+msgstr "{num} kişi video not kaydediyor"
+
+#: src/strings.rs:137
+msgid "recording a video note"
+msgstr "video not kaydetme"
+
+#: src/strings.rs:144
+msgid "{sender} is recording a voice note"
+msgstr "{sender} sesli not kaydediyor"
+
+#: src/strings.rs:148
+msgid "{sender1} and {sender2} are recording voice notes"
+msgstr "{sender1} ve {sender2} sesli not kaydediyor"
+
+#: src/strings.rs:155
+msgid "{num} people are recording voice notes"
+msgstr "{num} kişi sesli not kaydediyor"
+
+#: src/strings.rs:160
+msgid "recording a voice note"
+msgstr "sesli not kaydetme"
+
+#: src/strings.rs:167
+msgid "{sender} is playing a game"
+msgstr "{sender} oyun oynuyor"
+
+#: src/strings.rs:171
+msgid "{sender1} and {sender2} are playing games"
+msgstr "{sender1} ve {sender2} oyun oynuyor"
+
+#: src/strings.rs:178
+msgid "{num} people are playing games"
+msgstr "{num} kişi oyun oynuyor"
+
+#: src/strings.rs:183
+msgid "playing a game"
+msgstr "oyun oynama"
+
+#: src/strings.rs:190
+msgid "{sender} is typing"
+msgstr "{sender} yazıyor"
+
+#: src/strings.rs:194
+msgid "{sender1} and {sender2} are typing"
+msgstr "{sender1} ve {sender2} yazıyor"
+
+#: src/strings.rs:200
+msgid "{num} people are typing"
+msgstr "{num} kişi yazıyor"
+
+#: src/strings.rs:203
+msgid "typing"
+msgstr "yazma"
+
+#: src/strings.rs:210
+msgid "{sender} is uploading a document ({progress}%)"
+msgstr "{sender} belge yüklüyor (%{progress})"
+
+#: src/strings.rs:217
+msgid "{sender1} and {sender2} are uploading documents"
+msgstr "{sender1} ve {sender2} belge yüklüyor"
+
+#: src/strings.rs:224
+msgid "{num} people are uploading documents"
+msgstr "{num} kişi belge yüklüyor"
+
+#: src/strings.rs:230
+msgid "uploading a document ({progress}%)"
+msgstr "belge yükleniyor (%{progress})"
+
+#: src/strings.rs:239
+msgid "{sender} is uploading a photo ({progress}%)"
+msgstr "{sender} fotoğraf yüklüyor (%{progress})"
+
+#: src/strings.rs:246
+msgid "{sender1} and {sender2} are uploading photos"
+msgstr "{sender1} ve {sender2} fotoğraf yüklüyor"
+
+#: src/strings.rs:253
+msgid "{num} people are uploading photos"
+msgstr "{num} kişi fotoğraf yüklüyor"
+
+#: src/strings.rs:259
+msgid "uploading a photo ({progress}%)"
+msgstr "fotoğraf yükleniyor (%{progress})"
+
+#: src/strings.rs:268
+msgid "{sender} is uploading a video ({progress}%)"
+msgstr "{sender} video yüklüyor (%{progress})"
+
+#: src/strings.rs:275
+msgid "{sender1} and {sender2} are uploading videos"
+msgstr "{sender1} ve {sender2} video yüklüyor"
+
+#: src/strings.rs:282
+msgid "{num} people are uploading videos"
+msgstr "{num} kişi video yüklüyor"
+
+#: src/strings.rs:288
+msgid "uploading a video ({progress}%)"
+msgstr "video yükleniyor (%{progress})"
+
+#: src/strings.rs:297
+msgid "{sender} is uploading a video note ({progress}%)"
+msgstr "{sender} video not yüklüyor (%{progress})"
+
+#: src/strings.rs:304
+msgid "{sender1} and {sender2} are uploading video notes"
+msgstr "{sender1} ve {sender2} video not yüklüyor"
+
+#: src/strings.rs:311
+msgid "{num} people are uploading video notes"
+msgstr "{num} kişi video not yüklüyor"
+
+#: src/strings.rs:317
+msgid "uploading a video note ({progress}%)"
+msgstr "video not yükleniyor (%{progress})"
+
+#: src/strings.rs:326
+msgid "{sender} is uploading a voice note ({progress}%)"
+msgstr "{sender} sesli not yüklüyor (%{progress})"
+
+#: src/strings.rs:333
+msgid "{sender1} and {sender2} are uploading voice notes"
+msgstr "{sender1} ve {sender2} sesli not yüklüyor"
+
+#: src/strings.rs:340
+msgid "{num} people are uploading voice notes"
+msgstr "{num} kişi sesli not yüklüyor"
+
+#: src/strings.rs:346
+msgid "uploading a voice note ({progress}%)"
+msgstr "sesli not yükleniyor (%{progress})"
+
+#: src/strings.rs:355
+msgid "{sender} is watching an animation {emoji}"
+msgstr "{sender} animasyon izliyor {emoji}"
+
+#: src/strings.rs:362
+msgid "{sender1} and {sender2} are watching animations {emoji}"
+msgstr "{sender1} ve {sender2} animasyon izliyor {emoji}"
+
+#: src/strings.rs:370
+msgid "{num} people are watching animations {emoji}"
+msgstr "{num} kişi animasyon izliyor {emoji}"
+
+#: src/strings.rs:375
+msgid "watching an animation"
+msgstr "animasyon izleme"
+
+#: src/strings.rs:398
+msgid "last seen a long time ago"
+msgstr "son görülme: uzun zaman önce"
+
+#: src/strings.rs:399
+msgid "online"
+msgstr "çevrim içi"
+
+#. Translators: This is an online status with the date
+#: src/strings.rs:408
+#, c-format
+msgid "last seen %x"
+msgstr "son görülme: %x"
+
+#. Translators: This is an online status with the last seen time, without seconds
+#. Here you may want to change to a 24-hours representation, based on your locale.
+#. You can use this site to learn more: https://www.strfti.me/
+#: src/strings.rs:413
+msgid "last seen yesterday at %l:%M %p"
+msgstr "son görülme: dün %l:%M %p"
+
+#: src/strings.rs:417
+msgid "last seen {num} hour ago"
+msgid_plural "last seen {num} hours ago"
+msgstr[0] "son görülme: {num} saat önce"
+msgstr[1] "son görülme, {num} saat önce"
+
+#: src/strings.rs:424
+msgid "last seen {num} minute ago"
+msgid_plural "last seen {num} minutes ago"
+msgstr[0] "son görülme: {num} dakika önce"
+msgstr[1] "son görülme, {num} dakika önce"
+
+#: src/strings.rs:430
+msgid "last seen just now"
+msgstr "son görülme: şimdi"
+
+#: src/strings.rs:433
+msgid "last seen recently"
+msgstr "son görülme: yakın zamanda"
+
+#: src/strings.rs:434
+msgid "last seen within a week"
+msgstr "son görülme: bir hafta içinde"
+
+#: src/strings.rs:435
+msgid "last seen within a month"
+msgstr "son görülme: bir ay içinde"
+
+#: src/strings.rs:456 src/ui/session/content/message_row/location.blp:26
+#, fuzzy
+msgid "Live Location"
+msgstr "Video, {caption}"
+
+#: src/strings.rs:458
+#, fuzzy
+msgid "Location"
+msgstr "Başlık"
+
+#: src/strings.rs:467
+msgid "Photo has expired"
+msgstr "Fotoğrafın süresi doldu"
+
+#: src/strings.rs:470
+msgid "Video has expired"
+msgstr "Videonun süresi doldu"
+
+#: src/strings.rs:471
+msgid "Video Message"
+msgstr "Video İleti"
+
+#: src/strings.rs:504
+msgid "{sender} took a screenshot!"
+msgstr "{sender} ekran görüntüsü aldı!"
+
+#: src/strings.rs:509
+msgid "Location, {venue}"
+msgstr ""
+
+#: src/strings.rs:510
+msgid "Unsupported Message"
+msgstr "Desteklenmeyen İleti"
+
+#: src/strings.rs:516
+msgid "GIF"
+msgstr "GIF"
+
+#: src/strings.rs:518
+msgid "GIF, {caption}"
+msgstr "GIF, {caption}"
+
+#: src/strings.rs:526
+msgid "{title} – {performer}"
+msgstr "{title} – {performer}"
+
+#: src/strings.rs:532
+msgid "{title} – {performer}, {caption}"
+msgstr "{title} – {performer}, {caption}"
+
+#: src/strings.rs:548
+msgid "{file_name}, {caption}"
+msgstr "{file_name}, {caption}"
+
+#: src/strings.rs:556
+msgid "Photo"
+msgstr "Fotoğraf"
+
+#: src/strings.rs:558
+msgid "Photo, {caption}"
+msgstr "Fotoğraf, {caption}"
+
+#. Translators: This is a sticker with the associated emoji
+#: src/strings.rs:564
+msgid "{emoji} Sticker"
+msgstr "{emoji} Çıkartma"
+
+#: src/strings.rs:569
+msgid "Video"
+msgstr "Video"
+
+#: src/strings.rs:571
+msgid "Video, {caption}"
+msgstr "Video, {caption}"
+
+#: src/strings.rs:577
+msgid "Voice Message"
+msgstr "Sesli İleti"
+
+#: src/strings.rs:579
+msgid "Voice Message, {caption}"
+msgstr "Sesli İleti, {caption}"
+
+#: src/strings.rs:598
+msgid "Declined outgoing video call"
+msgstr "Reddedilen giden görüntülü arama"
+
+#: src/strings.rs:600
+msgid "Declined outgoing call"
+msgstr "Reddedilen giden arama"
+
+#: src/strings.rs:606
+msgid "Declined incoming video call"
+msgstr "Reddedilen gelen görüntülü arama"
+
+#: src/strings.rs:608
+msgid "Declined incoming call"
+msgstr "Reddedilen gelen arama"
+
+#: src/strings.rs:614
+msgid "Canceled call"
+msgstr "İptal edilen arama"
+
+#: src/strings.rs:616
+msgid "Missed call"
+msgstr "Cevapsız arama"
+
+#: src/strings.rs:629
+msgid "Outgoing video call ({duration})"
+msgstr "Giden görüntülü arama ({duration})"
+
+#: src/strings.rs:634
+msgid "Outgoing call ({duration})"
+msgstr "Giden arama ({duration})"
+
+#: src/strings.rs:639
+msgid "Outgoing video call"
+msgstr "Giden görüntülü arama"
+
+#: src/strings.rs:641
+msgid "Outgoing call"
+msgstr "Giden arama"
+
+#: src/strings.rs:646
+msgid "Incoming video call ({duration})"
+msgstr "Gelen video arama ({duration})"
+
+#: src/strings.rs:651
+msgid "Incoming call ({duration})"
+msgstr "Gelen arama ({duration})"
+
+#: src/strings.rs:656
+msgid "Incoming video call"
+msgstr "Gelen video arama"
+
+#: src/strings.rs:658 src/ui/window.rs:143
+msgid "Incoming call"
+msgstr "Gelen arama"
+
+#: src/strings.rs:665 src/strings.rs:682
+msgid "{sender} created the group \"{title}\""
+msgstr "{sender}, \"{title}\" grubunu oluşturdu"
+
+#: src/strings.rs:677
+msgid "Channel created"
+msgstr "Kanal oluşturuldu"
+
+#: src/strings.rs:696
+msgid "Channel renamed to \"{title}\""
+msgstr "Kanal, \"{title}\" olarak yeniden adlandırıldı"
+
+#: src/strings.rs:701
+msgid "{sender} changed the group name to \"{title}\""
+msgstr "{sender}, grup adını \"{title}\" olarak değiştirdi"
+
+#: src/strings.rs:711
+msgid "Channel photo changed"
+msgstr "Kanal fotoğrafı değiştirildi"
+
+#: src/strings.rs:715
+msgid "{sender} changed the group photo"
+msgstr "{sender}, grup fotoğrafını değiştirdi"
+
+#: src/strings.rs:723
+msgid "Channel photo removed"
+msgstr "Kanal fotoğrafı kaldırıldı"
+
+#: src/strings.rs:727
+msgid "{sender} removed the group photo"
+msgstr "{sender}, grup fotoğrafını kaldırdı"
+
+#: src/strings.rs:738 src/strings.rs:773
+msgid "{sender} joined the group"
+msgstr "{sender} gruba katıldı"
+
+#: src/strings.rs:743
+msgid "{sender} added {first_user} and {second_user}"
+msgstr "{sender}, {first_user} ve {second_user} kullanıcılarını ekledi"
+
+#: src/strings.rs:757
+msgid "{sender} added {users}"
+msgstr "{sender}, {users} kullanıcılarını ekledi"
+
+#: src/strings.rs:766
+msgid "{sender} joined the group via invite link"
+msgstr "{sender} davet linki ile grubuna katıldı"
+
+#: src/strings.rs:780
+msgid "{sender} left the group"
+msgstr "{sender} gruptan ayrıldı"
+
+#: src/strings.rs:785
+msgid "{sender} removed {user}"
+msgstr "{sender}, {user} kullanıcısını kaldırdı"
+
+#: src/strings.rs:810
+msgid "{sender} scored {points} in {game}"
+msgstr "{sender}, {game} oyununda {points} yaptı"
+
+#: src/strings.rs:819
+msgid "{sender} scored {points}"
+msgstr "{sender}, {points} puan yaptı"
+
+#: src/strings.rs:847
+msgid "{sender} pinned \"{text}\""
+msgstr "{sender}, \"{text}\" iletisini sabitledi"
+
+#: src/strings.rs:849
+msgid "{sender} pinned a GIF"
+msgstr "{sender} bir GIF'i sabitledi"
+
+#: src/strings.rs:850
+msgid "{sender} pinned an audio file"
+msgstr "{sender} bir ses dosyasını sabitledi"
+
+#: src/strings.rs:851
+msgid "{sender} pinned a file"
+msgstr "{sender} bir dosyayı sabitledi"
+
+#: src/strings.rs:852
+msgid "{sender} pinned a photo"
+msgstr "{sender} bir fotoğrafı sabitledi"
+
+#: src/strings.rs:853
+msgid "{sender} pinned a sticker"
+msgstr "{sender} bir çıkartmayı sabitledi"
+
+#: src/strings.rs:854
+msgid "{sender} pinned a video"
+msgstr "{sender} bir videoyu sabitledi"
+
+#: src/strings.rs:855
+msgid "{sender} pinned a video message"
+msgstr "{sender} bir video iletiyi sabitledi"
+
+#: src/strings.rs:856
+msgid "{sender} pinned a voice message"
+msgstr "{sender} bir sesli iletiyi sabitledi"
+
+#: src/strings.rs:857 src/strings.rs:859
+msgid "{sender} pinned a message"
+msgstr "{sender} bir iletiyi sabitledi"
+
+#: src/strings.rs:868
+msgid "{sender} joined Telegram"
+msgstr "{sender} Telegramʼa katıldı"
+
+#: src/ui/components/map.blp:29
+msgid "Map data by OpenStreetMap"
+msgstr ""
+
+#: src/ui/components/phone_number_input.blp:13
+msgid "Country"
+msgstr "Ülke"
+
+#: src/ui/components/phone_number_input.blp:21 src/ui/login/code.blp:16
+#: src/ui/login/other_device.blp:19 src/ui/login/password.blp:20
+#: src/ui/login/registration.blp:17
+msgid "Phone Number"
+msgstr "Telefon Numarası"
+
+#: src/ui/components/phone_number_input.rs:310
+msgid "You entered an invalid country code."
+msgstr "Geçersiz bir ülke kodu girdiniz."
+
+#: src/ui/login/code.blp:22
+msgid "Enter the Verification Code"
+msgstr "Doğrulama Kodunu Girin"
+
+#: src/ui/login/code.blp:39 src/ui/login/password.blp:185
+msgid "Code"
+msgstr "Kod"
+
+#: src/ui/login/code.blp:56 src/ui/login/password.blp:72
+#: src/ui/login/password.blp:202 src/ui/login/phone_number.blp:49
+#: src/ui/login/registration.blp:64
+msgid "_Next"
+msgstr "_Sonraki"
+
+#: src/ui/login/code.rs:117
+msgid "Send code via {type} (may still arrive within {countdown} seconds)"
+msgstr ""
+
+#: src/ui/login/code.rs:122
+msgid "Send code via {type}"
+msgstr ""
+
+#: src/ui/login/code.rs:147
+msgid "The code will arrive to you via {type}."
+msgstr ""
+
+#: src/ui/login/code.rs:184
+msgid "Failed to authenticate: {error}"
+msgstr ""
+
+#: src/ui/login/code.rs:198
+msgid "Failed to resend auth code: {error}"
+msgstr ""
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:228
+msgid "Telegram"
+msgstr "Telegram"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:230
+msgid "SMS"
+msgstr "SMS"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:232
+msgid "Call"
+msgstr "Arama"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:234
+msgid "Flash Call"
+msgstr "Hızlı Çağrı"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:236
+msgid "Missed Call"
+msgstr "Cevapsız Arama"
+
+#. Translators: This is an authentication method
+#: src/ui/login/code.rs:238
+msgid "Fragment"
+msgstr "Parça"
+
+#: src/ui/login/mod.rs:116
+msgid "Reset Registration Process?"
+msgstr ""
+
+#: src/ui/login/mod.rs:117
+msgid ""
+"If you reset the registration process, the previous progress will be "
+"irrevocably lost."
+msgstr ""
+
+#: src/ui/login/mod.rs:128 src/ui/login/password.rs:242
+#: src/ui/session/row.rs:110
+msgid "_Cancel"
+msgstr "İ_ptal"
+
+#: src/ui/login/mod.rs:129
+msgid "_Reset"
+msgstr ""
+
+#: src/ui/login/other_device.blp:24
+msgid "Scan Code"
+msgstr "Kodu Tara"
+
+#: src/ui/login/other_device.blp:25
+msgid "Scan this code with another Telegram app logged into your account."
+msgstr ""
+"Hesabınızda oturum açmış başka bir Telegram uygulamasıyla bu kodu tarayın."
+
+#: src/ui/login/other_device.blp:42
+#, fuzzy
+msgid "Log in using your phone number"
+msgstr "_Karekod kullanarak giriş yap"
+
+#: src/ui/login/password.blp:26
+msgid "Enter Your Password"
+msgstr "Parolanızı Girin"
+
+#: src/ui/login/password.blp:40
+msgid "Password"
+msgstr "Parola"
+
+#: src/ui/login/password.blp:47
+msgid "Hint"
+msgstr "İpucu"
+
+#: src/ui/login/password.blp:88
+#, fuzzy
+msgid "Forgot password?"
+msgstr "_Parolanızı mı unuttunuz?"
+
+#: src/ui/login/password.blp:107
+#, fuzzy
+msgid "Recover Password"
+msgstr "Parolanızı Girin"
+
+#: src/ui/login/password.blp:108
+msgid ""
+"When you set your cloud password, you provided a recovery e-mail address. A "
+"code can be sent there to reset your password."
+msgstr ""
+"Bulut parolanızı ayarladığınızda, bir kurtarma e-posta adresi sağladınız. "
+"Parolanızı sıfırlamak için oraya bir kod gönderilebilir."
+
+#: src/ui/login/password.blp:131
+#, fuzzy
+msgid "_Send Code"
+msgstr "Kodu Tara"
+
+#: src/ui/login/password.blp:150 src/ui/login/password.rs:243
+msgid "_Delete Account"
+msgstr "_Hesabı Sil"
+
+#: src/ui/login/password.blp:168
+#, fuzzy
+msgid "Enter the Code E-Mailed to You"
+msgstr "Size e-posta ile gönderilen kodu girin"
+
+#: src/ui/login/password.blp:218
+msgid "Unable to access your e-mail?"
+msgstr "E-postanıza erişemiyor musunuz?"
+
+#: src/ui/login/password.rs:198
+msgid "Failed to verify password: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:222
+msgid "Failed to recover password: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:234
 msgid "Warning"
 msgstr "Uyarı"
 
-#: src/login.rs:905
+#: src/ui/login/password.rs:236
 msgid ""
 "You will lose all your chats and messages, along with any media and files "
 "you shared!\n"
@@ -458,15 +956,27 @@ msgstr ""
 "\n"
 "Hesabınızı silmek istiyor musunuz?"
 
-#: src/login.rs:911
-msgid "_Cancel"
-msgstr "İ_ptal"
+#: src/ui/login/password.rs:269
+msgid "Failed to delete account: {error}"
+msgstr ""
 
-#: src/login.rs:984
+#: src/ui/login/password.rs:294
+msgid "Code expired. A new one has been sent you."
+msgstr ""
+
+#: src/ui/login/password.rs:299
+msgid "Code expired. Could not sent a new one: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:307
+msgid "Failed to send password code: {error}"
+msgstr ""
+
+#: src/ui/login/password.rs:316
 msgid "Sorry"
 msgstr "Üzgünüm"
 
-#: src/login.rs:986
+#: src/ui/login/password.rs:318
 msgid ""
 "If you can't restore access to the e-mail, your remaining options are either "
 "to remember your password or to delete and then recreate your account."
@@ -474,681 +984,476 @@ msgstr ""
 "E-postaya erişimi geri getiremiyorsanız, geriye kalan seçenekleriniz ya "
 "parolanızı hatırlamak ya da hesabınızı silip yeniden oluşturmaktır."
 
-#. Translators: This is an authentication method
-#: src/login.rs:1058
-msgid "Telegram"
-msgstr "Telegram"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1060
-msgid "SMS"
-msgstr "SMS"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1062
-msgid "Call"
-msgstr "Arama"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1064
-msgid "Flash Call"
-msgstr "Hızlı Çağrı"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1066
-msgid "Missed Call"
-msgstr "Cevapsız Arama"
-
-#. Translators: This is an authentication method
-#: src/login.rs:1068
-msgid "Fragment"
-msgstr "Parça"
-
-#: src/phone_number_input.rs:204
-msgid "You entered an invalid country code."
-msgstr "Geçersiz bir ülke kodu girdiniz."
-
-#: src/strings.rs:28
-msgid "{sender} is choosing a contact"
-msgstr "{sender} kişi seçiyor"
-
-#: src/strings.rs:32
-msgid "{sender1} and {sender2} are choosing contacts"
-msgstr "{sender1} ve {sender2} kişi seçiyor"
-
-#: src/strings.rs:39
-msgid "{num} people are choosing contacts"
-msgstr "{num} kişi, kişi seçiyor"
-
-#: src/strings.rs:44
-msgid "choosing a contact"
-msgstr "kişi seçme"
-
-#: src/strings.rs:51
-msgid "{sender} is choosing a location"
-msgstr "{sender} konum seçiyor"
-
-#: src/strings.rs:55
-msgid "{sender1} and {sender2} are choosing locations"
-msgstr "{sender1} ve {sender2} konum seçiyor"
-
-#: src/strings.rs:62
-msgid "{num} people are choosing locations"
-msgstr "{num} kişi konum seçiyor"
-
-#: src/strings.rs:67
-msgid "choosing a location"
-msgstr "konum seçme"
-
-#: src/strings.rs:74
-msgid "{sender} is choosing a sticker"
-msgstr "{sender} çıkartma seçiyor"
-
-#: src/strings.rs:78
-msgid "{sender1} and {sender2} are choosing stickers"
-msgstr "{sender1} ve {sender2} çıkartma seçiyor"
-
-#: src/strings.rs:85
-msgid "{num} people are choosing stickers"
-msgstr "{num} kişi çıkartma seçiyor"
-
-#: src/strings.rs:90
-msgid "choosing a sticker"
-msgstr "çıkartma seçme"
-
-#: src/strings.rs:97
-msgid "{sender} is recording a video"
-msgstr "{sender} video kaydediyor"
-
-#: src/strings.rs:101
-msgid "{sender1} and {sender2} are recording videos"
-msgstr "{sender1} ve {sender2} video kaydediyor"
-
-#: src/strings.rs:108
-msgid "{num} people are recording videos"
-msgstr "{num} kişi video kaydediyor"
-
-#: src/strings.rs:113
-msgid "recording a video"
-msgstr "video kaydetme"
-
-#: src/strings.rs:120
-msgid "{sender} is recording a video note"
-msgstr "{sender} video not kaydediyor"
-
-#: src/strings.rs:124
-msgid "{sender1} and {sender2} are recording video notes"
-msgstr "{sender1} ve {sender2} video not kaydediyor"
-
-#: src/strings.rs:131
-msgid "{num} people are recording video notes"
-msgstr "{num} kişi video not kaydediyor"
-
-#: src/strings.rs:136
-msgid "recording a video note"
-msgstr "video not kaydetme"
-
-#: src/strings.rs:143
-msgid "{sender} is recording a voice note"
-msgstr "{sender} sesli not kaydediyor"
-
-#: src/strings.rs:147
-msgid "{sender1} and {sender2} are recording voice notes"
-msgstr "{sender1} ve {sender2} sesli not kaydediyor"
-
-#: src/strings.rs:154
-msgid "{num} people are recording voice notes"
-msgstr "{num} kişi sesli not kaydediyor"
-
-#: src/strings.rs:159
-msgid "recording a voice note"
-msgstr "sesli not kaydetme"
-
-#: src/strings.rs:166
-msgid "{sender} is playing a game"
-msgstr "{sender} oyun oynuyor"
-
-#: src/strings.rs:170
-msgid "{sender1} and {sender2} are playing games"
-msgstr "{sender1} ve {sender2} oyun oynuyor"
-
-#: src/strings.rs:177
-msgid "{num} people are playing games"
-msgstr "{num} kişi oyun oynuyor"
-
-#: src/strings.rs:182
-msgid "playing a game"
-msgstr "oyun oynama"
-
-#: src/strings.rs:189
-msgid "{sender} is typing"
-msgstr "{sender} yazıyor"
-
-#: src/strings.rs:193
-msgid "{sender1} and {sender2} are typing"
-msgstr "{sender1} ve {sender2} yazıyor"
-
-#: src/strings.rs:199
-msgid "{num} people are typing"
-msgstr "{num} kişi yazıyor"
-
-#: src/strings.rs:202
-msgid "typing"
-msgstr "yazma"
-
-#: src/strings.rs:209
-msgid "{sender} is uploading a document ({progress}%)"
-msgstr "{sender} belge yüklüyor (%{progress})"
-
-#: src/strings.rs:216
-msgid "{sender1} and {sender2} are uploading documents"
-msgstr "{sender1} ve {sender2} belge yüklüyor"
-
-#: src/strings.rs:223
-msgid "{num} people are uploading documents"
-msgstr "{num} kişi belge yüklüyor"
-
-#: src/strings.rs:229
-msgid "uploading a document ({progress}%)"
-msgstr "belge yükleniyor (%{progress})"
-
-#: src/strings.rs:238
-msgid "{sender} is uploading a photo ({progress}%)"
-msgstr "{sender} fotoğraf yüklüyor (%{progress})"
-
-#: src/strings.rs:245
-msgid "{sender1} and {sender2} are uploading photos"
-msgstr "{sender1} ve {sender2} fotoğraf yüklüyor"
-
-#: src/strings.rs:252
-msgid "{num} people are uploading photos"
-msgstr "{num} kişi fotoğraf yüklüyor"
-
-#: src/strings.rs:258
-msgid "uploading a photo ({progress}%)"
-msgstr "fotoğraf yükleniyor (%{progress})"
-
-#: src/strings.rs:267
-msgid "{sender} is uploading a video ({progress}%)"
-msgstr "{sender} video yüklüyor (%{progress})"
-
-#: src/strings.rs:274
-msgid "{sender1} and {sender2} are uploading videos"
-msgstr "{sender1} ve {sender2} video yüklüyor"
-
-#: src/strings.rs:281
-msgid "{num} people are uploading videos"
-msgstr "{num} kişi video yüklüyor"
-
-#: src/strings.rs:287
-msgid "uploading a video ({progress}%)"
-msgstr "video yükleniyor (%{progress})"
-
-#: src/strings.rs:296
-msgid "{sender} is uploading a video note ({progress}%)"
-msgstr "{sender} video not yüklüyor (%{progress})"
-
-#: src/strings.rs:303
-msgid "{sender1} and {sender2} are uploading video notes"
-msgstr "{sender1} ve {sender2} video not yüklüyor"
-
-#: src/strings.rs:310
-msgid "{num} people are uploading video notes"
-msgstr "{num} kişi video not yüklüyor"
-
-#: src/strings.rs:316
-msgid "uploading a video note ({progress}%)"
-msgstr "video not yükleniyor (%{progress})"
-
-#: src/strings.rs:325
-msgid "{sender} is uploading a voice note ({progress}%)"
-msgstr "{sender} sesli not yüklüyor (%{progress})"
-
-#: src/strings.rs:332
-msgid "{sender1} and {sender2} are uploading voice notes"
-msgstr "{sender1} ve {sender2} sesli not yüklüyor"
-
-#: src/strings.rs:339
-msgid "{num} people are uploading voice notes"
-msgstr "{num} kişi sesli not yüklüyor"
-
-#: src/strings.rs:345
-msgid "uploading a voice note ({progress}%)"
-msgstr "sesli not yükleniyor (%{progress})"
-
-#: src/strings.rs:354
-msgid "{sender} is watching an animation {emoji}"
-msgstr "{sender} animasyon izliyor {emoji}"
-
-#: src/strings.rs:361
-msgid "{sender1} and {sender2} are watching animations {emoji}"
-msgstr "{sender1} ve {sender2} animasyon izliyor {emoji}"
-
-#: src/strings.rs:369
-msgid "{num} people are watching animations {emoji}"
-msgstr "{num} kişi animasyon izliyor {emoji}"
-
-#: src/strings.rs:374
-msgid "watching an animation"
-msgstr "animasyon izleme"
-
-#: src/strings.rs:395
-msgid "last seen a long time ago"
-msgstr "son görülme: uzun zaman önce"
-
-#: src/strings.rs:396
-msgid "online"
-msgstr "çevrim içi"
-
-#. Translators: This is an online status with the date
-#: src/strings.rs:405
-#, c-format
-msgid "last seen %x"
-msgstr "son görülme: %x"
-
-#. Translators: This is an online status with the last seen time, without seconds
-#. Here you may want to change to a 24-hours representation, based on your locale.
-#. You can use this site to learn more: https://www.strfti.me/
-#: src/strings.rs:410
-msgid "last seen yesterday at %l:%M %p"
-msgstr "son görülme: dün %l:%M %p"
-
-#: src/strings.rs:414
-msgid "last seen {num} hour ago"
-msgid_plural "last seen {num} hours ago"
-msgstr[0] "son görülme: {num} saat önce"
-msgstr[1] "son görülme, {num} saat önce"
-
-#: src/strings.rs:421
-msgid "last seen {num} minute ago"
-msgid_plural "last seen {num} minutes ago"
-msgstr[0] "son görülme: {num} dakika önce"
-msgstr[1] "son görülme, {num} dakika önce"
-
-#: src/strings.rs:427
-msgid "last seen just now"
-msgstr "son görülme: şimdi"
-
-#: src/strings.rs:430
-msgid "last seen recently"
-msgstr "son görülme: yakın zamanda"
-
-#: src/strings.rs:431
-msgid "last seen within a week"
-msgstr "son görülme: bir hafta içinde"
-
-#: src/strings.rs:432
-msgid "last seen within a month"
-msgstr "son görülme: bir ay içinde"
-
-#: src/strings.rs:456
-msgid "Photo has expired"
-msgstr "Fotoğrafın süresi doldu"
-
-#: src/strings.rs:459
-msgid "Video has expired"
-msgstr "Videonun süresi doldu"
-
-#: src/strings.rs:460
-msgid "Video Message"
-msgstr "Video İleti"
-
-#: src/strings.rs:491
-msgid "{sender} took a screenshot!"
-msgstr "{sender} ekran görüntüsü aldı!"
-
-#: src/strings.rs:496
-msgid "Unsupported Message"
-msgstr "Desteklenmeyen İleti"
-
-#: src/strings.rs:502
-msgid "GIF"
-msgstr "GIF"
-
-#: src/strings.rs:504
-msgid "GIF, {caption}"
-msgstr "GIF, {caption}"
-
-#: src/strings.rs:512
-msgid "{title} – {performer}"
-msgstr "{title} – {performer}"
-
-#: src/strings.rs:518
-msgid "{title} – {performer}, {caption}"
-msgstr "{title} – {performer}, {caption}"
-
-#: src/strings.rs:534
-msgid "{file_name}, {caption}"
-msgstr "{file_name}, {caption}"
-
-#: src/strings.rs:542
-msgid "Photo"
-msgstr "Fotoğraf"
-
-#: src/strings.rs:544
-msgid "Photo, {caption}"
-msgstr "Fotoğraf, {caption}"
-
-#. Translators: This is a sticker with the associated emoji
-#: src/strings.rs:550
-msgid "{emoji} Sticker"
-msgstr "{emoji} Çıkartma"
-
-#: src/strings.rs:555
-msgid "Video"
-msgstr "Video"
-
-#: src/strings.rs:557
-msgid "Video, {caption}"
-msgstr "Video, {caption}"
-
-#: src/strings.rs:563
-msgid "Voice Message"
-msgstr "Sesli İleti"
-
-#: src/strings.rs:565
-msgid "Voice Message, {caption}"
-msgstr "Sesli İleti, {caption}"
-
-#: src/strings.rs:582
-msgid "Declined outgoing video call"
-msgstr "Reddedilen giden görüntülü arama"
-
-#: src/strings.rs:584
-msgid "Declined outgoing call"
-msgstr "Reddedilen giden arama"
-
-#: src/strings.rs:590
-msgid "Declined incoming video call"
-msgstr "Reddedilen gelen görüntülü arama"
-
-#: src/strings.rs:592
-msgid "Declined incoming call"
-msgstr "Reddedilen gelen arama"
-
-#: src/strings.rs:600
-msgid "Canceled call"
-msgstr "İptal edilen arama"
-
-#: src/strings.rs:602
-msgid "Missed call"
-msgstr "Cevapsız arama"
-
-#: src/strings.rs:615
-msgid "Outgoing video call ({duration})"
-msgstr "Giden görüntülü arama ({duration})"
-
-#: src/strings.rs:620
-msgid "Outgoing call ({duration})"
-msgstr "Giden arama ({duration})"
-
-#: src/strings.rs:625
-msgid "Outgoing video call"
-msgstr "Giden görüntülü arama"
-
-#: src/strings.rs:627
-msgid "Outgoing call"
-msgstr "Giden arama"
-
-#: src/strings.rs:632
-msgid "Incoming video call ({duration})"
-msgstr "Gelen video arama ({duration})"
-
-#: src/strings.rs:637
-msgid "Incoming call ({duration})"
-msgstr "Gelen arama ({duration})"
-
-#: src/strings.rs:642
-msgid "Incoming video call"
-msgstr "Gelen video arama"
-
-#: src/strings.rs:644 src/window.rs:213
-msgid "Incoming call"
-msgstr "Gelen arama"
-
-#: src/strings.rs:651 src/strings.rs:662
-msgid "{sender} created the group \"{title}\""
-msgstr "{sender}, \"{title}\" grubunu oluşturdu"
-
-#: src/strings.rs:658
-msgid "Channel created"
-msgstr "Kanal oluşturuldu"
-
-#: src/strings.rs:672
-msgid "Channel renamed to \"{title}\""
-msgstr "Kanal, \"{title}\" olarak yeniden adlandırıldı"
-
-#: src/strings.rs:677
-msgid "{sender} changed the group name to \"{title}\""
-msgstr "{sender}, grup adını \"{title}\" olarak değiştirdi"
-
-#: src/strings.rs:687
-msgid "Channel photo changed"
-msgstr "Kanal fotoğrafı değiştirildi"
-
-#: src/strings.rs:691
-msgid "{sender} changed the group photo"
-msgstr "{sender}, grup fotoğrafını değiştirdi"
-
-#: src/strings.rs:699
-msgid "Channel photo removed"
-msgstr "Kanal fotoğrafı kaldırıldı"
-
-#: src/strings.rs:703
-msgid "{sender} removed the group photo"
-msgstr "{sender}, grup fotoğrafını kaldırdı"
-
-#: src/strings.rs:711 src/strings.rs:746
-msgid "{sender} joined the group"
-msgstr "{sender} gruba katıldı"
-
-#: src/strings.rs:716
-msgid "{sender} added {first_user} and {second_user}"
-msgstr "{sender}, {first_user} ve {second_user} kullanıcılarını ekledi"
-
-#: src/strings.rs:730
-msgid "{sender} added {users}"
-msgstr "{sender}, {users} kullanıcılarını ekledi"
-
-#: src/strings.rs:739
-msgid "{sender} joined the group via invite link"
-msgstr "{sender} davet linki ile grubuna katıldı"
-
-#: src/strings.rs:753
-msgid "{sender} left the group"
-msgstr "{sender} gruptan ayrıldı"
-
-#: src/strings.rs:758
-msgid "{sender} removed {user}"
-msgstr "{sender}, {user} kullanıcısını kaldırdı"
-
-#: src/strings.rs:777
-msgid "{sender} scored {points} in {game}"
-msgstr "{sender}, {game} oyununda {points} yaptı"
-
-#: src/strings.rs:786
-msgid "{sender} scored {points}"
-msgstr "{sender}, {points} puan yaptı"
-
-#: src/strings.rs:810
-msgid "{sender} pinned \"{text}\""
-msgstr "{sender}, \"{text}\" iletisini sabitledi"
-
-#: src/strings.rs:812
-msgid "{sender} pinned a GIF"
-msgstr "{sender} bir GIF'i sabitledi"
-
-#: src/strings.rs:813
-msgid "{sender} pinned an audio file"
-msgstr "{sender} bir ses dosyasını sabitledi"
-
-#: src/strings.rs:814
-msgid "{sender} pinned a file"
-msgstr "{sender} bir dosyayı sabitledi"
-
-#: src/strings.rs:815
-msgid "{sender} pinned a photo"
-msgstr "{sender} bir fotoğrafı sabitledi"
-
-#: src/strings.rs:816
-msgid "{sender} pinned a sticker"
-msgstr "{sender} bir çıkartmayı sabitledi"
-
-#: src/strings.rs:817
-msgid "{sender} pinned a video"
-msgstr "{sender} bir videoyu sabitledi"
-
-#: src/strings.rs:818
-msgid "{sender} pinned a video message"
-msgstr "{sender} bir video iletiyi sabitledi"
-
-#: src/strings.rs:819
-msgid "{sender} pinned a voice message"
-msgstr "{sender} bir sesli iletiyi sabitledi"
-
-#: src/strings.rs:820 src/strings.rs:822
-msgid "{sender} pinned a message"
-msgstr "{sender} bir iletiyi sabitledi"
-
-#: src/strings.rs:831
-msgid "{sender} joined Telegram"
-msgstr "{sender} Telegramʼa katıldı"
-
-#: src/session/preferences_window.rs:208
-msgid "Cache cleared"
-msgstr "Önbellek temizlendi"
-
-#: src/session/content/chat_action_bar.rs:363
-#: src/session/content/chat_action_bar.rs:380
+#: src/ui/login/password.rs:323 src/ui/login/registration.rs:173
+msgid "_OK"
+msgstr "_Tamam"
+
+#: src/ui/login/phone_number.blp:24
+msgid "Welcome"
+msgstr "Hoş Geldiniz"
+
+#: src/ui/login/phone_number.blp:66
+#, fuzzy
+msgid "Quick login using QR code"
+msgstr "_Karekod kullanarak giriş yap"
+
+#: src/ui/login/phone_number.rs:125
+msgid "Failed to load country codes: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:177 src/ui/session/row.rs:126
+msgid "Failed to log out: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:209
+msgid "Failed to use phone number: {error}"
+msgstr ""
+
+#: src/ui/login/phone_number.rs:233
+msgid "Failed to request QR code: {error}"
+msgstr ""
+
+#: src/ui/login/registration.blp:23
+msgid "Register New Account"
+msgstr "Yeni Hesap Aç"
+
+#: src/ui/login/registration.blp:43
+msgid "First Name"
+msgstr "İsim"
+
+#: src/ui/login/registration.blp:48
+msgid "Last Name"
+msgstr "Soyadı"
+
+#: src/ui/login/registration.blp:87
+msgid ""
+"By signing up,\n"
+"you agree to the <a href=\"\">Terms of Service</a>."
+msgstr ""
+"Kaydolarak,\n"
+"<a href=\"\">Hizmet Şartlarını</a> kabul etmiş olursunuz."
+
+#: src/ui/login/registration.rs:145
+msgid "Failed to register account: {error}"
+msgstr ""
+
+#: src/ui/login/registration.rs:168
+msgid "Do you accept the Terms of Service?"
+msgstr "Hizmet Koşullarını kabul ediyor musunuz?"
+
+#: src/ui/login/registration.rs:169 src/ui/session/content/chat_history.rs:227
+#: src/ui/session/content/message_row/mod.rs:182
+msgid "_No"
+msgstr "_ Hayır"
+
+#: src/ui/login/registration.rs:169 src/ui/session/content/chat_history.rs:227
+#: src/ui/session/content/message_row/mod.rs:182
+msgid "_Yes"
+msgstr "_Evet"
+
+#: src/ui/login/registration.rs:172
+msgid "Terms of Service"
+msgstr "Hizmet Koşulları"
+
+#: src/ui/session/contacts_window/mod.ui:3
+#, fuzzy
+msgid "Contacts"
+msgstr "_Kişiler"
+
+#: src/ui/session/content/chat_action_bar.blp:71
+msgid "Message"
+msgstr "İleti"
+
+#: src/ui/session/content/chat_action_bar.blp:103
+msgid "Unblock"
+msgstr "Engellemeyi Kaldır"
+
+#: src/ui/session/content/chat_action_bar.blp:134
+msgid "Join"
+msgstr "Katıl"
+
+#: src/ui/session/content/chat_action_bar.rs:119
+msgid "Failed to join chat: {error}"
+msgstr ""
+
+#: src/ui/session/content/chat_action_bar.rs:369
+#: src/ui/session/content/chat_action_bar.rs:386
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
-#: src/session/content/chat_action_bar.rs:365
-#: src/session/content/chat_action_bar.rs:382
+#: src/ui/session/content/chat_action_bar.rs:371
+#: src/ui/session/content/chat_action_bar.rs:388
 msgid "Deleted Message"
 msgstr "Silinmiş İleti"
 
-#: src/session/content/chat_action_bar.rs:376
+#: src/ui/session/content/chat_action_bar.rs:382
 msgid "Edit Message"
 msgstr "İletiyi Düzenle"
 
-#: src/session/content/chat_action_bar.rs:471
+#: src/ui/session/content/chat_action_bar.rs:477
 msgid "Images"
 msgstr "Görüntüler"
 
-#: src/session/content/chat_action_bar.rs:790
+#: src/ui/session/content/chat_action_bar.rs:796
 msgid "Unmute"
 msgstr "Sesi aç"
 
-#: src/session/content/chat_action_bar.rs:792
+#: src/ui/session/content/chat_action_bar.rs:798
 msgid "Mute"
 msgstr "Sessiz"
 
-#: src/session/content/chat_history.rs:230
+#: src/ui/session/content/chat_history.rs:224
 msgid "Leave chat?"
 msgstr "Sohbetten ayrılıyor musunuz?"
 
-#: src/session/content/chat_history.rs:231
+#: src/ui/session/content/chat_history.rs:225
 msgid "Do you want to leave this chat?"
 msgstr "Bu sohbetten ayrılmak istiyor musunuz?"
 
+#: src/ui/session/content/chat_history.ui:67
+msgid "Scroll to bottom"
+msgstr "En alta kaydır"
+
+#: src/ui/session/content/chat_history.ui:145
+msgid "View Info"
+msgstr "Bilgileri Görüntüle"
+
+#: src/ui/session/content/chat_history.ui:149
+msgid "Leave Chat"
+msgstr "Konuşmadan Ayrıl"
+
 #. Translators: This is a date format in the day divider without the year
-#: src/session/content/chat_history_row.rs:121
+#: src/ui/session/content/chat_history_row.rs:119
 msgid "%B %e"
 msgstr "%B %e"
 
 #. Translators: This is a date format in the day divider with the year
-#: src/session/content/chat_history_row.rs:124
+#: src/ui/session/content/chat_history_row.rs:122
 msgid "%B %e, %Y"
 msgstr "%B %e, %Y"
 
-#: src/session/content/chat_info_window.rs:131
+#: src/ui/session/content/chat_info_window.rs:132
 msgid "bot"
 msgstr "bot"
 
-#: src/session/content/chat_info_window.rs:146
+#: src/ui/session/content/chat_info_window.rs:145
 msgid "Mobile"
 msgstr "Cep Telefonu"
 
-#: src/session/content/chat_info_window.rs:156
+#: src/ui/session/content/chat_info_window.rs:152
 msgid "Username"
 msgstr "Kullanıcı Adı"
 
-#: src/session/content/chat_info_window.rs:174
-#: src/session/content/chat_info_window.rs:223
+#: src/ui/session/content/chat_info_window.rs:169
+#: src/ui/session/content/chat_info_window.rs:215
 msgid "{num} member"
 msgid_plural "{num} members"
 msgstr[0] "{num} üye"
 msgstr[1] "{num} üye"
 
-#: src/session/content/chat_info_window.rs:205
-#: src/session/content/chat_info_window.rs:264
+#: src/ui/session/content/chat_info_window.rs:198
+#: src/ui/session/content/chat_info_window.rs:254
 msgid "Description"
 msgstr "Açıklama"
 
-#: src/session/content/chat_info_window.rs:235
+#: src/ui/session/content/chat_info_window.rs:226
 msgid "Link"
 msgstr "Bağlantı"
 
-#: src/session/content/chat_info_window.rs:283
+#: src/ui/session/content/chat_info_window.rs:272
 msgid "Copied to clipboard"
 msgstr "Panoya kopyalandı"
 
-#: src/session/content/message_row/indicators.rs:266
+#: src/ui/session/content/message_menu.blp:6
+msgid "_Reply"
+msgstr "_Yanıtla"
+
+#: src/ui/session/content/message_menu.blp:12
+msgid "_Edit"
+msgstr "_Düzenle"
+
+#: src/ui/session/content/message_menu.blp:18
+msgid "Delete for Ever_yone"
+msgstr "_Herkes İçin Sil"
+
+#: src/ui/session/content/message_menu.blp:24
+msgid "_Delete for Me"
+msgstr "_Benim İçin Sil"
+
+#: src/ui/session/content/message_row/indicators.rs:248
 msgid "edited"
 msgstr "düzenlendi"
 
-#: src/session/content/message_row/indicators.rs:271
+#: src/ui/session/content/message_row/indicators.rs:256
 msgid "sponsored"
 msgstr "sponsorlu"
 
-#: src/session/content/message_row/mod.rs:171
+#: src/ui/session/content/message_row/location.rs:139
+#: src/ui/session/content/message_row/location.rs:148
+#, fuzzy
+msgid "updated just now"
+msgstr "son görülme: şimdi"
+
+#: src/ui/session/content/message_row/location.rs:152
+#, fuzzy
+msgid "updated an hour ago"
+msgstr "son görülme: {num} saat önce"
+
+#: src/ui/session/content/message_row/location.rs:155
+msgid "updated {hours} hours and {minutes} minutes ago"
+msgstr ""
+
+#: src/ui/session/content/message_row/mod.rs:170
 msgid "Do you want to delete this message for <b>everyone</b>?"
 msgstr "Bu iletiyi <b>herkes</b> için silmek istiyor musunuz?"
 
-#: src/session/content/message_row/mod.rs:173
+#: src/ui/session/content/message_row/mod.rs:172
 msgid "Do you want to delete this message?"
 msgstr "Bu iletiyi silmek istiyor musunuz?"
 
-#: src/session/content/message_row/mod.rs:177
-msgid "Confirm Message Deletion"
+#: src/ui/session/content/message_row/mod.rs:176
+#, fuzzy
+msgid "Confirm model::Message Deletion"
 msgstr "İleti Silmeyi Onayla"
 
-#: src/session/content/message_row/reply.rs:96
+#: src/ui/session/content/message_row/reply.rs:70
 msgid "Loading…"
 msgstr "Yükleniyor…"
 
-#: src/session/content/message_row/text.rs:131
+#: src/ui/session/content/message_row/text.rs:134
 msgid "This message is unsupported"
 msgstr "Bu ileti desteklenmiyor"
 
-#: src/session/sidebar/row.rs:417
-msgid "Draft:"
-msgstr "Taslak:"
+#: src/ui/session/content/mod.blp:22
+msgid "No Chat Selected"
+msgstr "Sohbet Seçilmedi"
 
-#: src/session/sidebar/row.rs:597
-msgid "You"
-msgstr "Siz"
+#: src/ui/session/content/mod.blp:23
+msgid "Select a chat to start messaging."
+msgstr "Mesajlaşmaya başlamak için bir sohbet seçin."
 
-#: src/session/sidebar/search/section_row.rs:130
+#: src/ui/session/content/send_media_window.blp:8
+#, fuzzy
+msgid "Send Image"
+msgstr "Görüntüler"
+
+#: src/ui/session/content/send_media_window.blp:23
+msgid "Caption"
+msgstr "Başlık"
+
+#: src/ui/session/content/send_media_window.blp:30
+msgid "Send"
+msgstr ""
+
+#: src/ui/session/content/send_media_window.blp:41
+msgid "Send as _File"
+msgstr ""
+
+#: src/ui/session/mod.blp:15 src/ui/session/sidebar/mod.ui:38
+#: src/ui/session/sidebar/search/section_row.rs:124
 msgid "Chats"
 msgstr "Sohbetler"
 
-#: src/session/sidebar/search/section_row.rs:133
+#: src/ui/session/mod.blp:26
+#, fuzzy
+msgid "Content"
+msgstr "_Kişiler"
+
+#: src/ui/session/preferences_window.blp:10
+msgid "Follow System Colors"
+msgstr "Sistem Renklerini Takip Et"
+
+#: src/ui/session/preferences_window.blp:19
+msgid "Dark Theme"
+msgstr "Koyu Tema"
+
+#: src/ui/session/preferences_window.blp:29
+msgid "Storage"
+msgstr "Depolama"
+
+#: src/ui/session/preferences_window.blp:32
+msgid "Cache Size"
+msgstr "Önbellek Boyutu"
+
+#: src/ui/session/preferences_window.blp:42
+msgid "Clear Cache"
+msgstr "Önbelleği Temizle"
+
+#: src/ui/session/preferences_window.rs:211
+msgid "Cache cleared"
+msgstr "Önbellek temizlendi"
+
+#: src/ui/session/row.blp:54
+msgid "Logout"
+msgstr ""
+
+#: src/ui/session/row.rs:99
+msgid "Log out <i>{display_name}</i>"
+msgstr ""
+
+#: src/ui/session/row.rs:105
+msgid "Are you sure you want to log out?"
+msgstr ""
+
+#: src/ui/session/row.rs:111
+#, fuzzy
+msgid "_Log out"
+msgstr "_Oturumu Kapat"
+
+#: src/ui/session/sidebar/mod.ui:7
+msgid "_Contacts"
+msgstr "_Kişiler"
+
+#: src/ui/session/sidebar/mod.ui:13
+msgid "_Preferences"
+msgstr "_Tercihler"
+
+#: src/ui/session/sidebar/mod.ui:17
+msgid "_Keyboard Shortcuts"
+msgstr "_Klavye Kısayolları"
+
+#: src/ui/session/sidebar/mod.ui:21
+msgid "_About Paper Plane"
+msgstr "Paper Plane _Hakkında"
+
+#: src/ui/session/sidebar/mod.ui:148 src/ui/session/sidebar/search/mod.ui:16
+msgid "Search"
+msgstr "Ara"
+
+#: src/ui/session/sidebar/mod.ui:165
+msgid "Sessions"
+msgstr ""
+
+#: src/ui/session/sidebar/row.rs:414
+msgid "Draft:"
+msgstr "Taslak:"
+
+#: src/ui/session/sidebar/row.rs:597
+msgid "You"
+msgstr "Siz"
+
+#: src/ui/session/sidebar/row_menu.blp:6
+msgid "_Pin"
+msgstr "_Sabitle"
+
+#: src/ui/session/sidebar/row_menu.blp:12
+msgid "_Unpin"
+msgstr "_Sabitlemeyi Kaldır"
+
+#: src/ui/session/sidebar/row_menu.blp:18
+msgid "_Mark as Unread"
+msgstr "Okunmadı Olarak _İmle"
+
+#: src/ui/session/sidebar/row_menu.blp:24
+msgid "Mark as _Read"
+msgstr "_Okundu Olarak İmle"
+
+#: src/ui/session/sidebar/search/mod.ui:79
+msgid "No Search Results"
+msgstr "Arama Sonucu Yok"
+
+#: src/ui/session/sidebar/search/mod.ui:80
+msgid "Try a different search."
+msgstr "Farklı bir arama deneyin."
+
+#: src/ui/session/sidebar/search/section_row.rs:127
 msgid "Global Search"
 msgstr "Genel Arama"
 
-#: src/session/sidebar/search/section_row.rs:136
+#: src/ui/session/sidebar/search/section_row.rs:130
 msgid "Recent"
 msgstr "Son"
 
-#: src/tdlib/country_info.rs:115
-msgid "Invalid Country Code"
-msgstr "Geçersiz Ülke Kodu"
+#: src/ui/session/switcher.blp:7
+msgid "_Production Server"
+msgstr "_Üretim Sunucusu"
 
-#: src/tdlib/country_info.rs:124
-msgid "Test Account"
-msgstr "Test Hesabı"
+#: src/ui/session/switcher.blp:12
+msgid "_Test Server"
+msgstr "_Test Sunucusu"
+
+#: src/ui/session/switcher.blp:41
+msgid "New Session"
+msgstr ""
+
+#~ msgid "A Telegram client optimized for the GNOME desktop"
+#~ msgstr "GNOME masaüstü için optimize edilmiş Telegram istemcisi"
+
+#~ msgid "Gnome;GTK;"
+#~ msgstr "Gnome;GTK;"
+
+#~ msgid ""
+#~ "A list of most recently used sessions, sorted by their database directory "
+#~ "names"
+#~ msgstr ""
+#~ "En son kullanılan oturumların veri tabanı dizin adlarına göre sıralanmış "
+#~ "bir listesi"
+
+#~ msgid "_Add Account"
+#~ msgstr "_Hesap Ekle"
+
+#~ msgid "_Previous"
+#~ msgstr "_Önceki"
+
+#~ msgid "The code cannot be sent anymore."
+#~ msgstr "Kod artık gönderilemez."
+
+#~ msgid "Use Recovery Code"
+#~ msgstr "Kurtarma Kodunu Kullan"
+
+#~ msgid "_Send recovery code"
+#~ msgstr "_Kurtarma kodu gönder"
+
+#~ msgid "Account Deletion"
+#~ msgstr "Hesap Silme"
+
+#~ msgctxt "shortcut window"
+#~ msgid "General"
+#~ msgstr "Genel"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Show Shortcuts"
+#~ msgstr "Kısayolları Göster"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Quit"
+#~ msgstr "Çık"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Chat List"
+#~ msgstr "Sohbet Listesi"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Search Chats"
+#~ msgstr "Sohbetlerde Ara"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Chat History"
+#~ msgstr "Sohbet Geçmişi"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Send Photo from Clipboard"
+#~ msgstr "Panodan Fotoğraf Gönder"
+
+#~ msgid ""
+#~ "One way to continue using your account is to delete and then recreate it"
+#~ msgstr ""
+#~ "Hesabınızı kullanmaya devam etmenin bir yolu onu silip yeniden "
+#~ "oluşturmaktır"
+
+#~ msgid ""
+#~ "Since you have not provided a recovery e-mail address, the only way to "
+#~ "continue using your account is to delete and then recreate it"
+#~ msgstr ""
+#~ "Bir kurtarma e-posta adresi sağlamadığınız için, hesabınızı kullanmaya "
+#~ "devam etmenin tek yolu hesabınızı silmek ve ardından yeniden oluşturmaktır"
+
+#~ msgid ""
+#~ "Please note, you will lose all your chats and messages, along with any "
+#~ "media and files you shared!"
+#~ msgstr ""
+#~ "Lütfen tüm sohbetlerinizi ve iletilerinizi, paylaştığınız ortam ve "
+#~ "dosyalarla birlikte kaybedeceğinizi unutmayın!"
 
 #~ msgid "Welcome to Paper Plane"
 #~ msgstr "Paper Plane'a Hoş Geldiniz"
