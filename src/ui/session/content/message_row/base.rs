@@ -82,10 +82,6 @@ pub(crate) trait MessageBaseExt:
         glib::Object::builder().property("message", message).build()
     }
 
-    fn message(&self) -> Self::Message {
-        self.property("message")
-    }
-
     fn set_message(&self, message: &Self::Message);
 }
 
