@@ -18,6 +18,7 @@ mod imp {
     pub(crate) struct SendMediaWindow {
         pub(super) chat: glib::WeakRef<model::Chat>,
         pub(super) path: OnceCell<String>,
+        pub(super) reply_to: OnceCell<i64>,
         pub(super) emoji_chooser: RefCell<Option<gtk::EmojiChooser>>,
         #[template_child]
         pub(super) toast_overlay: TemplateChild<adw::ToastOverlay>,
@@ -92,7 +93,12 @@ glib::wrapper! {
 }
 
 impl SendMediaWindow {
-    pub(crate) fn new(parent: &gtk::Window, chat: &model::Chat, path: String) -> Self {
+    pub(crate) fn new(
+        parent: &gtk::Window,
+        chat: &model::Chat,
+        path: String,
+        reply_to: i64,
+    ) -> Self {
         let obj: Self = glib::Object::builder()
             .property("transient-for", parent)
             .build();
@@ -103,6 +109,7 @@ impl SendMediaWindow {
 
         imp.chat.set(Some(chat));
         imp.path.set(path).unwrap();
+        imp.reply_to.set(reply_to).unwrap();
 
         obj
     }
@@ -162,7 +169,7 @@ impl SendMediaWindow {
 
         let reply_to = Some(MessageReplyTo::Message(MessageReplyToMessage {
             chat_id,
-            message_id: 0,
+            message_id: *imp.reply_to.get().unwrap(),
         }));
 
         match tdlib::functions::send_message(chat_id, 0, reply_to, None, content, client_id).await {
