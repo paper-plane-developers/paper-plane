@@ -29,6 +29,15 @@ enum ChatActionBarState {
     Editing(i64),
 }
 
+impl ChatActionBarState {
+    fn replying(&self) -> i64 {
+        match self {
+            Self::Replying(message_id) => *message_id,
+            _ => 0,
+        }
+    }
+}
+
 mod imp {
     use super::*;
 
