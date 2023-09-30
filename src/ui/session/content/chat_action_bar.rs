@@ -29,6 +29,15 @@ enum ChatActionBarState {
     Editing(i64),
 }
 
+impl ChatActionBarState {
+    fn replying(&self) -> i64 {
+        match self {
+            Self::Replying(message_id) => *message_id,
+            _ => 0,
+        }
+    }
+}
+
 mod imp {
     use super::*;
 
@@ -486,7 +495,8 @@ impl ChatActionBar {
             let path = file.path().unwrap().to_str().unwrap().to_string();
             let chat = self.chat().unwrap();
 
-            ui::SendMediaWindow::new(&parent, &chat, path).present();
+            ui::SendMediaWindow::new(&parent, &chat, path, self.imp().state.get().replying())
+                .present();
         }
     }
 
@@ -692,7 +702,8 @@ impl ChatActionBar {
 
             let parent = self.root().and_downcast().unwrap();
             let path = path.to_str().unwrap().to_string();
-            ui::SendMediaWindow::new(&parent, &chat, path).present();
+            ui::SendMediaWindow::new(&parent, &chat, path, self.imp().state.get().replying())
+                .present();
         }
 
         Ok(())
