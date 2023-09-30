@@ -16,6 +16,7 @@ indexmap = "2"
 locale_config = "0.3"
 log = "0.4"
 once_cell = "1"
+ori = { git = "https://github.com/paper-plane-developers/origami.git", package = "origami" }
 pretty_env_logger = "0.5"
 qrcode-generator = { version = "4", default-features = false }
 regex = "1"
