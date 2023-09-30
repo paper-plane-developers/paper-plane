@@ -94,8 +94,8 @@ impl MessageBaseExt for MessageVenue {
         }
 
         imp.message_bubble.update_from_message(message, true);
-        imp.message_bubble.add_label_class("caption");
-        imp.message_bubble.add_label_class("dim-label");
+        imp.message_bubble.add_message_label_class("caption");
+        imp.message_bubble.add_message_label_class("dim-label");
 
         // Update the message.
         let handler_id =

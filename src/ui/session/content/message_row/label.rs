@@ -211,6 +211,10 @@ impl MessageLabel {
         }
     }
 
+    pub(crate) fn add_label_class(&self, class: &str) {
+        self.imp().label.add_css_class(class);
+    }
+
     pub(crate) fn indicators(&self) -> Option<ui::MessageIndicators> {
         self.imp().indicators.borrow().clone()
     }

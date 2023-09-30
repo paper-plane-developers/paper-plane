@@ -262,8 +262,8 @@ impl MessageBubble {
         self.update_indicators_position();
     }
 
-    pub(crate) fn add_label_class(&self, class: &str) {
-        self.imp().message_label.add_css_class(class);
+    pub(crate) fn add_message_label_class(&self, class: &str) {
+        self.imp().message_label.add_label_class(class);
     }
 
     pub(crate) fn set_suffix(&self, prefix: Option<&gtk::Widget>) {
