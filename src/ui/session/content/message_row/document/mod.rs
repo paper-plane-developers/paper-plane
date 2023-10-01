@@ -166,17 +166,15 @@ impl MessageDocument {
     ) {
         let imp = self.imp();
         let click = &*imp.click;
-        let indicator = &*imp.status_indicator;
         let file_id = file.id;
 
+        imp.status_indicator.set_status(status);
         let handler_id = match status {
-            FileStatus::Downloading(_progress) | FileStatus::Uploading(_progress) => {
+            FileStatus::Downloading(_) | FileStatus::Uploading(_) => {
                 return;
-                // Show loading indicator
             }
             FileStatus::CanBeDownloaded => {
                 // Download file
-                indicator.set_status(FileStatus::CanBeDownloaded);
                 click.connect_released(clone!(@weak self as obj, @weak session => move |click, _, _, _| {
                     // TODO: Fix bug mentioned here
                     // https://github.com/paper-plane-developers/paper-plane/pull/372#discussion_r968841370
@@ -184,20 +182,21 @@ impl MessageDocument {
                         obj.update_status(file, session);
                     }));
 
-                    obj.imp().status_indicator.set_status(FileStatus::Downloading(0.0));
+                    let imp = obj.imp();
+
+                    imp.status_indicator.set_status(FileStatus::Downloading(0.0));
                     let handler_id = click.connect_released(clone!(@weak session => move |_, _, _, _| {
                         session.cancel_download_file(file_id);
                     }));
-                    if let Some(handler_id) = obj.imp().status_handler_id.replace(Some(handler_id)) {
+                    if let Some(handler_id) = imp.status_handler_id.replace(Some(handler_id)) {
                         click.disconnect(handler_id);
                     }
                 }))
             }
             FileStatus::Downloaded => {
                 // Open file
-                indicator.set_status(FileStatus::Downloaded);
                 if imp.file_thumbnail_picture.file().is_some() {
-                    indicator.set_visible(false);
+                    imp.status_indicator.set_visible(false);
                 }
                 let gio_file = gio::File::for_path(&file.local.path);
                 click.connect_released(move |_, _, _, _| {
