@@ -21,6 +21,8 @@ mod imp {
         pub(super) masked: Cell<bool>,
         #[template_child]
         pub(super) status_image: TemplateChild<gtk::Image>,
+        #[template_child]
+        pub(super) loading_indicator: TemplateChild<ori::LoadingIndicator>,
     }
 
     #[glib::object_subclass]
@@ -103,12 +105,18 @@ glib::wrapper! {
 
 impl StatusIndicator {
     pub(crate) fn set_status(&self, status: FileStatus) {
-        let icon_name = match status {
-            FileStatus::Downloading(_) | FileStatus::Uploading(_) => "media-playback-stop-symbolic",
-            FileStatus::CanBeDownloaded => "document-save-symbolic",
-            FileStatus::Downloaded => "folder-documents-symbolic",
+        let (loading_is_visible, progress, icon_name) = match status {
+            FileStatus::Downloading(progress) | FileStatus::Uploading(progress) => {
+                (true, progress, "media-playback-stop-symbolic")
+            }
+            FileStatus::CanBeDownloaded => (false, 0.0, "document-save-symbolic"),
+            FileStatus::Downloaded => (false, 0.0, "folder-documents-symbolic"),
         };
 
-        self.imp().status_image.set_icon_name(Some(icon_name));
+        let imp = self.imp();
+
+        imp.loading_indicator.set_visible(loading_is_visible);
+        imp.loading_indicator.set_progress(progress);
+        imp.status_image.set_icon_name(Some(icon_name));
     }
 }

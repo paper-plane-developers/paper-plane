@@ -243,6 +243,10 @@ messagebubble.document.outgoing .file > overlay > statusindicator {
   color: #79c271;
 }
 
+statusindicator > loadingindicator {
+  margin: 2px;
+}
+
 messagebubble.document .file:hover > overlay > statusindicator {
   opacity: 0.85;
 }
