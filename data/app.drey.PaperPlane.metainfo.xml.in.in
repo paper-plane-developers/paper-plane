@@ -43,7 +43,7 @@
   sabriunal
   <releases>
     <release version="0.1.0~beta.4" date="2023-09-25">
-      <description>
+      <description translatable="no">
         <p>This is the fourth beta release of Paper Plane 0.1.0 with new features and bug fixes:</p>
         <ul>
           <li>Paper Plane now uses some new shiny widgets from libadwaita 1.4, thanks to @melix99. (#518)</li>
@@ -61,7 +61,7 @@
       </description>
     </release>
     <release version="0.1.0~beta.3" date="2023-06-11">
-      <description>
+      <description translatable="no">
         <p>The third beta release of Paper Plane 0.1.0 should in the first place fix a build error on Flathub:</p>
         <ul>
           <li>Added registered categories to the desktop file to fix a build error on Flathub.</li>
@@ -71,7 +71,7 @@
       </description>
     </release>
     <release version="0.1.0~beta.2" date="2023-06-08">
-      <description>
+      <description translatable="no">
         <p>The second beta release of Paper Plane 0.1.0 contains the following features, fixes and chores:</p>
         <ul>
           <li>Blueprint compiler has been updated to version 0.8.1, thanks to @alissonlauffer.</li>
@@ -85,7 +85,7 @@
       </description>
     </release>
     <release version="0.1.0~beta.1" date="2023-05-16">
-      <description>
+      <description translatable="no">
         <p>Paper Plane 0.1.0-beta.1 is the first release for enthusiasts to try out and play around with.</p>
       </description>
     </release>
