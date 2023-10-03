@@ -2,7 +2,6 @@ use std::cell::RefCell;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use gettextrs::gettext;
 use gtk::glib;
 use once_cell::sync::Lazy;
 
@@ -15,7 +14,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub(crate) struct ChatHistoryRow {
-        /// An `ChatHistoryItem` or `SponsoredMessage`
+        /// A `Message` or `SponsoredMessage`
         pub(super) item: RefCell<Option<glib::Object>>,
     }
 
@@ -85,47 +84,30 @@ impl ChatHistoryRow {
         }
 
         if let Some(ref item) = item {
-            if let Some(item) = item.downcast_ref::<model::ChatHistoryItem>() {
-                match item.type_() {
-                    model::ChatHistoryItemType::Message(message) => {
-                        use tdlib::enums::MessageContent::*;
+            if let Some(message) = item.downcast_ref::<model::Message>() {
+                use tdlib::enums::MessageContent::*;
 
-                        match message.content().0 {
-                            MessageExpiredPhoto
-                            | MessageExpiredVideo
-                            | MessageCall(_)
-                            | MessageBasicGroupChatCreate(_)
-                            | MessageSupergroupChatCreate(_)
-                            | MessageChatChangeTitle(_)
-                            | MessageChatChangePhoto(_) // TODO: Show photo thumbnail
-                            | MessageChatDeletePhoto
-                            | MessageChatAddMembers(_)
-                            | MessageChatJoinByLink
-                            | MessageChatJoinByRequest
-                            | MessageChatDeleteMember(_)
-                            | MessagePinMessage(_)
-                            | MessageScreenshotTaken
-                            | MessageGameScore(_)
-                            | MessageContactRegistered => {
-                                self.get_or_create_event_row()
-                                    .set_label(&strings::message_content(message));
-                            }
-                            _ => self.update_or_create_message_row(message.to_owned().upcast()),
-                        }
+                match message.content().0 {
+                    MessageExpiredPhoto
+                    | MessageExpiredVideo
+                    | MessageCall(_)
+                    | MessageBasicGroupChatCreate(_)
+                    | MessageSupergroupChatCreate(_)
+                    | MessageChatChangeTitle(_)
+                    | MessageChatChangePhoto(_) // TODO: Show photo thumbnail
+                    | MessageChatDeletePhoto
+                    | MessageChatAddMembers(_)
+                    | MessageChatJoinByLink
+                    | MessageChatJoinByRequest
+                    | MessageChatDeleteMember(_)
+                    | MessagePinMessage(_)
+                    | MessageScreenshotTaken
+                    | MessageGameScore(_)
+                    | MessageContactRegistered => {
+                        self.get_or_create_event_row()
+                            .set_label(&strings::message_content(message));
                     }
-                    model::ChatHistoryItemType::DayDivider(date) => {
-                        let fmt = if date.year() == glib::DateTime::now_local().unwrap().year() {
-                            // Translators: This is a date format in the day divider without the year
-                            gettext("%B %e")
-                        } else {
-                            // Translators: This is a date format in the day divider with the year
-                            gettext("%B %e, %Y")
-                        };
-                        let date = date.format(&fmt).unwrap().to_string();
-
-                        let child = self.get_or_create_event_row();
-                        child.set_label(&date);
-                    }
+                    _ => self.update_or_create_message_row(message.to_owned().upcast()),
                 }
             } else if let Some(sponsored_message) = item.downcast_ref::<model::SponsoredMessage>() {
                 let content = &sponsored_message.content().0;

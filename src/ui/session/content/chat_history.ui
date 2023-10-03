@@ -94,6 +94,12 @@
                             <style>
                               <class name="chat-history"/>
                             </style>
+                            <property name="header-factory">
+                              <object class="GtkSignalListItemFactory" id="signal_list_item_factory">
+                                <signal name="bind" handler="on_signal_list_item_factory_bind_header" swapped="true"/>
+                                <signal name="unbind" handler="on_signal_list_item_factory_unbind_header" swapped="true"/>
+                              </object>
+                            </property>
                             <property name="factory">
                               <object class="GtkBuilderListItemFactory">
                                 <property name="bytes"><![CDATA[
