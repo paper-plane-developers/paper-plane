@@ -77,10 +77,9 @@ mod imp {
 
     impl WidgetImpl for Map {
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
-            let widget = &*self.obj();
             let (min_size, natural_size) = match orientation {
-                gtk::Orientation::Horizontal => widget.measure(for_size, MIN_WIDTH, MAX_WIDTH),
-                _ => widget.measure((for_size as f64 / PHI) as i32, MIN_HEIGHT, MAX_HEIGHT),
+                gtk::Orientation::Horizontal => self.measure(for_size, MIN_WIDTH, MAX_WIDTH),
+                _ => self.measure((for_size as f64 / PHI) as i32, MIN_HEIGHT, MAX_HEIGHT),
             };
 
             (min_size, natural_size, -1, -1)
@@ -98,6 +97,23 @@ mod imp {
             }
         }
     }
+
+    impl Map {
+        fn measure(&self, for_size: i32, min_size: i32, max_size: i32) -> (i32, i32) {
+            let natural_size = if for_size == -1 {
+                max_size
+            } else {
+                let mut child = self.obj().first_child();
+                while let Some(child_) = child {
+                    child = child_.next_sibling();
+                    child_.measure(gtk::Orientation::Horizontal, for_size);
+                }
+
+                for_size.min(max_size).max(min_size)
+            };
+            (min_size, natural_size)
+        }
+    }
 }
 
 glib::wrapper! {
@@ -106,24 +122,6 @@ glib::wrapper! {
 }
 
 impl Map {
-    fn measure(&self, for_size: i32, min_size: i32, max_size: i32) -> (i32, i32) {
-        let natural_size = if for_size == -1 {
-            max_size
-        } else {
-            self.measure_children(gtk::Orientation::Horizontal, for_size);
-            for_size.min(max_size).max(min_size)
-        };
-        (min_size, natural_size)
-    }
-
-    fn measure_children(&self, orientation: gtk::Orientation, for_size: i32) {
-        let mut child = self.first_child();
-        while let Some(child_) = child {
-            child = child_.next_sibling();
-            child_.measure(orientation, for_size);
-        }
-    }
-
     pub(crate) fn set_custom_marker(&self, marker: Option<gtk::Widget>) {
         let imp = self.imp();
         imp.marker.set_child(Some(&ui::MapMarker::from(
