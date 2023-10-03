@@ -35,7 +35,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
-            klass.set_css_name("messagelocation");
+            klass.set_css_name("messagevenue");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
