@@ -169,7 +169,7 @@ messagebubble.venue map {
 
 messagebubble.location.live-location map,
 messagebubble.venue map {
-  border-radius: 14px 14px 7px 7px;
+  border-radius: 14px 14px 0 0;
 }
 
 messagebubble.location map .license,
