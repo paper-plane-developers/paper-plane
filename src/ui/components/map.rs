@@ -1,11 +1,12 @@
+use adw::prelude::*;
 use gtk::glib;
-use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use shumate::traits::LocationExt;
-use shumate::traits::MarkerExt;
+use once_cell::sync::Lazy;
+use shumate::prelude::*;
 
 use crate::ui;
+use crate::utils;
 
 // The golden ratio
 const PHI: f64 = 1.6180339887;
@@ -44,6 +45,29 @@ mod imp {
     }
 
     impl ObjectImpl for Map {
+        fn properties() -> &'static [glib::ParamSpec] {
+            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+                vec![glib::ParamSpecBoolean::builder("interactive")
+                    .explicit_notify()
+                    .build()]
+            });
+            PROPERTIES.as_ref()
+        }
+
+        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            match pspec.name() {
+                "interactive" => self.obj().set_interactive(value.get().unwrap()),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            match pspec.name() {
+                "interactive" => self.obj().interactive().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -56,7 +80,7 @@ mod imp {
                 .unwrap();
             self.map.set_map_source(&map_source);
 
-            let viewport = self.map.viewport().unwrap();
+            let viewport = obj.viewport();
 
             let map_layer = shumate::MapLayer::new(&map_source, &viewport);
             self.map.add_layer(&map_layer);
@@ -67,11 +91,7 @@ mod imp {
         }
 
         fn dispose(&self) {
-            let mut child = self.obj().first_child();
-            while let Some(child_) = child {
-                child = child_.next_sibling();
-                child_.unparent();
-            }
+            utils::unparent_children(&*self.obj());
         }
     }
 
@@ -122,6 +142,14 @@ glib::wrapper! {
 }
 
 impl Map {
+    pub(crate) fn interactive(&self) -> bool {
+        self.imp().map.is_sensitive()
+    }
+
+    pub(crate) fn set_interactive(&self, interactive: bool) {
+        self.imp().map.set_sensitive(interactive);
+    }
+
     pub(crate) fn viewport(&self) -> shumate::Viewport {
         self.imp().map.viewport().unwrap()
     }
