@@ -25,10 +25,11 @@ template $PaplMap : Widget {
       "osd",
     ]
 
+    notify::halign => $on_license_label_notify_align() swapped;
+    notify::valign => $on_license_label_notify_align() swapped;
+
     label: _("Map data by OpenStreetMap");
     xalign: 1.0;
-    halign: end;
-    valign: start;
     wrap: true;
     wrap-mode: char;
   }

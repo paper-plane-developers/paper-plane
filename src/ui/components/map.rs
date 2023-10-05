@@ -15,6 +15,16 @@ const MAX_HEIGHT: i32 = 225;
 const MIN_WIDTH: i32 = (MIN_HEIGHT as f64 * PHI) as i32;
 const MAX_WIDTH: i32 = (MAX_HEIGHT as f64 * PHI) as i32;
 
+#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, glib::Enum)]
+#[enum_type(name = "LicensePosition")]
+pub(crate) enum LicensePosition {
+    #[default]
+    TopLeft,
+    TopRight,
+    BottomRight,
+    BottomLeft,
+}
+
 mod imp {
     use super::*;
 
@@ -26,6 +36,8 @@ mod imp {
         pub(super) marker_image: TemplateChild<gtk::Image>,
         #[template_child]
         pub(super) map: TemplateChild<shumate::Map>,
+        #[template_child]
+        pub(super) license_label: TemplateChild<gtk::Label>,
     }
 
     #[glib::object_subclass]
@@ -36,6 +48,8 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            Self::bind_template_callbacks(klass);
+
             klass.set_css_name("map");
         }
 
@@ -47,9 +61,14 @@ mod imp {
     impl ObjectImpl for Map {
         fn properties() -> &'static [glib::ParamSpec] {
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![glib::ParamSpecBoolean::builder("interactive")
-                    .explicit_notify()
-                    .build()]
+                vec![
+                    glib::ParamSpecBoolean::builder("interactive")
+                        .explicit_notify()
+                        .build(),
+                    glib::ParamSpecEnum::builder::<LicensePosition>("license-position")
+                        .explicit_notify()
+                        .build(),
+                ]
             });
             PROPERTIES.as_ref()
         }
@@ -57,6 +76,7 @@ mod imp {
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
             match pspec.name() {
                 "interactive" => self.obj().set_interactive(value.get().unwrap()),
+                "license-position" => self.obj().set_license_position(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -64,6 +84,7 @@ mod imp {
         fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
             match pspec.name() {
                 "interactive" => self.obj().interactive().to_value(),
+                "license-position" => self.obj().license_position().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -118,6 +139,7 @@ mod imp {
         }
     }
 
+    #[gtk::template_callbacks]
     impl Map {
         fn measure(&self, for_size: i32, min_size: i32, max_size: i32) -> (i32, i32) {
             let natural_size = if for_size == -1 {
@@ -132,6 +154,11 @@ mod imp {
                 for_size.min(max_size).max(min_size)
             };
             (min_size, natural_size)
+        }
+
+        #[template_callback]
+        fn on_license_label_notify_align(&self) {
+            self.obj().notify("license-position");
         }
     }
 }
@@ -148,6 +175,42 @@ impl Map {
 
     pub(crate) fn set_interactive(&self, interactive: bool) {
         self.imp().map.set_sensitive(interactive);
+    }
+
+    pub(crate) fn license_position(&self) -> LicensePosition {
+        let license_label = self.imp().license_label.get();
+
+        if license_label.valign() == gtk::Align::Start {
+            if license_label.halign() == gtk::Align::Start {
+                LicensePosition::TopLeft
+            } else {
+                LicensePosition::TopRight
+            }
+        } else if license_label.valign() == gtk::Align::Start {
+            LicensePosition::BottomLeft
+        } else {
+            LicensePosition::BottomRight
+        }
+    }
+
+    pub(crate) fn set_license_position(&self, license_position: LicensePosition) {
+        let (valign, halign) = match license_position {
+            LicensePosition::TopLeft => (gtk::Align::Start, gtk::Align::Start),
+            LicensePosition::TopRight => (gtk::Align::Start, gtk::Align::End),
+            LicensePosition::BottomRight => (gtk::Align::End, gtk::Align::End),
+            LicensePosition::BottomLeft => (gtk::Align::End, gtk::Align::Start),
+        };
+
+        let license_label = self.imp().license_label.get();
+
+        let _freeze_notify = license_label.freeze_notify();
+
+        license_label.set_valign(valign);
+        license_label.set_halign(halign);
+
+        if self.license_position() != license_position {
+            self.notify("license-position");
+        }
     }
 
     pub(crate) fn viewport(&self) -> shumate::Viewport {
