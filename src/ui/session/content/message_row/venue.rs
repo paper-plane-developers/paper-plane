@@ -20,6 +20,7 @@ mod imp {
     pub(crate) struct MessageVenue {
         pub(super) message: glib::WeakRef<model::Message>,
         pub(super) handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub(super) map_window: glib::WeakRef<ui::MapWindow>,
         #[template_child]
         pub(super) message_bubble: TemplateChild<ui::MessageBubble>,
         #[template_child]
@@ -36,6 +37,8 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
+            Self::bind_template_callbacks(klass);
+
             klass.set_css_name("messagevenue");
 
             klass.install_action("message-row.open", None, move |widget, _, _| {
@@ -75,6 +78,25 @@ mod imp {
 
     impl WidgetImpl for MessageVenue {}
     impl ui::MessageBaseImpl for MessageVenue {}
+
+    #[gtk::template_callbacks]
+    impl MessageVenue {
+        #[template_callback]
+        fn on_map_gesture_click_pressed(&self) {
+            let obj = &*self.obj();
+
+            let map_window =
+                ui::MapWindow::new(self.obj().root().and_downcast_ref::<gtk::Window>());
+            map_window.add_css_class("venue");
+
+            self.map_window.set(Some(&map_window));
+
+            obj.update_map_window(&self.message.upgrade().unwrap());
+            map_window.center_marker();
+
+            map_window.present();
+        }
+    }
 }
 
 glib::wrapper! {
@@ -105,10 +127,11 @@ impl MessageBaseExt for MessageVenue {
         // Update the message.
         let handler_id =
             message.connect_content_notify(clone!(@weak self as obj => move |message| {
-                obj.update(message);
+                obj.update_row(message);
+                obj.update_map_window(message);
             }));
         imp.handler_id.replace(Some(handler_id));
-        self.update(message);
+        self.update_row(message);
 
         imp.message.set(Some(message));
         self.notify("message");
@@ -125,7 +148,7 @@ impl MessageVenue {
         .launch(gtk::Window::NONE, gio::Cancellable::NONE, |_| {});
     }
 
-    fn update(&self, message: &model::Message) {
+    fn update_row(&self, message: &model::Message) {
         match message.content().0 {
             tdlib::enums::MessageContent::MessageVenue(td_message) => {
                 let imp = self.imp();
@@ -147,6 +170,21 @@ impl MessageVenue {
                 imp.message_bubble.set_label(venue.address);
             }
             _ => unreachable!(),
+        }
+    }
+
+    fn update_map_window(&self, message: &model::Message) {
+        if let Some(map_window) = self.imp().map_window.upgrade() {
+            match message.content().0 {
+                tdlib::enums::MessageContent::MessageVenue(td_message) => {
+                    let location = td_message.venue.location;
+
+                    map_window
+                        .map()
+                        .set_marker_position(location.latitude, location.longitude);
+                }
+                _ => unreachable!(),
+            }
         }
     }
 }
