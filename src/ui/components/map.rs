@@ -122,6 +122,11 @@ glib::wrapper! {
 }
 
 impl Map {
+    pub(crate) fn marker_location(&self) -> (f64, f64) {
+        let imp = self.imp();
+        (imp.marker.latitude(), imp.marker.longitude())
+    }
+
     pub(crate) fn set_custom_marker(&self, marker: Option<gtk::Widget>) {
         let imp = self.imp();
         imp.marker.set_child(Some(&ui::MapMarker::from(
