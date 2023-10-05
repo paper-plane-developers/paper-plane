@@ -122,6 +122,10 @@ glib::wrapper! {
 }
 
 impl Map {
+    pub(crate) fn viewport(&self) -> shumate::Viewport {
+        self.imp().map.viewport().unwrap()
+    }
+
     pub(crate) fn marker_location(&self) -> (f64, f64) {
         let imp = self.imp();
         (imp.marker.latitude(), imp.marker.longitude())
