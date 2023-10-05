@@ -2,6 +2,7 @@ use std::cell::RefCell;
 
 use gettextrs::gettext;
 use glib::clone;
+use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
@@ -46,6 +47,10 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             klass.set_css_name("messagelocation");
+
+            klass.install_action("message-row.open", None, move |widget, _, _| {
+                widget.open();
+            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -119,6 +124,15 @@ impl MessageBaseExt for MessageLocation {
 }
 
 impl MessageLocation {
+    pub(crate) fn open(&self) {
+        let (lat, lon) = self.imp().map.marker_location();
+
+        gtk::UriLauncher::new(&format!(
+            "https://www.openstreetmap.org/?mlat={lat}&mlon={lon}"
+        ))
+        .launch(gtk::Window::NONE, gio::Cancellable::NONE, |_| {});
+    }
+
     fn update(&self, message: &model::Message) {
         if let tdlib::enums::MessageContent::MessageLocation(message_) = message.content().0 {
             let imp = self.imp();
