@@ -170,14 +170,11 @@ impl Map {
         self.imp().marker.set_location(lat, lon);
     }
 
-    fn center_location(&self, lat: f64, lon: f64) {
-        let viewport = self.imp().map.viewport().unwrap();
-        viewport.set_zoom_level(16.0);
-        viewport.set_location(lat, lon);
-    }
+    pub(crate) fn center_marker(&self, zoom_level: f64) {
+        let viewport = self.viewport();
+        viewport.set_zoom_level(zoom_level);
 
-    pub(crate) fn center_marker(&self) {
-        let imp = self.imp();
-        self.center_location(imp.marker.latitude(), imp.marker.longitude());
+        let marker = &self.imp().marker;
+        viewport.set_location(marker.latitude(), marker.longitude());
     }
 }

@@ -141,7 +141,7 @@ impl MessageVenue {
 
                 imp.map
                     .set_marker_position(location.latitude, location.longitude);
-                imp.map.center_marker();
+                imp.map.center_marker(16.0);
 
                 imp.title_label.set_text(&venue.title);
                 imp.message_bubble.set_label(venue.address);

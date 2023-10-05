@@ -195,7 +195,7 @@ impl MessageLocation {
 
             imp.map
                 .set_marker_position(message_.location.latitude, message_.location.longitude);
-            imp.map.center_marker();
+            imp.map.center_marker(16.0);
         }
     }
 
