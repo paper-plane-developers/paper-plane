@@ -179,7 +179,15 @@ messagebubble.venue map .license {
   padding: 1px 6px;
 }
 
-messagebubble.location map .marker {
+window.location map .license,
+window.venue map .license {
+  border-radius: 9999px;
+  margin: 0 6px 6px 0;
+  padding: 1px 6px;
+}
+
+messagebubble.location map .marker,
+window.location map .marker {
   color: @red_3;
 }
 
@@ -194,7 +202,9 @@ messagebubble.venue map iconmapmarker .icon {
 
 messagebubble.location map avatarmapmarker .hull,
 messagebubble.venue map iconmapmarker .hull,
-messagebubble.venue map .marker {
+messagebubble.venue map .marker,
+window.venue map .marker,
+window.location map avatarmapmarker .hull {
   color: @accent_bg_color;
 }
 

@@ -1,0 +1,90 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplMapWindow : Adw.Window {
+  default-height: 600;
+  default-width: 800;
+  modal: true;
+
+  EventControllerKey {
+    key-pressed => $on_key_pressed() swapped;
+  }
+
+  content: Adw.ToolbarView {
+    extend-content-to-top-edge: true;
+
+    [top]
+    Adw.HeaderBar {
+      show-end-title-buttons: false;
+      show-start-title-buttons: false;
+
+      [start]
+      Button {
+        styles [
+          "circular",
+          "osd",
+          "raised",
+        ]
+
+        action-name: "map-window.center-marker";
+        icon-name: "find-location-symbolic";
+      }
+
+      [start]
+      Box {
+        styles ["linked"]
+
+        Button {
+          styles [
+            "circular",
+            "osd",
+            "raised",
+          ]
+
+          action-name: "map-window.zoom-out";
+          icon-name: "value-decrease-symbolic";
+        }
+
+        Button {
+          styles [
+            "circular",
+            "osd",
+            "raised",
+          ]
+
+          action-name: "map-window.zoom-in";
+          icon-name: "value-increase-symbolic";
+        }
+      }
+
+      title-widget: Button {
+        styles [
+          "small-pill",
+          "suggested-action",
+        ]
+
+        label: _("_Open in Browser");
+        action-name: "map-window.open";
+        halign: center;
+        use-underline: true;
+      };
+
+      [end]
+      Button {
+        styles [
+          "circular",
+          "osd",
+          "raised",
+        ]
+
+        action-name: "map-window.close";
+        icon-name: "window-close-symbolic";
+      }
+    }
+
+    $PaplMap map {
+      name: "map";
+      license-position: BottomRight;
+    }
+  };
+}
