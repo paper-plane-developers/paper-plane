@@ -17,6 +17,7 @@ pub(crate) use self::components::CircularProgressBar;
 pub(crate) use self::components::IconMapMarker;
 pub(crate) use self::components::Map;
 pub(crate) use self::components::MapMarker;
+pub(crate) use self::components::MapWindow;
 pub(crate) use self::components::MessageEntry;
 pub(crate) use self::components::PhoneNumberInput;
 pub(crate) use self::components::Snow;
@@ -96,6 +97,7 @@ pub(crate) fn init() {
     LoginRegistration::static_type();
     Map::static_type();
     MapMarker::static_type();
+    MapWindow::static_type();
     MediaPicture::static_type();
     MessageBase::static_type();
     MessageBubble::static_type();

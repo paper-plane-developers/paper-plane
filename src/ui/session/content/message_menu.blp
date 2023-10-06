@@ -25,6 +25,12 @@ menu model {
       action: "message-row.delete";
       hidden-when: "action-disabled";
     }
+
+    item {
+      label: _("Open");
+      action: "message-row.open";
+      hidden-when: "action-disabled";
+    }
   }
 }
 

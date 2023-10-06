@@ -13,12 +13,11 @@ Image marker_image {
 template $PaplMap : Widget {
 
   $ShumateMap map {
-    sensitive: "False";
-    hexpand: "True";
-    vexpand: "True";
+    hexpand: true;
+    vexpand: true;
   }
 
-  Label {
+  Label license_label {
     styles [
       "license",
       "dim-label",
@@ -26,10 +25,11 @@ template $PaplMap : Widget {
       "osd",
     ]
 
+    notify::halign => $on_license_label_notify_align() swapped;
+    notify::valign => $on_license_label_notify_align() swapped;
+
     label: _("Map data by OpenStreetMap");
     xalign: 1.0;
-    halign: end;
-    valign: start;
     wrap: true;
     wrap-mode: char;
   }
