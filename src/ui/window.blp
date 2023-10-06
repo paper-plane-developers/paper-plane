@@ -7,6 +7,10 @@ template $PaplWindow : Adw.ApplicationWindow {
   default-width: 900;
   default-height: 600;
 
+  EventControllerKey {
+    key-pressed => $on_key_pressed() swapped;
+  }
+
   notify::is_active => $on_notify_is_active() swapped;
 
   content: Adw.ToastOverlay {
