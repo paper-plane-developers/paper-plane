@@ -4,6 +4,10 @@ using Adw 1;
 template $PaplChatInfoWindow : Adw.Window {
   styles ["chat-info"]
 
+  EventControllerKey {
+    key-pressed => $on_key_pressed() swapped;
+  }
+
   default-width: 360;
   modal: true;
 
