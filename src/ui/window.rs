@@ -85,6 +85,21 @@ mod imp {
     #[gtk::template_callbacks]
     impl Window {
         #[template_callback]
+        fn on_key_pressed(
+            &self,
+            key: gdk::Key,
+            _: u32,
+            modifier: gdk::ModifierType,
+            _: &gtk::EventControllerKey,
+        ) -> glib::Propagation {
+            if key == gdk::Key::w && modifier == gdk::ModifierType::CONTROL_MASK {
+                self.obj().close();
+            }
+
+            glib::Propagation::Proceed
+        }
+
+        #[template_callback]
         fn on_notify_is_active(&self) {
             self.obj().client_manager_view().set_active_client_online();
         }

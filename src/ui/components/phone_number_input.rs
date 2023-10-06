@@ -187,7 +187,7 @@ mod imp {
                         .char_indices()
                         .find(|(_, c)| !c.is_whitespace())
                     {
-                        Some((text_pos_start, c)) if c == '+' => {
+                        Some((text_pos_start, '+')) => {
                             let analysis = model.analyze_for_calling_code(
                                 number
                                     .chars()

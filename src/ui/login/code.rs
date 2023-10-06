@@ -124,7 +124,7 @@ mod imp {
                                     )
                                 }
                             })
-                            .unwrap_or_else(String::new)
+                            .unwrap_or_default()
                     }
                 ),
             )

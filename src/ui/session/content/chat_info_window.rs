@@ -5,6 +5,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use glib::closure;
+use gtk::gdk;
 use gtk::glib;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
@@ -40,6 +41,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -82,6 +84,26 @@ mod imp {
     impl WidgetImpl for ChatInfoWindow {}
     impl WindowImpl for ChatInfoWindow {}
     impl AdwWindowImpl for ChatInfoWindow {}
+
+    #[gtk::template_callbacks]
+    impl ChatInfoWindow {
+        #[template_callback]
+        fn on_key_pressed(
+            &self,
+            key: gdk::Key,
+            _: u32,
+            modifier: gdk::ModifierType,
+            _: &gtk::EventControllerKey,
+        ) -> glib::Propagation {
+            if key == gdk::Key::Escape
+                || (key == gdk::Key::w && modifier == gdk::ModifierType::CONTROL_MASK)
+            {
+                self.obj().close();
+            }
+
+            glib::Propagation::Proceed
+        }
+    }
 }
 
 glib::wrapper! {

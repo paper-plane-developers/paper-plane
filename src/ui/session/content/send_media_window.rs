@@ -3,6 +3,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::clone;
+use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
@@ -36,6 +37,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
 
             klass.install_action_async(
                 "send-media-window.send-message",
@@ -85,6 +87,26 @@ mod imp {
     impl WidgetImpl for SendMediaWindow {}
     impl WindowImpl for SendMediaWindow {}
     impl AdwWindowImpl for SendMediaWindow {}
+
+    #[gtk::template_callbacks]
+    impl SendMediaWindow {
+        #[template_callback]
+        fn on_key_pressed(
+            &self,
+            key: gdk::Key,
+            _: u32,
+            modifier: gdk::ModifierType,
+            _: &gtk::EventControllerKey,
+        ) -> glib::Propagation {
+            if key == gdk::Key::Escape
+                || (key == gdk::Key::w && modifier == gdk::ModifierType::CONTROL_MASK)
+            {
+                self.obj().close();
+            }
+
+            glib::Propagation::Proceed
+        }
+    }
 }
 
 glib::wrapper! {
