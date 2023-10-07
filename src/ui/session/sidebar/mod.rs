@@ -1,4 +1,5 @@
 pub(crate) mod avatar;
+pub(crate) mod chat_list;
 pub(crate) mod mini_thumbnail;
 pub(crate) mod row;
 pub(crate) mod search;
@@ -16,6 +17,7 @@ use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
 pub(crate) use self::avatar::Avatar;
+pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::mini_thumbnail::MiniThumbnail;
 pub(crate) use self::row::Row;
 pub(crate) use self::search::ItemRow as SearchItemRow;

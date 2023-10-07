@@ -43,6 +43,7 @@ pub(crate) use self::content::SendMediaWindow;
 pub(crate) use self::preferences_window::PreferencesWindow;
 pub(crate) use self::row::Row;
 pub(crate) use self::sidebar::Avatar as SidebarAvatar;
+pub(crate) use self::sidebar::ChatList as SidebarChatList;
 pub(crate) use self::sidebar::MiniThumbnail as SidebarMiniThumbnail;
 pub(crate) use self::sidebar::Row as SidebarRow;
 pub(crate) use self::sidebar::Search as SidebarSearch;
