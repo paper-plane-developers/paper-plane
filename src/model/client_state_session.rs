@@ -233,6 +233,7 @@ impl ClientStateSession {
     }
 
     pub(crate) fn fetch_chats(&self) {
+        self.archive_chat_list().fetch();
         self.main_chat_list().fetch();
     }
 
