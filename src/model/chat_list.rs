@@ -14,6 +14,26 @@ use gtk::subclass::prelude::*;
 use crate::model;
 use crate::utils;
 
+#[derive(Debug, Default, Clone, Copy, PartialEq, glib::Enum)]
+#[enum_type(name = "ChatListType")]
+pub(crate) enum ChatListType {
+    #[default]
+    Main,
+    Archive,
+    Folder,
+}
+impl From<ChatListType> for Option<tdlib::enums::ChatList> {
+    fn from(list_type: ChatListType) -> Self {
+        match list_type {
+            ChatListType::Main => None,
+            ChatListType::Archive => Some(tdlib::enums::ChatList::Archive),
+            ChatListType::Folder => Some(tdlib::enums::ChatList::Folder(
+                tdlib::types::ChatListFolder { chat_folder_id: 0 },
+            )),
+        }
+    }
+}
+
 mod imp {
     use super::*;
 
@@ -24,6 +44,8 @@ mod imp {
         pub(super) list: RefCell<BTreeMap<i64, model::ChatListItem>>,
         #[property(get, set, construct_only)]
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
+        #[property(get, set, construct_only)]
+        pub(super) list_type: RefCell<model::BoxedChatListType>,
         #[property(get, set)]
         pub(super) unread_count: Cell<i32>,
     }
@@ -92,13 +114,17 @@ glib::wrapper! {
         @implements gio::ListModel;
 }
 
-impl From<&model::ClientStateSession> for ChatList {
-    fn from(session: &model::ClientStateSession) -> Self {
-        glib::Object::builder().property("session", session).build()
-    }
-}
-
 impl ChatList {
+    pub(crate) fn new(
+        session: &model::ClientStateSession,
+        list_type: tdlib::enums::ChatList,
+    ) -> Self {
+        glib::Object::builder()
+            .property("session", session)
+            .property("list-type", model::BoxedChatListType(list_type))
+            .build()
+    }
+
     pub(crate) fn len(&self) -> u32 {
         self.n_items()
     }
@@ -109,7 +135,7 @@ impl ChatList {
 
     pub(crate) fn fetch(&self) {
         utils::spawn(clone!(@weak self as obj => async move {
-            let result = tdlib::functions::load_chats(None, 20, obj.session_().client_().id())
+            let result = tdlib::functions::load_chats(Some(obj.list_type().0), 20, obj.session_().client_().id())
                 .await;
 
             if let Err(err) = result {

@@ -102,14 +102,14 @@ mod imp {
         /// Returns the main chat list.
         pub(crate) fn main_chat_list(&self) -> model::ChatList {
             self.main_chat_list
-                .get_or_init(|| model::ChatList::from(&*self.obj()))
+                .get_or_init(|| model::ChatList::new(&self.obj(), tdlib::enums::ChatList::Main))
                 .to_owned()
         }
 
         /// Returns the list of archived chats.
         pub(crate) fn archive_chat_list(&self) -> model::ChatList {
             self.archive_chat_list
-                .get_or_init(|| model::ChatList::from(&*self.obj()))
+                .get_or_init(|| model::ChatList::new(&self.obj(), tdlib::enums::ChatList::Archive))
                 .to_owned()
         }
     }
@@ -135,12 +135,17 @@ impl ClientStateSession {
     }
 
     /// Returns the filter chat list of the specified id.
-    pub(crate) fn filter_chat_list(&self, chat_filter_id: i32) -> model::ChatList {
+    pub(crate) fn filter_chat_list(&self, chat_folder_id: i32) -> model::ChatList {
         self.imp()
             .filter_chat_lists
             .borrow_mut()
-            .entry(chat_filter_id)
-            .or_insert_with(|| model::ChatList::from(self))
+            .entry(chat_folder_id)
+            .or_insert_with(|| {
+                model::ChatList::new(
+                    self,
+                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder { chat_folder_id }),
+                )
+            })
             .clone()
     }
 
