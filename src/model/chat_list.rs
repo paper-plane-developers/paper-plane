@@ -2,6 +2,7 @@ use std::cell::Cell;
 use std::cell::RefCell;
 use std::cell::RefMut;
 use std::collections::BTreeMap;
+use std::sync::OnceLock;
 
 use glib::clone;
 use glib::Properties;
@@ -36,7 +37,16 @@ mod imp {
 
     impl ObjectImpl for ChatList {
         fn properties() -> &'static [glib::ParamSpec] {
-            Self::derived_properties()
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
+                Self::derived_properties()
+                    .iter()
+                    .cloned()
+                    .chain(Some(
+                        glib::ParamSpecUInt::builder("len").read_only().build(),
+                    ))
+                    .collect::<Vec<_>>()
+            })
         }
 
         fn set_property(&self, id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
@@ -44,7 +54,16 @@ mod imp {
         }
 
         fn property(&self, id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            self.derived_property(id, pspec)
+            match pspec.name() {
+                "len" => self.obj().len().to_value(),
+                _ => self.derived_property(id, pspec),
+            }
+        }
+
+        fn constructed(&self) {
+            self.parent_constructed();
+            self.obj()
+                .connect_items_changed(|obj, _, _, _| obj.notify("len"));
         }
     }
 
@@ -80,6 +99,10 @@ impl From<&model::ClientStateSession> for ChatList {
 }
 
 impl ChatList {
+    pub(crate) fn len(&self) -> u32 {
+        self.n_items()
+    }
+
     pub(crate) fn session_(&self) -> model::ClientStateSession {
         self.session().unwrap()
     }
