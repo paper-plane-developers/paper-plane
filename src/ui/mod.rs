@@ -68,6 +68,7 @@ pub(crate) use self::session::SidebarSearchRow;
 pub(crate) use self::session::SidebarSearchSection;
 pub(crate) use self::session::SidebarSearchSectionRow;
 pub(crate) use self::session::SidebarSearchSectionType;
+pub(crate) use self::session::SidebarSelection;
 pub(crate) use self::session::Switcher as SessionSwitcher;
 pub(crate) use self::window::Window;
 

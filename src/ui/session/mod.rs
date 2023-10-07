@@ -51,6 +51,7 @@ pub(crate) use self::sidebar::SearchRow as SidebarSearchRow;
 pub(crate) use self::sidebar::SearchSection as SidebarSearchSection;
 pub(crate) use self::sidebar::SearchSectionRow as SidebarSearchSectionRow;
 pub(crate) use self::sidebar::SearchSectionType as SidebarSearchSectionType;
+pub(crate) use self::sidebar::Selection as SidebarSelection;
 pub(crate) use self::sidebar::Sidebar;
 pub(crate) use self::switcher::Switcher;
 use crate::model;
