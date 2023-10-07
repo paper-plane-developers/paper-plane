@@ -1,3 +1,4 @@
+pub(crate) mod archive_row;
 pub(crate) mod avatar;
 pub(crate) mod chat_list;
 pub(crate) mod mini_thumbnail;
@@ -16,6 +17,7 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 
+pub(crate) use self::archive_row::ArchiveRow;
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::mini_thumbnail::MiniThumbnail;
