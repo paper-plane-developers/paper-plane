@@ -1,4 +1,6 @@
+pub(crate) mod archive_row;
 pub(crate) mod avatar;
+pub(crate) mod chat_list;
 pub(crate) mod mini_thumbnail;
 pub(crate) mod row;
 pub(crate) mod search;
@@ -6,16 +8,18 @@ pub(crate) mod selection;
 
 use std::cell::Cell;
 use std::cell::OnceCell;
-use std::cell::RefCell;
 
 use glib::clone;
+use glib::Properties;
+use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
+pub(crate) use self::archive_row::ArchiveRow;
 pub(crate) use self::avatar::Avatar;
+pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::mini_thumbnail::MiniThumbnail;
 pub(crate) use self::row::Row;
 pub(crate) use self::search::ItemRow as SearchItemRow;
@@ -32,12 +36,16 @@ use crate::utils;
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    #[derive(Debug, Default, Properties, CompositeTemplate)]
+    #[properties(wrapper_type = super::Sidebar)]
     #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/mod.ui")]
     pub(crate) struct Sidebar {
+        pub(super) settings: utils::PaperPlaneSettings,
+        #[property(get, set)]
         pub(super) compact: Cell<bool>,
+        #[property(get, set, nullable)]
         pub(super) selected_chat: glib::WeakRef<model::Chat>,
-        pub(super) marked_as_unread_handler_id: RefCell<Option<glib::SignalHandlerId>>,
+        #[property(get, set)]
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
@@ -46,8 +54,6 @@ mod imp {
         pub(super) navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
         pub(super) main_view: TemplateChild<adw::ToolbarView>,
-        #[template_child]
-        pub(super) selection: TemplateChild<Selection>,
         #[template_child]
         pub(super) search: TemplateChild<Search>,
     }
@@ -69,6 +75,21 @@ mod imp {
             klass.install_action("sidebar.start-search", None, move |widget, _, _| {
                 widget.begin_chats_search();
             });
+
+            klass.install_action("sidebar.show-archived-chats", None, move |widget, _, _| {
+                widget.show_archived_chats();
+            });
+            klass.install_action("sidebar-menu.show-archived-chats", None, |widget, _, _| {
+                widget.show_archived_chats();
+            });
+
+            klass.install_action(
+                "sidebar.move-archive-row-to-chat-list",
+                None,
+                |widget, _, _| {
+                    widget.move_archive_row();
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -79,15 +100,6 @@ mod imp {
     #[gtk::template_callbacks]
     impl Sidebar {
         #[template_callback]
-        fn list_activate(&self, pos: u32) {
-            self.selection.set_selected_position(pos);
-
-            let item: model::ChatListItem =
-                self.selection.selected_item().unwrap().downcast().unwrap();
-            self.obj().set_selected_chat(item.chat().as_ref());
-        }
-
-        #[template_callback]
         fn close_search(&self) {
             self.navigation_view.pop_to_tag("chats");
         }
@@ -95,57 +107,31 @@ mod imp {
 
     impl ObjectImpl for Sidebar {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
-                vec![
-                    glib::ParamSpecBoolean::builder("compact").build(),
-                    glib::ParamSpecObject::builder::<model::Chat>("selected-chat")
-                        .explicit_notify()
-                        .build(),
-                    glib::ParamSpecObject::builder::<model::ClientStateSession>("session")
-                        .explicit_notify()
-                        .build(),
-                ]
-            });
-            PROPERTIES.as_ref()
+            Self::derived_properties()
         }
 
-        fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
-            let obj = self.obj();
-
-            match pspec.name() {
-                "compact" => {
-                    let compact = value.get().unwrap();
-                    self.compact.set(compact);
-                }
-                "selected-chat" => {
-                    let selected_chat = value.get().unwrap();
-                    obj.set_selected_chat(selected_chat);
-                }
-                "session" => {
-                    let session = value.get().unwrap();
-                    obj.set_session(session);
-                }
-                _ => unimplemented!(),
-            }
+        fn set_property(&self, id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {
+            self.derived_set_property(id, value, pspec)
         }
 
-        fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
-            let obj = self.obj();
-
-            match pspec.name() {
-                "compact" => self.compact.get().to_value(),
-                "selected-chat" => obj.selected_chat().to_value(),
-                "session" => obj.session().to_value(),
-                _ => unimplemented!(),
-            }
+        fn property(&self, id: usize, pspec: &glib::ParamSpec) -> glib::Value {
+            self.derived_property(id, pspec)
         }
 
         fn constructed(&self) {
             self.parent_constructed();
+
+            let obj = &*self.obj();
+
+            self.settings.connect_changed(
+                Some("archive-row-in-main-menu"),
+                clone!(@weak obj => move |settings, _| obj.update_archived_chats_actions(settings)),
+            );
+            obj.update_archived_chats_actions(&self.settings);
         }
 
         fn dispose(&self) {
-            self.navigation_view.unparent();
+            utils::unparent_children(&*self.obj());
         }
     }
 
@@ -202,71 +188,24 @@ impl Sidebar {
         imp.navigation_view.push_by_tag("search");
     }
 
-    pub(crate) fn selected_chat(&self) -> Option<model::Chat> {
-        self.imp().selected_chat.upgrade()
+    pub(crate) fn show_archived_chats(&self) {
+        self.imp().navigation_view.push_by_tag("archived-chats");
     }
 
-    pub(crate) fn set_selected_chat(&self, selected_chat: Option<&model::Chat>) {
-        if self.selected_chat().as_ref() == selected_chat {
-            return;
-        }
-
-        let imp = self.imp();
-
-        if let Some(handler_id) = imp.marked_as_unread_handler_id.take() {
-            self.selected_chat().unwrap().disconnect(handler_id);
-        }
-
-        if let Some(chat) = selected_chat {
-            let handler_id = chat.connect_notify_local(
-                Some("is-marked-as-unread"),
-                clone!(@weak self as obj => move |chat, _| {
-                    if chat.is_marked_as_unread() {
-                        obj.set_selected_chat(None);
-                    }
-                }),
-            );
-            imp.marked_as_unread_handler_id.replace(Some(handler_id));
-
-            let item = chat.session_().main_chat_list().find_chat_item(chat.id());
-            imp.selection.set_selected_item(item.map(|i| i.upcast()));
-
-            if chat.is_marked_as_unread() {
-                utils::spawn(clone!(@weak chat => async move {
-                    if let Err(e) = chat.mark_as_read().await {
-                        log::warn!("Error on toggling chat's unread state: {e:?}");
-                    }
-                }));
-            }
-        } else {
-            imp.selection.set_selected_item(None);
-        }
-
-        imp.selected_chat.set(selected_chat);
-
-        self.activate_action("navigation.push", Some(&"content".to_variant()))
+    pub(crate) fn move_archive_row(&self) {
+        self.imp()
+            .settings
+            .set("archive-row-in-main-menu", false)
             .unwrap();
-
-        self.notify("selected-chat");
     }
 
-    pub(crate) fn set_session(&self, session: Option<&model::ClientStateSession>) {
-        if self.session().as_ref() == session {
-            return;
-        }
+    fn update_archived_chats_actions(&self, settings: &gio::Settings) {
+        let archive_row_in_main_menu = settings.boolean("archive-row-in-main-menu");
 
-        let imp = self.imp();
-
-        if let Some(session) = session {
-            imp.selection
-                .set_model(Some(session.main_chat_list().clone().upcast()));
-        }
-
-        imp.session.set(session);
-        self.notify("session");
-    }
-
-    pub(crate) fn session(&self) -> Option<model::ClientStateSession> {
-        self.imp().session.upgrade()
+        self.action_set_enabled("sidebar-menu.show-archived-chats", archive_row_in_main_menu);
+        self.action_set_enabled(
+            "sidebar.move-archive-row-to-chat-list",
+            archive_row_in_main_menu,
+        );
     }
 }

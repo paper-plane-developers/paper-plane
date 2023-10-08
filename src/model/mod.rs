@@ -85,6 +85,15 @@ pub(crate) use self::supergroup::Supergroup;
 pub(crate) use self::user::User;
 
 #[derive(Clone, Debug, glib::Boxed)]
+#[boxed_type(name = "BoxedChatListType")]
+pub(crate) struct BoxedChatListType(pub(crate) tdlib::enums::ChatList);
+impl Default for BoxedChatListType {
+    fn default() -> Self {
+        Self(tdlib::enums::ChatList::Main)
+    }
+}
+
+#[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedUpdateNotificationGroup")]
 pub(crate) struct BoxedUpdateNotificationGroup(pub(crate) UpdateNotificationGroup);
 

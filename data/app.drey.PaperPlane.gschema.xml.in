@@ -31,5 +31,15 @@
       <summary>Color Scheme</summary>
       <description>The color scheme to be used in the app</description>
     </key>
+    <key name="collapsed-archive-row" type="b">
+      <default>false</default>
+      <summary>Collapsed archive row</summary>
+      <description>Whether the archive row is collaped</description>
+    </key>
+    <key name="archive-row-in-main-menu" type="b">
+      <default>false</default>
+      <summary>Whether the archive row shown in the main menu</summary>
+      <description>Whether the archive row shown in the main menu or in the chat list</description>
+    </key>
   </schema>
 </schemalist>

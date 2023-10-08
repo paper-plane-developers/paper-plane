@@ -234,7 +234,8 @@ impl ChatHistory {
                 {
                     Ok(_) => {
                         // Unselect recently left chat
-                        utils::ancestor::<_, ui::Sidebar>(self).set_selected_chat(None);
+                        utils::ancestor::<_, ui::Sidebar>(self)
+                            .set_selected_chat(Option::<model::Chat>::None);
                     }
                     Err(e) => log::warn!("Failed to leave chat: {:?}", e),
                 }

@@ -1,3 +1,7 @@
+.regular {
+  font-weight: normal;
+}
+
 .bold {
   font-weight: bold;
 }
@@ -17,6 +21,23 @@
   background: @accent_color;
 }
 
+archiverow:not(.in-main-menu) {
+  margin-bottom: -4px;
+}
+
+archiverow button {
+  margin: 6px 6px 0 6px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+archiverow.expanded button {
+  padding-left: 8px;
+}
+
+archiverow.collapsed button {
+  padding-left: 12px;
+}
 
 .unread-count {
   background-color: @accent_bg_color;
@@ -51,15 +72,15 @@
   padding: 5px;
 }
 
-.chat-list > row > widget {
+chatlist row > widget {
   padding: 6px 0;
 }
 
-.chat-list row minithumbnail {
+chatlist row minithumbnail {
   border-radius: 3px;
 }
 
-.chat-list row .unread-mention-count {
+chatlist row .unread-mention-count {
   color: @accent_fg_color;
   background-color: @accent_bg_color;
   font-size: smaller;
@@ -69,15 +90,16 @@
   padding: 2px 0px;
 }
 
-.chat-list row .unread-count {
+chatlist row .unread-count {
   font-size: smaller;
 }
 
-.chat-list row .unread-count-unmuted {
+chatlist row .unread-count-unmuted {
   background-color: @accent_bg_color;
 }
 
-.chat-list row .unread-count-muted {
+chatlist row .unread-count-muted,
+archiverow button .unread-count-muted {
   background-color: @light_5;
 }
 

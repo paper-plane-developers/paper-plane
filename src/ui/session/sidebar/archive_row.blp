@@ -1,0 +1,101 @@
+using Gtk 4.0;
+using Adw 1;
+
+menu menu {
+  section {
+    item {
+      label: _("_Collapse");
+      action: "archive-row.collapse";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("_Expand");
+      action: "archive-row.expand";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("_Move to Main Menu");
+      action: "archive-row.move-to-main-menu";
+      hidden-when: "action-disabled";
+    }
+  }
+}
+
+PopoverMenu popover_menu {
+  menu-model: menu;
+  has-arrow: false;
+}
+
+template $PaplSidebarArchiveRow {
+  layout-manager: BinLayout {};
+
+  notify::collapsed => $on_notify_collapsed();
+  notify::in-main-menu => $on_notify_in_main_menu();
+
+  GestureClick {
+    button: 3;
+    released => $on_right_click() swapped;
+  }
+
+  Button button {
+    styles ["flat"]
+
+    visible: bind-property template.in-main-menu inverted;
+
+    Box {
+      spacing: 12;
+
+      Adw.Avatar {
+        icon-name: "archive-symbolic";
+        size: 48;
+        text: "-";
+        visible: bind-property template.collapsed inverted;
+      }
+
+      Box {
+        orientation: vertical;
+        spacing: 6;
+        hexpand: true;
+        valign: center;
+
+        Inscription {
+          styles [
+            "regular",
+          ]
+
+          text: _("Archived Chats");
+          text-overflow: ellipsize_end;
+        }
+
+        Inscription chats_inscription {
+          styles [
+            "dim-label",
+            "caption",
+          ]
+
+          text-overflow: ellipsize_end;
+          visible: bind-property template.collapsed inverted;
+        }
+      }
+
+      Label unread_count_label {
+        styles ["unread-count", "unread-count-muted"]
+
+        halign: center;
+        valign: center;
+        width-chars: 1;
+        ellipsize: end;
+        justify: center;
+
+        label: bind template.archive_chat_list as <$ChatList>.unread-count;
+        visible: bind template.archive_chat_list as <$ChatList>.unread-count;
+      }
+
+      Image {
+        icon-name: "go-next-symbolic";
+      }
+    }
+  }
+}

@@ -7,6 +7,11 @@
         <attribute name="label" translatable="yes">_Contacts</attribute>
         <attribute name="action">session.show-contacts</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">_Archived Chats</attribute>
+        <attribute name="action">sidebar-menu.show-archived-chats</attribute>
+        <attribute name="hidden-when">action-disabled</attribute>
+      </item>
     </section>
     <section>
       <item>
@@ -98,38 +103,39 @@
                     <property name="hscrollbar-policy">never</property>
 
                     <child>
-                      <object class="GtkListView">
-                        <property name="single-click-activate">True</property>
-                        <signal name="activate" handler="list_activate" swapped="true"/>
-                        <property name="model">
-                          <object class="PaplSidebarSelection" id="selection">
-                            <binding name="hide-selection">
-                              <lookup name="compact">PaplSidebar</lookup>
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+
+                        <child>
+                          <object class="PaplSidebarArchiveRow">
+                            <property name="action-name">sidebar.show-archived-chats</property>
+                            <binding name="archive-chat-list">
+                              <lookup name="archive-chat-list" type="ClientStateSession">
+                                <lookup name="session">PaplSidebar</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="visible">
+                              <lookup name="len" type="ChatList">
+                                <lookup name="archive-chat-list" type="ClientStateSession">
+                                  <lookup name="session">PaplSidebar</lookup>
+                                </lookup>
+                              </lookup>
                             </binding>
                           </object>
-                        </property>
-                        <property name="factory">
-                          <object class="GtkBuilderListItemFactory">
-                            <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="PaplSidebarRow">
-        <binding name="item">
-          <lookup name="item">GtkListItem</lookup>
-        </binding>
-      </object>
-    </property>
-  </template>
-</interface>
-                            ]]></property>
+                        </child>
+
+                        <child>
+                          <object class="PaplSidebarChatList">
+                            <binding name="chat-list">
+                              <lookup name="main-chat-list" type="ClientStateSession">
+                                <lookup name="session">PaplSidebar</lookup>
+                              </lookup>
+                            </binding>
+                            <property name="selected-chat" bind-source="PaplSidebar" bind-property="selected-chat" bind-flags="sync-create|bidirectional"/>
+                            <property name="compact" bind-source="PaplSidebar" bind-property="compact" bind-flags="sync-create"/>
                           </object>
-                        </property>
-                        <style>
-                          <class name="navigation-sidebar"/>
-                          <class name="chat-list"/>
-                        </style>
+                        </child>
+
                       </object>
                     </child>
 
@@ -173,6 +179,55 @@
                     </lookup>
                   </lookup>
                 </binding>
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwNavigationPage">
+            <property name="tag">archived-chats</property>
+            <property name="title" translatable="yes">Archived Chats</property>
+
+            <child>
+              <object class="AdwToolbarView">
+
+                <child type="top">
+                  <object class="AdwHeaderBar">
+
+                    <child type="end">
+                      <object class="GtkButton" id="move_archive_row_button">
+                        <property name="action-name">sidebar.move-archive-row-to-chat-list</property>
+                        <property name="icon-name">move-archived-chats-to-chat-list-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Move to Chat List</property>
+                        <property name="visible" bind-source="move_archive_row_button" bind-property="sensitive" bind-flags="sync-create"/>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="vexpand">True</property>
+                    <property name="hscrollbar-policy">never</property>
+
+                    <child>
+                      <object class="PaplSidebarChatList">
+                        <binding name="chat-list">
+                          <lookup name="archive-chat-list" type="ClientStateSession">
+                            <lookup name="session">PaplSidebar</lookup>
+                          </lookup>
+                        </binding>
+                        <property name="selected-chat" bind-source="PaplSidebar" bind-property="selected-chat" bind-flags="sync-create|bidirectional"/>
+                        <property name="compact" bind-source="PaplSidebar" bind-property="compact" bind-flags="sync-create"/>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+
               </object>
             </child>
 
