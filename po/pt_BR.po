@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2023-09-30 08:46+0000\n"
+"PO-Revision-Date: 2023-10-09 02:01+0000\n"
 "Last-Translator: Alisson Lauffer <alissonvitortc@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "paper-plane/main/pt_BR/>\n"
@@ -27,7 +27,7 @@ msgstr "Paper Plane"
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
 msgid "Chat over Telegram on a modern and elegant client"
-msgstr ""
+msgstr "Converse pelo Telegram em um cliente moderno e elegante"
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;telegram;tg;chat;im;messaging;messenger;"
@@ -54,7 +54,7 @@ msgstr "Última sessão utilizada"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid "The directory name of the last used session"
-msgstr ""
+msgstr "O nome do diretório da última sessão usada"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: src/ui/session/preferences_window.blp:7
