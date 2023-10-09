@@ -64,7 +64,7 @@
       <description>
         <p>The third beta release of Paper Plane 0.1.0 should in the first place fix a build error on Flathub:</p>
         <ul>
-          <li>Added registered categories to te desktop file to fix a build error on Flathub.</li>
+          <li>Added registered categories to the desktop file to fix a build error on Flathub.</li>
           <li>Dependencies have been updated.</li>
           <li>Turkish translations have been updated, thanks to @sabriunal.</li>
         </ul>
