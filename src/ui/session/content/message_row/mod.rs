@@ -173,7 +173,7 @@ impl Row {
         };
 
         let dialog = adw::MessageDialog::builder()
-            .heading(gettext("Confirm model::Message Deletion"))
+            .heading(gettext("Confirm Message Deletion"))
             .body_use_markup(true)
             .body(message)
             .transient_for(&window)

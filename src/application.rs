@@ -197,7 +197,7 @@ impl Application {
                 "OpenStreetMap® is open data, licensed under the \
                 <a href=\"https://opendatacommons.org/licenses/odbl\">\
                 Open Data Commons Open Database License </a> (ODbL) by the \
-                <a href=\"https://osmfoundation.org\">aOpenStreetMap Foundation</a> (OSMF).",
+                <a href=\"https://osmfoundation.org\">OpenStreetMap Foundation</a> (OSMF).",
             )),
         );
 
