@@ -16,8 +16,6 @@ use crate::model;
 use crate::ui;
 use crate::utils;
 
-const MIN_N_ITEMS: u32 = 20;
-
 mod imp {
     use super::*;
 
@@ -29,6 +27,7 @@ mod imp {
         pub(super) model: RefCell<Option<model::ChatHistoryModel>>,
         pub(super) message_menu: OnceCell<gtk::PopoverMenu>,
         pub(super) is_auto_scrolling: Cell<bool>,
+        pub(super) is_loading_messages: Cell<bool>,
         pub(super) sticky: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
@@ -132,6 +131,10 @@ mod imp {
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
                 let imp = obj.imp();
 
+                if imp.is_loading_messages.get() {
+                    return;
+                }
+
                 if imp.is_auto_scrolling.get() {
                     if adj.value() + adj.page_size() >= adj.upper() {
                         imp.is_auto_scrolling.set(false);
@@ -139,7 +142,24 @@ mod imp {
                     }
                 } else {
                     obj.set_sticky(adj.value() + adj.page_size() >= adj.upper());
-                    obj.load_older_messages(adj);
+
+                    if adj.value() >= adj.page_size() * 2.0 && adj.upper() > adj.page_size() * 2.0 {
+                        return;
+                    }
+
+                    if let Some(model) = imp.model.borrow().as_ref() {
+                        imp.is_loading_messages.set(true);
+
+                        utils::spawn(clone!(@weak obj, @weak model => async move {
+                            obj.imp().is_loading_messages.set(false);
+
+                            if let Err(model::ChatHistoryError::Tdlib(e)) =
+                                model.load_older_messages(2).await
+                            {
+                                log::warn!("Couldn't load more chat messages: {:?}", e);
+                            }
+                        }));
+                    }
                 }
             }));
 
@@ -197,18 +217,6 @@ impl ChatHistory {
             "title",
             Some(self),
         );
-    }
-
-    fn load_older_messages(&self, adj: &gtk::Adjustment) {
-        if adj.value() < adj.page_size() * 2.0 || adj.upper() <= adj.page_size() * 2.0 {
-            if let Some(model) = self.imp().model.borrow().as_ref() {
-                utils::spawn(clone!(@weak model => async move {
-                    if let Err(model::ChatHistoryError::Tdlib(e)) = model.load_older_messages(20).await {
-                        log::warn!("Couldn't load more chat messages: {:?}", e);
-                    }
-                }));
-            }
-        }
     }
 
     fn open_info_dialog(&self) {
@@ -340,10 +348,19 @@ impl ChatHistory {
                 model.clone().upcast()
             };
 
-            utils::spawn(clone!(@weak model => async move {
-                while model.n_items() < MIN_N_ITEMS {
-                    let limit = MIN_N_ITEMS - model.n_items();
-                    match model.load_older_messages(limit as i32).await {
+            utils::spawn(clone!(@weak self as obj, @weak model => async move {
+                let imp = obj.imp();
+
+                imp.is_loading_messages.set(true);
+
+                let scrollbar = imp.scrolled_window.vscrollbar();
+                scrollbar.set_visible(false);
+
+                let adj = imp.list_view.vadjustment().unwrap();
+                adj.set_value(0.0);
+
+                while adj.value() == 0.0 {
+                    match model.load_older_messages(2).await {
                         Ok(can_load_more) => if !can_load_more {
                             break;
                         }
@@ -353,6 +370,11 @@ impl ChatHistory {
                         }
                     }
                 }
+
+                scrollbar.set_visible(true);
+
+                imp.is_loading_messages.set(false);
+                obj.set_sticky(true);
             }));
 
             let handler = chat.connect_new_message(clone!(@weak self as obj => move |_, msg| {
