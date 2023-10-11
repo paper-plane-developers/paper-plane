@@ -58,6 +58,12 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
 
+            klass.install_action("sidebar-row.archive", None, move |widget, _, _| {
+                widget.toggle_chat_is_archived()
+            });
+            klass.install_action("sidebar-row.unarchive", None, move |widget, _, _| {
+                widget.toggle_chat_is_archived()
+            });
             klass.install_action("sidebar-row.pin", None, move |widget, _, _| {
                 widget.toggle_chat_is_pinned()
             });
@@ -162,6 +168,27 @@ impl Default for Row {
 impl Row {
     pub(crate) fn new() -> Self {
         glib::Object::new()
+    }
+
+    pub(crate) fn toggle_chat_is_archived(&self) {
+        if let Some(item) = self.item() {
+            let chat = item.chat_();
+            utils::spawn(clone!(@weak self as obj => async move {
+                if let Err(e) = tdlib::functions::add_chat_to_list(
+                    chat.id(),
+                    match item.chat_list_type().0 {
+                        tdlib::enums::ChatList::Main => tdlib::enums::ChatList::Archive,
+                        tdlib::enums::ChatList::Archive => tdlib::enums::ChatList::Main,
+                        _ => return,
+                    },
+                    chat.session_().client_().id(),
+                )
+                .await
+                {
+                    utils::show_toast(&obj, e.message);
+                }
+            }));
+        }
     }
 
     fn toggle_chat_is_pinned(&self) {
@@ -529,6 +556,16 @@ impl Row {
         if let Some(item) = self.item() {
             let chat = item.chat_();
 
+            if chat.is_own_chat() {
+                self.update_archive_actions(false, false);
+            } else {
+                match item.chat_list_type().0 {
+                    tdlib::enums::ChatList::Main => self.update_archive_actions(true, false),
+                    tdlib::enums::ChatList::Archive => self.update_archive_actions(false, true),
+                    _ => self.update_archive_actions(false, false),
+                }
+            }
+
             self.update_pin_actions(!item.is_pinned(), item.is_pinned());
 
             if chat.unread_count() > 0 {
@@ -540,9 +577,15 @@ impl Row {
                 );
             }
         } else {
+            self.update_archive_actions(false, false);
             self.update_pin_actions(false, false);
             self.update_mark_as_unread_actions(false, false);
         }
+    }
+
+    fn update_archive_actions(&self, archive: bool, unarchive: bool) {
+        self.action_set_enabled("sidebar-row.archive", archive);
+        self.action_set_enabled("sidebar-row.unarchive", unarchive);
     }
 
     fn update_pin_actions(&self, pin: bool, unpin: bool) {

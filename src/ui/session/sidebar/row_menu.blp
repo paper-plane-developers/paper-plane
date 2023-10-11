@@ -3,6 +3,18 @@ using Gtk 4.0;
 menu model {
   section {
     item {
+      label: _("_Archive");
+      action: "sidebar-row.archive";
+      hidden-when: "action-disabled";
+    }
+
+    item {
+      label: _("_Unarchive");
+      action: "sidebar-row.unarchive";
+      hidden-when: "action-disabled";
+    }
+
+    item {
       label: _("_Pin");
       action: "sidebar-row.pin";
       hidden-when: "action-disabled";
