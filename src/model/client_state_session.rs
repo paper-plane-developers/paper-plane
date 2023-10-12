@@ -85,20 +85,12 @@ mod imp {
                     );
                 }
 
-                let tdlib::enums::User::User(me) = tdlib::functions::get_me(obj.client_().id()).await.unwrap();
-                obj.imp().set_me(&obj.upsert_user(me));
-
                 obj.fetch_chats();
             }));
         }
     }
 
     impl ClientStateSession {
-        fn set_me(&self, me: &model::User) {
-            self.me.set(Some(me));
-            self.obj().notify_me();
-        }
-
         /// Returns the main chat list.
         pub(crate) fn main_chat_list(&self) -> model::ChatList {
             self.main_chat_list
@@ -119,13 +111,13 @@ glib::wrapper! {
     pub(crate) struct ClientStateSession(ObjectSubclass<imp::ClientStateSession>);
 }
 
-impl From<&model::Client> for ClientStateSession {
-    fn from(client: &model::Client) -> Self {
-        glib::Object::builder().property("client", client).build()
-    }
-}
-
 impl ClientStateSession {
+    pub(crate) fn new(client: &model::Client, me: tdlib::types::User) -> Self {
+        let obj: Self = glib::Object::builder().property("client", client).build();
+        obj.imp().me.set(Some(&obj.upsert_user(me)));
+        obj
+    }
+
     pub(crate) fn client_(&self) -> model::Client {
         self.client().unwrap()
     }
