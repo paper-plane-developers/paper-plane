@@ -14,9 +14,10 @@ mod imp {
     #[derive(Debug, Properties, Default)]
     #[properties(wrapper_type = super::ChatListItem)]
     pub(crate) struct ChatListItem {
-        pub(super) chat_list_type: OnceCell<tdlib::enums::ChatList>,
         #[property(get, set, construct_only)]
         pub(super) chat: glib::WeakRef<model::Chat>,
+        #[property(get, set, construct_only)]
+        pub(super) chat_list_type: OnceCell<model::BoxedChatListType>,
         #[property(get)]
         pub(super) is_pinned: Cell<bool>,
     }
@@ -48,11 +49,15 @@ glib::wrapper! {
 
 impl ChatListItem {
     pub(crate) fn new(chat: &model::Chat, position: &tdlib::types::ChatPosition) -> ChatListItem {
-        let obj: Self = glib::Object::builder().property("chat", chat).build();
+        let obj: Self = glib::Object::builder()
+            .property("chat", chat)
+            .property(
+                "chat-list-type",
+                model::BoxedChatListType(position.list.clone()),
+            )
+            .build();
 
-        let imp = obj.imp();
-        imp.chat_list_type.set(position.list.clone()).unwrap();
-        imp.is_pinned.set(position.is_pinned);
+        obj.imp().is_pinned.set(position.is_pinned);
 
         obj
     }
@@ -73,7 +78,7 @@ impl ChatListItem {
         let chat = self.chat_();
 
         tdlib::functions::toggle_chat_is_pinned(
-            self.imp().chat_list_type.get().unwrap().clone(),
+            self.chat_list_type().0.clone(),
             chat.id(),
             !self.is_pinned(),
             chat.session_().client_().id(),

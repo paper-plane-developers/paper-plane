@@ -45,7 +45,7 @@ mod imp {
         pub(super) compact: Cell<bool>,
         #[property(get, set, nullable)]
         pub(super) selected_chat: glib::WeakRef<model::Chat>,
-        #[property(get, set)]
+        #[property(get, set = Self::set_session, explicit_notify)]
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
@@ -99,6 +99,31 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl Sidebar {
+        fn set_session(&self, session: Option<&model::ClientStateSession>) {
+            let obj = &*self.obj();
+            if obj.session().as_ref() == session {
+                return;
+            }
+
+            if let Some(session) = session {
+                obj.update_archived_chats_actions(&self.settings, session);
+
+                session.archive_chat_list().connect_items_changed(
+                    clone!(@weak obj, @weak session => move |chat_list, _, _, _| {
+                        let imp = obj.imp();
+                        if chat_list.n_items() == 0 {
+                            imp.navigation_view.pop_to_tag("chats");
+                        }
+
+                        obj.update_archived_chats_actions(&imp.settings, &session);
+                    }),
+                );
+            }
+
+            self.session.set(session);
+            obj.notify_session();
+        }
+
         #[template_callback]
         fn close_search(&self) {
             self.navigation_view.pop_to_tag("chats");
@@ -125,9 +150,10 @@ mod imp {
 
             self.settings.connect_changed(
                 Some("archive-row-in-main-menu"),
-                clone!(@weak obj => move |settings, _| obj.update_archived_chats_actions(settings)),
+                clone!(@weak obj => move |settings, _| {
+                    obj.update_archived_chats_actions(settings, &obj.session().unwrap());
+                }),
             );
-            obj.update_archived_chats_actions(&self.settings);
         }
 
         fn dispose(&self) {
@@ -199,10 +225,17 @@ impl Sidebar {
             .unwrap();
     }
 
-    fn update_archived_chats_actions(&self, settings: &gio::Settings) {
+    fn update_archived_chats_actions(
+        &self,
+        settings: &gio::Settings,
+        session: &model::ClientStateSession,
+    ) {
         let archive_row_in_main_menu = settings.boolean("archive-row-in-main-menu");
 
-        self.action_set_enabled("sidebar-menu.show-archived-chats", archive_row_in_main_menu);
+        self.action_set_enabled(
+            "sidebar-menu.show-archived-chats",
+            archive_row_in_main_menu && session.archive_chat_list().n_items() > 0,
+        );
         self.action_set_enabled(
             "sidebar.move-archive-row-to-chat-list",
             archive_row_in_main_menu,
