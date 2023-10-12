@@ -259,14 +259,19 @@ impl Client {
                     }));
                 }
                 AuthorizationState::Ready => {
-                    let state = model::ClientStateSession::from(self);
-                    while let Some(update) = self.imp().queued_updates.borrow_mut().pop_front() {
-                        state.handle_update(update);
-                    }
+                    utils::spawn(clone!(@weak self as obj => async move {
+                        let tdlib::enums::User::User(me) =
+                            tdlib::functions::get_me(obj.id()).await.unwrap();
 
-                    self.set_state(state.upcast());
+                        let state = model::ClientStateSession::new(&obj, me);
+                        while let Some(update) = obj.imp().queued_updates.borrow_mut().pop_front() {
+                            state.handle_update(update);
+                        }
 
-                    self.client_manager_().on_client_logged_in(self);
+                        obj.set_state(state.upcast());
+
+                        obj.client_manager_().on_client_logged_in(&obj);
+                    }));
                 }
                 AuthorizationState::Closing => {
                     self.set_state(model::ClientStateLoggingOut::default().upcast());
