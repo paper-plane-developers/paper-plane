@@ -49,6 +49,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
 
             klass.install_action("chat-history.view-info", None, move |widget, _, _| {
                 widget.open_info_dialog();
@@ -190,6 +191,41 @@ mod imp {
     }
 
     impl BinImpl for ChatHistory {}
+
+    #[gtk::template_callbacks]
+    impl ChatHistory {
+        #[template_callback]
+        fn on_signal_list_item_factory_bind_header(&self, list_item: &glib::Object) {
+            let list_header = list_item.downcast_ref::<gtk::ListHeader>().unwrap();
+
+            if let Some(item) = list_header.item() {
+                let message = item.downcast::<model::Message>().unwrap();
+
+                let date_time = glib::DateTime::from_unix_local(message.date() as i64).unwrap();
+
+                let fmt = if date_time.year() == glib::DateTime::now_local().unwrap().year() {
+                    // Translators: This is a date format in the day divider without the year
+                    gettext("%B %e")
+                } else {
+                    // Translators: This is a date format in the day divider with the year
+                    gettext("%B %e, %Y")
+                };
+
+                let row = ui::EventRow::new();
+                row.set_label(&date_time.format(&fmt).unwrap());
+
+                list_header.set_child(Some(&row));
+            }
+        }
+
+        #[template_callback]
+        fn on_signal_list_item_factory_unbind_header(&self, list_item: &glib::Object) {
+            list_item
+                .downcast_ref::<gtk::ListHeader>()
+                .unwrap()
+                .set_child(gtk::Widget::NONE);
+        }
+    }
 }
 
 glib::wrapper! {
