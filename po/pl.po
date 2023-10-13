@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2023-09-30 08:46+0000\n"
-"Last-Translator: Karol Lademan <karol@lademan.dev>\n"
+"PO-Revision-Date: 2023-10-14 19:01+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/paper-plane/main/"
 "pl/>\n"
 "Language: pl\n"
@@ -55,7 +55,7 @@ msgstr "Ostatnio używana sesja"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid "The directory name of the last used session"
-msgstr ""
+msgstr "Nazwa katalogu ostatnio używanej sesji"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: src/ui/session/preferences_window.blp:7
@@ -803,7 +803,7 @@ msgstr "Użytkownik {sender} dołączył do Telegrama"
 
 #: src/ui/components/map.blp:29
 msgid "Map data by OpenStreetMap"
-msgstr ""
+msgstr "Mapa dostarczona przez OpenStreetMap"
 
 #: src/ui/components/phone_number_input.blp:13
 msgid "Country"
@@ -836,6 +836,8 @@ msgstr "_Naprzód"
 #: src/ui/login/code.rs:117
 msgid "Send code via {type} (may still arrive within {countdown} seconds)"
 msgstr ""
+"Wyślij kod przez {type} (wiadomość może przyjść z opóźnieniem {countdown} "
+"sekund)"
 
 #: src/ui/login/code.rs:122
 msgid "Send code via {type}"
@@ -1033,7 +1035,7 @@ msgstr "Nie udało się wylogować: {error}"
 
 #: src/ui/login/phone_number.rs:209
 msgid "Failed to use phone number: {error}"
-msgstr ""
+msgstr "Nie udało się użyć numeru telefonu: {error}"
 
 #: src/ui/login/phone_number.rs:233
 msgid "Failed to request QR code: {error}"
@@ -1061,7 +1063,7 @@ msgstr ""
 
 #: src/ui/login/registration.rs:145
 msgid "Failed to register account: {error}"
-msgstr ""
+msgstr "Nie udało się zarejestrować konta: {error}"
 
 #: src/ui/login/registration.rs:168
 msgid "Do you accept the Terms of Service?"
@@ -1099,7 +1101,7 @@ msgstr "Dołącz"
 
 #: src/ui/session/content/chat_action_bar.rs:119
 msgid "Failed to join chat: {error}"
-msgstr ""
+msgstr "Nie udało się dołączyć do czatu: {error}"
 
 #: src/ui/session/content/chat_action_bar.rs:369
 #: src/ui/session/content/chat_action_bar.rs:386
@@ -1315,7 +1317,7 @@ msgstr "Wyloguj <i>{display_name}</i>"
 
 #: src/ui/session/row.rs:105
 msgid "Are you sure you want to log out?"
-msgstr ""
+msgstr "Czy na pewno chcesz się wylogować?"
 
 #: src/ui/session/row.rs:111
 msgid "_Log out"
