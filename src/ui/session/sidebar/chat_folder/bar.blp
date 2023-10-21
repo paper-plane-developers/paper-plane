@@ -1,0 +1,39 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplSidebarChatFolderBar {
+  layout-manager: BinLayout {};
+
+  notify::chat-folder-list => $on_notify_chat_folder_list();
+
+  EventControllerScroll {
+    scroll => $on_scroll_vertical() swapped;
+    flags: vertical;
+    propagation-phase: capture;
+  }
+
+  ScrolledWindow scrolled_window {
+    hscrollbar-policy: external;
+    vscrollbar-policy: never;
+    propagate-natural-height: true;
+
+    ListView {
+      styles [
+        "navigation-sidebar",
+        "navigation-tabbar",
+      ]
+
+      activate => $on_list_view_activated() swapped;
+      orientation: horizontal;
+      single-click-activate: true;
+      factory: SignalListItemFactory signal_list_item_factory {
+        bind => $on_signal_list_item_factory_bind() swapped;
+        unbind => $on_signal_list_item_factory_unbind() swapped;
+      };
+      model: $PaplSidebarChatFolderSelection selection {
+        model: bind template.chat-folder-list;
+        selected-chat-list: bind-property template.selected-chat-list bidirectional;
+      };
+    }
+  }
+}

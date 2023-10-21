@@ -3,6 +3,7 @@ mod basic_group;
 mod chat;
 mod chat_action;
 mod chat_action_list;
+mod chat_folder_list;
 mod chat_history_item;
 mod chat_history_model;
 mod chat_list;
@@ -52,6 +53,7 @@ pub(crate) use self::chat::Chat;
 pub(crate) use self::chat::ChatType;
 pub(crate) use self::chat_action::ChatAction;
 pub(crate) use self::chat_action_list::ChatActionList;
+pub(crate) use self::chat_folder_list::ChatFolderList;
 pub(crate) use self::chat_history_item::ChatHistoryItem;
 pub(crate) use self::chat_history_item::ChatHistoryItemType;
 pub(crate) use self::chat_history_model::ChatHistoryError;
@@ -90,6 +92,16 @@ pub(crate) struct BoxedChatListType(pub(crate) tdlib::enums::ChatList);
 impl Default for BoxedChatListType {
     fn default() -> Self {
         Self(tdlib::enums::ChatList::Main)
+    }
+}
+impl BoxedChatListType {
+    pub(crate) fn chat_folder_id(&self) -> Option<i32> {
+        match &self.0 {
+            tdlib::enums::ChatList::Folder(chat_list_folder) => {
+                Some(chat_list_folder.chat_folder_id)
+            }
+            _ => None,
+        }
     }
 }
 

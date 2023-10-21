@@ -18,7 +18,6 @@ mod imp {
     #[derive(Debug, Properties, Default)]
     #[properties(wrapper_type = super::ClientStateSession)]
     pub(crate) struct ClientStateSession {
-        pub(super) filter_chat_lists: RefCell<HashMap<i32, model::ChatList>>,
         pub(super) chats: RefCell<HashMap<i64, model::Chat>>,
         pub(super) users: RefCell<HashMap<i64, model::User>>,
         pub(super) basic_groups: RefCell<HashMap<i64, model::BasicGroup>>,
@@ -34,6 +33,8 @@ mod imp {
         pub(super) main_chat_list: OnceCell<model::ChatList>,
         #[property(get = Self::archive_chat_list)]
         pub(super) archive_chat_list: OnceCell<model::ChatList>,
+        #[property(get = Self::chat_folder_list)]
+        pub(super) chat_folder_list: OnceCell<model::ChatFolderList>,
         #[property(get)]
         pub(super) private_chats_notification_settings:
             RefCell<model::BoxedScopeNotificationSettings>,
@@ -104,6 +105,12 @@ mod imp {
                 .get_or_init(|| model::ChatList::new(&self.obj(), tdlib::enums::ChatList::Archive))
                 .to_owned()
         }
+
+        pub(crate) fn chat_folder_list(&self) -> model::ChatFolderList {
+            self.chat_folder_list
+                .get_or_init(|| model::ChatFolderList::from(&*self.obj()))
+                .to_owned()
+        }
     }
 }
 
@@ -124,21 +131,6 @@ impl ClientStateSession {
 
     pub(crate) fn me_(&self) -> model::User {
         self.me().unwrap()
-    }
-
-    /// Returns the filter chat list of the specified id.
-    pub(crate) fn filter_chat_list(&self, chat_folder_id: i32) -> model::ChatList {
-        self.imp()
-            .filter_chat_lists
-            .borrow_mut()
-            .entry(chat_folder_id)
-            .or_insert_with(|| {
-                model::ChatList::new(
-                    self,
-                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder { chat_folder_id }),
-                )
-            })
-            .clone()
     }
 
     /// Returns the `model::Chat` of the specified id, if present.
@@ -358,7 +350,8 @@ impl ClientStateSession {
                     .update_chat_position(chat, position);
             }
             Folder(data) => {
-                self.filter_chat_list(data.chat_folder_id)
+                self.chat_folder_list()
+                    .get_or_create(data.chat_folder_id)
                     .update_chat_position(chat, position);
             }
         }
@@ -418,6 +411,7 @@ impl ClientStateSession {
                 }
                 chat.handle_update(update);
             }
+            ChatFolders(_) => self.chat_folder_list().handle_update(update),
             ChatNotificationSettings(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatUnreadMentionCount(ref data) => self.chat(data.chat_id).handle_update(update),
             ChatBlockList(ref data) => self.chat(data.chat_id).handle_update(update),
@@ -478,19 +472,41 @@ impl ClientStateSession {
                     }
                 }
             }
+            UnreadChatCount(data) => {
+                use tdlib::enums::ChatList::*;
+
+                match data.chat_list {
+                    Main => {
+                        self.main_chat_list()
+                            .set_unread_chat_count(data.unread_count);
+                    }
+                    Archive => {
+                        self.archive_chat_list()
+                            .set_unread_chat_count(data.unread_count);
+                    }
+                    Folder(data_) => {
+                        self.chat_folder_list()
+                            .get_or_create(data_.chat_folder_id)
+                            .set_unread_chat_count(data.unread_count);
+                    }
+                }
+            }
             UnreadMessageCount(data) => {
                 use tdlib::enums::ChatList::*;
 
                 match data.chat_list {
                     Main => {
-                        self.main_chat_list().set_unread_count(data.unread_count);
+                        self.main_chat_list()
+                            .set_unread_message_count(data.unread_count);
                     }
                     Archive => {
-                        self.archive_chat_list().set_unread_count(data.unread_count);
+                        self.archive_chat_list()
+                            .set_unread_message_count(data.unread_count);
                     }
                     Folder(data_) => {
-                        self.filter_chat_list(data_.chat_folder_id)
-                            .set_unread_count(data.unread_count);
+                        self.chat_folder_list()
+                            .get_or_create(data_.chat_folder_id)
+                            .set_unread_message_count(data.unread_count);
                     }
                 }
             }

@@ -5,6 +5,8 @@
       <object class="GtkBinLayout"/>
     </property>
 
+    <signal name="notify::chat-list" handler="on_notify_chat_list"/>
+
     <child>
       <object class="GtkListView">
         <property name="single-click-activate">True</property>

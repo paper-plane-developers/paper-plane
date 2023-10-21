@@ -97,6 +97,17 @@
                   </object>
                 </child>
 
+                <child type="top">
+                  <object class="PaplSidebarChatFolderBar" id="folder_bar">
+                    <binding name="chat-folder-list">
+                      <lookup name="chat-folder-list" type="ClientStateSession">
+                        <lookup name="session">PaplSidebar</lookup>
+                      </lookup>
+                    </binding>
+
+                  </object>
+                </child>
+
                 <property name="content">
                   <object class="GtkScrolledWindow">
                     <property name="vexpand">True</property>
@@ -107,18 +118,11 @@
                         <property name="orientation">vertical</property>
 
                         <child>
-                          <object class="PaplSidebarArchiveRow">
+                          <object class="PaplSidebarArchiveRow" id="archive_row">
                             <property name="action-name">sidebar.show-archived-chats</property>
                             <binding name="archive-chat-list">
                               <lookup name="archive-chat-list" type="ClientStateSession">
                                 <lookup name="session">PaplSidebar</lookup>
-                              </lookup>
-                            </binding>
-                            <binding name="visible">
-                              <lookup name="len" type="ChatList">
-                                <lookup name="archive-chat-list" type="ClientStateSession">
-                                  <lookup name="session">PaplSidebar</lookup>
-                                </lookup>
                               </lookup>
                             </binding>
                           </object>
@@ -127,9 +131,7 @@
                         <child>
                           <object class="PaplSidebarChatList">
                             <binding name="chat-list">
-                              <lookup name="main-chat-list" type="ClientStateSession">
-                                <lookup name="session">PaplSidebar</lookup>
-                              </lookup>
+                              <lookup name="selected-chat-list">folder_bar</lookup>
                             </binding>
                             <property name="selected-chat" bind-source="PaplSidebar" bind-property="selected-chat" bind-flags="sync-create|bidirectional"/>
                             <property name="compact" bind-source="PaplSidebar" bind-property="compact" bind-flags="sync-create"/>

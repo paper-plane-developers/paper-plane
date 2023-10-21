@@ -1,5 +1,6 @@
 pub(crate) mod archive_row;
 pub(crate) mod avatar;
+pub(crate) mod chat_folder;
 pub(crate) mod chat_list;
 pub(crate) mod mini_thumbnail;
 pub(crate) mod row;
@@ -10,6 +11,7 @@ use std::cell::Cell;
 use std::cell::OnceCell;
 
 use glib::clone;
+use glib::closure;
 use glib::Properties;
 use gtk::gio;
 use gtk::glib;
@@ -19,6 +21,10 @@ use gtk::CompositeTemplate;
 
 pub(crate) use self::archive_row::ArchiveRow;
 pub(crate) use self::avatar::Avatar;
+pub(crate) use self::chat_folder::Bar as ChatFolderBar;
+pub(crate) use self::chat_folder::Icon as ChatFolderIcon;
+pub(crate) use self::chat_folder::Row as ChatFolderRow;
+pub(crate) use self::chat_folder::Selection as ChatFolderSelection;
 pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::mini_thumbnail::MiniThumbnail;
 pub(crate) use self::row::Row;
@@ -49,13 +55,17 @@ mod imp {
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
         pub(super) row_menu: OnceCell<gtk::PopoverMenu>,
         #[template_child]
-        pub(super) snow: TemplateChild<ui::Snow>,
-        #[template_child]
         pub(super) navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
         pub(super) main_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
         pub(super) search: TemplateChild<Search>,
+        #[template_child]
+        pub(super) snow: TemplateChild<ui::Snow>,
+        #[template_child]
+        pub(super) folder_bar: TemplateChild<ui::SidebarChatFolderBar>,
+        #[template_child]
+        pub(super) archive_row: TemplateChild<ui::SidebarArchiveRow>,
     }
 
     #[glib::object_subclass]
@@ -154,6 +164,32 @@ mod imp {
                     obj.update_archived_chats_actions(settings, &obj.session().unwrap());
                 }),
             );
+
+            let session_expr = Self::Type::this_expression("session");
+
+            session_expr
+                .chain_property::<model::ClientStateSession>("chat-folder-list")
+                .chain_property::<model::ChatFolderList>("has-folders")
+                .bind(&self.folder_bar.get(), "visible", Some(obj));
+
+            gtk::ClosureExpression::new::<bool>(
+                [
+                    session_expr
+                        .chain_property::<model::ClientStateSession>("archive-chat-list")
+                        .chain_property::<model::ChatList>("len"),
+                    session_expr.chain_property::<model::ClientStateSession>("main-chat-list"),
+                    self.folder_bar
+                        .get()
+                        .property_expression_weak("selected-chat-list"),
+                ],
+                closure!(|_: Self::Type,
+                          len: u32,
+                          main_chat_list: &model::ChatList,
+                          selected: Option<model::ChatList>| {
+                    len > 0 && Some(main_chat_list) == selected.as_ref()
+                }),
+            )
+            .bind(&self.archive_row.get(), "visible", Some(obj));
         }
 
         fn dispose(&self) {

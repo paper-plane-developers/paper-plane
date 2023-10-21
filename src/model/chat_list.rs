@@ -47,7 +47,13 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) list_type: RefCell<model::BoxedChatListType>,
         #[property(get, set)]
-        pub(super) unread_count: Cell<i32>,
+        pub(super) icon: RefCell<String>,
+        #[property(get, set)]
+        pub(super) title: RefCell<String>,
+        #[property(get, set)]
+        pub(super) unread_chat_count: Cell<i32>,
+        #[property(get, set)]
+        pub(super) unread_message_count: Cell<i32>,
     }
 
     #[glib::object_subclass]
@@ -147,16 +153,6 @@ impl ChatList {
                 obj.fetch();
             }
         }));
-    }
-
-    pub(crate) fn find_chat_item(&self, chat_id: i64) -> Option<model::ChatListItem> {
-        self.imp()
-            .list
-            .borrow()
-            .iter()
-            .find(|(_, item)| item.chat().unwrap().id() == chat_id)
-            .map(|(_, item)| item)
-            .cloned()
     }
 
     pub(crate) fn update_chat_position(
