@@ -1,0 +1,28 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PaplSidebarChatFolderIcon {
+  halign: center;
+  width-request: 54;
+
+  Image icon {
+    margin-top: 6;
+    pixel-size: 22;
+  }
+
+  Adw.Bin unread_mask_bin {
+    styles ["unread-mask"]
+
+    hexpand: true;
+    vexpand: true;
+  }
+
+  Label unread_label {
+    styles ["unread-label"]
+
+    halign: end;
+    valign: start;
+    margin-top: 2;
+    margin-end: 2;
+  }
+}

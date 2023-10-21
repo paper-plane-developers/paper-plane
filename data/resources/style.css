@@ -21,6 +21,29 @@
   background: @accent_color;
 }
 
+chatfoldericon .unread-mask {
+  border-radius: 9999px;
+  background-color: @window_bg_color;
+  padding: 1px;
+}
+
+chatfoldericon .unread-label {
+  border-radius: 9999px;
+  background-color: @accent_bg_color;
+  padding: 0 4px;
+  font-size: smaller;
+  font-weight: bold;
+  font-feature-settings: "tnum";
+}
+
+chatfolderbar .navigation-tabbar {
+  margin: -3px 3px;
+}
+
+chatfolderbar .navigation-tabbar row {
+  margin: 0 3px;
+}
+
 archiverow:not(.in-main-menu) {
   margin-bottom: -4px;
 }

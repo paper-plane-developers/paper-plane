@@ -1,5 +1,6 @@
 pub(crate) mod archive_row;
 pub(crate) mod avatar;
+pub(crate) mod chat_folder;
 pub(crate) mod chat_list;
 pub(crate) mod mini_thumbnail;
 pub(crate) mod row;
@@ -19,6 +20,10 @@ use gtk::CompositeTemplate;
 
 pub(crate) use self::archive_row::ArchiveRow;
 pub(crate) use self::avatar::Avatar;
+pub(crate) use self::chat_folder::Bar as ChatFolderBar;
+pub(crate) use self::chat_folder::Icon as ChatFolderIcon;
+pub(crate) use self::chat_folder::Row as ChatFolderRow;
+pub(crate) use self::chat_folder::Selection as ChatFolderSelection;
 pub(crate) use self::chat_list::ChatList;
 pub(crate) use self::mini_thumbnail::MiniThumbnail;
 pub(crate) use self::row::Row;
