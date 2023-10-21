@@ -89,8 +89,8 @@ template $PaplSidebarArchiveRow {
         ellipsize: end;
         justify: center;
 
-        label: bind template.archive_chat_list as <$ChatList>.unread-count;
-        visible: bind template.archive_chat_list as <$ChatList>.unread-count;
+        label: bind template.archive_chat_list as <$ChatList>.unread-chat-count;
+        visible: bind template.archive_chat_list as <$ChatList>.unread-chat-count;
       }
 
       Image {

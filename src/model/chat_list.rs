@@ -47,7 +47,13 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) list_type: RefCell<model::BoxedChatListType>,
         #[property(get, set)]
-        pub(super) unread_count: Cell<i32>,
+        pub(super) icon: RefCell<String>,
+        #[property(get, set)]
+        pub(super) title: RefCell<String>,
+        #[property(get, set)]
+        pub(super) unread_chat_count: Cell<i32>,
+        #[property(get, set)]
+        pub(super) unread_message_count: Cell<i32>,
     }
 
     #[glib::object_subclass]

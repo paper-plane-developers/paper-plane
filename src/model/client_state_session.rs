@@ -483,14 +483,16 @@ impl ClientStateSession {
 
                 match data.chat_list {
                     Main => {
-                        self.main_chat_list().set_unread_count(data.unread_count);
+                        self.main_chat_list()
+                            .set_unread_message_count(data.unread_count);
                     }
                     Archive => {
-                        self.archive_chat_list().set_unread_count(data.unread_count);
+                        self.archive_chat_list()
+                            .set_unread_message_count(data.unread_count);
                     }
                     Folder(data_) => {
                         self.filter_chat_list(data_.chat_folder_id)
-                            .set_unread_count(data.unread_count);
+                            .set_unread_message_count(data.unread_count);
                     }
                 }
             }

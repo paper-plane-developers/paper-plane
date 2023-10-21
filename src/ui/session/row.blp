@@ -38,8 +38,8 @@ template $PaplSessionRow {
     halign: end;
     ellipsize: end;
     justify: center;
-    label: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-count;
-    visible: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-count;
+    label: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-chat-count;
+    visible: bind template.session as <$ClientStateSession>.main-chat-list as <$ChatList>.unread-chat-count;
   }
 
   Stack stack {
