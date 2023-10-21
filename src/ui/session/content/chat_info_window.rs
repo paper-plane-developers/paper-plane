@@ -5,10 +5,10 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use glib::closure;
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 use crate::expressions;
 use crate::i18n::ngettext_f;

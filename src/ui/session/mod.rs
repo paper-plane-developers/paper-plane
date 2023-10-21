@@ -7,11 +7,11 @@ mod switcher;
 
 use adw::subclass::prelude::*;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::contacts_window::ContactsWindow;
 pub(crate) use self::contacts_window::Row as ContactRow;

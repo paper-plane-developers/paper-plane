@@ -5,13 +5,13 @@ use std::cell::RefCell;
 
 use file_status::FileStatus;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::status_indicator::StatusIndicator;
 use crate::model;

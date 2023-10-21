@@ -1,9 +1,9 @@
 use std::cell::OnceCell;
 
+use glib::once_cell::sync::Lazy;
 use glib::prelude::*;
 use glib::subclass::prelude::*;
 use gtk::glib;
-use once_cell::sync::Lazy;
 
 use crate::model;
 

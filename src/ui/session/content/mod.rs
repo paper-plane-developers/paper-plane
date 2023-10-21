@@ -8,10 +8,10 @@ mod message_row;
 mod send_media_window;
 
 use adw::subclass::prelude::*;
+use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::background::Background;
 pub(crate) use self::chat_action_bar::ChatActionBar;

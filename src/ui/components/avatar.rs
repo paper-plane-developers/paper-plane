@@ -44,7 +44,7 @@ mod imp {
 
     impl ObjectImpl for Avatar {
         fn properties() -> &'static [glib::ParamSpec] {
-            use once_cell::sync::Lazy;
+            use glib::once_cell::sync::Lazy;
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![
                     glib::ParamSpecObject::builder::<glib::Object>("item")

@@ -6,13 +6,13 @@ use std::time::UNIX_EPOCH;
 
 use gio::subclass::prelude::*;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use indexmap::map::Entry;
 use indexmap::IndexMap;
-use once_cell::sync::Lazy;
 
 use crate::model;
 use crate::utils;

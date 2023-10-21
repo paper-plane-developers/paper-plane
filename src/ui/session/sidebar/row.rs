@@ -3,12 +3,12 @@ use std::cell::OnceCell;
 use gettextrs::gettext;
 use glib::clone;
 use glib::closure;
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 use crate::expressions;
 use crate::model;

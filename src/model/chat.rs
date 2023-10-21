@@ -3,12 +3,12 @@ use std::cell::OnceCell;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use glib::Properties;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use once_cell::sync::Lazy;
 
 use crate::model;
 
