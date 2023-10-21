@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2023-03-17 10:37+0000\n"
+"PO-Revision-Date: 2023-09-27 07:02+0000\n"
 "Last-Translator: Philip Goto <philip.goto@gmail.com>\n"
-"Language-Team: Dutch <https://hosted.weblate.org/projects/paper-plane/paper-"
-"plane/nl/>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/paper-plane/main/"
+"nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.2-dev\n"
+"X-Generator: Weblate 5.1-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -31,7 +31,7 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.desktop.in.in:9
 msgid "Gnome;GTK;telegram;tg;chat;im;messaging;messenger;"
-msgstr ""
+msgstr "Gnome;GTK;telegram;tg;chat;im;messaging;messenger;berichten;"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
@@ -49,9 +49,8 @@ msgid "Default window maximized behaviour"
 msgstr "Standaardgedrag voor maximalisatie"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
-#, fuzzy
 msgid "Last used session"
-msgstr "Onlangs gebruikte sessies"
+msgstr "Laatstgebruikte sessie"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid "The directory name of the last used session"
@@ -89,15 +88,15 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:21
 msgid "Sending text messages and images."
-msgstr ""
+msgstr "Tekstberichten en afbeeldingen sturen"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:22
 msgid "Replying to messages."
-msgstr ""
+msgstr "Reageren op berichten"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:23
 msgid "Searching for groups and persons."
-msgstr ""
+msgstr "Zoeken naar groepen en personen"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:29
 msgid "Main window"
@@ -118,7 +117,7 @@ msgstr ""
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:50
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:64
 msgid "Dependencies have been updated."
-msgstr ""
+msgstr "Afhankelijkheden zijn bijgewerkt."
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:51
 msgid "Turkish translations have been updated, thanks to @sabriunal."
@@ -232,11 +231,11 @@ msgstr "Berichten sturen is niet toegestaan in deze groep"
 
 #: src/main.rs:121
 msgid "Prints application version"
-msgstr ""
+msgstr "Print de app-versie"
 
 #: src/main.rs:130
 msgid "Specify the minimum log level"
-msgstr ""
+msgstr "Geef het minimale loggings­niveau op"
 
 #: src/main.rs:139
 msgid "Whether to use a test data center on first account"
@@ -524,14 +523,12 @@ msgid "last seen within a month"
 msgstr "deze maand voor het laatst gezien"
 
 #: src/strings.rs:456 src/ui/session/content/message_row/location.blp:26
-#, fuzzy
 msgid "Live Location"
-msgstr "Video, {caption}"
+msgstr "Live-locatie"
 
 #: src/strings.rs:458
-#, fuzzy
 msgid "Location"
-msgstr "Beschrijving"
+msgstr "Locatie"
 
 #: src/strings.rs:467
 msgid "Photo has expired"
@@ -551,7 +548,7 @@ msgstr "{sender} heeft een schermafdruk gemaakt!"
 
 #: src/strings.rs:509
 msgid "Location, {venue}"
-msgstr ""
+msgstr "Locatie, {venue}"
 
 #: src/strings.rs:510
 msgid "Unsupported Message"
@@ -772,7 +769,7 @@ msgstr "{sender} heeft nu Telegram"
 
 #: src/ui/components/map.blp:29
 msgid "Map data by OpenStreetMap"
-msgstr ""
+msgstr "Kaart­gegevens door OpenStreetMap"
 
 #: src/ui/components/phone_number_input.blp:13
 msgid "Country"
@@ -808,7 +805,7 @@ msgstr ""
 
 #: src/ui/login/code.rs:122
 msgid "Send code via {type}"
-msgstr ""
+msgstr "Code sturen via {type}"
 
 #: src/ui/login/code.rs:147
 msgid "The code will arrive to you via {type}."
@@ -816,7 +813,7 @@ msgstr ""
 
 #: src/ui/login/code.rs:184
 msgid "Failed to authenticate: {error}"
-msgstr ""
+msgstr "Authenticatie mislukt: {error}"
 
 #: src/ui/login/code.rs:198
 msgid "Failed to resend auth code: {error}"
@@ -854,7 +851,7 @@ msgstr "Fragment"
 
 #: src/ui/login/mod.rs:116
 msgid "Reset Registration Process?"
-msgstr ""
+msgstr "Registratie­proces resetten?"
 
 #: src/ui/login/mod.rs:117
 msgid ""
@@ -869,7 +866,7 @@ msgstr "_Annuleren"
 
 #: src/ui/login/mod.rs:129
 msgid "_Reset"
-msgstr ""
+msgstr "_Resetten"
 
 #: src/ui/login/other_device.blp:24
 msgid "Scan Code"
@@ -897,14 +894,12 @@ msgid "Hint"
 msgstr "Hint"
 
 #: src/ui/login/password.blp:88
-#, fuzzy
 msgid "Forgot password?"
-msgstr "_Wachtwoord vergeten?"
+msgstr "Wachtwoord vergeten?"
 
 #: src/ui/login/password.blp:107
-#, fuzzy
 msgid "Recover Password"
-msgstr "Voer uw wachtwoord in"
+msgstr "Wachtwoord herstellen"
 
 #: src/ui/login/password.blp:108
 msgid ""
@@ -916,9 +911,8 @@ msgstr ""
 "wachtwoord opnieuw in te stellen."
 
 #: src/ui/login/password.blp:131
-#, fuzzy
 msgid "_Send Code"
-msgstr "Code scannen"
+msgstr "Code _sturen"
 
 #: src/ui/login/password.blp:150 src/ui/login/password.rs:243
 msgid "_Delete Account"
@@ -1057,9 +1051,8 @@ msgid "Terms of Service"
 msgstr "Servicevoorwaarden"
 
 #: src/ui/session/contacts_window/mod.ui:3
-#, fuzzy
 msgid "Contacts"
-msgstr "_Contacten"
+msgstr "Contacten"
 
 #: src/ui/session/content/chat_action_bar.blp:71
 msgid "Message"
@@ -1191,14 +1184,12 @@ msgstr "gesponsord"
 
 #: src/ui/session/content/message_row/location.rs:139
 #: src/ui/session/content/message_row/location.rs:148
-#, fuzzy
 msgid "updated just now"
-msgstr "net voor het laatst gezien"
+msgstr "net bijgewerkt"
 
 #: src/ui/session/content/message_row/location.rs:152
-#, fuzzy
 msgid "updated an hour ago"
-msgstr "{num} uur geleden voor het laatst gezien"
+msgstr "een uur geleden bijgewerkt"
 
 #: src/ui/session/content/message_row/location.rs:155
 msgid "updated {hours} hours and {minutes} minutes ago"
@@ -1213,9 +1204,8 @@ msgid "Do you want to delete this message?"
 msgstr "Wilt u dit bericht verwijderen?"
 
 #: src/ui/session/content/message_row/mod.rs:176
-#, fuzzy
 msgid "Confirm model::Message Deletion"
-msgstr "Verwijderen van bericht bevestigen"
+msgstr ""
 
 #: src/ui/session/content/message_row/reply.rs:70
 msgid "Loading…"
@@ -1234,9 +1224,8 @@ msgid "Select a chat to start messaging."
 msgstr "Selecteer een chat om een bericht te sturen."
 
 #: src/ui/session/content/send_media_window.blp:8
-#, fuzzy
 msgid "Send Image"
-msgstr "Afbeeldingen"
+msgstr "Afbeelding sturen"
 
 #: src/ui/session/content/send_media_window.blp:23
 msgid "Caption"
@@ -1244,12 +1233,11 @@ msgstr "Beschrijving"
 
 #: src/ui/session/content/send_media_window.blp:30
 msgid "Send"
-msgstr ""
+msgstr "Sturen"
 
 #: src/ui/session/content/send_media_window.blp:41
-#, fuzzy
 msgid "Send as _File"
-msgstr "Bestand openen"
+msgstr "Als _bestand sturen"
 
 #: src/ui/session/mod.blp:15 src/ui/session/sidebar/mod.ui:38
 #: src/ui/session/sidebar/search/section_row.rs:124
@@ -1257,9 +1245,8 @@ msgid "Chats"
 msgstr "Chats"
 
 #: src/ui/session/mod.blp:26
-#, fuzzy
 msgid "Content"
-msgstr "_Contacten"
+msgstr "Inhoud"
 
 #: src/ui/session/preferences_window.blp:10
 msgid "Follow System Colors"
@@ -1287,18 +1274,17 @@ msgstr "Cache geleegd"
 
 #: src/ui/session/row.blp:54
 msgid "Logout"
-msgstr ""
+msgstr "Uitloggen"
 
 #: src/ui/session/row.rs:99
 msgid "Log out <i>{display_name}</i>"
-msgstr ""
+msgstr "<i>{display_name}</i> uitloggen"
 
 #: src/ui/session/row.rs:105
 msgid "Are you sure you want to log out?"
 msgstr ""
 
 #: src/ui/session/row.rs:111
-#, fuzzy
 msgid "_Log out"
 msgstr "_Uitloggen"
 
@@ -1324,7 +1310,7 @@ msgstr "Zoeken"
 
 #: src/ui/session/sidebar/mod.ui:165
 msgid "Sessions"
-msgstr ""
+msgstr "Sessies"
 
 #: src/ui/session/sidebar/row.rs:414
 msgid "Draft:"
@@ -1376,7 +1362,7 @@ msgstr "_Testserver"
 
 #: src/ui/session/switcher.blp:41
 msgid "New Session"
-msgstr ""
+msgstr "Nieuwe sessie"
 
 #~ msgid "A Telegram client optimized for the GNOME desktop"
 #~ msgstr "Een Telegram-cliënt geoptimaliseerd voor GNOME"
