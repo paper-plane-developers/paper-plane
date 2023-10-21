@@ -92,6 +92,16 @@ impl Default for BoxedChatListType {
         Self(tdlib::enums::ChatList::Main)
     }
 }
+impl BoxedChatListType {
+    pub(crate) fn chat_folder_id(&self) -> Option<i32> {
+        match &self.0 {
+            tdlib::enums::ChatList::Folder(chat_list_folder) => {
+                Some(chat_list_folder.chat_folder_id)
+            }
+            _ => None,
+        }
+    }
+}
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "BoxedUpdateNotificationGroup")]
