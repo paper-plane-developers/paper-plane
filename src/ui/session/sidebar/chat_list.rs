@@ -110,6 +110,12 @@ mod imp {
         }
 
         #[template_callback]
+        fn on_notify_chat_list(&self) {
+            self.selection
+                .set_selected_chat(self.obj().selected_chat().as_ref());
+        }
+
+        #[template_callback]
         fn list_activate(&self, pos: u32) {
             let obj = &*self.obj();
             self.selection.set_selected_position(pos);
