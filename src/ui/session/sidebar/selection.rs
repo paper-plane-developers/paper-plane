@@ -8,13 +8,15 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use once_cell::sync::Lazy;
 
+use crate::model;
+
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
     pub(crate) struct Selection {
         pub(super) model: RefCell<Option<gio::ListModel>>,
-        pub(super) item: RefCell<Option<glib::Object>>,
+        pub(super) selected_chat: glib::WeakRef<model::Chat>,
         pub(super) hide_selection: Cell<bool>,
         pub(super) item_position: Cell<u32>,
         pub(super) signal_handler: RefCell<Option<glib::SignalHandlerId>>,
@@ -34,7 +36,7 @@ mod imp {
                     glib::ParamSpecObject::builder::<gio::ListModel>("model")
                         .explicit_notify()
                         .build(),
-                    glib::ParamSpecObject::builder::<glib::Object>("selected-item")
+                    glib::ParamSpecObject::builder::<glib::Object>("selected-chat")
                         .explicit_notify()
                         .build(),
                     glib::ParamSpecBoolean::builder("hide-selection")
@@ -50,7 +52,7 @@ mod imp {
 
             match pspec.name() {
                 "model" => obj.set_model(value.get().unwrap()),
-                "selected-item" => obj.set_selected_item(value.get().unwrap()),
+                "selected-chat" => obj.set_selected_chat(value.get().unwrap()),
                 "hide-selection" => obj.set_hide_selection(value.get().unwrap()),
                 _ => unimplemented!(),
             }
@@ -61,7 +63,7 @@ mod imp {
 
             match pspec.name() {
                 "model" => obj.model().to_value(),
-                "selected-item" => obj.selected_item().to_value(),
+                "selected-chat" => obj.selected_chat().to_value(),
                 "hide-selection" => obj.hide_selection().to_value(),
                 _ => unimplemented!(),
             }
@@ -79,7 +81,7 @@ mod imp {
 
     impl ListModelImpl for Selection {
         fn item_type(&self) -> glib::Type {
-            glib::Object::static_type()
+            model::ChatListItem::static_type()
         }
 
         fn n_items(&self) -> u32 {
@@ -125,13 +127,13 @@ glib::wrapper! {
 }
 
 impl Selection {
-    fn find_item_position(&self, item: &glib::Object, start_pos: u32, end_pos: u32) -> u32 {
+    fn find_item_position(&self, chat: &model::Chat, start_pos: u32, end_pos: u32) -> u32 {
         if let Some(model) = self.model() {
             for pos in start_pos..end_pos {
-                let check = model.item(pos);
-
-                if check.as_ref() == Some(item) {
-                    return pos;
+                if let Some(item) = model.item(pos).and_downcast_ref::<model::ChatListItem>() {
+                    if item.chat().as_ref() == Some(chat) {
+                        return pos;
+                    }
                 }
             }
         }
@@ -143,7 +145,7 @@ impl Selection {
         let imp = self.imp();
         let item_position = imp.item_position.get();
 
-        if let Some(selected_item) = self.selected_item() {
+        if let Some(selected_item) = self.selected_chat() {
             if item_position == gtk::INVALID_LIST_POSITION {
                 // Maybe the item got newly added
                 imp.item_position.set(self.find_item_position(
@@ -207,14 +209,14 @@ impl Selection {
         self.notify("model");
     }
 
-    pub(crate) fn selected_item(&self) -> Option<glib::Object> {
-        self.imp().item.borrow().clone()
+    pub(crate) fn selected_chat(&self) -> Option<model::Chat> {
+        self.imp().selected_chat.upgrade()
     }
 
-    fn set_selected_item_internal(&self, item: Option<glib::Object>, position: u32) {
+    fn set_selected_item_internal(&self, item: Option<&model::Chat>, position: u32) {
         let imp = self.imp();
 
-        imp.item.replace(item);
+        imp.selected_chat.set(item);
 
         let old_position = imp.item_position.get();
         imp.item_position.set(position);
@@ -226,33 +228,35 @@ impl Selection {
             if old_position == gtk::INVALID_LIST_POSITION {
                 self.selection_changed(position, 1);
             } else if position == gtk::INVALID_LIST_POSITION {
-                self.selection_changed(old_position, 1);
+                self.selection_changed(old_position.min(self.n_items() - 1), 1);
             } else if position < old_position {
-                self.selection_changed(position, old_position - position + 1);
+                self.selection_changed(
+                    position,
+                    (old_position - position + 1).min(self.n_items() - position),
+                );
             } else {
                 self.selection_changed(old_position, position - old_position + 1);
             }
         }
 
-        self.notify("selected-item");
+        self.notify("selected-chat");
     }
 
-    pub(crate) fn set_selected_item(&self, selected_item: Option<glib::Object>) {
-        if self.selected_item() == selected_item {
-            return;
-        }
-
-        let position = selected_item
+    pub(crate) fn set_selected_chat(&self, selected_chat: Option<&model::Chat>) {
+        let position = selected_chat
             .as_ref()
             .map(|i| self.find_item_position(i, 0, self.n_items()))
             .unwrap_or(gtk::INVALID_LIST_POSITION);
 
-        self.set_selected_item_internal(selected_item, position);
+        self.set_selected_item_internal(selected_chat, position);
     }
 
     pub(crate) fn set_selected_position(&self, position: u32) {
-        let item = self.item(position);
-        self.set_selected_item_internal(item, position);
+        let chat = self
+            .item(position)
+            .and_downcast::<model::ChatListItem>()
+            .and_then(|item| item.chat());
+        self.set_selected_item_internal(chat.as_ref(), position);
     }
 
     pub(crate) fn hide_selection(&self) -> bool {

@@ -91,8 +91,7 @@ mod imp {
                     );
                     self.marked_as_unread_handler_id.replace(Some(handler_id));
 
-                    let item = obj.chat_list().unwrap().find_chat_item(chat.id());
-                    self.selection.set_selected_item(item.map(|i| i.upcast()));
+                    self.selection.set_selected_chat(Some(chat));
 
                     if chat.is_marked_as_unread() {
                         utils::spawn(clone!(@weak chat => async move {
@@ -102,7 +101,7 @@ mod imp {
                         }));
                     }
                 }
-                None => self.selection.set_selected_item(None),
+                None => self.selection.set_selected_chat(None),
             }
 
             self.selected_chat.set(selected_chat);
@@ -115,9 +114,7 @@ mod imp {
             let obj = &*self.obj();
             self.selection.set_selected_position(pos);
 
-            let item: model::ChatListItem =
-                self.selection.selected_item().unwrap().downcast().unwrap();
-            obj.set_selected_chat(item.chat().as_ref());
+            obj.set_selected_chat(self.selection.selected_chat());
             obj.activate_action("navigation.push", Some(&"content".to_variant()))
                 .unwrap();
         }

@@ -149,16 +149,6 @@ impl ChatList {
         }));
     }
 
-    pub(crate) fn find_chat_item(&self, chat_id: i64) -> Option<model::ChatListItem> {
-        self.imp()
-            .list
-            .borrow()
-            .iter()
-            .find(|(_, item)| item.chat().unwrap().id() == chat_id)
-            .map(|(_, item)| item)
-            .cloned()
-    }
-
     pub(crate) fn update_chat_position(
         &self,
         chat: &model::Chat,
