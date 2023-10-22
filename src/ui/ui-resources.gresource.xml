@@ -15,6 +15,8 @@
     <file compressed="true" preprocess="xml-stripblanks">components/map_window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/message_entry.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">components/phone_number_input.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">components/style_selection_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">components/style_variant_preview.ui</file>
 
     <file compressed="true" preprocess="xml-stripblanks">login/code.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">login/mod.ui</file>

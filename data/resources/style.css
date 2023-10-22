@@ -513,3 +513,20 @@ splitbutton.small-pill:dir(ltr) > menubutton > button {
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;
 }
+
+styleselectionrow stylevariantpreview .wallpaper {
+  border-radius: 6px;
+  box-shadow: 0 0 9px 1px rgba(0,0,0,.2);
+}
+
+styleselectionrow button {
+  padding: 0;
+  margin: 0;
+  border: 3px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+}
+
+styleselectionrow button:checked {
+  border-color: @theme_selected_bg_color;
+}

@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $StyleVariantPreview {
+  layout-manager: BinLayout {};
+
+  margin-top: 2;
+  margin-end: 2;
+  margin-bottom: 2;
+  margin-start: 2;
+
+  Adw.Bin {
+    styles ["wallpaper"]
+
+    overflow: hidden;
+
+    Picture picture {
+      content-fit: fill;
+      width-request: 164;
+      height-request: 90;
+    }
+  }
+}

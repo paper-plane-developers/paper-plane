@@ -4,25 +4,9 @@ using Adw 1;
 template $PaplPreferencesWindow : Adw.PreferencesWindow {
   Adw.PreferencesPage {
     Adw.PreferencesGroup {
-      title: _("Color Scheme");
+      title: _("Interface");
 
-      Adw.ActionRow {
-        title: _("Follow System Colors");
-        activatable-widget: follow_system_colors_switch;
-
-        Switch follow_system_colors_switch {
-          valign: center;
-        }
-      }
-
-      Adw.ActionRow {
-        title: _("Dark Theme");
-        activatable-widget: dark_theme_switch;
-
-        Switch dark_theme_switch {
-          valign: center;
-        }
-      }
+      $StyleSelectionRow { }
     }
 
     Adw.PreferencesGroup {
