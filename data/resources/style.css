@@ -408,6 +408,10 @@ messagereply label.message {
   color: @window_fg_color;
 }
 
+messagebubble.outgoing messagereply label.message {
+  color: currentColor;
+}
+
 messagesticker {
   border-spacing: 6px;
 }

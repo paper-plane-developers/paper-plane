@@ -4,6 +4,7 @@ use std::hash::Hash;
 use std::hash::Hasher;
 
 use adw::prelude::*;
+use glib::clone;
 use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -32,6 +33,8 @@ mod imp {
     pub(crate) struct MessageBubble {
         pub(super) sender_color_class: RefCell<Option<String>>,
         pub(super) sender_binding: RefCell<Option<gtk::ExpressionWatch>>,
+        pub(super) parent_list_view: RefCell<glib::WeakRef<gtk::ListView>>,
+        pub(super) parent_background: RefCell<glib::WeakRef<ui::Background>>,
         #[template_child]
         pub(super) box_: TemplateChild<gtk::Box>,
         #[template_child]
@@ -99,6 +102,54 @@ mod imp {
     }
 
     impl WidgetImpl for MessageBubble {
+        fn realize(&self) {
+            self.parent_realize();
+
+            let widget = self.obj();
+
+            if let Some(view) = widget.parent_list_view() {
+                self.parent_list_view.replace(view.downgrade());
+                view.vadjustment()
+                    .unwrap()
+                    .connect_value_notify(clone!(@weak widget => move |_| {
+                        widget.queue_draw();
+                    }));
+            }
+
+            if let Some(background) = widget.parent_background() {
+                self.parent_background.replace(background.downgrade());
+                background.subscribe_to_redraw(widget.upcast_ref());
+            }
+        }
+
+        fn snapshot(&self, snapshot: &gtk::Snapshot) {
+            let widget = self.obj();
+
+            if let Some(background) = self.parent_background.borrow().upgrade() {
+                if !background.has_css_class("fallback") {
+                    let bounds = {
+                        let width = widget.width() as f32;
+                        let height = widget.height() as f32;
+
+                        gtk::graphene::Rect::new(0.0, 0.0, width, height)
+                    };
+
+                    let gradient_bounds = background.compute_bounds(self.obj().as_ref()).unwrap();
+
+                    if widget.has_css_class("outgoing") {
+                        snapshot
+                            .append_node(&background.message_bg_node(&bounds, &gradient_bounds));
+                    } else {
+                        snapshot.push_opacity(0.1);
+                        snapshot.append_node(&background.bg_node(&bounds, &gradient_bounds));
+                        snapshot.pop();
+                    };
+                }
+            }
+
+            self.parent_snapshot(snapshot);
+        }
+
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             // Limit the widget width
             if orientation == gtk::Orientation::Horizontal {
@@ -298,6 +349,16 @@ impl MessageBubble {
             imp.message_label
                 .set_indicators(Some(imp.indicators.clone()));
         }
+    }
+
+    fn parent_list_view(&self) -> Option<gtk::ListView> {
+        self.ancestor(gtk::ListView::static_type())?.downcast().ok()
+    }
+
+    fn parent_background(&self) -> Option<ui::Background> {
+        self.ancestor(ui::Background::static_type())?
+            .downcast()
+            .ok()
     }
 }
 
