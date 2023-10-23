@@ -157,15 +157,20 @@ mod imp {
 
             self.icon
                 .size_allocate(&gdk::Rectangle::new(0, 0, width, height), baseline);
+
             self.unread_mask_bin.size_allocate(
                 &gdk::Rectangle::new(
-                    width - unread_label_width - 2,
+                    match self.obj().direction() {
+                        gtk::TextDirection::Ltr => width - unread_label_width - 2,
+                        _ => 0,
+                    },
                     0,
                     unread_label_width + 2,
                     unread_label_height + 2,
                 ),
                 baseline,
             );
+
             self.unread_label
                 .size_allocate(&gdk::Rectangle::new(0, 0, width, height), baseline);
         }
