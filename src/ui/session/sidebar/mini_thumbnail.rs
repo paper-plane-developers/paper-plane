@@ -1,11 +1,11 @@
 use std::cell::RefCell;
 
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::graphene;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use once_cell::sync::Lazy;
 
 mod imp {
     use super::*;

@@ -4,12 +4,12 @@ use std::cell::OnceCell;
 
 use adw::subclass::prelude::*;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::row::Row;
 use crate::model;

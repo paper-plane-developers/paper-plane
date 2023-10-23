@@ -30,6 +30,7 @@ chatfoldericon .unread-mask {
 chatfoldericon .unread-label {
   border-radius: 9999px;
   background-color: @accent_bg_color;
+  color: @accent_fg_color;
   padding: 0 4px;
   font-size: smaller;
   font-weight: bold;

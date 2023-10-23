@@ -17,11 +17,11 @@ use std::cell::RefCell;
 use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::base::MessageBase;
 pub(crate) use self::base::MessageBaseExt;

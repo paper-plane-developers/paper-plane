@@ -1,9 +1,9 @@
 use std::cell::Cell;
 
+use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use once_cell::sync::Lazy;
 
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, glib::Enum)]
 #[enum_type(name = "SidebarSearchSectionType")]

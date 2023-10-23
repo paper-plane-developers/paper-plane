@@ -6,10 +6,10 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 use crate::expressions;
 use crate::model;

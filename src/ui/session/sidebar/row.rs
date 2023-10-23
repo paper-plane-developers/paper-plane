@@ -3,12 +3,12 @@ use std::cell::OnceCell;
 use gettextrs::gettext;
 use glib::clone;
 use glib::closure;
+use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 use crate::expressions;
 use crate::model;
@@ -504,15 +504,12 @@ impl Row {
 
             if chat.unread_mention_count() > 0 {
                 stack.set_visible_child(&*imp.unread_mention_label);
-                stack.set_visible(true);
             } else if chat.unread_count() > 0 || chat.is_marked_as_unread() {
                 stack.set_visible_child(&*imp.unread_count_label);
-                stack.set_visible(true);
             } else if item.is_pinned() {
                 stack.set_visible_child(&*imp.pin_icon);
-                stack.set_visible(true);
             } else {
-                stack.set_visible(false);
+                stack.set_visible_child_name("empty");
             }
         }
     }

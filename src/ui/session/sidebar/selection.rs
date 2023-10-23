@@ -2,11 +2,11 @@ use std::cell::Cell;
 use std::cell::RefCell;
 
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use once_cell::sync::Lazy;
 
 use crate::model;
 

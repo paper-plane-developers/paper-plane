@@ -6,9 +6,9 @@ use std::collections::VecDeque;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
-use once_cell::sync::Lazy;
 use thiserror::Error;
 
 use crate::model;

@@ -1,8 +1,8 @@
 use adw::subclass::prelude::*;
+use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 mod imp {
     use super::*;

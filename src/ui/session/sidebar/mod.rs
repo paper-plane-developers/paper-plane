@@ -1,11 +1,11 @@
-pub(crate) mod archive_row;
-pub(crate) mod avatar;
-pub(crate) mod chat_folder;
-pub(crate) mod chat_list;
-pub(crate) mod mini_thumbnail;
-pub(crate) mod row;
-pub(crate) mod search;
-pub(crate) mod selection;
+mod archive_row;
+mod avatar;
+mod chat_folder;
+mod chat_list;
+mod mini_thumbnail;
+mod row;
+mod search;
+mod selection;
 
 use std::cell::Cell;
 use std::cell::OnceCell;

@@ -22,7 +22,7 @@ template $PaplSidebarRow {
 
   Box {
     orientation: vertical;
-    spacing: 6;
+    spacing: 3;
     valign: center;
 
     Box {
@@ -84,6 +84,12 @@ template $PaplSidebarRow {
           icon-name: "view-pin-symbolic";
 
           styles ["dim-label"]
+        }
+
+        StackPage {
+          name: "empty";
+          
+          child: Adw.Bin {};
         }
 
         Label unread_mention_label {

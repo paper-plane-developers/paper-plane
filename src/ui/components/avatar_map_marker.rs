@@ -35,7 +35,7 @@ mod imp {
 
     impl ObjectImpl for AvatarMapMarker {
         fn properties() -> &'static [glib::ParamSpec] {
-            use once_cell::sync::Lazy;
+            use glib::once_cell::sync::Lazy;
             static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
                 vec![glib::ParamSpecObject::builder::<model::User>("user")
                     .construct()

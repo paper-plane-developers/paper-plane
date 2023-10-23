@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 use ui::MessageBaseExt;
 
 use crate::model;

@@ -3,8 +3,8 @@ use std::cell::RefCell;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
+use glib::once_cell::sync::Lazy;
 use gtk::glib;
-use once_cell::sync::Lazy;
 
 use crate::model;
 use crate::strings;

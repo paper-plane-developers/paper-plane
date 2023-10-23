@@ -5,13 +5,13 @@ mod section_row;
 
 use gettextrs::gettext;
 use glib::clone;
+use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use once_cell::sync::Lazy;
 
 pub(crate) use self::item_row::ItemRow;
 pub(crate) use self::row::Row;
