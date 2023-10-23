@@ -86,6 +86,12 @@ template $PaplSidebarRow {
           styles ["dim-label"]
         }
 
+        StackPage {
+          name: "empty";
+          
+          child: Adw.Bin {};
+        }
+
         Label unread_mention_label {
           halign: center;
           valign: center;
