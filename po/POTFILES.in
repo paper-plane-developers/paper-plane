@@ -3,7 +3,6 @@ data/app.drey.PaperPlane.gschema.xml.in
 data/app.drey.PaperPlane.metainfo.xml.in.in
 
 src/application.rs
-src/config.rs
 src/expressions.rs
 src/i18n.rs
 src/main.rs
