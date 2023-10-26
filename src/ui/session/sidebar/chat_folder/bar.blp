@@ -5,6 +5,7 @@ template $PaplSidebarChatFolderBar {
   layout-manager: BinLayout {};
 
   notify::chat-folder-list => $on_notify_chat_folder_list();
+  notify::selected-chat-list => $on_notify_selected_chat_list();
 
   EventControllerScroll {
     scroll => $on_scroll_vertical() swapped;

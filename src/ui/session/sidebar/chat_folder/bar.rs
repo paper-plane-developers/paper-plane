@@ -77,6 +77,13 @@ mod imp {
         }
 
         #[template_callback]
+        fn on_notify_selected_chat_list(&self) {
+            if self.obj().selected_chat_list().is_none() {
+                self.on_notify_chat_folder_list();
+            }
+        }
+
+        #[template_callback]
         fn on_scroll_vertical(
             &self,
             _dx: f64,
