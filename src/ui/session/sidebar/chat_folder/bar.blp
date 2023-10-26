@@ -5,11 +5,17 @@ template $PaplSidebarChatFolderBar {
   layout-manager: BinLayout {};
 
   notify::chat-folder-list => $on_notify_chat_folder_list();
+  notify::selected-chat-list => $on_notify_selected_chat_list();
 
   EventControllerScroll {
     scroll => $on_scroll_vertical() swapped;
     flags: vertical;
     propagation-phase: capture;
+  }
+
+  GestureClick {
+    button: 3;
+    pressed => $on_gesture_click_button_3_pressed();
   }
 
   ScrolledWindow scrolled_window {

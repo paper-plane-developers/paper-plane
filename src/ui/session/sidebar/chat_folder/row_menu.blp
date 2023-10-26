@@ -1,0 +1,15 @@
+using Gtk 4.0;
+
+menu menu {
+  section {
+    item {
+      label: _("_Remove");
+      action: "chat-folder-row.remove";
+    }
+  }
+}
+
+PopoverMenu popover_menu {
+  menu-model: menu;
+  has-arrow: false;
+}

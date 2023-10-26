@@ -2,16 +2,40 @@ using Gtk 4.0;
 using Adw 1;
 
 template $PaplSidebarChatFolderRow {
-  layout-manager: BoxLayout {
-    orientation: vertical;
-    spacing: 3;
-  };
+  layout-manager: BinLayout {};
 
-  $PaplSidebarChatFolderIcon icon {
-    chat-list: bind template.chat-list;
+  notify::chat-list => $on_notify_chat_list();
+
+  GestureClick {
+    button: 3;
+    pressed => $on_button_3_pressed();
+    released => $on_button_3_released() swapped;
   }
 
-  Label title_label {
-    styles ["caption"]
+  GestureLongPress {
+    touch-only: true;
+    pressed => $on_long_pressed();
+  }
+
+  Box {
+    orientation: vertical;
+    spacing: 3;
+
+    $PaplSidebarChatFolderIcon icon {
+      chat-list: bind template.chat-list;
+    }
+
+    Adw.Clamp {
+      maximum-size: 80;
+      tightening-threshold: 80;
+      
+      Label title_label {
+        styles ["caption"]
+
+        justify: center;
+        wrap: true;
+        wrap-mode: char;
+      }
+    }
   }
 }

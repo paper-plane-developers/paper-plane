@@ -1,5 +1,6 @@
 use glib::Properties;
 use gtk::glib;
+use gtk::glib::once_cell::unsync::OnceCell;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -15,6 +16,7 @@ mod imp {
     #[properties(wrapper_type = super::Bar)]
     #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/chat_folder/bar.ui")]
     pub(crate) struct Bar {
+        pub(super) popover_menu: OnceCell<gtk::PopoverMenu>,
         #[property(get, set)]
         pub(super) chat_folder_list: glib::WeakRef<model::ChatFolderList>,
         #[property(get, set)]
@@ -56,6 +58,9 @@ mod imp {
         }
 
         fn dispose(&self) {
+            if let Some(popover_menu) = self.popover_menu.get() {
+                popover_menu.unparent();
+            }
             utils::unparent_children(&*self.obj());
         }
     }
@@ -68,6 +73,13 @@ mod imp {
         fn on_notify_chat_folder_list(&self) {
             if self.obj().chat_folder_list().is_some() {
                 self.on_list_view_activated(0);
+            }
+        }
+
+        #[template_callback]
+        fn on_notify_selected_chat_list(&self) {
+            if self.obj().selected_chat_list().is_none() {
+                self.on_notify_chat_folder_list();
             }
         }
 
@@ -85,6 +97,11 @@ mod imp {
         }
 
         #[template_callback]
+        fn on_gesture_click_button_3_pressed(gesture_click: &gtk::GestureClick) {
+            gesture_click.set_state(gtk::EventSequenceState::Claimed);
+        }
+
+        #[template_callback]
         fn on_list_view_activated(&self, position: u32) {
             self.selection.select_item(position, true);
         }
@@ -96,13 +113,10 @@ mod imp {
 
             let chat_list = list_item.item().and_downcast::<model::ChatList>().unwrap();
 
-            list_item.set_child(Some(
-                &adw::Bin::builder()
-                    .child(&ui::SidebarChatFolderRow::from(&chat_list))
-                    .margin_top(6)
-                    .margin_bottom(6)
-                    .build(),
-            ));
+            list_item.set_child(Some(&ui::SidebarChatFolderRow::new(
+                &self.obj(),
+                &chat_list,
+            )));
         }
 
         #[template_callback]
@@ -118,4 +132,19 @@ mod imp {
 glib::wrapper! {
     pub(crate) struct Bar(ObjectSubclass<imp::Bar>)
         @extends gtk::Widget;
+}
+
+impl Bar {
+    pub(crate) fn popover_menu(&self) -> gtk::PopoverMenu {
+        self.imp()
+            .popover_menu
+            .get_or_init(|| {
+                gtk::Builder::from_resource(
+                    "/app/drey/paper-plane/ui/session/sidebar/chat_folder/row_menu.ui",
+                )
+                .object::<gtk::PopoverMenu>("popover_menu")
+                .unwrap()
+            })
+            .to_owned()
+    }
 }

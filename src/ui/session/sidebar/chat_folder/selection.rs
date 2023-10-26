@@ -176,11 +176,14 @@ mod imp {
                 } else if item_position < position {
                     // Nothing to do, position stays the same
                 } else if item_position < position + removed {
-                    self.item_position.set(obj.find_item_position(
-                        &chat_list,
-                        position,
-                        position + added,
-                    ));
+                    let new_item_position =
+                        obj.find_item_position(&chat_list, position, position + added);
+                    self.item_position.set(new_item_position);
+
+                    if new_item_position == gtk::INVALID_LIST_POSITION {
+                        self.selected_chat_list.set(None);
+                        obj.notify_selected_chat_list();
+                    }
                 } else {
                     self.item_position
                         .set((item_position as i64 + (added as i64 - removed as i64)) as u32);

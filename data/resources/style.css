@@ -38,11 +38,16 @@ chatfoldericon .unread-label {
 }
 
 chatfolderbar .navigation-tabbar {
-  margin: -3px 3px;
+  margin: -3px 5px;
 }
 
 chatfolderbar .navigation-tabbar row {
-  margin: 0 3px;
+  margin: 0 1px;
+  padding: 0;
+}
+
+chatfolderbar .navigation-tabbar row chatfolderrow {
+  padding: 6px;
 }
 
 archiverow:not(.in-main-menu) {
