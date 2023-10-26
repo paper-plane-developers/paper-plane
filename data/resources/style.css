@@ -45,6 +45,10 @@ chatfolderbar .navigation-tabbar row {
   margin: 0 3px;
 }
 
+chatfolderbar .navigation-tabbar row chatfolderrow {
+  padding: 6px;
+}
+
 archiverow:not(.in-main-menu) {
   margin-bottom: -4px;
 }

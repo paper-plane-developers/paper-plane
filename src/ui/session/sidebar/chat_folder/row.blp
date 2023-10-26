@@ -2,16 +2,18 @@ using Gtk 4.0;
 using Adw 1;
 
 template $PaplSidebarChatFolderRow {
-  layout-manager: BoxLayout {
+  layout-manager: BinLayout {};
+
+  Box {
     orientation: vertical;
     spacing: 3;
-  };
 
-  $PaplSidebarChatFolderIcon icon {
-    chat-list: bind template.chat-list;
-  }
+    $PaplSidebarChatFolderIcon icon {
+      chat-list: bind template.chat-list;
+    }
 
-  Label title_label {
-    styles ["caption"]
+    Label title_label {
+      styles ["caption"]
+    }
   }
 }
