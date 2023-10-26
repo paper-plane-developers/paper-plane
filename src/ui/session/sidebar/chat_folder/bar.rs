@@ -1,5 +1,6 @@
 use glib::Properties;
 use gtk::glib;
+use gtk::glib::once_cell::unsync::OnceCell;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -15,6 +16,7 @@ mod imp {
     #[properties(wrapper_type = super::Bar)]
     #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/chat_folder/bar.ui")]
     pub(crate) struct Bar {
+        pub(super) popover_menu: OnceCell<gtk::PopoverMenu>,
         #[property(get, set)]
         pub(super) chat_folder_list: glib::WeakRef<model::ChatFolderList>,
         #[property(get, set)]
@@ -56,6 +58,9 @@ mod imp {
         }
 
         fn dispose(&self) {
+            if let Some(popover_menu) = self.popover_menu.get() {
+                popover_menu.unparent();
+            }
             utils::unparent_children(&*self.obj());
         }
     }
@@ -117,4 +122,19 @@ mod imp {
 glib::wrapper! {
     pub(crate) struct Bar(ObjectSubclass<imp::Bar>)
         @extends gtk::Widget;
+}
+
+impl Bar {
+    pub(crate) fn popover_menu(&self) -> gtk::PopoverMenu {
+        self.imp()
+            .popover_menu
+            .get_or_init(|| {
+                gtk::Builder::from_resource(
+                    "/app/drey/paper-plane/ui/session/sidebar/chat_folder/row_menu.ui",
+                )
+                .object::<gtk::PopoverMenu>("popover_menu")
+                .unwrap()
+            })
+            .to_owned()
+    }
 }
