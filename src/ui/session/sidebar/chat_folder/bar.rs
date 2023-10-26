@@ -106,7 +106,10 @@ mod imp {
 
             let chat_list = list_item.item().and_downcast::<model::ChatList>().unwrap();
 
-            list_item.set_child(Some(&ui::SidebarChatFolderRow::from(&chat_list)));
+            list_item.set_child(Some(&ui::SidebarChatFolderRow::new(
+                &self.obj(),
+                &chat_list,
+            )));
         }
 
         #[template_callback]

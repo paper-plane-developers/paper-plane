@@ -4,6 +4,19 @@ using Adw 1;
 template $PaplSidebarChatFolderRow {
   layout-manager: BinLayout {};
 
+  notify::chat-list => $on_notify_chat_list();
+
+  GestureClick {
+    button: 3;
+    pressed => $on_button_3_pressed();
+    released => $on_button_3_released() swapped;
+  }
+
+  GestureLongPress {
+    touch-only: true;
+    pressed => $on_long_pressed();
+  }
+
   Box {
     orientation: vertical;
     spacing: 3;
@@ -16,8 +29,8 @@ template $PaplSidebarChatFolderRow {
       maximum-size: 80;
       tightening-threshold: 80;
       
-    Label title_label {
-      styles ["caption"]
+      Label title_label {
+        styles ["caption"]
 
         justify: center;
         wrap: true;
