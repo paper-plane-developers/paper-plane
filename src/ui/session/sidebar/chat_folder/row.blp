@@ -12,8 +12,17 @@ template $PaplSidebarChatFolderRow {
       chat-list: bind template.chat-list;
     }
 
+    Adw.Clamp {
+      maximum-size: 80;
+      tightening-threshold: 80;
+      
     Label title_label {
       styles ["caption"]
+
+        justify: center;
+        wrap: true;
+        wrap-mode: char;
+      }
     }
   }
 }
