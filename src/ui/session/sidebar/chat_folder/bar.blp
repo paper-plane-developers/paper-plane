@@ -12,6 +12,11 @@ template $PaplSidebarChatFolderBar {
     propagation-phase: capture;
   }
 
+  GestureClick {
+    button: 3;
+    pressed => $on_gesture_click_button_3_pressed();
+  }
+
   ScrolledWindow scrolled_window {
     hscrollbar-policy: external;
     vscrollbar-policy: never;

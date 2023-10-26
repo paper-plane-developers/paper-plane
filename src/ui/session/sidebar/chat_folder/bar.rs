@@ -85,6 +85,11 @@ mod imp {
         }
 
         #[template_callback]
+        fn on_gesture_click_button_3_pressed(gesture_click: &gtk::GestureClick) {
+            gesture_click.set_state(gtk::EventSequenceState::Claimed);
+        }
+
+        #[template_callback]
         fn on_list_view_activated(&self, position: u32) {
             self.selection.select_item(position, true);
         }
