@@ -4,6 +4,7 @@ use std::cell::RefMut;
 use std::collections::BTreeMap;
 use std::sync::OnceLock;
 
+use gettextrs::gettext;
 use glib::clone;
 use glib::Properties;
 use gtk::gio;
@@ -199,6 +200,21 @@ impl ChatList {
 
         drop(list);
         self.items_changed(position as u32, 0, 1);
+    }
+
+    pub(crate) async fn delete(&self) -> anyhow::Result<()> {
+        match self.list_type().0 {
+            tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder { chat_folder_id }) => {
+                tdlib::functions::delete_chat_folder(
+                    chat_folder_id,
+                    Vec::new(),
+                    self.session_().client_().id(),
+                )
+                .await
+                .map_err(|e| anyhow::Error::msg(e.message))
+            }
+            _ => Err(anyhow::Error::msg(gettext("Only folders can be deleted."))),
+        }
     }
 }
 
