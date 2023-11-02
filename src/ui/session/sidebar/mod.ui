@@ -7,11 +7,6 @@
         <attribute name="label" translatable="yes">_Contacts</attribute>
         <attribute name="action">session.show-contacts</attribute>
       </item>
-      <item>
-        <attribute name="label" translatable="yes">_Archived Chats</attribute>
-        <attribute name="action">sidebar-menu.show-archived-chats</attribute>
-        <attribute name="hidden-when">action-disabled</attribute>
-      </item>
     </section>
     <section>
       <item>
@@ -71,6 +66,111 @@
                           </object>
                         </child>
 
+                        <property name="title-widget">
+                          <object class="GtkStack" id="title_stack">
+                            <property name="hhomogeneous">False</property>
+
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">chats-label</property>
+
+                                <property name="child">
+                                  <object class="GtkLabel">
+                                    <style>
+                                      <class name="title"/>
+                                    </style>
+                                    <property name="label" translatable="yes">Chats</property>
+                                  </object>
+                                </property>
+
+                              </object>
+                            </child>
+
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">archive-button</property>
+
+                                <property name="child">
+                                  <object class="GtkButton">
+                                    <style>
+                                      <class name="flat"/>
+                                      <class name="two-line-window-title"/>
+                                    </style>
+                                    <property name="action-name">sidebar.show-archived-chats</property>
+
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="valign">center</property>
+
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <property name="spacing">3</property>
+
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label" translatable="yes">Chats</property>
+                                                <property name="ellipsize">end</property>
+                                              </object>
+                                            </child>
+
+                                          </object>
+                                        </child>
+
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <property name="spacing">3</property>
+
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <style>
+                                                  <class name="caption"/>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                                <property name="label" translatable="yes">Archive</property>
+                                                <property name="ellipsize">end</property>
+                                              </object>
+                                            </child>
+
+                                            <child>
+                                              <object class="GtkLabel" id="archive_unread_label">
+                                                <style>
+                                                  <class name="unread-label"/>
+                                                </style>
+                                                <property name="label">6</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+
+                                            <child>
+                                              <object class="GtkImage">
+                                                <style>
+                                                  <class name="dim-label"/>
+                                                </style>
+                                                <property name="icon-name">arrow1-right-symbolic</property>
+                                                <property name="margin-start">3</property>
+                                              </object>
+                                            </child>
+
+                                          </object>
+                                        </child>
+
+                                      </object>
+                                    </child>
+
+                                  </object>
+                                </property>
+
+                              </object>
+                            </child>
+
+                          </object>
+                        </property>
+
                         <child type="end">
                           <object class="GtkMenuButton">
                             <property name="icon-name">open-menu-symbolic</property>
@@ -108,41 +208,23 @@
                   </object>
                 </child>
 
-                <property name="content">
+                <child>
                   <object class="GtkScrolledWindow">
                     <property name="vexpand">True</property>
                     <property name="hscrollbar-policy">never</property>
 
                     <child>
-                      <object class="GtkBox">
-                        <property name="orientation">vertical</property>
-
-                        <child>
-                          <object class="PaplSidebarArchiveRow" id="archive_row">
-                            <property name="action-name">sidebar.show-archived-chats</property>
-                            <binding name="archive-chat-list">
-                              <lookup name="archive-chat-list" type="ClientStateSession">
-                                <lookup name="session">PaplSidebar</lookup>
-                              </lookup>
-                            </binding>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="PaplSidebarChatList">
-                            <binding name="chat-list">
-                              <lookup name="selected-chat-list">folder_bar</lookup>
-                            </binding>
-                            <property name="selected-chat" bind-source="PaplSidebar" bind-property="selected-chat" bind-flags="sync-create|bidirectional"/>
-                            <property name="compact" bind-source="PaplSidebar" bind-property="compact" bind-flags="sync-create"/>
-                          </object>
-                        </child>
-
+                      <object class="PaplSidebarChatList">
+                        <binding name="chat-list">
+                          <lookup name="selected-chat-list">folder_bar</lookup>
+                        </binding>
+                        <property name="selected-chat" bind-source="PaplSidebar" bind-property="selected-chat" bind-flags="sync-create|bidirectional"/>
+                        <property name="compact" bind-source="PaplSidebar" bind-property="compact" bind-flags="sync-create"/>
                       </object>
                     </child>
 
                   </object>
-                </property>
+                </child>
 
               </object>
             </child>
@@ -196,18 +278,7 @@
               <object class="AdwToolbarView">
 
                 <child type="top">
-                  <object class="AdwHeaderBar">
-
-                    <child type="end">
-                      <object class="GtkButton" id="move_archive_row_button">
-                        <property name="action-name">sidebar.move-archive-row-to-chat-list</property>
-                        <property name="icon-name">move-archived-chats-to-chat-list-symbolic</property>
-                        <property name="tooltip-text" translatable="yes">Move to Chat List</property>
-                        <property name="visible" bind-source="move_archive_row_button" bind-property="sensitive" bind-flags="sync-create"/>
-                      </object>
-                    </child>
-
-                  </object>
+                  <object class="AdwHeaderBar"/>
                 </child>
 
                 <child>

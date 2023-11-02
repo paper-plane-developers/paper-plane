@@ -9,7 +9,6 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/ghost-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/move-archived-chats-to-chat-list-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/all-chats-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/scalable/status/archive-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/avatar-map-marker-hull-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/map-marker-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-failed-symbolic.svg</file>

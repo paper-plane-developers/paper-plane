@@ -59,7 +59,6 @@ pub(crate) use self::session::Row as SessionRow;
 pub(crate) use self::session::SendMediaWindow;
 pub(crate) use self::session::Session;
 pub(crate) use self::session::Sidebar;
-pub(crate) use self::session::SidebarArchiveRow;
 pub(crate) use self::session::SidebarAvatar;
 pub(crate) use self::session::SidebarChatFolderBar;
 pub(crate) use self::session::SidebarChatFolderIcon;
@@ -128,7 +127,6 @@ pub(crate) fn init() {
     SessionRow::static_type();
     SessionSwitcher::static_type();
     Sidebar::static_type();
-    SidebarArchiveRow::static_type();
     SidebarAvatar::static_type();
     SidebarChatFolderBar::static_type();
     SidebarChatFolderIcon::static_type();

@@ -1,4 +1,3 @@
-mod archive_row;
 mod avatar;
 mod chat_folder;
 mod chat_list;
@@ -13,13 +12,11 @@ use std::cell::OnceCell;
 use glib::clone;
 use glib::closure;
 use glib::Properties;
-use gtk::gio;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
-pub(crate) use self::archive_row::ArchiveRow;
 pub(crate) use self::avatar::Avatar;
 pub(crate) use self::chat_folder::Bar as ChatFolderBar;
 pub(crate) use self::chat_folder::Icon as ChatFolderIcon;
@@ -46,7 +43,6 @@ mod imp {
     #[properties(wrapper_type = super::Sidebar)]
     #[template(resource = "/app/drey/paper-plane/ui/session/sidebar/mod.ui")]
     pub(crate) struct Sidebar {
-        pub(super) settings: utils::PaperPlaneSettings,
         #[property(get, set)]
         pub(super) compact: Cell<bool>,
         #[property(get, set, nullable)]
@@ -61,11 +57,13 @@ mod imp {
         #[template_child]
         pub(super) search: TemplateChild<Search>,
         #[template_child]
+        pub(super) title_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub(super) archive_unread_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub(super) snow: TemplateChild<ui::Snow>,
         #[template_child]
         pub(super) folder_bar: TemplateChild<ui::SidebarChatFolderBar>,
-        #[template_child]
-        pub(super) archive_row: TemplateChild<ui::SidebarArchiveRow>,
     }
 
     #[glib::object_subclass]
@@ -89,17 +87,6 @@ mod imp {
             klass.install_action("sidebar.show-archived-chats", None, move |widget, _, _| {
                 widget.show_archived_chats();
             });
-            klass.install_action("sidebar-menu.show-archived-chats", None, |widget, _, _| {
-                widget.show_archived_chats();
-            });
-
-            klass.install_action(
-                "sidebar.move-archive-row-to-chat-list",
-                None,
-                |widget, _, _| {
-                    widget.move_archive_row();
-                },
-            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -116,16 +103,11 @@ mod imp {
             }
 
             if let Some(session) = session {
-                obj.update_archived_chats_actions(&self.settings, session);
-
                 session.archive_chat_list().connect_items_changed(
                     clone!(@weak obj, @weak session => move |chat_list, _, _, _| {
-                        let imp = obj.imp();
                         if chat_list.n_items() == 0 {
-                            imp.navigation_view.pop_to_tag("chats");
+                            obj.imp().navigation_view.pop_to_tag("chats");
                         }
-
-                        obj.update_archived_chats_actions(&imp.settings, &session);
                     }),
                 );
             }
@@ -158,13 +140,6 @@ mod imp {
 
             let obj = &*self.obj();
 
-            self.settings.connect_changed(
-                Some("archive-row-in-main-menu"),
-                clone!(@weak obj => move |settings, _| {
-                    obj.update_archived_chats_actions(settings, &obj.session().unwrap());
-                }),
-            );
-
             let session_expr = Self::Type::this_expression("session");
 
             session_expr
@@ -172,24 +147,33 @@ mod imp {
                 .chain_property::<model::ChatFolderList>("has-folders")
                 .bind(&self.folder_bar.get(), "visible", Some(obj));
 
-            gtk::ClosureExpression::new::<bool>(
-                [
-                    session_expr
-                        .chain_property::<model::ClientStateSession>("archive-chat-list")
-                        .chain_property::<model::ChatList>("len"),
-                    session_expr.chain_property::<model::ClientStateSession>("main-chat-list"),
-                    self.folder_bar
-                        .get()
-                        .property_expression_weak("selected-chat-list"),
-                ],
-                closure!(|_: Self::Type,
-                          len: u32,
-                          main_chat_list: &model::ChatList,
-                          selected: Option<model::ChatList>| {
-                    len > 0 && Some(main_chat_list) == selected.as_ref()
-                }),
-            )
-            .bind(&self.archive_row.get(), "visible", Some(obj));
+            let archive_chat_list_expr =
+                session_expr.chain_property::<model::ClientStateSession>("archive-chat-list");
+
+            let archive_chat_list_unread_count_expr =
+                archive_chat_list_expr.chain_property::<model::ChatList>("unread-chat-count");
+
+            archive_chat_list_expr
+                .chain_property::<model::ChatList>("len")
+                .chain_closure::<String>(closure!(|_: Self::Type, len: u32| {
+                    if len > 0 {
+                        "archive-button"
+                    } else {
+                        "chats-label"
+                    }
+                }))
+                .bind(&self.title_stack.get(), "visible-child-name", Some(obj));
+
+            archive_chat_list_unread_count_expr.bind(
+                &self.archive_unread_label.get(),
+                "label",
+                Some(obj),
+            );
+            archive_chat_list_unread_count_expr.bind(
+                &self.archive_unread_label.get(),
+                "visible",
+                Some(obj),
+            );
         }
 
         fn dispose(&self) {
@@ -252,29 +236,5 @@ impl Sidebar {
 
     pub(crate) fn show_archived_chats(&self) {
         self.imp().navigation_view.push_by_tag("archived-chats");
-    }
-
-    pub(crate) fn move_archive_row(&self) {
-        self.imp()
-            .settings
-            .set("archive-row-in-main-menu", false)
-            .unwrap();
-    }
-
-    fn update_archived_chats_actions(
-        &self,
-        settings: &gio::Settings,
-        session: &model::ClientStateSession,
-    ) {
-        let archive_row_in_main_menu = settings.boolean("archive-row-in-main-menu");
-
-        self.action_set_enabled(
-            "sidebar-menu.show-archived-chats",
-            archive_row_in_main_menu && session.archive_chat_list().n_items() > 0,
-        );
-        self.action_set_enabled(
-            "sidebar.move-archive-row-to-chat-list",
-            archive_row_in_main_menu,
-        );
     }
 }

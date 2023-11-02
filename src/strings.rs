@@ -379,17 +379,6 @@ pub(crate) fn chat_action(action: &model::ChatAction) -> String {
     }
 }
 
-pub(crate) fn chat_display_name(chat: &model::Chat) -> String {
-    if chat.is_own_chat() {
-        gettext("Saved Messages")
-    } else if matches!(chat.chat_type(), model::ChatType::Private(user) if user.user_type().0 == tdlib::enums::UserType::Deleted)
-    {
-        gettext("Deleted Account")
-    } else {
-        chat.title()
-    }
-}
-
 pub(crate) fn user_display_name(user: &model::User, use_full_name: bool) -> String {
     if let tdlib::enums::UserType::Deleted = user.user_type().0 {
         gettext("Deleted Account")
