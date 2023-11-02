@@ -150,7 +150,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/libshumate/",
-                    "tag": "1.1.0"
+                    "tag": "1.1.2"
                 }
             ]
         },
