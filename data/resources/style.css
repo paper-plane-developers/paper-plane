@@ -27,6 +27,21 @@ chatfoldericon .unread-mask {
   padding: 1px;
 }
 
+headerbar .two-line-window-title {
+  padding: 0 9px;
+  margin: -1px 0;
+}
+
+headerbar .unread-label {
+  border-radius: 9999px;
+  background-color: @dark_2;
+  color: @accent_fg_color;
+  padding: 0 4px;
+  font-size: x-small;
+  font-weight: bold;
+  font-feature-settings: "tnum";
+}
+
 chatfoldericon .unread-label {
   border-radius: 9999px;
   background-color: @accent_bg_color;
@@ -48,24 +63,6 @@ chatfolderbar .navigation-tabbar row {
 
 chatfolderbar .navigation-tabbar row chatfolderrow {
   padding: 6px;
-}
-
-archiverow:not(.in-main-menu) {
-  margin-bottom: -4px;
-}
-
-archiverow button {
-  margin: 6px 6px 0 6px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-archiverow.expanded button {
-  padding-left: 8px;
-}
-
-archiverow.collapsed button {
-  padding-left: 12px;
 }
 
 .unread-count {
@@ -127,8 +124,7 @@ chatlist row .unread-count-unmuted {
   background-color: @accent_bg_color;
 }
 
-chatlist row .unread-count-muted,
-archiverow button .unread-count-muted {
+chatlist row .unread-count-muted {
   background-color: @light_5;
 }
 

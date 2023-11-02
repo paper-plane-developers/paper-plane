@@ -50,7 +50,6 @@
     <file compressed="true" preprocess="xml-stripblanks">session/mod.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/preferences_window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">session/sidebar/archive_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/sidebar/avatar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/sidebar/chat_folder/bar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">session/sidebar/chat_folder/icon.ui</file>

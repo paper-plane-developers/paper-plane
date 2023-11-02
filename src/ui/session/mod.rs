@@ -42,7 +42,6 @@ pub(crate) use self::content::MessageVideo;
 pub(crate) use self::content::SendMediaWindow;
 pub(crate) use self::preferences_window::PreferencesWindow;
 pub(crate) use self::row::Row;
-pub(crate) use self::sidebar::ArchiveRow as SidebarArchiveRow;
 pub(crate) use self::sidebar::Avatar as SidebarAvatar;
 pub(crate) use self::sidebar::ChatFolderBar as SidebarChatFolderBar;
 pub(crate) use self::sidebar::ChatFolderIcon as SidebarChatFolderIcon;

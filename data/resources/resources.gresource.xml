@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/app/drey/paper-plane/">
+    <file preprocess="xml-stripblanks">icons/scalable/actions/arrow1-right-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/big-x-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/clear-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/done-symbolic.svg</file>
@@ -8,7 +9,6 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/ghost-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/move-archived-chats-to-chat-list-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/all-chats-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/scalable/status/archive-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/avatar-map-marker-hull-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/map-marker-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/status/message-failed-symbolic.svg</file>
