@@ -40,8 +40,27 @@
   <url type="homepage">https://github.com/paper-plane-developers/paper-plane</url>
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
   <content_rating type="oars-1.1" />
-  sabriunal
   <releases>
+    <release version="0.1.0~beta.5" date="2023-11-03">
+      <description translatable="no">
+        <p>This is the fifth beta release of Paper Plane 0.1.0 with new features and bug fixes:</p>
+        <ul>
+          <li>Archived chats can now be displayed. (#598, #607, #613)</li>
+          <li>Chats can now be archived and de-archived. (#601)</li>
+          <li>Chat folders can now be displayed, selected and deleted. (#603, #608, #609, #614)</li>
+          <li>A regression that prevented images from being sent has been fixed. (#586)</li>
+          <li>The indicator for venue messages now has the correct opacity. (#588)</li>
+          <li>You can now reply to messages with pictures. (#589)</li>
+          <li>A loading indicator is now displayed when a document is downloaded, in coorporation with @yuraiz. (#590)</li>
+          <li>Many improvements to venue and location messages have landed, such as opening the map in the modal and displaying the location on the OSM website. (#596)</li>
+          <li>The loading of messages has been improved so that there are now always enough messages loaded to allow scrolling. (#600)</li>
+          <li>Fixed a crash that occurred sporadically when starting the application. (#602)</li>
+          <li>Release descriptions have been marked as untranslatable, thanks to @sabriunal. (#594)</li>
+          <li>Dependencies have been updated. (#615)</li>
+          <li>Translations have been updated. (#587, #616)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0~beta.4" date="2023-09-25">
       <description translatable="no">
         <p>This is the fourth beta release of Paper Plane 0.1.0 with new features and bug fixes:</p>
