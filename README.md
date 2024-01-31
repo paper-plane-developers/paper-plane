@@ -13,6 +13,9 @@
   <a href="https://github.com/paper-plane-developers/paper-plane/actions/workflows/ci.yml">
     <img src="https://github.com/paper-plane-developers/paper-plane/actions/workflows/ci.yml/badge.svg" alt="CI status"/>
   </a>
+  <a href="https://repology.org/project/paper-plane/versions">
+    <img src="https://repology.org/badge/tiny-repos/paper-plane.svg" alt="Packaging status">
+  </a>
   <a href="https://t.me/paperplanechat">
     <img src="https://img.shields.io/static/v1?label=Chat&message=@paperplanechat&color=blue&logo=telegram" alt="Telegram group">
   </a>
@@ -37,6 +40,10 @@ However, the following things are already working:
 - Searching for groups and persons.
 
 ## Installation Instructions
+
+<a href="https://repology.org/project/paper-plane/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/paper-plane.svg" alt="Packaging status" align="right">
+</a>
 
 Paper Plane is an in-development project and it isn't considered stable software yet.
 
