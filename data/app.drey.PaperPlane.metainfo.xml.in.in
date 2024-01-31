@@ -39,6 +39,8 @@
   </requires>
   <url type="homepage">https://github.com/paper-plane-developers/paper-plane</url>
   <url type="bugtracker">https://github.com/paper-plane-developers/paper-plane/issues</url>
+  <url type="vcs-browser">https://github.com/paper-plane-developers/paper-plane</url>
+  <url type="translate">https://hosted.weblate.org/engage/paper-plane</url>
   <content_rating type="oars-1.1" />
   <releases>
     <release version="0.1.0~beta.5" date="2023-11-03">
@@ -117,7 +119,7 @@
      <kudo>ModernToolkit</kudo>
      <kudo>HiDpiIcon</kudo>
   </kudos>
-  <developer_name>Marco Melorio</developer_name>
+  <developer_name translatable="no">Marco Melorio</developer_name>
   <update_contact>marco.melorio@protonmail.com</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
