@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2024-01-31 17:44+0000\n"
+"PO-Revision-Date: 2024-02-02 04:01+0000\n"
 "Last-Translator: Aleksana <alexander.huang.y@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "paper-plane/main/zh_Hans/>\n"
@@ -1400,7 +1400,7 @@ msgstr "测试服务器(_T)"
 
 #: src/ui/session/switcher.blp:41
 msgid "New Session"
-msgstr ""
+msgstr "新建会话"
 
 #~ msgid "A Telegram client optimized for the GNOME desktop"
 #~ msgstr "为 GNOME 桌面优化的 Telegram 客户端"
