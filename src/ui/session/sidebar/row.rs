@@ -27,6 +27,8 @@ mod imp {
         pub(super) chat_signal_group: OnceCell<glib::SignalGroup>,
         pub(super) session_signal_group: OnceCell<glib::SignalGroup>,
         #[template_child]
+        pub(super) secret_chat_icon: TemplateChild<gtk::Image>,
+        #[template_child]
         pub(super) title_label: TemplateChild<gtk::Inscription>,
         #[template_child]
         pub(super) message_status_icon: TemplateChild<gtk::Image>,
@@ -368,6 +370,7 @@ impl Row {
         self.update_status_stack();
         self.update_unread_count_style();
         self.update_actions();
+        self.update_secret_chat_style();
 
         self.notify("item");
     }
@@ -577,6 +580,26 @@ impl Row {
             self.update_archive_actions(false, false);
             self.update_pin_actions(false, false);
             self.update_mark_as_unread_actions(false, false);
+        }
+    }
+
+    fn update_secret_chat_style(&self) {
+        if let Some(item) = self.item() {
+            let imp = self.imp();
+            let chat = item.chat_();
+            let icon = &imp.secret_chat_icon;
+            match chat.chat_type() {
+                model::ChatType::Secret(_) => {
+                    icon.set_icon_name(Some("padlock2-symbolic"));
+                    icon.set_css_classes(&["accent"]);
+                    icon.set_visible(true);
+                    let title_label = &imp.title_label;
+                    title_label.set_css_classes(&["accent"]);
+                }
+                _ => {
+                    icon.set_visible(false);
+                }
+            }
         }
     }
 
