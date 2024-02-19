@@ -29,6 +29,7 @@ mod imp {
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) is_loading_messages: Cell<bool>,
         pub(super) sticky: Cell<bool>,
+        pub(super) is_secret_chat: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -92,6 +93,9 @@ mod imp {
                     glib::ParamSpecBoolean::builder("sticky")
                         .read_only()
                         .build(),
+                    glib::ParamSpecBoolean::builder("is-secret-chat")
+                        .read_only()
+                        .build(),
                 ]
             });
             PROPERTIES.as_ref()
@@ -106,6 +110,7 @@ mod imp {
                     obj.set_chat(chat);
                 }
                 "sticky" => obj.set_sticky(value.get().unwrap()),
+                "is_secret_chat" => obj.set_is_secret_chat(value.get().unwrap()),
                 _ => unimplemented!(),
             }
         }
@@ -116,6 +121,7 @@ mod imp {
             match pspec.name() {
                 "chat" => obj.chat().to_value(),
                 "sticky" => obj.sticky().to_value(),
+                "is-secret-chat" => obj.is_secret_chat().to_value(),
                 _ => unimplemented!(),
             }
         }
@@ -311,6 +317,15 @@ impl ChatHistory {
         let imp = self.imp();
 
         if let Some(chat) = chat {
+            match chat.chat_type() {
+                model::ChatType::Secret(_) => {
+                    self.set_is_secret_chat(true);
+                }
+                _ => {
+                    self.set_is_secret_chat(false);
+                }
+            }
+
             self.action_set_enabled(
                 "chat-history.leave-chat",
                 match chat.chat_type() {
@@ -410,6 +425,19 @@ impl ChatHistory {
 
         self.imp().sticky.set(sticky);
         self.notify("sticky");
+    }
+
+    pub(crate) fn is_secret_chat(&self) -> bool {
+        self.imp().is_secret_chat.get()
+    }
+
+    fn set_is_secret_chat(&self, is_secret_chat: bool) {
+        if self.is_secret_chat() == is_secret_chat {
+            return;
+        }
+
+        self.imp().is_secret_chat.set(is_secret_chat);
+        self.notify("is-secret-chat");
     }
 
     fn scroll_down(&self) {
