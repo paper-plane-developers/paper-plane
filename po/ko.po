@@ -8,19 +8,21 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-03-16 23:28+0000\n"
+"Last-Translator: honnip <me@honnip.page>\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/paper-plane/main/"
+"ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
 msgid "Paper Plane"
-msgstr ""
+msgstr "Paper Plane"
 
 #: data/app.drey.PaperPlane.desktop.in.in:4
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:8
@@ -34,12 +36,12 @@ msgstr ""
 #: data/app.drey.PaperPlane.gschema.xml.in:6
 #: data/app.drey.PaperPlane.gschema.xml.in:7
 msgid "Default window width"
-msgstr ""
+msgstr "기본 창 너비"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:11
 #: data/app.drey.PaperPlane.gschema.xml.in:12
 msgid "Default window height"
-msgstr ""
+msgstr "기본 창 높이"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:16
 #: data/app.drey.PaperPlane.gschema.xml.in:17
@@ -48,11 +50,11 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.gschema.xml.in:21
 msgid "Last used session"
-msgstr ""
+msgstr "마지막으로 사용한 세션"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:22
 msgid "The directory name of the last used session"
-msgstr ""
+msgstr "마지막으로 사용한 세션의 디렉터리 이름"
 
 #: data/app.drey.PaperPlane.gschema.xml.in:31
 #: src/ui/session/preferences_window.blp:7
@@ -69,6 +71,9 @@ msgid ""
 "user interface and strives to meet the design principles of the GNOME "
 "desktop."
 msgstr ""
+"Paper Plane은 대체 Telegram 클라이언트입니다. 사용자 인터페이스로 "
+"libadwaita를 사용하고 GNOME 데스크탑의 디자인 원칙을 달성하기 위해 "
+"노력합니다."
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:14
 msgid ""
@@ -78,19 +83,19 @@ msgstr ""
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:19
 msgid "The use of multiple accounts at the same time."
-msgstr ""
+msgstr "동시에 여러 계정 사용하기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:20
 msgid "Viewing text messages, images, stickers and files."
-msgstr ""
+msgstr "문자 메세지와 이미지, 스티커와 파일 보기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:21
 msgid "Sending text messages and images."
-msgstr ""
+msgstr "문자 메세지와 이미지 보내기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:22
 msgid "Replying to messages."
-msgstr ""
+msgstr "메세지 답장하기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:23
 msgid "Searching for groups and persons."
