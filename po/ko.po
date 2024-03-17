@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2024-03-16 23:28+0000\n"
+"PO-Revision-Date: 2024-03-18 08:01+0000\n"
 "Last-Translator: honnip <me@honnip.page>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/paper-plane/main/"
 "ko/>\n"
@@ -87,19 +87,19 @@ msgstr "동시에 여러 계정 사용하기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:20
 msgid "Viewing text messages, images, stickers and files."
-msgstr "문자 메세지와 이미지, 스티커와 파일 보기"
+msgstr "문자 메시지와 이미지, 스티커와 파일 보기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:21
 msgid "Sending text messages and images."
-msgstr "문자 메세지와 이미지 보내기"
+msgstr "문자 메시지와 이미지 보내기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:22
 msgid "Replying to messages."
-msgstr "메세지 답장하기"
+msgstr "메시지 답장하기"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:23
 msgid "Searching for groups and persons."
-msgstr ""
+msgstr "그룹 및 개인 검색"
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:29
 msgid "Main window"
@@ -179,7 +179,7 @@ msgstr ""
 
 #: src/application.rs:165
 msgid "Paper Plane developers"
-msgstr ""
+msgstr "Paper Plane 개발자"
 
 #: src/application.rs:185
 msgid "Sponsors"
@@ -202,11 +202,11 @@ msgstr ""
 #: src/expressions.rs:20 src/ui/session/sidebar/search/item_row.rs:97
 #: src/ui/session/sidebar/search/mod.rs:182
 msgid "Saved Messages"
-msgstr ""
+msgstr "저장한 메시지"
 
 #: src/expressions.rs:22 src/expressions.rs:44 src/strings.rs:384
 msgid "Deleted Account"
-msgstr ""
+msgstr "탈퇴한 계정"
 
 #: src/expressions.rs:90
 msgid "The admins of this group have restricted you from writing here"
@@ -245,11 +245,11 @@ msgstr ""
 
 #: src/model/country_info.rs:99
 msgid "Invalid Country Code"
-msgstr ""
+msgstr "잘못된 국가 코드"
 
 #: src/model/country_info.rs:108
 msgid "Test Account"
-msgstr ""
+msgstr "테스트 계정"
 
 #: src/strings.rs:29
 msgid "{sender} is choosing a contact"
@@ -477,7 +477,7 @@ msgstr ""
 
 #: src/strings.rs:398
 msgid "last seen a long time ago"
-msgstr ""
+msgstr "마지막으로 접속한 지 오래됨"
 
 #: src/strings.rs:399
 msgid "online"
@@ -487,34 +487,32 @@ msgstr ""
 #: src/strings.rs:408
 #, c-format
 msgid "last seen %x"
-msgstr ""
+msgstr "%x까지 접속함"
 
 #. Translators: This is an online status with the last seen time, without seconds
 #. Here you may want to change to a 24-hours representation, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/strings.rs:413
 msgid "last seen yesterday at %l:%M %p"
-msgstr ""
+msgstr "어제 %p %l:%M까지 접속함"
 
 #: src/strings.rs:417
 msgid "last seen {num} hour ago"
 msgid_plural "last seen {num} hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num}시간 전에 접속함"
 
 #: src/strings.rs:424
 msgid "last seen {num} minute ago"
 msgid_plural "last seen {num} minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{num}분 전에 접속함"
 
 #: src/strings.rs:430
 msgid "last seen just now"
-msgstr ""
+msgstr "방금 접속함"
 
 #: src/strings.rs:433
 msgid "last seen recently"
-msgstr ""
+msgstr "최근에 접속함"
 
 #: src/strings.rs:434
 msgid "last seen within a week"
@@ -558,7 +556,7 @@ msgstr ""
 
 #: src/strings.rs:516
 msgid "GIF"
-msgstr ""
+msgstr "GIF"
 
 #: src/strings.rs:518
 msgid "GIF, {caption}"
