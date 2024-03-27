@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2024-03-18 08:01+0000\n"
+"PO-Revision-Date: 2024-03-27 16:04+0000\n"
 "Last-Translator: honnip <me@honnip.page>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/paper-plane/main/"
 "ko/>\n"
@@ -1292,11 +1292,11 @@ msgstr ""
 
 #: src/ui/session/sidebar/mod.ui:148 src/ui/session/sidebar/search/mod.ui:16
 msgid "Search"
-msgstr ""
+msgstr "검색"
 
 #: src/ui/session/sidebar/mod.ui:165
 msgid "Sessions"
-msgstr ""
+msgstr "세션"
 
 #: src/ui/session/sidebar/row.rs:414
 msgid "Draft:"
