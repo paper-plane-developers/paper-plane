@@ -120,6 +120,9 @@
      <kudo>HiDpiIcon</kudo>
   </kudos>
   <developer_name translate="no">Marco Melorio</developer_name>
+  <developer id="io.github.paper-plane-developers">
+      <name translate="no">Marco Melorio</name>
+  </developer>
   <update_contact>marco.melorio@protonmail.com</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
