@@ -1,12 +1,12 @@
 use std::cell::Cell;
 use std::cell::OnceCell;
 use std::cell::RefCell;
+use std::sync::OnceLock;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use gtk::CompositeTemplate;
@@ -58,16 +58,20 @@ mod imp {
             });
             klass.install_action(
                 "chat-history.reply",
-                Some("x"),
+                Some(glib::VariantTy::INT64),
                 move |widget, _, variant| {
                     let message_id = variant.and_then(|v| v.get()).unwrap();
                     widget.imp().chat_action_bar.reply_to_message_id(message_id);
                 },
             );
-            klass.install_action("chat-history.edit", Some("x"), move |widget, _, variant| {
-                let message_id = variant.and_then(|v| v.get()).unwrap();
-                widget.imp().chat_action_bar.edit_message_id(message_id);
-            });
+            klass.install_action(
+                "chat-history.edit",
+                Some(glib::VariantTy::INT64),
+                move |widget, _, variant| {
+                    let message_id = variant.and_then(|v| v.get()).unwrap();
+                    widget.imp().chat_action_bar.edit_message_id(message_id);
+                },
+            );
             klass.install_action_async(
                 "chat-history.leave-chat",
                 None,
@@ -84,7 +88,8 @@ mod imp {
 
     impl ObjectImpl for ChatHistory {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![
                     glib::ParamSpecObject::builder::<model::Chat>("chat")
                         .explicit_notify()
@@ -93,8 +98,7 @@ mod imp {
                         .read_only()
                         .build(),
                 ]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

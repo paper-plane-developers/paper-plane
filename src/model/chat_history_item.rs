@@ -1,6 +1,6 @@
 use std::cell::OnceCell;
+use std::sync::OnceLock;
 
-use glib::once_cell::sync::Lazy;
 use glib::prelude::*;
 use glib::subclass::prelude::*;
 use gtk::glib;
@@ -30,13 +30,13 @@ mod imp {
 
     impl ObjectImpl for ChatHistoryItem {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![glib::ParamSpecBoxed::builder::<ChatHistoryItemType>("type")
                     .write_only()
                     .construct_only()
                     .build()]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

@@ -129,7 +129,7 @@ impl Snow {
     fn ensure_shader(&self) {
         let imp = self.imp();
         if imp.snow_shader.borrow().is_none() {
-            let renderer = self.native().unwrap().renderer();
+            let renderer = self.native().unwrap().renderer().unwrap();
 
             let shader = {
                 let bytes = glib::Bytes::from_static(SNOW_SHADER);

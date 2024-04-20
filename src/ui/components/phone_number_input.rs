@@ -3,11 +3,11 @@ use std::cell::Cell;
 use std::cell::OnceCell;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::OnceLock;
 
 use adw::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::glib::subclass::Signal;
 use gtk::pango;
@@ -56,13 +56,13 @@ mod imp {
 
     impl ObjectImpl for PhoneNumberInput {
         fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> =
-                Lazy::new(|| vec![Signal::builder("activate").build()]);
-            SIGNALS.as_ref()
+            static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
+            SIGNALS.get_or_init(|| vec![Signal::builder("activate").build()])
         }
 
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![
                     glib::ParamSpecObject::builder::<model::CountryList>("model")
                         .explicit_notify()
@@ -71,8 +71,7 @@ mod imp {
                         .explicit_notify()
                         .build(),
                 ]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

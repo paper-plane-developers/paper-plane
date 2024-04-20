@@ -7,8 +7,9 @@ mod event_row;
 mod message_row;
 mod send_media_window;
 
+use std::sync::OnceLock;
+
 use adw::subclass::prelude::*;
-use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
@@ -71,12 +72,12 @@ mod imp {
 
     impl ObjectImpl for Content {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![glib::ParamSpecObject::builder::<model::Chat>("chat")
                     .explicit_notify()
                     .build()]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

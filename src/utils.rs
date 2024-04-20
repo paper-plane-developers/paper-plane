@@ -1,9 +1,9 @@
 use std::future::Future;
 use std::ops::Deref;
 use std::path::PathBuf;
+use std::sync::OnceLock;
 
 use gettextrs::gettext;
-use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::gio;
 use gtk::glib;
@@ -16,7 +16,10 @@ use crate::config;
 use crate::APPLICATION_OPTS;
 use crate::TEMP_DIR;
 
-static PROTOCOL_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\w+://").unwrap());
+fn protocol_re() -> &'static Regex {
+    static PROTOCOL_RE: OnceLock<Regex> = OnceLock::new();
+    PROTOCOL_RE.get_or_init(|| Regex::new(r"^\w+://").unwrap())
+}
 
 #[derive(Debug)]
 pub(crate) struct PaperPlaneSettings(gio::Settings);
@@ -57,7 +60,7 @@ pub(crate) fn freplace(s: String, args: &[(&str, &str)]) -> String {
 }
 
 pub(crate) fn linkify(text: &str) -> String {
-    if !PROTOCOL_RE.is_match(text) {
+    if !protocol_re().is_match(text) {
         format!("http://{text}")
     } else {
         text.to_string()
@@ -251,7 +254,7 @@ pub(crate) fn decode_image_from_path(path: &str) -> Result<gdk::MemoryTexture, D
     Ok(texture)
 }
 
-pub(crate) fn show_toast<W: glib::IsA<gtk::Widget>>(widget: &W, title: impl Into<glib::GString>) {
+pub(crate) fn show_toast<W: IsA<gtk::Widget>>(widget: &W, title: impl Into<glib::GString>) {
     widget
         .ancestor(adw::ToastOverlay::static_type())
         .unwrap()

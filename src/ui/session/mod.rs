@@ -5,9 +5,10 @@ mod row;
 mod sidebar;
 mod switcher;
 
+use std::sync::OnceLock;
+
 use adw::subclass::prelude::*;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use gtk::gdk;
 use gtk::glib;
 use gtk::prelude::*;
@@ -107,7 +108,6 @@ mod imp {
                 gdk::Key::F,
                 gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::SHIFT_MASK,
                 "session.begin-chats-search",
-                None,
             );
             klass.install_action("session.begin-chats-search", None, |widget, _, _| {
                 widget.begin_chats_search();
@@ -117,7 +117,6 @@ mod imp {
                 gdk::Key::v,
                 gdk::ModifierType::CONTROL_MASK,
                 "session.paste",
-                None,
             );
             klass.install_action("session.paste", None, move |widget, _, _| {
                 widget.handle_paste_action();
@@ -131,14 +130,14 @@ mod imp {
 
     impl ObjectImpl for Session {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![
                     glib::ParamSpecObject::builder::<model::ClientStateSession>("model")
                         .construct_only()
                         .build(),
                 ]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

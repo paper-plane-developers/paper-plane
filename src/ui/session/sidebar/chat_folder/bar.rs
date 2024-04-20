@@ -1,6 +1,7 @@
+use std::cell::OnceCell;
+
 use glib::Properties;
 use gtk::glib;
-use gtk::glib::once_cell::unsync::OnceCell;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;

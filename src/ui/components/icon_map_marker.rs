@@ -34,15 +34,14 @@ mod imp {
 
     impl ObjectImpl for AvatarMapMarker {
         fn properties() -> &'static [glib::ParamSpec] {
-            use glib::once_cell::sync::Lazy;
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            use std::sync::OnceLock;
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![glib::ParamSpecString::builder("icon-name")
                     .construct()
                     .explicit_notify()
                     .build()]
-            });
-
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

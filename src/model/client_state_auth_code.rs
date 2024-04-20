@@ -2,8 +2,8 @@ use std::cell::Cell;
 use std::cell::RefCell;
 
 use glib::clone;
+use glib::prelude::*;
 use glib::subclass::prelude::*;
-use glib::ObjectExt;
 use glib::Properties;
 use gtk::glib;
 

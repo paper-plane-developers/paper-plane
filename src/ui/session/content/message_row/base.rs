@@ -76,7 +76,7 @@ glib::wrapper! {
 pub(crate) trait MessageBaseExt:
     glib::object::IsClass + IsA<glib::Object> + IsA<gtk::Widget> + IsA<MessageBase>
 {
-    type Message: glib::IsA<glib::Object>;
+    type Message: IsA<glib::Object>;
 
     fn new(message: &Self::Message) -> Self {
         glib::Object::builder().property("message", message).build()

@@ -2,11 +2,11 @@ use std::cell::Cell;
 use std::cell::RefCell;
 use std::cmp::Ordering;
 use std::collections::VecDeque;
+use std::sync::OnceLock;
 
 use gio::prelude::*;
 use gio::subclass::prelude::*;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use gtk::gio;
 use gtk::glib;
 use thiserror::Error;
@@ -40,12 +40,12 @@ mod imp {
 
     impl ObjectImpl for ChatHistoryModel {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![glib::ParamSpecObject::builder::<model::Chat>("chat")
                     .read_only()
                     .build()]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn property(&self, _id: usize, pspec: &glib::ParamSpec) -> glib::Value {
