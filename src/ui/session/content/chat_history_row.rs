@@ -1,9 +1,9 @@
 use std::cell::RefCell;
+use std::sync::OnceLock;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use glib::once_cell::sync::Lazy;
 use gtk::glib;
 
 use crate::model;
@@ -28,12 +28,12 @@ mod imp {
 
     impl ObjectImpl for ChatHistoryRow {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![glib::ParamSpecObject::builder::<glib::Object>("item")
                     .explicit_notify()
                     .build()]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

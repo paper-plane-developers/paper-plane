@@ -1,6 +1,7 @@
+use std::cell::OnceCell;
+
 use gettextrs::gettext;
 use glib::closure;
-use glib::once_cell::unsync::OnceCell;
 use glib::Properties;
 use gtk::gdk;
 use gtk::glib;

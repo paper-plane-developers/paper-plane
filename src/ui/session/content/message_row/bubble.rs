@@ -2,9 +2,9 @@ use std::cell::RefCell;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::Hash;
 use std::hash::Hasher;
+use std::sync::OnceLock;
 
 use adw::prelude::*;
-use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
@@ -68,7 +68,8 @@ mod imp {
 
     impl ObjectImpl for MessageBubble {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> = Lazy::new(|| {
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| {
                 vec![
                     glib::ParamSpecObject::builder::<gtk::Widget>("prefix")
                         .write_only()
@@ -78,8 +79,7 @@ mod imp {
                         .write_only()
                         .build(),
                 ]
-            });
-            PROPERTIES.as_ref()
+            })
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

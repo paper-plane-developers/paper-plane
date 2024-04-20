@@ -1,4 +1,5 @@
 use gettextrs::gettext;
+use glib::prelude::*;
 use gtk::glib;
 use gtk::glib::closure;
 use gtk::prelude::GObjectPropertyExpressionExt;
@@ -70,9 +71,7 @@ pub(crate) fn restriction_expression(chat: &model::Chat) -> gtk::Expression {
     }
 }
 
-fn restriction_label_expression<T: glib::StaticType, V: glib::ToValue>(
-    value: &V,
-) -> gtk::Expression {
+fn restriction_label_expression<T: StaticType, V: ToValue>(value: &V) -> gtk::Expression {
     let member_status_expression = gtk::PropertyExpression::new(
         T::static_type(),
         Some(gtk::ConstantExpression::new(value)),

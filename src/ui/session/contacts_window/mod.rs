@@ -1,10 +1,10 @@
 mod row;
 
 use std::cell::OnceCell;
+use std::sync::OnceLock;
 
 use adw::subclass::prelude::*;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use gtk::gio;
 use gtk::glib;
@@ -49,12 +49,12 @@ mod imp {
 
     impl ObjectImpl for ContactsWindow {
         fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+            static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
+            SIGNALS.get_or_init(|| {
                 vec![Signal::builder("contact-activated")
                     .param_types([i64::static_type()])
                     .build()]
-            });
-            SIGNALS.as_ref()
+            })
         }
     }
 

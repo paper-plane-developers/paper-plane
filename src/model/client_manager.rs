@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 use std::fs;
+use std::sync::OnceLock;
 use std::thread;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
 use gio::subclass::prelude::*;
 use glib::clone;
-use glib::once_cell::sync::Lazy;
 use glib::subclass::Signal;
 use gtk::gio;
 use gtk::glib;
@@ -33,7 +33,8 @@ mod imp {
 
     impl ObjectImpl for ClientManager {
         fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+            static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
+            SIGNALS.get_or_init(|| {
                 vec![
                     Signal::builder("client-removed")
                         .param_types([model::Client::static_type()])
@@ -48,8 +49,7 @@ mod imp {
                         ])
                         .build(),
                 ]
-            });
-            SIGNALS.as_ref()
+            })
         }
 
         fn constructed(&self) {
@@ -265,20 +265,18 @@ impl ClientManager {
     }
 
     fn start_tdlib_thread(&self) {
-        let (sender, receiver) = glib::MainContext::sync_channel(glib::Priority::DEFAULT, 100);
-        receiver.attach(
-            None,
-            clone!(@weak self as obj => @default-return glib::ControlFlow::Break,
-                move |(update, client_id)| {
-                    obj.handle_update(update, client_id);
-                    glib::ControlFlow::Continue
-                }
-            ),
-        );
+        let (sender, receiver) = async_channel::unbounded();
+        glib::spawn_future_local(clone!(@weak self as obj => async move {
+            while let Ok((update, client_id)) = receiver.recv().await {
+                obj.handle_update(update, client_id);
+            }
+        }));
 
         thread::spawn(move || loop {
             if let Some((update, client_id)) = tdlib::receive() {
-                _ = sender.send((update, client_id));
+                glib::spawn_future(clone!(@strong sender => async move {
+                    _ = sender.send((update, client_id)).await;
+                }));
             }
         });
     }

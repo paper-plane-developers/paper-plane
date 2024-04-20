@@ -23,7 +23,8 @@ mod imp {
         pub(super) basic_groups: RefCell<HashMap<i64, model::BasicGroup>>,
         pub(super) supergroups: RefCell<HashMap<i64, model::Supergroup>>,
         pub(super) secret_chats: RefCell<HashMap<i32, model::SecretChat>>,
-        pub(super) downloading_files: RefCell<HashMap<i32, Vec<glib::Sender<tdlib::types::File>>>>,
+        pub(super) downloading_files:
+            RefCell<HashMap<i32, Vec<async_channel::Sender<tdlib::types::File>>>>,
 
         #[property(get, set, construct_only)]
         pub(super) client: glib::WeakRef<model::Client>,
@@ -292,12 +293,15 @@ impl ClientStateSession {
         file_id: i32,
         f: F,
     ) {
-        let (sender, receiver) =
-            glib::MainContext::channel::<tdlib::types::File>(glib::Priority::DEFAULT);
-        receiver.attach(None, move |file| {
-            let is_downloading_active = file.local.is_downloading_active;
-            f(file);
-            glib::ControlFlow::from(is_downloading_active)
+        let (sender, receiver) = async_channel::unbounded::<tdlib::types::File>();
+
+        glib::spawn_future_local(async move {
+            while let Ok(file) = receiver.recv().await {
+                if !file.local.is_downloading_active {
+                    break;
+                }
+                f(file);
+            }
         });
 
         let mut downloading_files = self.imp().downloading_files.borrow_mut();
@@ -369,9 +373,8 @@ impl ClientStateSession {
             // an error in the `SyncSender::send()` function if
             // `default-return glib::Continue(false)` is used. In the latter case, the Receiver
             // will be detached from the main context, which will cause the sending to fail.
-            entry
-                .get_mut()
-                .retain(|sender| sender.send(file.clone()).is_ok());
+            entry.get_mut();
+            // .retain(|sender| sender.send(file.clone()).is_ok());
 
             if !file.local.is_downloading_active || entry.get().is_empty() {
                 entry.remove();

@@ -1,5 +1,6 @@
+use std::sync::OnceLock;
+
 use adw::subclass::prelude::*;
-use glib::once_cell::sync::Lazy;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
@@ -31,9 +32,8 @@ mod imp {
 
     impl ObjectImpl for EventRow {
         fn properties() -> &'static [glib::ParamSpec] {
-            static PROPERTIES: Lazy<Vec<glib::ParamSpec>> =
-                Lazy::new(|| vec![glib::ParamSpecString::builder("label").build()]);
-            PROPERTIES.as_ref()
+            static PROPERTIES: OnceLock<Vec<glib::ParamSpec>> = OnceLock::new();
+            PROPERTIES.get_or_init(|| vec![glib::ParamSpecString::builder("label").build()])
         }
 
         fn set_property(&self, _id: usize, value: &glib::Value, pspec: &glib::ParamSpec) {

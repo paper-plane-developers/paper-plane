@@ -1,10 +1,10 @@
 use std::cell::Cell;
+use std::cell::OnceCell;
 use std::cell::RefCell;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::clone;
-use glib::once_cell::unsync::OnceCell;
 use gtk::gdk;
 use gtk::gio;
 use gtk::glib;
@@ -180,7 +180,7 @@ mod imp {
                 let texture = match self.gradient_texture.take() {
                     Some(texture) if !size_changed => texture,
                     _ => {
-                        let renderer = self.obj().native().unwrap().renderer();
+                        let renderer = self.obj().native().unwrap().renderer().unwrap();
                         renderer.render_texture(self.gradient_shader_node(bounds), Some(bounds))
                     }
                 };
@@ -354,7 +354,7 @@ impl Background {
     fn ensure_shader(&self) {
         let imp = self.imp();
         if imp.shader.borrow().is_none() {
-            let renderer = self.native().unwrap().renderer();
+            let renderer = self.native().unwrap().renderer().unwrap();
 
             let shader = gsk::GLShader::from_bytes(&GRADIENT_SHADER.into());
             match shader.compile(&renderer) {
