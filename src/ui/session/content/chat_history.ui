@@ -9,7 +9,18 @@
             <child>
               <object class="AdwHeaderBar">
                 <child type="title">
-                  <object class="AdwWindowTitle" id="window_title"/>
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible" bind-source="PaplChatHistory"
+                          bind-property="is-secret-chat" bind-flags="sync-create" />
+                        <property name="icon-name">padlock2-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwWindowTitle" id="window_title"/>
+                    </child>
+                  </object>
                 </child>
                 <child type="end">
                   <object class="GtkMenuButton">
