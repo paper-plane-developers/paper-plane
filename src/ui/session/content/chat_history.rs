@@ -259,14 +259,9 @@ impl ChatHistory {
         self.root()?.downcast().ok()
     }
 
-    fn request_sponsored_message(
-        &self,
-        session: &model::ClientStateSession,
-        chat_id: i64,
-        list: &gio::ListStore,
-    ) {
-        utils::spawn(clone!(@weak session, @weak list => async move {
-            match model::SponsoredMessage::request(chat_id, &session).await {
+    fn request_sponsored_message(&self, chat: &model::Chat, list: &gio::ListStore) {
+        utils::spawn(clone!(@weak chat, @weak list => async move {
+            match model::SponsoredMessage::request(&chat).await {
                 Ok(sponsored_message) => {
                     if let Some(sponsored_message) = sponsored_message {
                         list.append(&sponsored_message);
@@ -339,11 +334,7 @@ impl ChatHistory {
                 // to the chat history in the GtkListView using a GtkFlattenListModel
                 let sponsored_message_list = gio::ListStore::new::<model::SponsoredMessage>();
                 list.append(&sponsored_message_list);
-                self.request_sponsored_message(
-                    &chat.session_(),
-                    chat.id(),
-                    &sponsored_message_list,
-                );
+                self.request_sponsored_message(chat, &sponsored_message_list);
 
                 list.append(&model);
 
