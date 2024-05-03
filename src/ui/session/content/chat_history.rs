@@ -1,6 +1,7 @@
 use std::cell::Cell;
 use std::cell::OnceCell;
 use std::cell::RefCell;
+use std::collections::HashSet;
 use std::sync::OnceLock;
 
 use adw::prelude::*;
@@ -30,6 +31,8 @@ mod imp {
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) is_loading_messages: Cell<bool>,
         pub(super) sticky: Cell<bool>,
+        pub(super) viewed_message_ids: RefCell<HashSet<i64>>,
+        pub(super) viewed_message_ids_changed: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -135,6 +138,21 @@ mod imp {
             let adj = self.list_view.vadjustment().unwrap();
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
                 let imp = obj.imp();
+
+                if imp.viewed_message_ids_changed.get() {
+                    imp.viewed_message_ids_changed.set(false);
+
+                    let chat = obj.chat().unwrap();
+                    let chat_id = chat.id();
+                    let client_id = chat.session_().client_().id();
+                    let viewed_message_ids = Vec::from_iter(imp.viewed_message_ids.borrow().iter().copied());
+
+                    utils::spawn(async move {
+                        tdlib::functions::view_messages(chat_id, viewed_message_ids, None, true, client_id)
+                            .await
+                            .unwrap();
+                    });
+                }
 
                 if imp.is_loading_messages.get() {
                     return;
@@ -281,6 +299,20 @@ impl ChatHistory {
                 }
             }
         }));
+    }
+
+    pub(crate) fn add_to_viewed_message_ids(&self, message_id: i64) {
+        let imp = self.imp();
+        if imp.viewed_message_ids.borrow_mut().insert(message_id) {
+            imp.viewed_message_ids_changed.set(true);
+        }
+    }
+
+    pub(crate) fn remove_from_viewed_message_ids(&self, message_id: i64) {
+        let imp = self.imp();
+        if imp.viewed_message_ids.borrow_mut().remove(&message_id) {
+            imp.viewed_message_ids_changed.set(true);
+        }
     }
 
     pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
