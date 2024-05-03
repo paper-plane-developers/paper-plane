@@ -8,6 +8,8 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
 use crate::model;
+use crate::types::ChatId;
+use crate::types::ClientId;
 use crate::ui;
 use crate::utils;
 use crate::APPLICATION_OPTS;
@@ -168,7 +170,7 @@ impl ClientManagerView {
         }));
     }
 
-    pub(crate) fn select_chat(&self, client_id: i32, chat_id: i64) {
+    pub(crate) fn select_chat(&self, client_id: ClientId, chat_id: ChatId) {
         if self
             .active_client()
             .filter(|client| client.id() == client_id)

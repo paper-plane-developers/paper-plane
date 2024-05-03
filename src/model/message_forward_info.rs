@@ -6,6 +6,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::model;
+use crate::types::MessageId;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageForwardOrigin")]
@@ -30,7 +31,7 @@ pub(crate) enum MessageForwardOrigin {
 }
 
 impl MessageForwardOrigin {
-    pub(crate) fn id(&self) -> Option<i64> {
+    pub(crate) fn id(&self) -> Option<MessageId> {
         Some(match self {
             Self::User(user) => user.id(),
             Self::Chat { chat, .. } | Self::Channel { chat, .. } => chat.id(),

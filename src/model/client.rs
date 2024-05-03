@@ -12,6 +12,7 @@ use gtk::subclass::prelude::*;
 
 use crate::config;
 use crate::model;
+use crate::types::ClientId;
 use crate::utils;
 
 /// A struct for storing information about a session's database.
@@ -35,7 +36,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) remove_if_auth: OnceCell<bool>,
         #[property(get, set, construct_only)]
-        pub(super) id: OnceCell<i32>,
+        pub(super) id: OnceCell<ClientId>,
         #[property(get, set, construct_only)]
         pub(super) database_info: OnceCell<model::BoxedDatabaseInfo>,
         #[property(get)]
@@ -80,13 +81,13 @@ impl Client {
     pub(crate) fn new(
         client_manager: &model::ClientManager,
         remove_if_auth: bool,
-        client_id: i32,
+        id: ClientId,
         database_info: model::DatabaseInfo,
     ) -> Self {
         glib::Object::builder()
             .property("client-manager", client_manager)
             .property("remove-if-auth", remove_if_auth)
-            .property("id", client_id)
+            .property("id", id)
             .property("database-info", model::BoxedDatabaseInfo(database_info))
             .build()
     }

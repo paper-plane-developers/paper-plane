@@ -11,6 +11,7 @@ mod expressions;
 mod i18n;
 mod model;
 mod strings;
+mod types;
 mod utils;
 
 use std::path::PathBuf;

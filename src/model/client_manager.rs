@@ -15,6 +15,7 @@ use indexmap::map::Entry;
 use indexmap::IndexMap;
 
 use crate::model;
+use crate::types::ClientId;
 use crate::utils;
 use crate::APPLICATION_OPTS;
 
@@ -161,13 +162,13 @@ impl ClientManager {
 
     fn add_client(
         &self,
-        client_id: i32,
+        id: ClientId,
         database_info: model::DatabaseInfo,
         remove_if_auth: bool,
     ) -> model::Client {
-        let client = model::Client::new(self, remove_if_auth, client_id, database_info);
+        let client = model::Client::new(self, remove_if_auth, id, database_info);
         let (position, _) = self.imp().0.borrow_mut().insert_full(
-            client_id,
+            id,
             // Important: Here, we basically say that we just want to wait for
             // `AuthorizationState::Ready` and skip the login process.
             client.clone(),
@@ -233,9 +234,9 @@ impl ClientManager {
         }
     }
 
-    pub(crate) fn handle_update(&self, update: tdlib::enums::Update, client_id: i32) {
+    pub(crate) fn handle_update(&self, update: tdlib::enums::Update, id: ClientId) {
         let mut list = self.imp().0.borrow_mut();
-        if let Entry::Occupied(entry) = list.entry(client_id) {
+        if let Entry::Occupied(entry) = list.entry(id) {
             if let tdlib::enums::Update::NotificationGroup(group) = update {
                 let session = entry
                     .get()

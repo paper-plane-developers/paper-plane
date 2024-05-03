@@ -61,6 +61,7 @@ pub(crate) use self::sidebar::Selection as SidebarSelection;
 pub(crate) use self::sidebar::Sidebar;
 pub(crate) use self::switcher::Switcher;
 use crate::model;
+use crate::types::ChatId;
 use crate::ui;
 use crate::utils;
 
@@ -176,11 +177,11 @@ impl Session {
         self.imp().model.upgrade()
     }
 
-    pub(crate) fn select_chat(&self, chat_id: i64) {
-        match self.model().unwrap().try_chat(chat_id) {
+    pub(crate) fn select_chat(&self, id: ChatId) {
+        match self.model().unwrap().try_chat(id) {
             Some(chat) => self.imp().sidebar.set_selected_chat(Some(&chat)),
             None => utils::spawn(clone!(@weak self as obj => async move {
-                match tdlib::functions::create_private_chat(chat_id, true, obj.model().unwrap().client_().id()).await {
+                match tdlib::functions::create_private_chat(id, true, obj.model().unwrap().client_().id()).await {
                     Ok(tdlib::enums::Chat::Chat(data)) => obj.imp().sidebar.set_selected_chat(obj.model().unwrap().try_chat(data.id).as_ref()),
                     Err(e) => log::warn!("Failed to create private chat: {:?}", e),
                 }
