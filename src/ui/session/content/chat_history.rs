@@ -5,6 +5,7 @@ use std::sync::OnceLock;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use futures::Future;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
@@ -173,6 +174,12 @@ mod imp {
                 }
             }));
         }
+
+        fn dispose(&self) {
+            if let Some(chat) = self.obj().chat() {
+                perform_chat_action(&chat, tdlib::functions::close_chat);
+            }
+        }
     }
 
     impl WidgetImpl for ChatHistory {
@@ -303,11 +310,17 @@ impl ChatHistory {
     }
 
     pub(crate) fn set_chat(&self, chat: Option<&model::Chat>) {
-        if self.chat().as_ref() == chat {
+        let old_chat = self.chat();
+        if chat == old_chat.as_ref() {
             return;
         }
 
         let imp = self.imp();
+
+        if let Some(chat) = old_chat {
+            chat.disconnect(imp.chat_handler.replace(None).unwrap());
+            perform_chat_action(chat.as_ref(), tdlib::functions::close_chat);
+        }
 
         if let Some(chat) = chat {
             self.action_set_enabled(
@@ -377,17 +390,14 @@ impl ChatHistory {
                     obj.imp().background.animate();
                 }
             }));
-
-            if let Some(old_handler) = self.imp().chat_handler.replace(Some(handler)) {
-                if let Some(old_chat) = imp.chat.upgrade() {
-                    old_chat.disconnect(old_handler);
-                }
-            }
+            imp.chat_handler.replace(Some(handler));
 
             let selection = gtk::NoSelection::new(Some(list_view_model));
             imp.list_view.set_model(Some(&selection));
 
             imp.model.replace(Some(model));
+
+            perform_chat_action(chat, tdlib::functions::open_chat);
         }
 
         imp.chat.set(chat);
@@ -415,4 +425,19 @@ impl ChatHistory {
         imp.scrolled_window
             .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
     }
+}
+
+fn perform_chat_action<F, Fut>(chat: &model::Chat, op: F)
+where
+    F: Fn(i64, i32) -> Fut + 'static,
+    Fut: Future<Output = Result<(), tdlib::types::Error>>,
+{
+    utils::spawn(clone!(@weak chat => async move  {
+        op(
+            chat.id(),
+            chat.session_().client_().id(),
+        )
+        .await
+        .unwrap();
+    }));
 }
