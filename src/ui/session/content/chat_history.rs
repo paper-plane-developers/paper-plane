@@ -1,10 +1,12 @@
 use std::cell::Cell;
 use std::cell::OnceCell;
 use std::cell::RefCell;
+use std::collections::HashSet;
 use std::sync::OnceLock;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use futures::Future;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
@@ -29,6 +31,8 @@ mod imp {
         pub(super) is_auto_scrolling: Cell<bool>,
         pub(super) is_loading_messages: Cell<bool>,
         pub(super) sticky: Cell<bool>,
+        pub(super) viewed_message_ids: RefCell<HashSet<i64>>,
+        pub(super) viewed_message_ids_changed: Cell<bool>,
         #[template_child]
         pub(super) window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
@@ -135,6 +139,21 @@ mod imp {
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
                 let imp = obj.imp();
 
+                if imp.viewed_message_ids_changed.get() {
+                    imp.viewed_message_ids_changed.set(false);
+
+                    let chat = obj.chat().unwrap();
+                    let chat_id = chat.id();
+                    let client_id = chat.session_().client_().id();
+                    let viewed_message_ids = Vec::from_iter(imp.viewed_message_ids.borrow().iter().copied());
+
+                    utils::spawn(async move {
+                        tdlib::functions::view_messages(chat_id, viewed_message_ids, None, true, client_id)
+                            .await
+                            .unwrap();
+                    });
+                }
+
                 if imp.is_loading_messages.get() {
                     return;
                 }
@@ -172,6 +191,12 @@ mod imp {
                     obj.scroll_down();
                 }
             }));
+        }
+
+        fn dispose(&self) {
+            if let Some(chat) = self.obj().chat() {
+                perform_chat_action(&chat, tdlib::functions::close_chat);
+            }
         }
     }
 
@@ -259,14 +284,9 @@ impl ChatHistory {
         self.root()?.downcast().ok()
     }
 
-    fn request_sponsored_message(
-        &self,
-        session: &model::ClientStateSession,
-        chat_id: i64,
-        list: &gio::ListStore,
-    ) {
-        utils::spawn(clone!(@weak session, @weak list => async move {
-            match model::SponsoredMessage::request(chat_id, &session).await {
+    fn request_sponsored_message(&self, chat: &model::Chat, list: &gio::ListStore) {
+        utils::spawn(clone!(@weak chat, @weak list => async move {
+            match model::SponsoredMessage::request(&chat).await {
                 Ok(sponsored_message) => {
                     if let Some(sponsored_message) = sponsored_message {
                         list.append(&sponsored_message);
@@ -279,6 +299,20 @@ impl ChatHistory {
                 }
             }
         }));
+    }
+
+    pub(crate) fn add_to_viewed_message_ids(&self, message_id: i64) {
+        let imp = self.imp();
+        if imp.viewed_message_ids.borrow_mut().insert(message_id) {
+            imp.viewed_message_ids_changed.set(true);
+        }
+    }
+
+    pub(crate) fn remove_from_viewed_message_ids(&self, message_id: i64) {
+        let imp = self.imp();
+        if imp.viewed_message_ids.borrow_mut().remove(&message_id) {
+            imp.viewed_message_ids_changed.set(true);
+        }
     }
 
     pub(crate) fn message_menu(&self) -> &gtk::PopoverMenu {
@@ -308,11 +342,17 @@ impl ChatHistory {
     }
 
     pub(crate) fn set_chat(&self, chat: Option<&model::Chat>) {
-        if self.chat().as_ref() == chat {
+        let old_chat = self.chat();
+        if chat == old_chat.as_ref() {
             return;
         }
 
         let imp = self.imp();
+
+        if let Some(chat) = old_chat {
+            chat.disconnect(imp.chat_handler.replace(None).unwrap());
+            perform_chat_action(chat.as_ref(), tdlib::functions::close_chat);
+        }
 
         if let Some(chat) = chat {
             self.action_set_enabled(
@@ -339,11 +379,7 @@ impl ChatHistory {
                 // to the chat history in the GtkListView using a GtkFlattenListModel
                 let sponsored_message_list = gio::ListStore::new::<model::SponsoredMessage>();
                 list.append(&sponsored_message_list);
-                self.request_sponsored_message(
-                    &chat.session_(),
-                    chat.id(),
-                    &sponsored_message_list,
-                );
+                self.request_sponsored_message(chat, &sponsored_message_list);
 
                 list.append(&model);
 
@@ -386,17 +422,14 @@ impl ChatHistory {
                     obj.imp().background.animate();
                 }
             }));
-
-            if let Some(old_handler) = self.imp().chat_handler.replace(Some(handler)) {
-                if let Some(old_chat) = imp.chat.upgrade() {
-                    old_chat.disconnect(old_handler);
-                }
-            }
+            imp.chat_handler.replace(Some(handler));
 
             let selection = gtk::NoSelection::new(Some(list_view_model));
             imp.list_view.set_model(Some(&selection));
 
             imp.model.replace(Some(model));
+
+            perform_chat_action(chat, tdlib::functions::open_chat);
         }
 
         imp.chat.set(chat);
@@ -424,4 +457,19 @@ impl ChatHistory {
         imp.scrolled_window
             .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
     }
+}
+
+fn perform_chat_action<F, Fut>(chat: &model::Chat, op: F)
+where
+    F: Fn(i64, i32) -> Fut + 'static,
+    Fut: Future<Output = Result<(), tdlib::types::Error>>,
+{
+    utils::spawn(clone!(@weak chat => async move  {
+        op(
+            chat.id(),
+            chat.session_().client_().id(),
+        )
+        .await
+        .unwrap();
+    }));
 }
