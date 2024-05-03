@@ -137,22 +137,9 @@ mod imp {
 
             let adj = self.list_view.vadjustment().unwrap();
             adj.connect_value_changed(clone!(@weak obj => move |adj| {
+                obj.view_messages();
+
                 let imp = obj.imp();
-
-                if imp.viewed_message_ids_changed.get() {
-                    imp.viewed_message_ids_changed.set(false);
-
-                    let chat = obj.chat().unwrap();
-                    let chat_id = chat.id();
-                    let client_id = chat.session_().client_().id();
-                    let viewed_message_ids = Vec::from_iter(imp.viewed_message_ids.borrow().iter().copied());
-
-                    utils::spawn(async move {
-                        tdlib::functions::view_messages(chat_id, viewed_message_ids, None, true, client_id)
-                            .await
-                            .unwrap();
-                    });
-                }
 
                 if imp.is_loading_messages.get() {
                     return;
@@ -415,6 +402,8 @@ impl ChatHistory {
 
                 imp.is_loading_messages.set(false);
                 obj.set_sticky(true);
+
+                obj.view_messages();
             }));
 
             let handler = chat.connect_new_message(clone!(@weak self as obj => move |_, msg| {
@@ -456,6 +445,26 @@ impl ChatHistory {
 
         imp.scrolled_window
             .emit_by_name::<bool>("scroll-child", &[&gtk::ScrollType::End, &false]);
+    }
+
+    pub(crate) fn view_messages(&self) {
+        let imp = self.imp();
+
+        if imp.viewed_message_ids_changed.get() {
+            imp.viewed_message_ids_changed.set(false);
+
+            let chat = self.chat().unwrap();
+            let chat_id = chat.id();
+            let client_id = chat.session_().client_().id();
+            let viewed_message_ids =
+                Vec::from_iter(imp.viewed_message_ids.borrow().iter().copied());
+
+            utils::spawn(async move {
+                tdlib::functions::view_messages(chat_id, viewed_message_ids, None, true, client_id)
+                    .await
+                    .unwrap();
+            });
+        }
     }
 }
 
