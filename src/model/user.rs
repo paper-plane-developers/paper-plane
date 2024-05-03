@@ -7,6 +7,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::model;
+use crate::types::UserId;
 
 mod imp {
     use super::*;
@@ -17,7 +18,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
         #[property(get, set, construct_only)]
-        pub(super) id: OnceCell<i64>,
+        pub(super) id: OnceCell<UserId>,
         #[property(get)]
         pub(super) user_type: RefCell<model::BoxedUserType>,
         #[property(get)]

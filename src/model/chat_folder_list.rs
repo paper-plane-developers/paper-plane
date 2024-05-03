@@ -9,6 +9,7 @@ use gtk::glib;
 use gtk::prelude::*;
 
 use crate::model;
+use crate::types::ChatFolderId;
 
 mod imp {
     use super::*;
@@ -130,15 +131,17 @@ impl ChatFolderList {
         self.session().unwrap()
     }
 
-    pub(crate) fn get_or_create(&self, chat_folder_id: i32) -> model::ChatList {
+    pub(crate) fn get_or_create(&self, id: ChatFolderId) -> model::ChatList {
         let mut list = self.imp().list.borrow_mut();
         list.iter()
-            .find(|chat_list| chat_list.list_type().chat_folder_id().unwrap() == chat_folder_id)
+            .find(|chat_list| chat_list.list_type().chat_folder_id().unwrap() == id)
             .cloned()
             .unwrap_or_else(|| {
                 let chat_list = model::ChatList::new(
                     &self.session_(),
-                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder { chat_folder_id }),
+                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder {
+                        chat_folder_id: id,
+                    }),
                 );
 
                 list.push(chat_list.to_owned());
@@ -152,14 +155,17 @@ impl ChatFolderList {
             })
     }
 
-    fn internal_get_or_create(&self, chat_folder_id: i32, position: u32) -> model::ChatList {
+    fn internal_get_or_create(&self, id: ChatFolderId, position: u32) -> model::ChatList {
         let imp = self.imp();
 
         let mut list = imp.list.borrow_mut();
 
-        match list.iter().cloned().enumerate().find(|(_, chat_list)| {
-            chat_list.list_type().chat_folder_id().unwrap() == chat_folder_id
-        }) {
+        match list
+            .iter()
+            .cloned()
+            .enumerate()
+            .find(|(_, chat_list)| chat_list.list_type().chat_folder_id().unwrap() == id)
+        {
             Some((old_position, chat_list)) => {
                 if position as usize != old_position {
                     list.remove(old_position);
@@ -179,7 +185,9 @@ impl ChatFolderList {
             None => {
                 let chat_list = model::ChatList::new(
                     &self.session_(),
-                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder { chat_folder_id }),
+                    tdlib::enums::ChatList::Folder(tdlib::types::ChatListFolder {
+                        chat_folder_id: id,
+                    }),
                 );
 
                 list.insert(position as usize, chat_list.to_owned());

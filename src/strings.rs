@@ -5,6 +5,7 @@ use gtk::glib;
 use crate::i18n::gettext_f;
 use crate::i18n::ngettext_f;
 use crate::model;
+use crate::types::MessageId;
 use crate::utils;
 
 pub(crate) fn chat_action(action: &model::ChatAction) -> String {
@@ -822,16 +823,12 @@ fn message_game_score(
     }
 }
 
-fn message_pin_message(
-    message_id: i64,
-    chat: &model::Chat,
-    sender: &model::MessageSender,
-) -> String {
+fn message_pin_message(id: MessageId, chat: &model::Chat, sender: &model::MessageSender) -> String {
     use tdlib::enums::MessageContent::*;
 
     // TODO: Add a way to retrieve the message and update the string
     // in case we don't have the message stored locally.
-    let string = match chat.message(message_id) {
+    let string = match chat.message(id) {
         Some(message) => match message.content().0 {
             MessageText(data) => {
                 const TEXT_LENGTH: usize = 32;

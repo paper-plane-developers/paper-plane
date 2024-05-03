@@ -11,6 +11,8 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::model;
+use crate::types::ChatId;
+use crate::types::MessageId;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "ChatType")]
@@ -81,7 +83,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) session: glib::WeakRef<model::ClientStateSession>,
         #[property(get, set, construct_only)]
-        pub(super) id: Cell<i64>,
+        pub(super) id: Cell<ChatId>,
         #[property(get, set, construct_only)]
         pub(super) chat_type: OnceCell<ChatType>,
         #[property(get)]
@@ -91,7 +93,7 @@ mod imp {
         #[property(get)]
         pub(super) avatar: RefCell<Option<model::Avatar>>,
         #[property(get)]
-        pub(super) last_read_outbox_message_id: Cell<i64>,
+        pub(super) last_read_outbox_message_id: Cell<MessageId>,
         #[property(get)]
         pub(super) is_marked_as_unread: Cell<bool>,
         #[property(get)]
@@ -330,13 +332,11 @@ impl Chat {
         self.notify_avatar();
     }
 
-    fn set_last_read_outbox_message_id(&self, last_read_outbox_message_id: i64) {
-        if self.last_read_outbox_message_id() == last_read_outbox_message_id {
+    fn set_last_read_outbox_message_id(&self, id: MessageId) {
+        if self.last_read_outbox_message_id() == id {
             return;
         }
-        self.imp()
-            .last_read_outbox_message_id
-            .set(last_read_outbox_message_id);
+        self.imp().last_read_outbox_message_id.set(id);
         self.notify_last_read_outbox_message_id();
     }
 
@@ -430,22 +430,22 @@ impl Chat {
     }
 
     /// Returns the `Message` of the specified id, if present in the cache.
-    pub(crate) fn message(&self, message_id: i64) -> Option<model::Message> {
-        self.imp().messages.borrow().get(&message_id).cloned()
+    pub(crate) fn message(&self, id: MessageId) -> Option<model::Message> {
+        self.imp().messages.borrow().get(&id).cloned()
     }
 
     /// Returns the `Message` of the specified id, if present in the cache. Otherwise it
     /// fetches it from the server and then it returns the result.
     pub(crate) async fn fetch_message(
         &self,
-        message_id: i64,
+        id: MessageId,
     ) -> Result<model::Message, tdlib::types::Error> {
-        if let Some(message) = self.message(message_id) {
+        if let Some(message) = self.message(id) {
             return Ok(message);
         }
 
         let client_id = self.session_().client_().id();
-        let result = tdlib::functions::get_message(self.id(), message_id, client_id).await;
+        let result = tdlib::functions::get_message(self.id(), id, client_id).await;
 
         result.map(|r| {
             let tdlib::enums::Message::Message(message) = r;
@@ -453,7 +453,7 @@ impl Chat {
             self.imp()
                 .messages
                 .borrow_mut()
-                .entry(message_id)
+                .entry(id)
                 .or_insert_with(|| model::Message::new(self, message))
                 .clone()
         })
@@ -461,19 +461,13 @@ impl Chat {
 
     pub(crate) async fn get_chat_history(
         &self,
-        from_message_id: i64,
+        from_id: MessageId,
         limit: i32,
     ) -> Result<Vec<model::Message>, tdlib::types::Error> {
         let client_id = self.session_().client_().id();
-        let result = tdlib::functions::get_chat_history(
-            self.id(),
-            from_message_id,
-            0,
-            limit,
-            false,
-            client_id,
-        )
-        .await;
+        let result =
+            tdlib::functions::get_chat_history(self.id(), from_id, 0, limit, false, client_id)
+                .await;
 
         let tdlib::enums::Messages::Messages(data) = result?;
 

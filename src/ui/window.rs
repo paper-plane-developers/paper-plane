@@ -10,6 +10,8 @@ use gtk::CompositeTemplate;
 use crate::config;
 use crate::model;
 use crate::strings;
+use crate::types::ChatId;
+use crate::types::ClientId;
 use crate::ui;
 use crate::utils;
 use crate::Application;
@@ -116,7 +118,7 @@ impl Window {
         glib::Object::builder().property("application", app).build()
     }
 
-    pub(crate) fn select_chat(&self, client_id: i32, chat_id: i64) {
+    pub(crate) fn select_chat(&self, client_id: ClientId, chat_id: ChatId) {
         self.client_manager_view().select_chat(client_id, chat_id);
     }
 

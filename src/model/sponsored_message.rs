@@ -6,6 +6,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::model;
+use crate::types::MessageId;
 
 mod imp {
     use super::*;
@@ -16,7 +17,7 @@ mod imp {
         #[property(get, set, construct_only)]
         pub(super) chat: OnceCell<model::Chat>,
         #[property(get, set, construct_only)]
-        pub(super) message_id: OnceCell<i64>,
+        pub(super) message_id: OnceCell<MessageId>,
         #[property(get, set, construct_only)]
         pub(super) content: OnceCell<model::BoxedMessageContent>,
         #[property(get, set, construct_only)]

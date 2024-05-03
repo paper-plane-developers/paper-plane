@@ -16,6 +16,7 @@ use crate::expressions;
 use crate::i18n::gettext_f;
 use crate::model;
 use crate::strings;
+use crate::types::MessageId;
 use crate::ui;
 use crate::utils;
 
@@ -417,11 +418,11 @@ impl ChatActionBar {
         }
     }
 
-    fn load_message_to_edit(&self, message_id: i64) {
+    fn load_message_to_edit(&self, id: MessageId) {
         if let Some(chat) = self.chat() {
             let client_id = chat.session_().client_().id();
 
-            if let Some(message) = chat.message(message_id) {
+            if let Some(message) = chat.message(id) {
                 match message.content().0 {
                     tdlib::enums::MessageContent::MessageText(data) => {
                         utils::block_on(async move {
@@ -755,12 +756,12 @@ impl ChatActionBar {
         self.notify("chat");
     }
 
-    pub(crate) fn reply_to_message_id(&self, message_id: i64) {
-        self.set_state(ChatActionBarState::Replying(message_id));
+    pub(crate) fn reply_to_message_id(&self, id: MessageId) {
+        self.set_state(ChatActionBarState::Replying(id));
     }
 
-    pub(crate) fn edit_message_id(&self, message_id: i64) {
-        self.set_state(ChatActionBarState::Editing(message_id));
+    pub(crate) fn edit_message_id(&self, id: MessageId) {
+        self.set_state(ChatActionBarState::Editing(id));
     }
 
     fn update_stack_page(&self) {

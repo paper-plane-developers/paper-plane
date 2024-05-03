@@ -13,6 +13,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 
 use crate::model;
+use crate::types::ChatId;
 use crate::utils;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, glib::Enum)]
@@ -220,7 +221,7 @@ impl ChatList {
 
 fn find_chat_item_position(
     list: &RefMut<BTreeMap<i64, model::ChatListItem>>,
-    chat_id: i64,
+    chat_id: ChatId,
 ) -> Option<(usize, i64)> {
     list.iter()
         .enumerate()

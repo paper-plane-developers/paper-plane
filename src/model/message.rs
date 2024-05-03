@@ -9,6 +9,7 @@ use gtk::subclass::prelude::*;
 
 use crate::expressions;
 use crate::model;
+use crate::types::MessageSenderId;
 
 #[derive(Clone, Debug, glib::Boxed)]
 #[boxed_type(name = "MessageSender")]
@@ -37,7 +38,7 @@ impl MessageSender {
         }
     }
 
-    pub(crate) fn id(&self) -> i64 {
+    pub(crate) fn id(&self) -> MessageSenderId {
         match self {
             Self::User(user) => user.id(),
             Self::Chat(chat) => chat.id(),

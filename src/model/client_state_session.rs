@@ -10,6 +10,9 @@ use glib::Properties;
 use gtk::glib;
 
 use crate::model;
+use crate::types::ChatId;
+use crate::types::SecretChatId;
+use crate::types::UserId;
 use crate::utils;
 
 mod imp {
@@ -135,8 +138,8 @@ impl ClientStateSession {
     }
 
     /// Returns the `model::Chat` of the specified id, if present.
-    pub(crate) fn try_chat(&self, chat_id: i64) -> Option<model::Chat> {
-        self.imp().chats.borrow().get(&chat_id).cloned()
+    pub(crate) fn try_chat(&self, id: ChatId) -> Option<model::Chat> {
+        self.imp().chats.borrow().get(&id).cloned()
     }
 
     /// Returns the `model::Chat` of the specified id. Panics if the chat is not present.
@@ -144,8 +147,8 @@ impl ClientStateSession {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an id returned by TDLib, it should be expected that the
     /// relative `model::Chat` exists in the list.
-    pub(crate) fn chat(&self, chat_id: i64) -> model::Chat {
-        self.try_chat(chat_id)
+    pub(crate) fn chat(&self, id: ChatId) -> model::Chat {
+        self.try_chat(id)
             .expect("Failed to get expected model::Chat")
     }
 
@@ -171,7 +174,7 @@ impl ClientStateSession {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an id returned by TDLib, it should be expected that the
     /// relative `model::User` exists in the list.
-    pub(crate) fn user(&self, user_id: i64) -> model::User {
+    pub(crate) fn user(&self, user_id: UserId) -> model::User {
         self.imp().users.borrow().get(&user_id).unwrap().clone()
     }
 
@@ -208,11 +211,11 @@ impl ClientStateSession {
     /// Note that TDLib guarantees that types are always returned before their ids,
     /// so if you use an id returned by TDLib, it should be expected that the
     /// relative `model::SecretChat` exists in the list.
-    pub(crate) fn secret_chat(&self, secret_chat_id: i32) -> model::SecretChat {
+    pub(crate) fn secret_chat(&self, id: SecretChatId) -> model::SecretChat {
         self.imp()
             .secret_chats
             .borrow()
-            .get(&secret_chat_id)
+            .get(&id)
             .expect("Failed to get expected model::SecretChat")
             .clone()
     }
