@@ -14,6 +14,7 @@ mod strings;
 mod types;
 mod utils;
 
+use std::borrow::Cow;
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::OnceLock;
@@ -77,6 +78,21 @@ fn main() -> glib::ExitCode {
                 application_opts.test_dc = true;
             }
 
+            let client_id = dict.lookup("client-id").unwrap();
+            let client_secret = dict.lookup("client-secret").unwrap();
+
+            match (client_id, client_secret) {
+                (Some(client_id), Some(client_secret)) => {
+                    application_opts.client_id = client_id;
+                    application_opts.client_secret = Cow::Owned(client_secret);
+                }
+                (None, None) => (),
+                _ => {
+                    log::error!("Both client-id and client-secret must be set together");
+                    return 1;
+                }
+            };
+
             APPLICATION_OPTS.set(application_opts).unwrap();
 
             -1
@@ -103,12 +119,16 @@ fn main() -> glib::ExitCode {
 pub(crate) struct ApplicationOptions {
     pub(crate) data_dir: PathBuf,
     pub(crate) test_dc: bool,
+    pub(crate) client_id: i32,
+    pub(crate) client_secret: Cow<'static, str>,
 }
 impl Default for ApplicationOptions {
     fn default() -> Self {
         Self {
             data_dir: PathBuf::from(glib::user_data_dir().to_str().unwrap()).join("paper-plane"),
             test_dc: Default::default(),
+            client_id: config::TG_API_ID,
+            client_secret: Cow::Borrowed(config::TG_API_HASH),
         }
     }
 }
@@ -130,6 +150,24 @@ fn setup_cli<A: IsA<gio::Application>>(app: A) -> A {
         glib::OptionArg::String,
         &gettext("Specify the minimum log level"),
         Some("error|warn|info|debug|trace"),
+    );
+
+    app.add_main_option(
+        "client-id",
+        b'c'.into(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::Int,
+        &gettext("Override the builtin client id"),
+        None,
+    );
+
+    app.add_main_option(
+        "client-secret",
+        b's'.into(),
+        glib::OptionFlags::NONE,
+        glib::OptionArg::String,
+        &gettext("Override the builtin client secret"),
+        None,
     );
 
     app.add_main_option(
