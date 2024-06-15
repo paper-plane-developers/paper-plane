@@ -78,7 +78,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gtk.git",
-                    "tag": "4.14.2"
+                    "tag": "4.14.4"
                 },
                 {
                     "type": "patch",
