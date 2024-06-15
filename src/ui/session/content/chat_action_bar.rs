@@ -573,7 +573,7 @@ impl ChatActionBar {
             notifications.use_default_mute_for = false;
             if notifications.mute_for == 0 {
                 let now = glib::DateTime::now_utc().unwrap().to_unix() as i32;
-                notifications.mute_for = std::i32::MAX - now
+                notifications.mute_for = i32::MAX - now
             } else {
                 notifications.mute_for = 0
             }
