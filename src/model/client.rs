@@ -14,6 +14,7 @@ use crate::config;
 use crate::model;
 use crate::types::ClientId;
 use crate::utils;
+use crate::APPLICATION_OPTS;
 
 /// A struct for storing information about a session's database.
 #[derive(Clone, Debug)]
@@ -169,6 +170,8 @@ impl Client {
             .expect("Data directory path is not a valid unicode string")
             .into();
 
+        let application_opts = APPLICATION_OPTS.get().unwrap();
+
         tdlib::functions::set_tdlib_parameters(
             database_info.use_test_dc,
             database_directory,
@@ -178,8 +181,8 @@ impl Client {
             true,
             true,
             true,
-            config::TG_API_ID,
-            config::TG_API_HASH.into(),
+            application_opts.client_id,
+            application_opts.client_secret.to_string(),
             system_language_code,
             "Desktop".into(),
             String::new(),
