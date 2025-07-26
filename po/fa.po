@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2024-10-20 14:16+0000\n"
+"PO-Revision-Date: 2025-07-27 14:06+0000\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/paper-plane/main/"
 "fa/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.8-rc\n"
+"X-Generator: Weblate 5.13-dev\n"
 
 #: data/app.drey.PaperPlane.desktop.in.in:3
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:7
@@ -170,6 +170,8 @@ msgid ""
 "The application will now be built with more aggressive compiler options, "
 "which should result in a smaller and maybe faster binary."
 msgstr ""
+"برنامه اکنون با گزینه‌های ترجمهٔ سخت‌گیرتری ساخته خواهد شد که می‌تواند دودویی "
+"کوچک‌تر و شاید سریع‌تری ایجاد کند."
 
 #: data/app.drey.PaperPlane.metainfo.xml.in.in:65
 msgid ""
@@ -235,17 +237,15 @@ msgstr "مدیران این گروه، امکان ارسال پیام را بر�
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:103 src/ui/session/content/message_row/indicators.rs:239
 #: src/ui/session/sidebar/row.rs:648
-#, fuzzy
 msgid "%l:%M %p"
-msgstr "%l:%M %p"
+msgstr "%OH:%OM"
 
 #. Translators: This is a date and time representation, without seconds.
 #. Here you may want to change to a 24-hours representation and change order, based on your locale.
 #. You can use this site to learn more: https://www.strfti.me/
 #: src/expressions.rs:108
-#, fuzzy
 msgid "%B %e, %Y %l:%M %p"
-msgstr "%Oe %OB %Oy"
+msgstr "%Oe %OB %Oy، %OH:%OM"
 
 #: src/expressions.rs:120
 msgid "Writing messages isn't allowed in this group."
