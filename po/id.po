@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: paper-plane\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-25 16:58+0200\n"
-"PO-Revision-Date: 2026-08-26 02:51+0000\n"
+"PO-Revision-Date: 2026-08-29 14:19+0000\n"
 "Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/paper-plane/"
 "main/id/>\n"
@@ -396,7 +396,7 @@ msgstr "{num} orang sedang bermain gim"
 
 #: src/strings.rs:183
 msgid "playing a game"
-msgstr "bermain gim"
+msgstr "sedang bermain game"
 
 #: src/strings.rs:190
 #, fuzzy
@@ -666,7 +666,7 @@ msgstr "Panggilan dibatalkan"
 
 #: src/strings.rs:616
 msgid "Missed call"
-msgstr "Panggilan tidak terjawab"
+msgstr "Panggilan terlewat"
 
 #: src/strings.rs:629
 #, fuzzy
@@ -751,7 +751,7 @@ msgstr "{sender} menambahkan {users}"
 
 #: src/strings.rs:766
 msgid "{sender} joined the group via invite link"
-msgstr "{sender} bergabung dengan grup melalui tautan undangan"
+msgstr "{sender} bergabung ke grup melalui tautan undangan"
 
 #: src/strings.rs:780
 #, fuzzy
@@ -1220,7 +1220,7 @@ msgstr "_Edit"
 
 #: src/ui/session/content/message_menu.blp:18
 msgid "Delete for Ever_yone"
-msgstr "Hapus untuk Semua Orang"
+msgstr "Hapus untuk Semu_a Orang"
 
 #: src/ui/session/content/message_menu.blp:24
 #, fuzzy
